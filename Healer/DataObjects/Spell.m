@@ -36,7 +36,7 @@
 
 -(SpellCardView*)spellCardView{
 	
-	
+	return nil;
 }
 
 -(BOOL)isInstant

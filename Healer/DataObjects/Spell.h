@@ -39,7 +39,7 @@
 @property NSInteger healingAmount;
 @property NSInteger energyCost;
 @property float castTime;
-@property (setter=setTargets) NSInteger targets;
+@property (nonatomic, setter=setTargets:) NSInteger targets;
 @property (nonatomic, copy) NSArray *percentagesPerTarget;
 @property (retain, getter=description) NSString *description;
 @property (retain, readonly) SpellAudioData *spellAudioData;

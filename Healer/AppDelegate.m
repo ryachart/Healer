@@ -109,7 +109,9 @@
 	[self removeStartupFlicker];
 	
 	// Run the intro Scene
-	[[CCDirector sharedDirector] runWithScene: [EncounterScene scene]];
+    HealerStartScene *startScene = [[HealerStartScene alloc] init];
+	[[CCDirector sharedDirector] runWithScene: startScene];
+    [startScene release];
 }
 
 

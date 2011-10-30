@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "RaidMember.h"
+#import "DataDefinitions.h"
 
 /* A collection of RaidMembers */
 

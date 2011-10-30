@@ -61,7 +61,7 @@ typedef int CastingDisabledReason;
 }
 @property (assign) NSArray *activeSpells;
 @property (retain) Spell *spellBeingCast;
-@property (setter=setEnergy) NSInteger energy;
+@property (nonatomic, setter=setEnergy:) NSInteger energy;
 @property (nonatomic, copy) NSDate *castStart;
 @property (nonatomic, copy) NSDate *lastEnergyRegen;
 @property (assign) NSArray* additionalTargets;

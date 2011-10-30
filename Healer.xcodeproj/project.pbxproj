@@ -131,7 +131,6 @@
 		387E7B07145E1263006D9266 /* RaidMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AFC145E1263006D9266 /* RaidMember.m */; };
 		387E7B08145E1263006D9266 /* Spell.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AFE145E1263006D9266 /* Spell.m */; };
 		387E7B27145E1375006D9266 /* BossHealthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B0A145E1375006D9266 /* BossHealthView.m */; };
-		387E7B28145E1375006D9266 /* CharacterActiveSpellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B0C145E1375006D9266 /* CharacterActiveSpellView.m */; };
 		387E7B29145E1375006D9266 /* CharacterBagView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B0E145E1375006D9266 /* CharacterBagView.m */; };
 		387E7B2A145E1375006D9266 /* CharacterEquipmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B10145E1375006D9266 /* CharacterEquipmentView.m */; };
 		387E7B2B145E1375006D9266 /* CharacterPersonaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B12145E1375006D9266 /* CharacterPersonaView.m */; };
@@ -152,8 +151,16 @@
 		387E7B4C145E1382006D9266 /* InGameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B3F145E1382006D9266 /* InGameViewController.m */; };
 		387E7B4D145E1382006D9266 /* PostGameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B41145E1382006D9266 /* PostGameViewController.m */; };
 		387E7B4E145E1382006D9266 /* QuickPlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B43145E1382006D9266 /* QuickPlayViewController.m */; };
-		387E7B4F145E1382006D9266 /* RaidLeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B45145E1382006D9266 /* RaidLeaderViewController.m */; };
+		387E7B4F145E1382006D9266 /* HealerStartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B45145E1382006D9266 /* HealerStartScene.m */; };
 		387E7B50145E1382006D9266 /* RaidOrganizerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B47145E1382006D9266 /* RaidOrganizerViewController.m */; };
+		387E7B55145E16B1006D9266 /* AudioController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B52145E16B1006D9266 /* AudioController.m */; };
+		387E7B56145E16B1006D9266 /* SpellAudioData.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B54145E16B1006D9266 /* SpellAudioData.m */; };
+		387E7B59145E1701006D9266 /* Boss.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B58145E1701006D9266 /* Boss.m */; };
+		387E7B62145E177B006D9266 /* CharacterActiveSpellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B5D145E177B006D9266 /* CharacterActiveSpellView.m */; };
+		387E7B63145E177B006D9266 /* PlayerMoveButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B5F145E177B006D9266 /* PlayerMoveButton.m */; };
+		387E7B64145E177B006D9266 /* PlayerSpellButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B61145E177B006D9266 /* PlayerSpellButton.m */; };
+		387E7B67145E17CC006D9266 /* Encounter.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B66145E17CC006D9266 /* Encounter.m */; };
+		387E7B6C145E1868006D9266 /* GameInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B6B145E1868006D9266 /* GameInfo.m */; };
 		38F04EEA13C2593500BCADCB /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38F04EE913C2593500BCADCB /* GameDefaults.plist */; };
 /* End PBXBuildFile section */
 
@@ -550,10 +557,30 @@
 		387E7B41145E1382006D9266 /* PostGameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostGameViewController.m; path = Scenes/PostGameViewController.m; sourceTree = "<group>"; };
 		387E7B42145E1382006D9266 /* QuickPlayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickPlayViewController.h; path = Scenes/QuickPlayViewController.h; sourceTree = "<group>"; };
 		387E7B43145E1382006D9266 /* QuickPlayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QuickPlayViewController.m; path = Scenes/QuickPlayViewController.m; sourceTree = "<group>"; };
-		387E7B44145E1382006D9266 /* RaidLeaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RaidLeaderViewController.h; path = Scenes/RaidLeaderViewController.h; sourceTree = "<group>"; };
-		387E7B45145E1382006D9266 /* RaidLeaderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RaidLeaderViewController.m; path = Scenes/RaidLeaderViewController.m; sourceTree = "<group>"; };
+		387E7B44145E1382006D9266 /* HealerStartScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HealerStartScene.h; path = Scenes/HealerStartScene.h; sourceTree = "<group>"; };
+		387E7B45145E1382006D9266 /* HealerStartScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HealerStartScene.m; path = Scenes/HealerStartScene.m; sourceTree = "<group>"; };
 		387E7B46145E1382006D9266 /* RaidOrganizerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RaidOrganizerViewController.h; path = Scenes/RaidOrganizerViewController.h; sourceTree = "<group>"; };
 		387E7B47145E1382006D9266 /* RaidOrganizerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RaidOrganizerViewController.m; path = Scenes/RaidOrganizerViewController.m; sourceTree = "<group>"; };
+		387E7B51145E16B1006D9266 /* AudioController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioController.h; path = "Audio Engine/AudioController.h"; sourceTree = "<group>"; };
+		387E7B52145E16B1006D9266 /* AudioController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AudioController.m; path = "Audio Engine/AudioController.m"; sourceTree = "<group>"; };
+		387E7B53145E16B1006D9266 /* SpellAudioData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpellAudioData.h; path = "Audio Engine/SpellAudioData.h"; sourceTree = "<group>"; };
+		387E7B54145E16B1006D9266 /* SpellAudioData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpellAudioData.m; path = "Audio Engine/SpellAudioData.m"; sourceTree = "<group>"; };
+		387E7B57145E1701006D9266 /* Boss.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Boss.h; path = DataObjects/Boss.h; sourceTree = "<group>"; };
+		387E7B58145E1701006D9266 /* Boss.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Boss.m; path = DataObjects/Boss.m; sourceTree = "<group>"; };
+		387E7B5A145E173D006D9266 /* GameUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameUserInterface.h; path = DataObjects/GameUserInterface.h; sourceTree = "<group>"; };
+		387E7B5C145E177B006D9266 /* CharacterActiveSpellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CharacterActiveSpellView.h; path = Controls/CharacterActiveSpellView.h; sourceTree = "<group>"; };
+		387E7B5D145E177B006D9266 /* CharacterActiveSpellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CharacterActiveSpellView.m; path = Controls/CharacterActiveSpellView.m; sourceTree = "<group>"; };
+		387E7B5E145E177B006D9266 /* PlayerMoveButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayerMoveButton.h; path = Controls/PlayerMoveButton.h; sourceTree = "<group>"; };
+		387E7B5F145E177B006D9266 /* PlayerMoveButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayerMoveButton.m; path = Controls/PlayerMoveButton.m; sourceTree = "<group>"; };
+		387E7B60145E177B006D9266 /* PlayerSpellButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayerSpellButton.h; path = Controls/PlayerSpellButton.h; sourceTree = "<group>"; };
+		387E7B61145E177B006D9266 /* PlayerSpellButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayerSpellButton.m; path = Controls/PlayerSpellButton.m; sourceTree = "<group>"; };
+		387E7B65145E17CC006D9266 /* Encounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Encounter.h; path = DataObjects/Encounter.h; sourceTree = "<group>"; };
+		387E7B66145E17CC006D9266 /* Encounter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Encounter.m; path = DataObjects/Encounter.m; sourceTree = "<group>"; };
+		387E7B68145E17EE006D9266 /* DataDefinitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDefinitions.h; sourceTree = "<group>"; };
+		387E7B69145E1854006D9266 /* Container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Container.h; path = DataObjects/Container.h; sourceTree = "<group>"; };
+		387E7B6A145E1868006D9266 /* GameInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameInfo.h; path = Healer/DataObjects/GameInfo.h; sourceTree = "<group>"; };
+		387E7B6B145E1868006D9266 /* GameInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GameInfo.m; path = Healer/DataObjects/GameInfo.m; sourceTree = "<group>"; };
+		387E7B6D145E18E1006D9266 /* CharacterSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CharacterSheet.h; path = DataObjects/CharacterSheet.h; sourceTree = "<group>"; };
 		38F04EE913C2593500BCADCB /* GameDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameDefaults.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -621,6 +648,7 @@
 				387E7AE4145E0D1B006D9266 /* Persistent Stores */,
 				386DD03A145DFF2D0086763E /* Data Objects */,
 				38F0504413C2618900BCADCB /* Sprites */,
+				387E7B5B145E1756006D9266 /* Controls */,
 				387E7AE3145E0D09006D9266 /* Scenes */,
 				387E7AE9145E0F8F006D9266 /* Audio */,
 				38024F0713C2564E003D36F2 /* Supporting Files */,
@@ -660,6 +688,13 @@
 		386DD03A145DFF2D0086763E /* Data Objects */ = {
 			isa = PBXGroup;
 			children = (
+				387E7B6D145E18E1006D9266 /* CharacterSheet.h */,
+				387E7B69145E1854006D9266 /* Container.h */,
+				387E7B65145E17CC006D9266 /* Encounter.h */,
+				387E7B66145E17CC006D9266 /* Encounter.m */,
+				387E7B5A145E173D006D9266 /* GameUserInterface.h */,
+				387E7B57145E1701006D9266 /* Boss.h */,
+				387E7B58145E1701006D9266 /* Boss.m */,
 				387E7AEA145E1263006D9266 /* Character.h */,
 				387E7AEB145E1263006D9266 /* Character.m */,
 				387E7AEC145E1263006D9266 /* Effect.h */,
@@ -1235,8 +1270,8 @@
 				387E7B41145E1382006D9266 /* PostGameViewController.m */,
 				387E7B42145E1382006D9266 /* QuickPlayViewController.h */,
 				387E7B43145E1382006D9266 /* QuickPlayViewController.m */,
-				387E7B44145E1382006D9266 /* RaidLeaderViewController.h */,
-				387E7B45145E1382006D9266 /* RaidLeaderViewController.m */,
+				387E7B44145E1382006D9266 /* HealerStartScene.h */,
+				387E7B45145E1382006D9266 /* HealerStartScene.m */,
 				387E7B46145E1382006D9266 /* RaidOrganizerViewController.h */,
 				387E7B47145E1382006D9266 /* RaidOrganizerViewController.m */,
 			);
@@ -1246,6 +1281,8 @@
 		387E7AE4145E0D1B006D9266 /* Persistent Stores */ = {
 			isa = PBXGroup;
 			children = (
+				387E7B6A145E1868006D9266 /* GameInfo.h */,
+				387E7B6B145E1868006D9266 /* GameInfo.m */,
 				387E7AE6145E0F70006D9266 /* PersistantDataManager.h */,
 				387E7AE7145E0F70006D9266 /* PersistantDataManager.m */,
 			);
@@ -1256,6 +1293,7 @@
 		387E7AE5145E0F54006D9266 /* Constants */ = {
 			isa = PBXGroup;
 			children = (
+				387E7B68145E17EE006D9266 /* DataDefinitions.h */,
 				38024F1413C2564E003D36F2 /* GameConfig.h */,
 			);
 			name = Constants;
@@ -1264,8 +1302,25 @@
 		387E7AE9145E0F8F006D9266 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
+				387E7B51145E16B1006D9266 /* AudioController.h */,
+				387E7B52145E16B1006D9266 /* AudioController.m */,
+				387E7B53145E16B1006D9266 /* SpellAudioData.h */,
+				387E7B54145E16B1006D9266 /* SpellAudioData.m */,
 			);
 			name = Audio;
+			sourceTree = "<group>";
+		};
+		387E7B5B145E1756006D9266 /* Controls */ = {
+			isa = PBXGroup;
+			children = (
+				387E7B5C145E177B006D9266 /* CharacterActiveSpellView.h */,
+				387E7B5D145E177B006D9266 /* CharacterActiveSpellView.m */,
+				387E7B5E145E177B006D9266 /* PlayerMoveButton.h */,
+				387E7B5F145E177B006D9266 /* PlayerMoveButton.m */,
+				387E7B60145E177B006D9266 /* PlayerSpellButton.h */,
+				387E7B61145E177B006D9266 /* PlayerSpellButton.m */,
+			);
+			name = Controls;
 			sourceTree = "<group>";
 		};
 		38F0504413C2618900BCADCB /* Sprites */ = {
@@ -1483,7 +1538,6 @@
 				387E7B07145E1263006D9266 /* RaidMember.m in Sources */,
 				387E7B08145E1263006D9266 /* Spell.m in Sources */,
 				387E7B27145E1375006D9266 /* BossHealthView.m in Sources */,
-				387E7B28145E1375006D9266 /* CharacterActiveSpellView.m in Sources */,
 				387E7B29145E1375006D9266 /* CharacterBagView.m in Sources */,
 				387E7B2A145E1375006D9266 /* CharacterEquipmentView.m in Sources */,
 				387E7B2B145E1375006D9266 /* CharacterPersonaView.m in Sources */,
@@ -1504,8 +1558,16 @@
 				387E7B4C145E1382006D9266 /* InGameViewController.m in Sources */,
 				387E7B4D145E1382006D9266 /* PostGameViewController.m in Sources */,
 				387E7B4E145E1382006D9266 /* QuickPlayViewController.m in Sources */,
-				387E7B4F145E1382006D9266 /* RaidLeaderViewController.m in Sources */,
+				387E7B4F145E1382006D9266 /* HealerStartScene.m in Sources */,
 				387E7B50145E1382006D9266 /* RaidOrganizerViewController.m in Sources */,
+				387E7B55145E16B1006D9266 /* AudioController.m in Sources */,
+				387E7B56145E16B1006D9266 /* SpellAudioData.m in Sources */,
+				387E7B59145E1701006D9266 /* Boss.m in Sources */,
+				387E7B62145E177B006D9266 /* CharacterActiveSpellView.m in Sources */,
+				387E7B63145E177B006D9266 /* PlayerMoveButton.m in Sources */,
+				387E7B64145E177B006D9266 /* PlayerSpellButton.m in Sources */,
+				387E7B67145E17CC006D9266 /* Encounter.m in Sources */,
+				387E7B6C145E1868006D9266 /* GameInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -23,7 +23,7 @@
 	BOOL isTouched;
 	
 }
-@property (assign, setter=setMemberData) HealableTarget* memberData;
+@property (nonatomic, assign, setter=setMemberData:) HealableTarget* memberData;
 @property (nonatomic, retain) UILabel *classNameLabel;
 @property (nonatomic, retain) UILabel *healthLabel;
 @property (nonatomic, retain) UILabel *effectsLabel;

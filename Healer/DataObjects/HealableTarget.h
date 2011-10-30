@@ -18,7 +18,7 @@
 	NSMutableArray *activeEffects;
 	NSMutableArray *healthAdjustmentModifiers;
 }
-@property (setter=setHealth) NSInteger health;
+@property (nonatomic, setter=setHealth:) NSInteger health;
 @property NSInteger maximumHealth;
 @property (readonly) NSMutableArray *activeEffects;
 

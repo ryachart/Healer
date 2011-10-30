@@ -19,7 +19,7 @@
 	
 	PlayerHealthViewDelegate *interactionDelegate;
 }
-@property (assign, setter=setMemberData) HealableTarget* memberData;
+@property (nonatomic, assign, setter=setMemberData:) HealableTarget* memberData;
 @property (nonatomic, retain) IBOutlet UILabel *healthLabel;
 @property (nonatomic, retain) PlayerHealthViewDelegate *interactionDelegate;
 @property (retain) UIColor *defaultBackgroundColor;

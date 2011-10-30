@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "cocos2d.h"
+#import "HealerStartScene.h"
 
 @class RootViewController;
 

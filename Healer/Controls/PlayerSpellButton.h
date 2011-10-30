@@ -18,7 +18,7 @@
 	
 	PlayerSpellButtonDelegate *interactionDelegate;
 }
-@property (retain, setter=setSpellData) Spell *spellData;
+@property (nonatomic, retain, setter=setSpellData:) Spell *spellData;
 @property (retain) PlayerSpellButtonDelegate *interactionDelegate;
 
 -(void)setSpellData:(Spell*)theSpell;

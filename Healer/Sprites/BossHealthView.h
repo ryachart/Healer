@@ -16,7 +16,7 @@
 	Boss* bossData;
 	
 }
-@property (assign, setter=setBossData) Boss* bossData;
+@property (nonatomic, assign, setter=setBossData:) Boss* bossData;
 @property (nonatomic, retain) IBOutlet UILabel *bossNameLabel;
 @property (nonatomic, retain) IBOutlet UILabel *healthLabel;
 

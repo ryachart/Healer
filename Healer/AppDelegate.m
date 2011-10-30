@@ -10,7 +10,6 @@
 
 #import "AppDelegate.h"
 #import "GameConfig.h"
-#import "EncounterScene.h"
 #import "RootViewController.h"
 
 @implementation AppDelegate

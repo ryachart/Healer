@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>background_color</key>
+	<dict>
+		<key>r</key>
+		<integer>70</integer>
+		<key>g</key>
+		<integer>70</integer>
+		<key>b</key>
+		<integer>70</integer>
+	</dict>
+	<key>num_allies_assassins</key>
+	<string>4</string>
+	<key>num_allies_wizards</key>
+	<string>5</string>
+	<key>num_allies_clerics</key>
+	<string>2</string>
+	<key>num_allies_guardians</key>
+	<string>1</string>
+	<key>num_bosses</key>
+	<integer>1</integer>
+	<key>ally_max_health</key>
+	<integer>100</integer>
+	<key>boss_max_health</key>
+	<integer>1000</integer>
+	<key>max_health_bar_size</key>
+	<integer>70</integer>
+	<key>max_health_bar_size_boss</key>
+	<integer>950</integer>
+</dict>
+</plist>

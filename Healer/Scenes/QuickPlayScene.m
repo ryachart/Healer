@@ -1,34 +1,58 @@
-    //
-//  QuickPlayViewController.m
-//  RaidLeader
+//
+//  QuickPlayScene.m
+//  Healer
 //
 //  Created by Ryan Hart on 4/28/10.
 //  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
 
-#import "QuickPlayViewController.h"
+#import "QuickPlayScene.h"
 
+@interface QuickPlayScene ()
+@property (retain) CCMenuItemLabel *easyModeButton;
+@property (retain) CCMenuItemLabel *mediumModeButton;
+@property (retain) CCMenuItemLabel *hardModeButton;
+@property (retain) CCMenuItemLabel *extremeModeButton;
+@property (retain) CCMenu *menu;
 
-@implementation QuickPlayViewController
+-(void)startEasyGame;
+-(void)startMediumGame;
+-(void)startHardGame;
+-(void)startExtremeGame;
+-(void)back;
 
-/*
- // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-        // Custom initialization
+@end
+
+@implementation QuickPlayScene
+@synthesize easyModeButton;
+@synthesize mediumModeButton;
+@synthesize hardModeButton;
+@synthesize extremeModeButton;
+@synthesize menu;
+
+-(id)init{
+    if (self = [super init]){
+        self.easyModeButton = [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Easy Game" fontName:@"Arial" fontSize:32] target:self selector:@selector(startEasyGame)] autorelease];
+        self.mediumModeButton= [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Medium Game" fontName:@"Arial" fontSize:32] target:self selector:@selector(startMediumGame)] autorelease];
+        [self.mediumModeButton setPosition:ccp(0, 50)];
+        self.hardModeButton= [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Hard Game" fontName:@"Arial" fontSize:32] target:self selector:@selector(startHardGame)] autorelease];
+        [self.hardModeButton setPosition:ccp(0, 100)];
+        self.extremeModeButton= [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Extreme Game" fontName:@"Arial" fontSize:32] target:self selector:@selector(startExtremeGame)] autorelease];
+        [self.extremeModeButton  setPosition:ccp(0, 150)];
+        
+        
+        self.menu = [CCMenu menuWithItems:self.easyModeButton, self.mediumModeButton, self.hardModeButton, self.extremeModeButton, nil];
+        
+        CGSize winSize = [CCDirector sharedDirector].winSize;
+        
+        [self.menu setPosition:ccp(winSize.width * .4, winSize.height * 1/3)];
+        [self.menu setColor:ccc3(255, 255, 255)];
+        [self addChild:self.menu];
     }
     return self;
 }
-*/
 
-/*
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad {
-    [super viewDidLoad];
-}
-*/
-
--(IBAction)startEasyGame
+-(void)startEasyGame
 {
 	srand(time(NULL));
 	
@@ -52,12 +76,12 @@
 	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
 	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
 	
-	[self.navigationController pushViewController:demoGameVC animated:YES];
+	//[self.navigationController pushViewController:demoGameVC animated:YES];
 	
 	
 }
 
--(IBAction)startMediumGame
+-(void)startMediumGame
 {
 	Raid* demoRaid = [[Raid alloc] init];
 	Player* demoPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
@@ -78,11 +102,11 @@
 	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
 	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
 	
-	[self.navigationController pushViewController:demoGameVC animated:YES];
+	//[self.navigationController pushViewController:demoGameVC animated:YES];
 	
 }
 
--(IBAction)startHardGame
+-(void)startHardGame
 {
 	Raid* demoRaid = [[Raid alloc] init];
 	Player* demoPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
@@ -104,11 +128,11 @@
 	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
 	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
 	
-	[self.navigationController pushViewController:demoGameVC animated:YES];
+	//[self.navigationController pushViewController:demoGameVC animated:YES];
 	
 }
 
--(IBAction)startExtremeGame
+-(void)startExtremeGame
 {
 	Raid* demoRaid = [[Raid alloc] init];
 	Player* demoPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
@@ -130,35 +154,14 @@
 	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
 	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
 	
-	[self.navigationController pushViewController:demoGameVC animated:YES];
+	//[self.navigationController pushViewController:demoGameVC animated:YES];
 	
 }
 
--(IBAction)back
+-(void)back
 {
-	[self.navigationController popViewControllerAnimated:YES];
+	//[self.navigationController popViewControllerAnimated:YES];
 	
-}
-
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Overriden to allow any orientation.
-    return YES;
-}
-
-
-- (void)didReceiveMemoryWarning {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
-}
-
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 

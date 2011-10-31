@@ -183,7 +183,7 @@
 	RoarOfLifeEffect *rolEffect = [[RoarOfLifeEffect alloc] initWithDuration:12 andEffectType:EffectTypePositive];
 	[rolEffect setNumOfTicks:6];
 	[rolEffect setHealingPerTick:3];
-	return rolEffect;
+	return [rolEffect autorelease];
 }
 @end
 
@@ -192,7 +192,7 @@
 	WoundWeavingEffect *wwe = [[WoundWeavingEffect alloc] initWithDuration:9 andEffectType:EffectTypePositive];
 	[wwe setNumOfTicks:3];
 	[wwe setHealingPerTick:12];
-	return wwe;
+	return [wwe autorelease];
 }
 @end
 
@@ -201,7 +201,7 @@
 	SurgingGrowthEffect *sge = [[SurgingGrowthEffect alloc] initWithDuration:5 andEffectType:EffectTypePositive];
 	[sge setNumOfTicks:5];
 	[sge setHealingPerTick:1];
-	return sge;
+	return [sge autorelease];
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
 {
@@ -244,7 +244,7 @@
 	FieryAdrenalineEffect * fae = [[FieryAdrenalineEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];
 	[fae setNumOfTicks:5];
 	[fae setHealingPerTick:3];
-	return fae;
+	return [fae autorelease];
 }
 -(void)didChangeHealthFrom:(NSInteger )health toNewHealth:(NSInteger )newHealth
 {
@@ -264,7 +264,7 @@
 	TwoWindsEffect *twe = [[TwoWindsEffect alloc] initWithDuration:12 andEffectType:EffectTypePositive];
 	[twe setNumOfTicks:4];
 	[twe setHealingPerTick:8];
-	return twe;
+	return [twe autorelease];
 }
 
 @end
@@ -274,7 +274,7 @@
 	SymbioticConnectionEffect *sce = [[SymbioticConnectionEffect alloc] initWithDuration:9 andEffectType:EffectTypePositive];
 	[sce setNumOfTicks:3];
 	[sce setHealingPerTick:10];
-	return sce;
+	return [sce autorelease];
 	
 }
 @end
@@ -284,7 +284,7 @@
 	UnleashedNatureEffect *unle = [[UnleashedNatureEffect alloc] initWithDuration:12 andEffectType:EffectTypePositive];
 	[unle setNumOfTicks:6];
 	[unle setHealingPerTick:3];
-	return unle;
+	return [unle autorelease];
 }
 @end
 
@@ -295,7 +295,7 @@
 +(id)defaultEffect{
 	ShiningAegisEffect *sae = [[ShiningAegisEffect alloc] initWithDuration:12 andEffectType:EffectTypePositive];
 	[sae setAmountToShield:20];
-	return sae;
+	return [sae autorelease];
 }
 
 @end
@@ -304,7 +304,7 @@
 +(id)defaultEffect{
 	BulwarkEffect *be = [[BulwarkEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive];
 	[be setAmountToShield:40];
-	return be;
+	return [be autorelease];
 }
 
 @end
@@ -312,7 +312,7 @@
 @implementation EtherealArmorEffect
 +(id)defaultEffect{
 	EtherealArmorEffect *eae = [[EtherealArmorEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive];
-	return eae;
+	return [eae autorelease];
 }
 
 -(void)didChangeHealthFrom:(NSInteger )health toNewHealth:(NSInteger )newHealth

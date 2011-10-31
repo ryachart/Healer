@@ -100,7 +100,7 @@
 	NSInteger row = [indexPath row];
 	
 	if (tableView == spellsTable){
-		[spellDescription setText:[[Spell spellFromTitle:[[characterShowing knownSpells] objectAtIndex:row]] description]];
+		[spellDescription setText:[[Spell spellFromTitle:[[characterShowing knownSpells] objectAtIndex:row]] spellDescription]];
 	}
 	
 	if (tableView == encountersTable){

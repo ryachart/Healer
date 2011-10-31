@@ -14,13 +14,15 @@
 
 -(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq
 {
-	maximumHealth = hlth;
-	health = hlth;
-	
-	damageDealt = damage;
-	damageFrequency = dmgFreq;
-	
-	activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
+    if (self = [super init]){
+        maximumHealth = hlth;
+        health = hlth;
+        
+        damageDealt = damage;
+        damageFrequency = dmgFreq;
+        
+        activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
+    }
 	return self;
 }
 
@@ -38,7 +40,7 @@
 {
 	Witch *defWitch = [[Witch alloc] initWithHealth:50 damageDealt:65 andDmgFrequency:.65];
 	
-	return defWitch;
+	return [defWitch autorelease];
 }
 
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
@@ -72,7 +74,7 @@
 {
 	Troll *defTroll = [[Troll alloc] initWithHealth:75 damageDealt:62 andDmgFrequency:.80];
 	
-	return defTroll;
+	return [defTroll autorelease];
 }
 
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
@@ -104,7 +106,7 @@
 +(Ogre*)defaultOgre
 {
 	Ogre *defOgre = [[Ogre alloc] initWithHealth:100 damageDealt:50 andDmgFrequency:1.0];
-	return defOgre;
+	return [defOgre autorelease];
 }
 
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime

@@ -129,7 +129,7 @@ static AudioController* sharedController = nil;
 {
 	if (playInSequence) {
 		if (!self.titles) {
-			[self setTitles: [playTitles mutableCopy]];			
+			[self setTitles: [[playTitles mutableCopy] autorelease]];			
 		}
 		
 		[self playTitle: [self.titles objectAtIndex: 0]

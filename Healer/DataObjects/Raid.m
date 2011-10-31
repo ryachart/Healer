@@ -13,8 +13,9 @@
 
 @synthesize raidMembers;
 -(id)init{
-	raidMembers = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];
-	
+    if (self = [super init]){
+        raidMembers = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];
+	}
 	return self;
 }
 
@@ -65,6 +66,6 @@
 		}
 	}
 	
-	return aliveMembers;
+	return [aliveMembers autorelease];
 }
 @end

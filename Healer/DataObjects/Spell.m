@@ -15,21 +15,23 @@
 
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd
 {
-	title = ttle;
-	healingAmount = healAmnt;
-	energyCost = nrgyCost;
-	castTime = time;
-	coolDown = cd;
-	isMultitouch = NO;
-	spellAudioData = [[SpellAudioData alloc] init];
+    if (self = [super init]){
+        title = ttle;
+        healingAmount = healAmnt;
+        energyCost = nrgyCost;
+        castTime = time;
+        coolDown = cd;
+        isMultitouch = NO;
+        spellAudioData = [[SpellAudioData alloc] init];
+    }
 	return self;
 }
 +(id)defaultSpell{
 	Spell* def = [[[self class] alloc] initWithTitle:@"DefaultSpell" healAmnt:0 energyCost:0 castTime:0.0 andCooldown:0];
-	return def;
+	return [def autorelease];
 }
 
--(NSString*)description{
+-(NSString*)spellDescription{
 	return [NSString stringWithFormat:@"Energy Cost : %i \n %@", energyCost, description];
 	
 }
@@ -186,7 +188,7 @@
 {
 	QuickHeal *quickHeal = [[QuickHeal alloc] initWithTitle:@"Quick Heal" healAmnt:25 energyCost:7 castTime:1.0 andCooldown:.5]; //3.5h/e
 	
-	return quickHeal;
+	return [quickHeal autorelease];
 }
 @end
 
@@ -195,7 +197,7 @@
 {
 	SuperHeal *bigHeal = [[SuperHeal alloc] initWithTitle:@"Super Heal" healAmnt:75 energyCost:10 castTime:2.0 andCooldown:.5];//7.5h/e
 
-	return bigHeal;
+	return [bigHeal autorelease];
 }
 @end
 
@@ -203,9 +205,9 @@
 +(id)defaultSpell
 {
 	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:100 energyCost:10 castTime:1.75 andCooldown:.5];//10h/e
-	NSArray *forkedPercentages = [NSArray arrayWithObjects:[[NSNumber alloc] initWithDouble:.50], [[NSNumber alloc] initWithDouble:.50], nil];
+	NSArray *forkedPercentages = [NSArray arrayWithObjects:[[[NSNumber alloc] initWithDouble:.50] autorelease], [[[NSNumber alloc] initWithDouble:.50] autorelease], nil];
 	[forkedHeal setTargets:2 withPercentagesPerTarget:forkedPercentages];
-	return forkedHeal;
+	return [forkedHeal autorelease];
 }
 @end
 
@@ -213,9 +215,9 @@
 +(id)defaultSpell
 {
 	SurgeOfLife *surgeOfLife = [[SurgeOfLife alloc] initWithTitle:@"Surge of Life" healAmnt:150 energyCost:14 castTime:1.5 andCooldown:.5];//10.7h/e
-	NSArray *surgePercentages = [NSArray arrayWithObjects:[[NSNumber alloc] initWithDouble:.50], [[NSNumber alloc] initWithDouble:.25], [[NSNumber alloc] initWithDouble:.25], nil];
+	NSArray *surgePercentages = [NSArray arrayWithObjects:[[[NSNumber alloc] initWithDouble:.50] autorelease], [[[NSNumber alloc] initWithDouble:.25] autorelease], [[[NSNumber alloc] initWithDouble:.25] autorelease], nil];
 	[surgeOfLife setTargets:3 withPercentagesPerTarget:surgePercentages];
-	return surgeOfLife;
+	return [surgeOfLife autorelease];
 }
 @end
 
@@ -224,7 +226,7 @@
 {
 	HealingBreath *healBreath = [[HealingBreath alloc] initWithTitle:@"Healing Breath" healAmnt:20 energyCost:8 castTime:1.5 andCooldown:0.0];
 	[healBreath setDescription:@"A spell that restores a small amount of health"];
-	return healBreath;
+	return [healBreath autorelease];
 }
 @end
 
@@ -233,14 +235,14 @@
 {
 	GloriousBeam *gloryBeam = [[GloriousBeam alloc] initWithTitle:@"Glorious Beam" healAmnt:18 energyCost:9 castTime:0.0 andCooldown:0.1];
 	[gloryBeam setDescription:@"A spell that instantly heals your target, but isn't very efficient."];
-	return gloryBeam;
+	return [gloryBeam autorelease];
 }
 -(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(NSDate *)theTime{
 	[super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
 	ShieldEffect *shieldEffect = [[ShieldEffect alloc] initWithDuration:20 andEffectType:EffectTypePositive];
 	[shieldEffect setAmountToShield:22];
 	[[thePlayer spellTarget] addEffect:shieldEffect];
-	NSLog(@"Added a shield to someone");
+    [shieldEffect release];
 }
 @end
 
@@ -249,7 +251,7 @@
 +(id)defaultSpell{
 	HastyBrew *hastyBrew = [[HastyBrew alloc] initWithTitle:@"Hasty Brew" healAmnt:10 energyCost:8 castTime:1.0 andCooldown:0.0];
 	[hastyBrew setDescription:@"A spell that heals a small amount but can be charged to heal up to twice as much"];
-	return hastyBrew;
+	return [hastyBrew autorelease];
 }
 
 -(void)beginCharging:(NSDate*)startTime{
@@ -296,7 +298,7 @@
 	[[roarOfLife spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[roarOfLife spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
 	[[roarOfLife spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
-	return roarOfLife;
+	return [roarOfLife autorelease];
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
 {
@@ -312,13 +314,12 @@
 	WoundWeaving *woundWeaving = [[WoundWeaving alloc] initWithTitle:@"Wound Weaving" healAmnt:0 energyCost:6 castTime:0.0 andCooldown:0.0];
 	[woundWeaving setDescription:@"An extremely efficient effect that regenerates the health of a the target over time."];
 	[[woundWeaving spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
-	return woundWeaving;
+	return [woundWeaving autorelease];
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime{
 	WoundWeavingEffect *wwEffect = [WoundWeavingEffect defaultEffect];
 	[[thePlayer spellTarget] addEffect:wwEffect];
 	[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
-	[wwEffect release];
 }
 
 @end
@@ -328,7 +329,7 @@
 	SurgingGrowth *sg = [[SurgingGrowth alloc] initWithTitle:@"Surging Growth" healAmnt:0 energyCost:7 castTime:0.0 andCooldown:0.0];
 	[sg setDescription:@"Heals increasing amounts for 5 seconds until it heals a moderate amount on expiration"];
 	[[sg spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"SGFinished"];
-	return sg;
+	return [sg autorelease];
 	
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime{
@@ -345,7 +346,7 @@
 	[[fa spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"FAdrStart"];
 	[[fa spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"FAdrFizzle"];
 	[[fa spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"FAdrFinish"];
-	return fa;
+	return [fa autorelease];
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime{
 	[[thePlayer spellTarget] addEffect:[FieryAdrenalineEffect defaultEffect]];
@@ -358,12 +359,12 @@
 +(id)defaultSpell{
 	TwoWinds* twoWinds = [[TwoWinds alloc] initWithTitle:@"Two Winds" healAmnt:0 energyCost:15 castTime:1.0 andCooldown:0.0];
 	[twoWinds setDescription:@"Heals 2 targets for a moderate amount over 12 seconds"];
-	NSArray *twoWindsPercs = [NSArray arrayWithObjects:[[NSNumber alloc] initWithDouble:0], [[NSNumber alloc] initWithDouble:0], nil];
+	NSArray *twoWindsPercs = [NSArray arrayWithObjects:[[[NSNumber alloc] initWithDouble:0] autorelease], [[[NSNumber alloc] initWithDouble:0] autorelease], nil];
 	[twoWinds setTargets:2 withPercentagesPerTarget:twoWindsPercs];
 	[[twoWinds spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"2WindStart"];
 	[[twoWinds spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"2WindFizzle"];
 	[[twoWinds spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"2WindFinish"];
-	return twoWinds;
+	return [twoWinds autorelease];
 	
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime{
@@ -382,12 +383,12 @@
 +(id)defaultSpell{
 	SymbioticConnection *symC = [[SymbioticConnection alloc] initWithTitle:@"Symbiotic Connection" healAmnt:20 energyCost:10 castTime:1.5 andCooldown:0];
 	[symC setDescription:@"Heals your primary target immediately for a moderate amount and heals your second target for a moderate amount over 9 seconds"];
-	NSArray *symbPercs = [NSArray arrayWithObjects:[[NSNumber alloc] initWithDouble:1], [[NSNumber alloc] initWithDouble:0], nil];
+	NSArray *symbPercs = [NSArray arrayWithObjects:[[[NSNumber alloc] initWithDouble:1] autorelease], [[[NSNumber alloc] initWithDouble:0] autorelease], nil];
 	[symC setTargets:2 withPercentagesPerTarget:symbPercs];
 	[[symC spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"SymbStart"];
 	[[symC spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"SymbFizzle"];
 	[[symC spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"SymbFinish"];
-	return symC;
+	return [symC autorelease];
 	
 	
 }
@@ -407,12 +408,12 @@
 +(id)defaultSpell{
 	UnleashedNature *unlNature = [[UnleashedNature alloc] initWithTitle:@"Unleashed Nature" healAmnt:33 energyCost:20 castTime:1.5 andCooldown:0.0];
 	[unlNature setDescription:@"Heals up to 3 targets for a moderate amount and continues to heal them for a small amount over 12 seconds"];
-	NSArray *unlPercs = [NSArray arrayWithObjects:[[NSNumber alloc] initWithDouble:.33], [[NSNumber alloc] initWithDouble:.33], [[NSNumber alloc] initWithDouble:.33], nil];
+	NSArray *unlPercs = [NSArray arrayWithObjects:[[[NSNumber alloc] initWithDouble:.33] autorelease], [[[NSNumber alloc] initWithDouble:.33] autorelease], [[[NSNumber alloc] initWithDouble:.33] autorelease], nil];
 	[[unlNature spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"UnlNatStart"];
 	[[unlNature spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"UnlNatFizzle"];
 	[[unlNature spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBigHealCast" ofType:@"wav"]] andTitle:@"UnlNatFinish"];
 	[unlNature setTargets:3 withPercentagesPerTarget:unlPercs];
-	return unlNature;
+	return [unlNature autorelease];
 	
 	
 }
@@ -451,7 +452,7 @@
 	[[sa spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicCasting" ofType:@"wav"]] andTitle:@"SAStart"];
 	[[sa spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicFizzle" ofType:@"wav"]] andTitle:@"SAFizzle"];
 	[[sa spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicCast" ofType:@"wav"]] andTitle:@"SAFinish"];
-	return sa;
+	return [sa autorelease];
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
 {
@@ -469,7 +470,7 @@
 	[[bulwark spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicCasting" ofType:@"wav"]] andTitle:@"BWStart"];
 	[[bulwark spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicFizzle" ofType:@"wav"]] andTitle:@"BWFizzle"];
 	[[bulwark spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerInstantShield" ofType:@"wav"]] andTitle:@"BWFinish"];
-	return bulwark;
+	return [bulwark autorelease];
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
 {
@@ -483,7 +484,7 @@
 	EtherealArmor * eaSpell = [[EtherealArmor alloc] initWithTitle:@"Ethereal Armor" healAmnt:0 energyCost:5 castTime:0.0 andCooldown:0.0];
 	[eaSpell setDescription:@"Puts a protective spell on the target that lowers incoming damage by 25% for 15 seconds"];
 	[[eaSpell spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerProtectiveCast" ofType:@"wav"]] andTitle:@"EAFinish"];
-	return eaSpell;
+	return [eaSpell autorelease];
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
 {

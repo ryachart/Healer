@@ -43,7 +43,7 @@
 }
 
 +(id)defaultEncounter{
-	return [[Encounter alloc] init];
+	return [[[Encounter alloc] init] autorelease];
 }
 
 +(Encounter*)encounterForTitle:(NSString*)ttle
@@ -150,7 +150,7 @@
 {
 	RitualistIntroEncounter *alchIntroEnc = [[RitualistIntroEncounter alloc] initWithTitle:@"Ritualist Intro Encounter" RaidSize:10 witches:4 ogres:4 trolls:4 andBoss:[MinorDemon defaultBoss]];
 	[alchIntroEnc setDescription:@"For many weeks now, a Minor Demon has been terrorizing your encampment.  Finally, a small force has come together to annihilate this threat once and for all."];
-	return alchIntroEnc;
+	return [alchIntroEnc autorelease];
 }
 @end
 
@@ -159,7 +159,7 @@
 {
 	SeerIntroEncounter *seerIntroEnc = [[SeerIntroEncounter alloc] initWithTitle:@"Seer Intro Encounter" RaidSize:10 witches:4 ogres:4 trolls:4 andBoss:[MinorDemon defaultBoss]];
 	[seerIntroEnc setDescription:@"For many weeks now, a Minor Demon has been terrorizing your encampment.  Finally, a small force has come together to annihilate this threat once and for all."];
-	return seerIntroEnc;
+	return [seerIntroEnc autorelease];
 }
 -(void)grantRewardToCharacter:(Character*)charac{
 	[charac addNewSpell:[Bulwark defaultSpell]];
@@ -171,7 +171,7 @@
 {
 	ShamanIntroEncounter *shamanIntroEnc = [[ShamanIntroEncounter alloc] initWithTitle:@"Shaman Intro Encounter" RaidSize:10 witches:4 ogres:4 trolls:4 andBoss:[MinorDemon defaultBoss]];
 	[shamanIntroEnc setDescription:@"For many weeks now, a Minor Demon has been terrorizing your encampment.  Finally, a small force has come together to annihilate this threat once and for all."];
-	return shamanIntroEnc;
+	return [shamanIntroEnc autorelease];
 }
 -(void)grantRewardToCharacter:(Character*)charac{
 	[charac	addNewSpell:[WoundWeaving defaultSpell]];
@@ -183,7 +183,7 @@
 {
 	FieryDemonEncounter *fieryDemonEnc = [[FieryDemonEncounter alloc] initWithTitle:@"Fiery Demon Encounter" RaidSize:15 witches:6 ogres:6 trolls:6 andBoss:[FieryDemon defaultBoss]];
 	[fieryDemonEnc setDescription:@"After defeating the minor demom, a small flame began to grow until the demon was reborn in flames.  Additional reinforcements have rushed to your aid and a new power has ignited inside you."];
-	return fieryDemonEnc;
+	return [fieryDemonEnc autorelease];
 }
 -(void)grantRewardToCharacter:(Character *)charac{
 	if ([[charac characterClass] isEqualToString:CharacterClassShaman]){
@@ -200,6 +200,6 @@
 {
 	BringerOfEvilEncounter *boeEnc = [[BringerOfEvilEncounter alloc] initWithTitle:@"Bringer Of Evil Encounter" RaidSize:25 witches:10 ogres:10 trolls:10 andBoss:[BringerOfEvil defaultBoss]];
 	[boeEnc setDescription:@"With a full army with you, you must engage the source of these demons....The Bringer of Evil himself"];
-	return boeEnc;
+	return [boeEnc autorelease];
 }
 @end

@@ -45,7 +45,7 @@
 @property (retain, readonly) SpellAudioData *spellAudioData;
 
 -(SpellCardView*)spellCardView;
--(NSString*)description;
+-(NSString*)spellDescription;
 -(BOOL)isInstant;
 -(void)setTargets:(NSInteger)numOfTargets withPercentagesPerTarget:(NSArray*)percentages;
 

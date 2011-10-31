@@ -65,6 +65,7 @@
 	
 	
 	[igVC readyWithRaid:theRaid boss:[selectedEncounter theBoss] andPlayer:thePlayer];
+    [thePlayer release];
 	[igVC setActiveEncounter:selectedEncounter];
 	NSArray *vcs = [self.navigationController viewControllers];
 	[igVC setViewControllerToBecome:[vcs objectAtIndex:[vcs indexOfObject:self]-1]];

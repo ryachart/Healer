@@ -90,7 +90,7 @@
 +(id)defaultBoss{
 	MinorDemon *defMinorDemon = [[MinorDemon alloc] initWithHealth:25000 damage:24 targets:2 frequency:.85 andChoosesMT:NO];
 	[defMinorDemon setTitle:@"Minor Demon"];
-	return defMinorDemon;
+	return [defMinorDemon autorelease];
 	
 }
 @end
@@ -99,7 +99,7 @@
 +(id)defaultBoss{
 	FieryDemon *fireDemon = [[FieryDemon alloc] initWithHealth:40000 damage:28 targets:2 frequency:0.80 andChoosesMT:NO];
 	[fireDemon setTitle:@"Fiery Demon"];
-	return fireDemon;
+	return [fireDemon autorelease];
 }
 
 -(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(NSDate*)theTime
@@ -166,7 +166,7 @@
 	BringerOfEvil *boe = [[BringerOfEvil alloc] initWithHealth:120000 damage:30 targets:5 frequency:0.75 andChoosesMT:NO];
 	[boe setNumEnrages:0];
 	[boe setTitle:@"Bringer of Evil"];
-	return boe;
+	return [boe autorelease];
 }
 -(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(NSDate*)theTime
 {
@@ -240,13 +240,13 @@
 +(id)defaultBoss{
 	Dragon *defDragon = [[Dragon alloc] initWithHealth:100000 damage:28 targets:4 frequency:0.80 andChoosesMT:NO];
 	[defDragon setTitle:@"Dragon"];
-	return defDragon;
+	return [defDragon autorelease];
 }@end
 @implementation Hydra
 +(id)defaultBoss{
 	Hydra *defHy = [[Hydra alloc] initWithHealth:125000 damage:28 targets:4 frequency:0.75 andChoosesMT:NO];
 	[defHy setTitle:@"Hydra"];
-	return defHy;
+	return [defHy autorelease];
 }
 @end
 
@@ -254,7 +254,7 @@
 +(id)defaultBoss{
 	Giant *defGi = [[Giant alloc] initWithHealth:85000 damage:30 targets:3 frequency:0.75 andChoosesMT:NO];
 	[defGi setTitle:@"Giant"];
-	return defGi;
+	return [defGi autorelease];
 }
 @end
 
@@ -264,7 +264,7 @@
 	ChaosDemon *defCD = [[ChaosDemon alloc] initWithHealth:115000 damage:20 targets:4 frequency:0.50 andChoosesMT:NO];
 	[defCD setNumEnrages:0];
 	[defCD setTitle:@"Chaos Demon"];
-	return defCD;
+	return [defCD autorelease];
 }
 -(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(NSDate*)theTime
 {

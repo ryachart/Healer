@@ -29,7 +29,7 @@
 	[itemCardView setBackgroundColor:[UIColor blueColor]];
 	[itemCardView addSubview:[[UIImageView alloc] initWithImage:[UIImage imageWithData:[NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:[[[[GameInfo sharedInstance] itemDictionary] objectForKey:name] objectForKey:@"Image"]  ofType:@"png"]]]]];
 	
-	return itemCardView;
+	return [itemCardView autorelease];
 	
 }
 /*

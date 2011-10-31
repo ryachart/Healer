@@ -1,33 +1,49 @@
     //
-//  InGameViewController.m
-//  RaidLeader
+//  GamePlayScene.m
+//  Healer
 //
 //  Created by Ryan Hart on 4/22/10.
 //  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
 
-#import "InGameViewController.h"
+#import "GamePlayScene.h"
 
 
-@implementation InGameViewController
-@synthesize activeEncounter, viewControllerToBecome;
+@interface GamePlayScene ()
+//Data Models
+@property (retain) Raid *raid;
+@property (retain) Boss *boss;
+@property (retain) Player *player;
+@end
 
- // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-        // Custom initialization
-		viewControllerToBecome = nil;
-    }
+@implementation GamePlayScene
+@synthesize activeEncounter;
+@synthesize raid;
+@synthesize boss;
+@synthesize player;
+
+-(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse
+{
+    if (self = [super init]){
+        self.raid = raidToUse;
+        self.boss = bossToUse;
+        self.player = playerToUse;
+        
+        //CACHE SOUNDS
+        AudioController *ac = [AudioController sharedInstance];
+        for (Spell* aSpell in [player activeSpells]){
+            [[aSpell spellAudioData] cacheSpellAudio];
+        }
+        [ac addNewPlayerWithTitle:CHANNELING_SPELL_TITLE andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/Channeling" ofType:@"wav"]]];
+        [ac addNewPlayerWithTitle:OUT_OF_MANA_TITLE andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/OutOfMana" ofType:@"wav"]]];
+	}
     return self;
 }
 
 
-
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad {
-    [super viewDidLoad];
-	
-	
+- (void)onEnter {
+    [super onEnter];
 	
 	for (int i = 0; i < [[player activeSpells] count]; i++){
 		switch (i) {
@@ -54,10 +70,8 @@
 	
 	
 	[raidView spawnRects];
-	//Generate RaidMemberHealthViews and add them to the RaidView
 	NSMutableArray *raidMembers = [raid raidMembers];
 	selectedRaidMembers = [[NSMutableArray alloc] initWithCapacity:5];
-	//NSLog(@"RaidMember count: %i", [raidMembers count]);
 	for (RaidMember *member in raidMembers)
 	{
 		RaidMemberHealthView *rmhv = [[RaidMemberHealthView alloc] initWithFrame:[raidView vendNextUsableRect]];
@@ -73,7 +87,8 @@
 	
 	
 	//The timer has to be scheduled after all the init is done!
-	gameLoopTimer = [NSTimer scheduledTimerWithTimeInterval:0.0 target:self selector:@selector(gameEvent:) userInfo:nil repeats:YES];
+//	gameLoopTimer = [NSTimer scheduledTimerWithTimeInterval:0.0 target:self selector:@selector(gameEvent:) userInfo:nil repeats:YES];
+    [self schedule:@selector(gameEvent:)];
 }
 
 -(void)thisMemberSelected:(RaidMemberHealthView*)hv
@@ -183,24 +198,8 @@
 	}
 }
 
--(void)readyWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse
-{
-	raid = raidToUse;
-	boss = bossToUse;
-	player = playerToUse;
-	
-	//CACHE SOUNDS
-	AudioController *ac = [AudioController sharedInstance];
-	for (Spell* aSpell in [player activeSpells]){
-		[[aSpell spellAudioData] cacheSpellAudio];
-	}
-	[ac addNewPlayerWithTitle:CHANNELING_SPELL_TITLE andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/Channeling" ofType:@"wav"]]];
-	[ac addNewPlayerWithTitle:OUT_OF_MANA_TITLE andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/OutOfMana" ofType:@"wav"]]];
-	
 
-}
-
--(void)gameEvent:(NSTimer*)timer
+-(void)gameEvent:(ccTime)deltaT
 {
 	//NSLog(@"Game Event!");
 	NSDate *gameTime = [NSDate date];

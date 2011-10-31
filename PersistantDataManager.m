@@ -57,7 +57,7 @@ static PersistantDataManager* sharedManager = nil;
 		id dataFromFile;
 		NSString *appFile = SAVE_FILE_NAME;
 		appFile = [appFile stringByAppendingFormat:[NSString stringWithFormat:@"%i.dat",i], nil];
-		if (dataFromFile = [self applicationPlistFromFile:appFile]){
+		if ((dataFromFile = [self applicationPlistFromFile:appFile])){
 			NSLog(@"Found a file");
 			NSDictionary *dictFromFile = (NSDictionary*)dataFromFile;
 			NSString* name = [dictFromFile objectForKey:@"Name"];

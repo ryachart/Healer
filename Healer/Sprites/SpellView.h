@@ -14,7 +14,7 @@
 	
 	UILabel *spellNameView;
 }
-@property (retain, readwrite, setter=setSpellToDisplay:) Spell *spellToDisplay;
+@property (nonatomic, retain, readwrite, setter=setSpellToDisplay:) Spell *spellToDisplay;
 @property (nonatomic, retain) UILabel *spellNameView;
 
 -(void)setSpellToDisplay:(Spell*)spell;

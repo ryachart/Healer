@@ -78,7 +78,6 @@
 			if ([currentTarget isDead]) continue;
 			else{
 				double PercentageThisTarget = [[[self percentagesPerTarget] objectAtIndex:i] doubleValue];
-				//NSLog(@"PercentageThisTarget: %1.3f", PercentageThisTarget);
 				[currentTarget setHealth:[[thePlayer spellTarget] health] + ([self healingAmount]*PercentageThisTarget)];
 			}
 			
@@ -294,9 +293,9 @@
 {
 	RoarOfLife *roarOfLife = [[RoarOfLife alloc] initWithTitle:@"Roar of Life" healAmnt:18 energyCost:8 castTime:1.0 andCooldown:0.0];
 	[roarOfLife setDescription:@"A spell that heals a minor amount now and then more over time."];
-	[[roarOfLife spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
-	[[roarOfLife spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
-	[[roarOfLife spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
+	[[roarOfLife spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
+	[[roarOfLife spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
+	[[roarOfLife spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
 	return roarOfLife;
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
@@ -312,7 +311,7 @@
 +(id)defaultSpell{
 	WoundWeaving *woundWeaving = [[WoundWeaving alloc] initWithTitle:@"Wound Weaving" healAmnt:0 energyCost:6 castTime:0.0 andCooldown:0.0];
 	[woundWeaving setDescription:@"An extremely efficient effect that regenerates the health of a the target over time."];
-	[[woundWeaving spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
+	[[woundWeaving spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
 	return woundWeaving;
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime{
@@ -328,7 +327,7 @@
 +(id)defaultSpell{
 	SurgingGrowth *sg = [[SurgingGrowth alloc] initWithTitle:@"Surging Growth" healAmnt:0 energyCost:7 castTime:0.0 andCooldown:0.0];
 	[sg setDescription:@"Heals increasing amounts for 5 seconds until it heals a moderate amount on expiration"];
-	[[sg spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanInstantHoT" ofType:@"wav"]] andTitle:@"SGFinished"];
+	[[sg spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"SGFinished"];
 	return sg;
 	
 }
@@ -343,9 +342,9 @@
 +(id)defaultSpell{
 	FieryAdrenaline *fa = [[FieryAdrenaline alloc] initWithTitle:@"Fiery Adrenaline" healAmnt:0 energyCost:4 castTime:1.0 andCooldown:0.0];
 	[fa setDescription:@"Heals a small amount over 10 seconds.  If the target is struck while under this effect, the duration refreshes."];
-	[[fa spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanBasicCasting" ofType:@"wav"]] andTitle:@"FAdrStart"];
-	[[fa spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"FAdrFizzle"];
-	[[fa spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanInstantHoT" ofType:@"wav"]] andTitle:@"FAdrFinish"];
+	[[fa spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"FAdrStart"];
+	[[fa spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"FAdrFizzle"];
+	[[fa spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"FAdrFinish"];
 	return fa;
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime{
@@ -361,9 +360,9 @@
 	[twoWinds setDescription:@"Heals 2 targets for a moderate amount over 12 seconds"];
 	NSArray *twoWindsPercs = [NSArray arrayWithObjects:[[NSNumber alloc] initWithDouble:0], [[NSNumber alloc] initWithDouble:0], nil];
 	[twoWinds setTargets:2 withPercentagesPerTarget:twoWindsPercs];
-	[[twoWinds spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanBasicCasting" ofType:@"wav"]] andTitle:@"2WindStart"];
-	[[twoWinds spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"2WindFizzle"];
-	[[twoWinds spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanInstantHoT" ofType:@"wav"]] andTitle:@"2WindFinish"];
+	[[twoWinds spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"2WindStart"];
+	[[twoWinds spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"2WindFizzle"];
+	[[twoWinds spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"2WindFinish"];
 	return twoWinds;
 	
 }
@@ -385,9 +384,9 @@
 	[symC setDescription:@"Heals your primary target immediately for a moderate amount and heals your second target for a moderate amount over 9 seconds"];
 	NSArray *symbPercs = [NSArray arrayWithObjects:[[NSNumber alloc] initWithDouble:1], [[NSNumber alloc] initWithDouble:0], nil];
 	[symC setTargets:2 withPercentagesPerTarget:symbPercs];
-	[[symC spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanBasicCasting" ofType:@"wav"]] andTitle:@"SymbStart"];
-	[[symC spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"SymbFizzle"];
-	[[symC spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanBasicCast" ofType:@"wav"]] andTitle:@"SymbFinish"];
+	[[symC spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"SymbStart"];
+	[[symC spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"SymbFizzle"];
+	[[symC spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"SymbFinish"];
 	return symC;
 	
 	
@@ -409,9 +408,9 @@
 	UnleashedNature *unlNature = [[UnleashedNature alloc] initWithTitle:@"Unleashed Nature" healAmnt:33 energyCost:20 castTime:1.5 andCooldown:0.0];
 	[unlNature setDescription:@"Heals up to 3 targets for a moderate amount and continues to heal them for a small amount over 12 seconds"];
 	NSArray *unlPercs = [NSArray arrayWithObjects:[[NSNumber alloc] initWithDouble:.33], [[NSNumber alloc] initWithDouble:.33], [[NSNumber alloc] initWithDouble:.33], nil];
-	[[unlNature spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanBasicCasting" ofType:@"wav"]] andTitle:@"UnlNatStart"];
-	[[unlNature spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"UnlNatFizzle"];
-	[[unlNature spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"ShamanBigHealCast" ofType:@"wav"]] andTitle:@"UnlNatFinish"];
+	[[unlNature spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"UnlNatStart"];
+	[[unlNature spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"UnlNatFizzle"];
+	[[unlNature spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBigHealCast" ofType:@"wav"]] andTitle:@"UnlNatFinish"];
 	[unlNature setTargets:3 withPercentagesPerTarget:unlPercs];
 	return unlNature;
 	
@@ -449,9 +448,9 @@
 +(id)defaultSpell{
 	ShiningAegis *sa = [[ShiningAegis alloc] initWithTitle:@"Shining Aegis" healAmnt:18 energyCost:8 castTime:1.0 andCooldown:0.0];	
 	[sa setDescription:@"Heals the target for a moderate amount and leaves a shield on that target to prevent some further damage"];
-	[[sa spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"SeerBasicCasting" ofType:@"wav"]] andTitle:@"SAStart"];
-	[[sa spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"SeerBasicFizzle" ofType:@"wav"]] andTitle:@"SAFizzle"];
-	[[sa spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"SeerBasicCast" ofType:@"wav"]] andTitle:@"SAFinish"];
+	[[sa spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicCasting" ofType:@"wav"]] andTitle:@"SAStart"];
+	[[sa spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicFizzle" ofType:@"wav"]] andTitle:@"SAFizzle"];
+	[[sa spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicCast" ofType:@"wav"]] andTitle:@"SAFinish"];
 	return sa;
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
@@ -467,9 +466,9 @@
 +(id)defaultSpell{
 	Bulwark *bulwark = [[Bulwark alloc] initWithTitle:@"Bulwark" healAmnt:0 energyCost:7 castTime:1.0 andCooldown:0.0];
 	[bulwark setDescription:@"Sets a shield that absorbs a moderate amount of damage on the target"];
-	[[bulwark spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"SeerBasicCasting" ofType:@"wav"]] andTitle:@"BWStart"];
-	[[bulwark spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"SeerBasicFizzle" ofType:@"wav"]] andTitle:@"BWFizzle"];
-	[[bulwark spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"SeerInstantShield" ofType:@"wav"]] andTitle:@"BWFinish"];
+	[[bulwark spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicCasting" ofType:@"wav"]] andTitle:@"BWStart"];
+	[[bulwark spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicFizzle" ofType:@"wav"]] andTitle:@"BWFizzle"];
+	[[bulwark spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerInstantShield" ofType:@"wav"]] andTitle:@"BWFinish"];
 	return bulwark;
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
@@ -483,7 +482,7 @@
 +(id)defaultSpell{
 	EtherealArmor * eaSpell = [[EtherealArmor alloc] initWithTitle:@"Ethereal Armor" healAmnt:0 energyCost:5 castTime:0.0 andCooldown:0.0];
 	[eaSpell setDescription:@"Puts a protective spell on the target that lowers incoming damage by 25% for 15 seconds"];
-	[[eaSpell spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"SeerProtectiveCast" ofType:@"wav"]] andTitle:@"EAFinish"];
+	[[eaSpell spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerProtectiveCast" ofType:@"wav"]] andTitle:@"EAFinish"];
 	return eaSpell;
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime

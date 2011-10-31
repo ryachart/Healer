@@ -56,9 +56,9 @@
 
 -(void)quickPlaySelected
 {
-	QuickPlayViewController *qpVC = [[QuickPlayViewController alloc] initWithNibName:@"QuickPlayViewController" bundle:nil];
-	//[self.navigationController pushViewController:qpVC animated:YES];
-	[qpVC release];
+	QuickPlayScene *qpS = [QuickPlayScene new];
+	[[CCDirector sharedDirector] pushScene:qpS];
+	[qpS release];
 }
 
 -(void)settingsSelected

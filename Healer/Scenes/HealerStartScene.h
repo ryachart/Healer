@@ -7,7 +7,7 @@
 //
 
 #import "cocos2d.h"
-#import "QuickPlayViewController.h"
+#import "QuickPlayScene.h"
 #import "CreateNewCharacterViewController.h"
 #import	"CharacterSelectionViewController.h"
 

@@ -37,6 +37,7 @@
 }
 -(void)setFinishedSound:(NSURL*)soundPath andTitle:(NSString*)title
 {
+    NSAssert(soundPath, @"Attempt to initialize a song with a nil path and title %@", title);
 	finishedSound = [soundPath retain];
 	self.finishedTitle = title;
 }

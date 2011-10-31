@@ -59,8 +59,8 @@
 		audioTitles = [[NSMutableArray alloc] initWithCapacity:2];
 		[audioTitles addObject:[NSString stringWithFormat:@"FireballStart%@", self]];
 		[audioTitles addObject:[NSString stringWithFormat:@"FireballImpact%@", self]];
-		[ac addNewPlayerWithTitle:[audioTitles objectAtIndex:0] andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"FireballStart" ofType:@"wav"]]];
-		[ac addNewPlayerWithTitle:[audioTitles objectAtIndex:1] andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"FireBallImpact" ofType:@"wav"]]];
+		[ac addNewPlayerWithTitle:[audioTitles objectAtIndex:0] andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/FireballStart" ofType:@"wav"]]];
+		[ac addNewPlayerWithTitle:[audioTitles objectAtIndex:1] andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/FireBallImpact" ofType:@"wav"]]];
 		[ac playTitle:[audioTitles objectAtIndex:0]];
 	}
 	

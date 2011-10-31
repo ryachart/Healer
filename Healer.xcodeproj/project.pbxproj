@@ -148,7 +148,7 @@
 		387E7B49145E1382006D9266 /* CharacterSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B39145E1382006D9266 /* CharacterSelectionViewController.m */; };
 		387E7B4A145E1382006D9266 /* CharacterSheetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B3B145E1382006D9266 /* CharacterSheetViewController.m */; };
 		387E7B4B145E1382006D9266 /* CreateNewCharacterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B3D145E1382006D9266 /* CreateNewCharacterViewController.m */; };
-		387E7B4C145E1382006D9266 /* InGameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B3F145E1382006D9266 /* InGameViewController.m */; };
+		387E7B4C145E1382006D9266 /* GamePlayScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B3F145E1382006D9266 /* GamePlayScene.m */; };
 		387E7B4D145E1382006D9266 /* PostGameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B41145E1382006D9266 /* PostGameViewController.m */; };
 		387E7B4E145E1382006D9266 /* QuickPlayScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B43145E1382006D9266 /* QuickPlayScene.m */; };
 		387E7B4F145E1382006D9266 /* HealerStartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B45145E1382006D9266 /* HealerStartScene.m */; };
@@ -493,8 +493,8 @@
 		387E7AE1145E0AF4006D9266 /* Sprites */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sprites; sourceTree = "<group>"; };
 		387E7AE6145E0F70006D9266 /* PersistantDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistantDataManager.h; sourceTree = "<group>"; };
 		387E7AE7145E0F70006D9266 /* PersistantDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersistantDataManager.m; sourceTree = "<group>"; };
-		387E7AEA145E1263006D9266 /* Character.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Character.h; path = DataObjects/Character.h; sourceTree = "<group>"; };
-		387E7AEB145E1263006D9266 /* Character.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Character.m; path = DataObjects/Character.m; sourceTree = "<group>"; };
+		387E7AEA145E1263006D9266 /* Character.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Character.h; path = Healer/DataObjects/Character.h; sourceTree = "<group>"; };
+		387E7AEB145E1263006D9266 /* Character.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Character.m; path = Healer/DataObjects/Character.m; sourceTree = "<group>"; };
 		387E7AEC145E1263006D9266 /* Effect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effect.h; path = DataObjects/Effect.h; sourceTree = "<group>"; };
 		387E7AED145E1263006D9266 /* Effect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Effect.m; path = DataObjects/Effect.m; sourceTree = "<group>"; };
 		387E7AEE145E1263006D9266 /* GameObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameObjects.h; path = DataObjects/GameObjects.h; sourceTree = "<group>"; };
@@ -552,8 +552,8 @@
 		387E7B3B145E1382006D9266 /* CharacterSheetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CharacterSheetViewController.m; path = Scenes/CharacterSheetViewController.m; sourceTree = "<group>"; };
 		387E7B3C145E1382006D9266 /* CreateNewCharacterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateNewCharacterViewController.h; path = Scenes/CreateNewCharacterViewController.h; sourceTree = "<group>"; };
 		387E7B3D145E1382006D9266 /* CreateNewCharacterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CreateNewCharacterViewController.m; path = Scenes/CreateNewCharacterViewController.m; sourceTree = "<group>"; };
-		387E7B3E145E1382006D9266 /* InGameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InGameViewController.h; path = Scenes/InGameViewController.h; sourceTree = "<group>"; };
-		387E7B3F145E1382006D9266 /* InGameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InGameViewController.m; path = Scenes/InGameViewController.m; sourceTree = "<group>"; };
+		387E7B3E145E1382006D9266 /* GamePlayScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GamePlayScene.h; path = Scenes/GamePlayScene.h; sourceTree = "<group>"; };
+		387E7B3F145E1382006D9266 /* GamePlayScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GamePlayScene.m; path = Scenes/GamePlayScene.m; sourceTree = "<group>"; };
 		387E7B40145E1382006D9266 /* PostGameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostGameViewController.h; path = Scenes/PostGameViewController.h; sourceTree = "<group>"; };
 		387E7B41145E1382006D9266 /* PostGameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostGameViewController.m; path = Scenes/PostGameViewController.m; sourceTree = "<group>"; };
 		387E7B42145E1382006D9266 /* QuickPlayScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickPlayScene.h; path = Scenes/QuickPlayScene.h; sourceTree = "<group>"; };
@@ -690,34 +690,14 @@
 		386DD03A145DFF2D0086763E /* Data Objects */ = {
 			isa = PBXGroup;
 			children = (
+				387E7B77145E290A006D9266 /* Game States */,
+				387E7B76145E28FB006D9266 /* Protocols */,
+				387E7B75145E28F5006D9266 /* Groups */,
+				387E7B71145E288B006D9266 /* Manipulators */,
+				387E7B70145E284F006D9266 /* Agents */,
 				387E7B6D145E18E1006D9266 /* CharacterSheet.h */,
-				387E7B69145E1854006D9266 /* Container.h */,
-				387E7B65145E17CC006D9266 /* Encounter.h */,
-				387E7B66145E17CC006D9266 /* Encounter.m */,
 				387E7B5A145E173D006D9266 /* GameUserInterface.h */,
-				387E7B57145E1701006D9266 /* Boss.h */,
-				387E7B58145E1701006D9266 /* Boss.m */,
-				387E7AEA145E1263006D9266 /* Character.h */,
-				387E7AEB145E1263006D9266 /* Character.m */,
-				387E7AEC145E1263006D9266 /* Effect.h */,
-				387E7AED145E1263006D9266 /* Effect.m */,
 				387E7AEE145E1263006D9266 /* GameObjects.h */,
-				387E7AEF145E1263006D9266 /* GameRect.h */,
-				387E7AF0145E1263006D9266 /* GameRect.m */,
-				387E7AF1145E1263006D9266 /* HealableTarget.h */,
-				387E7AF2145E1263006D9266 /* HealableTarget.m */,
-				387E7AF3145E1263006D9266 /* Item.h */,
-				387E7AF4145E1263006D9266 /* Item.m */,
-				387E7AF5145E1263006D9266 /* ItemContainer.h */,
-				387E7AF6145E1263006D9266 /* ItemContainer.m */,
-				387E7AF7145E1263006D9266 /* Player.h */,
-				387E7AF8145E1263006D9266 /* Player.m */,
-				387E7AF9145E1263006D9266 /* Raid.h */,
-				387E7AFA145E1263006D9266 /* Raid.m */,
-				387E7AFB145E1263006D9266 /* RaidMember.h */,
-				387E7AFC145E1263006D9266 /* RaidMember.m */,
-				387E7AFD145E1263006D9266 /* Spell.h */,
-				387E7AFE145E1263006D9266 /* Spell.m */,
 			);
 			name = "Data Objects";
 			sourceTree = "<group>";
@@ -1266,8 +1246,8 @@
 				387E7B3B145E1382006D9266 /* CharacterSheetViewController.m */,
 				387E7B3C145E1382006D9266 /* CreateNewCharacterViewController.h */,
 				387E7B3D145E1382006D9266 /* CreateNewCharacterViewController.m */,
-				387E7B3E145E1382006D9266 /* InGameViewController.h */,
-				387E7B3F145E1382006D9266 /* InGameViewController.m */,
+				387E7B3E145E1382006D9266 /* GamePlayScene.h */,
+				387E7B3F145E1382006D9266 /* GamePlayScene.m */,
 				387E7B40145E1382006D9266 /* PostGameViewController.h */,
 				387E7B41145E1382006D9266 /* PostGameViewController.m */,
 				387E7B42145E1382006D9266 /* QuickPlayScene.h */,
@@ -1287,6 +1267,8 @@
 				387E7B6B145E1868006D9266 /* GameInfo.m */,
 				387E7AE6145E0F70006D9266 /* PersistantDataManager.h */,
 				387E7AE7145E0F70006D9266 /* PersistantDataManager.m */,
+				387E7AEA145E1263006D9266 /* Character.h */,
+				387E7AEB145E1263006D9266 /* Character.m */,
 			);
 			name = "Persistent Stores";
 			path = ..;
@@ -1326,11 +1308,109 @@
 			name = Controls;
 			sourceTree = "<group>";
 		};
-		38F0504413C2618900BCADCB /* Sprites */ = {
+		387E7B70145E284F006D9266 /* Agents */ = {
 			isa = PBXGroup;
 			children = (
+				387E7B57145E1701006D9266 /* Boss.h */,
+				387E7B58145E1701006D9266 /* Boss.m */,
+				387E7AF7145E1263006D9266 /* Player.h */,
+				387E7AF8145E1263006D9266 /* Player.m */,
+				387E7AFB145E1263006D9266 /* RaidMember.h */,
+				387E7AFC145E1263006D9266 /* RaidMember.m */,
+			);
+			name = Agents;
+			sourceTree = "<group>";
+		};
+		387E7B71145E288B006D9266 /* Manipulators */ = {
+			isa = PBXGroup;
+			children = (
+				387E7AF3145E1263006D9266 /* Item.h */,
+				387E7AF4145E1263006D9266 /* Item.m */,
+				387E7AEC145E1263006D9266 /* Effect.h */,
+				387E7AED145E1263006D9266 /* Effect.m */,
+				387E7AFD145E1263006D9266 /* Spell.h */,
+				387E7AFE145E1263006D9266 /* Spell.m */,
+			);
+			name = Manipulators;
+			sourceTree = "<group>";
+		};
+		387E7B72145E28C2006D9266 /* Controls */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Controls;
+			sourceTree = "<group>";
+		};
+		387E7B73145E28CA006D9266 /* GamePlay */ = {
+			isa = PBXGroup;
+			children = (
+				387E7B17145E1375006D9266 /* PlayerCastBar.h */,
+				387E7B18145E1375006D9266 /* PlayerCastBar.m */,
+				387E7B19145E1375006D9266 /* PlayerEnergyView.h */,
+				387E7B1A145E1375006D9266 /* PlayerEnergyView.m */,
+				387E7B1B145E1375006D9266 /* PlayerHealthView.h */,
+				387E7B1C145E1375006D9266 /* PlayerHealthView.m */,
+				387E7B1D145E1375006D9266 /* RaidMemberHealthView.h */,
+				387E7B1E145E1375006D9266 /* RaidMemberHealthView.m */,
+				387E7B1F145E1375006D9266 /* RaidView.h */,
+				387E7B20145E1375006D9266 /* RaidView.m */,
 				387E7B09145E1375006D9266 /* BossHealthView.h */,
 				387E7B0A145E1375006D9266 /* BossHealthView.m */,
+			);
+			name = GamePlay;
+			sourceTree = "<group>";
+		};
+		387E7B74145E28D9006D9266 /* Containers */ = {
+			isa = PBXGroup;
+			children = (
+				387E7B69145E1854006D9266 /* Container.h */,
+				387E7AF5145E1263006D9266 /* ItemContainer.h */,
+				387E7AF6145E1263006D9266 /* ItemContainer.m */,
+			);
+			name = Containers;
+			sourceTree = "<group>";
+		};
+		387E7B75145E28F5006D9266 /* Groups */ = {
+			isa = PBXGroup;
+			children = (
+				387E7AF9145E1263006D9266 /* Raid.h */,
+				387E7AFA145E1263006D9266 /* Raid.m */,
+			);
+			name = Groups;
+			sourceTree = "<group>";
+		};
+		387E7B76145E28FB006D9266 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				387E7AF1145E1263006D9266 /* HealableTarget.h */,
+				387E7AF2145E1263006D9266 /* HealableTarget.m */,
+			);
+			name = Protocols;
+			sourceTree = "<group>";
+		};
+		387E7B77145E290A006D9266 /* Game States */ = {
+			isa = PBXGroup;
+			children = (
+				387E7B65145E17CC006D9266 /* Encounter.h */,
+				387E7B66145E17CC006D9266 /* Encounter.m */,
+			);
+			name = "Game States";
+			sourceTree = "<group>";
+		};
+		387E7B78145E291C006D9266 /* Wrappers */ = {
+			isa = PBXGroup;
+			children = (
+				387E7AEF145E1263006D9266 /* GameRect.h */,
+				387E7AF0145E1263006D9266 /* GameRect.m */,
+			);
+			name = Wrappers;
+			sourceTree = "<group>";
+		};
+		387E7B79145E2950006D9266 /* Character Management */ = {
+			isa = PBXGroup;
+			children = (
+				387E7B25145E1375006D9266 /* SpellView.h */,
+				387E7B26145E1375006D9266 /* SpellView.m */,
 				387E7B0B145E1375006D9266 /* CharacterActiveSpellView.h */,
 				387E7B0C145E1375006D9266 /* CharacterActiveSpellView.m */,
 				387E7B0D145E1375006D9266 /* CharacterBagView.h */,
@@ -1343,22 +1423,22 @@
 				387E7B14145E1375006D9266 /* CharacterSpellView.m */,
 				387E7B15145E1375006D9266 /* ItemCardView.h */,
 				387E7B16145E1375006D9266 /* ItemCardView.m */,
-				387E7B17145E1375006D9266 /* PlayerCastBar.h */,
-				387E7B18145E1375006D9266 /* PlayerCastBar.m */,
-				387E7B19145E1375006D9266 /* PlayerEnergyView.h */,
-				387E7B1A145E1375006D9266 /* PlayerEnergyView.m */,
-				387E7B1B145E1375006D9266 /* PlayerHealthView.h */,
-				387E7B1C145E1375006D9266 /* PlayerHealthView.m */,
-				387E7B1D145E1375006D9266 /* RaidMemberHealthView.h */,
-				387E7B1E145E1375006D9266 /* RaidMemberHealthView.m */,
-				387E7B1F145E1375006D9266 /* RaidView.h */,
-				387E7B20145E1375006D9266 /* RaidView.m */,
 				387E7B21145E1375006D9266 /* SelectedSpellView.h */,
 				387E7B22145E1375006D9266 /* SelectedSpellView.m */,
 				387E7B23145E1375006D9266 /* SpellCardView.h */,
 				387E7B24145E1375006D9266 /* SpellCardView.m */,
-				387E7B25145E1375006D9266 /* SpellView.h */,
-				387E7B26145E1375006D9266 /* SpellView.m */,
+			);
+			name = "Character Management";
+			sourceTree = "<group>";
+		};
+		38F0504413C2618900BCADCB /* Sprites */ = {
+			isa = PBXGroup;
+			children = (
+				387E7B79145E2950006D9266 /* Character Management */,
+				387E7B78145E291C006D9266 /* Wrappers */,
+				387E7B74145E28D9006D9266 /* Containers */,
+				387E7B73145E28CA006D9266 /* GamePlay */,
+				387E7B72145E28C2006D9266 /* Controls */,
 			);
 			name = Sprites;
 			sourceTree = "<group>";
@@ -1559,7 +1639,7 @@
 				387E7B49145E1382006D9266 /* CharacterSelectionViewController.m in Sources */,
 				387E7B4A145E1382006D9266 /* CharacterSheetViewController.m in Sources */,
 				387E7B4B145E1382006D9266 /* CreateNewCharacterViewController.m in Sources */,
-				387E7B4C145E1382006D9266 /* InGameViewController.m in Sources */,
+				387E7B4C145E1382006D9266 /* GamePlayScene.m in Sources */,
 				387E7B4D145E1382006D9266 /* PostGameViewController.m in Sources */,
 				387E7B4E145E1382006D9266 /* QuickPlayScene.m in Sources */,
 				387E7B4F145E1382006D9266 /* HealerStartScene.m in Sources */,

@@ -11,7 +11,7 @@
 #import "AudioController.h"
 @implementation Player
 
-@synthesize activeSpells, spellBeingCast, energy, castStart, maximumEnergy, lastEnergyRegen, spellTarget, additionalTargets, statusText;
+@synthesize activeSpells, spellBeingCast, energy, maximumEnergy, spellTarget, additionalTargets, statusText;
 @synthesize position;
 
 -(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen
@@ -24,63 +24,58 @@
 	spellTarget = nil;
 	spellBeingCast = nil;
 	isCasting = NO;
-	lastEnergyRegen = nil;
+	lastEnergyRegen = 0.0f;
 	statusText = @"";
 	position = 0;
 	maxChannelTime = 5;
+    castStart = 0.0f;
 	
 	for (int i = 0; i < CastingDisabledReasonTotal; i++){
 		castingDisabledReasons[i] = NO;
 	}
 	
 	activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
-	//activeEffects = [NSMutableArray arrayWithCapacity:MAXIMUM_STATUS_EFFECTS];
 	return self;
 }
 
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid gameTime:(NSDate*)theTime
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid gameTime:(float)timeDelta
 {
 	if (isCasting){
-		
+        castStart+= timeDelta;
 		if ([spellTarget isDead]){
 			[spellBeingCast spellInterrupted];
 			spellTarget = nil;
 			spellBeingCast = nil;
 			isCasting = NO;
-			castStart = nil;
+			castStart = 0.0f;
 		}
 		else if ([self remainingCastTime] <= 0){
 			//NSLog(@"Spell is finished being cast");
 			//SPELL END CAST
 			[spellBeingCast spellEndedCasting];
-			[spellBeingCast combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:theTime];
+			[spellBeingCast combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:timeDelta];
 		
 			spellTarget = nil;
 			spellBeingCast = nil;
 			isCasting = NO;
-			castStart = nil;
+			castStart = 0.0f;
 			additionalTargets = nil;
 		}
 		
 	}
 	
-	if (lastEnergyRegen == nil) {
-		lastEnergyRegen = [theTime copyWithZone:nil];
-	}
-	else{
-		//NSLog(@"Time Interval Since last regen %1.2f", timeSinceLastRegen);
-		if ([theTime timeIntervalSinceDate:lastEnergyRegen] >= 1.0)
-		{
-			//NSLog("Replenishing %i energy", energyRegenPerSecond);
-			[self setEnergy:energy + energyRegenPerSecond + [self channelingBonus]];
-			lastEnergyRegen = [theTime copyWithZone:nil];
-		}
-	}
+    lastEnergyRegen+= timeDelta;
+    if (lastEnergyRegen >= 1.0)
+    {
+        //NSLog("Replenishing %i energy", energyRegenPerSecond);
+        [self setEnergy:energy + energyRegenPerSecond + [self channelingBonus]];
+        lastEnergyRegen = 0.0;
+    }
 	//NSLog(@"Checking Effects %i", [activeEffects count]);
 	
 	for (int i = 0; i < [activeEffects count]; i++){
 		Effect *effect = [activeEffects objectAtIndex:i];
-		[effect combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:theTime];
+		[effect combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:timeDelta];
 		if ([effect isExpired]){
 			[effect expire];
 			[activeEffects removeObjectAtIndex:i];
@@ -98,9 +93,8 @@
 
 -(NSTimeInterval) remainingCastTime
 {
-	if (castStart != nil && isCasting){
-		NSDate *now = [NSDate date];
-		return [spellBeingCast castTime] - [now timeIntervalSinceDate:castStart];
+	if (castStart != 0.0 && isCasting){
+		return castStart - [spellBeingCast castTime];
 	}
 	else {
 		return 0.0;
@@ -125,7 +119,7 @@
 	spellTarget = nil;
 	spellBeingCast = nil;
 	isCasting = NO;
-	castStart = nil;
+	castStart = 0.0;
 	additionalTargets = nil;
 }
 
@@ -154,7 +148,7 @@
 	[theSpell spellBeganCasting];
 	spellBeingCast = theSpell;
 	spellTarget = primaryTarget;
-	castStart = [[NSDate date] copyWithZone:nil];
+	castStart = 0.0001;
 	isCasting = YES;
 	
 	additionalTargets = [targets copyWithZone:nil];
@@ -188,7 +182,7 @@
 }
 
 -(void)startChanneling{
-	channelingStartTime = [[NSDate date] copyWithZone:nil];
+	channelingStartTime = 0.0001;
 	[self disableCastingWithReason:CastingDisabledReasonChanneling];
 	
 	[[AudioController sharedInstance] playTitle:CHANNELING_SPELL_TITLE looping:20];
@@ -196,15 +190,15 @@
 }
 
 -(void)stopChanneling{
-	channelingStartTime = nil;
+	channelingStartTime = 0.0;
 	[self enableCastingWithReason:CastingDisabledReasonChanneling];
 	
 	[[AudioController sharedInstance] stopTitle:CHANNELING_SPELL_TITLE];
 }
 
 -(NSTimeInterval)channelingTime{
-	if (channelingStartTime != nil){
-		return [[NSDate date] timeIntervalSinceDate:channelingStartTime];	
+	if (channelingStartTime != 0.0){
+		return channelingStartTime;	
 	}
 	
 	return 0.0;

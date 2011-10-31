@@ -66,7 +66,7 @@
 	
 }
 
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
 	if ([self targets] <= 1){
 		[[thePlayer spellTarget] setHealth:[[thePlayer spellTarget] health] + [self healingAmount]];
@@ -237,8 +237,8 @@
 	[gloryBeam setDescription:@"A spell that instantly heals your target, but isn't very efficient."];
 	return [gloryBeam autorelease];
 }
--(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(NSDate *)theTime{
-	[super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+-(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta{
+	[super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
 	ShieldEffect *shieldEffect = [[ShieldEffect alloc] initWithDuration:20 andEffectType:EffectTypePositive];
 	[shieldEffect setAmountToShield:22];
 	[[thePlayer spellTarget] addEffect:shieldEffect];

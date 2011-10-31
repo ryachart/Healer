@@ -27,18 +27,18 @@
 	float damageFrequency; //All Raid members deal damage at some frequency
 	
 	//Combat Action Data
-	NSDate *lastAttack;
+	float lastAttack;
 	
 }
 
-@property (nonatomic, copy) NSDate *lastAttack;
+@property (readwrite) float lastAttack;
 
 -(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq;
 
 //This function is overriden by each subtype of RaidMember.
 //It allows a RaidMember to be asked to take any combatActions while the games goes on.
 //It also allows a RaidMember to deal damage.
--(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime;
+-(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta;
 
 
 @end

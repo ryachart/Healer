@@ -10,30 +10,28 @@
 #import "GameObjects.h"
 #import "AudioController.h"
 @implementation Effect
-@synthesize duration, timeApplied, isExpired, target, effectType;
+@synthesize duration, isExpired, target, effectType;
 
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
 {
 	duration = dur;
 	isExpired = NO;
 	effectType = type;
+    self.timeApplied = 0.0;
 	return self;
 }
 
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
-	if (timeApplied != nil && !isExpired)
+	if (self.timeApplied != 0.0 && !isExpired)
 	{
-		 
-		NSTimeInterval timeSinceStart = [theTime timeIntervalSinceDate:timeApplied];
-		//NSLog(@"TimeSinceStart %1.2f", timeSinceStart);
-		//NSLog(@"Duration: %1.2f", duration);
+        self.timeApplied += timeDelta;
 		//[thePlayer setStatusText:[NSString stringWithFormat:@"You will be destroyed in %1.2f seconds",timeSinceStart]];
-		if (timeSinceStart >= duration){
+		if (self.timeApplied >= duration){
 			//Here we do some effect, but we have to subclass Effects to decide what that is
 			//NSLog(@"Effect Expired");
 			//The one thing we always do here is expire the effect
-			timeApplied = nil;
+			self.timeApplied = 0.0;
 			isExpired = YES;
 			[thePlayer setStatusText:@""];
 			
@@ -66,16 +64,13 @@
 	
 	return self;
 }
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
-	if (timeApplied != nil && !isExpired)
+	if (self.timeApplied != 0.0 && !isExpired)
 	{
-		
-		NSTimeInterval timeSinceStart = [theTime timeIntervalSinceDate:timeApplied];
-		//NSLog(@"TimeSinceStart %1.2f", timeSinceStart);
-		//NSLog(@"Duration: %1.2f", duration);
-		[thePlayer setStatusText:[NSString stringWithFormat:@"A Fireball will strike you in %1.2f seconds. Move!",duration - timeSinceStart]];
-		if (timeSinceStart >= duration){
+		self.timeApplied += timeDelta;
+		[thePlayer setStatusText:[NSString stringWithFormat:@"A Fireball will strike you in %1.2f seconds. Move!",duration - self.timeApplied]];
+		if (timeDelta >= duration){
 			//Here we do some effect, but we have to subclass Effects to decide what that is
 			//NSLog(@"Effect Expired");
 			//The one thing we always do here is expire the effect
@@ -86,7 +81,7 @@
 				AudioController *ac = [AudioController sharedInstance];
 				[ac playTitle:[audioTitles objectAtIndex:1]];
 			}
-			timeApplied = nil;
+			self.timeApplied = 0.0;
 			isExpired = YES;
 			lastPosition = [thePlayer position];
 			[thePlayer setStatusText:@""];
@@ -109,31 +104,24 @@
 
 @synthesize numOfTicks, healingPerTick;
 
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
-	if (timeApplied != nil && !isExpired)
+	if (self.timeApplied != 0.0 && !isExpired)
 	{
-		if (lastTick == nil){
-			lastTick = [theTime copyWithZone:nil];
-		}
-		
-		NSTimeInterval timeSinceStart = [theTime timeIntervalSinceDate:timeApplied];
-		NSTimeInterval timeSinceLastTick = [theTime timeIntervalSinceDate:lastTick];
-		//NSLog(@"TimeSinceStart %1.2f", timeSinceStart);
-		//NSLog(@"Duration: %1.2f", duration);
-		//[thePlayer setStatusText:[NSString stringWithFormat:@"A Fireball will strike you in %1.2f seconds. Move!",duration - timeSinceStart]];
-		if (timeSinceLastTick >= (duration/numOfTicks)){
+        self.timeApplied += timeDelta;
+		lastTick += timeDelta;
+		if (lastTick >= (duration/numOfTicks)){
 			[target setHealth:[target health] + healingPerTick];
 			//NSLog(@"Tick");
-			lastTick = [theTime copyWithZone:nil];
+			lastTick = 0.0;
 		}
-		if (timeSinceStart >= duration){
+		if (self.timeApplied >= duration){
 			[target setHealth:[target health] + healingPerTick];
 			//NSLog(@"Tick");
 			//Here we do some effect, but we have to subclass Effects to decide what that is
 			//NSLog(@"Expired");
 			//The one thing we always do here is expire the effect
-			timeApplied = nil;
+			self.timeApplied = 0.0;
 			isExpired = YES;
 			
 		}
@@ -203,33 +191,25 @@
 	[sge setHealingPerTick:1];
 	return [sge autorelease];
 }
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
-	if (timeApplied != nil && !isExpired)
+	if (self.timeApplied != 0.0 && !isExpired)
 	{
-		if (lastTick == nil){
-			lastTick = [theTime copyWithZone:nil];
-		}
-		
-		NSTimeInterval timeSinceStart = [theTime timeIntervalSinceDate:timeApplied];
-		NSTimeInterval timeSinceLastTick = [theTime timeIntervalSinceDate:lastTick];
-		//NSLog(@"TimeSinceStart %1.2f", timeSinceStart);
-		//NSLog(@"Duration: %1.2f", duration);
-		//[thePlayer setStatusText:[NSString stringWithFormat:@"A Fireball will strike you in %1.2f seconds. Move!",duration - timeSinceStart]];
-		if (timeSinceLastTick >= (duration/numOfTicks)){
+		lastTick += timeDelta;
+		if (lastTick  >= (duration/numOfTicks)){
 			[target setHealth:[target health] + healingPerTick];
 			//NSLog(@"Tick");
 			healingPerTick += 1;
-			lastTick = [theTime copyWithZone:nil];
+			lastTick = 0.0;
 		}
-		if (timeSinceStart >= duration){
+		if (self.timeApplied >= duration){
 			[target setHealth:[target health] + healingPerTick];
 			[target setHealth:[target health] + healingPerTick*2];
 			//NSLog(@"Tick");
 			//Here we do some effect, but we have to subclass Effects to decide what that is
 			//NSLog(@"Expired");
 			//The one thing we always do here is expire the effect
-			timeApplied = nil;
+			self.timeApplied = 0.0;;
 			isExpired = YES;
 			
 		}
@@ -249,8 +229,7 @@
 -(void)didChangeHealthFrom:(NSInteger )health toNewHealth:(NSInteger )newHealth
 {
 	if (health > newHealth){
-		timeApplied = nil;
-		timeApplied = [[NSDate date] copyWithZone:nil];
+		self.timeApplied = 0.001; //BAD: It should actually refresh to zero but that breaks other logic
 		NSLog(@"Target took damage...refreshing duration");
 	}
 }

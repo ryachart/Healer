@@ -21,7 +21,6 @@ typedef enum {
 
 @interface Effect : NSObject {
 	NSTimeInterval duration;
-	NSDate *timeApplied;
 	EffectType effectType;
 	BOOL isExpired;
 	HealableTarget *target;
@@ -29,13 +28,13 @@ typedef enum {
 	NSMutableArray *audioTitles;
 }
 @property NSTimeInterval duration;
+@property (readwrite) float timeApplied;
 @property (readwrite, retain) HealableTarget *target;
-@property (nonatomic, copy) NSDate *timeApplied;
 @property (readonly) EffectType effectType;
 @property BOOL isExpired;
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type;
 
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime;
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta;
 -(void)expire;
 @end
 
@@ -51,7 +50,7 @@ typedef enum {
 {
 	NSInteger numOfTicks;
 	NSInteger healingPerTick;
-	NSDate *lastTick;
+	float lastTick;
 }
 @property (readwrite) NSInteger numOfTicks;
 @property (readwrite) NSInteger healingPerTick;

@@ -9,8 +9,13 @@
 #import "Boss.h"
 #import "GameObjects.h"
 
+@interface Boss ()
+@end
+
 @implementation Boss
 @synthesize lastAttack, health, maximumHealth, title;
+@synthesize timePassed;
+
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
 	health = hlth;
 	maximumHealth = hlth;
@@ -18,8 +23,9 @@
 	targets = trgets;
 	frequency = freq;
 	choosesMainTank = chooses;
-	lastAttack = nil;
+	lastAttack = 0.0f;
 	title = @"";
+    
 	return self;
 	
 }
@@ -102,14 +108,11 @@
 	return [fireDemon autorelease];
 }
 
--(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(NSDate*)theTime
+-(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta
 {
+    lastAttack+= timeDelta;
 	
-	if (lastAttack == nil)
-		lastAttack = [theTime copyWithZone:nil];
-	
-	NSTimeInterval timeSinceLastAttack = [theTime timeIntervalSinceDate:lastAttack];
-	if (timeSinceLastAttack >= frequency){
+	if (lastAttack >= frequency){
 		
 		NSInteger fireballChance = arc4random()% 100;
 		if (fireballChance <= 15 && ![[player activeEffects] containsObject:currentFireball])
@@ -119,9 +122,7 @@
 			[fireBall setLastPosition:[player position]];
 			[player addEffect:fireBall];
 		}
-		
-		[lastAttack release];
-		lastAttack = [theTime	copyWithZone:nil];
+		lastAttack = 0.0;
 		
 		NSInteger damagePerTarget = damage/targets;
 		NSArray* victims = [theRaid getAliveMembers];
@@ -168,12 +169,11 @@
 	[boe setTitle:@"Bringer of Evil"];
 	return [boe autorelease];
 }
--(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(NSDate*)theTime
+-(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta
 {
-	
-	
 	float PercentageHealthRemain = (((float)health)/maximumHealth) * 100;
-	
+	lastAttack+= timeDelta;
+    
 	if (PercentageHealthRemain <= 5 && numEnrages == 0)
 	{
 		[player setStatusText:@"The Bringer of Evil is ENRAGED!"];
@@ -181,11 +181,8 @@
 		numEnrages++;
 	}
 	
-	if (lastAttack == nil)
-		lastAttack = [theTime copyWithZone:nil];
-	
-	NSTimeInterval timeSinceLastAttack = [theTime timeIntervalSinceDate:lastAttack];
-	if (timeSinceLastAttack >= frequency){
+
+	if (lastAttack >= frequency){
 		
 		NSInteger fireballChance = arc4random()% 100;
 		if (fireballChance <= 5 && ![[player activeEffects] containsObject:currentFireball])
@@ -196,8 +193,7 @@
 			[player addEffect:fireBall];
 		}
 		
-		[lastAttack release];
-		lastAttack = [theTime	copyWithZone:nil];
+        lastAttack = 0.0f;
 		
 		NSInteger damagePerTarget = damage/targets;
 		NSArray* victims = [theRaid getAliveMembers];
@@ -266,10 +262,8 @@
 	[defCD setTitle:@"Chaos Demon"];
 	return [defCD autorelease];
 }
--(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(NSDate*)theTime
+-(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta
 {
-	
-	
 	float PercentageHealthRemain = (((float)health)/maximumHealth) * 100;
 	
 	if (PercentageHealthRemain <= 5 && numEnrages == 0)
@@ -278,11 +272,9 @@
 		numEnrages++;
 	}
 	
-	if (lastAttack == nil)
-		lastAttack = [theTime copyWithZone:nil];
+    lastAttack += timeDelta;
 	
-	NSTimeInterval timeSinceLastAttack = [theTime timeIntervalSinceDate:lastAttack];
-	if (timeSinceLastAttack >= frequency){
+	if (lastAttack >= frequency){
 		
 		NSInteger fireballChance = arc4random()% 100;
 		if (fireballChance <= 10 && ![[player activeEffects] containsObject:currentFireball])
@@ -293,8 +285,7 @@
 			[player addEffect:fireBall];
 		}
 		
-		[lastAttack release];
-		lastAttack = [theTime	copyWithZone:nil];
+        lastAttack = 0.0f;
 		
 		NSInteger damagePerTarget = damage/targets;
 		NSArray* victims = [theRaid getAliveMembers];

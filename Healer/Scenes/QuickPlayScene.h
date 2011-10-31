@@ -8,7 +8,7 @@
 
 #import "cocos2d.h"
 #import "GameObjects.h"
-#import "InGameViewController.h"
+#import "GamePlayScene.h"
 
 @interface QuickPlayScene : CCScene    {
 

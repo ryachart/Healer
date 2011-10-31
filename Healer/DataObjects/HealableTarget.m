@@ -40,7 +40,7 @@
 			}
 		}
 		
-		[theEffect setTimeApplied:[[NSDate date] copyWithZone:nil]];
+		[theEffect setTimeApplied:0.0001];
 		if ([theEffect conformsToProtocol:@protocol(HealthAdjustmentModifier)]){
 			[self addHealthAdjustmentModifier:(HealthAdjustmentModifier*)theEffect];
 		}

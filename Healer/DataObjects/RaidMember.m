@@ -26,7 +26,7 @@
 	return self;
 }
 
--(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
+-(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
 	
 	
@@ -43,14 +43,11 @@
 	return [defWitch autorelease];
 }
 
--(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
+-(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
-	if (lastAttack == nil)
-		lastAttack = [theTime copyWithZone:nil];
-	NSTimeInterval timeSinceLastAttack = [theTime timeIntervalSinceDate:lastAttack];
-	if (timeSinceLastAttack >= damageFrequency){
-		[lastAttack release];
-		lastAttack = [theTime	copyWithZone:nil];
+	lastAttack += timeDelta;
+	if (lastAttack >= damageFrequency){
+		lastAttack = 0.0;
 		
 		[theBoss setHealth:[theBoss health] - damageDealt];
 		
@@ -59,7 +56,7 @@
 	
 	for (int i = 0; i < [activeEffects count]; i++){
 		Effect *effect = [activeEffects objectAtIndex:i];
-		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
 		if ([effect isExpired]){
 			[effect expire];
 			[activeEffects removeObjectAtIndex:i];
@@ -77,14 +74,11 @@
 	return [defTroll autorelease];
 }
 
--(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
+-(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
-	if (lastAttack == nil)
-		lastAttack = [theTime copyWithZone:nil];
-	NSTimeInterval timeSinceLastAttack = [theTime timeIntervalSinceDate:lastAttack];
-	if (timeSinceLastAttack >= damageFrequency){
-		[lastAttack release];
-		lastAttack = [theTime	copyWithZone:nil];
+	lastAttack+= timeDelta;
+	if (lastAttack >= damageFrequency){
+		lastAttack = 0.0;
 		
 		[theBoss setHealth:[theBoss health] - damageDealt];
 		
@@ -92,7 +86,7 @@
 	
 	for (int i = 0; i < [activeEffects count]; i++){
 		Effect *effect = [activeEffects objectAtIndex:i];
-		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
 		if ([effect isExpired]){
 			[effect expire];
 			[activeEffects removeObjectAtIndex:i];
@@ -109,14 +103,11 @@
 	return [defOgre autorelease];
 }
 
--(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
+-(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
-	if (lastAttack == nil)
-		lastAttack = [theTime copyWithZone:nil];
-	NSTimeInterval timeSinceLastAttack = [theTime timeIntervalSinceDate:lastAttack];
-	if (timeSinceLastAttack >= damageFrequency){
-		[lastAttack release];
-		lastAttack = [theTime	copyWithZone:nil];
+	lastAttack+= timeDelta;
+	if (lastAttack >= damageFrequency){
+		lastAttack = 0.0;
 		
 		[theBoss setHealth:[theBoss health] - damageDealt];
 		
@@ -124,7 +115,7 @@
 	
 	for (int i = 0; i < [activeEffects count]; i++){
 		Effect *effect = [activeEffects objectAtIndex:i];
-		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
 		if ([effect isExpired]){
 			[effect expire];
 			[activeEffects removeObjectAtIndex:i];

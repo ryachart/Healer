@@ -49,7 +49,7 @@
 -(BOOL)isInstant;
 -(void)setTargets:(NSInteger)numOfTargets withPercentagesPerTarget:(NSArray*)percentages;
 
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime;
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime;
 -(void)spellBeganCasting;
 -(void)spellEndedCasting;
 -(void)spellInterrupted;

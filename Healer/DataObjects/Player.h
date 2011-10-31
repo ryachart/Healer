@@ -43,12 +43,12 @@ typedef int CastingDisabledReason;
 	BOOL isCasting;
 	Spell *spellBeingCast;
 	RaidMember *spellTarget;
-	NSDate *castStart;
+	float castStart;
 	NSArray *additionalTargets;
 	
 	//Temporal Combat Data
-	NSDate *lastEnergyRegen;
-	NSDate *channelingStartTime;
+	float lastEnergyRegen;
+	float channelingStartTime;
 	NSTimeInterval maxChannelTime;
 	
 	//Location Data
@@ -62,8 +62,6 @@ typedef int CastingDisabledReason;
 @property (assign) NSArray *activeSpells;
 @property (retain) Spell *spellBeingCast;
 @property (nonatomic, setter=setEnergy:) NSInteger energy;
-@property (nonatomic, copy) NSDate *castStart;
-@property (nonatomic, copy) NSDate *lastEnergyRegen;
 @property (assign) NSArray* additionalTargets;
 @property (assign) RaidMember* spellTarget;
 @property (nonatomic, retain) NSString *statusText;
@@ -72,7 +70,7 @@ typedef int CastingDisabledReason;
 
 -(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen;
 
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid gameTime:(NSDate*)theTime;
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid gameTime:(float)timeDelta;
 
 -(void)disableCastingWithReason:(CastingDisabledReason)reason;
 -(void)enableCastingWithReason:(CastingDisabledReason)reason;

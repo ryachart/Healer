@@ -87,7 +87,6 @@
 	
 	
 	//The timer has to be scheduled after all the init is done!
-//	gameLoopTimer = [NSTimer scheduledTimerWithTimeInterval:0.0 target:self selector:@selector(gameEvent:) userInfo:nil repeats:YES];
     [self schedule:@selector(gameEvent:)];
 }
 

@@ -26,13 +26,13 @@
 	NSString *title;
 	
 	//Combat Action Data
-	float lastAttack;
 }
 @property (nonatomic, setter=setHealth:) NSInteger health;
 @property (nonatomic, retain) NSString* title;
 @property NSInteger maximumHealth;
 
-@property (nonatomic, copy) NSDate *lastAttack;
+@property (nonatomic, readwrite) float lastAttack;
+
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses;
 -(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta;
 -(void)setHealth:(NSInteger)newHealth;

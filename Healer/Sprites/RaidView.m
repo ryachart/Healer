@@ -12,24 +12,17 @@
 @implementation RaidView
 
 
-- (id)initWithFrame:(CGRect)frame {
-    if ((self = [super initWithFrame:frame])) {
-        // Initialization code
-    }
-    return self;
-}
-
 -(BOOL)addRaidMemberHealthView:(RaidMemberHealthView*)healthView
 {
 	if (nextRectToUse-1 < MAXIMUM_RAID_MEMBERS_ALLOWED){
-		[self addSubview:healthView];
+		[self addChild:healthView];
 		if (nextRectToUse % 2 == 0){
-			[healthView setBackgroundColor:[UIColor grayColor]];
-			[healthView setDefaultBackgroundColor:[UIColor grayColor]];
+//			[healthView setBackgroundColor:[UIColor grayColor]];
+//			[healthView setDefaultBackgroundColor:[UIColor grayColor]];
 		}
 		else {
-			[healthView setBackgroundColor:[UIColor darkGrayColor]];
-			[healthView setDefaultBackgroundColor:[UIColor darkGrayColor]];
+//			[healthView setBackgroundColor:[UIColor darkGrayColor]];
+//			[healthView setDefaultBackgroundColor:[UIColor darkGrayColor]];
 		}
 
 		return YES;
@@ -39,7 +32,7 @@
 
 -(void)updateRaidHealth
 {
-	for (RaidMemberHealthView *rmhv in self.subviews){
+	for (RaidMemberHealthView *rmhv in self.children){
 		[rmhv updateHealth];
 	}
 	
@@ -50,10 +43,10 @@
 		int numCols = 5;
 		int numRows = 5;
 	
-		float cellWidth = (CGRectGetWidth(self.frame) * .95) / numCols; //We save 10% of the view for some semblance of a border
-		float cellHeight = (CGRectGetHeight(self.frame) * .95) / numRows ;
-		float borderWidthSize = CGRectGetWidth(self.frame) * .025;
-		float borderHeightSize = CGRectGetHeight(self.frame) * .025;
+		float cellWidth = (self.contentSize.width * .95) / numCols; //We save 10% of the view for some semblance of a border
+		float cellHeight = (self.contentSize.height * .95) / numRows ;
+		float borderWidthSize = self.contentSize.width * .025;
+		float borderHeightSize = self.contentSize.height * .025;
 	
 		for (int y = 0; y < numRows; y++){
 		

@@ -8,13 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "GameObjects.h"
+#import "cocos2d.h"
 
 @class PlayerSpellButtonDelegate;
 @class Chargable;
-@interface PlayerSpellButton : UIView {
+@interface PlayerSpellButton : CCLayerColor {
 	Spell *spellData;
 	
-	UILabel *spellTitle;
+	CCLabelTTF *spellTitle;
 	
 	PlayerSpellButtonDelegate *interactionDelegate;
 }

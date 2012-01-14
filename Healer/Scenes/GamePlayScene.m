@@ -7,6 +7,10 @@
 //
 
 #import "GamePlayScene.h"
+#import "RaidView.h"
+#import "PlayerSpellButton.h"
+#import "BossHealthView.h"
+#import "PlayerMoveButton.h"
 
 
 @interface GamePlayScene ()
@@ -21,7 +25,10 @@
 @synthesize raid;
 @synthesize boss;
 @synthesize player;
-
+@synthesize raidView;
+@synthesize spellView1, spellView2, spellView3, spellView4;
+@synthesize bossHealthView, playerHealthView, playerEnergyView, playerMoveButton, playerCastBar;
+@synthesize alertStatus;
 -(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse
 {
     if (self = [super init]){
@@ -48,20 +55,20 @@
 	for (int i = 0; i < [[player activeSpells] count]; i++){
 		switch (i) {
 			case 0:
-				[spell1  setSpellData:[[player activeSpells] objectAtIndex:i]];
-				[spell1 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+				[spellView1  setSpellData:[[player activeSpells] objectAtIndex:i]];
+				[spellView1 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
 				break;
 			case 1:
-				[spell2 setSpellData:[[player activeSpells] objectAtIndex:i]];
-				[spell2 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+				[spellView2 setSpellData:[[player activeSpells] objectAtIndex:i]];
+				[spellView2 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
 				break;
 			case 2:
-				[spell3 setSpellData:[[player activeSpells] objectAtIndex:i]];
-				[spell3 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+				[spellView3 setSpellData:[[player activeSpells] objectAtIndex:i]];
+				[spellView3 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
 				break;
 			case 3:
-				[spell4 setSpellData:[[player activeSpells] objectAtIndex:i]];
-				[spell4 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+				[spellView4 setSpellData:[[player activeSpells] objectAtIndex:i]];
+				[spellView4 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
 				break;
 			default:
 				break;
@@ -96,7 +103,7 @@
 	if ([[hv memberData] isDead]) return;
 	if ([selectedRaidMembers count] == 0){
 		[selectedRaidMembers addObject:hv];
-		[hv setBackgroundColor:[UIColor blueColor]];
+		[hv setColor:ccc3(0, 0, 255)];
 	}
 	else if ([selectedRaidMembers objectAtIndex:0] == hv){
 		//Here we do nothing because the already selected object has been reselected
@@ -105,13 +112,13 @@
 		RaidMemberHealthView *currentTarget = [selectedRaidMembers objectAtIndex:0];
 		if ([currentTarget isTouched]){
 			[selectedRaidMembers addObject:hv];
-			[hv setBackgroundColor:[UIColor purpleColor]];
+			[hv setColor:ccc3(255, 0, 255)];
 		}
 		else{
-			[currentTarget setBackgroundColor:[currentTarget defaultBackgroundColor]];
+			[currentTarget setColor:[currentTarget defaultBackgroundColor]];
 			[selectedRaidMembers removeObjectAtIndex:0];
 			[selectedRaidMembers insertObject:hv atIndex:0];
-			[hv setBackgroundColor:[UIColor blueColor]];
+            [hv setColor:ccc3(0, 0, 255)];
 		}
 		
 	}
@@ -121,7 +128,7 @@
 {
 	if (hv != [selectedRaidMembers objectAtIndex:0]){
 		[selectedRaidMembers removeObject:hv];
-		[hv setBackgroundColor:[hv defaultBackgroundColor]];
+		[hv setColor:[hv defaultBackgroundColor]];
 	}
 	
 }
@@ -171,7 +178,7 @@
 		if ([[spell spellData] conformsToProtocol:@protocol(Chargable)]){
 			if ([player spellBeingCast] == nil){
 				[(Chargable*)[spell spellData] beginCharging:[NSDate date]];
-				[spell setBackgroundColor:[UIColor orangeColor]];
+				[spell setColor:ccc3(150, 150, 0 )];
 			}
 		}
 		else{
@@ -191,7 +198,7 @@
 			if ([(Chargable*)[spell spellData] chargeStart] != nil){
 				[(Chargable*)[spell spellData] endCharging:[NSDate date]];
 				[player beginCasting:[spell spellData] withTargets:targets];
-				[spell setBackgroundColor:[UIColor whiteColor]];
+				[spell setColor:ccc3(255, 255, 255)];
 			}
 		}
 	}
@@ -201,14 +208,13 @@
 -(void)gameEvent:(ccTime)deltaT
 {
 	//NSLog(@"Game Event!");
-	NSDate *gameTime = [NSDate date];
 	//Data Events
 	NSMutableArray *raidMembers = [raid raidMembers];
 	NSInteger survivors = 0;
 	for (RaidMember *member in raidMembers)
 	{
 		if (![member isDead]){
-			[member combatActions:boss raid:raid thePlayer:player gameTime:gameTime];
+			[member combatActions:boss raid:raid thePlayer:player gameTime:deltaT];
 			survivors++;
 		}
 		else {
@@ -216,7 +222,7 @@
 		}
 
 	}
-	[boss combatActions:player theRaid:raid gameTime:gameTime];
+	[boss combatActions:player theRaid:raid gameTime:deltaT];
 	if ([playerMoveButton isMoving]){
 		[player disableCastingWithReason:CastingDisabledReasonMoving];
 		[player setPosition:[player position]+1];
@@ -226,54 +232,54 @@
 	}
 
 	
-	[player combatActions:boss theRaid:raid gameTime:gameTime];
+	[player combatActions:boss theRaid:raid gameTime:deltaT];
 	//Update UI
 	[raidView updateRaidHealth];
 	[bossHealthView updateHealth];
 	[playerHealthView updateHealth];
 	[playerCastBar updateTimeRemaining:[player remainingCastTime] ofMaxTime:[[player spellBeingCast] castTime]];
 	[playerEnergyView updateWithEnergy:[player energy] andMaxEnergy:[player maximumEnergy]];
-	[alertStatus setText:[player statusText]];
-	[spell1 updateUI];
-	[spell2 updateUI];
-	[spell3 updateUI];
-	[spell4 updateUI];
+	[alertStatus setString:[player statusText]];
+	[spellView1 updateUI];
+	[spellView2 updateUI];
+	[spellView3 updateUI];
+	[spellView4 updateUI];
 	
 	//Determine if there will be another iteration of the gamestate
 	if (survivors == 0)
 	{
-		if ([self viewControllerToBecome] == nil){
-			[self.navigationController	popViewControllerAnimated:YES];
-		}
-		else {
-			[self.navigationController popToViewController:viewControllerToBecome animated:YES];
-		}
+//		if ([self viewControllerToBecome] == nil){
+//			[self.navigationController	popViewControllerAnimated:YES];
+//		}
+//		else {
+//			[self.navigationController popToViewController:viewControllerToBecome animated:YES];
+//		}
 		UIAlertView *failureAlert = [[UIAlertView alloc] initWithTitle:@"Failure" message:@"Your Raid is dead" delegate:nil cancelButtonTitle:@"And so are you" otherButtonTitles:nil];
 		[failureAlert show];
-		[gameLoopTimer invalidate];
+
 	}
 	if ([player isDead]){
-		if ([self viewControllerToBecome] == nil){
-			[self.navigationController	popViewControllerAnimated:YES];
-		}
-		else {
-			[self.navigationController popToViewController:viewControllerToBecome animated:YES];
-		}
-		UIAlertView *failureAlert = [[UIAlertView alloc] initWithTitle:@"Failure" message:@"You have died" delegate:nil cancelButtonTitle:@"Be more careful" otherButtonTitles:nil];
-		[failureAlert show];
-		[gameLoopTimer invalidate];
+//		if ([self viewControllerToBecome] == nil){
+//			[self.navigationController	popViewControllerAnimated:YES];
+//		}
+//		else {
+//			[self.navigationController popToViewController:viewControllerToBecome animated:YES];
+//		}
+//		UIAlertView *failureAlert = [[UIAlertView alloc] initWithTitle:@"Failure" message:@"You have died" delegate:nil cancelButtonTitle:@"Be more careful" otherButtonTitles:nil];
+//		[failureAlert show];
+//		[gameLoopTimer invalidate];
 	}
 	if ([boss isDead]){
 		[activeEncounter characterDidCompleteEncounter];
-		if ([self viewControllerToBecome] == nil){
-			[self.navigationController	popViewControllerAnimated:YES];
-		}
-		else {
-			[self.navigationController popToViewController:viewControllerToBecome animated:YES];
-		}
-		UIAlertView *failureAlert = [[UIAlertView alloc] initWithTitle:@"WIN" message:@"You completed the mission!" delegate:nil cancelButtonTitle:@"Onto something darker.." otherButtonTitles:nil];
-		[failureAlert show];
-		[gameLoopTimer invalidate];
+//		if ([self viewControllerToBecome] == nil){
+//			[self.navigationController	popViewControllerAnimated:YES];
+//		}
+//		else {
+//			[self.navigationController popToViewController:viewControllerToBecome animated:YES];
+//		}
+//		UIAlertView *failureAlert = [[UIAlertView alloc] initWithTitle:@"WIN" message:@"You completed the mission!" delegate:nil cancelButtonTitle:@"Onto something darker.." otherButtonTitles:nil];
+//		[failureAlert show];
+//		[gameLoopTimer invalidate];
 	}
 	//NSLog(@"gameEventFired");
 }
@@ -290,24 +296,6 @@
     // Overriden to allow any orientation.
     return YES;
 }
-
-
-- (void)didReceiveMemoryWarning {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
-}
-
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-	
-	
-}
-
 
 - (void)dealloc {
     [super dealloc];

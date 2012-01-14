@@ -9,11 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "RaidMemberHealthView.h"
 #import "GameRect.h"
+#import "cocos2d.h"
 
 /* A RaidView contains an Array of all the Raid member health views and lays them 
    out based on the frame size.
  */
-@interface RaidView : UIView {
+@interface RaidView : CCLayer {
 	NSMutableArray *rectsToUse;
 	NSInteger nextRectToUse;
 }

@@ -10,7 +10,7 @@
 #import "GameObjects.h"
 #import "AudioController.h"
 @implementation Effect
-@synthesize duration, isExpired, target, effectType;
+@synthesize duration, isExpired, target, effectType, timeApplied;
 
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
 {

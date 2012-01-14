@@ -14,7 +14,6 @@
 
 @implementation Boss
 @synthesize lastAttack, health, maximumHealth, title;
-@synthesize timePassed;
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
 	health = hlth;
@@ -30,16 +29,13 @@
 	
 }
 
--(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(NSDate*)theTime
+-(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)theTime
 {
-	if (lastAttack == nil)
-		lastAttack = [theTime copyWithZone:nil];
+    self.lastAttack+= theTime;
 	
-	NSTimeInterval timeSinceLastAttack = [theTime timeIntervalSinceDate:lastAttack];
-	if (timeSinceLastAttack >= frequency){
+	if (self.lastAttack >= frequency){
 		
-		[lastAttack release];
-		lastAttack = [theTime	copyWithZone:nil];
+		self.lastAttack = 0;
 		
 		NSInteger damagePerTarget = damage/targets;
 		NSArray* victims = [theRaid getAliveMembers];
@@ -110,9 +106,9 @@
 
 -(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta
 {
-    lastAttack+= timeDelta;
+    self.lastAttack+= timeDelta;
 	
-	if (lastAttack >= frequency){
+	if (self.lastAttack >= frequency){
 		
 		NSInteger fireballChance = arc4random()% 100;
 		if (fireballChance <= 15 && ![[player activeEffects] containsObject:currentFireball])
@@ -122,7 +118,7 @@
 			[fireBall setLastPosition:[player position]];
 			[player addEffect:fireBall];
 		}
-		lastAttack = 0.0;
+		self.lastAttack = 0.0;
 		
 		NSInteger damagePerTarget = damage/targets;
 		NSArray* victims = [theRaid getAliveMembers];
@@ -172,7 +168,7 @@
 -(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta
 {
 	float PercentageHealthRemain = (((float)health)/maximumHealth) * 100;
-	lastAttack+= timeDelta;
+	self.lastAttack+= timeDelta;
     
 	if (PercentageHealthRemain <= 5 && numEnrages == 0)
 	{
@@ -182,7 +178,7 @@
 	}
 	
 
-	if (lastAttack >= frequency){
+	if (self.lastAttack >= frequency){
 		
 		NSInteger fireballChance = arc4random()% 100;
 		if (fireballChance <= 5 && ![[player activeEffects] containsObject:currentFireball])
@@ -191,9 +187,10 @@
 			currentFireball = fireBall;
 			[fireBall setLastPosition:[player position]];
 			[player addEffect:fireBall];
+            [fireBall release];
 		}
 		
-        lastAttack = 0.0f;
+        self.lastAttack = 0.0f;
 		
 		NSInteger damagePerTarget = damage/targets;
 		NSArray* victims = [theRaid getAliveMembers];
@@ -272,9 +269,9 @@
 		numEnrages++;
 	}
 	
-    lastAttack += timeDelta;
+    self.lastAttack += timeDelta;
 	
-	if (lastAttack >= frequency){
+	if (self.lastAttack >= frequency){
 		
 		NSInteger fireballChance = arc4random()% 100;
 		if (fireballChance <= 10 && ![[player activeEffects] containsObject:currentFireball])
@@ -285,7 +282,7 @@
 			[player addEffect:fireBall];
 		}
 		
-        lastAttack = 0.0f;
+        self.lastAttack = 0.0f;
 		
 		NSInteger damagePerTarget = damage/targets;
 		NSArray* victims = [theRaid getAliveMembers];

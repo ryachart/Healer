@@ -260,7 +260,7 @@
 -(void)endCharging:(NSDate*)endTime{
 	chargeEnd = [endTime copyWithZone:nil];
 }
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime
 {
 	NSInteger additionalHealing = 0;
 	NSTimeInterval timeDelta = [chargeEnd timeIntervalSinceDate:chargeStart];;
@@ -300,7 +300,7 @@
 	[[roarOfLife spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
 	return [roarOfLife autorelease];
 }
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime
 {
 	[[thePlayer spellTarget] setHealth:[[thePlayer spellTarget] health] + [self healingAmount]];
 	[[thePlayer spellTarget] addEffect:[RoarOfLifeEffect defaultEffect]];
@@ -316,7 +316,7 @@
 	[[woundWeaving spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
 	return [woundWeaving autorelease];
 }
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime{
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime{
 	WoundWeavingEffect *wwEffect = [WoundWeavingEffect defaultEffect];
 	[[thePlayer spellTarget] addEffect:wwEffect];
 	[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
@@ -332,7 +332,7 @@
 	return [sg autorelease];
 	
 }
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime{
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime{
 	[[thePlayer spellTarget] addEffect:[SurgingGrowthEffect defaultEffect]];
 	[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
 }
@@ -348,7 +348,7 @@
 	[[fa spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"FAdrFinish"];
 	return [fa autorelease];
 }
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime{
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime{
 	[[thePlayer spellTarget] addEffect:[FieryAdrenalineEffect defaultEffect]];
 	[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
 }
@@ -367,7 +367,7 @@
 	return [twoWinds autorelease];
 	
 }
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime{
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime{
 	
 	[[thePlayer spellTarget] addEffect:[TwoWindsEffect defaultEffect]];
 	
@@ -392,7 +392,7 @@
 	
 	
 }
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime{
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime{
 	[[thePlayer spellTarget] setHealth:[[thePlayer spellTarget] health] + [self healingAmount]];
 	
 	if ([[thePlayer additionalTargets] count] > 1){
@@ -417,7 +417,7 @@
 	
 	
 }
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime{
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime{
 	
 	if ([self targets] <= 1){
 		[[thePlayer spellTarget] setHealth:[[thePlayer spellTarget] health] + [self healingAmount]];
@@ -454,7 +454,7 @@
 	[[sa spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicCast" ofType:@"wav"]] andTitle:@"SAFinish"];
 	return [sa autorelease];
 }
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime
 {
 	[[thePlayer spellTarget] setHealth:[[thePlayer spellTarget] health] + [self healingAmount]];
 	[[thePlayer spellTarget] addEffect:[ShiningAegisEffect defaultEffect]];
@@ -472,7 +472,7 @@
 	[[bulwark spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerInstantShield" ofType:@"wav"]] andTitle:@"BWFinish"];
 	return [bulwark autorelease];
 }
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime
 {
 	[[thePlayer spellTarget] addEffect:[BulwarkEffect defaultEffect]];
 	[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];	
@@ -486,7 +486,7 @@
 	[[eaSpell spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerProtectiveCast" ofType:@"wav"]] andTitle:@"EAFinish"];
 	return [eaSpell autorelease];
 }
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(NSDate*)theTime
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime
 {
 	[[thePlayer spellTarget] addEffect:[EtherealArmorEffect defaultEffect]];
 	[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];

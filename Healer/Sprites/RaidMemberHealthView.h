@@ -8,15 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "GameObjects.h"
+#import "cocos2d.h"
 
 @class RaidMemberHealthViewDelegate;
 
-@interface RaidMemberHealthView : UIView {
-	UILabel *classNameLabel;
-	UILabel *healthLabel;
-	UILabel *effectsLabel;
-	UIColor *defaultBackgroundColor;
-	
+@interface RaidMemberHealthView : CCLayerColor {
 	HealableTarget* memberData;
 	RaidMemberHealthViewDelegate *interactionDelegate;
 	
@@ -24,15 +20,16 @@
 	
 }
 @property (nonatomic, assign, setter=setMemberData:) HealableTarget* memberData;
-@property (nonatomic, retain) UILabel *classNameLabel;
-@property (nonatomic, retain) UILabel *healthLabel;
-@property (nonatomic, retain) UILabel *effectsLabel;
+@property (nonatomic, retain) CCLabelTTF *classNameLabel;
+@property (nonatomic, retain) CCLabelTTF *healthLabel;
+@property (nonatomic, retain) CCLabelTTF *effectsLabel;
 @property (nonatomic, retain) RaidMemberHealthViewDelegate *interactionDelegate;
-@property (retain) UIColor *defaultBackgroundColor;
+@property (nonatomic, readwrite) ccColor3B defaultBackgroundColor;
 @property BOOL isTouched;
 -(void)setMemberData:(HealableTarget*)rdMember;
 
 -(void)updateHealth;
+-(id)initWithFrame:(CGRect)frame;
 @end
 
 @protocol RaidMemberHealthViewDelegate

@@ -13,29 +13,23 @@
 
 @synthesize spellData, interactionDelegate;
 
-- (id)initWithFrame:(CGRect)frame {
-    if ((self = [super initWithFrame:frame])) {
+- (id)init{
+    if (self = [super init]) {
         // Initialization code
+        spellTitle = [[CCLabelTTF alloc] initWithString:[spellData title] fontName:@"Arial" fontSize:14.0f];
+        //NSLog(@"Spell Title is %@", [spellData title]);
+        [self addChild:spellTitle];
     }
     return self;
-}
-
--(void)awakeFromNib{
-	//NSLog(@"AwakeFromnib: %1.2f", CGRectGetWidth(self.frame));
-	spellTitle = [[UILabel alloc] initWithFrame:CGRectMake(0,0,CGRectGetWidth(self.frame), CGRectGetHeight(self.frame)*.2)];
-	[spellTitle setFont:[UIFont	 systemFontOfSize:12]];
-	//NSLog(@"Spell Title is %@", [spellData title]);
-	[spellTitle setText:[spellData title]];
-	[self addSubview:spellTitle];
 }
 
 -(void)setSpellData:(Spell*)theSpell{
 	spellData = theSpell;
 	if (spellData == nil)
-		[self setHidden:YES];
+		[self setVisible:NO];
 	else{
 		NSLog(@"Spell Title is %@", [spellData title]);
-		[spellTitle setText:[spellData title]];
+		[spellTitle setString:[spellData title]];
 	}
 }
 /*
@@ -49,17 +43,18 @@
 -(void)updateUI{
 	if ([spellData conformsToProtocol:@protocol(Chargable)]){
 		if ([(Chargable*)spellData currentChargeTime] >= [(Chargable*)spellData maxChargeTime]){
-			[self setBackgroundColor:[UIColor greenColor]];
+			[self setColor:ccc3(0, 1, 0)];
 		}
 	}
 }
 
--(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+
+-(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
 	[interactionDelegate spellButtonSelected:self];
 	
 }
 
--(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
+-(void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
 	[interactionDelegate spellButtonUnselected:self];
 }
 - (void)dealloc {

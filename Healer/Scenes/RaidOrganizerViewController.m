@@ -7,7 +7,7 @@
 //
 
 #import "RaidOrganizerViewController.h"
-#import "InGameViewController.h"
+#import "GamePlayScene.h"
 
 @implementation RaidOrganizerViewController
 @synthesize spotsRemainingLabel;
@@ -44,7 +44,6 @@
 
 -(IBAction)encounterStart
 {
-	InGameViewController *igVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
 	Player* thePlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
 	[thePlayer setActiveSpells:selectedSpells];
 	
@@ -64,13 +63,11 @@
 	*/
 	
 	
-	[igVC readyWithRaid:theRaid boss:[selectedEncounter theBoss] andPlayer:thePlayer];
+	GamePlayScene *igVC = [[GamePlayScene alloc] initWithRaid:theRaid boss:[selectedEncounter theBoss] andPlayer:thePlayer];
     [thePlayer release];
 	[igVC setActiveEncounter:selectedEncounter];
-	NSArray *vcs = [self.navigationController viewControllers];
-	[igVC setViewControllerToBecome:[vcs objectAtIndex:[vcs indexOfObject:self]-1]];
+//	[igVC setViewControllerToBecome:[vcs objectAtIndex:[vcs indexOfObject:self]-1]];
 	
-	[self.navigationController pushViewController:igVC animated:YES];
 	//[thePlayer release];
 }
 

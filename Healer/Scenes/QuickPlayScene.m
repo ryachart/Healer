@@ -72,12 +72,13 @@
 		[demoRaid addRaidMember:[Troll defaultTroll]];
 	}
 	
-	
-	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
-	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
+//	
+//	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
+//	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
 	
 	//[self.navigationController pushViewController:demoGameVC animated:YES];
-	
+	GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
+    [[CCDirector sharedDirector] replaceScene:gps];
 	
 }
 
@@ -99,8 +100,8 @@
 	}
 	
 	
-	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
-	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
+//	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
+//	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
 	
 	//[self.navigationController pushViewController:demoGameVC animated:YES];
 	
@@ -125,8 +126,8 @@
 	}
 	
 	
-	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
-	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
+//	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
+//	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
 	
 	//[self.navigationController pushViewController:demoGameVC animated:YES];
 	
@@ -151,8 +152,8 @@
 	}
 	
 	
-	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
-	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
+//	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
+//	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
 	
 	//[self.navigationController pushViewController:demoGameVC animated:YES];
 	

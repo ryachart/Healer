@@ -13,8 +13,10 @@
 
 @synthesize bossNameLabel, healthLabel, bossData;
 - (id)initWithFrame:(CGRect)frame {
-    if ((self = [super initWithFrame:frame])) {
+    if ((self = [super init])) {
         // Initialization code
+        self.position = frame.origin;
+        self.contentSize = frame.size;
 		/*
 		[self setBackgroundColor:[UIColor darkGrayColor]];
 		bossNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(1, 1, CGRectGetWidth(frame), CGRectGetHeight(frame)*.25)];
@@ -52,34 +54,34 @@
 	}
 	else {
 		healthText = @"Dead";
-		[self setBackgroundColor:[UIColor redColor]];
-		[self setNeedsDisplay];
+//		[self setBackgroundColor:[UIColor redColor]];
+//		[self setNeedsDisplay];
 	}
 	
 	if (![healthText isEqualToString:[healthLabel text]]){
 		//NSLog(@"DIFFERENT");
 		[healthLabel setText:healthText];
-		[self setNeedsDisplay];
+		//[self setNeedsDisplay];
 	}
 }
 
 
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-	CGFloat x = CGRectGetWidth(self.frame) * .005;
-	CGFloat y = CGRectGetHeight(self.frame) * .05;
-	CGFloat height = CGRectGetHeight(self.frame) * .90;
-	double percentageOfHealth = ((float)[bossData health])/[bossData maximumHealth];
-	CGFloat width = CGRectGetWidth(self.frame) * .990 * percentageOfHealth;
-	//NSLog(@"Width: %f", width);
-	
-	CGContextRef context = UIGraphicsGetCurrentContext();
-	CGContextSetRGBFillColor(context,1,0, 0, 1);
-	
-	UIRectFill(CGRectMake(x,y,width,height));
-}
+//- (void)drawRect:(CGRect)rect {
+//    // Drawing code
+//	CGFloat x = CGRectGetWidth(self.frame) * .005;
+//	CGFloat y = CGRectGetHeight(self.frame) * .05;
+//	CGFloat height = CGRectGetHeight(self.frame) * .90;
+//	double percentageOfHealth = ((float)[bossData health])/[bossData maximumHealth];
+//	CGFloat width = CGRectGetWidth(self.frame) * .990 * percentageOfHealth;
+//	//NSLog(@"Width: %f", width);
+//	
+//	CGContextRef context = UIGraphicsGetCurrentContext();
+//	CGContextSetRGBFillColor(context,1,0, 0, 1);
+//	
+//	UIRectFill(CGRectMake(x,y,width,height));
+//}
 
 
 - (void)dealloc {

@@ -144,8 +144,9 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	UITableViewCell *thisCell = [[UITableViewCell alloc] initWithFrame:CGRectMake(0,0,200,100) reuseIdentifier:@"Cell"];
-	NSInteger row = [indexPath row];
+	UITableViewCell *thisCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
+	
+    NSInteger row = [indexPath row];
 	
 	if (tableView == spellsTable){
 		[[thisCell textLabel] setText:[[characterShowing knownSpells] objectAtIndex:row]];

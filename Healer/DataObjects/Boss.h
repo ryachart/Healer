@@ -69,7 +69,7 @@
 }
 @property NSInteger numEnrages;
 +(id)defaultBoss;
--(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(NSDate*)theTime;
+-(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)theTime;
 
 @end
 

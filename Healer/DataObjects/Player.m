@@ -16,25 +16,27 @@
 
 -(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen
 {
-	health = maximumHealth = hlth;
-	energy = enrgy;
-	energyRegenPerSecond = energyRegen;
-	maximumEnergy = enrgy;
-	targetIsSelf = NO;
-	spellTarget = nil;
-	spellBeingCast = nil;
-	isCasting = NO;
-	lastEnergyRegen = 0.0f;
-	statusText = @"";
-	position = 0;
-	maxChannelTime = 5;
-    castStart = 0.0f;
-	
-	for (int i = 0; i < CastingDisabledReasonTotal; i++){
-		castingDisabledReasons[i] = NO;
-	}
-	
-	activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
+    if (self = [super init]){
+        health = maximumHealth = hlth;
+        energy = enrgy;
+        energyRegenPerSecond = energyRegen;
+        maximumEnergy = enrgy;
+        targetIsSelf = NO;
+        spellTarget = nil;
+        spellBeingCast = nil;
+        isCasting = NO;
+        lastEnergyRegen = 0.0f;
+        statusText = @"";
+        position = 0;
+        maxChannelTime = 5;
+        castStart = 0.0f;
+        
+        for (int i = 0; i < CastingDisabledReasonTotal; i++){
+            castingDisabledReasons[i] = NO;
+        }
+        
+        activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
+    }
 	return self;
 }
 
@@ -94,7 +96,7 @@
 -(NSTimeInterval) remainingCastTime
 {
 	if (castStart != 0.0 && isCasting){
-		return castStart - [spellBeingCast castTime];
+		return [spellBeingCast castTime] - castStart;
 	}
 	else {
 		return 0.0;

@@ -1334,13 +1334,6 @@
 			name = Manipulators;
 			sourceTree = "<group>";
 		};
-		387E7B72145E28C2006D9266 /* Controls */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Controls;
-			sourceTree = "<group>";
-		};
 		387E7B73145E28CA006D9266 /* GamePlay */ = {
 			isa = PBXGroup;
 			children = (
@@ -1438,7 +1431,6 @@
 				387E7B78145E291C006D9266 /* Wrappers */,
 				387E7B74145E28D9006D9266 /* Containers */,
 				387E7B73145E28CA006D9266 /* GamePlay */,
-				387E7B72145E28C2006D9266 /* Controls */,
 			);
 			name = Sprites;
 			sourceTree = "<group>";
@@ -1698,6 +1690,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1708,6 +1701,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
+				PROVISIONING_PROFILE = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 2;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1717,6 +1712,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Healer/Prefix.pch;
@@ -1726,6 +1722,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
+				PROVISIONING_PROFILE = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;

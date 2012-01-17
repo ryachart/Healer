@@ -11,24 +11,29 @@
 
 @implementation PlayerSpellButton
 
-@synthesize spellData, interactionDelegate;
+@synthesize spellData, interactionDelegate, spellTitle;
 
-- (id)init{
+- (id)initWithFrame:(CGRect)frame{
     if (self = [super init]) {
+        self.position = frame.origin;
+        self.contentSize = frame.size;
+        [self setOpacity:255];
+        self.isTouchEnabled = YES;
+        [self setColor:ccc3(111, 111, 111)];
         // Initialization code
-        spellTitle = [[CCLabelTTF alloc] initWithString:[spellData title] fontName:@"Arial" fontSize:14.0f];
-        //NSLog(@"Spell Title is %@", [spellData title]);
+        self.spellTitle = [[[CCLabelTTF alloc] initWithString:[spellData title] fontName:@"Arial" fontSize:14.0f] autorelease];
+        [self.spellTitle setPosition:CGPointMake(50, 25)];
         [self addChild:spellTitle];
     }
     return self;
 }
 
 -(void)setSpellData:(Spell*)theSpell{
-	spellData = theSpell;
+	[spellData release];
+    spellData = [theSpell retain];
 	if (spellData == nil)
 		[self setVisible:NO];
 	else{
-		NSLog(@"Spell Title is %@", [spellData title]);
 		[spellTitle setString:[spellData title]];
 	}
 }
@@ -50,12 +55,23 @@
 
 
 -(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
-	[interactionDelegate spellButtonSelected:self];
+    UITouch *touch = [touches anyObject];
+    CGPoint touchLocation = [[CCDirector sharedDirector] convertToGL:[touch locationInView:[touch view]]];
+    
+    CGRect layerRect =  [self boundingBox];
+    layerRect.origin = CGPointZero;
+    CGPoint convertedToNodeSpacePoint = [self convertToNodeSpace:touchLocation];
+    
+    if (interactionDelegate != nil && CGRectContainsPoint(layerRect, convertedToNodeSpacePoint)){
+        [interactionDelegate spellButtonSelected:self];
+        [self setColor:ccc3(255, 0, 255)];
+    }
 	
 }
 
 -(void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
 	[interactionDelegate spellButtonUnselected:self];
+    [self setColor:ccc3(111, 111, 111)];
 }
 - (void)dealloc {
     [super dealloc];

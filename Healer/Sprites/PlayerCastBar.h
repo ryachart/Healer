@@ -6,14 +6,15 @@
 //  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "cocos2d.h"
 
 
-@interface PlayerCastBar : UIView {
-	UILabel* timeRemaining;
-	
+@interface PlayerCastBar : CCLayerColor {
 	double percentTimeRemaining;
 }
+@property (nonatomic, retain) CCLabelTTF *timeRemaining;
+@property (nonatomic, retain) CCLayerColor *castBar;
 
+-(id)initWithFrame:(CGRect)frame;
 -(void)updateTimeRemaining:(NSTimeInterval)remaining ofMaxTime:(NSTimeInterval)maxTime;
 @end

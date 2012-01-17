@@ -95,6 +95,7 @@
 		[raidView addRaidMemberHealthView:rmhv];
 		spotsRemaining--;
 		[spotsRemainingLabel setText:[NSString stringWithFormat:@"Spots: %i", spotsRemaining]];
+        [rmhv release];
 	}
 }
 -(IBAction)removeWitch{
@@ -120,6 +121,7 @@
 		[raidView addRaidMemberHealthView:rmhv];
 		spotsRemaining--;
 		[spotsRemainingLabel setText:[NSString stringWithFormat:@"Spots: %i", spotsRemaining]];
+        [rmhv release];
 	}
 }
 -(IBAction)removeTroll{

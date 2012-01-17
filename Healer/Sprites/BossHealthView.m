@@ -11,12 +11,31 @@
 
 @implementation BossHealthView
 
-@synthesize bossNameLabel, healthLabel, bossData;
+@synthesize bossNameLabel, healthLabel, bossData, healthFrame;
+
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super init])) {
         // Initialization code
         self.position = frame.origin;
         self.contentSize = frame.size;
+        [self setOpacity:255];
+        
+        self.healthFrame = [[[CCLayerColor alloc] initWithColor:ccc4(0, 255, 0, 255)] autorelease];
+        [self.healthFrame setPosition:CGPointMake(0, 0)];
+        [self.healthFrame setContentSize:frame.size];
+        
+        self.bossNameLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0];
+        self.bossNameLabel.position = CGPointMake(1, 1);
+        self.bossNameLabel.contentSize = frame.size;
+        
+        self.healthLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0];
+        self.healthLabel.position = CGPointMake(frame.size.width * .3, frame.size.height * .3);
+        self.healthLabel.contentSize = CGSizeMake(frame.size.width * .5, frame.size.height * .25);
+
+        [self addChild:self.healthFrame];
+        [self addChild:self.bossNameLabel];
+        [self addChild:self.healthLabel];
+
 		/*
 		[self setBackgroundColor:[UIColor darkGrayColor]];
 		bossNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(1, 1, CGRectGetWidth(frame), CGRectGetHeight(frame)*.25)];
@@ -40,7 +59,7 @@
 {
 	bossData = theBoss;
 	
-	[bossNameLabel setText:[bossData title]];
+	[self.bossNameLabel setString:[bossData title]];
 	
 	
 }
@@ -50,19 +69,23 @@
 	NSString *healthText;
 	if (bossData.health >= 1){
 		healthText = [NSString stringWithFormat:@"%3.1f", (((float)bossData.health) / bossData.maximumHealth)*100];
+        
 		
 	}
 	else {
 		healthText = @"Dead";
-//		[self setBackgroundColor:[UIColor redColor]];
-//		[self setNeedsDisplay];
+
 	}
 	
-	if (![healthText isEqualToString:[healthLabel text]]){
+	if (![healthText isEqualToString:[self.healthLabel string]]){
 		//NSLog(@"DIFFERENT");
-		[healthLabel setText:healthText];
+		[self. healthLabel setString:healthText];
 		//[self setNeedsDisplay];
 	}
+    
+    double percentageOfHealth = ((float)[self.bossData health])/[self.bossData maximumHealth];
+    CGFloat width = self.contentSize.width * .990 * percentageOfHealth;
+    [self.healthFrame setContentSize:CGSizeMake(width, self.healthFrame.contentSize.height)];
 }
 
 

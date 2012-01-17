@@ -10,7 +10,7 @@
 
 
 @implementation RaidView
-
+@synthesize rectsToUse;
 
 -(BOOL)addRaidMemberHealthView:(RaidMemberHealthView*)healthView
 {
@@ -39,7 +39,7 @@
 }
 -(void)spawnRects{
 	if (rectsToUse == nil){
-		rectsToUse = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];
+		self.rectsToUse = [[[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED] autorelease];
 		int numCols = 5;
 		int numRows = 5;
 	

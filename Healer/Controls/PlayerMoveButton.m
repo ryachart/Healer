@@ -21,6 +21,7 @@
 		UILabel	*descLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(frame)*.4, CGRectGetWidth(frame), CGRectGetHeight(frame)*.2)];
 		[descLabel setText:@"Move"];
 		[self addSubview:descLabel];
+        [descLabel release];
     }
     return self;
 }
@@ -31,6 +32,7 @@
 	UILabel	*descLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.frame)*.4, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame)*.2)];
 	[descLabel setText:@"Move"];
 	[self addSubview:descLabel];
+    [descLabel release];
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{

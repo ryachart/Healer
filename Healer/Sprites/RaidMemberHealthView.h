@@ -16,16 +16,16 @@
 	HealableTarget* memberData;
 	RaidMemberHealthViewDelegate *interactionDelegate;
 	
-	BOOL isTouched;
 	
 }
 @property (nonatomic, assign, setter=setMemberData:) HealableTarget* memberData;
+@property (nonatomic, retain) CCLayerColor *healthBarLayer;
 @property (nonatomic, retain) CCLabelTTF *classNameLabel;
 @property (nonatomic, retain) CCLabelTTF *healthLabel;
 @property (nonatomic, retain) CCLabelTTF *effectsLabel;
 @property (nonatomic, retain) RaidMemberHealthViewDelegate *interactionDelegate;
 @property (nonatomic, readwrite) ccColor3B defaultBackgroundColor;
-@property BOOL isTouched;
+@property (nonatomic) BOOL isTouched;
 -(void)setMemberData:(HealableTarget*)rdMember;
 
 -(void)updateHealth;

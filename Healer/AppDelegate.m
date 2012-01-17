@@ -152,7 +152,6 @@
 }
 
 - (void)dealloc {
-	[[CCDirector sharedDirector] release];
 	[super dealloc];
 }
 

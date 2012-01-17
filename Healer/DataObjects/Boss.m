@@ -40,7 +40,7 @@
 		NSInteger damagePerTarget = damage/targets;
 		NSArray* victims = [theRaid getAliveMembers];
 		
-		RaidMember *target;
+		RaidMember *target = nil;
 		
 		if (targets <= [victims count]){
 			for (int i = 0; i < targets; i++){
@@ -57,6 +57,9 @@
 			
 			for (int i = 0; i < targets; i++){
 				do{
+                    if ([victims count] <= 0){
+                        break;
+                    }
 					NSInteger targetIndex = arc4random() % [victims count];
 					
 					target = [victims objectAtIndex:targetIndex];

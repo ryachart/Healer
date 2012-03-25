@@ -11,7 +11,7 @@
 #import "PlayerSpellButton.h"
 #import "BossHealthView.h"
 #import "PlayerMoveButton.h"
-
+#import "PostBattleScene.h"
 
 @interface GamePlayScene ()
 //Data Models
@@ -45,11 +45,13 @@
         
         self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(100, 660, 884, 80)] autorelease];
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(200,40, 400, 50)] autorelease];
-        
+        self.playerHealthView = [[[PlayerHealthView alloc] initWithFrame:CGRectMake(800, 600, 200, 50)] autorelease];
+        self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(800, 545, 200, 50)] autorelease];
         
         [self addChild:self.bossHealthView];
         [self addChild:self.playerCastBar];
-        
+        [self addChild:self.playerHealthView];
+        [self addChild:self.playerEnergyView];
         //CACHE SOUNDS
         AudioController *ac = [AudioController sharedInstance];
         for (Spell* aSpell in [player activeSpells]){
@@ -61,25 +63,25 @@
         for (int i = 0; i < [[player activeSpells] count]; i++){
             switch (i) {
                 case 0:
-                    self.spellView1 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(824, 500, 150, 150)] autorelease];
+                    self.spellView1 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 335, 100, 100)] autorelease];
                     [self.spellView1  setSpellData:[[player activeSpells] objectAtIndex:i]];
                     [self.spellView1 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                     [self addChild:self.spellView1];
                     break;
                 case 1:
-                    self.spellView2 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(824, 350, 150, 150)] autorelease];
+                    self.spellView2 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 230, 100, 100)] autorelease];
                     [self.spellView2 setSpellData:[[player activeSpells] objectAtIndex:i]];
                     [self.spellView2 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                     [self addChild:self.spellView2];
                     break;
                 case 2:
-                    self.spellView3 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(824, 200, 150, 150)] autorelease];
+                    self.spellView3 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 125, 100, 100)] autorelease];
                     [self.spellView3 setSpellData:[[player activeSpells] objectAtIndex:i]];
                     [self.spellView3 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                     [self addChild:self.spellView3];
                     break;
                 case 3:
-                    self.spellView4 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(824, 50, 150, 150)] autorelease];
+                    self.spellView4 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 20, 100, 100)] autorelease];
                     [self.spellView4 setSpellData:[[player activeSpells] objectAtIndex:i]];
                     [self.spellView4 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                     [self addChild:self.spellView4];
@@ -160,7 +162,7 @@
 	if ([[hv memberData] isDead]) return;
 	if ([selectedRaidMembers count] == 0){
 		[selectedRaidMembers addObject:hv];
-		[hv setBackgroundColor:[UIColor blueColor]];
+		[hv setColor:ccBLUE];
 	}
 	else if ([selectedRaidMembers objectAtIndex:0] == hv){
 		//Here we do nothing because the already selected object has been reselected
@@ -169,13 +171,13 @@
 		PlayerHealthView *currentTarget = [selectedRaidMembers objectAtIndex:0];
 		if ([currentTarget isTouched]){
 			[selectedRaidMembers addObject:hv];
-			[hv setBackgroundColor:[UIColor purpleColor]];
+			[hv setColor:ccc3(255, 0, 255)];
 		}
 		else{
-			[currentTarget setBackgroundColor:[currentTarget defaultBackgroundColor]];
+			[currentTarget setColor:[hv defaultBackgroundColor]];
 			[selectedRaidMembers removeObjectAtIndex:0];
 			[selectedRaidMembers insertObject:hv atIndex:0];
-			[hv setBackgroundColor:[UIColor blueColor]];
+			[hv setColor:ccBLUE];
 		}
 		
 	}
@@ -184,7 +186,7 @@
 {
 	if (hv != [selectedRaidMembers objectAtIndex:0]){
 		[selectedRaidMembers removeObject:hv];
-		[hv setBackgroundColor:[hv defaultBackgroundColor]];
+		[hv setColor:ccBLUE];
 	}
 	
 }
@@ -269,41 +271,22 @@
 	//Determine if there will be another iteration of the gamestate
 	if (survivors == 0)
 	{
-//		if ([self viewControllerToBecome] == nil){
-//			[self.navigationController	popViewControllerAnimated:YES];
-//		}
-//		else {
-//			[self.navigationController popToViewController:viewControllerToBecome animated:YES];
-//		}
 		UIAlertView *failureAlert = [[UIAlertView alloc] initWithTitle:@"Failure" message:@"Your Raid is dead" delegate:nil cancelButtonTitle:@"And so are you" otherButtonTitles:nil];
 		[failureAlert show];
         [failureAlert release];
+        [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:NO] autorelease]];
 
 	}
 	if ([player isDead]){
-//		if ([self viewControllerToBecome] == nil){
-//			[self.navigationController	popViewControllerAnimated:YES];
-//		}
-//		else {
-//			[self.navigationController popToViewController:viewControllerToBecome animated:YES];
-//		}
-//		UIAlertView *failureAlert = [[UIAlertView alloc] initWithTitle:@"Failure" message:@"You have died" delegate:nil cancelButtonTitle:@"Be more careful" otherButtonTitles:nil];
-//		[failureAlert show];
-//		[gameLoopTimer invalidate];
+        UIAlertView *failureAlert = [[UIAlertView alloc] initWithTitle:@"Failure" message:@"Your Raid is dead" delegate:nil cancelButtonTitle:@"And so are you" otherButtonTitles:nil];
+		[failureAlert show];
+        [failureAlert release];
+        [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:NO] autorelease]];
 	}
 	if ([boss isDead]){
 		[activeEncounter characterDidCompleteEncounter];
-//		if ([self viewControllerToBecome] == nil){
-//			[self.navigationController	popViewControllerAnimated:YES];
-//		}
-//		else {
-//			[self.navigationController popToViewController:viewControllerToBecome animated:YES];
-//		}
-//		UIAlertView *failureAlert = [[UIAlertView alloc] initWithTitle:@"WIN" message:@"You completed the mission!" delegate:nil cancelButtonTitle:@"Onto something darker.." otherButtonTitles:nil];
-//		[failureAlert show];
-//		[gameLoopTimer invalidate];
+        [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:YES] autorelease]];
 	}
-	//NSLog(@"gameEventFired");
 }
 
 -(void)beginChanneling{

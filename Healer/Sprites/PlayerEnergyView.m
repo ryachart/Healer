@@ -12,58 +12,50 @@
 @implementation PlayerEnergyView
 
 @synthesize channelDelegate, percentChanneled;
+@synthesize energyBar, energyLabel;
 
 - (id)initWithFrame:(CGRect)frame {
-    if ((self = [super initWithFrame:frame])) {
+    if ((self = [super init])) {
         // Initialization code
 		percentEnergy = 0.0;
+        percentChanneled = 0.0;
+        
+        self.position = frame.origin;
+        self.contentSize = frame.size;
+        self.isTouchEnabled = YES;
+        isTouched = NO;
+        //[self setDefaultBackgroundColor:ccWHITE];
+        
+        self.energyLabel = [CCLabelTTF labelWithString:@"100/100" fontName:@"Arial" fontSize:14];
+        [self.energyLabel setColor:ccBLACK];
+        self.energyLabel.position = CGPointMake(frame.size.width * .3, frame.size.width * .1);
+        [self.energyLabel setContentSize:CGSizeMake(frame.size.width * .4, frame.size.height *.5)];
+        [self addChild:self.energyLabel z:100];
+        
+        self.energyBar = [CCLayerColor layerWithColor:ccc4(0, 0, 255, 255)];
+        [self.energyBar setPosition:CGPointMake(0, 0)];
+        self.energyBar.contentSize = CGSizeMake(0, frame.size.height);
+        [self addChild:self.energyBar];
     }
     return self;
 }
 
--(void)awakeFromNib
-{
-	
-	energyLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetWidth(self.frame)*.3,CGRectGetHeight(self.frame)*.1,CGRectGetWidth(self.frame)*.4, CGRectGetHeight(self.frame)*.5)];
-	[energyLabel setBackgroundColor:[UIColor clearColor]];
-	[self addSubview:energyLabel];
-	[energyLabel setTextAlignment:UITextAlignmentCenter];
-	[energyLabel setText:@"100/100"];
-	percentEnergy = 0.0;
-	percentChanneled = 0.0;
-}
-
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
 	[channelDelegate beginChanneling];
-	[self setBackgroundColor:[UIColor cyanColor]];
+	[self setColor:ccc3(0, 255, 255)];
 }
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
 	[channelDelegate endChanneling];
-	[self setBackgroundColor:[UIColor whiteColor]];
+	[self setColor:ccc3(255, 255, 255)];
 }
 
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-	CGFloat x = CGRectGetWidth(self.frame) * .025;
-	CGFloat y = CGRectGetHeight(self.frame) * .05;
-	CGFloat height = CGRectGetHeight(self.frame) * .90;
-	CGFloat width = CGRectGetWidth(self.frame) * .95 * percentEnergy;
-	//NSLog(@"Width: %f", width);
-	
-	CGContextRef context = UIGraphicsGetCurrentContext();
-	CGContextSetRGBFillColor(context,0,.75, .75, 1);
-	
-	UIRectFill(CGRectMake(x,y,width,height));
-}
 
 -(void)updateWithEnergy:(NSInteger)current andMaxEnergy:(NSInteger)max
 {
-	[energyLabel setText:[NSString stringWithFormat:@"%i/%i", current, max]];
-	[self setNeedsDisplay];
-	percentEnergy = ((float)current)/max;
+	[energyLabel setString:[NSString stringWithFormat:@"%i/%i", current, max]];
+    percentEnergy = ((float)current)/max;
+    self.energyBar.contentSize = CGSizeMake(self.contentSize.width * percentEnergy, self.contentSize.height);
 		
 }
 - (void)dealloc {

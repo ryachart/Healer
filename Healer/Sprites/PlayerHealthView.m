@@ -8,72 +8,76 @@
 
 #import "PlayerHealthView.h"
 
-
 @implementation PlayerHealthView
-@synthesize memberData, healthLabel, isTouched, interactionDelegate, defaultBackgroundColor;
+@synthesize memberData, healthLabel, isTouched, interactionDelegate, defaultBackgroundColor, healthBar;
 
 - (id)initWithFrame:(CGRect)frame {
-    if ((self = [super initWithFrame:frame])) {
+    if ((self = [super init])) {
         // Initialization code
+        self.position = frame.origin;
+        self.contentSize = frame.size;
+        self.isTouchEnabled = YES;
+        isTouched = NO;
+        [self setDefaultBackgroundColor:ccWHITE];
+        
+        self.healthLabel = [CCLabelTTF labelWithString:@"100.0" fontName:@"Arial" fontSize:14];
+        [self.healthLabel setPosition:CGPointMake(frame.size.width * .5, frame.size.height * .5)];
+        [self.healthLabel setColor:ccBLACK];
+        [self addChild:self.healthLabel z:10];
+        
+        self.healthBar = [CCLayerColor layerWithColor:ccc4(0, 255, 0, 255)];
+        [self.healthBar setPosition:CGPointMake(0, 0)];
+        self.healthBar.contentSize = CGSizeMake(0, frame.size.height);
+        [self addChild:self.healthBar];
     }
     return self;
 }
 
--(void)awakeFromNib{
-	isTouched = NO;
-	[self setDefaultBackgroundColor:[UIColor whiteColor]];
-}
--(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+-(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	//UITouch *touch = [touches anyObject];
-	
-	[[self interactionDelegate] playerSelected:self];
-	isTouched = YES;
+    UITouch *touch = [touches anyObject];
+    CGPoint touchLocation = [[CCDirector sharedDirector] convertToGL:[touch locationInView:[touch view]]];
+    
+    CGRect layerRect =  [self boundingBox];
+    layerRect.origin = CGPointZero;
+    CGPoint convertedToNodeSpacePoint = [self convertToNodeSpace:touchLocation];
+    
+    if (interactionDelegate != nil && CGRectContainsPoint(layerRect, convertedToNodeSpacePoint)){
+        [[self interactionDelegate] playerSelected:self];
+        isTouched = YES;
+    }
 }
 
--(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+-(void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-	
-	isTouched = NO;
-	[[self interactionDelegate] playerUnselected:self];
-	
+	if (interactionDelegate != nil){
+        BOOL wasTouched = isTouched;
+		isTouched = NO;
+        if (wasTouched){
+            [[self interactionDelegate] playerUnselected:self];
+        }
+	}
 }
 
 -(void)updateHealth
 {
 	NSString *healthText;
+    float healthPercentage = (((float)memberData.health) / memberData.maximumHealth);
+    self.healthBar.contentSize = CGSizeMake(healthPercentage * self.contentSize.width, self.healthBar.contentSize.height);
 	if (memberData.health >= 1){
-		healthText = [NSString stringWithFormat:@"%3.1f", (((float)memberData.health) / memberData.maximumHealth)*100];
+        
+		healthText = [NSString stringWithFormat:@"%3.1f", (healthPercentage)*100];
 	}
 	else {
 		healthText = @"Dead";
-		[self setBackgroundColor:[UIColor redColor]];
-		[self setNeedsDisplay];
+		[self setColor:ccRED];
 	}
 	
-	if (![healthText isEqualToString:[healthLabel text]]){
+	if (![healthText isEqualToString:[self.healthLabel string]]){
 		//NSLog(@"DIFFERENT");
-		[healthLabel setText:healthText];
-		[self setNeedsDisplay];
+		[self.healthLabel setString:healthText];
 	}
-}
-
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-	
-	CGFloat x = CGRectGetWidth(self.frame) * .005;
-	CGFloat y = CGRectGetHeight(self.frame) * .05;
-	CGFloat height = CGRectGetHeight(self.frame) * .90;
-	double percentageOfHealth = ((float)[memberData health])/[memberData maximumHealth];
-	CGFloat width = CGRectGetWidth(self.frame) * .990 * percentageOfHealth;
-	//NSLog(@"Width: %f", width);
-	
-	CGContextRef context = UIGraphicsGetCurrentContext();
-	CGContextSetRGBFillColor(context,0,1, 0, 1);
-	
-	UIRectFill(CGRectMake(x,y,width,height));
 }
 
 

@@ -25,7 +25,7 @@
         [self.healthFrame setContentSize:frame.size];
         
         self.bossNameLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0];
-        self.bossNameLabel.position = CGPointMake(1, 1);
+        self.bossNameLabel.position = CGPointMake(50, 50);
         self.bossNameLabel.contentSize = frame.size;
         
         self.healthLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0];
@@ -35,20 +35,6 @@
         [self addChild:self.healthFrame];
         [self addChild:self.bossNameLabel];
         [self addChild:self.healthLabel];
-
-		/*
-		[self setBackgroundColor:[UIColor darkGrayColor]];
-		bossNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(1, 1, CGRectGetWidth(frame), CGRectGetHeight(frame)*.25)];
-		[bossNameLabel setBackgroundColor:[UIColor clearColor]];
-		[bossNameLabel setFont:[UIFont	systemFontOfSize:12]];
-		
-		healthLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetWidth(frame)*.3, CGRectGetHeight(frame)*.3, CGRectGetWidth(frame)*.5, CGRectGetHeight(frame)*.25)];
-		[healthLabel setBackgroundColor:[UIColor clearColor]];
-		[healthLabel setFont:[UIFont systemFontOfSize:12]];
-		
-		[self addSubview:bossNameLabel];
-		[self addSubview:healthLabel];
-		 */
     }
     return self;
 }

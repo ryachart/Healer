@@ -6,25 +6,21 @@
 //  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import "Player.h"
+#import "cocos2d.h"
 
 @class PlayerHealthViewDelegate;
 
-@interface PlayerHealthView : UIView {
-	UILabel *healthLabel;
-	UIColor *defaultBackgroundColor;
-	HealableTarget* memberData;
+@interface PlayerHealthView : CCLayerColor {
 	BOOL isTouched;
-	
-	PlayerHealthViewDelegate *interactionDelegate;
 }
+@property (nonatomic, retain) CCLayerColor *healthBar;
 @property (nonatomic, assign, setter=setMemberData:) HealableTarget* memberData;
-@property (nonatomic, retain) IBOutlet UILabel *healthLabel;
+@property (nonatomic, retain) CCLabelTTF *healthLabel;
 @property (nonatomic, retain) PlayerHealthViewDelegate *interactionDelegate;
-@property (retain) UIColor *defaultBackgroundColor;
+@property ccColor3B defaultBackgroundColor;
 @property BOOL isTouched;
-
+-(id)initWithFrame:(CGRect)frame;
 -(void)setMemberData:(HealableTarget*)thePlayer;
 
 -(void)updateHealth;

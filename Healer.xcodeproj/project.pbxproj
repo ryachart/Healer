@@ -163,6 +163,7 @@
 		387E7B6C145E1868006D9266 /* GameInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B6B145E1868006D9266 /* GameInfo.m */; };
 		387E7B6F145E1E74006D9266 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = 387E7B6E145E1E74006D9266 /* Sounds */; };
 		38F04EEA13C2593500BCADCB /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38F04EE913C2593500BCADCB /* GameDefaults.plist */; };
+		BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -584,6 +585,8 @@
 		387E7B6D145E18E1006D9266 /* CharacterSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CharacterSheet.h; path = DataObjects/CharacterSheet.h; sourceTree = "<group>"; };
 		387E7B6E145E1E74006D9266 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = "<group>"; };
 		38F04EE913C2593500BCADCB /* GameDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameDefaults.plist; sourceTree = "<group>"; };
+		BF6CC5CE15022496000F1AFF /* PostBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostBattleScene.h; path = Scenes/PostBattleScene.h; sourceTree = "<group>"; };
+		BF6CC5CF15022496000F1AFF /* PostBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostBattleScene.m; path = Scenes/PostBattleScene.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1256,6 +1259,8 @@
 				387E7B45145E1382006D9266 /* HealerStartScene.m */,
 				387E7B46145E1382006D9266 /* RaidOrganizerViewController.h */,
 				387E7B47145E1382006D9266 /* RaidOrganizerViewController.m */,
+				BF6CC5CE15022496000F1AFF /* PostBattleScene.h */,
+				BF6CC5CF15022496000F1AFF /* PostBattleScene.m */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -1461,7 +1466,7 @@
 		38024DA213C2564D003D36F2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = Apple;
 			};
 			buildConfigurationList = 38024DA513C2564D003D36F2 /* Build configuration list for PBXProject "Healer" */;
@@ -1644,6 +1649,7 @@
 				387E7B64145E177B006D9266 /* PlayerSpellButton.m in Sources */,
 				387E7B67145E17CC006D9266 /* Encounter.m in Sources */,
 				387E7B6C145E1868006D9266 /* GameInfo.m in Sources */,
+				BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

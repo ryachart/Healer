@@ -62,6 +62,7 @@ static AudioController* sharedController = nil;
 	}
 	//[newAudioPlayer setDelegate:self]
 	
+    [newAudioPlayer prepareToPlay];
 	if (newAudioPlayer){
 		[audioPlayers setObject:newAudioPlayer forKey:title];
 		//[newAudioPlayer prepareToPlay];

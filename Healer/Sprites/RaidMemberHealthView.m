@@ -46,6 +46,7 @@
         [self addChild:self.healthBarLayer];
         [self addChild:self.classNameLabel];
         [self addChild:self.healthLabel];
+        [self addChild:self.effectsLabel];
 		interactionDelegate = nil;
 		
 		isTouched = NO;
@@ -99,11 +100,7 @@
 		}
 	}
 
-	
-	
-
 	if (![healthText isEqualToString:[healthLabel string]] || ![effectText isEqualToString:[effectsLabel string]]){
-		//NSLog(@"DIFFERENT");
 		[effectsLabel setString:effectText];
 		[healthLabel setString:healthText];
 	}
@@ -113,7 +110,6 @@
 
 -(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-	//UITouch *touch = [touches anyObject];
     UITouch *touch = [touches anyObject];
     CGPoint touchLocation = [[CCDirector sharedDirector] convertToGL:[touch locationInView:[touch view]]];
     
@@ -127,22 +123,6 @@
     }
 }
 
-//-(void)ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
-//    UITouch *touch = [touches anyObject];
-//    CGPoint touchLocation = [[CCDirector sharedDirector] convertToGL:[touch locationInView:[touch view]]];
-//    
-//    CGRect layerRect =  [self boundingBox];
-//    layerRect.origin = CGPointZero;
-//    CGPoint convertedToNodeSpacePoint = [self convertToNodeSpace:touchLocation];
-//    
-//    if (interactionDelegate != nil && CGRectContainsPoint(layerRect, convertedToNodeSpacePoint)){
-//        if (!isTouched){
-//            [[self interactionDelegate] thisMemberSelected:self];
-//            isTouched = YES;
-//        }
-//    }
-//}
-
 -(void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     
@@ -154,39 +134,6 @@
         }
 	}
 }
-
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-//- (void)drawRect:(CGRect)rect {
-//    // Drawing code
-//	CGFloat percentageToFill = ((float)memberData.health)/memberData.maximumHealth;
-//	
-//	CGFloat width = CGRectGetWidth(self.frame) * .8;
-//	CGFloat x = CGRectGetWidth(self.frame) * .10; //10% of the rect is a border
-//	
-//	CGFloat y = CGRectGetHeight(self.frame) * .10 + (CGRectGetHeight(self.frame) * .8 * (1.0 - percentageToFill));
-//	CGFloat height = CGRectGetHeight(self.frame) * .8 - (CGRectGetHeight(self.frame) * .8 * (1.0 - percentageToFill));
-//	
-//	CGContextRef context = UIGraphicsGetCurrentContext();
-//	CGContextSetRGBFillColor(context,0,1, 0, 1);
-//	
-//	UIRectFill(CGRectMake(x,y,width,height));
-//	
-//	
-//	[classNameLabel drawTextInRect:classNameLabel.frame];
-//	[healthLabel drawTextInRect:healthLabel.frame];
-//	[effectsLabel drawTextInRect:effectsLabel.frame];
-//	/*
-//	 CGFloat R = arc4random()%200;
-//	 CGFloat G = arc4random()%200;
-//	 CGFloat B = arc4random()%200;
-//	 */
-//	
-//	
-//	
-//	
-//}
-
 
 - (void)dealloc {
     [super dealloc];

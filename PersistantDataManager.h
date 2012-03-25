@@ -11,6 +11,8 @@
 #define MAX_CHARACTERS 5
 #define SAVE_FILE_NAME @"SavedCharacterData"
 
+extern NSString* const PlayerHighestLevelAttempted;
+extern NSString* const PlayerHighestLevelCompleted;
 
 @interface PersistantDataManager : NSObject {
 	Character* selectedCharacter;

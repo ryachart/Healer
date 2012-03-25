@@ -19,16 +19,16 @@
     self = [super init];
     if (self){
         if (victory){
-            CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"VICTORY!" fontName:nil fontSize:72];
+            CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"VICTORY!" fontName:@"Arial" fontSize:72];
             [victoryLabel setPosition:CGPointMake(512, 384)];
             [self addChild:victoryLabel];
         }else{
-            CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"DEFEAT!" fontName:nil fontSize:72];
+            CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"DEFEAT!" fontName:@"Arial" fontSize:72];
             [victoryLabel setPosition:CGPointMake(512, 384)];
             [self addChild:victoryLabel];
         }
         
-        CCMenuItem *done = [CCMenuItem itemWithTarget:self selector:@selector(done)];
+        CCMenuItemLabel *done = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Continue" fontName:@"Arial" fontSize:32] target:self selector:@selector(done)];
         
         CCMenu *menu = [CCMenu menuWithItems:done, nil];
         menu.position = CGPointMake(512, 200);
@@ -38,6 +38,8 @@
 }
                             
 -(void)done{
-    
+    QuickPlayScene *qps = [[QuickPlayScene alloc] init];
+    [[CCDirector sharedDirector] replaceScene:qps];
+    [qps release];
 }
 @end

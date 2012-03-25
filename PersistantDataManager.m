@@ -9,6 +9,10 @@
 #import "PersistantDataManager.h"
 #import "DataDefinitions.h"
 
+NSString* const PlayerHighestLevelAttempted = @"com.healer.playerHighestLevelAttempted";
+NSString* const PlayerHighestLevelCompleted = @"com.healer.playerHighestLevelCompleted";
+
+
 @implementation PersistantDataManager
 
 @synthesize selectedCharacter, characters;

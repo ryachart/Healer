@@ -40,6 +40,7 @@
 @property (nonatomic, retain) PlayerMoveButton *playerMoveButton;
 @property (nonatomic, retain) PlayerCastBar *playerCastBar;
 @property (nonatomic, retain) CCLabelTTF *alertStatus;
+@property (readwrite) NSInteger levelNumber;
 
 -(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse;
 

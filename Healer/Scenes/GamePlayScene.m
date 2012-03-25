@@ -12,6 +12,7 @@
 #import "BossHealthView.h"
 #import "PlayerMoveButton.h"
 #import "PostBattleScene.h"
+#import "PersistantDataManager.h"
 
 @interface GamePlayScene ()
 //Data Models
@@ -29,6 +30,7 @@
 @synthesize spellView1, spellView2, spellView3, spellView4;
 @synthesize bossHealthView, playerHealthView, playerEnergyView, playerMoveButton, playerCastBar;
 @synthesize alertStatus;
+@synthesize levelNumber;
 -(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse
 {
     if (self = [super init]){
@@ -271,20 +273,18 @@
 	//Determine if there will be another iteration of the gamestate
 	if (survivors == 0)
 	{
-		UIAlertView *failureAlert = [[UIAlertView alloc] initWithTitle:@"Failure" message:@"Your Raid is dead" delegate:nil cancelButtonTitle:@"And so are you" otherButtonTitles:nil];
-		[failureAlert show];
-        [failureAlert release];
         [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:NO] autorelease]];
-
 	}
+    
 	if ([player isDead]){
-        UIAlertView *failureAlert = [[UIAlertView alloc] initWithTitle:@"Failure" message:@"Your Raid is dead" delegate:nil cancelButtonTitle:@"And so are you" otherButtonTitles:nil];
-		[failureAlert show];
-        [failureAlert release];
         [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:NO] autorelease]];
 	}
 	if ([boss isDead]){
 		[activeEncounter characterDidCompleteEncounter];
+        int i = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
+        if (self.levelNumber > i){
+            [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:self.levelNumber] forKey:PlayerHighestLevelCompleted];
+        }
         [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:YES] autorelease]];
 	}
 }
@@ -303,13 +303,13 @@
 }
 
 - (void)dealloc {
-    [super dealloc];
 	AudioController *ac = [AudioController sharedInstance];
 	for (Spell* aSpell in [player activeSpells]){
 		[[aSpell spellAudioData] releaseSpellAudio];
 	}
 	[ac removeAudioPlayerWithTitle:CHANNELING_SPELL_TITLE];
 	[ac removeAudioPlayerWithTitle:OUT_OF_MANA_TITLE];
+    [super dealloc];
 }
 
 

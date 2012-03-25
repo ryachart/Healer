@@ -69,16 +69,34 @@
 
 @end
 
+//SIMPLE GAME SPELLS
+@interface Heal : Spell //Basic Efficient Low throughput Heal
+@end
+
+@interface GreaterHeal : Spell //Simple High cost high efficiency Heal
+@end
+
+@interface ForkedHeal : Spell //Two target heal with good efficiency
+@end
+
+@interface Regrow : Spell //Instant cast 12 second HoT
+@end
+
+@interface Sphere : Spell //Fast cast expensive Absorb
+@end
+
+@interface BlastOfLight : Spell //Instant cast short cooldown heal
+@end
+
+@interface Purify : Spell //Cure
+@end
+
 ////BASIC TEST SPELLS/////
 @interface QuickHeal : Spell
 
 @end
 
 @interface SuperHeal : Spell
-
-@end
-
-@interface ForkedHeal : Spell
 
 @end
 

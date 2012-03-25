@@ -28,11 +28,11 @@
     if (self = [super init]){
         //Perform Scene Setup
         
-        self.storyModeButton = [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Story Mode" fontName:@"Arial" fontSize:32] target:self selector:@selector(storyModeSelected)] autorelease];
-        self.quickPlayButton= [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Quick Play" fontName:@"Arial" fontSize:32] target:self selector:@selector(quickPlaySelected)] autorelease];
+//        self.storyModeButton = [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Story Mode" fontName:@"Arial" fontSize:32] target:self selector:@selector(storyModeSelected)] autorelease];
+        self.quickPlayButton= [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Play" fontName:@"Arial" fontSize:32] target:self selector:@selector(quickPlaySelected)] autorelease];
         [self.quickPlayButton setPosition:ccp(0, 100)];
         
-        self.menu = [CCMenu menuWithItems:self.storyModeButton, self.quickPlayButton, nil];
+        self.menu = [CCMenu menuWithItems:self.quickPlayButton, nil];
         
         CGSize winSize = [CCDirector sharedDirector].winSize;
         

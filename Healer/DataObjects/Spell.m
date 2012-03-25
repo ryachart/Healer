@@ -181,6 +181,51 @@
 }
 @end
 
+
+#pragma mark - Simple Game Spells
+@implementation Heal
++(id)defaultSpell{
+    Heal *heal = [[Heal alloc] initWithTitle:@"Heal" healAmnt:17 energyCost:5 castTime:2.0 andCooldown:0.5];
+    return [heal autorelease];
+}
+
+@end
+
+@implementation GreaterHeal
++(id)defaultSpell{
+    GreaterHeal *heal = [[GreaterHeal alloc] initWithTitle:@"Greater Heal" healAmnt:35 energyCost:9 castTime:2.5 andCooldown:0.5];
+    return [heal autorelease];
+}
+@end
+
+@implementation ForkedHeal
++(id)defaultSpell
+{
+	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:76 energyCost:10 castTime:1.75 andCooldown:.5];//10h/e
+	NSArray *forkedPercentages = [NSArray arrayWithObjects:[[[NSNumber alloc] initWithDouble:.50] autorelease], [[[NSNumber alloc] initWithDouble:.50] autorelease], nil];
+	[forkedHeal setTargets:2 withPercentagesPerTarget:forkedPercentages];
+	return [forkedHeal autorelease];
+}
+@end
+
+@implementation Regrow
+
+@end
+
+@implementation  Sphere
+
+@end
+
+
+@implementation BlastOfLight
+
+@end
+
+@implementation Purify
+
+@end
+
+
 #pragma mark -
 #pragma mark Test Spells
 @implementation QuickHeal
@@ -201,15 +246,7 @@
 }
 @end
 
-@implementation ForkedHeal
-+(id)defaultSpell
-{
-	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:100 energyCost:10 castTime:1.75 andCooldown:.5];//10h/e
-	NSArray *forkedPercentages = [NSArray arrayWithObjects:[[[NSNumber alloc] initWithDouble:.50] autorelease], [[[NSNumber alloc] initWithDouble:.50] autorelease], nil];
-	[forkedHeal setTargets:2 withPercentagesPerTarget:forkedPercentages];
-	return [forkedHeal autorelease];
-}
-@end
+
 
 @implementation SurgeOfLife
 +(id)defaultSpell

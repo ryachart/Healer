@@ -7,6 +7,7 @@
 //
 
 #import "QuickPlayScene.h"
+#import "PersistantDataManager.h"
 
 @interface QuickPlayScene ()
 @property (retain) CCMenuItemLabel *easyModeButton;
@@ -15,10 +16,8 @@
 @property (retain) CCMenuItemLabel *extremeModeButton;
 @property (retain) CCMenu *menu;
 
--(void)startEasyGame;
--(void)startMediumGame;
--(void)startHardGame;
--(void)startExtremeGame;
+-(void)beginGameWithSelectedLevel:(id)sender;
+
 -(void)back;
 
 @end
@@ -29,32 +28,60 @@
 @synthesize hardModeButton;
 @synthesize extremeModeButton;
 @synthesize menu;
-
 -(id)init{
     if (self = [super init]){
-        self.easyModeButton = [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Easy Game" fontName:@"Arial" fontSize:32] target:self selector:@selector(startEasyGame)] autorelease];
-        self.mediumModeButton= [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Medium Game" fontName:@"Arial" fontSize:32] target:self selector:@selector(startMediumGame)] autorelease];
-        [self.mediumModeButton setPosition:ccp(0, 50)];
-        self.hardModeButton= [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Hard Game" fontName:@"Arial" fontSize:32] target:self selector:@selector(startHardGame)] autorelease];
-        [self.hardModeButton setPosition:ccp(0, 100)];
-        self.extremeModeButton= [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Extreme Game" fontName:@"Arial" fontSize:32] target:self selector:@selector(startExtremeGame)] autorelease];
-        [self.extremeModeButton  setPosition:ccp(0, 150)];
-        
-        
-        self.menu = [CCMenu menuWithItems:self.easyModeButton, self.mediumModeButton, self.hardModeButton, self.extremeModeButton, nil];
-        
-        CGSize winSize = [CCDirector sharedDirector].winSize;
-        
-        [self.menu setPosition:ccp(winSize.width * .4, winSize.height * 1/3)];
+        self.menu = [CCMenu menuWithItems:nil];
+        for (int i = 0; i < 20; i++){
+            CCMenuItemLabel *levelButton = [[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:[NSString stringWithFormat:@"Level %i", i + 1] fontName:@"Arial" fontSize:32] target: self selector:@selector(beginGameWithSelectedLevel:)];
+            levelButton.tag = i +1;
+            if (i > ([[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue] )){
+                levelButton.opacity = 125;
+            }
+            [self.menu addChild:levelButton];
+        }
+        [self.menu setPosition:ccp([CCDirector sharedDirector].winSize.width /2, [CCDirector sharedDirector].winSize.height / 2)];
         [self.menu setColor:ccc3(255, 255, 255)];
+        [self.menu alignItemsInRows:[NSNumber numberWithInt:10],[NSNumber numberWithInt:10], nil];
         [self addChild:self.menu];
     }
     return self;
 }
 
+
+-(void)beginGameWithSelectedLevel:(CCMenuItemLabel*)sender{
+    int level = sender.tag;
+    srand(time(NULL));
+    
+    int i = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
+    
+    if (i + 1 < level){
+        return;
+    }
+    
+    if (level == 1){
+        Raid *basicRaid = [[Raid alloc] init];
+        Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
+        Boss *basicBoss = [[Boss alloc] initWithHealth:5000 damage:12 targets:1 frequency:1.5 andChoosesMT:NO];
+        
+        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], nil]];
+        
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Troll defaultTroll]];
+        }
+        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:basicRaid boss:basicBoss andPlayer:basicPlayer];
+        [gps setLevelNumber:level];
+        [[CCDirector sharedDirector] replaceScene:gps];
+        [gps release];
+        [basicBoss release];
+        [basicPlayer release];
+        [basicRaid release];
+    }
+    
+}
+
 -(void)startEasyGame
 {
-	srand(time(NULL));
+	
 	
 	Raid* demoRaid = [[Raid alloc] init];
 	Player* demoPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
@@ -82,87 +109,9 @@
 	
 }
 
--(void)startMediumGame
-{
-	Raid* demoRaid = [[Raid alloc] init];
-	Player* demoPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
-	Dragon* demoBoss = 	[Dragon defaultBoss];
-	[demoPlayer setActiveSpells:[NSArray arrayWithObjects:[TwoWinds defaultSpell], [SymbioticConnection defaultSpell], [GloriousBeam defaultSpell], nil]];
-	
-	for (int i = 0; i < 7; i++){
-		[demoRaid addRaidMember:[Witch defaultWitch]];
-	}
-	for (int i = 0; i < 9; i++){
-		[demoRaid addRaidMember:[Ogre defaultOgre]];
-	}
-	for (int i =0; i < 9; i++){
-		[demoRaid addRaidMember:[Troll defaultTroll]];
-	}
-	
-	
-//	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
-//	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
-	
-	//[self.navigationController pushViewController:demoGameVC animated:YES];
-	
-}
-
--(void)startHardGame
-{
-	Raid* demoRaid = [[Raid alloc] init];
-	Player* demoPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
-	Hydra* demoBoss = 	[Hydra defaultBoss];
-
-	[demoPlayer setActiveSpells:[NSArray arrayWithObjects:[QuickHeal defaultSpell], [SuperHeal defaultSpell], [ForkedHeal defaultSpell], [UnleashedNature defaultSpell], nil]];
-	
-	for (int i = 0; i < 9; i++){
-		[demoRaid addRaidMember:[Witch defaultWitch]];
-	}
-	for (int i = 0; i < 8; i++){
-		[demoRaid addRaidMember:[Ogre defaultOgre]];
-	}
-	for (int i =0; i < 8; i++){
-		[demoRaid addRaidMember:[Troll defaultTroll]];
-	}
-	
-	
-//	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
-//	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
-	
-	//[self.navigationController pushViewController:demoGameVC animated:YES];
-	
-}
-
--(void)startExtremeGame
-{
-	Raid* demoRaid = [[Raid alloc] init];
-	Player* demoPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
-	ChaosDemon* demoBoss = 	[ChaosDemon defaultBoss];
-	
-	[demoPlayer setActiveSpells:[NSArray arrayWithObjects:[QuickHeal defaultSpell], [SuperHeal defaultSpell], [ForkedHeal defaultSpell],[SurgeOfLife defaultSpell], nil]];
-	
-	for (int i = 0; i < 9; i++){
-		[demoRaid addRaidMember:[Witch defaultWitch]];
-	}
-	for (int i = 0; i < 8; i++){
-		[demoRaid addRaidMember:[Ogre defaultOgre]];
-	}
-	for (int i =0; i < 8; i++){
-		[demoRaid addRaidMember:[Troll defaultTroll]];
-	}
-	
-	
-//	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
-//	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
-	
-	//[self.navigationController pushViewController:demoGameVC animated:YES];
-	
-}
-
 -(void)back
 {
 	//[self.navigationController popViewControllerAnimated:YES];
-	
 }
 
 

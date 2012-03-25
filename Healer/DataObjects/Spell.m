@@ -36,6 +36,15 @@
 	
 }
 
+-(NSInteger)healingAmount{
+    int finalAmount = healingAmount;
+    int fuzzRange = (int)round(healingAmount * .05);
+    int fuzz = arc4random() % (fuzzRange + 1);
+    
+    finalAmount += fuzz * (arc4random() % 2 == 0 ? -1 : 1);
+    return finalAmount;
+}
+
 -(SpellCardView*)spellCardView{
 	
 	return nil;

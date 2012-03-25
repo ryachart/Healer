@@ -285,7 +285,7 @@
         if (self.levelNumber > i){
             [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:self.levelNumber] forKey:PlayerHighestLevelCompleted];
         }
-        [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:YES] autorelease]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:1.0 scene:[[[PostBattleScene alloc] initWithVictory:YES] autorelease]]];
 	}
 }
 

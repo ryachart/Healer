@@ -7,9 +7,12 @@
 //
 
 #import "PlayerHealthView.h"
+@interface PlayerHealthView ()
+@property (nonatomic, readwrite) int lastHealth;
+@end
 
 @implementation PlayerHealthView
-@synthesize memberData, healthLabel, isTouched, interactionDelegate, defaultBackgroundColor, healthBar;
+@synthesize memberData, healthLabel, isTouched, interactionDelegate, defaultBackgroundColor, healthBar, lastHealth;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super init])) {
@@ -18,6 +21,7 @@
         self.contentSize = frame.size;
         self.isTouchEnabled = YES;
         isTouched = NO;
+        lastHealth = 0;
         [self setDefaultBackgroundColor:ccWHITE];
         
         self.healthLabel = [CCLabelTTF labelWithString:@"100.0" fontName:@"Arial" fontSize:14];
@@ -31,6 +35,11 @@
         [self addChild:self.healthBar];
     }
     return self;
+}
+
+-(void)setMemberData:(HealableTarget *)thePlayer{
+    memberData = thePlayer;
+    lastHealth = memberData.health;
 }
 
 -(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -61,7 +70,26 @@
 }
 
 -(void)updateHealth
-{
+{   
+    if (memberData && memberData.health > lastHealth){
+        //We were healed.  Lets fire some SCT!
+        int heal = memberData.health - lastHealth;
+        CCLabelTTF *shadowLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"+%i", heal] fontName:@"Arial" fontSize:20];
+        [shadowLabel setColor:ccBLACK];
+        [shadowLabel setPosition:CGPointMake(self.contentSize.width /2 -1 , self.contentSize.height /2 + 1)];
+        
+        CCLabelTTF *sctLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"+%i", heal] fontName:@"Arial" fontSize:20];
+        [sctLabel setColor:ccGREEN];
+        [sctLabel setPosition:CGPointMake(self.contentSize.width /2 , self.contentSize.height /2)];
+        
+        [self addChild:shadowLabel z:10];
+        [self addChild:sctLabel z:11];
+        
+        [sctLabel runAction:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0], nil]];
+        [shadowLabel runAction:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0], nil]];
+        
+    }
+    lastHealth = memberData.health;
 	NSString *healthText;
     float healthPercentage = (((float)memberData.health) / memberData.maximumHealth);
     self.healthBar.contentSize = CGSizeMake(healthPercentage * self.contentSize.width, self.healthBar.contentSize.height);

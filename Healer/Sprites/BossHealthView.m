@@ -8,10 +8,13 @@
 
 #import "BossHealthView.h"
 
+@interface BossHealthView ()
+@property (nonatomic, readwrite) NSInteger lastHealth;
+@end
 
 @implementation BossHealthView
 
-@synthesize bossNameLabel, healthLabel, bossData, healthFrame;
+@synthesize bossNameLabel, healthLabel, bossData, healthFrame, lastHealth;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super init])) {
@@ -19,6 +22,8 @@
         self.position = frame.origin;
         self.contentSize = frame.size;
         [self setOpacity:255];
+        
+        lastHealth = 0;
         
         self.healthFrame = [[[CCLayerColor alloc] initWithColor:ccc4(0, 255, 0, 255)] autorelease];
         [self.healthFrame setPosition:CGPointMake(0, 0)];
@@ -33,8 +38,8 @@
         self.healthLabel.contentSize = CGSizeMake(frame.size.width * .5, frame.size.height * .25);
 
         [self addChild:self.healthFrame];
-        [self addChild:self.bossNameLabel];
-        [self addChild:self.healthLabel];
+        [self addChild:self.bossNameLabel z:10];
+        [self addChild:self.healthLabel z:10];
     }
     return self;
 }

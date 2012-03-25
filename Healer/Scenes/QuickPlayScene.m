@@ -61,7 +61,7 @@
     if (level == 1){
         Raid *basicRaid = [[Raid alloc] init];
         Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
-        Boss *basicBoss = [[Boss alloc] initWithHealth:5000 damage:12 targets:1 frequency:1.5 andChoosesMT:NO];
+        Boss *basicBoss = [[Boss alloc] initWithHealth:7500 damage:12 targets:1 frequency:1.5 andChoosesMT:NO];
         
         [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], nil]];
         
@@ -70,43 +70,13 @@
         }
         GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:basicRaid boss:basicBoss andPlayer:basicPlayer];
         [gps setLevelNumber:level];
-        [[CCDirector sharedDirector] replaceScene:gps];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:1.0 scene:gps]];
         [gps release];
         [basicBoss release];
         [basicPlayer release];
         [basicRaid release];
     }
     
-}
-
--(void)startEasyGame
-{
-	
-	
-	Raid* demoRaid = [[Raid alloc] init];
-	Player* demoPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
-	Giant* demoBoss = 	[Giant defaultBoss];
-
-	[demoPlayer setActiveSpells:[NSArray arrayWithObjects:[SurgingGrowth defaultSpell], [RoarOfLife defaultSpell], [FieryAdrenaline defaultSpell], [WoundWeaving defaultSpell], nil]];
-	
-	for (int i = 0; i < 5; i++){
-		[demoRaid addRaidMember:[Witch defaultWitch]];
-	}
-	for (int i = 0; i < 10; i++){
-		[demoRaid addRaidMember:[Ogre defaultOgre]];
-	}
-	for (int i =0; i < 10; i++){
-		[demoRaid addRaidMember:[Troll defaultTroll]];
-	}
-	
-//	
-//	InGameViewController* demoGameVC = [[InGameViewController alloc] initWithNibName:@"InGameViewController" bundle:nil];
-//	[demoGameVC readyWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
-	
-	//[self.navigationController pushViewController:demoGameVC animated:YES];
-	GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:demoRaid boss:demoBoss andPlayer:demoPlayer];
-    [[CCDirector sharedDirector] replaceScene:gps];
-	
 }
 
 -(void)back

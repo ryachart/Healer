@@ -10,10 +10,14 @@
 
 #define HEALTH_BAR_BORDER 6
 
+@interface RaidMemberHealthView ()
+@property (nonatomic, readwrite) NSInteger lastHealth;
+@end
+
 @implementation RaidMemberHealthView
 
 @synthesize memberData, classNameLabel, healthLabel, interactionDelegate, defaultBackgroundColor, isTouched, effectsLabel;
-@synthesize healthBarLayer;
+@synthesize healthBarLayer, lastHealth;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super init])) {
@@ -22,6 +26,7 @@
         self.position = frame.origin;
         self.contentSize = frame.size;
         
+        self.lastHealth = 0;
         
         self.healthBarLayer = [CCLayerColor layerWithColor:ccc4(0, 255, 0, 255) width:frame.size.width - (HEALTH_BAR_BORDER *2) height:frame.size.height - (HEALTH_BAR_BORDER *2)];
         self.healthBarLayer.position = CGPointMake(HEALTH_BAR_BORDER, HEALTH_BAR_BORDER);
@@ -57,7 +62,7 @@
 -(void)setMemberData:(RaidMember*)rdMember
 {
 	memberData = rdMember;
-	
+	self.lastHealth = memberData.health;
 	if ([memberData class] == [Witch class]) [classNameLabel setString:@"Witch"];
 	if ([memberData class] == [Ogre	 class]) [classNameLabel setString:@"Ogre"];
 	if ([memberData class] == [Troll class]) [classNameLabel setString:@"Troll"];
@@ -75,6 +80,25 @@
 }
 -(void)updateHealth
 {
+    if (memberData && memberData.health > self.lastHealth){
+        //We were healed.  Lets fire some SCT!
+        int heal = memberData.health - lastHealth;
+        CCLabelTTF *shadowLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"+%i", heal] fontName:@"Arial" fontSize:20];
+        [shadowLabel setColor:ccBLACK];
+        [shadowLabel setPosition:CGPointMake(self.contentSize.width /2 -1 , self.contentSize.height /2 + 1)];
+        
+        CCLabelTTF *sctLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"+%i", heal] fontName:@"Arial" fontSize:20];
+        [sctLabel setColor:ccGREEN];
+        [sctLabel setPosition:CGPointMake(self.contentSize.width /2 , self.contentSize.height /2)];
+        
+        [self addChild:shadowLabel z:10];
+        [self addChild:sctLabel z:11];
+        
+        [sctLabel runAction:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0], nil]];
+        [shadowLabel runAction:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0], nil]];
+        
+    }
+    self.lastHealth = memberData.health;
 	NSString *healthText;
 	if (memberData.health >= 1){
 		healthText = [NSString stringWithFormat:@"%3.1f", (((float)memberData.health) / memberData.maximumHealth)*100];

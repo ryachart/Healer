@@ -7,11 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "CombatEvent.h"
 #define MAXIMUM_STATUS_EFFECTS 25
 @class Effect;
 @class HealthAdjustmentModifier;
-@interface HealableTarget : NSObject {
+@interface HealableTarget : NSObject <EventDataSource> {
 	NSInteger health; //All HealableTargets must have health
 	NSInteger maximumHealth;
 	

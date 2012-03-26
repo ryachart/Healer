@@ -16,7 +16,6 @@
 
 @interface Spell : NSObject {
 	float castTime;
-	float coolDown;
 	NSInteger targets;
 	NSInteger healingAmount;
 	NSInteger energyCost;
@@ -43,13 +42,15 @@
 @property (nonatomic, copy) NSArray *percentagesPerTarget;
 @property (retain, getter=description) NSString *description;
 @property (retain, readonly) SpellAudioData *spellAudioData;
-
+@property (nonatomic, readwrite) float cooldownRemaining;
+@property (nonatomic, readwrite) float cooldown;
 -(SpellCardView*)spellCardView;
 -(NSString*)spellDescription;
 -(BOOL)isInstant;
 -(void)setTargets:(NSInteger)numOfTargets withPercentagesPerTarget:(NSArray*)percentages;
 
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime;
+-(void)updateCooldowns:(float)theTime;
 -(void)spellBeganCasting;
 -(void)spellEndedCasting;
 -(void)spellInterrupted;

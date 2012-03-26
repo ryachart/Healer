@@ -17,23 +17,24 @@
 
 #import <Foundation/Foundation.h>
 #import "HealableTarget.h"
-
+#import "CombatEvent.h"
 
 @class Boss;
 @class Raid;
 @class Player;
 @interface RaidMember : HealableTarget {
-	NSInteger damageDealt; //All RaidMembers deal some damage
 	float damageFrequency; //All Raid members deal damage at some frequency
 	
 	//Combat Action Data
 	float lastAttack;
 	
 }
-
+@property (nonatomic,  readwrite) NSInteger damageDealt; //All RaidMembers deal some damage
 @property (readwrite) float lastAttack;
+@property (nonatomic, assign) id<EventLogger> *logger;
 
 -(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq;
+-(BOOL)raidMemberShouldDodgeAttack:(float)modifer;
 
 //This function is overriden by each subtype of RaidMember.
 //It allows a RaidMember to be asked to take any combatActions while the games goes on.

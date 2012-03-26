@@ -13,18 +13,19 @@
 @end
 
 @implementation Boss
-@synthesize lastAttack, health, maximumHealth, title;
+@synthesize lastAttack, health, maximumHealth, title, logger;
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
-	health = hlth;
-	maximumHealth = hlth;
-	damage = dmg;
-	targets = trgets;
-	frequency = freq;
-	choosesMainTank = chooses;
-	lastAttack = 0.0f;
-	title = @"";
-    
+    if (self = [super init]){
+        health = hlth;
+        maximumHealth = hlth;
+        damage = dmg;
+        targets = trgets;
+        frequency = freq;
+        choosesMainTank = chooses;
+        lastAttack = 0.0f;
+        title = @"";
+    }
 	return self;
 	
 }
@@ -50,7 +51,12 @@
 					target = [victims objectAtIndex:targetIndex];
 				} while ([target isDead]);
 				
-				[target setHealth:[target health] - damagePerTarget];
+                if (![target raidMemberShouldDodgeAttack:0.0]){
+                    [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:damagePerTarget] andEventType:CombatEventTypeDamage]];
+                    [target setHealth:[target health] - damagePerTarget];
+                }else{
+                    [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:0 andEventType:CombatEventTypeDodge]];
+                }
 			}
 		}
 		else{
@@ -89,6 +95,13 @@
 +(id)defaultBoss
 {
 	return nil;
+}
+
+-(NSString*)sourceName{
+    return self.title;
+}
+-(NSString*)targetName{
+    return self.title;
 }
 @end
 @implementation MinorDemon
@@ -136,6 +149,7 @@
 					target = [victims objectAtIndex:targetIndex];
 				} while ([target isDead]);
 				
+                
 				[target setHealth:[target health] - damagePerTarget];
 			}
 		}

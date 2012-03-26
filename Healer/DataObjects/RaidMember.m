@@ -11,6 +11,7 @@
 
 @implementation RaidMember
 @synthesize lastAttack;
+@synthesize damageDealt;
 
 -(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq
 {
@@ -24,6 +25,20 @@
         activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
     }
 	return self;
+}
+
+
+-(NSInteger)damageDealt{
+    int finalAmount = damageDealt;
+    int fuzzRange = (int)round(damageDealt * .05);
+    int fuzz = arc4random() % (fuzzRange + 1);
+    
+    finalAmount += fuzz * (arc4random() % 2 == 0 ? -1 : 1);
+    return finalAmount;
+}
+
+-(BOOL)raidMemberShouldDodgeAttack:(float)modifer{
+    return NO;
 }
 
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
@@ -43,16 +58,19 @@
 	return [defWitch autorelease];
 }
 
+-(BOOL)raidMemberShouldDodgeAttack:(float)modifer{
+    return arc4random() % 100 <= 5;
+}
+
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
 	lastAttack += timeDelta;
 	if (lastAttack >= damageFrequency){
 		lastAttack = 0.0;
 		
-		[theBoss setHealth:[theBoss health] - damageDealt];
+		[theBoss setHealth:[theBoss health] - self.damageDealt];
 		
 	}
-
 	
 	for (int i = 0; i < [activeEffects count]; i++){
 		Effect *effect = [activeEffects objectAtIndex:i];
@@ -74,13 +92,17 @@
 	return [defTroll autorelease];
 }
 
+-(BOOL)raidMemberShouldDodgeAttack:(float)modifer{
+    return arc4random() % 100 <= 8;
+}
+
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
 	lastAttack+= timeDelta;
 	if (lastAttack >= damageFrequency){
 		lastAttack = 0.0;
 		
-		[theBoss setHealth:[theBoss health] - damageDealt];
+		[theBoss setHealth:[theBoss health] - self.damageDealt];
 		
 	}
 	
@@ -103,13 +125,17 @@
 	return [defOgre autorelease];
 }
 
+-(BOOL)raidMemberShouldDodgeAttack:(float)modifer{
+    return arc4random() % 100 <= 10;
+}
+
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
 	lastAttack+= timeDelta;
 	if (lastAttack >= damageFrequency){
 		lastAttack = 0.0;
 		
-		[theBoss setHealth:[theBoss health] - damageDealt];
+		[theBoss setHealth:[theBoss health] - self.damageDealt];
 		
 	}
 	

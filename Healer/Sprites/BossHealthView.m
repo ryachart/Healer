@@ -51,21 +51,37 @@
 	bossData = theBoss;
 	
 	[self.bossNameLabel setString:[bossData title]];
-	
+	lastHealth = theBoss.health;
 	
 }
 
 -(void)updateHealth
 {
+    if (bossData && bossData.health < lastHealth){
+        int heal = bossData.health - lastHealth;
+        CCLabelTTF *shadowLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
+        [shadowLabel setColor:ccBLACK];
+        [shadowLabel setPosition:CGPointMake(self.contentSize.width /2 -1 , self.contentSize.height /2 + 1)];
+        
+        CCLabelTTF *sctLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
+        [sctLabel setColor:ccRED];
+        [sctLabel setPosition:CGPointMake(self.contentSize.width /2 , self.contentSize.height /2)];
+        
+        [self addChild:shadowLabel z:10];
+        [self addChild:sctLabel z:11];
+        
+        int direction = arc4random() % 2 == 1 ? -1 : 1;
+        [sctLabel runAction:[CCSpawn actions:[CCJumpBy actionWithDuration:2.0 position:CGPointMake(direction * 50, -50) height:20 jumps:1], [CCFadeOut actionWithDuration:2.0], nil]];
+        [shadowLabel runAction:[CCSpawn actions:[CCJumpBy actionWithDuration:2.0 position:CGPointMake(direction * 50, -50) height:20 jumps:1], [CCFadeOut actionWithDuration:2.0], nil]];
+    }
+    
+    lastHealth = bossData.health;
 	NSString *healthText;
 	if (bossData.health >= 1){
 		healthText = [NSString stringWithFormat:@"%3.1f", (((float)bossData.health) / bossData.maximumHealth)*100];
-        
-		
 	}
 	else {
 		healthText = @"Dead";
-
 	}
 	
 	if (![healthText isEqualToString:[self.healthLabel string]]){

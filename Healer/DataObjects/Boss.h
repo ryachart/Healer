@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "CombatEvent.h"
 @class Player;
 @class Raid;
 @class RaidMember;
@@ -16,7 +16,7 @@
   To make special bosses, subclass boss and override
   combatActions.
  */
-@interface Boss : NSObject {
+@interface Boss : NSObject <EventDataSource> {
 	NSInteger health;
 	NSInteger maximumHealth;
 	NSInteger damage;
@@ -29,6 +29,7 @@
 }
 @property (nonatomic, setter=setHealth:) NSInteger health;
 @property (nonatomic, retain) NSString* title;
+@property (nonatomic, assign) id<EventLogger> logger;
 @property NSInteger maximumHealth;
 
 @property (nonatomic, readwrite) float lastAttack;

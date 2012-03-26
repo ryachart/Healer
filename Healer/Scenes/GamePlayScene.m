@@ -13,7 +13,6 @@
 #import "PlayerMoveButton.h"
 #import "PostBattleScene.h"
 #import "PersistantDataManager.h"
-
 @interface GamePlayScene ()
 //Data Models
 @property (nonatomic, retain) Raid *raid;
@@ -31,12 +30,17 @@
 @synthesize bossHealthView, playerHealthView, playerEnergyView, playerMoveButton, playerCastBar;
 @synthesize alertStatus;
 @synthesize levelNumber;
+@synthesize eventLog;
 -(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse
 {
     if (self = [super init]){
         self.raid = raidToUse;
         self.boss = bossToUse;
+        [self.boss setLogger:self];
         self.player = playerToUse;
+        [self.player setLogger:self];
+        
+        self.eventLog = [NSMutableArray arrayWithCapacity:1000];
         
         self.raidView = [[[RaidView alloc] init] autorelease];
         [self.raidView setPosition:CGPointMake(100, 100)];
@@ -100,7 +104,6 @@
         for (RaidMember *member in raidMembers)
         {
             RaidMemberHealthView *rmhv = [[RaidMemberHealthView alloc] initWithFrame:[raidView vendNextUsableRect]];
-            //NSLog(@"Vended Rect: %1.1f", (float)CGRectGetWidth([rmhv frame]));
             [rmhv setMemberData:member];
             [rmhv setInteractionDelegate:(RaidMemberHealthViewDelegate*)self];
             [raidView addRaidMemberHealthView:rmhv];
@@ -208,7 +211,11 @@
 			}
 		}
 		else{
-			[player beginCasting:[spell spellData] withTargets:targets];
+            if ([[spell spellData] cooldownRemaining] > 0.0){
+                //Post an alert status that that is on cooldown
+            }else{
+                [player beginCasting:[spell spellData] withTargets:targets];
+            }
 		}
 	}
 }
@@ -230,6 +237,20 @@
 	}
 }
 
+
+-(void)logEvent:(CombatEvent *)event{
+    [self.eventLog addObject:event];
+    
+    if (event.type == CombatEventTypeDodge){
+        RaidMember *dodgedTarget = (RaidMember*)event.target;
+        
+        for (RaidMemberHealthView *rmhv in self.raidView.children){
+            if (rmhv.memberData == dodgedTarget){
+                [rmhv displaySCT:@"Dodge!"];
+            }
+        }
+    }
+}
 
 -(void)gameEvent:(ccTime)deltaT
 {
@@ -273,10 +294,12 @@
 	//Determine if there will be another iteration of the gamestate
 	if (survivors == 0)
 	{
+        [self unschedule:@selector(gameEvent:)];
         [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:NO] autorelease]];
 	}
     
 	if ([player isDead]){
+                [self unschedule:@selector(gameEvent:)];
         [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:NO] autorelease]];
 	}
 	if ([boss isDead]){
@@ -285,7 +308,8 @@
         if (self.levelNumber > i){
             [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:self.levelNumber] forKey:PlayerHighestLevelCompleted];
         }
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:1.0 scene:[[[PostBattleScene alloc] initWithVictory:YES] autorelease]]];
+        [self unschedule:@selector(gameEvent:)];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:[[[PostBattleScene alloc] initWithVictory:YES] autorelease]]];
 	}
 }
 

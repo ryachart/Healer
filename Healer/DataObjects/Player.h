@@ -57,14 +57,15 @@ typedef int CastingDisabledReason;
 	NSString *statusText;
 	
 	BOOL castingDisabledReasons[CastingDisabledReasonTotal];
-	
 }
 @property (assign) NSArray *activeSpells;
+@property (nonatomic, readonly)  NSMutableSet *spellsOnCooldown;
 @property (retain) Spell *spellBeingCast;
 @property (nonatomic, setter=setEnergy:) NSInteger energy;
 @property (assign) NSArray* additionalTargets;
 @property (assign) RaidMember* spellTarget;
 @property (nonatomic, retain) NSString *statusText;
+@property (nonatomic, assign) id<EventLogger> logger;
 @property NSInteger position;
 @property NSInteger maximumEnergy;
 

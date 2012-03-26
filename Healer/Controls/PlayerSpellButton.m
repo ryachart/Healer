@@ -8,10 +8,13 @@
 
 #import "PlayerSpellButton.h"
 
+@interface PlayerSpellButton ()
+@property (nonatomic, assign) CCLayerColor *cooldownCountLayer;
+@end
 
 @implementation PlayerSpellButton
 
-@synthesize spellData, interactionDelegate, spellTitle;
+@synthesize spellData, interactionDelegate, spellTitle, cooldownCountLayer;
 
 - (id)initWithFrame:(CGRect)frame{
     if (self = [super init]) {
@@ -21,9 +24,17 @@
         self.isTouchEnabled = YES;
         [self setColor:ccc3(111, 111, 111)];
         // Initialization code
+        
+        self.cooldownCountLayer = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 175)];
+        [self.cooldownCountLayer setContentSize:frame.size];
+        [self.cooldownCountLayer setVisible:NO];
+        
         self.spellTitle = [[[CCLabelTTF alloc] initWithString:[spellData title] fontName:@"Arial" fontSize:14.0f] autorelease];
         [self.spellTitle setPosition:CGPointMake(50, 25)];
         [self addChild:spellTitle];
+        
+        [self addChild:self.cooldownCountLayer z:10];
+        
     }
     return self;
 }
@@ -37,13 +48,6 @@
 		[spellTitle setString:[spellData title]];
 	}
 }
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
 
 -(void)updateUI{
 	if ([spellData conformsToProtocol:@protocol(Chargable)]){
@@ -51,6 +55,13 @@
 			[self setColor:ccc3(0, 1, 0)];
 		}
 	}
+    if ([spellData cooldownRemaining] > 0){
+        [self.cooldownCountLayer setVisible:YES];
+        [self.cooldownCountLayer setContentSize:CGSizeMake(self.cooldownCountLayer.contentSize.width, self.contentSize.height * ([spellData cooldownRemaining]/[spellData cooldown]))];
+    }else if ([self.cooldownCountLayer visible]){
+        [self.cooldownCountLayer setVisible:NO];
+        [self.cooldownCountLayer setContentSize:self.contentSize];
+    }
 }
 
 

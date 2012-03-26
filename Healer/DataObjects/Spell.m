@@ -8,10 +8,11 @@
 
 #import "GameObjects.h"
 #import	"AudioController.h"
+#import "CombatEvent.h"
 
 @implementation Spell
 
-@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData;
+@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData, cooldownRemaining, cooldown;
 
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd
 {
@@ -20,7 +21,7 @@
         healingAmount = healAmnt;
         energyCost = nrgyCost;
         castTime = time;
-        coolDown = cd;
+        self.cooldown = cd;
         isMultitouch = NO;
         spellAudioData = [[SpellAudioData alloc] init];
     }
@@ -89,14 +90,28 @@
 			if ([currentTarget isDead]) continue;
 			else{
 				double PercentageThisTarget = [[[self percentagesPerTarget] objectAtIndex:i] doubleValue];
+                int currentTargetHealth = currentTarget.health;
 				[currentTarget setHealth:[[thePlayer spellTarget] health] + ([self healingAmount]*PercentageThisTarget)];
+                int newTargetHealth = currentTarget.health;
+                [thePlayer.logger logEvent:[CombatEvent eventWithSource:thePlayer target:currentTarget value:[NSNumber numberWithInt:newTargetHealth - currentTargetHealth] andEventType:CombatEventTypeHeal]]; 
 			}
 			
 		}
 		[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
 	}
+    
+    if (self.cooldown > 0.0){
+        [[thePlayer spellsOnCooldown] addObject:self];
+        self.cooldownRemaining = self.cooldown;
+    }
 }
-
+-(void)updateCooldowns:(float)theTime{
+    self.cooldownRemaining -= theTime;
+    
+    if (self.cooldownRemaining < 0){
+        self.cooldownRemaining = 0;
+    }
+}
 -(void)spellBeganCasting{
 	AudioController * ac = [AudioController sharedInstance];
 	if ([spellAudioData beginTitle] != nil){
@@ -194,7 +209,7 @@
 #pragma mark - Simple Game Spells
 @implementation Heal
 +(id)defaultSpell{
-    Heal *heal = [[Heal alloc] initWithTitle:@"Heal" healAmnt:17 energyCost:5 castTime:2.0 andCooldown:0.5];
+    Heal *heal = [[Heal alloc] initWithTitle:@"Heal" healAmnt:17 energyCost:5 castTime:2.0 andCooldown:.25];
     return [heal autorelease];
 }
 

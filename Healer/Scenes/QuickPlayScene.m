@@ -62,6 +62,7 @@
         Raid *basicRaid = [[Raid alloc] init];
         Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
         Boss *basicBoss = [[Boss alloc] initWithHealth:7500 damage:12 targets:1 frequency:1.5 andChoosesMT:NO];
+        [basicBoss setTitle:@"Zombie"];
         
         [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], nil]];
         
@@ -70,13 +71,135 @@
         }
         GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:basicRaid boss:basicBoss andPlayer:basicPlayer];
         [gps setLevelNumber:level];
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:1.0 scene:gps]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
         [gps release];
         [basicBoss release];
         [basicPlayer release];
         [basicRaid release];
     }
     
+    if (level == 2){
+        Raid *basicRaid = [[Raid alloc] init];
+        Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
+        Boss *basicBoss = [[Boss alloc] initWithHealth:12000 damage:12 targets:1 frequency:1.4 andChoosesMT:NO];
+        [basicBoss setTitle:@"Zombie Wizard"];
+        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], nil]];
+        
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Troll defaultTroll]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Ogre defaultOgre]];
+        }
+        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:basicRaid boss:basicBoss andPlayer:basicPlayer];
+        [gps setLevelNumber:level];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
+        [gps release];
+        [basicBoss release];
+        [basicPlayer release];
+        [basicRaid release];
+    }
+    
+    if (level == 3){
+        Raid *basicRaid = [[Raid alloc] init];
+        Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
+        Boss *basicBoss = [[Boss alloc] initWithHealth:20000 damage:8 targets:4 frequency:.8 andChoosesMT:NO];
+        [basicBoss setTitle:@"Zombie Horde"];
+        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], nil]];
+        
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Troll defaultTroll]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Ogre defaultOgre]];
+        }
+        
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Witch defaultWitch]];
+        }
+        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:basicRaid boss:basicBoss andPlayer:basicPlayer];
+        [gps setLevelNumber:level];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
+        [gps release];
+        [basicBoss release];
+        [basicPlayer release];
+        [basicRaid release];
+    }
+    
+    if (level == 4){
+        Raid *basicRaid = [[Raid alloc] init];
+        Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
+        Boss *basicBoss = [[Boss alloc] initWithHealth:50000 damage:50 targets:2 frequency:5.0 andChoosesMT:NO];
+        [basicBoss setTitle:@"Knights of Fargore"];
+        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil]];
+        
+        for (int i = 0; i < 4; i++){
+            [basicRaid addRaidMember:[Troll defaultTroll]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Ogre defaultOgre]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Witch defaultWitch]];
+        }
+        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:basicRaid boss:basicBoss andPlayer:basicPlayer];
+        [gps setLevelNumber:level];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
+        [gps release];
+        [basicBoss release];
+        [basicPlayer release];
+        [basicRaid release];
+    }
+    
+    if (level == 5){
+        Raid *basicRaid = [[Raid alloc] init];
+        Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
+        Boss *basicBoss = [[Boss alloc] initWithHealth:75000 damage:60 targets:3 frequency:4.5 andChoosesMT:NO];
+        [basicBoss setTitle:@"Fargore General"];
+        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil]];
+        
+        for (int i = 0; i < 4; i++){
+            [basicRaid addRaidMember:[Troll defaultTroll]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Ogre defaultOgre]];
+        }
+        for (int i = 0; i < 4; i++){
+            [basicRaid addRaidMember:[Witch defaultWitch]];
+        }
+        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:basicRaid boss:basicBoss andPlayer:basicPlayer];
+        [gps setLevelNumber:level];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
+        [gps release];
+        [basicBoss release];
+        [basicPlayer release];
+        [basicRaid release];
+    }
+    
+    if (level == 6){
+        Raid *basicRaid = [[Raid alloc] init];
+        Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
+        Boss *basicBoss = [[Boss alloc] initWithHealth:50000 damage:50 targets:5 frequency:5.0 andChoosesMT:NO];
+        [basicBoss setTitle:@"Drake of Thelia"];
+        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil]];
+        
+        for (int i = 0; i < 4; i++){
+            [basicRaid addRaidMember:[Troll defaultTroll]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Ogre defaultOgre]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Witch defaultWitch]];
+        }
+        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:basicRaid boss:basicBoss andPlayer:basicPlayer];
+        [gps setLevelNumber:level];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
+        [gps release];
+        [basicBoss release];
+        [basicPlayer release];
+        [basicRaid release];
+    }
 }
 
 -(void)back

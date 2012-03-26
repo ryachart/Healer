@@ -12,7 +12,7 @@
 @implementation Player
 
 @synthesize activeSpells, spellBeingCast, energy, maximumEnergy, spellTarget, additionalTargets, statusText;
-@synthesize position;
+@synthesize position, logger, spellsOnCooldown=_spellsOnCooldown;
 
 -(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen
 {
@@ -31,6 +31,8 @@
         maxChannelTime = 5;
         castStart = 0.0f;
         
+        _spellsOnCooldown = [[NSMutableSet setWithCapacity:4] retain];
+        
         for (int i = 0; i < CastingDisabledReasonTotal; i++){
             castingDisabledReasons[i] = NO;
         }
@@ -38,6 +40,11 @@
         activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
     }
 	return self;
+}
+
+-(void)dealloc{
+    [_spellsOnCooldown release]; _spellsOnCooldown = nil;
+    [super dealloc];
 }
 
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid gameTime:(float)timeDelta
@@ -52,7 +59,6 @@
 			castStart = 0.0f;
 		}
 		else if ([self remainingCastTime] <= 0){
-			//NSLog(@"Spell is finished being cast");
 			//SPELL END CAST
 			[spellBeingCast spellEndedCasting];
 			[spellBeingCast combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:timeDelta];
@@ -69,11 +75,9 @@
     lastEnergyRegen+= timeDelta;
     if (lastEnergyRegen >= 1.0)
     {
-        //NSLog("Replenishing %i energy", energyRegenPerSecond);
         [self setEnergy:energy + energyRegenPerSecond + [self channelingBonus]];
         lastEnergyRegen = 0.0;
     }
-	//NSLog(@"Checking Effects %i", [activeEffects count]);
 	
 	for (int i = 0; i < [activeEffects count]; i++){
 		Effect *effect = [activeEffects objectAtIndex:i];
@@ -83,13 +87,13 @@
 			[activeEffects removeObjectAtIndex:i];
 		}
 	}
-	/*
-	for (Effect *effect in activeEffects){
-		[effect combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:theTime];
-		if ([effect isExpired]){
-			[activeEffects removeObject:effect];
-		}
-	}*/
+    
+    for (Spell *spell in [self spellsOnCooldown]){
+        [spell updateCooldowns:timeDelta];
+        if (spell.cooldownRemaining == 0){
+            [self.spellsOnCooldown removeObject:spell];
+        }
+    }
 	
 }
 
@@ -138,9 +142,7 @@
 		//NSLog(@"Attempting a recast on the same target.  Cancelling..");
 		return;
 	}
-	//NSLog(@"Energy: %i, Cost: %i", [self energy], [theSpell energyCost]);
 	NSInteger energyDiff = [self energy] - [theSpell energyCost];
-	//NSLog(@"Energy Diff: %i", energyDiff);
 	if (energyDiff < 0) {
 		NSLog(@"Not enough energy");
 		[[AudioController sharedInstance] playTitle:OUT_OF_MANA_TITLE];

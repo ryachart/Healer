@@ -30,6 +30,8 @@
 
 -(void)updateHealth;
 -(id)initWithFrame:(CGRect)frame;
+
+-(void)displaySCT:(NSString*)sct;
 @end
 
 @protocol RaidMemberHealthViewDelegate

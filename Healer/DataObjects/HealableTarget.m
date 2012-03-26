@@ -65,4 +65,11 @@
 {
 	return health <= 0;
 }
+
+-(NSString*)sourceName{
+    return [[self class] description];
+}
+-(NSString*)targetName{
+    return [[self class] description];
+}
 @end

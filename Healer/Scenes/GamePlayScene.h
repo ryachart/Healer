@@ -11,7 +11,7 @@
 #import "GameUserInterface.h"
 #import "AudioController.h"
 #import "Encounter.h"
-
+#import "CombatEvent.h"
 
 @class PlayerSpellButton;
 @class RaidView;
@@ -22,9 +22,10 @@
 @class PlayerMoveButton;
 @class PlayerCastBar;
 /* This is the screen we see while involved in a raid */
-@interface GamePlayScene : CCScene {
+@interface GamePlayScene : CCScene <EventLogger> {
 	NSMutableDictionary *memberToHealthView;
 	NSMutableArray *selectedRaidMembers;
+   
 	
 }
 @property (readwrite, retain) Encounter *activeEncounter;
@@ -41,7 +42,7 @@
 @property (nonatomic, retain) PlayerCastBar *playerCastBar;
 @property (nonatomic, retain) CCLabelTTF *alertStatus;
 @property (readwrite) NSInteger levelNumber;
-
+@property (nonatomic, retain)  NSMutableArray *eventLog;
 -(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse;
 
 @end

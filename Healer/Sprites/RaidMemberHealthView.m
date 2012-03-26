@@ -78,30 +78,35 @@
     self.isTouchEnabled = NO;
     [super onExit];
 }
+
+-(void)displaySCT:(NSString*)sct{
+    CCLabelTTF *shadowLabel = [CCLabelTTF labelWithString:sct fontName:@"Arial" fontSize:20];
+    [shadowLabel setColor:ccBLACK];
+    [shadowLabel setPosition:CGPointMake(self.contentSize.width /2 -1 , self.contentSize.height /2 + 1)];
+    
+    CCLabelTTF *sctLabel = [CCLabelTTF labelWithString:sct fontName:@"Arial" fontSize:20];
+    [sctLabel setColor:ccGREEN];
+    [sctLabel setPosition:CGPointMake(self.contentSize.width /2 , self.contentSize.height /2)];
+    
+    [self addChild:shadowLabel z:10];
+    [self addChild:sctLabel z:11];
+    
+    [sctLabel runAction:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0], nil]];
+    [shadowLabel runAction:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0], nil]];
+}
+
 -(void)updateHealth
 {
     if (memberData && memberData.health > self.lastHealth){
         //We were healed.  Lets fire some SCT!
         int heal = memberData.health - lastHealth;
-        CCLabelTTF *shadowLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"+%i", heal] fontName:@"Arial" fontSize:20];
-        [shadowLabel setColor:ccBLACK];
-        [shadowLabel setPosition:CGPointMake(self.contentSize.width /2 -1 , self.contentSize.height /2 + 1)];
-        
-        CCLabelTTF *sctLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"+%i", heal] fontName:@"Arial" fontSize:20];
-        [sctLabel setColor:ccGREEN];
-        [sctLabel setPosition:CGPointMake(self.contentSize.width /2 , self.contentSize.height /2)];
-        
-        [self addChild:shadowLabel z:10];
-        [self addChild:sctLabel z:11];
-        
-        [sctLabel runAction:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0], nil]];
-        [shadowLabel runAction:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0], nil]];
+        [self displaySCT:[NSString stringWithFormat:@"+%i", heal]];
         
     }
     self.lastHealth = memberData.health;
 	NSString *healthText;
 	if (memberData.health >= 1){
-		healthText = [NSString stringWithFormat:@"%3.1f", (((float)memberData.health) / memberData.maximumHealth)*100];
+		healthText = [NSString stringWithFormat:@"%3.1f%", (((float)memberData.health) / memberData.maximumHealth)*100];
 		self.healthBarLayer.contentSize = CGSizeMake(self.healthBarLayer.contentSize.width, (self.contentSize.height - (HEALTH_BAR_BORDER * 2) ) * (((float)memberData.health) / memberData.maximumHealth));
 	}
 	else {

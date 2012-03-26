@@ -27,6 +27,7 @@
 		38024F0A13C2564E003D36F2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 38024F0913C2564E003D36F2 /* main.m */; };
 		38024F0D13C2564E003D36F2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 38024F0C13C2564E003D36F2 /* AppDelegate.m */; };
 		38024F1013C2564E003D36F2 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 38024F0F13C2564E003D36F2 /* RootViewController.m */; };
+		386747A91520073D0057A8C9 /* CombatEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 386747A81520073D0057A8C9 /* CombatEvent.m */; };
 		386DD169145E06E30086763E /* CCAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 386DD041145E06E20086763E /* CCAction.m */; };
 		386DD16A145E06E30086763E /* CCActionCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 386DD043145E06E20086763E /* CCActionCamera.m */; };
 		386DD16B145E06E30086763E /* CCActionEase.m in Sources */ = {isa = PBXBuildFile; fileRef = 386DD045145E06E20086763E /* CCActionEase.m */; };
@@ -193,6 +194,8 @@
 		38024F0E13C2564E003D36F2 /* RootViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
 		38024F0F13C2564E003D36F2 /* RootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		38024F1413C2564E003D36F2 /* GameConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameConfig.h; sourceTree = "<group>"; };
+		386747A71520073D0057A8C9 /* CombatEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatEvent.h; sourceTree = "<group>"; };
+		386747A81520073D0057A8C9 /* CombatEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CombatEvent.m; sourceTree = "<group>"; };
 		386DD040145E06E20086763E /* CCAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCAction.h; sourceTree = "<group>"; };
 		386DD041145E06E20086763E /* CCAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCAction.m; sourceTree = "<group>"; };
 		386DD042145E06E20086763E /* CCActionCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCActionCamera.h; sourceTree = "<group>"; };
@@ -1391,6 +1394,8 @@
 			children = (
 				387E7B65145E17CC006D9266 /* Encounter.h */,
 				387E7B66145E17CC006D9266 /* Encounter.m */,
+				386747A71520073D0057A8C9 /* CombatEvent.h */,
+				386747A81520073D0057A8C9 /* CombatEvent.m */,
 			);
 			name = "Game States";
 			sourceTree = "<group>";
@@ -1650,6 +1655,7 @@
 				387E7B67145E17CC006D9266 /* Encounter.m in Sources */,
 				387E7B6C145E1868006D9266 /* GameInfo.m in Sources */,
 				BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */,
+				386747A91520073D0057A8C9 /* CombatEvent.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

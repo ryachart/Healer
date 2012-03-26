@@ -295,12 +295,12 @@
 	if (survivors == 0)
 	{
         [self unschedule:@selector(gameEvent:)];
-        [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:NO] autorelease]];
+        [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:NO andEventLog:self.eventLog] autorelease]];
 	}
     
 	if ([player isDead]){
                 [self unschedule:@selector(gameEvent:)];
-        [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:NO] autorelease]];
+        [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:NO andEventLog:self.eventLog] autorelease]];
 	}
 	if ([boss isDead]){
 		[activeEncounter characterDidCompleteEncounter];
@@ -309,7 +309,7 @@
             [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:self.levelNumber] forKey:PlayerHighestLevelCompleted];
         }
         [self unschedule:@selector(gameEvent:)];
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:[[[PostBattleScene alloc] initWithVictory:YES] autorelease]]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:[[[PostBattleScene alloc] initWithVictory:YES andEventLog:self.eventLog] autorelease]]];
 	}
 }
 

@@ -10,13 +10,13 @@
 
 @implementation CombatEvent
 @synthesize type = _type, value, source, target;
--(id)initWithSource:(id<EventDataSource>)source target:(id<EventDataSource>)target value:(NSNumber*)value andEventType:(CombatEventType)type{
+-(id)initWithSource:(id<EventDataSource>)src target:(id<EventDataSource>)trgt value:(NSNumber*)val andEventType:(CombatEventType)typ{
     self = [super init];
     if (self){
-        self.source = source;
-        self.target = target;
-        self.value = value;
-        self.type = type;
+        self.source = src;
+        self.target = trgt;
+        self.value = val;
+        self.type = typ;
     }
     return self;
 }

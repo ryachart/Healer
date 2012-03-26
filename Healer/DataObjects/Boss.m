@@ -54,6 +54,10 @@
                 if (![target raidMemberShouldDodgeAttack:0.0]){
                     [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:damagePerTarget] andEventType:CombatEventTypeDamage]];
                     [target setHealth:[target health] - damagePerTarget];
+                    
+                    if ([target isDead]){
+                        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:nil andEventType:CombatEventTypeMemberDied]];
+                    }
                 }else{
                     [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:0 andEventType:CombatEventTypeDodge]];
                 }

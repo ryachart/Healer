@@ -59,7 +59,6 @@
 -(BOOL)hasCastSounds
 {
 	return NO;
-	//return (castSoundFileURL != nil);
 }
 
 -(void)setTargets:(NSInteger)numOfTargets withPercentagesPerTarget:(NSArray*)percentages
@@ -79,7 +78,10 @@
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
 	if ([self targets] <= 1){
+        int currentTargetHealth = [thePlayer spellTarget].health;
 		[[thePlayer spellTarget] setHealth:[[thePlayer spellTarget] health] + [self healingAmount]];
+        int newHealth = [thePlayer spellTarget].health;
+        [thePlayer.logger logEvent:[CombatEvent eventWithSource:thePlayer target:[thePlayer spellTarget] value:[NSNumber numberWithInt:newHealth - currentTargetHealth] andEventType:CombatEventTypeHeal]]; 
 		[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
 	}
 	else if ([self targets] > 1){

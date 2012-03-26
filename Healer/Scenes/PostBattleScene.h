@@ -9,6 +9,6 @@
 #import "cocos2d.h"
 
 @interface PostBattleScene : CCScene
--(id)initWithVictory:(BOOL)victory;
+-(id)initWithVictory:(BOOL)victory andEventLog:(NSArray*)eventLog;
 
 @end

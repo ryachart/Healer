@@ -10,9 +10,12 @@
 
 
 typedef enum {
+    CombatEventTypeBegan,
     CombatEventTypeDodge,
     CombatEventTypeHeal,
-    CombatEventTypeDamage
+    CombatEventTypeDamage,
+    CombatEventTypeMemberDied,
+    CombatEventEnded
 } CombatEventType;
 
 @protocol EventDataSource <NSObject>

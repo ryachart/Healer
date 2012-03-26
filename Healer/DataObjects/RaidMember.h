@@ -31,7 +31,6 @@
 }
 @property (nonatomic,  readwrite) NSInteger damageDealt; //All RaidMembers deal some damage
 @property (readwrite) float lastAttack;
-@property (nonatomic, assign) id<EventLogger> *logger;
 
 -(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq;
 -(BOOL)raidMemberShouldDodgeAttack:(float)modifer;

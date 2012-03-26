@@ -29,12 +29,14 @@
         [self.healthFrame setPosition:CGPointMake(0, 0)];
         [self.healthFrame setContentSize:frame.size];
         
-        self.bossNameLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0];
-        self.bossNameLabel.position = CGPointMake(50, 50);
+        self.bossNameLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:32.0];
+        self.bossNameLabel.position = CGPointMake(100, 50);
         self.bossNameLabel.contentSize = frame.size;
+        [self.bossNameLabel setColor:ccRED];
         
-        self.healthLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0];
-        self.healthLabel.position = CGPointMake(frame.size.width * .3, frame.size.height * .3);
+        self.healthLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:32.0];
+        [self.healthLabel setColor:ccRED];
+        self.healthLabel.position = CGPointMake(frame.size.width * .35, frame.size.height * .3);
         self.healthLabel.contentSize = CGSizeMake(frame.size.width * .5, frame.size.height * .25);
 
         [self addChild:self.healthFrame];

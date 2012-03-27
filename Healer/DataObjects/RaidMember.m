@@ -27,6 +27,10 @@
 	return self;
 }
 
+-(float)dps{
+    return (float)damageDealt  / damageFrequency;
+}
+
 
 -(NSInteger)damageDealt{
     int finalAmount = damageDealt;
@@ -71,15 +75,20 @@
 		[theBoss setHealth:[theBoss health] - self.damageDealt];
 		
 	}
-	
+	NSMutableArray *effectsToRemove = [NSMutableArray arrayWithCapacity:5];
 	for (int i = 0; i < [activeEffects count]; i++){
 		Effect *effect = [activeEffects objectAtIndex:i];
 		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
 		if ([effect isExpired]){
 			[effect expire];
-			[activeEffects removeObjectAtIndex:i];
+            [effectsToRemove addObject:effect];
 		}
 	}
+    
+    for (Effect *effect in effectsToRemove){
+        [activeEffects removeObject:effect];
+
+    }
 }
 
 @end

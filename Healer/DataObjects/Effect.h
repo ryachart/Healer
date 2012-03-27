@@ -28,6 +28,7 @@ typedef enum {
 	NSMutableArray *audioTitles;
 }
 @property NSTimeInterval duration;
+@property (readwrite) NSInteger maxStacks;
 @property (readwrite) float timeApplied;
 @property (readwrite, retain) HealableTarget *target;
 @property (readonly) EffectType effectType;

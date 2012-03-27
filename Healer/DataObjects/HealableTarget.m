@@ -25,7 +25,6 @@
 	}
 	if (health < 0) health = 0;
 	if (health > maximumHealth) {
-		//NSLog(@"Health>MaxHealth");
 		health = maximumHealth;
 	}
 }
@@ -33,12 +32,16 @@
 -(void)addEffect:(Effect*)theEffect
 {
 	if (activeEffects != nil){
+        int currentStacks = 0;
 		for (Effect *effectFA in activeEffects){
 			if ([effectFA class] == [theEffect class]){
-				NSLog(@"This target already has a copy of that effect");
-				return;
+                currentStacks++;
 			}
 		}
+        
+        if (currentStacks >= theEffect.maxStacks){
+            return;
+        }
 		
 		[theEffect setTimeApplied:0.0001];
 		if ([theEffect conformsToProtocol:@protocol(HealthAdjustmentModifier)]){
@@ -71,5 +74,10 @@
 }
 -(NSString*)targetName{
     return [[self class] description];
+}
+
+-(void)dealloc{
+    [healthAdjustmentModifiers release]; healthAdjustmentModifiers = nil;
+    [super dealloc];
 }
 @end

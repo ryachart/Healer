@@ -10,13 +10,14 @@
 #import "GameObjects.h"
 #import "AudioController.h"
 @implementation Effect
-@synthesize duration, isExpired, target, effectType, timeApplied;
+@synthesize duration, isExpired, target, effectType, timeApplied, maxStacks;
 
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
 {
 	duration = dur;
 	isExpired = NO;
 	effectType = type;
+    self.maxStacks = 1;
     self.timeApplied = 0.0;
 	return self;
 }
@@ -117,17 +118,11 @@
 		}
 		if (self.timeApplied >= duration){
 			[target setHealth:[target health] + healingPerTick];
-			//NSLog(@"Tick");
-			//Here we do some effect, but we have to subclass Effects to decide what that is
-			//NSLog(@"Expired");
 			//The one thing we always do here is expire the effect
 			self.timeApplied = 0.0;
 			isExpired = YES;
-			
 		}
-		
 	}
-	
 }
 
 @end
@@ -159,7 +154,6 @@
 }
 -(void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth
 {
-	//NSLog(@"Shield Recognized: DidChangeHealth");
 }
 @end
 

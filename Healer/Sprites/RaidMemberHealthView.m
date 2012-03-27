@@ -59,6 +59,25 @@
     return self;
 }
 
+-(ccColor3B)colorForPercentage:(float)percentage{
+    if (percentage > .800){
+        return ccGREEN;
+    }
+    
+    if (percentage > .600){
+        return ccYELLOW;
+    }
+    
+    if (percentage > .300){
+        return ccORANGE;
+    }
+    
+    if (percentage > 0.0){
+        return ccc3(255, 75, 0);
+    }
+    return ccRED;
+}
+
 -(void)setMemberData:(RaidMember*)rdMember
 {
 	memberData = rdMember;
@@ -108,6 +127,7 @@
 	if (memberData.health >= 1){
 		healthText = [NSString stringWithFormat:@"%3.1f%", (((float)memberData.health) / memberData.maximumHealth)*100];
 		self.healthBarLayer.contentSize = CGSizeMake(self.healthBarLayer.contentSize.width, (self.contentSize.height - (HEALTH_BAR_BORDER * 2) ) * (((float)memberData.health) / memberData.maximumHealth));
+        [self.healthBarLayer setColor:[self colorForPercentage:(((float)memberData.health) / memberData.maximumHealth)]];
 	}
 	else {
 		healthText = @"Dead";

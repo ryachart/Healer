@@ -165,6 +165,7 @@
 		387E7B6F145E1E74006D9266 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = 387E7B6E145E1E74006D9266 /* Sounds */; };
 		38F04EEA13C2593500BCADCB /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38F04EE913C2593500BCADCB /* GameDefaults.plist */; };
 		BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
+		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -590,6 +591,8 @@
 		38F04EE913C2593500BCADCB /* GameDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameDefaults.plist; sourceTree = "<group>"; };
 		BF6CC5CE15022496000F1AFF /* PostBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostBattleScene.h; path = Scenes/PostBattleScene.h; sourceTree = "<group>"; };
 		BF6CC5CF15022496000F1AFF /* PostBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostBattleScene.m; path = Scenes/PostBattleScene.m; sourceTree = "<group>"; };
+		BF80763115214A04001EB2B3 /* PreBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreBattleScene.h; path = Scenes/PreBattleScene.h; sourceTree = "<group>"; };
+		BF80763215214A04001EB2B3 /* PreBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PreBattleScene.m; path = Scenes/PreBattleScene.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1244,26 +1247,17 @@
 		387E7AE3145E0D09006D9266 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
-				387E7B36145E1382006D9266 /* CharacterOrganizerViewController.h */,
-				387E7B37145E1382006D9266 /* CharacterOrganizerViewController.m */,
-				387E7B38145E1382006D9266 /* CharacterSelectionViewController.h */,
-				387E7B39145E1382006D9266 /* CharacterSelectionViewController.m */,
-				387E7B3A145E1382006D9266 /* CharacterSheetViewController.h */,
-				387E7B3B145E1382006D9266 /* CharacterSheetViewController.m */,
-				387E7B3C145E1382006D9266 /* CreateNewCharacterViewController.h */,
-				387E7B3D145E1382006D9266 /* CreateNewCharacterViewController.m */,
+				BF80762F152149D8001EB2B3 /* Deprecated VCs */,
 				387E7B3E145E1382006D9266 /* GamePlayScene.h */,
 				387E7B3F145E1382006D9266 /* GamePlayScene.m */,
-				387E7B40145E1382006D9266 /* PostGameViewController.h */,
-				387E7B41145E1382006D9266 /* PostGameViewController.m */,
 				387E7B42145E1382006D9266 /* QuickPlayScene.h */,
 				387E7B43145E1382006D9266 /* QuickPlayScene.m */,
 				387E7B44145E1382006D9266 /* HealerStartScene.h */,
 				387E7B45145E1382006D9266 /* HealerStartScene.m */,
-				387E7B46145E1382006D9266 /* RaidOrganizerViewController.h */,
-				387E7B47145E1382006D9266 /* RaidOrganizerViewController.m */,
 				BF6CC5CE15022496000F1AFF /* PostBattleScene.h */,
 				BF6CC5CF15022496000F1AFF /* PostBattleScene.m */,
+				BF80763115214A04001EB2B3 /* PreBattleScene.h */,
+				BF80763215214A04001EB2B3 /* PreBattleScene.m */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -1443,6 +1437,25 @@
 				387E7B73145E28CA006D9266 /* GamePlay */,
 			);
 			name = Sprites;
+			sourceTree = "<group>";
+		};
+		BF80762F152149D8001EB2B3 /* Deprecated VCs */ = {
+			isa = PBXGroup;
+			children = (
+				387E7B46145E1382006D9266 /* RaidOrganizerViewController.h */,
+				387E7B47145E1382006D9266 /* RaidOrganizerViewController.m */,
+				387E7B36145E1382006D9266 /* CharacterOrganizerViewController.h */,
+				387E7B37145E1382006D9266 /* CharacterOrganizerViewController.m */,
+				387E7B38145E1382006D9266 /* CharacterSelectionViewController.h */,
+				387E7B39145E1382006D9266 /* CharacterSelectionViewController.m */,
+				387E7B3A145E1382006D9266 /* CharacterSheetViewController.h */,
+				387E7B3B145E1382006D9266 /* CharacterSheetViewController.m */,
+				387E7B3C145E1382006D9266 /* CreateNewCharacterViewController.h */,
+				387E7B3D145E1382006D9266 /* CreateNewCharacterViewController.m */,
+				387E7B40145E1382006D9266 /* PostGameViewController.h */,
+				387E7B41145E1382006D9266 /* PostGameViewController.m */,
+			);
+			name = "Deprecated VCs";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1656,6 +1669,7 @@
 				387E7B6C145E1868006D9266 /* GameInfo.m in Sources */,
 				BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */,
 				386747A91520073D0057A8C9 /* CombatEvent.m in Sources */,
+				BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

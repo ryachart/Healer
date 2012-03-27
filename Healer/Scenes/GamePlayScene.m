@@ -198,12 +198,16 @@
 
 -(void)spellButtonSelected:(PlayerSpellButton*)spell
 {
+    if ([[spell spellData] cooldownRemaining] > 0.0){
+        return;
+    }
+    
 	if ([selectedRaidMembers count] > 0 && [selectedRaidMembers objectAtIndex:0] != nil){
 		NSMutableArray *targets = [NSMutableArray arrayWithCapacity:[selectedRaidMembers count]];
 		for (RaidMemberHealthView *healthView in selectedRaidMembers){
 			[targets addObject:[healthView memberData]];
 		}
-		
+        
 		if ([[spell spellData] conformsToProtocol:@protocol(Chargable)]){
 			if ([player spellBeingCast] == nil){
 				[(Chargable*)[spell spellData] beginCharging:[NSDate date]];
@@ -211,16 +215,15 @@
 			}
 		}
 		else{
-            if ([[spell spellData] cooldownRemaining] > 0.0){
-                //Post an alert status that that is on cooldown
-            }else{
-                [player beginCasting:[spell spellData] withTargets:targets];
-            }
+            [player beginCasting:[spell spellData] withTargets:targets];
 		}
 	}
 }
 
 -(void)spellButtonUnselected:(PlayerSpellButton*)spell{
+    if ([[spell spellData] cooldownRemaining] > 0.0){
+        return;
+    }
 	if ([selectedRaidMembers count] > 0 && [selectedRaidMembers objectAtIndex:0] != nil){
 		NSMutableArray *targets = [NSMutableArray arrayWithCapacity:[selectedRaidMembers count]];
 		for (RaidMemberHealthView *healthView in selectedRaidMembers){

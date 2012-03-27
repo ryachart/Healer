@@ -211,7 +211,11 @@
 #pragma mark - Simple Game Spells
 @implementation Heal
 +(id)defaultSpell{
-    Heal *heal = [[Heal alloc] initWithTitle:@"Heal" healAmnt:17 energyCost:5 castTime:2.0 andCooldown:.25];
+    Heal *heal = [[Heal alloc] initWithTitle:@"Heal" healAmnt:12 energyCost:3 castTime:1.5 andCooldown:0.0];
+    [heal setDescription:@"Heals your target for a small amount"];
+    [[heal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
+	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
+	[[heal spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
     return [heal autorelease];
 }
 
@@ -219,7 +223,11 @@
 
 @implementation GreaterHeal
 +(id)defaultSpell{
-    GreaterHeal *heal = [[GreaterHeal alloc] initWithTitle:@"Greater Heal" healAmnt:35 energyCost:9 castTime:2.5 andCooldown:0.5];
+    GreaterHeal *heal = [[GreaterHeal alloc] initWithTitle:@"Greater Heal" healAmnt:50 energyCost:9 castTime:2.5 andCooldown:2.0];
+    [heal setDescription:@"Heals your target for a large amount"];
+    [[heal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
+	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
+	[[heal spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
     return [heal autorelease];
 }
 @end
@@ -230,11 +238,31 @@
 	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:76 energyCost:10 castTime:1.75 andCooldown:.5];//10h/e
 	NSArray *forkedPercentages = [NSArray arrayWithObjects:[[[NSNumber alloc] initWithDouble:.50] autorelease], [[[NSNumber alloc] initWithDouble:.50] autorelease], nil];
 	[forkedHeal setTargets:2 withPercentagesPerTarget:forkedPercentages];
+    [forkedHeal setDescription:@"Heals up to two simultaneously selected targets."];
+    [[forkedHeal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
+	[[forkedHeal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
+	[[forkedHeal spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
 	return [forkedHeal autorelease];
 }
 @end
 
 @implementation Regrow
++(id)defaultSpell{
+    Regrow *regrow = [[Regrow alloc] initWithTitle:@"Regrow" healAmnt:0 energyCost:9 castTime:0.0 andCooldown:2.5];
+    [regrow setDescription:@"Heals for a large amount over 12 seconds."];
+    [[regrow spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
+    return [regrow autorelease];
+}
+
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime
+{
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+    HealOverTimeEffect *hotEffect = [[HealOverTimeEffect alloc] initWithDuration:12.0 andEffectType:EffectTypePositive];
+    [hotEffect setNumOfTicks:4];
+    [hotEffect setHealingPerTick:13];
+    [[thePlayer spellTarget] addEffect:hotEffect];
+    [hotEffect release];
+}
 
 @end
 

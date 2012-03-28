@@ -112,12 +112,15 @@
         self.timeApplied += timeDelta;
 		lastTick += timeDelta;
 		if (lastTick >= (duration/numOfTicks)){
-			[target setHealth:[target health] + healingPerTick];
-			//NSLog(@"Tick");
+            if (!target.isDead){
+                [target setHealth:[target health] + healingPerTick];
+            }
 			lastTick = 0.0;
 		}
 		if (self.timeApplied >= duration){
-			[target setHealth:[target health] + healingPerTick];
+            if (!target.isDead){
+                [target setHealth:[target health] + healingPerTick];
+            }
 			//The one thing we always do here is expire the effect
 			self.timeApplied = 0.0;
 			isExpired = YES;

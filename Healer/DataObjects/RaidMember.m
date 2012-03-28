@@ -27,6 +27,11 @@
 	return self;
 }
 
+-(void)dealloc{
+    [activeEffects release]; activeEffects = nil;
+    [super dealloc];
+}
+
 -(float)dps{
     return (float)damageDealt  / damageFrequency;
 }
@@ -69,7 +74,7 @@
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
 	lastAttack += timeDelta;
-	if (lastAttack >= damageFrequency){
+	if (lastAttack >= damageFrequency && !self.isDead){
 		lastAttack = 0.0;
 		
 		[theBoss setHealth:[theBoss health] - self.damageDealt];
@@ -108,7 +113,7 @@
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
 	lastAttack+= timeDelta;
-	if (lastAttack >= damageFrequency){
+	if (lastAttack >= damageFrequency && !self.isDead){
 		lastAttack = 0.0;
 		
 		[theBoss setHealth:[theBoss health] - self.damageDealt];
@@ -141,7 +146,7 @@
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
 	lastAttack+= timeDelta;
-	if (lastAttack >= damageFrequency){
+	if (lastAttack >= damageFrequency && !self.isDead){
 		lastAttack = 0.0;
 		
 		[theBoss setHealth:[theBoss health] - self.damageDealt];

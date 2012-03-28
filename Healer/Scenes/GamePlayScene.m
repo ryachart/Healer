@@ -278,8 +278,8 @@
 	NSInteger survivors = 0;
 	for (RaidMember *member in raidMembers)
 	{
+        [member combatActions:boss raid:raid thePlayer:player gameTime:deltaT];
 		if (![member isDead]){
-			[member combatActions:boss raid:raid thePlayer:player gameTime:deltaT];
 			survivors++;
 		}
 		else {

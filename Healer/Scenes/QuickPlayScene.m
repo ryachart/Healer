@@ -68,7 +68,7 @@
         basicBoss = [[Boss alloc] initWithHealth:7500 damage:12 targets:1 frequency:1.5 andChoosesMT:NO];
         [basicBoss setTitle:@"Zombie"];
         
-        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [RoarOfLife defaultSpell], [ForkedHeal defaultSpell], nil]];
+        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], nil]];
         
         for (int i = 0; i < 2; i++){
             [basicRaid addRaidMember:[Troll defaultTroll]];

@@ -37,7 +37,7 @@
         [self.classNameLabel setContentSize:CGSizeMake(frame.size.width, frame.size.height)];
         [self.classNameLabel setColor:ccc3(0, 0, 0)];
         
-        self.isFocusedLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0];
+        self.isFocusedLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:15.0];
         [self.isFocusedLabel setPosition:CGPointMake(50, 50)];
         [self.isFocusedLabel setColor:ccBLACK];
         

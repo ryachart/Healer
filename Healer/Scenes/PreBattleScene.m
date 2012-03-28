@@ -113,12 +113,12 @@
         int allySlotsUsed = 0;
         if (ogreCount >0){
             CCLayerColor *ogreBackground = [CCLayerColor layerWithColor:ccc4(255, 0, 0, 255)];
-            [ogreBackground setPosition:ccp(70, 450)];
+            [ogreBackground setPosition:ccp(40, 450)];
             [ogreBackground setContentSize:CGSizeMake(100, 100)];
             [self addChild:ogreBackground];
             
             CCLayerColor *ogreDetailBackground = [CCLayerColor layerWithColor:ccc4(255, 255, 255, 255)];
-            [ogreDetailBackground setPosition: ccp(170, 450)];
+            [ogreDetailBackground setPosition: ccp(140, 450)];
             [ogreDetailBackground setContentSize:CGSizeMake(200, 100)];
             [self addChild:ogreDetailBackground];
             
@@ -143,12 +143,12 @@
         }
         if (trollCount > 0){
             CCLayerColor *trollBackground = [CCLayerColor layerWithColor:ccc4(0, 255, 0, 255)];
-            [trollBackground setPosition:CGPointMake(70, 345 + ((1 - allySlotsUsed) * 105))];
+            [trollBackground setPosition:CGPointMake(40, 345 + ((1 - allySlotsUsed) * 105))];
             [trollBackground setContentSize:CGSizeMake(100, 100)];
             [self addChild:trollBackground];
             
             CCLayerColor *trollDetailBackground = [CCLayerColor layerWithColor:ccc4(255, 255, 255, 255)];
-            [trollDetailBackground setPosition: ccp(170, 345 + ((1 - allySlotsUsed) * 105))];
+            [trollDetailBackground setPosition: ccp(140, 345 + ((1 - allySlotsUsed) * 105))];
             [trollDetailBackground setContentSize:CGSizeMake(200, 100)];
             [self addChild:trollDetailBackground];
             
@@ -174,12 +174,12 @@
         
         if (witchCount > 0){
             CCLayerColor *witchBackground = [CCLayerColor layerWithColor:ccc4(255, 0, 255, 255)];
-            [witchBackground setPosition:ccp(70, 240 + ((2 - allySlotsUsed) * 105))];
+            [witchBackground setPosition:ccp(40, 240 + ((2 - allySlotsUsed) * 105))];
             [witchBackground setContentSize:CGSizeMake(100, 100)];
             [self addChild:witchBackground];
             
             CCLayerColor *witchDetailBackground = [CCLayerColor layerWithColor:ccc4(255, 255, 255, 255)];
-            [witchDetailBackground setPosition: ccp(170, 240 + ((2 - allySlotsUsed) * 105))];
+            [witchDetailBackground setPosition: ccp(140, 240 + ((2 - allySlotsUsed) * 105))];
             [witchDetailBackground setContentSize:CGSizeMake(200, 100)];
             [self addChild:witchDetailBackground];
             

@@ -593,6 +593,7 @@
 		BF6CC5CF15022496000F1AFF /* PostBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostBattleScene.m; path = Scenes/PostBattleScene.m; sourceTree = "<group>"; };
 		BF80763115214A04001EB2B3 /* PreBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreBattleScene.h; path = Scenes/PreBattleScene.h; sourceTree = "<group>"; };
 		BF80763215214A04001EB2B3 /* PreBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PreBattleScene.m; path = Scenes/PreBattleScene.m; sourceTree = "<group>"; };
+		BF80764C1522DACC001EB2B3 /* Announcer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Announcer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1390,6 +1391,7 @@
 				387E7B66145E17CC006D9266 /* Encounter.m */,
 				386747A71520073D0057A8C9 /* CombatEvent.h */,
 				386747A81520073D0057A8C9 /* CombatEvent.m */,
+				BF80764C1522DACC001EB2B3 /* Announcer.h */,
 			);
 			name = "Game States";
 			sourceTree = "<group>";

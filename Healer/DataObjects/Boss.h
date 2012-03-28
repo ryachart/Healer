@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "CombatEvent.h"
+#import "Announcer.h"
 @class Player;
 @class Raid;
 @class RaidMember;
@@ -27,6 +28,7 @@
 	
 	//Combat Action Data
 }
+@property (nonatomic, retain) id <Announcer> announcer;
 @property (nonatomic, setter=setHealth:) NSInteger health;
 @property (nonatomic, retain) NSString* title;
 @property (nonatomic, assign) id<EventLogger> logger;

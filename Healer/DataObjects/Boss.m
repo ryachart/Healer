@@ -15,7 +15,7 @@
 @end
 
 @implementation Boss
-@synthesize lastAttack, health, maximumHealth, title, logger, focusTarget;
+@synthesize lastAttack, health, maximumHealth, title, logger, focusTarget, announcer;
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
     if (self = [super init]){
@@ -77,6 +77,10 @@
         
         if (choosesMainTank && !self.focusTarget.isDead){
             [self damageTarget:self.focusTarget withDamage:(int)round(damagePerTarget * 1.2)];
+            if (self.focusTarget.isDead){
+                [self.announcer announce:[NSString stringWithFormat:@"%@ enters a blood rage upon killing his focused target.", self.title]];
+
+            }
         }
 		if (targets <= [victims count]){
 			for (int i = 0; i < targets - (int)(choosesMainTank && !self.focusTarget.isDead); i++){

@@ -12,6 +12,7 @@
 #import "AudioController.h"
 #import "Encounter.h"
 #import "CombatEvent.h"
+#import "Announcer.h"
 
 @class PlayerSpellButton;
 @class RaidView;
@@ -22,7 +23,7 @@
 @class PlayerMoveButton;
 @class PlayerCastBar;
 /* This is the screen we see while involved in a raid */
-@interface GamePlayScene : CCScene <EventLogger> {
+@interface GamePlayScene : CCScene <EventLogger, Announcer> {
 	NSMutableDictionary *memberToHealthView;
 	NSMutableArray *selectedRaidMembers;
    

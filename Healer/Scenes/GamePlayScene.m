@@ -18,6 +18,7 @@
 @property (nonatomic, retain) Raid *raid;
 @property (nonatomic, retain) Boss *boss;
 @property (nonatomic, retain) Player *player;
+@property (nonatomic, assign) CCLabelTTF *announcementLabel;
 @end
 
 @implementation GamePlayScene
@@ -31,12 +32,15 @@
 @synthesize alertStatus;
 @synthesize levelNumber;
 @synthesize eventLog;
+@synthesize announcementLabel;
+
 -(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse
 {
     if (self = [super init]){
         self.raid = raidToUse;
         self.boss = bossToUse;
         [self.boss setLogger:self];
+        [self.boss setAnnouncer:self];
         self.player = playerToUse;
         [self.player setLogger:self];
         
@@ -53,11 +57,16 @@
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(200,40, 400, 50)] autorelease];
         self.playerHealthView = [[[PlayerHealthView alloc] initWithFrame:CGRectMake(800, 600, 200, 50)] autorelease];
         self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(800, 545, 200, 50)] autorelease];
+        self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
+        [self.announcementLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .65)];
+        [self.announcementLabel setColor:ccYELLOW];
+        [self.announcementLabel setVisible:NO];
         
         [self addChild:self.bossHealthView];
         [self addChild:self.playerCastBar];
         [self addChild:self.playerHealthView];
         [self addChild:self.playerEnergyView];
+        [self addChild:self.announcementLabel z:100];
         //CACHE SOUNDS
         AudioController *ac = [AudioController sharedInstance];
         for (Spell* aSpell in [player activeSpells]){
@@ -125,7 +134,6 @@
 
 -(void)thisMemberSelected:(RaidMemberHealthView*)hv
 {
-	//NSLog(@"You selected a raidMember");
 	if ([[hv memberData] isDead]) return;
     [hv setOpacity:255];
 	if ([selectedRaidMembers count] == 0){
@@ -240,6 +248,14 @@
 	}
 }
 
+-(void)announce:(NSString *)announcement{
+    [self.announcementLabel setVisible:YES];
+    [self.announcementLabel setString:announcement];
+    [self.announcementLabel runAction:[CCSequence actions:[CCScaleTo actionWithDuration:1.5 scale:1.25], [CCScaleTo actionWithDuration:1.5 scale:1.0],[CCDelayTime actionWithDuration:5.0], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [node setVisible:NO];
+        [(CCLabelTTF*)node setString:@""];
+    }],nil]];
+}
 
 -(void)logEvent:(CombatEvent *)event{
     [self.eventLog addObject:event];

@@ -8,12 +8,14 @@
 
 #import "Boss.h"
 #import "GameObjects.h"
+#import "RaidMember.h"
 
 @interface Boss ()
+@property (nonatomic, retain) RaidMember *focusTarget;
 @end
 
 @implementation Boss
-@synthesize lastAttack, health, maximumHealth, title, logger;
+@synthesize lastAttack, health, maximumHealth, title, logger, focusTarget;
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
     if (self = [super init]){
@@ -30,9 +32,35 @@
 	
 }
 
+-(void)damageTarget:(RaidMember*)target withDamage:(int)damagePerTarget{
+    if (![target raidMemberShouldDodgeAttack:0.0]){
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:damagePerTarget] andEventType:CombatEventTypeDamage]];
+        [target setHealth:[target health] - damagePerTarget];
+        
+        if ([target isDead]){
+            [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:nil andEventType:CombatEventTypeMemberDied]];
+        }
+    }else{
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:0 andEventType:CombatEventTypeDodge]];
+    }
+}
+
 -(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)theTime
 {
     self.lastAttack+= theTime;
+
+    if (choosesMainTank && !self.focusTarget){
+        int highestHealth = ((RaidMember*)[theRaid.raidMembers objectAtIndex:0]).maximumHealth;
+        RaidMember *tempTarget = [theRaid.raidMembers objectAtIndex:0];
+        for (int i = 1; i < theRaid.raidMembers.count; i++){
+            if (((RaidMember*)[theRaid.raidMembers objectAtIndex:i]).maximumHealth > highestHealth){
+                highestHealth = ((RaidMember*)[theRaid.raidMembers objectAtIndex:i]).maximumHealth;
+                tempTarget = ((RaidMember*)[theRaid.raidMembers objectAtIndex:i]);
+            }
+        }
+        self.focusTarget = tempTarget;
+        [self.focusTarget setIsFocused:YES];
+    }
 	
 	if (self.lastAttack >= frequency){
 		
@@ -43,29 +71,26 @@
 		
 		RaidMember *target = nil;
 		
+        if (choosesMainTank && self.focusTarget.isDead){
+            damagePerTarget *= 3; //The tank died.  Outgoing damage is now tripled
+        }
+        
+        if (choosesMainTank && !self.focusTarget.isDead){
+            [self damageTarget:self.focusTarget withDamage:(int)round(damagePerTarget * 1.2)];
+        }
 		if (targets <= [victims count]){
-			for (int i = 0; i < targets; i++){
+			for (int i = 0; i < targets - (int)(choosesMainTank && !self.focusTarget.isDead); i++){
 				do{
 					NSInteger targetIndex = arc4random() % [victims count];
 					
 					target = [victims objectAtIndex:targetIndex];
 				} while ([target isDead]);
 				
-                if (![target raidMemberShouldDodgeAttack:0.0]){
-                    [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:damagePerTarget] andEventType:CombatEventTypeDamage]];
-                    [target setHealth:[target health] - damagePerTarget];
-                    
-                    if ([target isDead]){
-                        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:nil andEventType:CombatEventTypeMemberDied]];
-                    }
-                }else{
-                    [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:0 andEventType:CombatEventTypeDodge]];
-                }
+                [self damageTarget:target withDamage:damagePerTarget];
 			}
 		}
 		else{
-			
-			for (int i = 0; i < targets; i++){
+			for (int i = 0; i < targets - (int)(choosesMainTank && !self.focusTarget.isDead); i++){
 				do{
                     if ([victims count] <= 0){
                         break;
@@ -74,7 +99,7 @@
 					
 					target = [victims objectAtIndex:targetIndex];
 				} while ([target isDead]);
-				[target setHealth:[target health] - damagePerTarget];
+                [self damageTarget:target withDamage:damagePerTarget];
 				
 				if ([[theRaid getAliveMembers] count] == 0){
 					i = targets;

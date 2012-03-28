@@ -21,6 +21,7 @@
 @property (nonatomic, setter=setHealth:) NSInteger health;
 @property NSInteger maximumHealth;
 @property (readonly) NSMutableArray *activeEffects;
+@property (nonatomic, readwrite) BOOL isFocused;
 
 -(void)setHealth:(NSInteger)newHealth;
 -(BOOL)isDead;

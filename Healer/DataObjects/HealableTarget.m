@@ -11,7 +11,7 @@
 #import "Effect.h"
 
 @implementation HealableTarget
-@synthesize health, maximumHealth, activeEffects;
+@synthesize health, maximumHealth, activeEffects, isFocused;
 
 -(void)setHealth:(NSInteger)newHealth
 {

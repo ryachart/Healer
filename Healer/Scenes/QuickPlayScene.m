@@ -113,7 +113,7 @@
     if (level == 4){
         basicRaid = [[Raid alloc] init];
         basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
-        basicBoss = [[Boss alloc] initWithHealth:50000 damage:50 targets:2 frequency:5.0 andChoosesMT:NO];
+        basicBoss = [[Boss alloc] initWithHealth:50000 damage:25 targets:2 frequency:2.5 andChoosesMT:YES];
         [basicBoss setTitle:@"Knights of Fargore"];
         [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil]];
         

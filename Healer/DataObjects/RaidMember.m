@@ -27,6 +27,32 @@
 	return self;
 }
 
+-(void)performAttackIfAbleOnTarget:(Boss*)target{
+	if (lastAttack >= damageFrequency && !self.isDead){
+		lastAttack = 0.0;
+		
+		[target setHealth:[target health] - self.damageDealt];
+		
+	}
+}
+
+-(void)updateEffects:(Boss*)theBoss raid:(Raid*)theRaid player:(Player*)thePlayer time:(float)timeDelta{
+    NSMutableArray *effectsToRemove = [NSMutableArray arrayWithCapacity:5];
+	for (int i = 0; i < [activeEffects count]; i++){
+		Effect *effect = [activeEffects objectAtIndex:i];
+		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+		if ([effect isExpired]){
+			[effect expire];
+            [effectsToRemove addObject:effect];
+		}
+	}
+    
+    for (Effect *effect in effectsToRemove){
+        [activeEffects removeObject:effect];
+        
+    }
+}
+
 -(void)dealloc{
     [activeEffects release]; activeEffects = nil;
     [super dealloc];
@@ -52,7 +78,9 @@
 
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
-	
+    lastAttack += timeDelta;
+    [self performAttackIfAbleOnTarget:theBoss];
+    [self updateEffects:theBoss raid:theRaid player:thePlayer time:timeDelta];
 	
 }
 
@@ -71,31 +99,6 @@
     return arc4random() % 100 <= 5;
 }
 
--(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
-{
-	lastAttack += timeDelta;
-	if (lastAttack >= damageFrequency && !self.isDead){
-		lastAttack = 0.0;
-		
-		[theBoss setHealth:[theBoss health] - self.damageDealt];
-		
-	}
-	NSMutableArray *effectsToRemove = [NSMutableArray arrayWithCapacity:5];
-	for (int i = 0; i < [activeEffects count]; i++){
-		Effect *effect = [activeEffects objectAtIndex:i];
-		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
-		if ([effect isExpired]){
-			[effect expire];
-            [effectsToRemove addObject:effect];
-		}
-	}
-    
-    for (Effect *effect in effectsToRemove){
-        [activeEffects removeObject:effect];
-
-    }
-}
-
 @end
 
 @implementation Troll
@@ -109,27 +112,6 @@
 -(BOOL)raidMemberShouldDodgeAttack:(float)modifer{
     return arc4random() % 100 <= 8;
 }
-
--(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
-{
-	lastAttack+= timeDelta;
-	if (lastAttack >= damageFrequency && !self.isDead){
-		lastAttack = 0.0;
-		
-		[theBoss setHealth:[theBoss health] - self.damageDealt];
-		
-	}
-	
-	for (int i = 0; i < [activeEffects count]; i++){
-		Effect *effect = [activeEffects objectAtIndex:i];
-		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
-		if ([effect isExpired]){
-			[effect expire];
-			[activeEffects removeObjectAtIndex:i];
-		}
-	}
-	
-}
 @end
 
 @implementation Ogre
@@ -141,26 +123,5 @@
 
 -(BOOL)raidMemberShouldDodgeAttack:(float)modifer{
     return arc4random() % 100 <= 10;
-}
-
--(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
-{
-	lastAttack+= timeDelta;
-	if (lastAttack >= damageFrequency && !self.isDead){
-		lastAttack = 0.0;
-		
-		[theBoss setHealth:[theBoss health] - self.damageDealt];
-		
-	}
-	
-	for (int i = 0; i < [activeEffects count]; i++){
-		Effect *effect = [activeEffects objectAtIndex:i];
-		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
-		if ([effect isExpired]){
-			[effect expire];
-			[activeEffects removeObjectAtIndex:i];
-		}
-	}
-	
 }
 @end

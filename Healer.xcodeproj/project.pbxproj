@@ -166,6 +166,7 @@
 		38F04EEA13C2593500BCADCB /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38F04EE913C2593500BCADCB /* GameDefaults.plist */; };
 		BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
+		BF8A50F415236D6300BEC882 /* GamePlayFTUELayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -594,6 +595,8 @@
 		BF80763115214A04001EB2B3 /* PreBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreBattleScene.h; path = Scenes/PreBattleScene.h; sourceTree = "<group>"; };
 		BF80763215214A04001EB2B3 /* PreBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PreBattleScene.m; path = Scenes/PreBattleScene.m; sourceTree = "<group>"; };
 		BF80764C1522DACC001EB2B3 /* Announcer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Announcer.h; sourceTree = "<group>"; };
+		BF8A50F215236D6300BEC882 /* GamePlayFTUELayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlayFTUELayer.h; sourceTree = "<group>"; };
+		BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlayFTUELayer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1352,6 +1355,8 @@
 				387E7B20145E1375006D9266 /* RaidView.m */,
 				387E7B09145E1375006D9266 /* BossHealthView.h */,
 				387E7B0A145E1375006D9266 /* BossHealthView.m */,
+				BF8A50F215236D6300BEC882 /* GamePlayFTUELayer.h */,
+				BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */,
 			);
 			name = GamePlay;
 			sourceTree = "<group>";
@@ -1672,6 +1677,7 @@
 				BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */,
 				386747A91520073D0057A8C9 /* CombatEvent.m in Sources */,
 				BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */,
+				BF8A50F415236D6300BEC882 /* GamePlayFTUELayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

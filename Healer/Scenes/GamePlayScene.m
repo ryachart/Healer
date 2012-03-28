@@ -19,6 +19,8 @@
 @property (nonatomic, retain) Boss *boss;
 @property (nonatomic, retain) Player *player;
 @property (nonatomic, assign) CCLabelTTF *announcementLabel;
+
+-(void)battleBegin;
 @end
 
 @implementation GamePlayScene
@@ -124,11 +126,44 @@
         
         
         //The timer has to be scheduled after all the init is done!
-        [self schedule:@selector(gameEvent:)];
+        
 	}
     return self;
 }
 
+-(void)onEnterTransitionDidFinish{
+    if (self.levelNumber == 1){
+        GamePlayFTUELayer *gpfl = [[[GamePlayFTUELayer alloc] init] autorelease];
+        [gpfl setDelegate:self];
+        [self addChild:gpfl z:1000];
+        [gpfl showWelcome];
+    }else{
+        [self battleBegin];
+    }
+}
+
+-(void)ftueLayerDidComplete{
+    [self battleBegin];
+}
+
+-(void)battleBegin{
+    self.announcementLabel.visible = YES;
+    __block GamePlayScene *blockSelf = self;
+    [blockSelf runAction:[CCSequence actions:
+                          [CCCallBlock actionWithBlock:^(){
+        [blockSelf.announcementLabel setString:@"Battle Begins in 3"];
+    }], 
+                          [CCDelayTime actionWithDuration:1.0], 
+                          [CCCallBlock actionWithBlock:^(){
+        [blockSelf.announcementLabel setString:@"Battle Begins in 2"];
+    }], [CCDelayTime actionWithDuration:1.0],
+                          [CCCallBlock actionWithBlock:^(){
+        [blockSelf.announcementLabel setString:@"Battle Begins in 1"];
+    }], [CCDelayTime actionWithDuration:1.0], [CCCallBlock actionWithBlock:^{
+        blockSelf.announcementLabel.visible = NO;
+        [blockSelf schedule:@selector(gameEvent:)];
+    }], nil]];
+}
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 

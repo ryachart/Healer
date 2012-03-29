@@ -10,7 +10,7 @@
 
 @protocol GamePlayFTUELayerDelegate <NSObject>
 
--(void)ftueLayerDidComplete;
+-(void)ftueLayerDidComplete:(CCNode*)ftueLayer;
 
 @end
 

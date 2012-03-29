@@ -133,6 +133,7 @@
 
 -(void)onEnterTransitionDidFinish{
     if (self.levelNumber == 1){
+        [self gameEvent:0.0]; //Bump the UI
         GamePlayFTUELayer *gpfl = [[[GamePlayFTUELayer alloc] init] autorelease];
         [gpfl setDelegate:self];
         [self addChild:gpfl z:1000];
@@ -142,7 +143,8 @@
     }
 }
 
--(void)ftueLayerDidComplete{
+-(void)ftueLayerDidComplete:(CCNode*)ftueLayer{
+    [ftueLayer removeFromParentAndCleanup:YES];
     [self battleBegin];
 }
 

@@ -83,13 +83,22 @@
 @interface Regrow : Spell //Instant cast 12 second HoT
 @end
 
-@interface Sphere : Spell //Fast cast expensive Absorb
+@interface Barrier : Spell //Fast cast expensive Absorb
 @end
 
-@interface BlastOfLight : Spell //Instant cast short cooldown heal
+@interface HealingBurst : Spell //Instant cast short cooldown heal
 @end
 
 @interface Purify : Spell //Cure
+@end
+
+@interface OrbsOfLight : Spell //Reactive Heal
+@end
+
+@interface SwirlingLight : Spell //Intensified HoT
+@end
+
+@interface LightEternal : Spell //Prayer of Smart Healing
 @end
 
 ////BASIC TEST SPELLS/////

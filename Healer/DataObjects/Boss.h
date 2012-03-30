@@ -43,6 +43,26 @@
 +(id)defaultBoss;
 @end
 
+
+#pragma mark - Shipping Bosses
+@interface Ghoul : Boss
+@end
+
+@interface Troll : Boss
+@end
+
+@interface Drake : Boss
+@end
+
+@interface Trulzar : Boss
+@end
+
+@interface DarkCouncil : Boss
+@end
+
+
+
+
 #pragma mark -
 #pragma mark Demo Bosses
 @interface Dragon : Boss {

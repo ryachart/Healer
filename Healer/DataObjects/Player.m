@@ -67,7 +67,7 @@
 			spellBeingCast = nil;
 			isCasting = NO;
 			castStart = 0.0f;
-			additionalTargets = nil;
+			[additionalTargets release]; additionalTargets = nil;
 		}
 		
 	}

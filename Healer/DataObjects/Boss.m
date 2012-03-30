@@ -12,6 +12,7 @@
 
 @interface Boss ()
 @property (nonatomic, retain) RaidMember *focusTarget;
+-(int)damageDealt;
 @end
 
 @implementation Boss
@@ -32,14 +33,31 @@
 	
 }
 
+-(int)damageDealt{
+    
+    float multiplyModifier = 1;
+    int additiveModifier = 0;
+    
+    if (choosesMainTank && self.focusTarget.isDead){
+        multiplyModifier *= 3; //The tank died.  Outgoing damage is now tripled
+    }
+    
+    return (int)round((float)damage/(float)targets * multiplyModifier) + additiveModifier;
+}
+
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid*)raid andPlayer:(Player*)player{
     //The main entry point for health based triggers
 }
 
--(void)damageTarget:(RaidMember*)target withDamage:(int)damagePerTarget{
+-(void)damageTarget:(RaidMember*)target{
     if (![target raidMemberShouldDodgeAttack:0.0]){
-        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:damagePerTarget] andEventType:CombatEventTypeDamage]];
-        [target setHealth:[target health] - damagePerTarget];
+        int thisDamage = self.damageDealt;
+        
+        if (target == self.focusTarget){
+            thisDamage = (int)round(thisDamage * .2);
+        }
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:thisDamage] andEventType:CombatEventTypeDamage]];
+        [target setHealth:[target health] - thisDamage];
         
         if ([target isDead]){
             [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:nil andEventType:CombatEventTypeMemberDied]];
@@ -71,17 +89,12 @@
 		
 		self.lastAttack = 0;
 		
-		NSInteger damagePerTarget = damage/targets;
 		NSArray* victims = [theRaid getAliveMembers];
 		
 		RaidMember *target = nil;
 		
-        if (choosesMainTank && self.focusTarget.isDead){
-            damagePerTarget *= 3; //The tank died.  Outgoing damage is now tripled
-        }
-        
         if (choosesMainTank && !self.focusTarget.isDead){
-            [self damageTarget:self.focusTarget withDamage:(int)round(damagePerTarget * 1.2)];
+            [self damageTarget:self.focusTarget];
             if (self.focusTarget.isDead){
                 [self.announcer announce:[NSString stringWithFormat:@"%@ enters a blood rage upon killing his focused target.", self.title]];
                 
@@ -95,7 +108,7 @@
 					target = [victims objectAtIndex:targetIndex];
 				} while ([target isDead]);
 				
-                [self damageTarget:target withDamage:damagePerTarget];
+                [self damageTarget:target];
 			}
 		}
 		else{
@@ -108,7 +121,7 @@
 					
 					target = [victims objectAtIndex:targetIndex];
 				} while ([target isDead]);
-                [self damageTarget:target withDamage:damagePerTarget];
+                [self damageTarget:target];
 				
 				if ([[theRaid getAliveMembers] count] == 0){
 					i = targets;

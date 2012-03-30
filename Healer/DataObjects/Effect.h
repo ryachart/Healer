@@ -55,7 +55,10 @@ typedef enum {
 }
 @property (readwrite) NSInteger numOfTicks;
 @property (readwrite) NSInteger healingPerTick;
+-(void)tick;
+@end
 
+@interface SwirlingLightEffect : HealOverTimeEffect
 @end
 
 @interface ShieldEffect : Effect <HealthAdjustmentModifier>
@@ -65,6 +68,10 @@ typedef enum {
 @property (readwrite) NSInteger amountToShield;
 @end
 
+
+@interface ReactiveHealEffect : Effect <HealthAdjustmentModifier>
+@property NSInteger amountPerReaction;
+@end
 
 @interface BigFireball : Effect {
 	NSInteger lastPosition;

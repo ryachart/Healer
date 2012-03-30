@@ -19,6 +19,7 @@
 @property (nonatomic, retain) Boss *boss;
 @property (nonatomic, retain) Player *player;
 @property (nonatomic, assign) CCLabelTTF *announcementLabel;
+@property (nonatomic, assign) CCLabelTTF *errAnnouncementLabel;
 
 -(void)battleBegin;
 @end
@@ -35,6 +36,7 @@
 @synthesize levelNumber;
 @synthesize eventLog;
 @synthesize announcementLabel;
+@synthesize errAnnouncementLabel;
 
 -(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse
 {
@@ -64,11 +66,17 @@
         [self.announcementLabel setColor:ccYELLOW];
         [self.announcementLabel setVisible:NO];
         
+        self.errAnnouncementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
+        [self.errAnnouncementLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .4)];
+        [self.errAnnouncementLabel setColor:ccRED];
+        [self.errAnnouncementLabel setVisible:NO];
+        
         [self addChild:self.bossHealthView];
         [self addChild:self.playerCastBar];
         [self addChild:self.playerHealthView];
         [self addChild:self.playerEnergyView];
         [self addChild:self.announcementLabel z:100];
+        [self addChild:self.errAnnouncementLabel z:99];
         //CACHE SOUNDS
         AudioController *ac = [AudioController sharedInstance];
         for (Spell* aSpell in [player activeSpells]){
@@ -294,6 +302,15 @@
     }],nil]];
 }
 
+-(void)errorAnnounce:(NSString*)announcement{
+    [self.errAnnouncementLabel setVisible:YES];
+    [self.errAnnouncementLabel setString:announcement];
+    [self.errAnnouncementLabel runAction:[CCSequence actions:[CCScaleTo actionWithDuration:1.5 scale:1.25], [CCScaleTo actionWithDuration:1.5 scale:1.0],[CCDelayTime actionWithDuration:5.0], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [node setVisible:NO];
+        [(CCLabelTTF*)node setString:@""];
+    }],nil]];
+}
+
 -(void)logEvent:(CombatEvent *)event{
     [self.eventLog addObject:event];
     
@@ -320,7 +337,7 @@
 			survivors++;
 		}
 		else {
-			//if ([
+			
 		}
 
 	}

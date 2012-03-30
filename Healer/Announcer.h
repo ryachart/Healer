@@ -10,4 +10,5 @@
 
 @protocol Announcer <NSObject>
 -(void)announce:(NSString*)announcement;
+-(void)errorAnnounce:(NSString*)announcement;
 @end

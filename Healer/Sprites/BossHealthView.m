@@ -30,7 +30,7 @@
         [self.healthFrame setContentSize:frame.size];
         
         self.bossNameLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:32.0];
-        self.bossNameLabel.position = CGPointMake(100, 50);
+        self.bossNameLabel.position = CGPointMake(200, 50);
         self.bossNameLabel.contentSize = frame.size;
         [self.bossNameLabel setColor:ccRED];
         

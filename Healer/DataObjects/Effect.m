@@ -42,6 +42,13 @@
 	
 }
 
+-(BOOL)isEqual:(id)object{
+    if ([object isMemberOfClass:[self class]]){
+        return YES;
+    }
+    return NO;
+}
+
 -(void)expire{
 
 }
@@ -73,8 +80,6 @@
 		[thePlayer setStatusText:[NSString stringWithFormat:@"A Fireball will strike you in %1.2f seconds. Move!",duration - self.timeApplied]];
 		if (timeDelta >= duration){
 			//Here we do some effect, but we have to subclass Effects to decide what that is
-			//NSLog(@"Effect Expired");
-			//The one thing we always do here is expire the effect
 			
 			NSInteger movementDelta = [thePlayer position] - lastPosition;
 			if (movementDelta < 30){
@@ -112,20 +117,22 @@
         self.timeApplied += timeDelta;
 		lastTick += timeDelta;
 		if (lastTick >= (duration/numOfTicks)){
-            if (!target.isDead){
-                [target setHealth:[target health] + healingPerTick];
-            }
+            [self tick];
 			lastTick = 0.0;
 		}
 		if (self.timeApplied >= duration){
-            if (!target.isDead){
-                [target setHealth:[target health] + healingPerTick];
-            }
+            [self tick];
 			//The one thing we always do here is expire the effect
 			self.timeApplied = 0.0;
 			isExpired = YES;
 		}
 	}
+}
+
+-(void)tick{
+    if (!target.isDead){
+        [target setHealth:[target health] + healingPerTick];
+    }
 }
 
 @end
@@ -160,6 +167,32 @@
 }
 @end
 
+
+@implementation ReactiveHealEffect
+@synthesize amountPerReaction;
+
+-(void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
+    
+}
+-(void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth{
+    if (currentHealth < newHealth){
+        [self.target setHealth:self.target.health + self.amountPerReaction];
+    }
+}
+@end
+@implementation SwirlingLightEffect
+
+-(void)tick{
+    int similarEffectCount = 0;
+    for (Effect *effect in target.activeEffects){
+        if ([effect isEqual:self]){
+            similarEffectCount++;
+        }
+    }
+    
+    [self.target setHealth:self.target.health + (int)round((self.healingPerTick * (similarEffectCount * .25)))];
+}
+@end
 #pragma mark -
 #pragma mark Shaman Spells
 
@@ -280,6 +313,7 @@
 +(id)defaultEffect{
 	BulwarkEffect *be = [[BulwarkEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive];
 	[be setAmountToShield:40];
+    [be setMaxStacks:1];
 	return [be autorelease];
 }
 

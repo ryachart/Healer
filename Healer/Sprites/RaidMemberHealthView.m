@@ -86,9 +86,7 @@
 {
 	memberData = rdMember;
 	self.lastHealth = memberData.health;
-	if ([memberData class] == [Witch class]) [classNameLabel setString:@"Witch"];
-	if ([memberData class] == [Ogre	 class]) [classNameLabel setString:@"Ogre"];
-	if ([memberData class] == [Troll class]) [classNameLabel setString:@"Troll"];
+    [self.classNameLabel setString:rdMember.title];
 
 }
 

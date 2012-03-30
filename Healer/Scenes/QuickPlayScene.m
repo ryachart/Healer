@@ -65,13 +65,13 @@
     if (level == 1){
         basicRaid = [[Raid alloc] init];
         basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
-        basicBoss = [[Boss alloc] initWithHealth:7500 damage:12 targets:1 frequency:1.5 andChoosesMT:NO];
-        [basicBoss setTitle:@"Zombie"];
+        basicBoss = [[Boss alloc] initWithHealth:6750 damage:12 targets:1 frequency:1.5 andChoosesMT:NO];
+        [basicBoss setTitle:@"The Night Ghoul"];
         
         [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], nil]];
         
         for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Troll defaultTroll]];
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
         }
 
     }
@@ -79,34 +79,34 @@
     if (level == 2){
         basicRaid = [[Raid alloc] init];
         basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
-        basicBoss = [[Boss alloc] initWithHealth:12000 damage:12 targets:1 frequency:1.4 andChoosesMT:NO];
-        [basicBoss setTitle:@"Zombie Wizard"];
+        basicBoss = [[Boss alloc] initWithHealth:45000 damage:10 targets:2 frequency:1.4 andChoosesMT:YES];
+        [basicBoss setTitle:@"Corrupted Troll"];
         [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], nil]];
         
         for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Troll defaultTroll]];
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
         }
         for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Ogre defaultOgre]];
+            [basicRaid addRaidMember:[Guardian defaultGuardian]];
         }
     }
     
     if (level == 3){
         basicRaid = [[Raid alloc] init];
         basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
-        basicBoss = [[Boss alloc] initWithHealth:20000 damage:8 targets:4 frequency:.8 andChoosesMT:NO];
-        [basicBoss setTitle:@"Zombie Horde"];
+        basicBoss = [[Boss alloc] initWithHealth:120000 damage:8 targets:4 frequency:.8 andChoosesMT:NO];
+        [basicBoss setTitle:@"Drake of Soldorn"];
         [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], nil]];
         
         for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Troll defaultTroll]];
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
         }
-        for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Ogre defaultOgre]];
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Guardian  defaultGuardian]];
         }
         
         for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Witch defaultWitch]];
+            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
         }
     }
     

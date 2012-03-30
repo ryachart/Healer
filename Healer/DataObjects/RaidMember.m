@@ -12,6 +12,7 @@
 @implementation RaidMember
 @synthesize lastAttack;
 @synthesize damageDealt;
+@synthesize title;
 
 -(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq
 {
@@ -21,6 +22,7 @@
         
         damageDealt = damage;
         damageFrequency = dmgFreq;
+        self.title = @"NOTITLE";
         
         activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
     }
@@ -86,6 +88,41 @@
 
 
 @end
+
+
+#pragma mark - Merc Campaign Allies
+
+@implementation  Guardian
++(Guardian*)defaultGuardian{
+    return [[[Guardian alloc] init] autorelease];
+}
+-(id)init{
+    
+}
+
+@end
+
+
+@implementation Solider
+
+@end
+
+@implementation Champion
+
+@end
+
+@implementation  Wizard
+
+@end
+
+@implementation Berserker
+
+@end
+
+@implementation  Demonslayer
+
+@end
+#pragma mark - Deprecated Party Members
 
 @implementation Witch
 +(Witch*)defaultWitch

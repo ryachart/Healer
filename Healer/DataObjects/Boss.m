@@ -32,6 +32,10 @@
 	
 }
 
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid*)raid andPlayer:(Player*)player{
+    //The main entry point for health based triggers
+}
+
 -(void)damageTarget:(RaidMember*)target withDamage:(int)damagePerTarget{
     if (![target raidMemberShouldDodgeAttack:0.0]){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:damagePerTarget] andEventType:CombatEventTypeDamage]];
@@ -45,10 +49,7 @@
     }
 }
 
--(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)theTime
-{
-    self.lastAttack+= theTime;
-
+-(void)chooseMainTankInRaid:(Raid *)theRaid{
     if (choosesMainTank && !self.focusTarget){
         int highestHealth = ((RaidMember*)[theRaid.raidMembers objectAtIndex:0]).maximumHealth;
         RaidMember *tempTarget = [theRaid.raidMembers objectAtIndex:0];
@@ -61,8 +62,12 @@
         self.focusTarget = tempTarget;
         [self.focusTarget setIsFocused:YES];
     }
-	
-	if (self.lastAttack >= frequency){
+}
+
+-(void)performStandardAttackOnTheRaid:(Raid*)theRaid andPlayer:(Player*)thePlayer withTime:(float)theTime{
+    self.lastAttack+= theTime;
+
+    if (self.lastAttack >= frequency){
 		
 		self.lastAttack = 0;
 		
@@ -79,7 +84,7 @@
             [self damageTarget:self.focusTarget withDamage:(int)round(damagePerTarget * 1.2)];
             if (self.focusTarget.isDead){
                 [self.announcer announce:[NSString stringWithFormat:@"%@ enters a blood rage upon killing his focused target.", self.title]];
-
+                
             }
         }
 		if (targets <= [victims count]){
@@ -112,6 +117,15 @@
 		}
 		
 	}
+
+}
+-(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)theTime
+{
+    [self healthPercentageReached:(float)self.health/(float)self.maximumHealth withRaid:theRaid andPlayer:player];
+
+    [self chooseMainTankInRaid:theRaid];
+	
+    [self performStandardAttackOnTheRaid:theRaid andPlayer:player withTime:theTime];
 }
 
 -(void)setHealth:(NSInteger)newHealth
@@ -137,6 +151,18 @@
     return self.title;
 }
 @end
+
+#pragma mark - Shipping Bosses (Merc Campaign)
+
+
+
+
+
+
+
+
+
+#pragma mark - Deprecated Bosses
 @implementation MinorDemon
 +(id)defaultBoss{
 	MinorDemon *defMinorDemon = [[MinorDemon alloc] initWithHealth:25000 damage:24 targets:2 frequency:.85 andChoosesMT:NO];
@@ -277,8 +303,6 @@
 	}
 }
 @end
-#pragma mark -
-#pragma mark Demo Bosses
 @implementation Dragon
 +(id)defaultBoss{
 	Dragon *defDragon = [[Dragon alloc] initWithHealth:100000 damage:28 targets:4 frequency:0.80 andChoosesMT:NO];

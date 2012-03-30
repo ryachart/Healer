@@ -13,6 +13,7 @@
 @synthesize lastAttack;
 @synthesize damageDealt;
 @synthesize title;
+@synthesize dodgeChance;
 
 -(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq
 {
@@ -23,7 +24,7 @@
         damageDealt = damage;
         damageFrequency = dmgFreq;
         self.title = @"NOTITLE";
-        
+        self.dodgeChance = 0.0;
         activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
     }
 	return self;
@@ -75,7 +76,7 @@
 }
 
 -(BOOL)raidMemberShouldDodgeAttack:(float)modifer{
-    return NO;
+    return arc4random() % 100 <= (100 * self.dodgeChance);
 }
 
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
@@ -97,14 +98,39 @@
     return [[[Guardian alloc] init] autorelease];
 }
 -(id)init{
-    
+    if (self = [super initWithHealth:100 damageDealt:50 andDmgFrequency:1.0]){
+        self.title = @"Guardian";
+        self.dodgeChance = .09;
+    }
+    return self;
 }
-
 @end
 
 
-@implementation Solider
+@implementation Soldier
++(Soldier*)defaultSoldier{
+    return [[[Soldier alloc] init] autorelease];
+}
+-(id)init{
+    if (self = [super initWithHealth:75 damageDealt:62 andDmgFrequency:.80]){
+        self.title = @"Soldier";
+        self.dodgeChance = .07;
+    }
+    return self;
+}
+@end
 
+@implementation  Demonslayer
++(Demonslayer*)defaultDemonslayer{
+    return [[[Demonslayer alloc] init] autorelease];
+}
+-(id)init{
+    if (self = [super initWithHealth:75 damageDealt:62 andDmgFrequency:.80]){
+        self.title = @"Demonslayer";
+        self.dodgeChance = .05;
+    }
+    return self;
+}
 @end
 
 @implementation Champion
@@ -112,16 +138,43 @@
 @end
 
 @implementation  Wizard
++(Wizard*)defaultWizard{
+    return [[[Wizard alloc] init] autorelease];
+}
 
+-(id)init{
+    if (self = [super initWithHealth:75 damageDealt:25 andDmgFrequency:1.0]){
+        self.title = @"Wizard";
+        self.dodgeChance = .05;
+        lastEnergyGrant = 0.0;
+    }
+    return self;
+}
+
+-(void)combatActions:(Boss *)theBoss raid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta{
+    [super combatActions:theBoss raid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+    lastEnergyGrant += timeDelta;
+    if (lastEnergyGrant > 1.0){
+        [thePlayer setEnergy:thePlayer.energy + 1];
+        lastEnergyGrant = 0.0;
+    }
+    
+}
 @end
 
 @implementation Berserker
++(Berserker*)defaultBerserker{
+    return [[[Berserker alloc] init] autorelease];
+}
+-(id)init{
+    if (self = [super initWithHealth:70 damageDealt:70 andDmgFrequency:1.0]){
+    
+    }
+}
 
 @end
 
-@implementation  Demonslayer
 
-@end
 #pragma mark - Deprecated Party Members
 
 @implementation Witch

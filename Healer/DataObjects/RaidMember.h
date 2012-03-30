@@ -32,6 +32,7 @@
 @property (nonatomic, retain) NSString* title;
 @property (nonatomic,  readwrite) NSInteger damageDealt; //All RaidMembers deal some damage
 @property (readwrite) float lastAttack;
+@property (readwrite) float dodgeChance;
 -(float)dps;
 
 -(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq;
@@ -55,11 +56,16 @@
 @interface Demonslayer : RaidMember 
 +(Demonslayer*)defaultDemonslayer;
 @end
-@interface Wizard : RaidMember
+@interface Wizard : RaidMember{
+    float lastEnergyGrant;
+}
++(Wizard*)defaultWizard;
 @end
-@interface Champion : RaidMember    
+@interface Champion : RaidMember 
++(Champion *)defaultChampion;
 @end
 @interface Berserker : RaidMember
++(Berserker*)defaultBerserker;
 @end
 #pragma mark - Deprecated
 //Witches deal the most damage but take the most damage

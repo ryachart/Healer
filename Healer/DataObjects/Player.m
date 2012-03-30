@@ -163,22 +163,19 @@
 {
 	energy = newEnergy;
 	if (energy < 0) energy = 0;
-	if (energy > maximumEnergy) energy = maximumHealth;
+	if (energy > maximumEnergy) energy = maximumEnergy;
 }
 
 -(int)channelingBonus{
 	
 	if ([self channelingTime] >= maxChannelTime){
-		//NSLog(@"Bonus is 10");
 		return 10;
 	}
 	else if ([self channelingTime] >= .5 * maxChannelTime){
-		//NSLog(@"Bonus is 5");
 		return 6;
 		
 	}
 	else if ([self channelingTime] >= .25 * maxChannelTime){
-		//NSLog(@"Bonus is 2");
 		return 3;
 	}
 	

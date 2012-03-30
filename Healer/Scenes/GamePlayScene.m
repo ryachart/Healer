@@ -47,11 +47,12 @@
         [self.boss setAnnouncer:self];
         self.player = playerToUse;
         [self.player setLogger:self];
+        [self.player setAnnouncer:self];
         
         self.eventLog = [NSMutableArray arrayWithCapacity:1000];
         
         self.raidView = [[[RaidView alloc] init] autorelease];
-        [self.raidView setPosition:CGPointMake(100, 100)];
+        [self.raidView setPosition:CGPointMake(10, 100)];
         [self.raidView setContentSize:CGSizeMake(500, 500)];
         [self.raidView setColor:ccGRAY];
         [self.raidView setOpacity:255];
@@ -171,6 +172,7 @@
         [blockSelf.announcementLabel setString:@"Battle Begins in 1"];
     }], [CCDelayTime actionWithDuration:1.0], [CCCallBlock actionWithBlock:^{
         blockSelf.announcementLabel.visible = NO;
+        blockSelf.announcementLabel.string = @"";
         [blockSelf schedule:@selector(gameEvent:)];
     }], nil]];
 }
@@ -207,6 +209,7 @@
 
 -(void)thisMemberUnselected:(RaidMemberHealthView*)hv
 {
+    if ([[hv memberData] isDead]) return;
 	if (hv != [selectedRaidMembers objectAtIndex:0]){
 		[selectedRaidMembers removeObject:hv];
         [hv setOpacity:0];
@@ -294,12 +297,19 @@
 }
 
 -(void)announce:(NSString *)announcement{
+    if (![self.announcementLabel.string isEqualToString:@""]){
+        [self.announcementLabel stopAllActions];
+        [self.announcementLabel setString:@""];
+        [self.announcementLabel setScale:1.0];
+    }
+    
     [self.announcementLabel setVisible:YES];
     [self.announcementLabel setString:announcement];
-    [self.announcementLabel runAction:[CCSequence actions:[CCScaleTo actionWithDuration:1.5 scale:1.25], [CCScaleTo actionWithDuration:1.5 scale:1.0],[CCDelayTime actionWithDuration:5.0], [CCCallBlockN actionWithBlock:^(CCNode *node){
+    [self.announcementLabel runAction:[CCSequence actions:[CCScaleTo actionWithDuration:.3 scale:1.5], [CCScaleTo actionWithDuration:.3 scale:1.0],[CCDelayTime actionWithDuration:3.0], [CCCallBlockN actionWithBlock:^(CCNode *node){
         [node setVisible:NO];
         [(CCLabelTTF*)node setString:@""];
     }],nil]];
+    
 }
 
 -(void)errorAnnounce:(NSString*)announcement{
@@ -336,9 +346,6 @@
 		if (![member isDead]){
 			survivors++;
 		}
-		else {
-			
-		}
 
 	}
 	[boss combatActions:player theRaid:raid gameTime:deltaT];
@@ -368,12 +375,12 @@
 	if (survivors == 0)
 	{
         [self unschedule:@selector(gameEvent:)];
-        [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:NO andEventLog:self.eventLog] autorelease]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:[[[PostBattleScene alloc] initWithVictory:NO andEventLog:self.eventLog] autorelease]]];
 	}
     
 	if ([player isDead]){
                 [self unschedule:@selector(gameEvent:)];
-        [[CCDirector sharedDirector] replaceScene:[[[PostBattleScene alloc] initWithVictory:NO andEventLog:self.eventLog] autorelease]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:[[[PostBattleScene alloc] initWithVictory:NO andEventLog:self.eventLog] autorelease]]];
 	}
 	if ([boss isDead]){
 		[activeEncounter characterDidCompleteEncounter];

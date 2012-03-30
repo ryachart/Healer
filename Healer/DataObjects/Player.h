@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "HealableTarget.h"
+#import "Announcer.h"
 
 /* The Player class contains the necessary information for managing a player while
 	the game is taking place.  The Player is not a data type that persists between games
@@ -59,6 +60,7 @@ typedef int CastingDisabledReason;
 	BOOL castingDisabledReasons[CastingDisabledReasonTotal];
 }
 @property (nonatomic, retain) NSArray *activeSpells;
+@property (nonatomic, retain) id<Announcer> announcer;
 @property (nonatomic, readonly)  NSMutableSet *spellsOnCooldown;
 @property (retain) Spell *spellBeingCast;
 @property (nonatomic, setter=setEnergy:) NSInteger energy;

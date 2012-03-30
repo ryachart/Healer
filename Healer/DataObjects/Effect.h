@@ -47,18 +47,20 @@ typedef enum {
 
 @end
 
-@interface HealOverTimeEffect : Effect
+
+#pragma mark - Shipping Spell Effects
+@interface RepeatedHealthEffect : Effect
 {
 	NSInteger numOfTicks;
-	NSInteger healingPerTick;
+	NSInteger valuePerTick;
 	float lastTick;
 }
 @property (readwrite) NSInteger numOfTicks;
-@property (readwrite) NSInteger healingPerTick;
+@property (readwrite) NSInteger valuePerTick;
 -(void)tick;
 @end
 
-@interface SwirlingLightEffect : HealOverTimeEffect
+@interface SwirlingLightEffect : RepeatedHealthEffect
 @end
 
 @interface ShieldEffect : Effect <HealthAdjustmentModifier>
@@ -73,6 +75,13 @@ typedef enum {
 @property NSInteger amountPerReaction;
 @end
 
+
+
+#pragma mark - Shipping Boss Effects
+@interface TrulzarPoison : RepeatedHealthEffect
+@end
+
+#pragma mark - DEPRECATED EFFECTS
 @interface BigFireball : Effect {
 	NSInteger lastPosition;
 }
@@ -80,31 +89,31 @@ typedef enum {
 @end
 
 /////SHAMAN EFFECTS/////
-@interface RoarOfLifeEffect : HealOverTimeEffect 
+@interface RoarOfLifeEffect : RepeatedHealthEffect 
 +(id)defaultEffect;
 @end
 
-@interface WoundWeavingEffect : HealOverTimeEffect
+@interface WoundWeavingEffect : RepeatedHealthEffect
 +(id)defaultEffect;
 @end
 
-@interface SurgingGrowthEffect: HealOverTimeEffect
+@interface SurgingGrowthEffect: RepeatedHealthEffect
 +(id)defaultEffect;
 @end
 
-@interface FieryAdrenalineEffect : HealOverTimeEffect <HealthAdjustmentModifier>
+@interface FieryAdrenalineEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
 +(id)defaultEffect;
 @end
 
-@interface TwoWindsEffect : HealOverTimeEffect
+@interface TwoWindsEffect : RepeatedHealthEffect
 +(id)defaultEffect;
 @end
 
-@interface SymbioticConnectionEffect : HealOverTimeEffect
+@interface SymbioticConnectionEffect : RepeatedHealthEffect
 +(id)defaultEffect;
 @end
 
-@interface UnleashedNatureEffect: HealOverTimeEffect
+@interface UnleashedNatureEffect: RepeatedHealthEffect
 +(id)defaultEffect;
 @end
 

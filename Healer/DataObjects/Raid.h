@@ -25,4 +25,5 @@
 -(NSArray*)getAliveMembers;
 
 -(NSInteger)classCount:(NSString*)classToCount;
+-(RaidMember*)randomLivingMember;
 @end

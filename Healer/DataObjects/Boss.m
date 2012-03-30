@@ -9,6 +9,7 @@
 #import "Boss.h"
 #import "GameObjects.h"
 #import "RaidMember.h"
+#import "AudioController.h"
 
 @interface Boss ()
 @property (nonatomic, retain) RaidMember *focusTarget;
@@ -28,11 +29,18 @@
         choosesMainTank = chooses;
         lastAttack = 0.0f;
         title = @"";
+        
+        for (int i = 0; i < 101; i++){
+            healthThresholdCrossed[i] = NO;
+        }
     }
 	return self;
 	
 }
 
+-(float)healthPercentage{
+    return (float)self.health / (float)self.maximumHealth * 100;
+}
 -(int)damageDealt{
     
     float multiplyModifier = 1;
@@ -54,7 +62,7 @@
         int thisDamage = self.damageDealt;
         
         if (target == self.focusTarget){
-            thisDamage = (int)round(thisDamage * .2);
+            thisDamage = (int)round(thisDamage * 1.2);
         }
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:thisDamage] andEventType:CombatEventTypeDamage]];
         [target setHealth:[target health] - thisDamage];
@@ -96,7 +104,7 @@
         if (choosesMainTank && !self.focusTarget.isDead){
             [self damageTarget:self.focusTarget];
             if (self.focusTarget.isDead){
-                [self.announcer announce:[NSString stringWithFormat:@"%@ enters a blood rage upon killing his focused target.", self.title]];
+                [self.announcer announce:[NSString stringWithFormat:@"%@ frenzies upon killing his focused target.", self.title]];
                 
             }
         }
@@ -134,7 +142,19 @@
 }
 -(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)theTime
 {
-    [self healthPercentageReached:(float)self.health/(float)self.maximumHealth withRaid:theRaid andPlayer:player];
+    float healthPercentage = ((float)self.health/(float)self.maximumHealth) * 100;
+    int roundedPercentage = (int)round(healthPercentage);
+    int integerOnlyPercentage = (int)healthPercentage;
+    if ((healthPercentage - .5) < integerOnlyPercentage){
+        //This isnt there yet. We only want it to fire if we rounded up!
+    }else{
+        if (roundedPercentage < 100 && roundedPercentage > 0){
+            if (!healthThresholdCrossed[roundedPercentage]){
+                [self healthPercentageReached:(float)roundedPercentage withRaid:theRaid andPlayer:player];
+                healthThresholdCrossed[roundedPercentage] = YES;
+            }
+        }
+    }
 
     [self chooseMainTankInRaid:theRaid];
 	
@@ -167,11 +187,116 @@
 
 #pragma mark - Shipping Bosses (Merc Campaign)
 
+@implementation Ghoul
++(id)defaultBoss{
+    Ghoul *ghoul = [[Ghoul alloc]initWithHealth:6750 damage:10 targets:1 frequency:1.5 andChoosesMT:NO];
+    [ghoul setTitle:@"The Night Ghoul"];
+    return [ghoul autorelease];
+}
 
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+//    if (percentage == 75.0){
+//        [self.announcer announce:@"A putrid limb falls from the ghoul..."];
+//    }
+//    
+//    if (percentage == 50.0){
+//        [self.announcer announce:@"The ghoul begins to crumble."];
+//    }
+//    
+//    if (percentage == 25.0){
+//        [self.announcer announce:@"The nearly lifeless ghoul shrieks in agony.."];
+//    }
+}
+@end
 
+@implementation CorruptedTroll
++(id)defaultBoss{
+    CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:45000 damage:10 targets:2 frequency:1.4 andChoosesMT:YES];
+    [corTroll setTitle:@"Corrupted Troll"];
+    
+    return  [corTroll autorelease];
+}
+@end
 
+@implementation Drake 
++(id)defaultBoss{
+    Drake *drake = [[Drake alloc] initWithHealth:52000 damage:8 targets:4 frequency:.8 andChoosesMT:NO];
+    [drake setTitle:@"Drake of Soldorn"];
+    return [drake autorelease];
+}
+@end
 
+@implementation Trulzar
+@synthesize lastPoisonTime;
++(id)defaultBoss{
+    Trulzar *boss = [[Trulzar alloc] initWithHealth:180000 damage:20 targets:10 frequency:2.5 andChoosesMT:NO];
+    [boss setTitle:@"Trulzar the Maleficar"];
+    return [boss autorelease];
+}
 
+-(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
+    if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq andChoosesMT:chooses]){
+        [[AudioController sharedInstance] addNewPlayerWithTitle:@"trulzar-laugh" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/trulzar-laugh" ofType:@"m4a"]]];
+    }
+    return self;
+}
+
+-(void)dealloc{
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"trulzar-laugh"];
+    [super dealloc];
+}
+-(void)applyPoisonToTarget:(RaidMember*)target{
+    TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
+    [poisonEffect setValuePerTick:-7];
+    [poisonEffect setNumOfTicks:24];
+    [target addEffect:poisonEffect];
+    [poisonEffect release];
+}
+
+-(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
+    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+    self.lastPoisonTime += timeDelta;
+    
+    if (self.lastPoisonTime > 10){ 
+        if (self.healthPercentage > 10.0){
+            [self.announcer announce:@"Trulzar fills an ally with poison."];
+            [[AudioController sharedInstance] playTitle:@"trulzar-laugh"];
+            [self applyPoisonToTarget:[theRaid randomLivingMember]];
+            self.lastPoisonTime = 0;
+        }
+    }
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    if (((int)percentage) % 10 == 0){
+        //Every 10% of his life....
+        for (RaidMember *member in raid.raidMembers){
+            [self.announcer announce:@"Trulzar grasps at the souls of the poisoned."];
+            if (!member.isDead){
+                BOOL isPoisoned = NO;
+                for (Effect *effect in member.activeEffects){
+                    if ([effect isMemberOfClass:[TrulzarPoison class]]){
+                        isPoisoned = YES;
+                        break;
+                    }
+                }
+                
+                if (isPoisoned){
+                    [member setHealth: 1];
+                }
+            }
+        }
+    }
+    
+    if (((int)percentage) == 3){
+        for (RaidMember *member in raid.raidMembers){
+            [self.announcer announce:@"Trulzar cackles as the room fills with noxious poison."];
+            [self applyPoisonToTarget:member];
+        }
+    }
+}
+
+@end
 
 
 

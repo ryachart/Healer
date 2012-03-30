@@ -64,9 +64,8 @@
     
     if (level == 1){
         basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
-        basicBoss = [[Boss alloc] initWithHealth:6750 damage:12 targets:1 frequency:1.5 andChoosesMT:NO];
-        [basicBoss setTitle:@"The Night Ghoul"];
+        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+        basicBoss = [Ghoul defaultBoss];
         
         [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], nil]];
         
@@ -78,9 +77,8 @@
     
     if (level == 2){
         basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
-        basicBoss = [[Boss alloc] initWithHealth:45000 damage:10 targets:2 frequency:1.4 andChoosesMT:YES];
-        [basicBoss setTitle:@"Corrupted Troll"];
+        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+        basicBoss = [CorruptedTroll defaultBoss];
         [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], nil]];
         
         for (int i = 0; i < 2; i++){
@@ -93,18 +91,19 @@
     
     if (level == 3){
         basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
-        basicBoss = [[Boss alloc] initWithHealth:120000 damage:8 targets:4 frequency:.8 andChoosesMT:NO];
-        [basicBoss setTitle:@"Drake of Soldorn"];
-        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], nil]];
+        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+        basicBoss = [Drake defaultBoss];
+        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil]];
         
-        for (int i = 0; i < 2; i++){
+        for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Soldier defaultSoldier]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Guardian  defaultGuardian]];
         }
-        
         for (int i = 0; i < 2; i++){
             [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
         }
@@ -112,25 +111,27 @@
     
     if (level == 4){
         basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
-        basicBoss = [[Boss alloc] initWithHealth:50000 damage:25 targets:2 frequency:2.5 andChoosesMT:YES];
-        [basicBoss setTitle:@"Knights of Fargore"];
-        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil]];
+        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+        basicBoss = [Trulzar defaultBoss];
+        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Purify defaultSpell], nil]];
         
         for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Troll defaultTroll]];
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
         }
         for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Ogre defaultOgre]];
+            [basicRaid addRaidMember:[Guardian defaultGuardian]];
         }
         for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Witch defaultWitch]];
+            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
     }
     
     if (level == 5){
         basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
+        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
         basicBoss = [[Boss alloc] initWithHealth:75000 damage:60 targets:3 frequency:4.5 andChoosesMT:NO];
         [basicBoss setTitle:@"Fargore General"];
         [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil]];
@@ -148,7 +149,7 @@
     
     if (level == 6){
         basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
+        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
         basicBoss = [[Boss alloc] initWithHealth:85000 damage:17 targets:5 frequency:1.8 andChoosesMT:NO];
         [basicBoss setTitle:@"Drake of Thelia"];
         [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Regrow defaultSpell], nil]];
@@ -166,7 +167,7 @@
     
     if (level == 7){
         basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:100 energyRegen:1];
+        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
         basicBoss = [[Boss alloc] initWithHealth:130000 damage:60 targets:5 frequency:2.5 andChoosesMT:NO];
         [basicBoss setTitle:@"Thelian Dragon"];
         [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Regrow defaultSpell], nil]];
@@ -182,15 +183,12 @@
         }
     }
     
-    
-    
     if (basicBoss && basicPlayer && basicRaid){
         
         PreBattleScene *pbs = [[PreBattleScene alloc] initWithRaid:basicRaid boss:basicBoss andPlayer:basicPlayer];
         [pbs setLevelNumber:level];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:pbs]];
         [pbs release];
-        [basicBoss release];
         [basicPlayer release];
         [basicRaid release];
     }

@@ -181,7 +181,7 @@
     [super combatActions:theBoss raid:theRaid thePlayer:thePlayer gameTime:timeDelta];
     lastEnergyGrant += timeDelta;
     if (lastEnergyGrant > 1.0){
-        [thePlayer setEnergy:thePlayer.energy + 1];
+        [thePlayer setEnergy:thePlayer.energy + 6];
         lastEnergyGrant = 0.0;
     }
     

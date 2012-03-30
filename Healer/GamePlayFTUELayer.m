@@ -66,7 +66,7 @@
     [self.informationLabel setString:@"These are your allies.  Tap on these to select targets for your spells."];
     [self.informationLabel runAction:[CCFadeIn actionWithDuration:1.0]];
     [self.highlightLayer setContentSize:CGSizeMake(520, 520)];
-    [self.highlightLayer setPosition:CGPointMake(86, 95)];
+    [self.highlightLayer setPosition:CGPointMake(5, 95)];
     [self.highlightLayer runAction:[CCSequence actions:[CCFadeTo actionWithDuration:1.0 opacity:80], [CCDelayTime actionWithDuration:3.0], [CCFadeTo actionWithDuration:1.5 opacity:0], nil]];    
     [self.informationLabel runAction:[CCSequence actions:[CCDelayTime  actionWithDuration:4.5], [CCFadeOut actionWithDuration:1.5], [CCCallFunc actionWithTarget:self selector:@selector(showBossInformation)], nil]];
 }

@@ -27,6 +27,7 @@
 	NSString *title;
 	
 	//Combat Action Data
+    BOOL healthThresholdCrossed[101];
 }
 @property (nonatomic, retain) id <Announcer> announcer;
 @property (nonatomic, setter=setHealth:) NSInteger health;
@@ -40,7 +41,9 @@
 -(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta;
 -(void)setHealth:(NSInteger)newHealth;
 -(BOOL)isDead;
+-(float)healthPercentage; //In Hundreds form
 +(id)defaultBoss;
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid*)raid andPlayer:(Player*)player;
 @end
 
 
@@ -48,19 +51,24 @@
 @interface Ghoul : Boss
 @end
 
-@interface Troll : Boss
+@interface CorruptedTroll : Boss
 @end
 
 @interface Drake : Boss
 @end
 
 @interface Trulzar : Boss
+@property (readwrite) NSTimeInterval lastPoisonTime;
 @end
 
 @interface DarkCouncil : Boss
 @end
 
+@interface PlaguebringerColossus: Boss
+@end
 
+@interface SporeRavagers : Boss
+@end
 
 
 #pragma mark -

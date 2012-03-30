@@ -12,7 +12,7 @@
 @implementation Player
 
 @synthesize activeSpells, spellBeingCast, energy, maximumEnergy, spellTarget, additionalTargets, statusText;
-@synthesize position, logger, spellsOnCooldown=_spellsOnCooldown;
+@synthesize position, logger, spellsOnCooldown=_spellsOnCooldown, announcer;
 
 -(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen
 {
@@ -26,7 +26,7 @@
         spellBeingCast = nil;
         isCasting = NO;
         lastEnergyRegen = 0.0f;
-        statusText = @"";
+        self.statusText = @"";
         position = 0;
         maxChannelTime = 5;
         castStart = 0.0f;
@@ -44,6 +44,9 @@
 
 -(void)dealloc{
     [_spellsOnCooldown release]; _spellsOnCooldown = nil;
+    [additionalTargets release]; additionalTargets = nil;
+    [activeEffects release]; 
+    activeEffects = nil; 
     [super dealloc];
 }
 
@@ -88,11 +91,16 @@
 		}
 	}
     
+    NSMutableArray *spellsOffCooldown = [NSMutableArray  arrayWithCapacity:4];
     for (Spell *spell in [self spellsOnCooldown]){
         [spell updateCooldowns:timeDelta];
         if (spell.cooldownRemaining == 0){
-            [self.spellsOnCooldown removeObject:spell];
+            [spellsOffCooldown  addObject:spell];
         }
+    }
+    
+    for (Spell *spellToRemove in spellsOffCooldown){
+        [self.spellsOnCooldown removeObject:spellToRemove];
     }
 	
 }
@@ -144,8 +152,8 @@
 	}
 	NSInteger energyDiff = [self energy] - [theSpell energyCost];
 	if (energyDiff < 0) {
-		NSLog(@"Not enough energy");
-		[[AudioController sharedInstance] playTitle:OUT_OF_MANA_TITLE];
+        [self.announcer errorAnnounce:@"Not enough Energy"];
+        [[AudioController sharedInstance] playTitle:OUT_OF_MANA_TITLE];
 		return;
 	}
 	//SPELL BEGIN CAST
@@ -155,7 +163,8 @@
 	castStart = 0.0001;
 	isCasting = YES;
 	
-	additionalTargets = [targets copyWithZone:nil];
+    [additionalTargets release];
+	additionalTargets = [targets retain];
 	
 }
 

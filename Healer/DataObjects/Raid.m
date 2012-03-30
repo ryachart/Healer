@@ -68,4 +68,15 @@
 	
 	return [aliveMembers autorelease];
 }
+
+-(RaidMember*)randomLivingMember{
+    RaidMember *selectedMember = nil;
+    
+    do {
+        selectedMember = [self.raidMembers objectAtIndex:arc4random() % self.raidMembers.count];
+        if (selectedMember.isDead)
+            selectedMember = nil;
+    }while (!selectedMember);
+    return selectedMember;
+}
 @end

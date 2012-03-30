@@ -33,7 +33,7 @@
         self.healthBarLayer.position = CGPointMake(HEALTH_BAR_BORDER, HEALTH_BAR_BORDER);
         
 		self.classNameLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0f];            
-        [self.classNameLabel setPosition:CGPointMake(20, 10)];
+        [self.classNameLabel setPosition:CGPointMake(frame.size.width * .5, 10)];
         [self.classNameLabel setContentSize:CGSizeMake(frame.size.width, frame.size.height)];
         [self.classNameLabel setColor:ccc3(0, 0, 0)];
         
@@ -42,12 +42,12 @@
         [self.isFocusedLabel setColor:ccBLACK];
         
 		self.healthLabel =  [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0f];   
-        [self.healthLabel setPosition:CGPointMake(frame.size.width * .3, frame.size.height * .3)];
+        [self.healthLabel setPosition:CGPointMake(frame.size.width * .5, frame.size.height * .3)];
         [self.healthLabel setContentSize:CGSizeMake(frame.size.width * .5, frame.size.height * .25)];
         [self.healthLabel setColor:ccc3(0, 0, 0)];
 		
 		self.effectsLabel =  [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0f];
-        [self.effectsLabel setPosition:CGPointMake(0, frame.size.height * .15)];
+        [self.effectsLabel setPosition:CGPointMake(frame.size.width * .5, frame.size.height * .85)];
         [self.effectsLabel setContentSize:CGSizeMake(frame.size.width, frame.size.height * .15)];
         [self.effectsLabel setColor:ccc3(0, 0, 0)];
 			
@@ -112,8 +112,12 @@
     [self addChild:shadowLabel z:10];
     [self addChild:sctLabel z:11];
     
-    [sctLabel runAction:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0], nil]];
-    [shadowLabel runAction:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0], nil]];
+    [sctLabel runAction:[CCSequence actions:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [node removeFromParentAndCleanup:YES];
+    }], nil]];
+    [shadowLabel runAction:[CCSequence actions:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [node removeFromParentAndCleanup:YES];
+    }], nil]];
 }
 
 -(void)updateHealth
@@ -146,15 +150,18 @@
 	
 	NSMutableString* effectText = [[NSMutableString alloc] initWithCapacity:10];
 	for (Effect *eff in self.memberData.activeEffects){
-		if ([eff isKindOfClass:[HealOverTimeEffect class]]){
-			[effectText appendString:@"H"];
-		}
-		else if ([eff isKindOfClass:[ShieldEffect class]]){
+        if ([eff isKindOfClass:[ShieldEffect class]]){
 			[effectText appendString:@"S"];
 		}
 		else if ([eff effectType] == EffectTypePositive){
-			[effectText appendString:@"P"];
-		}
+            if ([eff isKindOfClass:[RepeatedHealthEffect class]]){
+                [effectText appendString:@"H"];
+            }else{
+                [effectText appendString:@"P"];
+            }
+		} else if ([eff effectType] == EffectTypeNegative){
+            [effectText appendFormat:@"N"];
+        }
 	}
 
 	if (![healthText isEqualToString:[healthLabel string]] || ![effectText isEqualToString:[effectsLabel string]]){

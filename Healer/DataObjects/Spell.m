@@ -17,15 +17,24 @@
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd
 {
     if (self = [super init]){
-        title = ttle;
+        title = [ttle retain];
         healingAmount = healAmnt;
         energyCost = nrgyCost;
         castTime = time;
         self.cooldown = cd;
         isMultitouch = NO;
         spellAudioData = [[SpellAudioData alloc] init];
+        percentagesPerTarget = nil;
     }
 	return self;
+}
+
+-(void)dealloc{
+    [spellAudioData release]; spellAudioData = nil;
+    [title release]; title = nil;
+    [percentagesPerTarget release];percentagesPerTarget = nil;
+    [super dealloc];
+    
 }
 +(id)defaultSpell{
 	Spell* def = [[[self class] alloc] initWithTitle:@"DefaultSpell" healAmnt:0 energyCost:0 castTime:0.0 andCooldown:0];
@@ -69,7 +78,7 @@
 	}
 	else if (numOfTargets > 1){
 		targets = numOfTargets;
-		percentagesPerTarget = [percentages copyWithZone:nil];
+		percentagesPerTarget = [percentages retain];
 		isMultitouch = YES;
 	}
 	
@@ -143,66 +152,7 @@
 
 
 +(Spell*)spellFromTitle:(NSString*)ttle
-{
-	//Shaman Spells
-	if ([ttle isEqualToString:@"Roar of Life"]){
-		return [RoarOfLife defaultSpell];
-	}
-	if ([ttle isEqualToString:@"Wound Weaving"]){
-		return [WoundWeaving defaultSpell];
-	}
-	if ([ttle isEqualToString:@"Surging Growth"]){
-		return [SurgingGrowth defaultSpell];
-	}
-	if ([ttle isEqualToString:@"Fiery Adrenaline"]){
-		return [FieryAdrenaline defaultSpell];
-	}
-	if ([ttle isEqualToString:@"Two Winds"]){
-		return [TwoWinds defaultSpell];
-	}
-	if ([ttle isEqualToString:@"Symbiotic Connection"]){
-		return [SymbioticConnection defaultSpell];
-	}
-	if ([ttle isEqualToString:@"Unleashed Nature"]){
-		return [UnleashedNature defaultSpell];
-	}
-	
-	//Seer Spells
-	if ([ttle isEqualToString:@"Shining Aegis"]){
-		return [ShiningAegis defaultSpell];
-	}
-	if ([ttle isEqualToString:@"Bulwark"]){
-		return [Bulwark defaultSpell];
-	}
-	if ([ttle isEqualToString:@"Ethereal Armor"]){
-		return [EtherealArmor defaultSpell];
-	}
-	
-	//TEST SPELLS
-	if ([ttle isEqualToString:@"Quick Heal"]){
-		return [QuickHeal defaultSpell];
-	}
-	if ([ttle isEqualToString:@"Super Heal"]){
-		return [SuperHeal defaultSpell];
-	}
-	if ([ttle isEqualToString:@"Forked Heal"]){
-		return [ForkedHeal defaultSpell];
-	}
-	if ([ttle isEqualToString:@"Surge of Life"]){
-		return [SurgeOfLife defaultSpell];
-	}
-	
-	if ([ttle isEqualToString:@"Healing Breath"]){
-		return [HealingBreath defaultSpell];
-	}
-	if ([ttle isEqualToString:@"Glorious Beam"]){
-		return [GloriousBeam defaultSpell];
-	}
-	
-	if ([ttle isEqualToString:@"Hasty Brew"]){
-		return [HastyBrew defaultSpell];
-	}
-	
+{	
 	return nil;
 }
 @end
@@ -211,7 +161,7 @@
 #pragma mark - Simple Game Spells
 @implementation Heal
 +(id)defaultSpell{
-    Heal *heal = [[Heal alloc] initWithTitle:@"Heal" healAmnt:17 energyCost:3 castTime:1.75 andCooldown:0.0];
+    Heal *heal = [[Heal alloc] initWithTitle:@"Heal" healAmnt:17 energyCost:30 castTime:1.75 andCooldown:0.0];
     [heal setDescription:@"Heals your target for a small amount"];
     [[heal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -223,7 +173,7 @@
 
 @implementation GreaterHeal
 +(id)defaultSpell{
-    GreaterHeal *heal = [[GreaterHeal alloc] initWithTitle:@"Greater Heal" healAmnt:50 energyCost:9 castTime:2.25 andCooldown:2.0];
+    GreaterHeal *heal = [[GreaterHeal alloc] initWithTitle:@"Greater Heal" healAmnt:50 energyCost:90 castTime:2.25 andCooldown:2.0];
     [heal setDescription:@"Heals your target for a large amount"];
     [[heal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -234,7 +184,7 @@
 
 @implementation HealingBurst
 +(id)defaultSpell{
-    HealingBurst *heal = [[HealingBurst alloc] initWithTitle:@"Healing Burst" healAmnt:37 energyCost:9 castTime:1.25 andCooldown:5.0];
+    HealingBurst *heal = [[HealingBurst alloc] initWithTitle:@"Healing Burst" healAmnt:37 energyCost:90 castTime:1.25 andCooldown:5.0];
     [heal setDescription:@"Heals your target for a moderate amount very quickly"];
     [[heal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -246,7 +196,7 @@
 @implementation ForkedHeal
 +(id)defaultSpell
 {
-	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:76 energyCost:10 castTime:1.75 andCooldown:.5];//10h/e
+	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:76 energyCost:100 castTime:1.75 andCooldown:.5];//10h/e
 	NSArray *forkedPercentages = [NSArray arrayWithObjects:[[[NSNumber alloc] initWithDouble:.50] autorelease], [[[NSNumber alloc] initWithDouble:.50] autorelease], nil];
 	[forkedHeal setTargets:2 withPercentagesPerTarget:forkedPercentages];
     [forkedHeal setDescription:@"Heals up to two simultaneously selected targets."];
@@ -259,7 +209,7 @@
 
 @implementation Regrow
 +(id)defaultSpell{
-    Regrow *regrow = [[Regrow alloc] initWithTitle:@"Regrow" healAmnt:0 energyCost:9 castTime:0.0 andCooldown:2.5];
+    Regrow *regrow = [[Regrow alloc] initWithTitle:@"Regrow" healAmnt:0 energyCost:90 castTime:0.0 andCooldown:2.5];
     [regrow setDescription:@"Heals for a large amount over 12 seconds."];
     [[regrow spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
     return [regrow autorelease];
@@ -268,9 +218,9 @@
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime
 {
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
-    HealOverTimeEffect *hotEffect = [[HealOverTimeEffect alloc] initWithDuration:12.0 andEffectType:EffectTypePositive];
+    RepeatedHealthEffect *hotEffect = [[RepeatedHealthEffect alloc] initWithDuration:12.0 andEffectType:EffectTypePositive];
     [hotEffect setNumOfTicks:4];
-    [hotEffect setHealingPerTick:13];
+    [hotEffect setValuePerTick:13];
     [[thePlayer spellTarget] addEffect:hotEffect];
     [hotEffect release];
 }
@@ -279,7 +229,7 @@
 
 @implementation  Barrier
 +(id)defaultSpell{
-	Barrier *bulwark = [[Barrier alloc] initWithTitle:@"Barrier" healAmnt:0 energyCost:7 castTime:0.0 andCooldown:6.0];
+	Barrier *bulwark = [[Barrier alloc] initWithTitle:@"Barrier" healAmnt:0 energyCost:70 castTime:0.0 andCooldown:6.0];
 	[bulwark setDescription:@"Sets a shield around the target that absorbs moderate damage"];
 	[[bulwark spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicCasting" ofType:@"wav"]] andTitle:@"BWStart"];
 	[[bulwark spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicFizzle" ofType:@"wav"]] andTitle:@"BWFizzle"];
@@ -303,7 +253,7 @@
 
 @implementation Purify
 +(id)defaultSpell{
-    Purify *purify = [[Purify alloc] initWithTitle:@"Purify" healAmnt:2 energyCost:4 castTime:0.0 andCooldown:5.0];
+    Purify *purify = [[Purify alloc] initWithTitle:@"Purify" healAmnt:2 energyCost:40 castTime:0.0 andCooldown:5.0];
     [purify setDescription:@"Dispels negative spell effects from allies."];
     [[purify spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
     return [purify autorelease];
@@ -326,7 +276,7 @@
 
 @implementation  OrbsOfLight
 +(id)defaultSpell{
-    OrbsOfLight *orbs = [[OrbsOfLight alloc] initWithTitle:@"Orbs of Light" healAmnt:0 energyCost:8 castTime:1.5 andCooldown:4.0];
+    OrbsOfLight *orbs = [[OrbsOfLight alloc] initWithTitle:@"Orbs of Light" healAmnt:0 energyCost:80 castTime:1.5 andCooldown:4.0];
     [orbs setDescription:@"Heals a target for a moderate amount each time it takes damage."];
     [[orbs spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[orbs spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -348,7 +298,7 @@
 
 @implementation  SwirlingLight
 +(id)defaultSpell{
-    SwirlingLight *swirl = [[SwirlingLight alloc] initWithTitle:@"Swirling Light" healAmnt:0 energyCost:4 castTime:0.0 andCooldown:2.0];
+    SwirlingLight *swirl = [[SwirlingLight alloc] initWithTitle:@"Swirling Light" healAmnt:0 energyCost:40 castTime:0.0 andCooldown:2.0];
     [swirl setDescription:@"Heals a target over 10 seconds.  Each additional stack improves all the healing of all stacks."];
 	[[swirl spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
     return [swirl autorelease];
@@ -359,7 +309,7 @@
     SwirlingLightEffect *sle = [[SwirlingLightEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];
     [sle setMaxStacks:4];
     [sle setNumOfTicks:10];
-    [sle setHealingPerTick:2];
+    [sle setValuePerTick:2];
     [thePlayer.spellTarget addEffect:sle];
     [sle release];
 }
@@ -368,7 +318,7 @@
 
 @implementation  LightEternal
 +(id)defaultSpell{
-    LightEternal *le = [[LightEternal alloc] initWithTitle:@"Light Eternal" healAmnt:20 energyCost:12 castTime:2.5 andCooldown:15.0];
+    LightEternal *le = [[LightEternal alloc] initWithTitle:@"Light Eternal" healAmnt:20 energyCost:120 castTime:2.5 andCooldown:15.0];
     [le setDescription:@"Heals up to 5 allies with the least health among allies for a moderate amount"];
     [[le spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[le spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];

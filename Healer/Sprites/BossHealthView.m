@@ -73,8 +73,10 @@
         [self addChild:sctLabel z:11];
         
         int direction = arc4random() % 2 == 1 ? -1 : 1;
-        [sctLabel runAction:[CCSpawn actions:[CCJumpBy actionWithDuration:2.0 position:CGPointMake(direction * 50, -50) height:20 jumps:1], [CCFadeOut actionWithDuration:2.0], nil]];
-        [shadowLabel runAction:[CCSpawn actions:[CCJumpBy actionWithDuration:2.0 position:CGPointMake(direction * 50, -50) height:20 jumps:1], [CCFadeOut actionWithDuration:2.0], nil]];
+        [sctLabel runAction:[CCSequence actions:[CCSpawn actions:[CCJumpBy actionWithDuration:2.0 position:CGPointMake(direction * 50, -50) height:20 jumps:1], [CCFadeOut actionWithDuration:2.0], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+            [node removeFromParentAndCleanup:YES];}], nil]];
+        [shadowLabel runAction:[CCSequence actions:[CCSpawn actions:[CCJumpBy actionWithDuration:2.0 position:CGPointMake(direction * 50, -50) height:20 jumps:1], [CCFadeOut actionWithDuration:2.0], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+            [node removeFromParentAndCleanup:YES];}], nil]];
     }
     
     lastHealth = bossData.health;

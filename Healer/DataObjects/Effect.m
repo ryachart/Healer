@@ -27,10 +27,8 @@
 	if (self.timeApplied != 0.0 && !isExpired)
 	{
         self.timeApplied += timeDelta;
-		//[thePlayer setStatusText:[NSString stringWithFormat:@"You will be destroyed in %1.2f seconds",timeSinceStart]];
 		if (self.timeApplied >= duration){
 			//Here we do some effect, but we have to subclass Effects to decide what that is
-			//NSLog(@"Effect Expired");
 			//The one thing we always do here is expire the effect
 			self.timeApplied = 0.0;
 			isExpired = YES;
@@ -54,61 +52,9 @@
 }
 @end
 
+@implementation RepeatedHealthEffect
 
-@implementation BigFireball
-
-@synthesize lastPosition;
-
--(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type{
-	if (self = [super initWithDuration:dur andEffectType:type]){
-		AudioController* ac = [AudioController sharedInstance];
-		audioTitles = [[NSMutableArray alloc] initWithCapacity:2];
-		[audioTitles addObject:[NSString stringWithFormat:@"FireballStart%@", self]];
-		[audioTitles addObject:[NSString stringWithFormat:@"FireballImpact%@", self]];
-		[ac addNewPlayerWithTitle:[audioTitles objectAtIndex:0] andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/FireballStart" ofType:@"wav"]]];
-		[ac addNewPlayerWithTitle:[audioTitles objectAtIndex:1] andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/FireBallImpact" ofType:@"wav"]]];
-		[ac playTitle:[audioTitles objectAtIndex:0]];
-	}
-	
-	return self;
-}
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
-{
-	if (self.timeApplied != 0.0 && !isExpired)
-	{
-		self.timeApplied += timeDelta;
-		[thePlayer setStatusText:[NSString stringWithFormat:@"A Fireball will strike you in %1.2f seconds. Move!",duration - self.timeApplied]];
-		if (timeDelta >= duration){
-			//Here we do some effect, but we have to subclass Effects to decide what that is
-			
-			NSInteger movementDelta = [thePlayer position] - lastPosition;
-			if (movementDelta < 30){
-				[thePlayer setHealth:[thePlayer health] - 50];
-				AudioController *ac = [AudioController sharedInstance];
-				[ac playTitle:[audioTitles objectAtIndex:1]];
-			}
-			self.timeApplied = 0.0;
-			isExpired = YES;
-			lastPosition = [thePlayer position];
-			[thePlayer setStatusText:@""];
-			
-		}
-		
-	}
-	
-}
-
--(void)expire{
-		AudioController* ac = [AudioController sharedInstance];
-		[ac removeAudioPlayerWithTitle:@"FireballStart"];
-		[ac removeAudioPlayerWithTitle:@"FireballImpact"];	
-}
-
-@end
-
-@implementation HealOverTimeEffect
-
-@synthesize numOfTicks, healingPerTick;
+@synthesize numOfTicks, valuePerTick;
 
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
@@ -131,7 +77,7 @@
 
 -(void)tick{
     if (!target.isDead){
-        [target setHealth:[target health] + healingPerTick];
+        [target setHealth:[target health] + valuePerTick];
     }
 }
 
@@ -190,9 +136,24 @@
         }
     }
     
-    [self.target setHealth:self.target.health + (int)round((self.healingPerTick * (similarEffectCount * .25)))];
+    [self.target setHealth:self.target.health + (int)round((self.valuePerTick * (similarEffectCount * .25)))];
 }
 @end
+
+
+@implementation TrulzarPoison
+-(void)tick{
+    if (!target.isDead){
+        float percentComplete = self.timeApplied / self.duration;
+    
+        [self.target setHealth:self.target.health + [self valuePerTick] * (int)round(1+percentComplete)];
+    }
+}
+
+@end
+
+
+#pragma mark - DEPRECATED SPELLS
 #pragma mark -
 #pragma mark Shaman Spells
 
@@ -200,7 +161,7 @@
 +(id)defaultEffect{
 	RoarOfLifeEffect *rolEffect = [[RoarOfLifeEffect alloc] initWithDuration:12 andEffectType:EffectTypePositive];
 	[rolEffect setNumOfTicks:6];
-	[rolEffect setHealingPerTick:3];
+	[rolEffect setValuePerTick:3];
 	return [rolEffect autorelease];
 }
 @end
@@ -209,7 +170,7 @@
 +(id)defaultEffect{
 	WoundWeavingEffect *wwe = [[WoundWeavingEffect alloc] initWithDuration:9 andEffectType:EffectTypePositive];
 	[wwe setNumOfTicks:3];
-	[wwe setHealingPerTick:12];
+	[wwe setValuePerTick:12];
 	return [wwe autorelease];
 }
 @end
@@ -218,7 +179,7 @@
 +(id)defaultEffect{
 	SurgingGrowthEffect *sge = [[SurgingGrowthEffect alloc] initWithDuration:5 andEffectType:EffectTypePositive];
 	[sge setNumOfTicks:5];
-	[sge setHealingPerTick:1];
+	[sge setValuePerTick:1];
 	return [sge autorelease];
 }
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
@@ -227,14 +188,14 @@
 	{
 		lastTick += timeDelta;
 		if (lastTick  >= (duration/numOfTicks)){
-			[target setHealth:[target health] + healingPerTick];
+			[target setHealth:[target health] + valuePerTick];
 			//NSLog(@"Tick");
-			healingPerTick += 1;
+			valuePerTick += 1;
 			lastTick = 0.0;
 		}
 		if (self.timeApplied >= duration){
-			[target setHealth:[target health] + healingPerTick];
-			[target setHealth:[target health] + healingPerTick*2];
+			[target setHealth:[target health] + valuePerTick];
+			[target setHealth:[target health] + valuePerTick*2];
 			//NSLog(@"Tick");
 			//Here we do some effect, but we have to subclass Effects to decide what that is
 			//NSLog(@"Expired");
@@ -253,7 +214,7 @@
 +(id)defaultEffect{
 	FieryAdrenalineEffect * fae = [[FieryAdrenalineEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];
 	[fae setNumOfTicks:5];
-	[fae setHealingPerTick:3];
+	[fae setValuePerTick:3];
 	return [fae autorelease];
 }
 -(void)didChangeHealthFrom:(NSInteger )health toNewHealth:(NSInteger )newHealth
@@ -272,7 +233,7 @@
 +(id)defaultEffect{
 	TwoWindsEffect *twe = [[TwoWindsEffect alloc] initWithDuration:12 andEffectType:EffectTypePositive];
 	[twe setNumOfTicks:4];
-	[twe setHealingPerTick:8];
+	[twe setValuePerTick:8];
 	return [twe autorelease];
 }
 
@@ -282,7 +243,7 @@
 +(id)defaultEffect{
 	SymbioticConnectionEffect *sce = [[SymbioticConnectionEffect alloc] initWithDuration:9 andEffectType:EffectTypePositive];
 	[sce setNumOfTicks:3];
-	[sce setHealingPerTick:10];
+	[sce setValuePerTick:10];
 	return [sce autorelease];
 	
 }
@@ -292,7 +253,7 @@
 +(id)defaultEffect{
 	UnleashedNatureEffect *unle = [[UnleashedNatureEffect alloc] initWithDuration:12 andEffectType:EffectTypePositive];
 	[unle setNumOfTicks:6];
-	[unle setHealingPerTick:3];
+	[unle setValuePerTick:3];
 	return [unle autorelease];
 }
 @end
@@ -341,3 +302,53 @@
 
 @end
 
+@implementation BigFireball
+
+@synthesize lastPosition;
+
+-(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type{
+	if (self = [super initWithDuration:dur andEffectType:type]){
+		AudioController* ac = [AudioController sharedInstance];
+		audioTitles = [[NSMutableArray alloc] initWithCapacity:2];
+		[audioTitles addObject:[NSString stringWithFormat:@"FireballStart%@", self]];
+		[audioTitles addObject:[NSString stringWithFormat:@"FireballImpact%@", self]];
+		[ac addNewPlayerWithTitle:[audioTitles objectAtIndex:0] andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/FireballStart" ofType:@"wav"]]];
+		[ac addNewPlayerWithTitle:[audioTitles objectAtIndex:1] andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/FireBallImpact" ofType:@"wav"]]];
+		[ac playTitle:[audioTitles objectAtIndex:0]];
+	}
+	
+	return self;
+}
+-(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
+{
+	if (self.timeApplied != 0.0 && !isExpired)
+	{
+		self.timeApplied += timeDelta;
+		[thePlayer setStatusText:[NSString stringWithFormat:@"A Fireball will strike you in %1.2f seconds. Move!",duration - self.timeApplied]];
+		if (timeDelta >= duration){
+			//Here we do some effect, but we have to subclass Effects to decide what that is
+			
+			NSInteger movementDelta = [thePlayer position] - lastPosition;
+			if (movementDelta < 30){
+				[thePlayer setHealth:[thePlayer health] - 50];
+				AudioController *ac = [AudioController sharedInstance];
+				[ac playTitle:[audioTitles objectAtIndex:1]];
+			}
+			self.timeApplied = 0.0;
+			isExpired = YES;
+			lastPosition = [thePlayer position];
+			[thePlayer setStatusText:@""];
+			
+		}
+		
+	}
+	
+}
+
+-(void)expire{
+    AudioController* ac = [AudioController sharedInstance];
+    [ac removeAudioPlayerWithTitle:@"FireballStart"];
+    [ac removeAudioPlayerWithTitle:@"FireballImpact"];	
+}
+
+@end

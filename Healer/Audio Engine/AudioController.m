@@ -116,7 +116,6 @@ static AudioController* sharedController = nil;
 			[player setCurrentTime:0.0];
 		}
 		else{
-			NSLog(@"Playing %@", title);
 			[player setNumberOfLoops:numberOfLoops];
 			if (![player play]){
 				NSLog(@"Failed to play!");
@@ -146,7 +145,6 @@ static AudioController* sharedController = nil;
 
 -(void)playTitle:(NSString*)title
 {
-	//NSLog(@"Playing title");
 	[self playTitle: title looping: 0];
 }
 

@@ -156,7 +156,7 @@
 }
 
 -(int)damageDealt{
-    int baseDamage = self.damageDealt;
+    int baseDamage = [super damageDealt];
     
     return baseDamage - (self.maximumHealth - self.health);
 }

@@ -42,7 +42,8 @@
 -(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse
 {
     if (self = [super init]){
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:[[NSBundle mainBundle] pathForResource:@"sprites" ofType:@"plist"  inDirectory:@"assets"]];
+        NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
         
         self.raid = raidToUse;
         self.boss = bossToUse;

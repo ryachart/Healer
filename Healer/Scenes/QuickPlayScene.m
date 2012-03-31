@@ -46,6 +46,12 @@
         [self.menu setColor:ccc3(255, 255, 255)];
         [self.menu alignItemsInRows:[NSNumber numberWithInt:10],[NSNumber numberWithInt:10], nil];
         [self addChild:self.menu];
+        
+        
+        CCMenu *backButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Back" fontName:@"Arial" fontSize:24.0] target:self selector:@selector(back)], nil];
+        [backButton setPosition:CGPointMake(30, [CCDirector sharedDirector].winSize.height * .9)];
+        [backButton setColor:ccWHITE];
+        [self addChild:backButton];
     }
     return self;
 }
@@ -155,36 +161,46 @@
     if (level == 6){
         basicRaid = [[Raid alloc] init];
         basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-        basicBoss = [[Boss alloc] initWithHealth:85000 damage:17 targets:5 frequency:1.8 andChoosesMT:NO];
-        [basicBoss setTitle:@"Drake of Thelia"];
-        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Regrow defaultSpell], nil]];
+        basicBoss = [PlaguebringerColossus defaultBoss];
+        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [ForkedHeal defaultSpell], [Regrow defaultSpell], nil]];
         
-        for (int i = 0; i < 6; i++){
-            [basicRaid addRaidMember:[Troll defaultTroll]];
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
         }
-        for (int i = 0; i < 6; i++){
-            [basicRaid addRaidMember:[Ogre defaultOgre]];
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
+        }
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Witch defaultWitch]];
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Guardian defaultGuardian]];
         }
     }
     
     if (level == 7){
         basicRaid = [[Raid alloc] init];
         basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-        basicBoss = [[Boss alloc] initWithHealth:130000 damage:60 targets:5 frequency:2.5 andChoosesMT:NO];
-        [basicBoss setTitle:@"Thelian Dragon"];
-        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Regrow defaultSpell], nil]];
+        basicBoss = [SporeRavagers defaultBoss];
+        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [HealingBurst defaultSpell], [Regrow defaultSpell], nil]];
         
-        for (int i = 0; i < 8; i++){
-            [basicRaid addRaidMember:[Troll defaultTroll]];
+        for (int i = 0; i < 7; i++){
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
         }
-        for (int i = 0; i < 8; i++){
-            [basicRaid addRaidMember:[Ogre defaultOgre]];
+        for (int i = 0; i < 4; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
         }
-        for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Witch defaultWitch]];
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Guardian defaultGuardian]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
         }
     }
     

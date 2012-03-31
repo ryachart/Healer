@@ -163,9 +163,7 @@
 		387E7B6C145E1868006D9266 /* GameInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B6B145E1868006D9266 /* GameInfo.m */; };
 		38F04EEA13C2593500BCADCB /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38F04EE913C2593500BCADCB /* GameDefaults.plist */; };
 		BF0557A015268D0A006B4781 /* ProjectileEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF05579F15268D0A006B4781 /* ProjectileEffect.m */; };
-		BF0557AD1526BBA6006B4781 /* build-spritesheet.sh in Resources */ = {isa = PBXBuildFile; fileRef = BF0557AC1526BBA6006B4781 /* build-spritesheet.sh */; };
 		BF0557B51526BC02006B4781 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = BF0557B41526BC02006B4781 /* assets */; };
-		BF0557BB1526BC2B006B4781 /* assets in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF0557B41526BC02006B4781 /* assets */; };
 		BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
 		BF8249D71526D7C2000B554B /* RaidMemberPreBattleCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */; };
@@ -182,19 +180,6 @@
 			remoteInfo = MakeAssets;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		BF0557AE1526BBBA006B4781 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
-			dstPath = assets;
-			dstSubfolderSpec = 7;
-			files = (
-				BF0557BB1526BC2B006B4781 /* assets in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		38024DAB13C2564D003D36F2 /* Healer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Healer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1537,7 +1522,6 @@
 				38024DA713C2564D003D36F2 /* Sources */,
 				38024DA813C2564D003D36F2 /* Frameworks */,
 				38024DA913C2564D003D36F2 /* Resources */,
-				BF0557AE1526BBBA006B4781 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1592,7 +1576,6 @@
 				38024DD313C2564D003D36F2 /* iTunesArtwork in Resources */,
 				38F04EEA13C2593500BCADCB /* GameDefaults.plist in Resources */,
 				BFB99F1B15257F6D007EE559 /* Sounds in Resources */,
-				BF0557AD1526BBA6006B4781 /* build-spritesheet.sh in Resources */,
 				BF0557B51526BC02006B4781 /* assets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -88,6 +88,9 @@ typedef enum {
 @interface CouncilPoisonball : DelayedHealthEffect
 @end
 
+@interface ExpiresAtFullHealthRHE: RepeatedHealthEffect
+@end
+
 
 
 #pragma mark - DEPRECATED EFFECTS

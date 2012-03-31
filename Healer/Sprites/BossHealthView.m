@@ -60,10 +60,12 @@
 -(void)updateHealth
 {
     if (bossData && bossData.health < lastHealth){
+        int startingFuzzX = arc4random() % 10;
+        int startingFuzzY = arc4random() % 10;
         int heal = bossData.health - lastHealth;
         CCLabelTTF *shadowLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
         [shadowLabel setColor:ccBLACK];
-        [shadowLabel setPosition:CGPointMake(self.contentSize.width /2 -1 , self.contentSize.height /2 + 1)];
+        [shadowLabel setPosition:CGPointMake(self.contentSize.width /2 -1 + startingFuzzX , self.contentSize.height /2 + 1 + startingFuzzY)];
         
         CCLabelTTF *sctLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
         [sctLabel setColor:ccRED];
@@ -73,9 +75,10 @@
         [self addChild:sctLabel z:11];
         
         int direction = arc4random() % 2 == 1 ? -1 : 1;
-        [sctLabel runAction:[CCSequence actions:[CCSpawn actions:[CCJumpBy actionWithDuration:2.0 position:CGPointMake(direction * 50, -50) height:20 jumps:1], [CCFadeOut actionWithDuration:2.0], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        int distanceFuzz = arc4random() % 50;
+        [sctLabel runAction:[CCSequence actions:[CCSpawn actions:[CCJumpBy actionWithDuration:2.0 position:CGPointMake(direction * 50 + distanceFuzz, -50) height:20 jumps:1], [CCFadeOut actionWithDuration:2.0], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node removeFromParentAndCleanup:YES];}], nil]];
-        [shadowLabel runAction:[CCSequence actions:[CCSpawn actions:[CCJumpBy actionWithDuration:2.0 position:CGPointMake(direction * 50, -50) height:20 jumps:1], [CCFadeOut actionWithDuration:2.0], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [shadowLabel runAction:[CCSequence actions:[CCSpawn actions:[CCJumpBy actionWithDuration:2.0 position:CGPointMake(direction * 50 + distanceFuzz, -50) height:20 jumps:1], [CCFadeOut actionWithDuration:2.0], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node removeFromParentAndCleanup:YES];}], nil]];
     }
     
@@ -89,33 +92,13 @@
 	}
 	
 	if (![healthText isEqualToString:[self.healthLabel string]]){
-		//NSLog(@"DIFFERENT");
 		[self. healthLabel setString:healthText];
-		//[self setNeedsDisplay];
 	}
     
     double percentageOfHealth = ((float)[self.bossData health])/[self.bossData maximumHealth];
     CGFloat width = self.contentSize.width * .990 * percentageOfHealth;
     [self.healthFrame setContentSize:CGSizeMake(width, self.healthFrame.contentSize.height)];
 }
-
-
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-//- (void)drawRect:(CGRect)rect {
-//    // Drawing code
-//	CGFloat x = CGRectGetWidth(self.frame) * .005;
-//	CGFloat y = CGRectGetHeight(self.frame) * .05;
-//	CGFloat height = CGRectGetHeight(self.frame) * .90;
-//	double percentageOfHealth = ((float)[bossData health])/[bossData maximumHealth];
-//	CGFloat width = CGRectGetWidth(self.frame) * .990 * percentageOfHealth;
-//	//NSLog(@"Width: %f", width);
-//	
-//	CGContextRef context = UIGraphicsGetCurrentContext();
-//	CGContextSetRGBFillColor(context,1,0, 0, 1);
-//	
-//	UIRectFill(CGRectMake(x,y,width,height));
-//}
 
 
 - (void)dealloc {

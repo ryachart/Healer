@@ -31,6 +31,7 @@
 }
 @property (nonatomic, retain) id <Announcer> announcer;
 @property (nonatomic, setter=setHealth:) NSInteger health;
+@property (nonatomic, readwrite) float criticalChance;
 @property (nonatomic, retain) NSString* title;
 @property (nonatomic, assign) id<EventLogger> logger;
 @property NSInteger maximumHealth;
@@ -67,9 +68,16 @@
 @end
 
 @interface PlaguebringerColossus: Boss
+@property (readwrite) NSInteger numBubblesPopped;
+@property (readwrite) NSTimeInterval lastSickeningTime;
 @end
 
 @interface SporeRavagers : Boss
+@property (readwrite) NSTimeInterval lastSecondaryAttack;
+@property (readwrite) BOOL isEnraged;
+@property (nonatomic, retain) RaidMember *focusTarget2;
+@property (nonatomic, retain) RaidMember *focusTarget3;
+
 @end
 
 

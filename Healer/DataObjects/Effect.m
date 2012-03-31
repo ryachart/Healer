@@ -174,6 +174,17 @@
 }
 @end
 
+@implementation  ExpiresAtFullHealthRHE
+
+-(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta{
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+    if (self.target.health > self.target.maximumHealth * .98){
+        self.isExpired = YES;
+    }
+}
+
+@end
+
 
 #pragma mark - DEPRECATED SPELLS
 #pragma mark -

@@ -18,7 +18,7 @@
 @end
 
 @implementation Boss
-@synthesize lastAttack, health, maximumHealth, title, logger, focusTarget, announcer;
+@synthesize lastAttack, health, maximumHealth, title, logger, focusTarget, announcer, criticalChance;
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
     if (self = [super init]){
@@ -30,7 +30,7 @@
         choosesMainTank = chooses;
         lastAttack = 0.0f;
         title = @"";
-        
+        self.criticalChance = 0.0;
         for (int i = 0; i < 101; i++){
             healthThresholdCrossed[i] = NO;
         }
@@ -51,6 +51,10 @@
         multiplyModifier *= 3; //The tank died.  Outgoing damage is now tripled
     }
     
+    if (self.criticalChance != 0.0 && arc4random() % 100 < (self.criticalChance * 100)){
+        multiplyModifier *= 1.5;
+    }
+    
     return (int)round((float)damage/(float)targets * multiplyModifier) + additiveModifier;
 }
 
@@ -62,7 +66,7 @@
     if (![target raidMemberShouldDodgeAttack:0.0]){
         int thisDamage = self.damageDealt;
         
-        if (target == self.focusTarget){
+        if (target.isFocused){
             thisDamage = (int)round(thisDamage * 1.2);
         }
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:thisDamage] andEventType:CombatEventTypeDamage]];
@@ -105,7 +109,7 @@
         if (choosesMainTank && !self.focusTarget.isDead){
             [self damageTarget:self.focusTarget];
             if (self.focusTarget.isDead){
-                [self.announcer announce:[NSString stringWithFormat:@"%@ frenzies upon killing his focused target.", self.title]];
+                [self.announcer announce:[NSString stringWithFormat:@"%@ frenzies upon killing its focused target.", self.title]];
                 
             }
         }
@@ -382,11 +386,192 @@
         self.lastPoisonballTime = 0;
     }
 }
+@end
 
 
+@implementation PlaguebringerColossus
+@synthesize lastSickeningTime, numBubblesPopped;
++(id)defaultBoss{
+    //427500
+    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:427500 damage:16 targets:2 frequency:2.5 andChoosesMT:YES];
+    [boss setTitle:@"Plaguebringer Colossus"];
+    return [boss autorelease];
+}
+
+-(void)sickenTarget:(RaidMember *)target{
+    ExpiresAtFullHealthRHE *infectedWound = [[ExpiresAtFullHealthRHE alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative];
+    [infectedWound setTitle:@"pbc-infected-wound"];
+    [infectedWound setValuePerTick:-2];
+    [infectedWound setNumOfTicks:15];
+    [infectedWound setSpriteName:@"poison.png"];
+    if (target.health > target.maximumHealth * .98){
+        //Force the health under .98 so it doesnt immediately expire when applied.
+        [target setHealth:target.health * .94];
+    }
+    [target addEffect:infectedWound];
+    [infectedWound release];
+    
+}
+
+-(void)burstPussBubbleOnRaid:(Raid*)theRaid{
+    [self.announcer announce:@"A putrid sac of filth bursts onto your allies"];
+    self.numBubblesPopped++;
+    for (RaidMember *member in theRaid.raidMembers){
+        if (!member.isDead){
+            RepeatedHealthEffect *singleTickDot = [[RepeatedHealthEffect alloc] initWithDuration:1.0 andEffectType:EffectTypeNegative];
+            [singleTickDot setTitle:@"pbc-pussBubble"];
+            [singleTickDot setNumOfTicks:1];
+            [singleTickDot setValuePerTick:-20];
+            [singleTickDot setSpriteName:@"poison.png"];
+            [member addEffect:singleTickDot];
+            [singleTickDot release];
+        }
+    }
+}
+     
+-(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
+    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+    
+    self.lastSickeningTime += timeDelta;
+    if (self.lastSickeningTime > 15.0){
+        for ( int i = 0; i < 2; i++){
+            [self sickenTarget:theRaid.randomLivingMember];
+        }
+        self.lastSickeningTime = 0.0;
+    }
+}
+
+-(int)damageDealt{
+    int dmg = [super damageDealt];
+    return dmg * (1 - self.numBubblesPopped * .1);
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    if (((int)percentage) % 20 == 0 && percentage != 100){
+        [self burstPussBubbleOnRaid:raid];
+    }
+}
 
 @end
 
+@implementation SporeRavagers
+@synthesize focusTarget2, focusTarget3, lastSecondaryAttack, isEnraged;
++(id)defaultBoss{
+    SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:8 targets:1 frequency:2.5 andChoosesMT:YES];
+    [boss setTitle:@"Spore Ravagers"];
+    return [boss autorelease];
+}
+-(void)chooseSecondAndThirdFocusTargetsFromRaid:(Raid*)raid{
+    int highestHealth = ((RaidMember*)[raid.raidMembers objectAtIndex:0]).maximumHealth;
+    NSMutableArray *selectableMembers = [NSMutableArray arrayWithArray:raid.raidMembers];
+    [selectableMembers removeObject:self.focusTarget];
+    
+    RaidMember *tempTarget = [selectableMembers objectAtIndex:0];
+    for (int i = 1; i < selectableMembers.count; i++){
+        if (((RaidMember*)[selectableMembers objectAtIndex:i]).maximumHealth > highestHealth){
+            highestHealth = ((RaidMember*)[selectableMembers objectAtIndex:i]).maximumHealth;
+            tempTarget = ((RaidMember*)[selectableMembers objectAtIndex:i]);
+        }
+    }
+    self.focusTarget2 = tempTarget;
+    [self.focusTarget2 setIsFocused:YES];
+    
+    [selectableMembers removeObject:self.focusTarget2];
+    
+    
+    tempTarget = [selectableMembers objectAtIndex:0];
+    highestHealth = tempTarget.maximumHealth;
+    for (int i = 1; i < selectableMembers.count; i++){
+        if (((RaidMember*)[selectableMembers objectAtIndex:i]).maximumHealth > highestHealth){
+            highestHealth = ((RaidMember*)[selectableMembers objectAtIndex:i]).maximumHealth;
+            tempTarget = ((RaidMember*)[selectableMembers objectAtIndex:i]);
+        }
+    }
+    self.focusTarget3 = tempTarget;
+    [self.focusTarget3 setIsFocused:YES];
+    
+}
+
+-(void)ravagerDiedFocusing:(RaidMember*)focus andRaid:(Raid*)raid{
+    [self.announcer announce:@"A Spore Ravager falls to the ground and explodes!"];
+    
+    [focus setIsFocused:NO];
+    
+    for (int i = 0; i < 5; i++){
+        RaidMember *member = [raid randomLivingMember];
+        [member setHealth:member.health - 35];
+    }
+    
+}
+
+-(int)damageDealt{
+    float multiplyModifier = 1;
+    
+    if (self.isEnraged){
+        multiplyModifier *= 2.25;
+    }
+    
+    if ((self.focusTarget.isDead ) || (self.focusTarget2 && self.focusTarget2.isDead ) || (self.focusTarget3 && self.focusTarget3.isDead )){
+        multiplyModifier *= 3; //The tank died.  Outgoing damage is now tripled
+    }
+    
+    if (self.criticalChance && arc4random() % 100 < (self.criticalChance * 100)){
+        multiplyModifier *= 1.5;
+    }
+    
+    return (int)round((float)damage/(float)targets * multiplyModifier);
+}
+
+-(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
+    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+    
+    if (!self.focusTarget2 && !self.focusTarget3 && self.healthPercentage > 90.0){
+        [self chooseSecondAndThirdFocusTargetsFromRaid:theRaid];
+    }
+    
+    self.lastSecondaryAttack += timeDelta;
+    if (self.lastSecondaryAttack > frequency){
+        if (self.focusTarget2)
+        [self damageTarget:self.focusTarget2];
+        if (self.focusTarget3)
+        [self damageTarget:self.focusTarget3];
+        self.lastSecondaryAttack = 0.0;
+    }
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    
+    if (percentage == 96.0){
+        [self.announcer announce:@"A putrid green mist fills the area..."];
+        for (RaidMember *member in raid.raidMembers){
+            RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:300 andEffectType:EffectTypeNegativeInvisible];
+            [rhe setTitle:@"spore-ravager-green-mist"];
+            [rhe setValuePerTick:-1];
+            [rhe setNumOfTicks:60];
+            [member addEffect:rhe];
+            [rhe release];
+        }
+    }
+    if (percentage == 66.0){
+        [self ravagerDiedFocusing:self.focusTarget3 andRaid:raid];
+        if (!self.focusTarget3.isDead){
+            self.focusTarget3 = nil;
+        }
+    }
+    if (percentage == 33.0){
+        [self ravagerDiedFocusing:self.focusTarget2 andRaid:raid];
+        if (!self.focusTarget2.isDead){
+            self.focusTarget2 = nil;
+        }
+    }
+    
+    if (percentage == 30.0){
+        [self.announcer announce:@"The last remaining Spore Ravager glows with rage."];
+        self.isEnraged = YES;
+    }
+}
+
+@end
 
 #pragma mark - Deprecated Bosses
 @implementation MinorDemon

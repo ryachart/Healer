@@ -219,6 +219,7 @@
 {
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
     RepeatedHealthEffect *hotEffect = [[RepeatedHealthEffect alloc] initWithDuration:12.0 andEffectType:EffectTypePositive];
+    [hotEffect setSpriteName:@"healing_default.png"];
     [hotEffect setNumOfTicks:4];
     [hotEffect setValuePerTick:13];
     [[thePlayer spellTarget] addEffect:hotEffect];
@@ -289,6 +290,7 @@
     
     ReactiveHealEffect *rhe = [[ReactiveHealEffect alloc] initWithDuration:20.0 andEffectType:EffectTypePositive];
     [rhe setMaxStacks:1];
+    [rhe setSpriteName:@"healing_default.png"];
     [rhe setAmountPerReaction:20];
     [thePlayer.spellTarget addEffect:rhe];
     [rhe     release];
@@ -308,6 +310,7 @@
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
     SwirlingLightEffect *sle = [[SwirlingLightEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];
     [sle setMaxStacks:4];
+    [sle setSpriteName:@"healing_default.png"];
     [sle setNumOfTicks:10];
     [sle setValuePerTick:2];
     [thePlayer.spellTarget addEffect:sle];

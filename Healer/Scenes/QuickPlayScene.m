@@ -30,6 +30,9 @@
 @synthesize menu;
 -(id)init{
     if (self = [super init]){
+#if DEBUG
+        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:100] forKey:PlayerHighestLevelCompleted];
+#endif
         self.menu = [CCMenu menuWithItems:nil];
         for (int i = 0; i < 20; i++){
             CCMenuItemLabel *levelButton = [[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:[NSString stringWithFormat:@"Level %i", i + 1] fontName:@"Arial" fontSize:32] target: self selector:@selector(beginGameWithSelectedLevel:)];

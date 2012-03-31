@@ -12,13 +12,15 @@
 
 @interface RaidMemberHealthView ()
 @property (nonatomic, assign) CCLabelTTF *isFocusedLabel;
+@property (nonatomic, assign) CCSprite *priorityPositiveEffectSprite;
+@property (nonatomic, assign) CCSprite *priorityNegativeEffectSprite;
 @property (nonatomic, readwrite) NSInteger lastHealth;
 @end
 
 @implementation RaidMemberHealthView
 
 @synthesize memberData, classNameLabel, healthLabel, interactionDelegate, defaultBackgroundColor, isTouched, effectsLabel;
-@synthesize healthBarLayer, lastHealth, isFocusedLabel;
+@synthesize healthBarLayer, lastHealth, isFocusedLabel, priorityNegativeEffectSprite, priorityPositiveEffectSprite;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super init])) {
@@ -45,7 +47,7 @@
         [self.healthLabel setPosition:CGPointMake(frame.size.width * .5, frame.size.height * .3)];
         [self.healthLabel setContentSize:CGSizeMake(frame.size.width * .5, frame.size.height * .25)];
         [self.healthLabel setColor:ccc3(0, 0, 0)];
-		
+                
 		self.effectsLabel =  [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0f];
         [self.effectsLabel setPosition:CGPointMake(frame.size.width * .5, frame.size.height * .85)];
         [self.effectsLabel setContentSize:CGSizeMake(frame.size.width, frame.size.height * .15)];
@@ -149,20 +151,44 @@
 	}
 	
 	NSMutableString* effectText = [[NSMutableString alloc] initWithCapacity:10];
+    Effect *negativeEffect = nil;
+    Effect *positiveEffect = nil;
 	for (Effect *eff in self.memberData.activeEffects){
-        if ([eff isKindOfClass:[ShieldEffect class]]){
-			[effectText appendString:@"S"];
-		}
-		else if ([eff effectType] == EffectTypePositive){
-            if ([eff isKindOfClass:[RepeatedHealthEffect class]]){
-                [effectText appendString:@"H"];
-            }else{
-                [effectText appendString:@"P"];
-            }
-		} else if ([eff effectType] == EffectTypeNegative){
-            [effectText appendFormat:@"N"];
+        if ([eff effectType] == EffectTypePositive){
+            positiveEffect = eff;
+        }
+        if ([eff effectType] == EffectTypeNegative){
+            negativeEffect = eff;
         }
 	}
+    
+    if (positiveEffect && positiveEffect.spriteName){
+        if (!self.priorityPositiveEffectSprite){
+            self.priorityPositiveEffectSprite = [CCSprite spriteWithSpriteFrameName:positiveEffect.spriteName];
+            [self.priorityPositiveEffectSprite setContentSize:CGSizeMake(50, 50)];
+            [self.priorityPositiveEffectSprite setPosition:CGPointMake(10, 0)];
+            [self addChild:self.priorityNegativeEffectSprite z:5];
+        }else{
+            [self.priorityPositiveEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:positiveEffect.spriteName]];
+        }
+        [self.priorityPositiveEffectSprite setVisible:YES];
+    }else{
+        [self.priorityPositiveEffectSprite setVisible:NO];
+    }
+    
+    if (negativeEffect && negativeEffect.spriteName){
+        if (!self.priorityNegativeEffectSprite){
+            self.priorityNegativeEffectSprite = [CCSprite spriteWithSpriteFrameName:negativeEffect.spriteName];
+            [self.priorityNegativeEffectSprite setContentSize:CGSizeMake(50, 50)];
+            [self.priorityNegativeEffectSprite setPosition:CGPointMake(10, self.contentSize.height * .9)];
+            [self addChild:self.priorityNegativeEffectSprite z:5];
+        }else{
+            [self.priorityNegativeEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:negativeEffect.spriteName]];
+        }
+        [self.priorityNegativeEffectSprite setVisible:YES];
+    }else{
+        [self.priorityNegativeEffectSprite setVisible:NO];
+    }
 
 	if (![healthText isEqualToString:[healthLabel string]] || ![effectText isEqualToString:[effectsLabel string]]){
 		[effectsLabel setString:effectText];

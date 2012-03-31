@@ -10,6 +10,7 @@
 #import "GameObjects.h"
 #import "RaidMember.h"
 #import "AudioController.h"
+#import "ProjectileEffect.h"
 
 @interface Boss ()
 @property (nonatomic, retain) RaidMember *focusTarget;
@@ -149,9 +150,11 @@
         //This isnt there yet. We only want it to fire if we rounded up!
     }else{
         if (roundedPercentage < 100 && roundedPercentage > 0){
-            if (!healthThresholdCrossed[roundedPercentage]){
-                [self healthPercentageReached:(float)roundedPercentage withRaid:theRaid andPlayer:player];
-                healthThresholdCrossed[roundedPercentage] = YES;
+            for (int i = 100; i > roundedPercentage; i--){
+                if (!healthThresholdCrossed[i]){
+                    [self healthPercentageReached:i withRaid:theRaid andPlayer:player];
+                    healthThresholdCrossed[i] = YES;;
+                }
             }
         }
     }
@@ -195,17 +198,18 @@
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-//    if (percentage == 75.0){
-//        [self.announcer announce:@"A putrid limb falls from the ghoul..."];
-//    }
-//    
-//    if (percentage == 50.0){
-//        [self.announcer announce:@"The ghoul begins to crumble."];
-//    }
-//    
-//    if (percentage == 25.0){
-//        [self.announcer announce:@"The nearly lifeless ghoul shrieks in agony.."];
-//    }
+    NSLog(@"Percentage: % 1.2f", percentage);
+    if (percentage == 75.0){
+        [self.announcer announce:@"A putrid limb falls from the ghoul..."];
+    }
+    
+    if (percentage == 50.0){
+        [self.announcer announce:@"The ghoul begins to crumble."];
+    }
+    
+    if (percentage == 25.0){
+        [self.announcer announce:@"The nearly lifeless ghoul shrieks in agony.."];
+    }
 }
 @end
 
@@ -219,10 +223,46 @@
 @end
 
 @implementation Drake 
+@synthesize lastFireballTime;
 +(id)defaultBoss{
-    Drake *drake = [[Drake alloc] initWithHealth:52000 damage:8 targets:4 frequency:.8 andChoosesMT:NO];
+    Drake *drake = [[Drake alloc] initWithHealth:52000 damage:4 targets:4 frequency:.8 andChoosesMT:NO];
     [drake setTitle:@"Drake of Soldorn"];
     return [drake autorelease];
+}
+
+-(void)shootFireballAtTarget:(RaidMember*)target withDelay:(float)delay{
+    float colTime = (1.5 + delay);
+    DelayedHealthEffect *fireball = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
+    
+    ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:@"fireball.png" target:target andCollisionTime:colTime];
+    [self.announcer displayProjectileEffect:fireballVisual];
+    [fireballVisual release];
+    
+    [fireball setValue:-20];
+    [target addEffect:fireball];
+    [fireball release];
+}
+
+-(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
+    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+    
+    self.lastFireballTime += timeDelta;
+    if (self.lastFireballTime > 5.0){
+        [self shootFireballAtTarget:[theRaid randomLivingMember] withDelay:0.0];
+        self.lastFireballTime = 0;
+    }
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    if (percentage == 50.0){
+        int i = 0;
+        for (RaidMember *member in raid.raidMembers){
+            if (!member.isDead){
+                [self shootFireballAtTarget:member withDelay:i * .75];
+            }
+            i++;
+        }
+    }
 }
 @end
 
@@ -247,7 +287,17 @@
 }
 -(void)applyPoisonToTarget:(RaidMember*)target{
     TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
+    [poisonEffect setSpriteName:@"trulzar_poison.png"];
     [poisonEffect setValuePerTick:-7];
+    [poisonEffect setNumOfTicks:24];
+    [target addEffect:poisonEffect];
+    [poisonEffect release];
+}
+
+-(void)applyWeakPoisonToTarget:(RaidMember*)target{
+    TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
+    [poisonEffect setSpriteName:@"trulzar_poison.png"];
+    [poisonEffect setValuePerTick:-2];
     [poisonEffect setNumOfTicks:24];
     [target addEffect:poisonEffect];
     [poisonEffect release];
@@ -268,10 +318,10 @@
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (((int)percentage) % 10 == 0){
+    if (((int)percentage) % 10 == 0 && ((int)percentage) != 100){
         //Every 10% of his life....
         for (RaidMember *member in raid.raidMembers){
-            [self.announcer announce:@"Trulzar grasps at the souls of the poisoned."];
+            [self.announcer announce:@"Trulzar's corruption surges in poisoned victims."];
             if (!member.isDead){
                 BOOL isPoisoned = NO;
                 for (Effect *effect in member.activeEffects){
@@ -288,10 +338,10 @@
         }
     }
     
-    if (((int)percentage) == 3){
+    if (((int)percentage) == 7){
         for (RaidMember *member in raid.raidMembers){
             [self.announcer announce:@"Trulzar cackles as the room fills with noxious poison."];
-            [self applyPoisonToTarget:member];
+            [self applyWeakPoisonToTarget:member];
         }
     }
 }

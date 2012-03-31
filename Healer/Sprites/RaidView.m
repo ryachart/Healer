@@ -30,6 +30,17 @@
 	return NO;
 }
 
+-(CGPoint)frameCenterForMember:(RaidMember*)raidMember{
+    for (RaidMemberHealthView *rmhv in self.children){
+        if (rmhv.memberData == raidMember){
+            CGPoint framePosition = rmhv.position;
+            return [self convertToWorldSpace:ccpAdd(framePosition, ccp(rmhv.contentSize.width /2 ,rmhv.contentSize.height /2))];
+        }
+    }
+    NSLog(@"Member not found!");
+    return CGPointZero;
+}
+
 -(void)updateRaidHealth
 {
 	for (RaidMemberHealthView *rmhv in self.children){

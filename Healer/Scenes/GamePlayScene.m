@@ -13,6 +13,14 @@
 #import "PlayerMoveButton.h"
 #import "PostBattleScene.h"
 #import "PersistantDataManager.h"
+
+/// converts degrees to radians
+#define CC_DEGREES_TO_RADIANS(__ANGLE__) ((__ANGLE__) / 180.0f * (float)M_PI)
+
+/// converts radians to degrees
+#define CC_RADIANS_TO_DEGREES(__ANGLE__) ((__ANGLE__) / (float)M_PI * 180.0f)
+
+
 @interface GamePlayScene ()
 //Data Models
 @property (nonatomic, retain) Raid *raid;
@@ -41,6 +49,8 @@
 -(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse
 {
     if (self = [super init]){
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:[[NSBundle mainBundle] pathForResource:@"sprites" ofType:@"plist"  inDirectory:@"assets"]];
+        
         self.raid = raidToUse;
         self.boss = bossToUse;
         [self.boss setLogger:self];
@@ -141,6 +151,11 @@
 }
 
 -(void)onEnterTransitionDidFinish{
+#if DEBUG
+    if (self.levelNumber == 1){
+        self.levelNumber = 0;
+    }
+#endif
     if (self.levelNumber == 1){
         [self gameEvent:0.0]; //Bump the UI
         GamePlayFTUELayer *gpfl = [[[GamePlayFTUELayer alloc] init] autorelease];
@@ -294,6 +309,34 @@
 			}
 		}
 	}
+}
+
+-(float)lengthOfVector:(CGPoint)vec{
+    return sqrt(pow(vec.x, 2) + pow(vec.y, 2));
+}
+
+-(float)rotationFromPoint:(CGPoint)a toPoint:(CGPoint)b{
+    CGPoint aToBVector = CGPointMake(b.x - a.x , b.y - a.y);
+    CGPoint unitVector = ccpNormalize(aToBVector);
+    return atan2(unitVector.y, unitVector.x);
+}
+
+-(void)displayProjectileEffect:(ProjectileEffect*)effect{
+    CCSprite *projectileSprite = [CCSprite spriteWithSpriteFrameName:effect.spriteName];;
+    
+    CGPoint originLocation = CGPointMake(650, 600);
+    CGPoint destination = [self.raidView frameCenterForMember:effect.target];
+    if (projectileSprite){
+        [projectileSprite setAnchorPoint:CGPointMake(.5, .5)];
+        [projectileSprite setVisible:NO];
+        [projectileSprite setPosition:originLocation];
+        [projectileSprite setRotation:CC_RADIANS_TO_DEGREES([self rotationFromPoint:originLocation toPoint:destination]) + 180.0];
+        [self addChild:projectileSprite];
+        [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}], [CCMoveTo actionWithDuration:effect.collisionTime position:destination],[CCSpawn actions:[CCScaleTo actionWithDuration:.33 scale:2.0], [CCFadeOut actionWithDuration:.33], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+            [node removeFromParentAndCleanup:YES];
+        }], nil]];
+    }
+
 }
 
 -(void)announce:(NSString *)announcement{

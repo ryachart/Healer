@@ -55,6 +55,7 @@
 @end
 
 @interface Drake : Boss
+@property (readwrite) NSTimeInterval lastFireballTime;
 @end
 
 @interface Trulzar : Boss

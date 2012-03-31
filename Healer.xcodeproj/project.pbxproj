@@ -119,7 +119,6 @@
 		386DD228145E07100086763E /* CJSONDeserializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 386DD21A145E07100086763E /* CJSONDeserializer.m */; };
 		386DD229145E07100086763E /* CJSONScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = 386DD21C145E07100086763E /* CJSONScanner.m */; };
 		386DD22A145E07100086763E /* CJSONSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 386DD21E145E07100086763E /* CJSONSerializer.m */; };
-		387E7AE2145E0AF4006D9266 /* Sprites in Resources */ = {isa = PBXBuildFile; fileRef = 387E7AE1145E0AF4006D9266 /* Sprites */; };
 		387E7AE8145E0F70006D9266 /* PersistantDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AE7145E0F70006D9266 /* PersistantDataManager.m */; };
 		387E7AFF145E1263006D9266 /* Character.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AEB145E1263006D9266 /* Character.m */; };
 		387E7B00145E1263006D9266 /* Effect.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AED145E1263006D9266 /* Effect.m */; };
@@ -163,11 +162,38 @@
 		387E7B67145E17CC006D9266 /* Encounter.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B66145E17CC006D9266 /* Encounter.m */; };
 		387E7B6C145E1868006D9266 /* GameInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B6B145E1868006D9266 /* GameInfo.m */; };
 		38F04EEA13C2593500BCADCB /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38F04EE913C2593500BCADCB /* GameDefaults.plist */; };
+		BF0557A015268D0A006B4781 /* ProjectileEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF05579F15268D0A006B4781 /* ProjectileEffect.m */; };
+		BF0557AD1526BBA6006B4781 /* build-spritesheet.sh in Resources */ = {isa = PBXBuildFile; fileRef = BF0557AC1526BBA6006B4781 /* build-spritesheet.sh */; };
+		BF0557B51526BC02006B4781 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = BF0557B41526BC02006B4781 /* assets */; };
+		BF0557BB1526BC2B006B4781 /* assets in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF0557B41526BC02006B4781 /* assets */; };
 		BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
 		BF8A50F415236D6300BEC882 /* GamePlayFTUELayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */; };
 		BFB99F1B15257F6D007EE559 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = BFB99F1A15257F6D007EE559 /* Sounds */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BF0557C61526BDA5006B4781 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 38024DA213C2564D003D36F2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BF0557C11526BD39006B4781;
+			remoteInfo = MakeAssets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BF0557AE1526BBBA006B4781 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = assets;
+			dstSubfolderSpec = 7;
+			files = (
+				BF0557BB1526BC2B006B4781 /* assets in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		38024DAB13C2564D003D36F2 /* Healer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Healer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -496,7 +522,6 @@
 		386DD21D145E07100086763E /* CJSONSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CJSONSerializer.h; sourceTree = "<group>"; };
 		386DD21E145E07100086763E /* CJSONSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CJSONSerializer.m; sourceTree = "<group>"; };
 		386DD21F145E07100086763E /* JSONRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONRepresentation.h; sourceTree = "<group>"; };
-		387E7AE1145E0AF4006D9266 /* Sprites */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sprites; sourceTree = "<group>"; };
 		387E7AE6145E0F70006D9266 /* PersistantDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistantDataManager.h; sourceTree = "<group>"; };
 		387E7AE7145E0F70006D9266 /* PersistantDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersistantDataManager.m; sourceTree = "<group>"; };
 		387E7AEA145E1263006D9266 /* Character.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Character.h; path = Healer/DataObjects/Character.h; sourceTree = "<group>"; };
@@ -589,6 +614,10 @@
 		387E7B6B145E1868006D9266 /* GameInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GameInfo.m; path = Healer/DataObjects/GameInfo.m; sourceTree = "<group>"; };
 		387E7B6D145E18E1006D9266 /* CharacterSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CharacterSheet.h; path = DataObjects/CharacterSheet.h; sourceTree = "<group>"; };
 		38F04EE913C2593500BCADCB /* GameDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameDefaults.plist; sourceTree = "<group>"; };
+		BF05579E15268D0A006B4781 /* ProjectileEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProjectileEffect.h; sourceTree = "<group>"; };
+		BF05579F15268D0A006B4781 /* ProjectileEffect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectileEffect.m; sourceTree = "<group>"; };
+		BF0557AC1526BBA6006B4781 /* build-spritesheet.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "build-spritesheet.sh"; path = "scripts/build-spritesheet.sh"; sourceTree = SOURCE_ROOT; };
+		BF0557B41526BC02006B4781 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = SOURCE_ROOT; };
 		BF6CC5CE15022496000F1AFF /* PostBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostBattleScene.h; path = Scenes/PostBattleScene.h; sourceTree = "<group>"; };
 		BF6CC5CF15022496000F1AFF /* PostBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostBattleScene.m; path = Scenes/PostBattleScene.m; sourceTree = "<group>"; };
 		BF80763115214A04001EB2B3 /* PreBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreBattleScene.h; path = Scenes/PreBattleScene.h; sourceTree = "<group>"; };
@@ -676,7 +705,8 @@
 		38024DC013C2564D003D36F2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				387E7AE1145E0AF4006D9266 /* Sprites */,
+				BF0557B41526BC02006B4781 /* assets */,
+				BF0557AC1526BBA6006B4781 /* build-spritesheet.sh */,
 				38024DC113C2564D003D36F2 /* Default.png */,
 				38024DC313C2564D003D36F2 /* fps_images.png */,
 				38024DC513C2564D003D36F2 /* Icon-72.png */,
@@ -1438,12 +1468,22 @@
 		38F0504413C2618900BCADCB /* Sprites */ = {
 			isa = PBXGroup;
 			children = (
+				BF05579C15268CEF006B4781 /* Descriptors */,
 				387E7B79145E2950006D9266 /* Character Management */,
 				387E7B78145E291C006D9266 /* Wrappers */,
 				387E7B74145E28D9006D9266 /* Containers */,
 				387E7B73145E28CA006D9266 /* GamePlay */,
 			);
 			name = Sprites;
+			sourceTree = "<group>";
+		};
+		BF05579C15268CEF006B4781 /* Descriptors */ = {
+			isa = PBXGroup;
+			children = (
+				BF05579E15268D0A006B4781 /* ProjectileEffect.h */,
+				BF05579F15268D0A006B4781 /* ProjectileEffect.m */,
+			);
+			name = Descriptors;
 			sourceTree = "<group>";
 		};
 		BF80762F152149D8001EB2B3 /* Deprecated VCs */ = {
@@ -1467,6 +1507,23 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXLegacyTarget section */
+		BF0557C11526BD39006B4781 /* MakeAssets */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "${PROJECT_DIR}/scripts/build-spritesheet.sh";
+			buildConfigurationList = BF0557C21526BD39006B4781 /* Build configuration list for PBXLegacyTarget "MakeAssets" */;
+			buildPhases = (
+			);
+			buildToolPath = /bin/sh;
+			buildWorkingDirectory = "";
+			dependencies = (
+			);
+			name = MakeAssets;
+			passBuildSettingsInEnvironment = 1;
+			productName = MakeAssets;
+		};
+/* End PBXLegacyTarget section */
+
 /* Begin PBXNativeTarget section */
 		38024DAA13C2564D003D36F2 /* Healer */ = {
 			isa = PBXNativeTarget;
@@ -1475,10 +1532,12 @@
 				38024DA713C2564D003D36F2 /* Sources */,
 				38024DA813C2564D003D36F2 /* Frameworks */,
 				38024DA913C2564D003D36F2 /* Resources */,
+				BF0557AE1526BBBA006B4781 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				BF0557C71526BDA5006B4781 /* PBXTargetDependency */,
 			);
 			name = Healer;
 			productName = Healer;
@@ -1507,6 +1566,7 @@
 			projectRoot = "";
 			targets = (
 				38024DAA13C2564D003D36F2 /* Healer */,
+				BF0557C11526BD39006B4781 /* MakeAssets */,
 			);
 		};
 /* End PBXProject section */
@@ -1526,8 +1586,9 @@
 				38024DD013C2564D003D36F2 /* Icon@2x.png in Resources */,
 				38024DD313C2564D003D36F2 /* iTunesArtwork in Resources */,
 				38F04EEA13C2593500BCADCB /* GameDefaults.plist in Resources */,
-				387E7AE2145E0AF4006D9266 /* Sprites in Resources */,
 				BFB99F1B15257F6D007EE559 /* Sounds in Resources */,
+				BF0557AD1526BBA6006B4781 /* build-spritesheet.sh in Resources */,
+				BF0557B51526BC02006B4781 /* assets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1678,10 +1739,19 @@
 				386747A91520073D0057A8C9 /* CombatEvent.m in Sources */,
 				BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */,
 				BF8A50F415236D6300BEC882 /* GamePlayFTUELayer.m in Sources */,
+				BF0557A015268D0A006B4781 /* ProjectileEffect.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BF0557C71526BDA5006B4781 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BF0557C11526BD39006B4781 /* MakeAssets */;
+			targetProxy = BF0557C61526BDA5006B4781 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		38024F1513C2564E003D36F2 /* Debug */ = {
@@ -1802,6 +1872,71 @@
 			};
 			name = "Ad Hoc";
 		};
+		BF0557C31526BD39006B4781 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		BF0557C41526BD39006B4781 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		BF0557C51526BD39006B4781 /* Ad Hoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "Ad Hoc";
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1824,6 +1959,15 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		BF0557C21526BD39006B4781 /* Build configuration list for PBXLegacyTarget "MakeAssets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF0557C31526BD39006B4781 /* Debug */,
+				BF0557C41526BD39006B4781 /* Release */,
+				BF0557C51526BD39006B4781 /* Ad Hoc */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

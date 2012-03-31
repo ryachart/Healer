@@ -22,6 +22,8 @@
 //Returns Yes is successful, no otherwise.
 -(BOOL)addRaidMemberHealthView:(RaidMemberHealthView*)healthView;
 
+-(CGPoint)frameCenterForMember:(RaidMember*)raidMember;
+
 -(void)spawnRects;
 -(CGRect)vendNextUsableRect;
 

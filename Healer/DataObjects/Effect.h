@@ -16,7 +16,9 @@
 typedef enum {
 	EffectTypeNeutral,
 	EffectTypePositive,
-	EffectTypeNegative
+	EffectTypeNegative, 
+    EffectTypePositiveInvisible,
+    EffectTypeNegativeInvisible
 } EffectType;
 
 @interface Effect : NSObject {
@@ -27,6 +29,7 @@ typedef enum {
 	
 	NSMutableArray *audioTitles;
 }
+@property (nonatomic, retain) NSString* spriteName;
 @property NSTimeInterval duration;
 @property (readwrite) NSInteger maxStacks;
 @property (readwrite) float timeApplied;
@@ -64,9 +67,6 @@ typedef enum {
 @end
 
 @interface ShieldEffect : Effect <HealthAdjustmentModifier>
-{
-	NSInteger amountToShield;
-}
 @property (readwrite) NSInteger amountToShield;
 @end
 
@@ -75,11 +75,16 @@ typedef enum {
 @property NSInteger amountPerReaction;
 @end
 
+@interface DelayedHealthEffect : Effect
+@property NSInteger value;
+@end
 
 
 #pragma mark - Shipping Boss Effects
 @interface TrulzarPoison : RepeatedHealthEffect
 @end
+
+
 
 #pragma mark - DEPRECATED EFFECTS
 @interface BigFireball : Effect {

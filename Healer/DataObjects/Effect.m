@@ -10,15 +10,18 @@
 #import "GameObjects.h"
 #import "AudioController.h"
 @implementation Effect
-@synthesize duration, isExpired, target, effectType, timeApplied, maxStacks;
+@synthesize duration, isExpired, target, effectType, timeApplied, maxStacks, spriteName;
 
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
 {
-	duration = dur;
-	isExpired = NO;
-	effectType = type;
-    self.maxStacks = 1;
-    self.timeApplied = 0.0;
+    if (self = [super init]){
+        duration = dur;
+        isExpired = NO;
+        effectType = type;
+        self.maxStacks = 1;
+        self.timeApplied = 0.0;
+        self.spriteName = nil;
+    }
 	return self;
 }
 
@@ -96,17 +99,14 @@
 	NSInteger healthDelta = *currentHealth - *newHealth;
 	
 	if (healthDelta >= amountToShield){
-		NSLog(@"%@: Absorbing %i damage and expiring.", self, amountToShield);
 		*newHealth += amountToShield;
 		amountToShield = 0;
 		isExpired = YES;
 	}
 	else if (healthDelta < amountToShield){
-		NSLog(@"Absorbing %i damage", healthDelta);
 		*newHealth += healthDelta;
 		amountToShield -= healthDelta;
 	}
-	NSLog(@"Amount to Shield: %i", amountToShield);
 }
 -(void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth
 {
@@ -126,6 +126,15 @@
     }
 }
 @end
+
+@implementation  DelayedHealthEffect
+@synthesize value;
+-(void)expire{
+    [self.target setHealth:self.target.health + self.value];
+    [super expire];
+}
+@end
+
 @implementation SwirlingLightEffect
 
 -(void)tick{

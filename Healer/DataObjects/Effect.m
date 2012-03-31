@@ -10,7 +10,7 @@
 #import "GameObjects.h"
 #import "AudioController.h"
 @implementation Effect
-@synthesize duration, isExpired, target, effectType, timeApplied, maxStacks, spriteName;
+@synthesize duration, isExpired, target, effectType, timeApplied, maxStacks, spriteName, title;
 
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
 {
@@ -21,6 +21,7 @@
         self.maxStacks = 1;
         self.timeApplied = 0.0;
         self.spriteName = nil;
+        self.title = nil;
     }
 	return self;
 }
@@ -43,8 +44,8 @@
 	
 }
 
--(BOOL)isEqual:(id)object{
-    if ([object isMemberOfClass:[self class]]){
+-(BOOL)isEqual:(Effect*)object{
+    if ([self.title isEqualToString:object.title]){
         return YES;
     }
     return NO;
@@ -159,6 +160,18 @@
     }
 }
 
+@end
+
+@implementation CouncilPoisonball
+-(void)expire{
+    RepeatedHealthEffect *poisonDoT = [[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative];
+    [poisonDoT setSpriteName:@"poison.png"];
+    [poisonDoT setValuePerTick:-3];
+    [poisonDoT setNumOfTicks:4];
+    [self.target addEffect:poisonDoT];
+    [poisonDoT release];
+    [super expire];
+}
 @end
 
 
@@ -282,6 +295,7 @@
 @implementation BulwarkEffect
 +(id)defaultEffect{
 	BulwarkEffect *be = [[BulwarkEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive];
+    [be setTitle:@"bulwark-effect"];
 	[be setAmountToShield:40];
     [be setMaxStacks:1];
 	return [be autorelease];

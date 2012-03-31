@@ -122,6 +122,7 @@
     }], nil]];
 }
 
+#define BLINK_ACTION_TAG 32432
 -(void)updateHealth
 {
     if (memberData && memberData.health > self.lastHealth){
@@ -150,7 +151,6 @@
         [self setOpacity:255];
 	}
 	
-	NSMutableString* effectText = [[NSMutableString alloc] initWithCapacity:10];
     Effect *negativeEffect = nil;
     Effect *positiveEffect = nil;
 	for (Effect *eff in self.memberData.activeEffects){
@@ -162,39 +162,47 @@
         }
 	}
     
-    if (positiveEffect && positiveEffect.spriteName){
+    if (positiveEffect && positiveEffect.spriteName && !self.memberData.isDead){
         if (!self.priorityPositiveEffectSprite){
             self.priorityPositiveEffectSprite = [CCSprite spriteWithSpriteFrameName:positiveEffect.spriteName];
-            [self.priorityPositiveEffectSprite setContentSize:CGSizeMake(50, 50)];
-            [self.priorityPositiveEffectSprite setPosition:CGPointMake(10, 0)];
-            [self addChild:self.priorityNegativeEffectSprite z:5];
+            [self.priorityPositiveEffectSprite setContentSize:CGSizeMake(40, 40)];
+            [self.priorityPositiveEffectSprite setPosition:CGPointMake(20, self.contentSize.height * .15)];
+            [self addChild:self.priorityPositiveEffectSprite z:5];
         }else{
             [self.priorityPositiveEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:positiveEffect.spriteName]];
+        }
+        if (positiveEffect.timeApplied/positiveEffect.duration > .8 && ![self.priorityPositiveEffectSprite getActionByTag:BLINK_ACTION_TAG]){
+            CCAction *blinkAction = [CCRepeatForever actionWithAction:[CCSequence actions:[CCFadeTo actionWithDuration:.5 opacity:120], [CCFadeTo actionWithDuration:.5 opacity:255], nil]];
+            blinkAction.tag = BLINK_ACTION_TAG;
+            [self.priorityPositiveEffectSprite runAction:blinkAction];
         }
         [self.priorityPositiveEffectSprite setVisible:YES];
     }else{
         [self.priorityPositiveEffectSprite setVisible:NO];
     }
     
-    if (negativeEffect && negativeEffect.spriteName){
+    if (negativeEffect && negativeEffect.spriteName && !self.memberData.isDead){
         if (!self.priorityNegativeEffectSprite){
             self.priorityNegativeEffectSprite = [CCSprite spriteWithSpriteFrameName:negativeEffect.spriteName];
-            [self.priorityNegativeEffectSprite setContentSize:CGSizeMake(50, 50)];
-            [self.priorityNegativeEffectSprite setPosition:CGPointMake(10, self.contentSize.height * .9)];
+            [self.priorityNegativeEffectSprite setContentSize:CGSizeMake(40, 40)];
+            [self.priorityNegativeEffectSprite setPosition:CGPointMake(20, self.contentSize.height * .8)];
             [self addChild:self.priorityNegativeEffectSprite z:5];
         }else{
             [self.priorityNegativeEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:negativeEffect.spriteName]];
+        }
+        if (negativeEffect.timeApplied/negativeEffect.duration > .8 && ![self.priorityNegativeEffectSprite getActionByTag:BLINK_ACTION_TAG]){
+            CCAction *blinkAction = [CCRepeatForever actionWithAction:[CCSequence actions:[CCFadeTo actionWithDuration:.5 opacity:120], [CCFadeTo actionWithDuration:.5 opacity:255], nil]];
+            blinkAction.tag = BLINK_ACTION_TAG;
+            [self.priorityNegativeEffectSprite runAction:blinkAction];
         }
         [self.priorityNegativeEffectSprite setVisible:YES];
     }else{
         [self.priorityNegativeEffectSprite setVisible:NO];
     }
 
-	if (![healthText isEqualToString:[healthLabel string]] || ![effectText isEqualToString:[effectsLabel string]]){
-		[effectsLabel setString:effectText];
+	if (![healthText isEqualToString:[healthLabel string]]){
 		[healthLabel setString:healthText];
 	}
-	[effectText release];
 }
 
 

@@ -63,6 +63,7 @@
 @end
 
 @interface DarkCouncil : Boss
+@property (readwrite) NSTimeInterval lastPoisonballTime;
 @end
 
 @interface PlaguebringerColossus: Boss

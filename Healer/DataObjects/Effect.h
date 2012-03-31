@@ -30,6 +30,7 @@ typedef enum {
 	NSMutableArray *audioTitles;
 }
 @property (nonatomic, retain) NSString* spriteName;
+@property (nonatomic, retain) NSString* title; //Should be unique
 @property NSTimeInterval duration;
 @property (readwrite) NSInteger maxStacks;
 @property (readwrite) float timeApplied;
@@ -82,6 +83,9 @@ typedef enum {
 
 #pragma mark - Shipping Boss Effects
 @interface TrulzarPoison : RepeatedHealthEffect
+@end
+
+@interface CouncilPoisonball : DelayedHealthEffect
 @end
 
 

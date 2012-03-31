@@ -14,13 +14,6 @@
 #import "PostBattleScene.h"
 #import "PersistantDataManager.h"
 
-/// converts degrees to radians
-#define CC_DEGREES_TO_RADIANS(__ANGLE__) ((__ANGLE__) / 180.0f * (float)M_PI)
-
-/// converts radians to degrees
-#define CC_RADIANS_TO_DEGREES(__ANGLE__) ((__ANGLE__) / (float)M_PI * 180.0f)
-
-
 @interface GamePlayScene ()
 //Data Models
 @property (nonatomic, retain) Raid *raid;

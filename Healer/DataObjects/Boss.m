@@ -287,18 +287,20 @@
 }
 -(void)applyPoisonToTarget:(RaidMember*)target{
     TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
-    [poisonEffect setSpriteName:@"trulzar_poison.png"];
+    [poisonEffect setSpriteName:@"poison.png"];
     [poisonEffect setValuePerTick:-7];
     [poisonEffect setNumOfTicks:24];
+    [poisonEffect setTitle:@"trulzar-poison1"];
     [target addEffect:poisonEffect];
     [poisonEffect release];
 }
 
 -(void)applyWeakPoisonToTarget:(RaidMember*)target{
     TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
-    [poisonEffect setSpriteName:@"trulzar_poison.png"];
+    [poisonEffect setSpriteName:@"poison.png"];
     [poisonEffect setValuePerTick:-2];
     [poisonEffect setNumOfTicks:24];
+    [poisonEffect setTitle:@"trulzar-poison2"];
     [target addEffect:poisonEffect];
     [poisonEffect release];
 }
@@ -325,7 +327,7 @@
             if (!member.isDead){
                 BOOL isPoisoned = NO;
                 for (Effect *effect in member.activeEffects){
-                    if ([effect isMemberOfClass:[TrulzarPoison class]]){
+                    if ([effect.title isEqualToString:@"trulzar-poison1"]){
                         isPoisoned = YES;
                         break;
                     }
@@ -348,6 +350,42 @@
 
 @end
 
+@implementation DarkCouncil
+@synthesize lastPoisonballTime;
++(id)defaultBoss{
+    DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:292500 damage:5 targets:5 frequency:.75 andChoosesMT:NO];
+    [boss setTitle:@"Council of Dark Summoners"];
+    return [boss autorelease];
+}
+
+-(void)shootProjectileAtTarget:(RaidMember*)target withDelay:(float)delay{
+    float colTime = (1.5 + delay);
+    CouncilPoisonball *fireball = [[CouncilPoisonball alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
+    
+    ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:@"green_fireball.png" target:target andCollisionTime:colTime];
+    [self.announcer displayProjectileEffect:fireballVisual];
+    [fireballVisual release];
+    
+    [fireball setValue:-20];
+    [target addEffect:fireball];
+    [fireball release];
+}
+
+-(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
+    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+    self.lastPoisonballTime += timeDelta;
+    
+    if (self.lastPoisonballTime > 10){ 
+        for (int i = 0; i < 2; i++){
+            [self shootProjectileAtTarget:[theRaid randomLivingMember] withDelay:i * 1];
+        }
+        self.lastPoisonballTime = 0;
+    }
+}
+
+
+
+@end
 
 
 #pragma mark - Deprecated Bosses

@@ -12,6 +12,7 @@
 #import "Raid.h"
 #import "Spell.h"
 #import "GamePlayScene.h"
+#import "RaidMemberPreBattleCard.h"
 
 
 @interface PreBattleScene ()
@@ -91,121 +92,39 @@
             i++;
         }
         
-        int trollCount = 0;
-        int witchCount = 0;
-        int ogreCount = 0;
-        for (RaidMember *member in self.raid.raidMembers){
-            if ([member.sourceName isEqualToString:@"Witch"]){
-                witchCount++;
-            }
-            if ([member.sourceName isEqualToString:@"Ogre"]){
-                ogreCount++;
-            }
-            if ([member.sourceName isEqualToString:@"Troll"]){
-                trollCount++;
-            }
-        }
         
 
         CCLabelTTF *alliesLabel = [CCLabelTTF labelWithString:@"Your Allies:" fontName:@"Arial" fontSize:32];
-        [alliesLabel setPosition:ccp(100, 600)];
+        [alliesLabel setPosition:ccp(100, 700)];
         [self addChild:alliesLabel];
-        int allySlotsUsed = 0;
-        if (ogreCount >0){
-            CCLayerColor *ogreBackground = [CCLayerColor layerWithColor:ccc4(255, 0, 0, 255)];
-            [ogreBackground setPosition:ccp(40, 450)];
-            [ogreBackground setContentSize:CGSizeMake(100, 100)];
-            [self addChild:ogreBackground];
-            
-            CCLayerColor *ogreDetailBackground = [CCLayerColor layerWithColor:ccc4(255, 255, 255, 255)];
-            [ogreDetailBackground setPosition: ccp(140, 450)];
-            [ogreDetailBackground setContentSize:CGSizeMake(200, 100)];
-            [self addChild:ogreDetailBackground];
-            
-            CCLabelTTF *ogreHealthLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Health: %i", [Ogre defaultOgre].maximumHealth] dimensions:CGSizeMake(200, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24];
-            [ogreHealthLabel setColor:ccBLACK];
-            [ogreHealthLabel setPosition:ccp(100, 78)];
-            [ogreDetailBackground addChild:ogreHealthLabel];
-            
-            CCLabelTTF *ogreDPSLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"DPS: %1.2f", [Ogre defaultOgre].dps] dimensions:CGSizeMake(200, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24];
-            [ogreDPSLabel setColor:ccBLACK];
-            [ogreDPSLabel setPosition:ccp(100, 58)];
-            [ogreDetailBackground addChild:ogreDPSLabel];
-            
-            CCLabelTTF *ogresLabel = [CCLabelTTF labelWithString:@"Ogres" dimensions:CGSizeMake(100, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:32];
-            [ogresLabel setPosition:ccp(50, 78)];
-            [ogreBackground addChild:ogresLabel];
-            
-            CCLabelTTF *ogreCountLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", ogreCount] dimensions:CGSizeMake(50, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:32];
-            [ogreCountLabel setPosition:ccp(50, 38)];
-            [ogreBackground addChild:ogreCountLabel];
-            allySlotsUsed++;
-        }
-        if (trollCount > 0){
-            CCLayerColor *trollBackground = [CCLayerColor layerWithColor:ccc4(0, 255, 0, 255)];
-            [trollBackground setPosition:CGPointMake(40, 345 + ((1 - allySlotsUsed) * 105))];
-            [trollBackground setContentSize:CGSizeMake(100, 100)];
-            [self addChild:trollBackground];
-            
-            CCLayerColor *trollDetailBackground = [CCLayerColor layerWithColor:ccc4(255, 255, 255, 255)];
-            [trollDetailBackground setPosition: ccp(140, 345 + ((1 - allySlotsUsed) * 105))];
-            [trollDetailBackground setContentSize:CGSizeMake(200, 100)];
-            [self addChild:trollDetailBackground];
-            
-            CCLabelTTF *trollHealthLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Health: %i", [Troll defaultTroll].maximumHealth] dimensions:CGSizeMake(200, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24];
-            [trollHealthLabel setColor:ccBLACK];
-            [trollHealthLabel setPosition:ccp(100, 78)];
-            [trollDetailBackground addChild:trollHealthLabel];
-            
-            CCLabelTTF *trollDPSLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"DPS: %1.2f", [Troll defaultTroll].dps] dimensions:CGSizeMake(200, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24];
-            [trollDPSLabel setColor:ccBLACK];
-            [trollDPSLabel setPosition:ccp(100, 58)];
-            [trollDetailBackground addChild:trollDPSLabel];
-            
-            CCLabelTTF *trollsLabel = [CCLabelTTF labelWithString:@"Trolls" dimensions:CGSizeMake(100, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:32];
-            [trollsLabel setPosition:ccp(50, 78)];
-            [trollBackground addChild:trollsLabel];
-            
-            CCLabelTTF *trollCountLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", trollCount] dimensions:CGSizeMake(50, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:32];
-            [trollCountLabel setPosition:ccp(50, 38)];
-            [trollBackground addChild:trollCountLabel];
-            allySlotsUsed++;
+        
+        NSMutableDictionary *raidMemberTypes = [NSMutableDictionary dictionaryWithCapacity:5];
+        
+        for (RaidMember* member in self.raid.raidMembers){
+            NSNumber *number = [raidMemberTypes objectForKey:member.title];
+            if (!number){
+                number = [NSNumber numberWithInt:1];
+                [raidMemberTypes setObject:number forKey:member.title];
+            }else{
+                number = [NSNumber numberWithInt:[number intValue] + 1];
+            }
+            [raidMemberTypes setObject:number forKey:member.title];
         }
         
-        if (witchCount > 0){
-            CCLayerColor *witchBackground = [CCLayerColor layerWithColor:ccc4(255, 0, 255, 255)];
-            [witchBackground setPosition:ccp(40, 240 + ((2 - allySlotsUsed) * 105))];
-            [witchBackground setContentSize:CGSizeMake(100, 100)];
-            [self addChild:witchBackground];
-            
-            CCLayerColor *witchDetailBackground = [CCLayerColor layerWithColor:ccc4(255, 255, 255, 255)];
-            [witchDetailBackground setPosition: ccp(140, 240 + ((2 - allySlotsUsed) * 105))];
-            [witchDetailBackground setContentSize:CGSizeMake(200, 100)];
-            [self addChild:witchDetailBackground];
-            
-            CCLabelTTF *witchHealthLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Health: %i", [Witch defaultWitch].maximumHealth] dimensions:CGSizeMake(200, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24];
-            [witchHealthLabel setColor:ccBLACK];
-            [witchHealthLabel setPosition:ccp(100, 78)];
-            [witchDetailBackground addChild:witchHealthLabel];
-            
-            CCLabelTTF *witchDPSLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"DPS: %1.2f", [Witch defaultWitch].dps] dimensions:CGSizeMake(200, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24];
-            [witchDPSLabel setColor:ccBLACK];
-            [witchDPSLabel setPosition:ccp(100, 58)];
-            [witchDetailBackground addChild:witchDPSLabel];
-            
-            
-            CCLabelTTF *witchLabel = [CCLabelTTF labelWithString:@"Witches" dimensions:CGSizeMake(100, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24];
-            [witchLabel setPosition:ccp(50, 78)];
-            [witchBackground  addChild:witchLabel];
-            
-            CCLabelTTF *witchCountLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", witchCount] dimensions:CGSizeMake(50, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:32];
-            [witchCountLabel setPosition:ccp(50, 38)];
-            [witchBackground addChild:witchCountLabel];
-            allySlotsUsed++;
-
+        i = 0;
+        for (NSString *types in raidMemberTypes){
+            RaidMember *member = nil;
+            for (RaidMember *thisMember in self.raid.raidMembers){
+                if ([thisMember.title isEqualToString:types]){
+                    member = thisMember; 
+                    break;
+                }
+            }
+            RaidMemberPreBattleCard *preBattleCard = [[RaidMemberPreBattleCard alloc] initWithFrame:CGRectMake(50, 560 - (101 * i), 200, 100) count:[[raidMemberTypes objectForKey:types] intValue] andRaidMember:member];
+            [self addChild:preBattleCard];
+            [preBattleCard release];
+            i++;
         }
-        
-        
         
     }
     return self;

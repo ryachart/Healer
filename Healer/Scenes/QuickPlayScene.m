@@ -135,18 +135,20 @@
     if (level == 5){
         basicRaid = [[Raid alloc] init];
         basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-        basicBoss = [[Boss alloc] initWithHealth:75000 damage:60 targets:3 frequency:4.5 andChoosesMT:NO];
-        [basicBoss setTitle:@"Fargore General"];
-        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil]];
+        basicBoss = [DarkCouncil defaultBoss];
+        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell],[Purify defaultSpell], [Regrow defaultSpell], nil]];
         
-        for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Troll defaultTroll]];
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
         }
-        for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Ogre defaultOgre]];
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Guardian defaultGuardian]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Witch defaultWitch]];
+            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
         }
     }
     

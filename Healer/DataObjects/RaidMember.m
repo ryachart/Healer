@@ -107,7 +107,7 @@
     if (self = [super initWithHealth:100 damageDealt:50 andDmgFrequency:1.0]){
         self.title = @"Guardian";
         self.dodgeChance = .09;
-        self.info = @"A Guardian has high health but low damage.";
+        self.info = @"The Guardian has high health but low damage.";
     }
     return self;
 }
@@ -121,7 +121,7 @@
 -(id)init{
     if (self = [super initWithHealth:75 damageDealt:62 andDmgFrequency:.80]){
         self.title = @"Soldier";
-        self.info = @"A Soldier has moderate health and moderate damage.";
+        self.info = @"The Soldier has moderate health and moderate damage.";
         self.dodgeChance = .07;
     }
     return self;
@@ -135,7 +135,7 @@
 -(id)init{
     if (self = [super initWithHealth:50 damageDealt:65 andDmgFrequency:.6]){
         self.title = @"Demonslayer";
-        self.info = @"A Demonslayer has low health but high damage.";
+        self.info = @"ATheDemonslayer has low health but high damage.";
         self.dodgeChance = .05;
     }
     return self;
@@ -149,7 +149,7 @@
 -(id)init{
     if (self = [super initWithHealth:80 damageDealt:80 andDmgFrequency:1.0]){
         self.title = @"Champion";
-        self.info = @"A Champion has more health and deals more damage the more health it has.";
+        self.info = @"The Champion has more health and deals more damage the more health it has.";
         self.dodgeChance = .07;
     }
     return self;
@@ -171,7 +171,7 @@
     if (self = [super initWithHealth:75 damageDealt:25 andDmgFrequency:1.0]){
         self.title = @"Wizard";
         self.dodgeChance = .07;
-        self.info = @"A Wizard has moderate health and low damage but improves your energy regeneration";
+        self.info = @"The Wizard has moderate health and low damage but improves your energy regeneration";
         lastEnergyGrant = 0.0;
     }
     return self;
@@ -195,7 +195,7 @@
 -(id)init{
     if (self = [super initWithHealth:70 damageDealt:140 andDmgFrequency:1.0]){
         self.title = @"Berserker";
-        self.info = @"A Berserker has moderate health and deals more damage at low health.";
+        self.info = @"The Berserker has moderate health and deals more damage at low health.";
         self.dodgeChance = .07;
     }
     return self;

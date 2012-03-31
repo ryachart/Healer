@@ -34,7 +34,7 @@
 	if (activeEffects != nil){
         int currentStacks = 0;
 		for (Effect *effectFA in activeEffects){
-			if ([effectFA class] == [theEffect class]){
+			if ([effectFA.title isEqualToString:theEffect.title]){
                 currentStacks++;
 			}
 		}

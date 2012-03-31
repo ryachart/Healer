@@ -459,6 +459,7 @@
 +(id)defaultBoss{
     SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:8 targets:1 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Spore Ravagers"];
+    [boss setCriticalChance:.5];
     return [boss autorelease];
 }
 -(void)chooseSecondAndThirdFocusTargetsFromRaid:(Raid*)raid{

@@ -13,16 +13,20 @@
 #import "PlayerMoveButton.h"
 #import "PostBattleScene.h"
 #import "PersistantDataManager.h"
+#import "GamePlayPauseLayer.h"
 
 @interface GamePlayScene ()
 //Data Models
+@property (nonatomic, readwrite) BOOL paused;
 @property (nonatomic, retain) Raid *raid;
 @property (nonatomic, retain) Boss *boss;
 @property (nonatomic, retain) Player *player;
 @property (nonatomic, assign) CCLabelTTF *announcementLabel;
 @property (nonatomic, assign) CCLabelTTF *errAnnouncementLabel;
+@property (nonatomic, retain) GamePlayPauseLayer *pauseMenuLayer;
 
 -(void)battleBegin;
+-(void)showPauseMenu;
 @end
 
 @implementation GamePlayScene
@@ -38,13 +42,14 @@
 @synthesize eventLog;
 @synthesize announcementLabel;
 @synthesize errAnnouncementLabel;
-
+@synthesize paused;
+@synthesize pauseMenuLayer;
 -(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse
 {
     if (self = [super init]){
         NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
-        
+        paused = YES;
         self.raid = raidToUse;
         self.boss = bossToUse;
         [self.boss setLogger:self];
@@ -139,9 +144,46 @@
         
         
         //The timer has to be scheduled after all the init is done!
+        CCLabelTTF *menuLabel = [CCLabelTTF labelWithString:@"Menu" fontName:@"Arial" fontSize:32.0];
+        CCMenu *menuButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:menuLabel target:self selector:@selector(showPauseMenu)], nil];
+        [menuButton setPosition:CGPointMake(50, [CCDirector sharedDirector].winSize.height * .95)];
+        [menuButton setColor:ccWHITE];
+        [self addChild:menuButton];
         
 	}
     return self;
+}
+
+-(void)setPaused:(BOOL)newPaused{
+    if (self.paused == newPaused)
+        return;
+    
+    paused = newPaused;
+    
+    if (self.paused){
+        [self unschedule:@selector(gameEvent:)];
+    }else{
+        [self schedule:@selector(gameEvent:)];
+    }
+}
+
+-(void)showPauseMenu{
+    if (self.paused){
+        return;
+    }
+    
+    [self setPaused:YES];
+    
+    if (!self.pauseMenuLayer){
+        self.pauseMenuLayer = [[[GamePlayPauseLayer alloc] initWithDelegate:self] autorelease];
+    }
+    [self addChild:self.pauseMenuLayer z:10000];
+
+}
+
+-(void)pauseLayerDidFinish{
+    [self.pauseMenuLayer removeFromParentAndCleanup:YES];
+    [self setPaused:NO];
 }
 
 -(void)onEnterTransitionDidFinish{
@@ -182,7 +224,7 @@
     }], [CCDelayTime actionWithDuration:1.0], [CCCallBlock actionWithBlock:^{
         blockSelf.announcementLabel.visible = NO;
         blockSelf.announcementLabel.string = @"";
-        [blockSelf schedule:@selector(gameEvent:)];
+        [blockSelf setPaused:NO];
     }], nil]];
 }
 
@@ -411,12 +453,12 @@
 	//Determine if there will be another iteration of the gamestate
 	if (survivors == 0)
 	{
-        [self unschedule:@selector(gameEvent:)];
+        [self setPaused:YES];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:[[[PostBattleScene alloc] initWithVictory:NO andEventLog:self.eventLog] autorelease]]];
 	}
     
 	if ([player isDead]){
-                [self unschedule:@selector(gameEvent:)];
+        [self setPaused:YES];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:[[[PostBattleScene alloc] initWithVictory:NO andEventLog:self.eventLog] autorelease]]];
 	}
 	if ([boss isDead]){
@@ -425,7 +467,7 @@
         if (self.levelNumber > i){
             [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:self.levelNumber] forKey:PlayerHighestLevelCompleted];
         }
-        [self unschedule:@selector(gameEvent:)];
+        [self setPaused:YES];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:[[[PostBattleScene alloc] initWithVictory:YES andEventLog:self.eventLog] autorelease]]];
 	}
 }

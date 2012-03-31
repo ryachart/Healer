@@ -169,6 +169,8 @@
             [self.priorityPositiveEffectSprite setPosition:CGPointMake(20, self.contentSize.height * .15)];
             [self addChild:self.priorityPositiveEffectSprite z:5];
         }else{
+            [self.priorityPositiveEffectSprite stopAllActions];
+            [self.priorityPositiveEffectSprite setOpacity:255];
             [self.priorityPositiveEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:positiveEffect.spriteName]];
         }
         if (positiveEffect.timeApplied/positiveEffect.duration > .8 && ![self.priorityPositiveEffectSprite getActionByTag:BLINK_ACTION_TAG]){
@@ -188,6 +190,8 @@
             [self.priorityNegativeEffectSprite setPosition:CGPointMake(20, self.contentSize.height * .8)];
             [self addChild:self.priorityNegativeEffectSprite z:5];
         }else{
+            [self.priorityNegativeEffectSprite stopAllActions];
+            [self.priorityNegativeEffectSprite setOpacity:255];
             [self.priorityNegativeEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:negativeEffect.spriteName]];
         }
         if (negativeEffect.timeApplied/negativeEffect.duration > .8 && ![self.priorityNegativeEffectSprite getActionByTag:BLINK_ACTION_TAG]){

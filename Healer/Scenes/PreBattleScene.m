@@ -13,7 +13,7 @@
 #import "Spell.h"
 #import "GamePlayScene.h"
 #import "RaidMemberPreBattleCard.h"
-
+#import "QuickPlayScene.h"
 
 @interface PreBattleScene ()
 @property (nonatomic, readwrite) NSInteger maxPlayers;
@@ -21,6 +21,7 @@
 @property (nonatomic, retain) Boss *boss;
 @property (nonatomic, retain) Raid *raid;
 
+-(void)back;
 -(void)doneButton;
 @end
 
@@ -95,7 +96,7 @@
         
 
         CCLabelTTF *alliesLabel = [CCLabelTTF labelWithString:@"Your Allies:" fontName:@"Arial" fontSize:32];
-        [alliesLabel setPosition:ccp(100, 700)];
+        [alliesLabel setPosition:ccp(120, 680)];
         [self addChild:alliesLabel];
         
         NSMutableDictionary *raidMemberTypes = [NSMutableDictionary dictionaryWithCapacity:5];
@@ -120,16 +121,26 @@
                     break;
                 }
             }
-            RaidMemberPreBattleCard *preBattleCard = [[RaidMemberPreBattleCard alloc] initWithFrame:CGRectMake(50, 560 - (101 * i), 200, 100) count:[[raidMemberTypes objectForKey:types] intValue] andRaidMember:member];
+            RaidMemberPreBattleCard *preBattleCard = [[RaidMemberPreBattleCard alloc] initWithFrame:CGRectMake(50, 540 - (101 * i), 200, 100) count:[[raidMemberTypes objectForKey:types] intValue] andRaidMember:member];
             [self addChild:preBattleCard];
             [preBattleCard release];
             i++;
         }
         
+        CCLabelTTF *back = [CCLabelTTF labelWithString:@"Back" fontName:@"Arial" fontSize:32.0];
+        CCMenu *backButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:back target:self selector:@selector(back)], nil];
+        [backButton setPosition:CGPointMake(50, [CCDirector sharedDirector].winSize.height * .95)];
+        [backButton setColor:ccWHITE];
+        [self addChild:backButton];
+        
+        
     }
     return self;
 }
 
+-(void)back{
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:1.0 scene:[[[QuickPlayScene alloc] init] autorelease]]];
+}
 -(void)doneButton{
     GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss andPlayer:self.player];
     [gps setLevelNumber:self.levelNumber];

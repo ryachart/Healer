@@ -361,6 +361,12 @@
     
     CGPoint originLocation = CGPointMake(650, 600);
     CGPoint destination = [self.raidView frameCenterForMember:effect.target];
+    CCParticleSystem  *collisionEffect = nil;
+    if (effect.collisionParticleName){
+        NSURL *systemPath = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"emitters"] URLByAppendingPathComponent:effect.collisionParticleName];   
+        collisionEffect = [CCParticleSystemPoint particleWithFile:[systemPath relativePath]];
+    }
+
     if (projectileSprite){
         [projectileSprite setAnchorPoint:CGPointMake(.5, .5)];
         [projectileSprite setVisible:NO];
@@ -368,7 +374,13 @@
         [projectileSprite setRotation:CC_RADIANS_TO_DEGREES([self rotationFromPoint:originLocation toPoint:destination]) + 180.0];
         [projectileSprite setColor:effect.spriteColor];
         [self addChild:projectileSprite];
-        [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}], [CCMoveTo actionWithDuration:effect.collisionTime position:destination],[CCSpawn actions:[CCScaleTo actionWithDuration:.33 scale:2.0], [CCFadeOut actionWithDuration:.33], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}], [CCMoveTo actionWithDuration:effect.collisionTime position:destination],[CCSpawn actions:[CCCallBlockN actionWithBlock:^(CCNode *node){
+            if (collisionEffect){
+                [collisionEffect setPosition:destination];
+                [collisionEffect setAutoRemoveOnFinish:YES];
+                [self addChild:collisionEffect z:100];
+            }
+        }],[CCScaleTo actionWithDuration:.33 scale:2.0], [CCFadeOut actionWithDuration:.33], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node removeFromParentAndCleanup:YES];
         }], nil]];
     }

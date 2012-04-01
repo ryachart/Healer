@@ -11,6 +11,7 @@
 
 @class RaidMember;
 @interface ProjectileEffect : NSObject
+@property (nonatomic, retain) NSString* collisionParticleName;
 @property (nonatomic, readonly, retain) NSString *spriteName;
 @property (nonatomic, readonly, retain) RaidMember *target;
 @property (nonatomic, readonly) NSTimeInterval collisionTime;

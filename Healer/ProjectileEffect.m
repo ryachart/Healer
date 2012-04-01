@@ -15,7 +15,7 @@
 @end
 
 @implementation ProjectileEffect
-@synthesize spriteName, target, collisionTime, delay, spriteColor;
+@synthesize spriteName, target, collisionTime, delay, spriteColor, collisionParticleName;
 -(id)initWithSpriteName:(NSString*)sprtName target:(RaidMember*)trgt andCollisionTime:(NSTimeInterval)colTime{
     if (self=[super init]){
         self.spriteName = sprtName;

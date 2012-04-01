@@ -239,6 +239,7 @@
     DelayedHealthEffect *fireball = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
     
     ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:@"fireball.png" target:target andCollisionTime:colTime];
+    [fireballVisual setCollisionParticleName:@"fire_explosion.plist"];
     [self.announcer displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     

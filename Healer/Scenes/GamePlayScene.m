@@ -346,6 +346,8 @@
 	}
 }
 
+#pragma mark - Announcer Behaviors
+
 -(float)lengthOfVector:(CGPoint)vec{
     return sqrt(pow(vec.x, 2) + pow(vec.y, 2));
 }
@@ -354,6 +356,16 @@
     CGPoint aToBVector = CGPointMake(b.x - a.x , b.y - a.y);
     CGPoint unitVector = ccpNormalize(aToBVector);
     return atan2(unitVector.y, unitVector.x);
+}
+
+-(void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target{
+    NSURL *systemPath = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"emitters"] URLByAppendingPathComponent:name];   
+    CCParticleSystemPoint *collisionEffect = [CCParticleSystemPoint particleWithFile:[systemPath relativePath]];
+    CGPoint destination = [self.raidView frameCenterForMember:target];
+    [collisionEffect setPosition:destination];
+    [collisionEffect setAutoRemoveOnFinish:YES];
+    [self addChild:collisionEffect z:100];
+
 }
 
 -(void)displayProjectileEffect:(ProjectileEffect*)effect{
@@ -474,7 +486,7 @@
 	[raidView updateRaidHealth];
 	[bossHealthView updateHealth];
 	[playerHealthView updateHealth];
-	[playerCastBar updateTimeRemaining:[player remainingCastTime] ofMaxTime:[[player spellBeingCast] castTime]];
+	[playerCastBar updateTimeRemaining:[player remainingCastTime] ofMaxTime:[[player spellBeingCast] castTime] forSpell:[player spellBeingCast]];
 	[playerEnergyView updateWithEnergy:[player energy] andMaxEnergy:[player maximumEnergy]];
 	[alertStatus setString:[player statusText]];
 	[self.spellView1 updateUI];

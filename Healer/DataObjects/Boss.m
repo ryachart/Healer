@@ -292,6 +292,7 @@
 }
 -(void)applyPoisonToTarget:(RaidMember*)target{
     TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
+    [self.announcer displayParticleSystemWithName:@"poison_cloud.plist" onTarget:target];
     [poisonEffect setSpriteName:@"poison.png"];
     [poisonEffect setValuePerTick:-7];
     [poisonEffect setNumOfTicks:24];
@@ -302,6 +303,7 @@
 
 -(void)applyWeakPoisonToTarget:(RaidMember*)target{
     TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
+    [self.announcer displayParticleSystemWithName:@"poison_cloud.plist" onTarget:target];
     [poisonEffect setSpriteName:@"poison.png"];
     [poisonEffect setValuePerTick:-2];
     [poisonEffect setNumOfTicks:24];
@@ -368,6 +370,7 @@
     CouncilPoisonball *fireball = [[CouncilPoisonball alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
     
     ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:@"green_fireball.png" target:target andCollisionTime:colTime];
+    [fireballVisual setCollisionParticleName:@"poison_cloud"];
     [self.announcer displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     

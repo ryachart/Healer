@@ -8,7 +8,7 @@
 
 #import "cocos2d.h"
 
-
+@class Spell;
 @interface PlayerCastBar : CCLayerColor {
 	double percentTimeRemaining;
 }
@@ -16,5 +16,5 @@
 @property (nonatomic, retain) CCLayerColor *castBar;
 
 -(id)initWithFrame:(CGRect)frame;
--(void)updateTimeRemaining:(NSTimeInterval)remaining ofMaxTime:(NSTimeInterval)maxTime;
+-(void)updateTimeRemaining:(NSTimeInterval)remaining ofMaxTime:(NSTimeInterval)maxTime forSpell:(Spell*)spell;
 @end

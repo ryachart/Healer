@@ -69,7 +69,7 @@
         
         CCLabelTTF *sctLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
         [sctLabel setColor:ccRED];
-        [sctLabel setPosition:CGPointMake(self.contentSize.width /2 , self.contentSize.height /2)];
+        [sctLabel setPosition:CGPointMake(self.contentSize.width /2 + startingFuzzX, self.contentSize.height /2 + startingFuzzY)];
         
         [self addChild:shadowLabel z:10];
         [self addChild:sctLabel z:11];

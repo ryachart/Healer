@@ -7,7 +7,7 @@
 //
 
 #import "PlayerCastBar.h"
-
+#import "Spell.h"
 
 @implementation PlayerCastBar
 @synthesize timeRemaining, castBar;
@@ -22,9 +22,9 @@
 		percentTimeRemaining = 0.0;
         
         
-        self.timeRemaining = [CCLabelTTF labelWithString:@"Not Casting" fontName:@"Arial" fontSize:12.0];
+        self.timeRemaining = [CCLabelTTF labelWithString:@"Not Casting" dimensions:self.contentSize alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
         [self.timeRemaining setColor:ccRED];
-        [self.timeRemaining setPosition:CGPointMake(50, 25)];
+        [self.timeRemaining setPosition:CGPointMake(200, 15)];
         [self addChild:self.timeRemaining z:100];
         
         self.castBar = [CCLayerColor layerWithColor:ccc4(0, 255, 0, 255)];
@@ -38,7 +38,7 @@
     return self;
 }
 
--(void)updateTimeRemaining:(NSTimeInterval)remaining ofMaxTime:(NSTimeInterval)maxTime
+-(void)updateTimeRemaining:(NSTimeInterval)remaining ofMaxTime:(NSTimeInterval)maxTime forSpell:(Spell*)spell
 {
 	if (remaining <= 0){
 		[self.timeRemaining setString:@"Not casting"];
@@ -48,7 +48,7 @@
 	else {
 		percentTimeRemaining = remaining/maxTime;
         [self.castBar setContentSize:CGSizeMake(self.contentSize.width * (1 - percentTimeRemaining), self.castBar.contentSize.height)];
-		[timeRemaining setString:[NSString stringWithFormat:@"%1.2f", remaining]];
+		[timeRemaining setString:[NSString stringWithFormat:@"%@: %1.2f", spell.title,  remaining]];
 	}
 }
 

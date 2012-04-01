@@ -9,10 +9,13 @@
 #import <Foundation/Foundation.h>
 #import "ProjectileEffect.h"
 
+@class RaidMember;
 @protocol Announcer <NSObject>
 -(void)announce:(NSString*)announcement;
 -(void)errorAnnounce:(NSString*)announcement;
 
+//Graphical Announcements
 -(void)displayProjectileEffect:(ProjectileEffect*)effect;
 -(void)displayThrowEffect:(ProjectileEffect*)effect;
+-(void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target;
 @end

@@ -8,8 +8,6 @@
 
 #import "cocos2d.h"
 #import "QuickPlayScene.h"
-#import "CreateNewCharacterViewController.h"
-#import	"CharacterSelectionViewController.h"
 
 /* This is the start screen. */
 @interface HealerStartScene : CCScene {

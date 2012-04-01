@@ -13,7 +13,6 @@
 @property (retain) CCMenuItemLabel* storyModeButton;
 @property (retain) CCMenuItemLabel* quickPlayButton;
 
--(void)storyModeSelected;
 -(void)quickPlaySelected;
 -(void)settingsSelected;
 
@@ -44,14 +43,6 @@
     }
     return self;
 }
-
--(void)storyModeSelected
-{
-	CharacterSelectionViewController *csVC = [[CharacterSelectionViewController alloc] initWithNibName:@"CharacterSelectionViewController" bundle:nil];
-	//[self.navigationController pushViewController:csVC animated:YES];
-	[csVC release];
-}
-
 
 
 -(void)quickPlaySelected

@@ -80,6 +80,9 @@
 
 @end
 
+@interface MischievousImps: Boss
+@property (readwrite) NSTimeInterval lastPotionThrow;
+@end
 
 #pragma mark -
 #pragma mark Demo Bosses

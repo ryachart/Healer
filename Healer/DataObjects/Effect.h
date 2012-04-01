@@ -91,6 +91,9 @@ typedef enum {
 @interface ExpiresAtFullHealthRHE: RepeatedHealthEffect
 @end
 
+@interface ImpLightningBottle : DelayedHealthEffect
+@end
+
 
 
 #pragma mark - DEPRECATED EFFECTS

@@ -165,6 +165,7 @@
 @implementation CouncilPoisonball
 -(void)expire{
     RepeatedHealthEffect *poisonDoT = [[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative];
+    [poisonDoT setTitle:@"council-ball-dot"];
     [poisonDoT setSpriteName:@"poison.png"];
     [poisonDoT setValuePerTick:-3];
     [poisonDoT setNumOfTicks:4];
@@ -183,6 +184,20 @@
     }
 }
 
+@end
+
+@implementation ImpLightningBottle 
+-(void)expire{
+    [self.target setHealth:self.target.health - 10];
+    RepeatedHealthEffect *burnDoT = [[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative];
+    [burnDoT setTitle:@"imp-burn-dot"];
+    [burnDoT setSpriteName:@"poison.png"];
+    [burnDoT setValuePerTick:-5];
+    [burnDoT setNumOfTicks:4];
+    [self.target addEffect:burnDoT];
+    [burnDoT release];
+    [super expire];
+}
 @end
 
 
@@ -308,6 +323,7 @@
 	BulwarkEffect *be = [[BulwarkEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive];
     [be setTitle:@"bulwark-effect"];
 	[be setAmountToShield:40];
+    [be setSpriteName:@"healing_default.png"];
     [be setMaxStacks:1];
 	return [be autorelease];
 }

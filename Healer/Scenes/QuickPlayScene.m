@@ -204,15 +204,39 @@
         }
     }
     
+    if (level == 8){
+        basicRaid = [[Raid alloc] init];
+        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+        basicBoss = [MischievousImps defaultBoss];
+        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [Barrier defaultSpell], [HealingBurst defaultSpell], [Purify defaultSpell], nil]];
+        
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Guardian defaultGuardian]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+        }
+    }
+    
     if (basicBoss && basicPlayer && basicRaid){
         
         PreBattleScene *pbs = [[PreBattleScene alloc] initWithRaid:basicRaid boss:basicBoss andPlayer:basicPlayer];
         [pbs setLevelNumber:level];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:pbs]];
         [pbs release];
-        [basicPlayer release];
-        [basicRaid release];
+
     }
+    [basicPlayer release];
+    [basicRaid release];
 }
 
 -(void)back

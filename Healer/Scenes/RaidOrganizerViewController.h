@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Encounter.h"
 #import "RaidView.h"
 #import "Raid.h"
 #import "RaidMember.h"

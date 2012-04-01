@@ -10,7 +10,6 @@
 #import "GameObjects.h"
 #import "GameUserInterface.h"
 #import "AudioController.h"
-#import "Encounter.h"
 #import "CombatEvent.h"
 #import "Announcer.h"
 #import "GamePlayFTUELayer.h"
@@ -31,7 +30,6 @@
    
 	
 }
-@property (readwrite, retain) Encounter *activeEncounter;
 //Interface Elements
 @property (nonatomic, retain) PlayerSpellButton *spellView1;
 @property (nonatomic, retain) PlayerSpellButton *spellView2;

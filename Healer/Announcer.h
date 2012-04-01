@@ -12,5 +12,7 @@
 @protocol Announcer <NSObject>
 -(void)announce:(NSString*)announcement;
 -(void)errorAnnounce:(NSString*)announcement;
+
 -(void)displayProjectileEffect:(ProjectileEffect*)effect;
+-(void)displayThrowEffect:(ProjectileEffect*)effect;
 @end

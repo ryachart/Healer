@@ -120,22 +120,14 @@
 		386DD229145E07100086763E /* CJSONScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = 386DD21C145E07100086763E /* CJSONScanner.m */; };
 		386DD22A145E07100086763E /* CJSONSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 386DD21E145E07100086763E /* CJSONSerializer.m */; };
 		387E7AE8145E0F70006D9266 /* PersistantDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AE7145E0F70006D9266 /* PersistantDataManager.m */; };
-		387E7AFF145E1263006D9266 /* Character.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AEB145E1263006D9266 /* Character.m */; };
 		387E7B00145E1263006D9266 /* Effect.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AED145E1263006D9266 /* Effect.m */; };
 		387E7B01145E1263006D9266 /* GameRect.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AF0145E1263006D9266 /* GameRect.m */; };
 		387E7B02145E1263006D9266 /* HealableTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AF2145E1263006D9266 /* HealableTarget.m */; };
-		387E7B03145E1263006D9266 /* Item.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AF4145E1263006D9266 /* Item.m */; };
-		387E7B04145E1263006D9266 /* ItemContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AF6145E1263006D9266 /* ItemContainer.m */; };
 		387E7B05145E1263006D9266 /* Player.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AF8145E1263006D9266 /* Player.m */; };
 		387E7B06145E1263006D9266 /* Raid.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AFA145E1263006D9266 /* Raid.m */; };
 		387E7B07145E1263006D9266 /* RaidMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AFC145E1263006D9266 /* RaidMember.m */; };
 		387E7B08145E1263006D9266 /* Spell.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AFE145E1263006D9266 /* Spell.m */; };
 		387E7B27145E1375006D9266 /* BossHealthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B0A145E1375006D9266 /* BossHealthView.m */; };
-		387E7B29145E1375006D9266 /* CharacterBagView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B0E145E1375006D9266 /* CharacterBagView.m */; };
-		387E7B2A145E1375006D9266 /* CharacterEquipmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B10145E1375006D9266 /* CharacterEquipmentView.m */; };
-		387E7B2B145E1375006D9266 /* CharacterPersonaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B12145E1375006D9266 /* CharacterPersonaView.m */; };
-		387E7B2C145E1375006D9266 /* CharacterSpellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B14145E1375006D9266 /* CharacterSpellView.m */; };
-		387E7B2D145E1375006D9266 /* ItemCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B16145E1375006D9266 /* ItemCardView.m */; };
 		387E7B2E145E1375006D9266 /* PlayerCastBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B18145E1375006D9266 /* PlayerCastBar.m */; };
 		387E7B2F145E1375006D9266 /* PlayerEnergyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B1A145E1375006D9266 /* PlayerEnergyView.m */; };
 		387E7B30145E1375006D9266 /* PlayerHealthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B1C145E1375006D9266 /* PlayerHealthView.m */; };
@@ -144,27 +136,21 @@
 		387E7B33145E1375006D9266 /* SelectedSpellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B22145E1375006D9266 /* SelectedSpellView.m */; };
 		387E7B34145E1375006D9266 /* SpellCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B24145E1375006D9266 /* SpellCardView.m */; };
 		387E7B35145E1375006D9266 /* SpellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B26145E1375006D9266 /* SpellView.m */; };
-		387E7B48145E1382006D9266 /* CharacterOrganizerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B37145E1382006D9266 /* CharacterOrganizerViewController.m */; };
-		387E7B49145E1382006D9266 /* CharacterSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B39145E1382006D9266 /* CharacterSelectionViewController.m */; };
-		387E7B4A145E1382006D9266 /* CharacterSheetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B3B145E1382006D9266 /* CharacterSheetViewController.m */; };
-		387E7B4B145E1382006D9266 /* CreateNewCharacterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B3D145E1382006D9266 /* CreateNewCharacterViewController.m */; };
 		387E7B4C145E1382006D9266 /* GamePlayScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B3F145E1382006D9266 /* GamePlayScene.m */; };
 		387E7B4D145E1382006D9266 /* PostGameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B41145E1382006D9266 /* PostGameViewController.m */; };
 		387E7B4E145E1382006D9266 /* QuickPlayScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B43145E1382006D9266 /* QuickPlayScene.m */; };
-		387E7B4F145E1382006D9266 /* HealerStartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B45145E1382006D9266 /* HealerStartScene.m */; };
-		387E7B50145E1382006D9266 /* RaidOrganizerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B47145E1382006D9266 /* RaidOrganizerViewController.m */; };
 		387E7B55145E16B1006D9266 /* AudioController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B52145E16B1006D9266 /* AudioController.m */; };
 		387E7B56145E16B1006D9266 /* SpellAudioData.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B54145E16B1006D9266 /* SpellAudioData.m */; };
 		387E7B59145E1701006D9266 /* Boss.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B58145E1701006D9266 /* Boss.m */; };
 		387E7B62145E177B006D9266 /* CharacterActiveSpellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B5D145E177B006D9266 /* CharacterActiveSpellView.m */; };
 		387E7B63145E177B006D9266 /* PlayerMoveButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B5F145E177B006D9266 /* PlayerMoveButton.m */; };
 		387E7B64145E177B006D9266 /* PlayerSpellButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B61145E177B006D9266 /* PlayerSpellButton.m */; };
-		387E7B67145E17CC006D9266 /* Encounter.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B66145E17CC006D9266 /* Encounter.m */; };
 		387E7B6C145E1868006D9266 /* GameInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B6B145E1868006D9266 /* GameInfo.m */; };
 		38F04EEA13C2593500BCADCB /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38F04EE913C2593500BCADCB /* GameDefaults.plist */; };
 		BF0557A015268D0A006B4781 /* ProjectileEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF05579F15268D0A006B4781 /* ProjectileEffect.m */; };
 		BF0557B51526BC02006B4781 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = BF0557B41526BC02006B4781 /* assets */; };
 		BF21071C1527C272001B93D7 /* GamePlayPauseLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */; };
+		BF21071D1527E171001B93D7 /* HealerStartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B45145E1382006D9266 /* HealerStartScene.m */; };
 		BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
 		BF8249D71526D7C2000B554B /* RaidMemberPreBattleCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */; };
@@ -1592,6 +1578,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF21071D1527E171001B93D7 /* HealerStartScene.m in Sources */,
 				38024F0A13C2564E003D36F2 /* main.m in Sources */,
 				38024F0D13C2564E003D36F2 /* AppDelegate.m in Sources */,
 				38024F1013C2564E003D36F2 /* RootViewController.m in Sources */,
@@ -1687,22 +1674,14 @@
 				386DD229145E07100086763E /* CJSONScanner.m in Sources */,
 				386DD22A145E07100086763E /* CJSONSerializer.m in Sources */,
 				387E7AE8145E0F70006D9266 /* PersistantDataManager.m in Sources */,
-				387E7AFF145E1263006D9266 /* Character.m in Sources */,
 				387E7B00145E1263006D9266 /* Effect.m in Sources */,
 				387E7B01145E1263006D9266 /* GameRect.m in Sources */,
 				387E7B02145E1263006D9266 /* HealableTarget.m in Sources */,
-				387E7B03145E1263006D9266 /* Item.m in Sources */,
-				387E7B04145E1263006D9266 /* ItemContainer.m in Sources */,
 				387E7B05145E1263006D9266 /* Player.m in Sources */,
 				387E7B06145E1263006D9266 /* Raid.m in Sources */,
 				387E7B07145E1263006D9266 /* RaidMember.m in Sources */,
 				387E7B08145E1263006D9266 /* Spell.m in Sources */,
 				387E7B27145E1375006D9266 /* BossHealthView.m in Sources */,
-				387E7B29145E1375006D9266 /* CharacterBagView.m in Sources */,
-				387E7B2A145E1375006D9266 /* CharacterEquipmentView.m in Sources */,
-				387E7B2B145E1375006D9266 /* CharacterPersonaView.m in Sources */,
-				387E7B2C145E1375006D9266 /* CharacterSpellView.m in Sources */,
-				387E7B2D145E1375006D9266 /* ItemCardView.m in Sources */,
 				387E7B2E145E1375006D9266 /* PlayerCastBar.m in Sources */,
 				387E7B2F145E1375006D9266 /* PlayerEnergyView.m in Sources */,
 				387E7B30145E1375006D9266 /* PlayerHealthView.m in Sources */,
@@ -1711,22 +1690,15 @@
 				387E7B33145E1375006D9266 /* SelectedSpellView.m in Sources */,
 				387E7B34145E1375006D9266 /* SpellCardView.m in Sources */,
 				387E7B35145E1375006D9266 /* SpellView.m in Sources */,
-				387E7B48145E1382006D9266 /* CharacterOrganizerViewController.m in Sources */,
-				387E7B49145E1382006D9266 /* CharacterSelectionViewController.m in Sources */,
-				387E7B4A145E1382006D9266 /* CharacterSheetViewController.m in Sources */,
-				387E7B4B145E1382006D9266 /* CreateNewCharacterViewController.m in Sources */,
 				387E7B4C145E1382006D9266 /* GamePlayScene.m in Sources */,
 				387E7B4D145E1382006D9266 /* PostGameViewController.m in Sources */,
 				387E7B4E145E1382006D9266 /* QuickPlayScene.m in Sources */,
-				387E7B4F145E1382006D9266 /* HealerStartScene.m in Sources */,
-				387E7B50145E1382006D9266 /* RaidOrganizerViewController.m in Sources */,
 				387E7B55145E16B1006D9266 /* AudioController.m in Sources */,
 				387E7B56145E16B1006D9266 /* SpellAudioData.m in Sources */,
 				387E7B59145E1701006D9266 /* Boss.m in Sources */,
 				387E7B62145E177B006D9266 /* CharacterActiveSpellView.m in Sources */,
 				387E7B63145E177B006D9266 /* PlayerMoveButton.m in Sources */,
 				387E7B64145E177B006D9266 /* PlayerSpellButton.m in Sources */,
-				387E7B67145E17CC006D9266 /* Encounter.m in Sources */,
 				387E7B6C145E1868006D9266 /* GameInfo.m in Sources */,
 				BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */,
 				386747A91520073D0057A8C9 /* CombatEvent.m in Sources */,

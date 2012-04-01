@@ -15,12 +15,13 @@
 @end
 
 @implementation ProjectileEffect
-@synthesize spriteName, target, collisionTime, delay;
+@synthesize spriteName, target, collisionTime, delay, spriteColor;
 -(id)initWithSpriteName:(NSString*)sprtName target:(RaidMember*)trgt andCollisionTime:(NSTimeInterval)colTime{
     if (self=[super init]){
         self.spriteName = sprtName;
         self.target = trgt;
         self.collisionTime = colTime;
+        self.spriteColor = ccWHITE;
     }
     return self;
 }

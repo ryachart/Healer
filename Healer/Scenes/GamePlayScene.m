@@ -30,7 +30,6 @@
 @end
 
 @implementation GamePlayScene
-@synthesize activeEncounter;
 @synthesize raid;
 @synthesize boss;
 @synthesize player;
@@ -367,12 +366,33 @@
         [projectileSprite setVisible:NO];
         [projectileSprite setPosition:originLocation];
         [projectileSprite setRotation:CC_RADIANS_TO_DEGREES([self rotationFromPoint:originLocation toPoint:destination]) + 180.0];
+        [projectileSprite setColor:effect.spriteColor];
         [self addChild:projectileSprite];
         [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}], [CCMoveTo actionWithDuration:effect.collisionTime position:destination],[CCSpawn actions:[CCScaleTo actionWithDuration:.33 scale:2.0], [CCFadeOut actionWithDuration:.33], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node removeFromParentAndCleanup:YES];
         }], nil]];
     }
 
+}
+
+-(void)displayThrowEffect:(ProjectileEffect *)effect{
+    CCSprite *projectileSprite = [CCSprite spriteWithSpriteFrameName:effect.spriteName];;
+    
+    CGPoint originLocation = CGPointMake(650, 600);
+    CGPoint destination = [self.raidView frameCenterForMember:effect.target];
+    if (projectileSprite){
+        [projectileSprite setAnchorPoint:CGPointMake(.5, .5)];
+        [projectileSprite setVisible:NO];
+        [projectileSprite setPosition:originLocation];
+        [projectileSprite setRotation:CC_RADIANS_TO_DEGREES([self rotationFromPoint:originLocation toPoint:destination]) + 180.0];
+        [projectileSprite setColor:effect.spriteColor];
+        [self addChild:projectileSprite];
+        ccBezierConfig bezierConfig = {destination,ccp(destination.x ,originLocation.y), ccp(destination.x,originLocation.y) };
+        [projectileSprite runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:.3 angle:360.0]]];
+        [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}],[CCSpawn actions:[CCBezierTo actionWithDuration:effect.collisionTime bezier:bezierConfig] ,nil ],[CCSpawn actions:[CCScaleTo actionWithDuration:.33 scale:2.0], [CCFadeOut actionWithDuration:.33], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+            [node removeFromParentAndCleanup:YES];
+        }], nil]];
+    }
 }
 
 -(void)announce:(NSString *)announcement{
@@ -462,7 +482,6 @@
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:[[[PostBattleScene alloc] initWithVictory:NO andEventLog:self.eventLog] autorelease]]];
 	}
 	if ([boss isDead]){
-		[activeEncounter characterDidCompleteEncounter];
         int i = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
         if (self.levelNumber > i){
             [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:self.levelNumber] forKey:PlayerHighestLevelCompleted];

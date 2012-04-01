@@ -574,235 +574,94 @@
 
 @end
 
-#pragma mark - Deprecated Bosses
-@implementation MinorDemon
+@implementation MischievousImps
+@synthesize lastPotionThrow;
 +(id)defaultBoss{
-	MinorDemon *defMinorDemon = [[MinorDemon alloc] initWithHealth:25000 damage:24 targets:2 frequency:.85 andChoosesMT:NO];
-	[defMinorDemon setTitle:@"Minor Demon"];
-	return [defMinorDemon autorelease];
-	
-}
-@end
-
-@implementation FieryDemon
-+(id)defaultBoss{
-	FieryDemon *fireDemon = [[FieryDemon alloc] initWithHealth:40000 damage:28 targets:2 frequency:0.80 andChoosesMT:NO];
-	[fireDemon setTitle:@"Fiery Demon"];
-	return [fireDemon autorelease];
-}
-
--(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta
-{
-    self.lastAttack+= timeDelta;
-	
-	if (self.lastAttack >= frequency){
-		
-		NSInteger fireballChance = arc4random()% 100;
-		if (fireballChance <= 15 && ![[player activeEffects] containsObject:currentFireball])
-		{
-			BigFireball *fireBall = [[BigFireball alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative];
-			currentFireball = fireBall;
-			[fireBall setLastPosition:[player position]];
-			[player addEffect:fireBall];
-		}
-		self.lastAttack = 0.0;
-		
-		NSInteger damagePerTarget = damage/targets;
-		NSArray* victims = [theRaid getAliveMembers];
-		
-		RaidMember *target;
-		
-		if (targets <= [victims count]){
-			for (int i = 0; i < targets; i++){
-				do{
-					NSInteger targetIndex = arc4random() % [victims count];
-					
-					target = [victims objectAtIndex:targetIndex];
-				} while ([target isDead]);
-				
-                
-				[target setHealth:[target health] - damagePerTarget];
-			}
-		}
-		else{
-			
-			for (int i = 0; i < targets; i++){
-				do{
-					NSInteger targetIndex = arc4random() % [victims count];
-					
-					target = [victims objectAtIndex:targetIndex];
-				} while ([target isDead]);
-				[target setHealth:[target health] - damagePerTarget];
-				
-				if ([[theRaid getAliveMembers] count] == 0){
-					i = targets;
-				}
-			}
-		}
-		
-	}
-}
-
-@end
-
-@implementation BringerOfEvil
-@synthesize numEnrages;
-+(id)defaultBoss{
-	BringerOfEvil *boe = [[BringerOfEvil alloc] initWithHealth:120000 damage:30 targets:5 frequency:0.75 andChoosesMT:NO];
-	[boe setNumEnrages:0];
-	[boe setTitle:@"Bringer of Evil"];
-	return [boe autorelease];
-}
--(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta
-{
-	float PercentageHealthRemain = (((float)health)/maximumHealth) * 100;
-	self.lastAttack+= timeDelta;
+    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:97500 damage:16 targets:1 frequency:3.0 andChoosesMT:YES];
+    [boss setTitle:@"Mischievious Imps"];
     
-	if (PercentageHealthRemain <= 5 && numEnrages == 0)
-	{
-		[player setStatusText:@"The Bringer of Evil is ENRAGED!"];
-		damage = damage *2;
-		numEnrages++;
-	}
-	
+    [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw1" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw1" ofType:@"m4a"]]];
+    [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw2" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw2" ofType:@"m4a"]]];
+    return [boss autorelease];
+}
 
-	if (self.lastAttack >= frequency){
-		
-		NSInteger fireballChance = arc4random()% 100;
-		if (fireballChance <= 5 && ![[player activeEffects] containsObject:currentFireball])
-		{
-			BigFireball *fireBall = [[BigFireball alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative];
-			currentFireball = fireBall;
-			[fireBall setLastPosition:[player position]];
-			[player addEffect:fireBall];
-            [fireBall release];
-		}
-		
-        self.lastAttack = 0.0f;
-		
-		NSInteger damagePerTarget = damage/targets;
-		NSArray* victims = [theRaid getAliveMembers];
-		
-		RaidMember *target;
-		
-		if (targets <= [victims count]){
-			for (int i = 0; i < targets; i++){
-				do{
-					NSInteger targetIndex = arc4random() % [victims count];
-					
-					target = [victims objectAtIndex:targetIndex];
-				} while ([target isDead]);
-				
-				[target setHealth:[target health] - damagePerTarget];
-			}
-		}
-		else{
-			
-			for (int i = 0; i < targets; i++){
-				do{
-					NSInteger targetIndex = arc4random() % [victims count];
-					
-					target = [victims objectAtIndex:targetIndex];
-				} while ([target isDead]);
-				[target setHealth:[target health] - damagePerTarget];
-				
-				if ([[theRaid getAliveMembers] count] == 0){
-					i = targets;
-				}
-			}
-		}
-		
-	}
+-(void)dealloc{
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"imp_throw1"];
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"imp_throw2"];
+    [super dealloc];
+}
+
+-(int)damageDealt{
+    int dmg = [super damageDealt];
+    return dmg;
+}
+
+-(void)throwPotionToTarget:(RaidMember *)target withDelay:(float)delay{
+    int potion = arc4random() % 2;
+    float colTime = (1.5 + delay);
+
+    if (potion == 0){
+        //Liquid Fire
+        ImpLightningBottle* bottleEffect = [[ImpLightningBottle alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
+        
+        ProjectileEffect *bottleVisual = [[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime];
+        [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
+        [self.announcer displayThrowEffect:bottleVisual];
+        [bottleVisual release];
+        
+        [target addEffect:bottleEffect];
+        [bottleEffect release];
+        
+    }else if (potion == 1){
+        //Lightning In a Bottle
+        DelayedHealthEffect *bottleEffect = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
+        
+        ProjectileEffect *bottleVisual = [[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime];
+        [bottleVisual setSpriteColor:ccc3(0, 128, 128)];
+        [self.announcer displayThrowEffect:bottleVisual];
+        [bottleVisual release];
+        
+        [(ImpLightningBottle*)bottleEffect setValue:-20];
+        [target addEffect:bottleEffect];
+        [bottleEffect release];
+    }
+    
+}
+
+-(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
+    
+    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+    if (self.healthPercentage > 30.0){
+        self.lastPotionThrow+=timeDelta;
+        if (self.lastPotionThrow > 12){
+            [self throwPotionToTarget:[theRaid randomLivingMember] withDelay:0.0];
+            self.lastPotionThrow = 0.0;
+            int throwSound = arc4random() %2 + 1;
+            [[AudioController sharedInstance] playTitle:[NSString stringWithFormat:@"imp_throw%i", throwSound]];
+
+        }
+    }
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    if (percentage == 99.0){
+        [self.announcer announce:@"An imp grabs a bundle of vials off of a nearby desk."];
+    }
+    
+    if (percentage == 50.0){
+        for (RaidMember *member in raid.raidMembers){
+            if (!member.isDead){
+                [self throwPotionToTarget:member withDelay:0.0];
+            }
+        }
+        [self.announcer announce:@"An imp angrily hurls the entire case of flasks at you!"];
+        [[AudioController sharedInstance] playTitle:[NSString stringWithFormat:@"imp_throw1"]];
+    }
+    
+    if (percentage == 30.0){
+        [self.announcer announce:@"All of the imps angrily pounce on their focused target!"];
+        frequency /= 2.0;
+        damage *= .75;
+    }
 }
 @end
-@implementation Dragon
-+(id)defaultBoss{
-	Dragon *defDragon = [[Dragon alloc] initWithHealth:100000 damage:28 targets:4 frequency:0.80 andChoosesMT:NO];
-	[defDragon setTitle:@"Dragon"];
-	return [defDragon autorelease];
-}@end
-@implementation Hydra
-+(id)defaultBoss{
-	Hydra *defHy = [[Hydra alloc] initWithHealth:125000 damage:28 targets:4 frequency:0.75 andChoosesMT:NO];
-	[defHy setTitle:@"Hydra"];
-	return [defHy autorelease];
-}
-@end
-
-@implementation Giant
-+(id)defaultBoss{
-	Giant *defGi = [[Giant alloc] initWithHealth:85000 damage:30 targets:3 frequency:0.75 andChoosesMT:NO];
-	[defGi setTitle:@"Giant"];
-	return [defGi autorelease];
-}
-@end
-
-@implementation ChaosDemon
-@synthesize numEnrages;
-+(id)defaultBoss{
-	ChaosDemon *defCD = [[ChaosDemon alloc] initWithHealth:115000 damage:20 targets:4 frequency:0.50 andChoosesMT:NO];
-	[defCD setNumEnrages:0];
-	[defCD setTitle:@"Chaos Demon"];
-	return [defCD autorelease];
-}
--(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta
-{
-	float PercentageHealthRemain = (((float)health)/maximumHealth) * 100;
-	
-	if (PercentageHealthRemain <= 5 && numEnrages == 0)
-	{
-		damage = damage *2;
-		numEnrages++;
-	}
-	
-    self.lastAttack += timeDelta;
-	
-	if (self.lastAttack >= frequency){
-		
-		NSInteger fireballChance = arc4random()% 100;
-		if (fireballChance <= 10 && ![[player activeEffects] containsObject:currentFireball])
-		{
-			BigFireball *fireBall = [[BigFireball alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative];
-			currentFireball = fireBall;
-			[fireBall setLastPosition:[player position]];
-			[player addEffect:fireBall];
-		}
-		
-        self.lastAttack = 0.0f;
-		
-		NSInteger damagePerTarget = damage/targets;
-		NSArray* victims = [theRaid getAliveMembers];
-		
-		RaidMember *target;
-		
-		if (targets <= [victims count]){
-			for (int i = 0; i < targets; i++){
-				do{
-					NSInteger targetIndex = arc4random() % [victims count];
-					
-					target = [victims objectAtIndex:targetIndex];
-				} while ([target isDead]);
-				
-				[target setHealth:[target health] - damagePerTarget];
-			}
-		}
-		else{
-			
-			for (int i = 0; i < targets; i++){
-				do{
-					NSInteger targetIndex = arc4random() % [victims count];
-					
-					target = [victims objectAtIndex:targetIndex];
-				} while ([target isDead]);
-				[target setHealth:[target health] - damagePerTarget];
-				
-				if ([[theRaid getAliveMembers] count] == 0){
-					i = targets;
-				}
-			}
-		}
-		
-	}
-}
-@end
-

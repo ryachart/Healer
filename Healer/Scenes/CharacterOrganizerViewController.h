@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "Character.h"
 #import "PersistantDataManager.h"
-#import "Encounter.h"
 #import "SelectedSpellView.h"
 
 #define MAX_SPELLS_ACTIVE 4

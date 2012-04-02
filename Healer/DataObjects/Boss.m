@@ -218,11 +218,31 @@
 @end
 
 @implementation CorruptedTroll
+@synthesize lastRockTime;
 +(id)defaultBoss{
-    CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:45000 damage:10 targets:2 frequency:1.4 andChoosesMT:YES];
+    CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:45000 damage:8 targets:1 frequency:1.4 andChoosesMT:YES];
     [corTroll setTitle:@"Corrupted Troll"];
     
     return  [corTroll autorelease];
+}
+-(void)doCaveInOnRaid:(Raid*)theRaid{
+    [self.announcer displayScreenShakeForDuration:2.5];
+    [self.announcer announce:@"The Corrupted Troll Smashes the cave ceiling"];
+    [self.announcer displayPartcileSystemOnRaidWithName:@"falling_rocks.plist"];
+    for (RaidMember *member in theRaid.raidMembers){
+        if (!member.isDead){
+            [member setHealth:member.health - 14];
+        }
+    }
+}
+
+-(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
+    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+    lastRockTime += timeDelta;
+    if (lastRockTime > 25.0){
+        [self doCaveInOnRaid:theRaid];
+        lastRockTime = 0.0;
+    }
 }
 @end
 
@@ -370,7 +390,7 @@
     CouncilPoisonball *fireball = [[CouncilPoisonball alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
     
     ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:@"green_fireball.png" target:target andCollisionTime:colTime];
-    [fireballVisual setCollisionParticleName:@"poison_cloud"];
+    [fireballVisual setCollisionParticleName:@"poison_cloud.plist"];
     [self.announcer displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     

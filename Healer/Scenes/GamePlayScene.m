@@ -14,6 +14,7 @@
 #import "PostBattleScene.h"
 #import "PersistantDataManager.h"
 #import "GamePlayPauseLayer.h"
+#import "CCShakeScreen.h"
 
 @interface GamePlayScene ()
 //Data Models
@@ -358,6 +359,20 @@
     return atan2(unitVector.y, unitVector.x);
 }
 
+-(void)displayScreenShakeForDuration:(float)duration{
+    [self runAction:[CCSequence actions:[CCShakeScreen actionWithDuration:duration], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [node setPosition:CGPointMake(0, 0)];
+    }], nil] ];
+}
+
+-(void)displayPartcileSystemOnRaidWithName:(NSString*)name{
+    NSURL *systemPath = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"emitters"] URLByAppendingPathComponent:name];   
+    CCParticleSystemPoint *collisionEffect = [CCParticleSystemPoint particleWithFile:[systemPath relativePath]];
+    CGPoint destination = ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height));
+    [collisionEffect setPosition:destination];
+    [collisionEffect setAutoRemoveOnFinish:YES];
+    [self addChild:collisionEffect z:100];
+}
 -(void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target{
     NSURL *systemPath = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"emitters"] URLByAppendingPathComponent:name];   
     CCParticleSystemPoint *collisionEffect = [CCParticleSystemPoint particleWithFile:[systemPath relativePath]];

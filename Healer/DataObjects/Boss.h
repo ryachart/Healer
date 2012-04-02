@@ -53,6 +53,7 @@
 @end
 
 @interface CorruptedTroll : Boss
+@property (readwrite) NSTimeInterval lastRockTime;
 @end
 
 @interface Drake : Boss
@@ -82,60 +83,4 @@
 
 @interface MischievousImps: Boss
 @property (readwrite) NSTimeInterval lastPotionThrow;
-@end
-
-#pragma mark -
-#pragma mark Demo Bosses
-@interface Dragon : Boss {
-
-}
-+(id)defaultBoss;
-@end
-
-@interface Giant: Boss {
-}
-+(id)defaultBoss;
-@end
-
-@interface Hydra : Boss
-{
-		
-}
-
-+(id)defaultBoss;
-
-@end
-
-@interface ChaosDemon : Boss
-{
-	NSInteger numEnrages;
-	Effect *currentFireball;
-}
-@property NSInteger numEnrages;
-+(id)defaultBoss;
--(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)theTime;
-
-@end
-
-#pragma mark -
-#pragma mark Campaign Bosses
-@interface MinorDemon : Boss
-{
-		
-}
-@end
-
-@interface FieryDemon : Boss
-{
-	Effect *currentFireball;
-}
-
-@end
-
-@interface BringerOfEvil : Boss
-{
-	NSInteger numEnrages;
-	Effect *currentFireball;
-}
-@property NSInteger numEnrages;
 @end

@@ -152,6 +152,7 @@
 		BF21071C1527C272001B93D7 /* GamePlayPauseLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */; };
 		BF21071D1527E171001B93D7 /* HealerStartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B45145E1382006D9266 /* HealerStartScene.m */; };
 		BF21071F15291E5F001B93D7 /* emitters in Resources */ = {isa = PBXBuildFile; fileRef = BF21071E15291E5F001B93D7 /* emitters */; };
+		BF21072315292740001B93D7 /* CCShakeScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21072215292740001B93D7 /* CCShakeScreen.m */; };
 		BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
 		BF8249D71526D7C2000B554B /* RaidMemberPreBattleCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */; };
@@ -595,6 +596,8 @@
 		BF21071A1527C271001B93D7 /* GamePlayPauseLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlayPauseLayer.h; sourceTree = "<group>"; };
 		BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlayPauseLayer.m; sourceTree = "<group>"; };
 		BF21071E15291E5F001B93D7 /* emitters */ = {isa = PBXFileReference; lastKnownFileType = folder; path = emitters; sourceTree = SOURCE_ROOT; };
+		BF21072115292740001B93D7 /* CCShakeScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCShakeScreen.h; sourceTree = "<group>"; };
+		BF21072215292740001B93D7 /* CCShakeScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCShakeScreen.m; sourceTree = "<group>"; };
 		BF6CC5CE15022496000F1AFF /* PostBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostBattleScene.h; path = Scenes/PostBattleScene.h; sourceTree = "<group>"; };
 		BF6CC5CF15022496000F1AFF /* PostBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostBattleScene.m; path = Scenes/PostBattleScene.m; sourceTree = "<group>"; };
 		BF80763115214A04001EB2B3 /* PreBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreBattleScene.h; path = Scenes/PreBattleScene.h; sourceTree = "<group>"; };
@@ -1261,6 +1264,7 @@
 		387E7AE3145E0D09006D9266 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				BF21072015292726001B93D7 /* Animations */,
 				BF80762F152149D8001EB2B3 /* Deprecated VCs */,
 				387E7B3E145E1382006D9266 /* GamePlayScene.h */,
 				387E7B3F145E1382006D9266 /* GamePlayScene.m */,
@@ -1468,6 +1472,15 @@
 				BF05579F15268D0A006B4781 /* ProjectileEffect.m */,
 			);
 			name = Descriptors;
+			sourceTree = "<group>";
+		};
+		BF21072015292726001B93D7 /* Animations */ = {
+			isa = PBXGroup;
+			children = (
+				BF21072115292740001B93D7 /* CCShakeScreen.h */,
+				BF21072215292740001B93D7 /* CCShakeScreen.m */,
+			);
+			name = Animations;
 			sourceTree = "<group>";
 		};
 		BF80762F152149D8001EB2B3 /* Deprecated VCs */ = {
@@ -1711,6 +1724,7 @@
 				BF0557A015268D0A006B4781 /* ProjectileEffect.m in Sources */,
 				BF8249D71526D7C2000B554B /* RaidMemberPreBattleCard.m in Sources */,
 				BF21071C1527C272001B93D7 /* GamePlayPauseLayer.m in Sources */,
+				BF21072315292740001B93D7 /* CCShakeScreen.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

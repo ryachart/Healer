@@ -364,8 +364,15 @@
         [node setPosition:CGPointMake(0, 0)];
     }], nil] ];
 }
-
 -(void)displayPartcileSystemOnRaidWithName:(NSString*)name{
+    NSURL *systemPath = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"emitters"] URLByAppendingPathComponent:name];   
+    CCParticleSystemPoint *collisionEffect = [CCParticleSystemPoint particleWithFile:[systemPath relativePath]];
+    CGPoint destination = ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height /2));
+    [collisionEffect setPosition:destination];
+    [collisionEffect setAutoRemoveOnFinish:YES];
+    [self addChild:collisionEffect z:100];
+}
+-(void)displayPartcileSystemOverRaidWithName:(NSString*)name{
     NSURL *systemPath = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"emitters"] URLByAppendingPathComponent:name];   
     CCParticleSystemPoint *collisionEffect = [CCParticleSystemPoint particleWithFile:[systemPath relativePath]];
     CGPoint destination = ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height));

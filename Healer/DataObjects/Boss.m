@@ -228,7 +228,7 @@
 -(void)doCaveInOnRaid:(Raid*)theRaid{
     [self.announcer displayScreenShakeForDuration:2.5];
     [self.announcer announce:@"The Corrupted Troll Smashes the cave ceiling"];
-    [self.announcer displayPartcileSystemOnRaidWithName:@"falling_rocks.plist"];
+    [self.announcer displayPartcileSystemOverRaidWithName:@"falling_rocks.plist"];
     for (RaidMember *member in theRaid.raidMembers){
         if (!member.isDead){
             [member setHealth:member.health - 14];
@@ -249,7 +249,7 @@
 @implementation Drake 
 @synthesize lastFireballTime;
 +(id)defaultBoss{
-    Drake *drake = [[Drake alloc] initWithHealth:52000 damage:4 targets:4 frequency:.8 andChoosesMT:NO];
+    Drake *drake = [[Drake alloc] initWithHealth:52000 damage:4 targets:1 frequency:1.2 andChoosesMT:NO];
     [drake setTitle:@"Drake of Soldorn"];
     return [drake autorelease];
 }
@@ -263,7 +263,7 @@
     [self.announcer displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     
-    [fireball setValue:-20];
+    [fireball setValue:-24];
     [target addEffect:fireball];
     [fireball release];
 }
@@ -272,7 +272,7 @@
     [super combatActions:player theRaid:theRaid gameTime:timeDelta];
     
     self.lastFireballTime += timeDelta;
-    if (self.lastFireballTime > 5.0){
+    if (self.lastFireballTime > 4.0){
         [self shootFireballAtTarget:[theRaid randomLivingMember] withDelay:0.0];
         self.lastFireballTime = 0;
     }
@@ -568,6 +568,7 @@
     
     if (percentage == 96.0){
         [self.announcer announce:@"A putrid green mist fills the area..."];
+        [self.announcer displayPartcileSystemOnRaidWithName:@"green_mist.plist"];
         for (RaidMember *member in raid.raidMembers){
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:300 andEffectType:EffectTypeNegativeInvisible];
             [rhe setTitle:@"spore-ravager-green-mist"];

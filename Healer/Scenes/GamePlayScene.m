@@ -366,7 +366,7 @@
 }
 -(void)displayPartcileSystemOnRaidWithName:(NSString*)name{
     NSURL *systemPath = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"emitters"] URLByAppendingPathComponent:name];   
-    CCParticleSystemPoint *collisionEffect = [CCParticleSystemPoint particleWithFile:[systemPath relativePath]];
+    CCParticleSystemPoint *collisionEffect = [CCParticleSystemQuad particleWithFile:[systemPath relativePath]];
     CGPoint destination = ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height /2));
     [collisionEffect setPosition:destination];
     [collisionEffect setAutoRemoveOnFinish:YES];
@@ -374,7 +374,7 @@
 }
 -(void)displayPartcileSystemOverRaidWithName:(NSString*)name{
     NSURL *systemPath = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"emitters"] URLByAppendingPathComponent:name];   
-    CCParticleSystemPoint *collisionEffect = [CCParticleSystemPoint particleWithFile:[systemPath relativePath]];
+    CCParticleSystemPoint *collisionEffect = [CCParticleSystemQuad particleWithFile:[systemPath relativePath]];
     CGPoint destination = ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height));
     [collisionEffect setPosition:destination];
     [collisionEffect setAutoRemoveOnFinish:YES];
@@ -382,7 +382,7 @@
 }
 -(void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target{
     NSURL *systemPath = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"emitters"] URLByAppendingPathComponent:name];   
-    CCParticleSystemPoint *collisionEffect = [CCParticleSystemPoint particleWithFile:[systemPath relativePath]];
+    CCParticleSystemPoint *collisionEffect = [CCParticleSystemQuad particleWithFile:[systemPath relativePath]];
     CGPoint destination = [self.raidView frameCenterForMember:target];
     [collisionEffect setPosition:destination];
     [collisionEffect setAutoRemoveOnFinish:YES];
@@ -398,7 +398,7 @@
     CCParticleSystem  *collisionEffect = nil;
     if (effect.collisionParticleName){
         NSURL *systemPath = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"emitters"] URLByAppendingPathComponent:effect.collisionParticleName];   
-        collisionEffect = [CCParticleSystemPoint particleWithFile:[systemPath relativePath]];
+        collisionEffect = [CCParticleSystemQuad particleWithFile:[systemPath relativePath]];
     }
 
     if (projectileSprite){

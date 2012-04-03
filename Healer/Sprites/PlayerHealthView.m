@@ -24,12 +24,12 @@
         lastHealth = 0;
         [self setDefaultBackgroundColor:ccWHITE];
         
-        self.healthLabel = [CCLabelTTF labelWithString:@"100.0" fontName:@"Arial" fontSize:14];
+        self.healthLabel = [CCLabelTTF labelWithString:@"Health: 100.0%" fontName:@"Arial" fontSize:14];
         [self.healthLabel setPosition:CGPointMake(frame.size.width * .5, frame.size.height * .5)];
         [self.healthLabel setColor:ccBLACK];
         [self addChild:self.healthLabel z:10];
         
-        self.healthBar = [CCLayerColor layerWithColor:ccc4(0, 255, 0, 255)];
+        self.healthBar = [CCLayerGradient layerWithColor:ccc4(0, 255, 0, 255) fadingTo:ccc4(0, 50, 0, 50) alongVector:CGPointMake(0, 1)];
         [self.healthBar setPosition:CGPointMake(0, 0)];
         self.healthBar.contentSize = CGSizeMake(0, frame.size.height);
         [self addChild:self.healthBar];
@@ -95,7 +95,7 @@
     self.healthBar.contentSize = CGSizeMake(healthPercentage * self.contentSize.width, self.healthBar.contentSize.height);
 	if (memberData.health >= 1){
         
-		healthText = [NSString stringWithFormat:@"%3.1f", (healthPercentage)*100];
+		healthText = [NSString stringWithFormat:@"Health: %3.1f%", (healthPercentage)*100];
 	}
 	else {
 		healthText = @"Dead";

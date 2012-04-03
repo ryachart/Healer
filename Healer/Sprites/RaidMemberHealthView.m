@@ -140,7 +140,7 @@
     self.lastHealth = memberData.health;
 	NSString *healthText;
 	if (memberData.health >= 1){
-		healthText = [NSString stringWithFormat:@"%3.1f%", (((float)memberData.health) / memberData.maximumHealth)*100];
+		healthText = [NSString stringWithFormat:@"%3.1f\%", (((float)memberData.health) / memberData.maximumHealth)*100];
 		self.healthBarLayer.contentSize = CGSizeMake(self.healthBarLayer.contentSize.width, (self.contentSize.height - (HEALTH_BAR_BORDER * 2) ) * (((float)memberData.health) / memberData.maximumHealth));
         [self.healthBarLayer setColor:[self colorForPercentage:(((float)memberData.health) / memberData.maximumHealth)]];
 	}

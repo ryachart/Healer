@@ -36,7 +36,7 @@
         
         self.healthLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:32.0];
         [self.healthLabel setColor:ccRED];
-        self.healthLabel.position = CGPointMake(frame.size.width * .35, frame.size.height * .3);
+        self.healthLabel.position = CGPointMake(frame.size.width * .5, frame.size.height * .5);
         self.healthLabel.contentSize = CGSizeMake(frame.size.width * .5, frame.size.height * .25);
 
         [self addChild:self.healthFrame];
@@ -85,7 +85,7 @@
     lastHealth = bossData.health;
 	NSString *healthText;
 	if (bossData.health >= 1){
-		healthText = [NSString stringWithFormat:@"%3.1f", (((float)bossData.health) / bossData.maximumHealth)*100];
+		healthText = [NSString stringWithFormat:@"%3.1f%", (((float)bossData.health) / bossData.maximumHealth)*100];
 	}
 	else {
 		healthText = @"Dead";

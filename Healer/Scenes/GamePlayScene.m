@@ -68,9 +68,14 @@
         [self addChild:self.raidView];
         
         self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(100, 660, 884, 80)] autorelease];
+        CCLayerColor *playerStatusBackground = [CCLayerColor layerWithColor:ccc4(100, 100, 100, 200)];
+        [playerStatusBackground setContentSize:CGSizeMake(210, 120)];
+        [playerStatusBackground setPosition:CGPointMake(795, 535)];
+        [self addChild:playerStatusBackground];
+        
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(200,40, 400, 50)] autorelease];
-        self.playerHealthView = [[[PlayerHealthView alloc] initWithFrame:CGRectMake(800, 600, 200, 50)] autorelease];
-        self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(800, 545, 200, 50)] autorelease];
+        self.playerHealthView = [[[PlayerHealthView alloc] initWithFrame:CGRectMake(800, 595, 200, 50)] autorelease];
+        self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(800, 540, 200, 50)] autorelease];
         self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
         [self.announcementLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .65)];
         [self.announcementLabel setColor:ccYELLOW];
@@ -189,6 +194,7 @@
 -(void)onEnterTransitionDidFinish{
 #if DEBUG
     if (self.levelNumber == 1){
+        [self gameEvent:0.0]; //Bump the UI
         self.levelNumber = 0;
     }
 #endif

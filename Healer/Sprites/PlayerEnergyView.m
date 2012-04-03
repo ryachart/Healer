@@ -26,13 +26,14 @@
         isTouched = NO;
         //[self setDefaultBackgroundColor:ccWHITE];
         
-        self.energyLabel = [CCLabelTTF labelWithString:@"100/100" fontName:@"Arial" fontSize:14];
+        self.energyLabel = [CCLabelTTF labelWithString:@"Energy: 1000/1000" fontName:@"Arial" fontSize:14];
+        [self.energyLabel setColor:ccWHITE];
         [self.energyLabel setColor:ccBLACK];
-        self.energyLabel.position = CGPointMake(frame.size.width * .3, frame.size.width * .1);
+        self.energyLabel.position = CGPointMake(frame.size.width * .5, frame.size.height * .5);
         [self.energyLabel setContentSize:CGSizeMake(frame.size.width * .4, frame.size.height *.5)];
         [self addChild:self.energyLabel z:100];
         
-        self.energyBar = [CCLayerColor layerWithColor:ccc4(0, 0, 255, 255)];
+        self.energyBar = [CCLayerGradient layerWithColor:ccc4(0, 0, 255, 255) fadingTo:ccc4(0, 0, 50, 50)];
         [self.energyBar setPosition:CGPointMake(0, 0)];
         self.energyBar.contentSize = CGSizeMake(0, frame.size.height);
         [self addChild:self.energyBar];
@@ -53,7 +54,7 @@
 
 -(void)updateWithEnergy:(NSInteger)current andMaxEnergy:(NSInteger)max
 {
-	[energyLabel setString:[NSString stringWithFormat:@"%i/%i", current, max]];
+	[energyLabel setString:[NSString stringWithFormat:@"Energy: %i/%i", current, max]];
     percentEnergy = ((float)current)/max;
     self.energyBar.contentSize = CGSizeMake(self.contentSize.width * percentEnergy, self.contentSize.height);
 		

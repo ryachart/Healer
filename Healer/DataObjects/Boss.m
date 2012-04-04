@@ -314,8 +314,8 @@
     TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
     [self.announcer displayParticleSystemWithName:@"poison_cloud.plist" onTarget:target];
     [poisonEffect setSpriteName:@"poison.png"];
-    [poisonEffect setValuePerTick:-7];
-    [poisonEffect setNumOfTicks:24];
+    [poisonEffect setValuePerTick:-6];
+    [poisonEffect setNumOfTicks:30];
     [poisonEffect setTitle:@"trulzar-poison1"];
     [target addEffect:poisonEffect];
     [poisonEffect release];
@@ -347,25 +347,25 @@
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (((int)percentage) % 10 == 0 && ((int)percentage) != 100){
-        //Every 10% of his life....
-        for (RaidMember *member in raid.raidMembers){
-            [self.announcer announce:@"Trulzar's corruption surges in poisoned victims."];
-            if (!member.isDead){
-                BOOL isPoisoned = NO;
-                for (Effect *effect in member.activeEffects){
-                    if ([effect.title isEqualToString:@"trulzar-poison1"]){
-                        isPoisoned = YES;
-                        break;
-                    }
-                }
-                
-                if (isPoisoned){
-                    [member setHealth: 1];
-                }
-            }
-        }
-    }
+//    if (((int)percentage) % 10 == 0 && ((int)percentage) != 100){
+//        //Every 10% of his life....
+//        for (RaidMember *member in raid.raidMembers){
+//            [self.announcer announce:@"Trulzar's corruption surges in poisoned victims."];
+//            if (!member.isDead){
+//                BOOL isPoisoned = NO;
+//                for (Effect *effect in member.activeEffects){
+//                    if ([effect.title isEqualToString:@"trulzar-poison1"]){
+//                        isPoisoned = YES;
+//                        break;
+//                    }
+//                }
+//                
+//                if (isPoisoned){
+//                    [member setHealth: 1];
+//                }
+//            }
+//        }
+//    }
     
     if (((int)percentage) == 7){
         for (RaidMember *member in raid.raidMembers){

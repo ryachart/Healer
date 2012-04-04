@@ -18,7 +18,7 @@
 @end
 
 @implementation Boss
-@synthesize lastAttack, health, maximumHealth, title, logger, focusTarget, announcer, criticalChance;
+@synthesize lastAttack, health, maximumHealth, title, logger, focusTarget, announcer, criticalChance, info;
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
     if (self = [super init]){
@@ -198,6 +198,7 @@
 +(id)defaultBoss{
     Ghoul *ghoul = [[Ghoul alloc]initWithHealth:6750 damage:10 targets:1 frequency:1.5 andChoosesMT:NO];
     [ghoul setTitle:@"The Night Ghoul"];
+    [ghoul setInfo:@"A ghoul has found its way onto a nearby farmer's land.  It has already killed the farmer's wife.  You will accompany a small band of mercenaries to dispatch the ghoul."];
     return [ghoul autorelease];
 }
 
@@ -222,7 +223,7 @@
 +(id)defaultBoss{
     CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:45000 damage:8 targets:1 frequency:1.4 andChoosesMT:YES];
     [corTroll setTitle:@"Corrupted Troll"];
-    
+    [corTroll setInfo:@"A Troll of Raklor has been identified among the demons brewing in the south.  It has been corrupted and twisted into a foul and terrible creature.  You will journey with a small band of soldiers to the south to dispatch this troll."];
     return  [corTroll autorelease];
 }
 -(void)doCaveInOnRaid:(Raid*)theRaid{
@@ -251,6 +252,7 @@
 +(id)defaultBoss{
     Drake *drake = [[Drake alloc] initWithHealth:52000 damage:4 targets:1 frequency:1.2 andChoosesMT:NO];
     [drake setTitle:@"Drake of Soldorn"];
+    [drake setInfo:@"After felling the Troll of Raklor, you raided the encampment to discover that the agents of darkness had summoned a Drake of Soldorn.  It is hidden in the Paragon Cliffs.  Take with you a party of blood thirsty fighters and dispatch this beast from our world."];
     return [drake autorelease];
 }
 
@@ -296,6 +298,7 @@
 +(id)defaultBoss{
     Trulzar *boss = [[Trulzar alloc] initWithHealth:180000 damage:20 targets:10 frequency:2.5 andChoosesMT:NO];
     [boss setTitle:@"Trulzar the Maleficar"];
+    [boss setInfo:@"King Dralazak himself has posted a bounty for the head of the Trulzar: a warlock who has slaughtered the King's most prized fighter.  The Light Ascendant have done battle with Trulzar in the past and lost many good soldiers.  This would be a great opportunity to prove that your presence will turn the tide of any battles. Take with you your most hearty adventurers for only the strongest will return..."];
     return [boss autorelease];
 }
 
@@ -382,6 +385,7 @@
 +(id)defaultBoss{
     DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:292500 damage:5 targets:5 frequency:.75 andChoosesMT:NO];
     [boss setTitle:@"Council of Dark Summoners"];
+    [boss setInfo:@"The Theranorian Seers have infiltrated the minds of the Council of Dark Summoners and discovered their location.  King Dralazak has sent word to of this discovery to  The Light Ascendant."];
     return [boss autorelease];
 }
 
@@ -419,6 +423,7 @@
     //427500
     PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:427500 damage:16 targets:2 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Plaguebringer Colossus"];
+    [boss setInfo:@"From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped.  The village people have foreseen their impending doom and sent young and brave hopefuls to join The Light Ascendant in exchange for protection.  You must lead this group to victory against the wretched beast."];
     return [boss autorelease];
 }
 
@@ -483,6 +488,7 @@
 +(id)defaultBoss{
     SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:8 targets:1 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Spore Ravagers"];
+    [boss setInfo:@" Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate.  Conversely, no villagers have left the town, either..."];
     [boss setCriticalChance:.5];
     return [boss autorelease];
 }
@@ -602,9 +608,9 @@
 @implementation MischievousImps
 @synthesize lastPotionThrow;
 +(id)defaultBoss{
-    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:97500 damage:16 targets:1 frequency:3.0 andChoosesMT:YES];
+    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:97500 damage:10 targets:1 frequency:3.0 andChoosesMT:YES];
     [boss setTitle:@"Mischievious Imps"];
-    
+    [boss setInfo:@" A local alchemist has posted a small reward for removing a pesky imp infestation from her store.  Sensing something a little more sinister a small party has been dispatched from the Light Ascendant just in case there is more than meets the eye."];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw1" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw1" ofType:@"m4a"]]];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw2" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw2" ofType:@"m4a"]]];
     return [boss autorelease];
@@ -646,7 +652,7 @@
         [self.announcer displayThrowEffect:bottleVisual];
         [bottleVisual release];
         
-        [(ImpLightningBottle*)bottleEffect setValue:-20];
+        [(ImpLightningBottle*)bottleEffect setValue:-35];
         [target addEffect:bottleEffect];
         [bottleEffect release];
     }

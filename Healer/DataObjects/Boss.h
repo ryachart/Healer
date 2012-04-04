@@ -29,6 +29,7 @@
 	//Combat Action Data
     BOOL healthThresholdCrossed[101];
 }
+@property (nonatomic, retain) NSString * info;
 @property (nonatomic, retain) id <Announcer> announcer;
 @property (nonatomic, setter=setHealth:) NSInteger health;
 @property (nonatomic, readwrite) float criticalChance;

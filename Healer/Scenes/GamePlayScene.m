@@ -206,6 +206,7 @@
         [self addChild:gpfl z:1000];
         [gpfl showWelcome];
     }else{
+        [self gameEvent:0.0]; //Bump the UI
         [self battleBegin];
     }
 }

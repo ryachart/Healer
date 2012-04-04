@@ -7,12 +7,13 @@
 //
 
 #import "PlayerEnergyView.h"
+#import "Scale9Sprite.h"
 
 
 @implementation PlayerEnergyView
 
 @synthesize channelDelegate, percentChanneled;
-@synthesize energyBar, energyLabel;
+@synthesize energyBar, energyLabel, energyStyleFrame;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super init])) {
@@ -37,6 +38,7 @@
         [self.energyBar setPosition:CGPointMake(0, 0)];
         self.energyBar.contentSize = CGSizeMake(0, frame.size.height);
         [self addChild:self.energyBar];
+        [self addChild:self.energyStyleFrame];
     }
     return self;
 }

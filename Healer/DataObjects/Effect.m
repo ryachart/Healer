@@ -188,11 +188,11 @@
 
 @implementation ImpLightningBottle 
 -(void)expire{
-    [self.target setHealth:self.target.health - 10];
+    [self.target setHealth:self.target.health - 15];
     RepeatedHealthEffect *burnDoT = [[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative];
     [burnDoT setTitle:@"imp-burn-dot"];
     [burnDoT setSpriteName:@"poison.png"];
-    [burnDoT setValuePerTick:-5];
+    [burnDoT setValuePerTick:-20];
     [burnDoT setNumOfTicks:4];
     [self.target addEffect:burnDoT];
     [burnDoT release];

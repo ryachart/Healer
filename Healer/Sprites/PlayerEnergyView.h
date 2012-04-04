@@ -9,6 +9,7 @@
 #import "cocos2d.h"
 #import "GameObjects.h"
 
+@class Scale9Sprite;
 @class ChannelingDelegate;
 
 @interface PlayerEnergyView : CCLayerColor {
@@ -19,7 +20,8 @@
 	BOOL isTouched;
 }
 @property (retain) ChannelingDelegate *channelDelegate;
-@property (nonatomic, assign) CCLayerColor *energyBar;
+@property (nonatomic, assign) Scale9Sprite *energyStyleFrame;
+@property (nonatomic, assign) CCSprite *energyBar;
 @property (nonatomic, assign) CCLabelTTF *energyLabel;
 @property (readwrite) double percentChanneled;
 - (id)initWithFrame:(CGRect)frame;

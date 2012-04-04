@@ -7,6 +7,7 @@
 //
 
 #import "RaidMemberHealthView.h"
+#import "CCRoundedRect.h"
 
 #define HEALTH_BAR_BORDER 6
 
@@ -31,8 +32,22 @@
         
         self.lastHealth = 0;
         
-        self.healthBarLayer = [CCLayerColor layerWithColor:ccc4(0, 255, 0, 255) width:frame.size.width - (HEALTH_BAR_BORDER *2) height:frame.size.height - (HEALTH_BAR_BORDER *2)];
+//        self.healthBarLayer = [CCLayerColor layerWithColor:ccc4(0, 255, 0, 255) width:frame.size.width - (HEALTH_BAR_BORDER *2) height:frame.size.height - (HEALTH_BAR_BORDER *2)];
+//        self.healthBarLayer.position = CGPointMake(HEALTH_BAR_BORDER, HEALTH_BAR_BORDER);
+        
+        CCRoundedRect *barBackgroundAndBorder = [[[CCRoundedRect alloc] initWithRectSize:CGSizeMake(frame.size.width - (HEALTH_BAR_BORDER * 2), frame.size.height - (HEALTH_BAR_BORDER * 2))] autorelease];
+        [barBackgroundAndBorder setFillColor:ccc4(255,255,255, 255)];
+        [barBackgroundAndBorder setRadius:5.0];
+        [barBackgroundAndBorder setBorderWidth:2.0];
+        [barBackgroundAndBorder setBorderColor:ccc4(0, 0, 0, 255)];
+        [barBackgroundAndBorder setPosition:CGPointMake(HEALTH_BAR_BORDER, HEALTH_BAR_BORDER)];
+        [self addChild:barBackgroundAndBorder];
+        
+        self.healthBarLayer = [[[CCRoundedRect alloc] initWithRectSize:CGSizeMake(frame.size.width - (HEALTH_BAR_BORDER * 2), frame.size.height - (HEALTH_BAR_BORDER * 2))] autorelease];
         self.healthBarLayer.position = CGPointMake(HEALTH_BAR_BORDER, HEALTH_BAR_BORDER);
+        self.healthBarLayer.radius = 5.0;
+        self.healthBarLayer.borderWidth = 0.0;
+        self.healthBarLayer.borderColor = ccc4(0, 0, 0, 0);
         
 		self.classNameLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0f];            
         [self.classNameLabel setPosition:CGPointMake(frame.size.width * .5, 10)];
@@ -141,12 +156,13 @@
 	NSString *healthText;
 	if (memberData.health >= 1){
 		healthText = [NSString stringWithFormat:@"%3.1f\%", (((float)memberData.health) / memberData.maximumHealth)*100];
-		self.healthBarLayer.contentSize = CGSizeMake(self.healthBarLayer.contentSize.width, (self.contentSize.height - (HEALTH_BAR_BORDER * 2) ) * (((float)memberData.health) / memberData.maximumHealth));
-        [self.healthBarLayer setColor:[self colorForPercentage:(((float)memberData.health) / memberData.maximumHealth)]];
+		self.healthBarLayer.size = CGSizeMake(self.healthBarLayer.size.width, (self.contentSize.height - (HEALTH_BAR_BORDER * 2) ) * (((float)memberData.health) / memberData.maximumHealth));
+        ccColor3B colorForPerc = [self colorForPercentage:(((float)memberData.health) / memberData.maximumHealth)];
+        [self.healthBarLayer setFillColor:ccc4(colorForPerc.r, colorForPerc.g, colorForPerc.b, 255)];
 	}
 	else {
 		healthText = @"Dead";
-        self.healthBarLayer.contentSize = CGSizeMake(self.healthBarLayer.contentSize.width, 0);
+        self.healthBarLayer.size = CGSizeMake(self.healthBarLayer.size.width, 0);
 		[self setColor:ccc3(255, 0, 0)];
         [self setOpacity:255];
 	}

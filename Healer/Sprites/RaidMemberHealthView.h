@@ -10,6 +10,7 @@
 #import "GameObjects.h"
 #import "cocos2d.h"
 
+@class CCRoundedRect;
 @class RaidMemberHealthViewDelegate;
 
 @interface RaidMemberHealthView : CCLayerColor {
@@ -19,7 +20,7 @@
 	
 }
 @property (nonatomic, assign, setter=setMemberData:) HealableTarget* memberData;
-@property (nonatomic, retain) CCLayerColor *healthBarLayer;
+@property (nonatomic, retain) CCRoundedRect *healthBarLayer;
 @property (nonatomic, retain) CCLabelTTF *classNameLabel;
 @property (nonatomic, retain) CCLabelTTF *healthLabel;
 @property (nonatomic, retain) CCLabelTTF *effectsLabel;

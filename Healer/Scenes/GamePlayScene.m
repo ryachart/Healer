@@ -15,6 +15,7 @@
 #import "PersistantDataManager.h"
 #import "GamePlayPauseLayer.h"
 #import "CCShakeScreen.h"
+#import "ParticleSystemCache.h"
 
 @interface GamePlayScene ()
 //Data Models
@@ -371,24 +372,21 @@
     }], nil] ];
 }
 -(void)displayPartcileSystemOnRaidWithName:(NSString*)name{
-    NSURL *systemPath = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"emitters"] URLByAppendingPathComponent:name];   
-    CCParticleSystemPoint *collisionEffect = [CCParticleSystemQuad particleWithFile:[systemPath relativePath]];
+    CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
     CGPoint destination = ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height /2));
     [collisionEffect setPosition:destination];
     [collisionEffect setAutoRemoveOnFinish:YES];
     [self addChild:collisionEffect z:100];
 }
 -(void)displayPartcileSystemOverRaidWithName:(NSString*)name{
-    NSURL *systemPath = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"emitters"] URLByAppendingPathComponent:name];   
-    CCParticleSystemPoint *collisionEffect = [CCParticleSystemQuad particleWithFile:[systemPath relativePath]];
+    CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
     CGPoint destination = ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height));
     [collisionEffect setPosition:destination];
     [collisionEffect setAutoRemoveOnFinish:YES];
     [self addChild:collisionEffect z:100];
 }
 -(void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target{
-    NSURL *systemPath = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"emitters"] URLByAppendingPathComponent:name];   
-    CCParticleSystemPoint *collisionEffect = [CCParticleSystemQuad particleWithFile:[systemPath relativePath]];
+    CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
     CGPoint destination = [self.raidView frameCenterForMember:target];
     [collisionEffect setPosition:destination];
     [collisionEffect setAutoRemoveOnFinish:YES];
@@ -403,10 +401,8 @@
     CGPoint destination = [self.raidView frameCenterForMember:effect.target];
     CCParticleSystem  *collisionEffect = nil;
     if (effect.collisionParticleName){
-        NSURL *systemPath = [[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"emitters"] URLByAppendingPathComponent:effect.collisionParticleName];   
-        collisionEffect = [CCParticleSystemQuad particleWithFile:[systemPath relativePath]];
+        collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:effect.collisionParticleName];
     }
-
     if (projectileSprite){
         [projectileSprite setAnchorPoint:CGPointMake(.5, .5)];
         [projectileSprite setVisible:NO];

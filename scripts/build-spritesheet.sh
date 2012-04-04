@@ -3,8 +3,6 @@
 ASSETS_DIR=${PROJECT_DIR}/assets
 sprites_dir=${PROJECT_DIR}/sprites
 
-# these are all required
-	# make destination
 asset=`basename $sprites_dir`
 mkdir -p $ASSETS_DIR
 plist=$ASSETS_DIR/sprites-ipad-hd.plist

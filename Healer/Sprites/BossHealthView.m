@@ -65,11 +65,11 @@
         int heal = bossData.health - lastHealth;
         CCLabelTTF *shadowLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
         [shadowLabel setColor:ccBLACK];
-        [shadowLabel setPosition:CGPointMake(self.contentSize.width /2 -1 + startingFuzzX , self.contentSize.height /2 + 1 + startingFuzzY)];
+        [shadowLabel setPosition:CGPointMake(self.healthFrame.contentSize.width - 1 + startingFuzzX , self.contentSize.height /2 + 1 + startingFuzzY)];
         
         CCLabelTTF *sctLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
         [sctLabel setColor:ccRED];
-        [sctLabel setPosition:CGPointMake(self.contentSize.width /2 + startingFuzzX, self.contentSize.height /2 + startingFuzzY)];
+        [sctLabel setPosition:CGPointMake(self.healthFrame.contentSize.width + startingFuzzX, self.contentSize.height /2 + startingFuzzY)];
         
         [self addChild:shadowLabel z:10];
         [self addChild:sctLabel z:11];

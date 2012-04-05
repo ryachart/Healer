@@ -35,31 +35,32 @@
 //        self.healthBarLayer = [CCLayerColor layerWithColor:ccc4(0, 255, 0, 255) width:frame.size.width - (HEALTH_BAR_BORDER *2) height:frame.size.height - (HEALTH_BAR_BORDER *2)];
 //        self.healthBarLayer.position = CGPointMake(HEALTH_BAR_BORDER, HEALTH_BAR_BORDER);
         
+        float backgroundBorderWidth = 4.0;
         CCRoundedRect *barBackgroundAndBorder = [[[CCRoundedRect alloc] initWithRectSize:CGSizeMake(frame.size.width - (HEALTH_BAR_BORDER * 2), frame.size.height - (HEALTH_BAR_BORDER * 2))] autorelease];
         [barBackgroundAndBorder setFillColor:ccc4(255,255,255, 255)];
-        [barBackgroundAndBorder setRadius:5.0];
-        [barBackgroundAndBorder setBorderWidth:2.0];
+        [barBackgroundAndBorder setRadius:6.0];
+        [barBackgroundAndBorder setBorderWidth:backgroundBorderWidth];
         [barBackgroundAndBorder setBorderColor:ccc4(0, 0, 0, 255)];
         [barBackgroundAndBorder setPosition:CGPointMake(HEALTH_BAR_BORDER, HEALTH_BAR_BORDER)];
         [self addChild:barBackgroundAndBorder];
         
-        self.healthBarLayer = [[[CCRoundedRect alloc] initWithRectSize:CGSizeMake(frame.size.width - (HEALTH_BAR_BORDER * 2), frame.size.height - (HEALTH_BAR_BORDER * 2))] autorelease];
-        self.healthBarLayer.position = CGPointMake(HEALTH_BAR_BORDER, HEALTH_BAR_BORDER);
-        self.healthBarLayer.radius = 5.0;
+        self.healthBarLayer = [[[CCRoundedRect alloc] initWithRectSize:CGSizeMake(frame.size.width - ((HEALTH_BAR_BORDER + backgroundBorderWidth/2) * 2), frame.size.height - ((HEALTH_BAR_BORDER+ backgroundBorderWidth/2 ) * 2))] autorelease];
+        self.healthBarLayer.position = CGPointMake(HEALTH_BAR_BORDER + backgroundBorderWidth/2, HEALTH_BAR_BORDER + backgroundBorderWidth/2);
+        self.healthBarLayer.radius = 6.0;
         self.healthBarLayer.borderWidth = 0.0;
         self.healthBarLayer.borderColor = ccc4(0, 0, 0, 0);
         
 		self.classNameLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0f];            
-        [self.classNameLabel setPosition:CGPointMake(frame.size.width * .5, 10)];
+        [self.classNameLabel setPosition:CGPointMake(frame.size.width * .5, 14)];
         [self.classNameLabel setContentSize:CGSizeMake(frame.size.width, frame.size.height)];
         [self.classNameLabel setColor:ccc3(0, 0, 0)];
         
         self.isFocusedLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:15.0];
-        [self.isFocusedLabel setPosition:CGPointMake(50, 50)];
+        [self.isFocusedLabel setPosition:CGPointMake(50, 54)];
         [self.isFocusedLabel setColor:ccBLACK];
         
 		self.healthLabel =  [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0f];   
-        [self.healthLabel setPosition:CGPointMake(frame.size.width * .5, frame.size.height * .3)];
+        [self.healthLabel setPosition:CGPointMake(frame.size.width * .5, frame.size.height * .34)];
         [self.healthLabel setContentSize:CGSizeMake(frame.size.width * .5, frame.size.height * .25)];
         [self.healthLabel setColor:ccc3(0, 0, 0)];
                 
@@ -156,13 +157,14 @@
 	NSString *healthText;
 	if (memberData.health >= 1){
 		healthText = [NSString stringWithFormat:@"%3.1f\%", (((float)memberData.health) / memberData.maximumHealth)*100];
-		self.healthBarLayer.size = CGSizeMake(self.healthBarLayer.size.width, (self.contentSize.height - (HEALTH_BAR_BORDER * 2) ) * (((float)memberData.health) / memberData.maximumHealth));
+		self.healthBarLayer.size = CGSizeMake(self.healthBarLayer.size.width,(int)round((self.contentSize.height - ((HEALTH_BAR_BORDER + 2.0 ) * 2) ) * (((float)memberData.health) / memberData.maximumHealth)));
         ccColor3B colorForPerc = [self colorForPercentage:(((float)memberData.health) / memberData.maximumHealth)];
         [self.healthBarLayer setFillColor:ccc4(colorForPerc.r, colorForPerc.g, colorForPerc.b, 255)];
 	}
 	else {
 		healthText = @"Dead";
         self.healthBarLayer.size = CGSizeMake(self.healthBarLayer.size.width, 0);
+        self.healthBarLayer.visible = NO;
 		[self setColor:ccc3(255, 0, 0)];
         [self setOpacity:255];
 	}

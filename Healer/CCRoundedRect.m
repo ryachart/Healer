@@ -92,24 +92,24 @@ void ccFillPoly( CGPoint *poli, int points, BOOL closePolygon )
 	CGPoint vertices[16];
     
     vertices[0] = ccp(0,radius);
-    vertices[1] = ccp(0,radius*(kappa));
+    vertices[1] = ccp(0,radius*(1-kappa));
     vertices[2] = ccp(radius*(1-kappa),0);
     vertices[3] = ccp(radius,0);
     
     vertices[4] = ccp(size.width-radius,0);
     vertices[5] = ccp(size.width-radius*(1-kappa),0);
-    vertices[6] = ccp(size.width,radius*(kappa));
+    vertices[6] = ccp(size.width,radius*(1-kappa));
     vertices[7] = ccp(size.width,radius);
     
-    vertices[8] = ccp(size.width,size.height + radius);
-    vertices[9] = ccp(size.width,size.height + radius*(kappa));
+    vertices[8] = ccp(size.width,size.height - radius);
+    vertices[9] = ccp(size.width,size.height - radius*(1-kappa));
     vertices[10] = ccp(size.width-radius*(1-kappa),size.height);
     vertices[11] = ccp(size.width-radius,size.height);
     
     vertices[12] = ccp(radius,size.height);
-    vertices[13] = ccp(radius*(1-kappa),size.height);                   
-    vertices[14] = ccp(0,size.height+radius*(kappa));                   
-    vertices[15] = ccp(0,size.height+radius);    
+    vertices[13] = ccp(radius*(1-kappa),size.height);                  
+    vertices[14] = ccp(0,size.height-radius*(1-kappa));                  
+    vertices[15] = ccp(0,size.height-radius);    
     
     
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

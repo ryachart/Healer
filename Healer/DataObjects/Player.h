@@ -90,4 +90,9 @@ typedef int CastingDisabledReason;
 
 -(BOOL)isDead;
 -(void)setEnergy:(NSInteger)newEnergy;
+
+
+//Multiplayer
+@property (nonatomic, retain) NSString* playerID;
+@property (nonatomic, readwrite) BOOL isAudible; //Turn off other sounds;
 @end

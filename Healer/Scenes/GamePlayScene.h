@@ -14,6 +14,7 @@
 #import "Announcer.h"
 #import "GamePlayFTUELayer.h"
 #import "GamePlayPauseLayer.h"
+#import <GameKit/GameKit.h>
 
 @class PlayerSpellButton;
 @class RaidView;
@@ -24,7 +25,7 @@
 @class PlayerMoveButton;
 @class PlayerCastBar;
 /* This is the screen we see while involved in a raid */
-@interface GamePlayScene : CCScene <EventLogger, Announcer, GamePlayFTUELayerDelegate, PauseLayerDelegate> {
+@interface GamePlayScene : CCScene <EventLogger, Announcer, GamePlayFTUELayerDelegate, PauseLayerDelegate, GKMatchDelegate> {
 	NSMutableDictionary *memberToHealthView;
 	NSMutableArray *selectedRaidMembers;
    
@@ -46,4 +47,12 @@
 @property (nonatomic, retain)  NSMutableArray *eventLog;
 -(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse;
 
+
+//Multiplayer
+@property (nonatomic, readwrite) BOOL isServer;
+@property (nonatomic, readwrite) BOOL isClient;
+@property (nonatomic, retain) GKMatch*match;
+@property (nonatomic, retain) NSArray *players;
+
+-(id)initWithRaid:(Raid *)raidToUse boss:(Boss *)bossToUse andPlayers:(NSArray*)players;
 @end

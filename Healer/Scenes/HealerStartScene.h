@@ -8,9 +8,12 @@
 
 #import "cocos2d.h"
 #import "QuickPlayScene.h"
+#import <UIKit/UIKit.h>
+#import <GameKit/GameKit.h>
+
 
 /* This is the start screen. */
-@interface HealerStartScene : CCScene {
+@interface HealerStartScene : CCScene <GKMatchmakerViewControllerDelegate> {
 	
 }
 

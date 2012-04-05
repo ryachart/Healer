@@ -161,6 +161,8 @@
 		BF8249D71526D7C2000B554B /* RaidMemberPreBattleCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */; };
 		BF8A50F415236D6300BEC882 /* GamePlayFTUELayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */; };
 		BFB99F1B15257F6D007EE559 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = BFB99F1A15257F6D007EE559 /* Sounds */; };
+		BFE3408B152D57A5008E84F1 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE3408A152D57A5008E84F1 /* GameKit.framework */; };
+		BFFB58E6152D69C7005B760E /* MultiplayerSetupScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -617,6 +619,9 @@
 		BF8A50F215236D6300BEC882 /* GamePlayFTUELayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlayFTUELayer.h; sourceTree = "<group>"; };
 		BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlayFTUELayer.m; sourceTree = "<group>"; };
 		BFB99F1A15257F6D007EE559 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = SOURCE_ROOT; };
+		BFE3408A152D57A5008E84F1 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
+		BFFB58E4152D69C7005B760E /* MultiplayerSetupScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiplayerSetupScene.h; sourceTree = "<group>"; };
+		BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiplayerSetupScene.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -624,6 +629,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFE3408B152D57A5008E84F1 /* GameKit.framework in Frameworks */,
 				38024DB013C2564D003D36F2 /* QuartzCore.framework in Frameworks */,
 				38024DB213C2564D003D36F2 /* OpenGLES.framework in Frameworks */,
 				38024DB413C2564D003D36F2 /* OpenAL.framework in Frameworks */,
@@ -663,6 +669,7 @@
 				386DD03F145E06E20086763E /* cocos2d */,
 				386DD0EA145E06E20086763E /* CocosDenshion */,
 				386DD162145E06E20086763E /* cocoslive */,
+				BFE3408A152D57A5008E84F1 /* GameKit.framework */,
 				38024DAF13C2564D003D36F2 /* QuartzCore.framework */,
 				38024DB113C2564D003D36F2 /* OpenGLES.framework */,
 				38024DB313C2564D003D36F2 /* OpenAL.framework */,
@@ -1285,6 +1292,8 @@
 				BF6CC5CF15022496000F1AFF /* PostBattleScene.m */,
 				BF80763115214A04001EB2B3 /* PreBattleScene.h */,
 				BF80763215214A04001EB2B3 /* PreBattleScene.m */,
+				BFFB58E4152D69C7005B760E /* MultiplayerSetupScene.h */,
+				BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -1759,6 +1768,7 @@
 				BF21074A152AAAEB001B93D7 /* Scale9Sprite.m in Sources */,
 				BF21075D152B5623001B93D7 /* ParticleSystemCache.m in Sources */,
 				BF7B721B152CA9AC001999D3 /* CCRoundedRect.m in Sources */,
+				BFFB58E6152D69C7005B760E /* MultiplayerSetupScene.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

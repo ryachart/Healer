@@ -19,7 +19,7 @@
 @synthesize title;
 @synthesize dodgeChance;
 @synthesize info;
-
+@synthesize battleID;
 -(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq
 {
     if (self = [super init]){

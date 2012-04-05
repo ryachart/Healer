@@ -9,14 +9,17 @@
 #import "Player.h"
 #import "GameObjects.h"
 #import "AudioController.h"
+#import <GameKit/GameKit.h>
+
 @implementation Player
 
 @synthesize activeSpells, spellBeingCast, energy, maximumEnergy, spellTarget, additionalTargets, statusText;
-@synthesize position, logger, spellsOnCooldown=_spellsOnCooldown, announcer;
+@synthesize position, logger, spellsOnCooldown=_spellsOnCooldown, announcer, playerID, isAudible;
 
 -(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen
 {
     if (self = [super init]){
+        self.isAudible = YES;
         health = maximumHealth = hlth;
         energy = enrgy;
         energyRegenPerSecond = energyRegen;
@@ -55,7 +58,9 @@
 	if (isCasting){
         castStart+= timeDelta;
 		if ([spellTarget isDead]){
-			[spellBeingCast spellInterrupted];
+            if (self.isAudible){
+                [spellBeingCast spellInterrupted];
+            }
 			spellTarget = nil;
 			spellBeingCast = nil;
 			isCasting = NO;
@@ -63,7 +68,9 @@
 		}
 		else if ([self remainingCastTime] <= 0){
 			//SPELL END CAST
-			[spellBeingCast spellEndedCasting];
+            if (self.isAudible){
+                [spellBeingCast spellEndedCasting];
+            }
 			[spellBeingCast combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:timeDelta];
 		
 			spellTarget = nil;
@@ -129,7 +136,9 @@
 }
 -(void)disableCastingWithReason:(CastingDisabledReason)reason{
 	castingDisabledReasons[reason] = YES;
-	[spellBeingCast spellInterrupted];
+    if (self.isAudible){
+        [spellBeingCast spellInterrupted];
+    }
 	spellTarget = nil;
 	spellBeingCast = nil;
 	isCasting = NO;
@@ -152,12 +161,16 @@
 	}
 	NSInteger energyDiff = [self energy] - [theSpell energyCost];
 	if (energyDiff < 0) {
-        [self.announcer errorAnnounce:@"Not enough Energy"];
-        [[AudioController sharedInstance] playTitle:OUT_OF_MANA_TITLE];
+        if (self.isAudible){
+            [self.announcer errorAnnounce:@"Not enough Energy"];
+            [[AudioController sharedInstance] playTitle:OUT_OF_MANA_TITLE];
+        }
 		return;
 	}
 	//SPELL BEGIN CAST
-	[theSpell spellBeganCasting];
+    if (self.isAudible){
+        [theSpell spellBeganCasting];
+    }
 	spellBeingCast = theSpell;
 	spellTarget = primaryTarget;
 	castStart = 0.0001;

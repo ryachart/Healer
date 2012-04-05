@@ -15,8 +15,6 @@
 
 @interface Raid : NSObject {
 	NSMutableArray *raidMembers;
-	
-	
 }
 @property (readonly) NSMutableArray *raidMembers;
 -(id) init;
@@ -26,4 +24,7 @@
 
 -(NSInteger)classCount:(NSString*)classToCount;
 -(RaidMember*)randomLivingMember;
+
+//Multiplayer
+-(RaidMember*)memberForBattleID:(NSString*)battleID;
 @end

@@ -15,7 +15,7 @@
 @implementation AppDelegate
 
 @synthesize window;
-
+@synthesize viewController;
 - (void) removeStartupFlicker
 {
 	//
@@ -97,7 +97,6 @@
 	
 	// make the View Controller a child of the main window
 	[window addSubview: viewController.view];
-	
 	[window makeKeyAndVisible];
 	
 	// Default texture format for PNG/BMP/TIFF/JPEG/GIF images

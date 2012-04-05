@@ -45,6 +45,21 @@
 @synthesize errAnnouncementLabel;
 @synthesize paused;
 @synthesize pauseMenuLayer;
+@synthesize match, isClient, isServer, players;
+
+-(id)initWithRaid:(Raid *)raidToUse boss:(Boss *)bossToUse andPlayers:(NSArray *)plyrs{
+    if (self = [self initWithRaid:raidToUse boss:bossToUse andPlayer:(Player*)[plyrs objectAtIndex:0]]){
+        self.players = plyrs;
+        
+        for (int i = 1; i < self.players.count; i++){
+            Player *iPlayer = [self.players objectAtIndex:i];
+            [iPlayer setLogger:self];
+            [iPlayer setAnnouncer:self];
+        }
+    }
+    return self;
+}
+
 -(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse
 {
     if (self = [super init]){
@@ -331,6 +346,14 @@
 		}
 		else{
             [player beginCasting:[spell spellData] withTargets:targets];
+            if (self.isClient){
+                NSMutableString *message = [NSMutableString string];
+                [message appendFormat:@"BGNSPELL|%@", [[spell spellData] title]];
+                for (RaidMember *target in targets){
+                    [message appendFormat:@"|%@", target.battleID];
+                }
+                [match sendDataToAllPlayers:[message dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+            }
 		}
 	}
 }
@@ -485,28 +508,35 @@
 
 -(void)gameEvent:(ccTime)deltaT
 {
-	//Data Events
-	NSMutableArray *raidMembers = [raid raidMembers];
-	NSInteger survivors = 0;
-	for (RaidMember *member in raidMembers)
-	{
-        [member combatActions:boss raid:raid thePlayer:player gameTime:deltaT];
-		if (![member isDead]){
-			survivors++;
-		}
-
-	}
-	[boss combatActions:player theRaid:raid gameTime:deltaT];
-	if ([playerMoveButton isMoving]){
-		[player disableCastingWithReason:CastingDisabledReasonMoving];
-		[player setPosition:[player position]+1];
-	}
-	else {
-		[player enableCastingWithReason:CastingDisabledReasonMoving];
-	}
-
-	
-	[player combatActions:boss theRaid:raid gameTime:deltaT];
+    if (self.isServer || (!self.isServer && !self.isClient)){
+        //Only perform the simulation if we are not the server
+        //Data Events
+        [boss combatActions:player theRaid:raid gameTime:deltaT];
+        if ([playerMoveButton isMoving]){
+            [player disableCastingWithReason:CastingDisabledReasonMoving];
+            [player setPosition:[player position]+1];
+        }
+        else {
+            [player enableCastingWithReason:CastingDisabledReasonMoving];
+        }
+    }
+    
+    if (self.isServer){
+        [match sendDataToAllPlayers:[[NSString stringWithFormat:@"BOSSHEALTH|%i", self.boss.health] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+        
+        for (RaidMember *member in self.raid.raidMembers){
+            [match sendDataToAllPlayers:[[NSString stringWithFormat:@"RMHLTH|%i|%@", member.health, member.battleID] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+        }
+    }
+    //The player's simulation must continue...This might not work
+    [player combatActions:boss theRaid:raid gameTime:deltaT];
+    
+    if (self.isServer){
+        for (int i = 1; i < self.players.count; i++){
+            [[self.players objectAtIndex:i] combatActions:boss theRaid:raid gameTime:deltaT];
+        }
+    }
+    
 	//Update UI
 	[raidView updateRaidHealth];
 	[bossHealthView updateHealth];
@@ -519,7 +549,21 @@
 	[self.spellView3 updateUI];
 	[self.spellView4 updateUI];
 	
+    
+    
+    
+    
 	//Determine if there will be another iteration of the gamestate
+    NSMutableArray *raidMembers = [raid raidMembers];
+    NSInteger survivors = 0;
+    for (RaidMember *member in raidMembers)
+    {
+        [member combatActions:boss raid:raid thePlayer:player gameTime:deltaT];
+        if (![member isDead]){
+            survivors++;
+        }
+        
+    }
 	if (survivors == 0)
 	{
         [self setPaused:YES];
@@ -563,5 +607,103 @@
     [super dealloc];
 }
 
+
+
+
+#pragma mark GKMatchDelegate
+
+// The match received data sent from the player.
+- (void)match:(GKMatch *)theMatch didReceiveData:(NSData *)data fromPlayer:(NSString *)playerID {    
+    if (match != theMatch) return;
+    
+    NSString* message = [NSString stringWithUTF8String:[data bytes]];
+    
+    if ([message hasPrefix:@"BOSSHEALTH|"]){
+        self.boss.health = [[message substringFromIndex:11] intValue];
+    }
+    
+    if ([message hasPrefix:@"RMHLTH|"]){
+        NSArray *messageComponents = [message componentsSeparatedByString:@"|"];
+        
+        int health = [[messageComponents objectAtIndex:1] intValue];
+        NSString* battleID = [messageComponents objectAtIndex:2];
+        
+        [[self.raid memberForBattleID:battleID] setHealth:health];
+        
+    }
+    
+    if ([message hasPrefix:@"BGNSPELL|"]){
+        //A client has told us they started casting a spell
+        NSArray *messageComponents = [message componentsSeparatedByString:@"|"];
+        Player *sender = nil;
+        for (Player *candidate in self.players){
+            if ([candidate.playerID isEqualToString:playerID]){
+                sender = candidate; break;
+            }
+        }
+        
+        if (!sender){
+            NSLog(@"FAILED TO FIND SENDER! =(");
+        }
+        Spell *chosenSpell = nil;
+        
+        for (Spell *candidate in sender.activeSpells){
+            if ([candidate.title isEqualToString:[messageComponents objectAtIndex:1]]){
+                chosenSpell = candidate; break;
+            }
+        }
+        NSMutableArray *targets = [NSMutableArray arrayWithCapacity:3];
+        if (messageComponents.count > 1){
+            for (int i = 2; i < messageComponents.count; i++){
+                [targets addObject:[self.raid memberForBattleID:[messageComponents objectAtIndex:i]]];
+            }
+            sender.spellTarget = [targets objectAtIndex:0];
+        }
+        
+        [sender beginCasting:chosenSpell withTargets:targets];
+    }
+    
+    //[delegate match:theMatch didReceiveData:data fromPlayer:playerID];
+    
+}
+
+// The player state changed (eg. connected or disconnected)
+- (void)match:(GKMatch *)theMatch player:(NSString *)playerID didChangeState:(GKPlayerConnectionState)state {   
+    if (match != theMatch) return;
+    
+    switch (state) {
+        case GKPlayerStateConnected: 
+            // handle a new player connection.
+            NSLog(@"Player connected!");
+            
+//            if (!self.matchStarted && theMatch.expectedPlayerCount == 0) {
+//                NSLog(@"Ready to start match!");
+//            }
+            
+            break; 
+        case GKPlayerStateDisconnected:
+            // a player just disconnected. 
+            NSLog(@"Player disconnected!");
+            //[delegate matchEnded];
+            break;
+    }                     
+}
+
+// The match was unable to connect with the player due to an error.
+- (void)match:(GKMatch *)theMatch connectionWithPlayerFailed:(NSString *)playerID withError:(NSError *)error {
+    
+    if (match != theMatch) return;
+    
+    NSLog(@"Failed to connect to player with error: %@", error.localizedDescription);
+    //[delegate matchEnded];
+}
+
+// The match was unable to be established with any players due to an error.
+- (void)match:(GKMatch *)theMatch didFailWithError:(NSError *)error {
+    
+    if (match != theMatch) return;
+    
+    NSLog(@"Match failed with error: %@", error.localizedDescription);
+}
 
 @end

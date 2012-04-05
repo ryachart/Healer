@@ -7,14 +7,17 @@
 //
 
 #import "Raid.h"
-
+@interface Raid ()
+@property (nonatomic, retain) NSMutableDictionary *raidMemberBattleIDDictionary;
+@end
 
 @implementation Raid
 
-@synthesize raidMembers;
+@synthesize raidMembers, raidMemberBattleIDDictionary;
 -(id)init{
     if (self = [super init]){
         raidMembers = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];
+        self.raidMemberBattleIDDictionary = [NSMutableDictionary dictionaryWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];
 	}
 	return self;
 }
@@ -53,6 +56,10 @@
 {
 	if ([raidMembers count] < MAXIMUM_RAID_MEMBERS_ALLOWED && ![raidMembers containsObject:member]){
 		[raidMembers addObject:member];
+        
+        if (member.battleID){
+            [self.raidMemberBattleIDDictionary setObject:member forKey:member.battleID];
+        }
 	}
 }
 -(NSArray*)getAliveMembers
@@ -78,5 +85,9 @@
             selectedMember = nil;
     }while (!selectedMember);
     return selectedMember;
+}
+
+-(RaidMember*)memberForBattleID:(NSString *)battleID{
+    return [self.raidMemberBattleIDDictionary objectForKey:battleID];
 }
 @end

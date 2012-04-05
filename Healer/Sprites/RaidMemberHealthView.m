@@ -148,6 +148,20 @@
         
     }
     
+    if (memberData && memberData.health < self.lastHealth){
+        int damage = lastHealth - memberData.health;
+        
+        if ((float)damage / memberData.maximumHealth >= .33){
+            [self displaySCT:@"Euagh!"];
+        }
+        
+        if ((float)memberData.health / memberData.maximumHealth <= .25){
+            if (memberData.health != 0){
+                [self displaySCT:@"Help!"];
+            }
+        }
+    }
+    
     if (memberData.isFocused){
         [self.isFocusedLabel setString:@"FOCUSED!"];
     }else{

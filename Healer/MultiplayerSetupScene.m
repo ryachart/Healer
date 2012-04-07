@@ -13,6 +13,7 @@
 #import "Spell.h"
 #import "GamePlayScene.h"
 #import <GameKit/GameKit.h>
+#import <AVFoundation/AVFoundation.h>
 
 @interface MultiplayerSetupScene ()
 @property (nonatomic, retain) Raid *raid;
@@ -49,45 +50,46 @@
     return self;
 }
 
+-(void)serverAddRaidMember:(RaidMember*)member{
+    int i = self.raid.raidMembers.count;
+    [member setBattleID:[NSString stringWithFormat:@"%@%i", [member class], i]];
+    [self.raid addRaidMember:member];
+    [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ADDRM|%@|%@%i",[member class], [member class], i] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+}
+
 -(void)beginGame{
     if (!self.raid){
         self.raid = [[[Raid alloc] init] autorelease];
     }
     Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
     [basicPlayer setPlayerID:[GKLocalPlayer localPlayer].playerID];
-    Boss *basicBoss = [Drake defaultBoss];
-    [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil]];
+    Boss *basicBoss = [SporeRavagers defaultBoss];
+    [basicBoss setIsMultiplayer:YES];
+    [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [HealingBurst defaultSpell], [Regrow defaultSpell], nil]];
 
-    for (int i = 0; i < 1; i++){
+    for (int i = 0; i < 7; i++){
         if (self.isServer){
-            RaidMember *member = [Soldier defaultSoldier];
-            [member setBattleID:[NSString stringWithFormat:@"%@%i", [member class], i]];
-            [self.raid addRaidMember:member];
-            [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ADDRM|%@|%@%i",[member class], [member class], i] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+            [self serverAddRaidMember:[Soldier defaultSoldier]]; 
         }
     }
-    for (int i = 0; i < 1; i++){
+    for (int i = 0; i < 4; i++){
         if (self.isServer){
-            RaidMember *member = [Wizard defaultWizard];
-            [member setBattleID:[NSString stringWithFormat:@"%@%i", [member class], i]];
-            [self.raid addRaidMember:member];
-            [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ADDRM|%@|%@%i",[member class], [member class], i] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+            [self serverAddRaidMember:[Champion defaultChampion]];
         }
     }
-    for (int i = 0; i < 1; i++){
+    for (int i = 0; i < 3; i++){
         if (self.isServer){
-            RaidMember *member = [Guardian defaultGuardian];
-            [member setBattleID:[NSString stringWithFormat:@"%@%i", [member class], i]];
-            [self.raid addRaidMember:member];
-            [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ADDRM|%@|%@%i",[member class], [member class], i] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+            [self serverAddRaidMember:[Guardian defaultGuardian]];
         }
     }
-    for (int i = 0; i < 2; i++){
+    for (int i = 0; i < 3; i++){
         if (self.isServer){
-            RaidMember *member = [Demonslayer defaultDemonslayer];
-            [member setBattleID:[NSString stringWithFormat:@"%@%i", [member class], i]];
-            [self.raid addRaidMember:member];
-            [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ADDRM|%@|%@%i",[member class], [member class], i] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+            [self serverAddRaidMember:[Wizard defaultWizard]];
+        }
+    }
+    for (int i = 0; i < 3; i++){
+        if (self.isServer){
+            [self serverAddRaidMember:[Demonslayer defaultDemonslayer]];
         }
     }
     
@@ -96,7 +98,7 @@
     if (self.isServer){
         Player *otherPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
         [otherPlayer setIsAudible:NO];
-        [otherPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil]];
+        [otherPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [HealingBurst defaultSpell], [Regrow defaultSpell], nil]];
         [otherPlayer setPlayerID:[[self.match playerIDs] objectAtIndex:0]];
         gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:basicBoss andPlayers:[NSArray arrayWithObjects:basicPlayer, otherPlayer, nil]];
         [otherPlayer release];
@@ -145,7 +147,7 @@
 - (void)match:(GKMatch *)theMatch didReceiveData:(NSData *)data fromPlayer:(NSString *)playerID {    
     if (match != theMatch) return;
     
-    NSString* message = [NSString stringWithUTF8String:[data bytes]];
+    NSString* message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"message: %@", message);
     
     if ([message isEqualToString:@"BEGIN"]){
@@ -162,7 +164,7 @@
         NSString* battleID = [messageComponents objectAtIndex:2];
         [self generateRaidMemberFromServerWithClass:className andBattleID:battleID];
     }
-    //[delegate match:theMatch didReceiveData:data fromPlayer:playerID];
+    [message release];
 }
 
 // The player state changed (eg. connected or disconnected)
@@ -183,10 +185,20 @@
                 }
                 [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ACKSERVER: %@", self.serverPlayerID] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
                 
+                [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+                [[AVAudioSession sharedInstance] setActive:YES error:nil];
+                
+                GKVoiceChat *voiceChannel = [[theMatch voiceChatWithName:@"mender"] retain];
+                [voiceChannel start];
+                [voiceChannel setActive:YES];
+
+                
                 if (self.isServer){
                     self.beginButton.isEnabled = YES;
                     [self.beginButton setOpacity:255];
                 }
+                
+                
             }
             //            if (!self.matchStarted && theMatch.expectedPlayerCount == 0) {
             //                NSLog(@"Ready to start match!");

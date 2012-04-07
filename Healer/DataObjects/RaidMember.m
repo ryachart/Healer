@@ -8,6 +8,7 @@
 
 #import "RaidMember.h"
 #import "GameObjects.h"
+#import "HealableTarget.h"
 
 @interface RaidMember ()
 -(void)performAttackIfAbleOnTarget:(Boss*)target;
@@ -91,6 +92,24 @@
     [self performAttackIfAbleOnTarget:theBoss];
     [self updateEffects:theBoss raid:theRaid player:thePlayer time:timeDelta];
 	
+}
+
+
+-(NSString*)asNetworkMessage{
+    NSString* message = [NSString stringWithFormat:@"RDMBR|%@|%i|%i|", self.battleID, self.health, self.isFocused];
+    return message;
+}
+-(void)updateWithNetworkMessage:(NSString*)message{
+    NSArray*components = [message componentsSeparatedByString:@"|"];
+    
+    NSInteger healthFromMessage = [[components objectAtIndex:2] intValue];
+    if (healthFromMessage >= 0 && healthFromMessage <= self.maximumHealth){
+        self.health = healthFromMessage;
+    }
+    
+    BOOL focused = [[components objectAtIndex:3] boolValue];
+    
+    self.isFocused = focused;
 }
 
 

@@ -45,7 +45,7 @@ static AudioController* sharedController = nil;
 		[self setAudioPlayers:[NSMutableDictionary dictionaryWithCapacity:30]];
 		dupPlayers = 0;
 		[[AVAudioSession sharedInstance] setActive:YES error:nil];
-		[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+		[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
 	}
 	return self;
 	

@@ -17,6 +17,9 @@
 #import "CCShakeScreen.h"
 #import "ParticleSystemCache.h"
 
+
+#define NETWORK_THROTTLE 5
+
 @interface GamePlayScene ()
 //Data Models
 @property (nonatomic, readwrite) BOOL paused;
@@ -26,9 +29,13 @@
 @property (nonatomic, assign) CCLabelTTF *announcementLabel;
 @property (nonatomic, assign) CCLabelTTF *errAnnouncementLabel;
 @property (nonatomic, retain) GamePlayPauseLayer *pauseMenuLayer;
+@property (nonatomic, readwrite) NSInteger networkThrottle;
 
 -(void)battleBegin;
 -(void)showPauseMenu;
+
+-(void)handleProjectileEffectMessage:(NSString*)message;
+-(void)handleSpellBeginMessage:(NSString*)message fromPlayer:(NSString*)playerID;
 @end
 
 @implementation GamePlayScene
@@ -45,7 +52,7 @@
 @synthesize errAnnouncementLabel;
 @synthesize paused;
 @synthesize pauseMenuLayer;
-@synthesize match, isClient, isServer, players;
+@synthesize match, isClient, isServer, players, networkThrottle;
 
 -(id)initWithRaid:(Raid *)raidToUse boss:(Boss *)bossToUse andPlayers:(NSArray *)plyrs{
     if (self = [self initWithRaid:raidToUse boss:bossToUse andPlayer:(Player*)[plyrs objectAtIndex:0]]){
@@ -171,6 +178,7 @@
         [menuButton setColor:ccWHITE];
         [self addChild:menuButton];
         
+        self.networkThrottle = 0;
 	}
     return self;
 }
@@ -348,7 +356,7 @@
             [player beginCasting:[spell spellData] withTargets:targets];
             if (self.isClient){
                 NSMutableString *message = [NSMutableString string];
-                [message appendFormat:@"BGNSPELL|%@", [[spell spellData] title]];
+                [message appendFormat:@"BGNSPELL|%@", [[spell spellData] spellID]];
                 for (RaidMember *target in targets){
                     [message appendFormat:@"|%@", target.battleID];
                 }
@@ -403,6 +411,10 @@
     [self addChild:collisionEffect z:100];
 }
 -(void)displayPartcileSystemOverRaidWithName:(NSString*)name{
+    if (self.isServer){
+        NSString* networkMessage = [NSString stringWithFormat:@"STMOVER|%@", name];
+        [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
+    }
     CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
     CGPoint destination = ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height));
     [collisionEffect setPosition:destination];
@@ -419,6 +431,11 @@
 }
 
 -(void)displayProjectileEffect:(ProjectileEffect*)effect{
+    if (self.isServer){
+        effect.type = ProjectileEffectTypeNormal;
+        [self.match sendDataToAllPlayers:[effect.asNetworkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
+    }
+    
     CCSprite *projectileSprite = [CCSprite spriteWithSpriteFrameName:effect.spriteName];;
     
     CGPoint originLocation = CGPointMake(650, 600);
@@ -448,6 +465,10 @@
 }
 
 -(void)displayThrowEffect:(ProjectileEffect *)effect{
+    if (self.isServer){
+        effect.type = ProjectileEffectTypeThrow;
+        [self.match sendDataToAllPlayers:[effect.asNetworkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
+    }
     CCSprite *projectileSprite = [CCSprite spriteWithSpriteFrameName:effect.spriteName];;
     
     CGPoint originLocation = CGPointMake(650, 600);
@@ -472,6 +493,11 @@
         [self.announcementLabel stopAllActions];
         [self.announcementLabel setString:@""];
         [self.announcementLabel setScale:1.0];
+    }
+    
+    if (self.isServer){
+        NSString* annoucementMessage = [NSString stringWithFormat:@"ANNC|%@", announcement];
+        [self.match sendDataToAllPlayers:[annoucementMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
     }
     
     [self.announcementLabel setVisible:YES];
@@ -522,10 +548,15 @@
     }
     
     if (self.isServer){
-        [match sendDataToAllPlayers:[[NSString stringWithFormat:@"BOSSHEALTH|%i", self.boss.health] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+        self.networkThrottle++;
         
-        for (RaidMember *member in self.raid.raidMembers){
-            [match sendDataToAllPlayers:[[NSString stringWithFormat:@"RMHLTH|%i|%@", member.health, member.battleID] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+        if (self.networkThrottle >= NETWORK_THROTTLE){
+            [match sendDataToAllPlayers:[[NSString stringWithFormat:@"BOSSHEALTH|%i", self.boss.health] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+            
+            for (RaidMember *member in self.raid.raidMembers){
+                [match sendDataToAllPlayers:[[member asNetworkMessage] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+            }
+            self.networkThrottle = 0;
         }
     }
     //The player's simulation must continue...This might not work
@@ -616,55 +647,102 @@
 - (void)match:(GKMatch *)theMatch didReceiveData:(NSData *)data fromPlayer:(NSString *)playerID {    
     if (match != theMatch) return;
     
-    NSString* message = [NSString stringWithUTF8String:[data bytes]];
+    NSString* message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
-    if ([message hasPrefix:@"BOSSHEALTH|"]){
-        self.boss.health = [[message substringFromIndex:11] intValue];
+    if (self.isClient){
+        if ([message hasPrefix:@"BOSSHEALTH|"]){
+            self.boss.health = [[message substringFromIndex:11] intValue];
+        }
+        
+        if ([message hasPrefix:@"RDMBR|"]){
+            NSArray *messageComponents = [message componentsSeparatedByString:@"|"];
+            
+            NSString* battleID = [messageComponents objectAtIndex:1];
+
+            [[self.raid memberForBattleID:battleID] updateWithNetworkMessage:message];
+        }
+        
+        if ([message hasPrefix:@"ANNC|"]){
+            [self announce:[message substringFromIndex:5]];
+        }
+        
+        if ([message hasPrefix:@"PARTEFF|"]){
+            
+        }
+        
+        if ([message hasPrefix:@"PRJEFF|"]){
+            [self handleProjectileEffectMessage:message];
+        }
+        
+        if ([message hasPrefix:@"STMOVER|"]){
+            [self displayPartcileSystemOverRaidWithName:[message substringFromIndex:8]];
+        }
     }
     
-    if ([message hasPrefix:@"RMHLTH|"]){
-        NSArray *messageComponents = [message componentsSeparatedByString:@"|"];
-        
-        int health = [[messageComponents objectAtIndex:1] intValue];
-        NSString* battleID = [messageComponents objectAtIndex:2];
-        
-        [[self.raid memberForBattleID:battleID] setHealth:health];
-        
+    if (self.isServer){
+        if ([message hasPrefix:@"BGNSPELL|"]){
+            //A client has told us they started casting a spell
+            [self handleSpellBeginMessage:message fromPlayer:playerID];
+        }
+    }
+    [message release];
+}
+
+-(void)handleProjectileEffectMessage:(NSString*)message{
+    ProjectileEffect *effect = [[ProjectileEffect alloc] initWithNetworkMessage:message andRaid:self.raid];
+    
+    if (effect.type == ProjectileEffectTypeNormal){
+        [self displayProjectileEffect:effect];
     }
     
-    if ([message hasPrefix:@"BGNSPELL|"]){
-        //A client has told us they started casting a spell
-        NSArray *messageComponents = [message componentsSeparatedByString:@"|"];
-        Player *sender = nil;
-        for (Player *candidate in self.players){
-            if ([candidate.playerID isEqualToString:playerID]){
-                sender = candidate; break;
+    if (effect.type == ProjectileEffectTypeThrow){
+        [self displayThrowEffect:effect];
+    }
+    [effect release];
+}
+
+
+-(void)handleSpellBeginMessage:(NSString*)message fromPlayer:(NSString*)playerID{
+    NSArray *messageComponents = [message componentsSeparatedByString:@"|"];
+    Player *sender = nil;
+    for (Player *candidate in self.players){
+        if ([candidate.playerID isEqualToString:playerID]){
+            sender = candidate; break;
+        }
+    }
+    
+    if (!sender){
+        NSLog(@"FAILED TO FIND SENDER! =(");
+    }
+    Spell *chosenSpell = nil;
+    
+    for (Spell *candidate in sender.activeSpells){
+        if ([candidate.spellID isEqualToString:[messageComponents objectAtIndex:1]]){
+            chosenSpell = candidate; break;
+        }
+    }
+    if (!chosenSpell){
+        NSAssert(chosenSpell, @"Failed to find the spell in active spells.");
+    }
+    
+    NSMutableArray *targets = [NSMutableArray arrayWithCapacity:3];
+    if (messageComponents.count > 2){
+        for (int i = 2; i < messageComponents.count; i++){
+            RaidMember *member = [self.raid memberForBattleID:[messageComponents objectAtIndex:i]];
+            if (member){
+                [targets addObject:member];
+            }else{
+                NSLog(@"INVALID SPELL TARGET RECEIVED");
             }
         }
-        
-        if (!sender){
-            NSLog(@"FAILED TO FIND SENDER! =(");
-        }
-        Spell *chosenSpell = nil;
-        
-        for (Spell *candidate in sender.activeSpells){
-            if ([candidate.title isEqualToString:[messageComponents objectAtIndex:1]]){
-                chosenSpell = candidate; break;
-            }
-        }
-        NSMutableArray *targets = [NSMutableArray arrayWithCapacity:3];
-        if (messageComponents.count > 1){
-            for (int i = 2; i < messageComponents.count; i++){
-                [targets addObject:[self.raid memberForBattleID:[messageComponents objectAtIndex:i]]];
-            }
+        if (targets.count > 0){
             sender.spellTarget = [targets objectAtIndex:0];
+        }else{
+            NSLog(@"MALFORMED SPELL MESSAGE: %@", message);
         }
-        
-        [sender beginCasting:chosenSpell withTargets:targets];
     }
     
-    //[delegate match:theMatch didReceiveData:data fromPlayer:playerID];
-    
+    [sender beginCasting:chosenSpell withTargets:targets];
 }
 
 // The player state changed (eg. connected or disconnected)
@@ -676,13 +754,10 @@
             // handle a new player connection.
             NSLog(@"Player connected!");
             
-//            if (!self.matchStarted && theMatch.expectedPlayerCount == 0) {
-//                NSLog(@"Ready to start match!");
-//            }
-            
             break; 
         case GKPlayerStateDisconnected:
-            // a player just disconnected. 
+            // a player just disconnected.
+            [self announce:@"Player Disconnected"];
             NSLog(@"Player disconnected!");
             //[delegate matchEnded];
             break;

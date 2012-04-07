@@ -9,6 +9,7 @@
 #import "QuickPlayScene.h"
 #import "PersistantDataManager.h"
 #import "PreBattleScene.h"
+#import "HealerStartScene.h"
 @interface QuickPlayScene ()
 @property (retain) CCMenuItemLabel *easyModeButton;
 @property (retain) CCMenuItemLabel *mediumModeButton;
@@ -241,7 +242,7 @@
 
 -(void)back
 {
-	//[self.navigationController popViewControllerAnimated:YES];
+    [[CCDirector sharedDirector] replaceScene:[[[HealerStartScene alloc] init] autorelease]];
 }
 
 

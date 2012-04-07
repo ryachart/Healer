@@ -35,6 +35,7 @@
 +(id)defaultSpell;
 +(Spell*)spellFromTitle:(NSString*)ttle;
 @property (readonly, retain) NSString *title;
+@property (readonly, retain) NSString* spellID;
 @property (nonatomic, readwrite) NSInteger healingAmount;
 @property NSInteger energyCost;
 @property float castTime;

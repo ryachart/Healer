@@ -10,9 +10,14 @@
 #import	"AudioController.h"
 #import "CombatEvent.h"
 
+@interface Spell ()
+@property (nonatomic, retain) NSString *spellID;
+
+@end
+
 @implementation Spell
 
-@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData, cooldownRemaining, cooldown;
+@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData, cooldownRemaining, cooldown, spellID;
 
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd
 {
@@ -25,6 +30,7 @@
         isMultitouch = NO;
         spellAudioData = [[SpellAudioData alloc] init];
         percentagesPerTarget = nil;
+        self.spellID = NSStringFromClass([self class]);
     }
 	return self;
 }

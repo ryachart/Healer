@@ -45,7 +45,8 @@
 //It also allows a RaidMember to deal damage.
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta;
 
-
+-(NSString*)asNetworkMessage;
+-(void)updateWithNetworkMessage:(NSString*)message;
 @end
 
 

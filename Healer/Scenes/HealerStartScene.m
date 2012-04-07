@@ -118,7 +118,7 @@
 -(void)quickPlaySelected
 {
 	QuickPlayScene *qpS = [QuickPlayScene new];
-	[[CCDirector sharedDirector] pushScene:qpS];
+	[[CCDirector sharedDirector] replaceScene:qpS];
 	[qpS release];
 }
 

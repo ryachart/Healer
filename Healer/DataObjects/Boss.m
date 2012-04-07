@@ -18,7 +18,7 @@
 @end
 
 @implementation Boss
-@synthesize lastAttack, health, maximumHealth, title, logger, focusTarget, announcer, criticalChance, info;
+@synthesize lastAttack, health, maximumHealth, title, logger, focusTarget, announcer, criticalChance, info, isMultiplayer=_isMultiplayer;
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
     if (self = [super init]){
@@ -34,11 +34,16 @@
         for (int i = 0; i < 101; i++){
             healthThresholdCrossed[i] = NO;
         }
+        self.isMultiplayer = NO;
     }
 	return self;
 	
 }
 
+-(void)setIsMultiplayer:(BOOL)isMultiplayer{
+    _isMultiplayer = isMultiplayer;
+    
+}
 -(float)healthPercentage{
     return (float)self.health / (float)self.maximumHealth * 100;
 }
@@ -49,6 +54,10 @@
     
     if (choosesMainTank && self.focusTarget.isDead){
         multiplyModifier *= 3; //The tank died.  Outgoing damage is now tripled
+    }
+    
+    if (self.isMultiplayer){
+        multiplyModifier *= 1.5;
     }
     
     if (self.criticalChance != 0.0 && arc4random() % 100 < (self.criticalChance * 100)){
@@ -544,6 +553,10 @@
     
     if ((self.focusTarget.isDead ) || (self.focusTarget2 && self.focusTarget2.isDead ) || (self.focusTarget3 && self.focusTarget3.isDead )){
         multiplyModifier *= 3; //The tank died.  Outgoing damage is now tripled
+    }
+    
+    if (self.isMultiplayer){
+        multiplyModifier *= 1.5;
     }
     
     if (self.criticalChance && arc4random() % 100 < (self.criticalChance * 100)){

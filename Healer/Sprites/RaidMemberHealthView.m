@@ -186,6 +186,7 @@
     Effect *negativeEffect = nil;
     Effect *positiveEffect = nil;
 	for (Effect *eff in self.memberData.activeEffects){
+        NSLog(@"HAS 1 EFFECT");
         if ([eff effectType] == EffectTypePositive){
             positiveEffect = eff;
         }

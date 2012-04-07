@@ -197,12 +197,7 @@
                     self.beginButton.isEnabled = YES;
                     [self.beginButton setOpacity:255];
                 }
-                
-                
             }
-            //            if (!self.matchStarted && theMatch.expectedPlayerCount == 0) {
-            //                NSLog(@"Ready to start match!");
-            //            }
             
             break; 
         case GKPlayerStateDisconnected:

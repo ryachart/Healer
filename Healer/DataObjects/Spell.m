@@ -17,7 +17,7 @@
 
 @implementation Spell
 
-@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData, cooldownRemaining, cooldown, spellID;
+@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData, cooldownRemaining, cooldown, spellID, appliedEffect;
 
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd
 {
@@ -90,6 +90,12 @@
 	
 }
 
+-(void)applyEffectToTarget:(RaidMember*)target{
+    if (self.appliedEffect){
+        [target addEffect:[[self.appliedEffect copy] autorelease]];
+    }
+}
+
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
 	if ([self targets] <= 1){
@@ -98,6 +104,7 @@
         int newHealth = [thePlayer spellTarget].health;
         [thePlayer.logger logEvent:[CombatEvent eventWithSource:thePlayer target:[thePlayer spellTarget] value:[NSNumber numberWithInt:newHealth - currentTargetHealth] andEventType:CombatEventTypeHeal]]; 
 		[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
+        [self applyEffectToTarget:thePlayer.spellTarget];
 	}
 	else if ([self targets] > 1){
 		int limit = [self targets];
@@ -111,6 +118,7 @@
 				[currentTarget setHealth:[[thePlayer spellTarget] health] + ([self healingAmount]*PercentageThisTarget)];
                 int newTargetHealth = currentTarget.health;
                 [thePlayer.logger logEvent:[CombatEvent eventWithSource:thePlayer target:currentTarget value:[NSNumber numberWithInt:newTargetHealth - currentTargetHealth] andEventType:CombatEventTypeHeal]]; 
+                [self applyEffectToTarget:currentTarget];
 			}
 			
 		}
@@ -154,12 +162,6 @@
 	if ([spellAudioData interruptedTitle] != nil){
 		[ac playTitle:[spellAudioData interruptedTitle]];
 	}
-}
-
-
-+(Spell*)spellFromTitle:(NSString*)ttle
-{	
-	return nil;
 }
 @end
 
@@ -218,19 +220,15 @@
     Regrow *regrow = [[Regrow alloc] initWithTitle:@"Regrow" healAmnt:0 energyCost:90 castTime:0.0 andCooldown:2.5];
     [regrow setDescription:@"Heals for a large amount over 12 seconds."];
     [[regrow spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
-    return [regrow autorelease];
-}
-
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime
-{
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+    
     RepeatedHealthEffect *hotEffect = [[RepeatedHealthEffect alloc] initWithDuration:12.0 andEffectType:EffectTypePositive];
     [hotEffect setSpriteName:@"healing_default.png"];
     [hotEffect setTitle:@"regrow-effect"];
     [hotEffect setNumOfTicks:4];
     [hotEffect setValuePerTick:13];
-    [[thePlayer spellTarget] addEffect:hotEffect];
+    [regrow setAppliedEffect:hotEffect];
     [hotEffect release];
+    return [regrow autorelease];
 }
 
 @end
@@ -242,20 +240,9 @@
 	[[bulwark spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicCasting" ofType:@"wav"]] andTitle:@"BWStart"];
 	[[bulwark spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicFizzle" ofType:@"wav"]] andTitle:@"BWFizzle"];
 	[[bulwark spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerInstantShield" ofType:@"wav"]] andTitle:@"BWFinish"];
+    [bulwark setAppliedEffect:[BulwarkEffect defaultEffect]];
 	return [bulwark autorelease];
 }
-
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime
-{
-    if (![[thePlayer spellTarget].activeEffects containsObject:[BulwarkEffect defaultEffect]]){
-        [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
-        [[thePlayer spellTarget] addEffect:[BulwarkEffect defaultEffect]];
-        [thePlayer setEnergy:[thePlayer energy] - [self energyCost]];	
-    }else{
-        [theBoss.announcer errorAnnounce:@"That target already has a Barrier."];
-    }
-}
-
 @end
 
 
@@ -289,19 +276,15 @@
     [[orbs spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[orbs spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
 	[[orbs spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
-    return [orbs autorelease];
-}
-
--(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
-    
     ReactiveHealEffect *rhe = [[ReactiveHealEffect alloc] initWithDuration:20.0 andEffectType:EffectTypePositive];
     [rhe setTitle:@"orbs-of-light-effect"];
     [rhe setMaxStacks:1];
     [rhe setSpriteName:@"healing_default.png"];
     [rhe setAmountPerReaction:20];
-    [thePlayer.spellTarget addEffect:rhe];
+    [orbs setAppliedEffect:rhe];
     [rhe     release];
+    
+    return [orbs autorelease];
 }
 
 @end
@@ -311,21 +294,16 @@
     SwirlingLight *swirl = [[SwirlingLight alloc] initWithTitle:@"Swirling Light" healAmnt:0 energyCost:40 castTime:0.0 andCooldown:2.0];
     [swirl setDescription:@"Heals a target over 10 seconds.  Each additional stack improves all the healing of all stacks."];
 	[[swirl spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
-    return [swirl autorelease];
-}
-
--(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
     SwirlingLightEffect *sle = [[SwirlingLightEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];
     [sle setMaxStacks:4];
     [sle setSpriteName:@"healing_default.png"];
     [sle setTitle:@"swirling-light-effect"];
     [sle setNumOfTicks:10];
     [sle setValuePerTick:2];
-    [thePlayer.spellTarget addEffect:sle];
+    [swirl setAppliedEffect:sle];
     [sle release];
+    return [swirl autorelease];
 }
-
 @end
 
 @implementation  LightEternal

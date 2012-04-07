@@ -10,11 +10,9 @@
 #import "PersistantDataManager.h"
 #import "PreBattleScene.h"
 #import "HealerStartScene.h"
+#import "Encounter.h"
+
 @interface QuickPlayScene ()
-@property (retain) CCMenuItemLabel *easyModeButton;
-@property (retain) CCMenuItemLabel *mediumModeButton;
-@property (retain) CCMenuItemLabel *hardModeButton;
-@property (retain) CCMenuItemLabel *extremeModeButton;
 @property (retain) CCMenu *menu;
 
 -(void)beginGameWithSelectedLevel:(id)sender;
@@ -24,10 +22,6 @@
 @end
 
 @implementation QuickPlayScene
-@synthesize easyModeButton;
-@synthesize mediumModeButton;
-@synthesize hardModeButton;
-@synthesize extremeModeButton;
 @synthesize menu;
 -(id)init{
     if (self = [super init]){
@@ -68,176 +62,23 @@
         return;
     }
     
-    Raid *basicRaid = nil;
-    Player *basicPlayer = nil;
-    Boss *basicBoss = nil;
-    
-    if (level == 1){
-        basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-        basicBoss = [Ghoul defaultBoss];
-        
-        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], nil]];
-        
-        for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-
+    Encounter *encounter = [Encounter encounterForLevel:level isMultiplayer:NO];
+    Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+    NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
+    for (Spell *spell in encounter.activeSpells){
+        [activeSpells addObject:[[spell class] defaultSpell]];
     }
+    [basicPlayer setActiveSpells:(NSArray*)activeSpells];
     
-    if (level == 2){
-        basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-        basicBoss = [CorruptedTroll defaultBoss];
-        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], nil]];
+    if (encounter.boss && basicPlayer && encounter.raid){
         
-        for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Guardian defaultGuardian]];
-        }
-    }
-    
-    if (level == 3){
-        basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-        basicBoss = [Drake defaultBoss];
-        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil]];
-        
-        for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Wizard defaultWizard]];
-        }
-        for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Guardian  defaultGuardian]];
-        }
-        for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
-        }
-    }
-    
-    if (level == 4){
-        basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-        basicBoss = [Trulzar defaultBoss];
-        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Purify defaultSpell], nil]];
-        
-        for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Guardian defaultGuardian]];
-        }
-        for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
-        }
-        for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Wizard defaultWizard]];
-        }
-    }
-    
-    if (level == 5){
-        basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-        basicBoss = [DarkCouncil defaultBoss];
-        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell],[Purify defaultSpell], [Regrow defaultSpell], nil]];
-        
-        for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Guardian defaultGuardian]];
-        }
-        for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Wizard defaultWizard]];
-        }
-        for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
-        }
-    }
-    
-    if (level == 6){
-        basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-        basicBoss = [PlaguebringerColossus defaultBoss];
-        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [ForkedHeal defaultSpell], [Regrow defaultSpell], nil]];
-        
-        for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Champion defaultChampion]];
-        }
-        for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
-        }
-        for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Wizard defaultWizard]];
-        }
-        for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Guardian defaultGuardian]];
-        }
-    }
-    
-    if (level == 7){
-        basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-        basicBoss = [SporeRavagers defaultBoss];
-        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [HealingBurst defaultSpell], [Regrow defaultSpell], nil]];
-        
-        for (int i = 0; i < 7; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Champion defaultChampion]];
-        }
-        for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Guardian defaultGuardian]];
-        }
-        for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Wizard defaultWizard]];
-        }
-        for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
-        }
-    }
-    
-    if (level == 8){
-        basicRaid = [[Raid alloc] init];
-        basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-        basicBoss = [MischievousImps defaultBoss];
-        [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [Barrier defaultSpell], [HealingBurst defaultSpell], [Purify defaultSpell], nil]];
-        
-        for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Champion defaultChampion]];
-        }
-        for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Guardian defaultGuardian]];
-        }
-        for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Wizard defaultWizard]];
-        }
-        for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
-        }
-    }
-    
-    if (basicBoss && basicPlayer && basicRaid){
-        
-        PreBattleScene *pbs = [[PreBattleScene alloc] initWithRaid:basicRaid boss:basicBoss andPlayer:basicPlayer];
+        PreBattleScene *pbs = [[PreBattleScene alloc] initWithRaid:encounter.raid boss:encounter.boss andPlayer:basicPlayer];
         [pbs setLevelNumber:level];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:pbs]];
         [pbs release];
 
     }
     [basicPlayer release];
-    [basicRaid release];
 }
 
 -(void)back

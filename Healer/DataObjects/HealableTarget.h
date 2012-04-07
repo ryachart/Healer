@@ -18,6 +18,7 @@
 	NSMutableArray *activeEffects;
 	NSMutableArray *healthAdjustmentModifiers;
 }
+@property (nonatomic, retain) NSString* battleID;
 @property (nonatomic, setter=setHealth:) NSInteger health;
 @property NSInteger maximumHealth;
 @property (readonly) NSMutableArray *activeEffects;

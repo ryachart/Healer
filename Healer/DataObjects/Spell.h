@@ -13,6 +13,7 @@
 @class Boss;
 @class Raid;
 @class Player;
+@class Effect;
 
 @interface Spell : NSObject {
 	float castTime;
@@ -33,9 +34,8 @@
 }
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd;
 +(id)defaultSpell;
-+(Spell*)spellFromTitle:(NSString*)ttle;
 @property (readonly, retain) NSString *title;
-@property (readonly, retain) NSString* spellID;
+@property (nonatomic, readonly, retain) NSString* spellID;
 @property (nonatomic, readwrite) NSInteger healingAmount;
 @property NSInteger energyCost;
 @property float castTime;
@@ -45,6 +45,7 @@
 @property (retain, readonly) SpellAudioData *spellAudioData;
 @property (nonatomic, readwrite) float cooldownRemaining;
 @property (nonatomic, readwrite) float cooldown;
+@property (nonatomic, retain) Effect* appliedEffect;
 -(SpellCardView*)spellCardView;
 -(NSString*)spellDescription;
 -(BOOL)isInstant;

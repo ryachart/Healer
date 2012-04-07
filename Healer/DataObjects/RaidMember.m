@@ -20,7 +20,6 @@
 @synthesize title;
 @synthesize dodgeChance;
 @synthesize info;
-@synthesize battleID;
 -(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq
 {
     if (self = [super init]){
@@ -96,16 +95,31 @@
 
 
 -(NSString*)asNetworkMessage{
-    NSString* message = [NSString stringWithFormat:@"RDMBR|%@|%i|%i|", self.battleID, self.health, self.isFocused];
+    NSMutableString* message = [NSMutableString stringWithFormat:@"RDMBR|%@|%i|%i|", self.battleID, self.health, self.isFocused];
+    for (Effect*effect in self.activeEffects){
+        [message appendFormat:@"#%@", effect.asNetworkMessage];
+    }
     return message;
 }
 -(void)updateWithNetworkMessage:(NSString*)message{
-    NSArray*components = [message componentsSeparatedByString:@"|"];
+    NSArray* effectComponents = [message componentsSeparatedByString:@"#"];
+    
+    NSArray* components = [[effectComponents objectAtIndex:0] componentsSeparatedByString:@"|"];
     
     NSInteger healthFromMessage = [[components objectAtIndex:2] intValue];
     if (healthFromMessage >= 0 && healthFromMessage <= self.maximumHealth){
         self.health = healthFromMessage;
     }
+    
+    NSMutableArray *effects = [NSMutableArray arrayWithCapacity:5];
+    for (int i = 1; i < effectComponents.count; i++){
+        Effect *networkEffect = [[Effect alloc] initWithNetworkMessage:[effectComponents objectAtIndex:i]];
+        [networkEffect setTarget:self];
+        [effects addObject:networkEffect];
+        [networkEffect release];
+    }
+    [activeEffects release];
+    activeEffects = [effects retain];
     
     BOOL focused = [[components objectAtIndex:3] boolValue];
     

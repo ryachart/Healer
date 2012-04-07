@@ -26,6 +26,15 @@
 	return self;
 }
 
+-(id)copy{
+    Effect *copied = [[[self class] alloc] initWithDuration:self.duration andEffectType:self.effectType];
+    copied.maxStacks = self.maxStacks;
+    copied.spriteName = self.spriteName;
+    copied.title = self.title;
+    
+    return copied;
+}
+
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
 	if (self.timeApplied != 0.0 && !isExpired)
@@ -54,11 +63,33 @@
 -(void)expire{
 
 }
+//EFF|TARGET|TITLE|DURATION|TYPE|SPRITENAME
+-(NSString*)asNetworkMessage{
+    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName];
+    
+    return message;
+}
+-(id)initWithNetworkMessage:(NSString*)message{
+    NSArray *messageComponents = [message componentsSeparatedByString:@"|"];
+    if (self = [self initWithDuration:[[messageComponents objectAtIndex:2] doubleValue] andEffectType:[[messageComponents objectAtIndex:4] intValue]]){
+        self.title = [messageComponents objectAtIndex:1];
+        self.timeApplied = [[messageComponents objectAtIndex:3] doubleValue];
+        self.spriteName = [messageComponents objectAtIndex:5];
+    }
+    return self;
+}
 @end
 
 @implementation RepeatedHealthEffect
 
 @synthesize numOfTicks, valuePerTick;
+
+-(id)copy{
+    RepeatedHealthEffect *copy = [super copy];
+    [copy setNumOfTicks:self.numOfTicks];
+    [copy setValuePerTick:self.valuePerTick];
+    return copy;
+}
 
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
@@ -90,6 +121,12 @@
 @implementation ShieldEffect
 @synthesize amountToShield;
 
+-(id)copy{
+    ShieldEffect *copy = [super copy];
+    [copy setAmountToShield:self.amountToShield];
+    return copy;
+}   
+
 -(void)willChangeHealthFrom:(NSInteger*)currentHealth toNewHealth:(NSInteger*)newHealth
 {
 	if (*newHealth >= *currentHealth)
@@ -118,6 +155,12 @@
 @implementation ReactiveHealEffect
 @synthesize amountPerReaction;
 
+-(id)copy{
+    ReactiveHealEffect *copy = [super copy];
+    [copy setAmountPerReaction:self.amountPerReaction];
+    return copy;
+}
+
 -(void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
     
 }
@@ -130,6 +173,11 @@
 
 @implementation  DelayedHealthEffect
 @synthesize value;
+-(id)copy{
+    DelayedHealthEffect *copy = [super copy];
+    [copy setValue:self.value];
+    return copy;
+}
 -(void)expire{
     [self.target setHealth:self.target.health + self.value];
     [super expire];

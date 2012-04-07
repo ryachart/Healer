@@ -16,6 +16,7 @@
 #import "GamePlayPauseLayer.h"
 #import "CCShakeScreen.h"
 #import "ParticleSystemCache.h"
+#import "Encounter.h"
 
 
 #define NETWORK_THROTTLE 5
@@ -53,6 +54,13 @@
 @synthesize paused;
 @synthesize pauseMenuLayer;
 @synthesize match, isClient, isServer, players, networkThrottle;
+
+-(id)initWithEncounter:(Encounter*)enc andPlayers:(NSArray*)plyers{
+    if (self = [self initWithRaid:enc.raid boss:enc.boss andPlayers:plyers]){
+
+    }
+    return self;
+}
 
 -(id)initWithRaid:(Raid *)raidToUse boss:(Boss *)bossToUse andPlayers:(NSArray *)plyrs{
     if (self = [self initWithRaid:raidToUse boss:bossToUse andPlayer:(Player*)[plyrs objectAtIndex:0]]){
@@ -562,6 +570,8 @@
             }
             self.networkThrottle = 0;
         }
+    }else{
+        
     }
     //The player's simulation must continue...This might not work
     [player combatActions:boss theRaid:raid gameTime:deltaT];

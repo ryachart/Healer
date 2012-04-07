@@ -12,6 +12,7 @@
 
 @implementation HealableTarget
 @synthesize health, maximumHealth, activeEffects, isFocused;
+@synthesize battleID;
 
 -(void)setHealth:(NSInteger)newHealth
 {

@@ -41,6 +41,10 @@ typedef enum {
 
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta;
 -(void)expire;
+
+//Multiplayer
+-(NSString*)asNetworkMessage;
+-(id)initWithNetworkMessage:(NSString*)message;
 @end
 
 @protocol HealthAdjustmentModifier

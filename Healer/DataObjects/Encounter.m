@@ -7,199 +7,181 @@
 //
 
 #import "Encounter.h"
-#import "PersistantDataManager.h"
-#import "DataDefinitions.h"
+#import "Player.h"
+#import "Raid.h"
+#import "RaidMember.h"
+#import "Boss.h"
+#import "Spell.h"
 
 @implementation Encounter
-
-@synthesize title, description, numWitches, numTrolls, numOgres, theBoss, raidSize;
-
--(void)characterDidCompleteEncounter
-{
-	PersistantDataManager *dataMan = [PersistantDataManager sharedInstance];
-	[[dataMan selectedCharacter] addNewEncounterCompleted:self];
-	[self grantRewardToCharacter:[dataMan selectedCharacter]];
-	[dataMan saveData];
-}
-
--(void)grantRewardToCharacter:(Character*)charac{
-	
-}
-
--(id)initWithTitle:(NSString*)ttle RaidSize:(NSInteger)raidSze witches:(NSInteger)witch ogres:(NSInteger)ogre trolls:(NSInteger)troll andBoss:(Boss*)boss
-{
-	if (self = [super init]){
-		title = ttle;
-		raidSize = raidSze;
-		numWitches = witch;
-		numOgres = ogre;
-		numTrolls = troll;
-		theBoss = boss;
-	
-		description = @"No Description";
-	}
-	
-	return self;
-}
-
-+(id)defaultEncounter{
-	return [[[Encounter alloc] init] autorelease];
-}
-
-+(Encounter*)encounterForTitle:(NSString*)ttle
-{
-	if ([ttle isEqualToString:@"Ritualist Intro Encounter"]){
-		return [RitualistIntroEncounter defaultEncounter];
-	}
-	
-	if ([ttle isEqualToString:@"Seer Intro Encounter"]){
-		return [SeerIntroEncounter defaultEncounter];
-	}
-	
-	if ([ttle isEqualToString:@"Shaman Intro Encounter"]){
-		return [ShamanIntroEncounter defaultEncounter];
-	}
-	
-	if ([ttle isEqualToString:@"Fiery Demon Encounter"]){
-		return [FieryDemonEncounter defaultEncounter];
-	}
-	
-	if ([ttle isEqualToString:@"Bringer Of Evil Encounter"]){
-		return [BringerOfEvilEncounter defaultEncounter];
-	}
-	
-	return nil;
-	
-}
-
-+(Encounter*)nextEncounterForRitualist:(NSString*)currentEncounterTitle
-{
-	NSArray *ritualistEncounterOrder = 
-		[NSArray arrayWithObjects:[RitualistIntroEncounter defaultEncounter],[FieryDemonEncounter defaultEncounter], [BringerOfEvilEncounter defaultEncounter],nil];
-	
-	if ([currentEncounterTitle isEqualToString:@"VoidEnc"]){
-		return [ritualistEncounterOrder objectAtIndex:0];
-	}
-	
-	for (int i = 0; i < [ritualistEncounterOrder count]; i++){
-		Encounter *encounter = [ritualistEncounterOrder objectAtIndex:i];
-		if ([[encounter title] isEqualToString:currentEncounterTitle] && i != [ritualistEncounterOrder count]-1){
-			return [ritualistEncounterOrder objectAtIndex:i+1];
-		}
-	}
-	return nil;
-	
-}
-+(Encounter*)nextEncounterForShaman:(NSString*)currentEncounterTitle
-{
-	NSArray *shamanEncounterOrder = 
-	[NSArray arrayWithObjects:[ShamanIntroEncounter defaultEncounter], [FieryDemonEncounter defaultEncounter], [BringerOfEvilEncounter defaultEncounter], nil];
-	
-	if ([currentEncounterTitle isEqualToString:@"VoidEnc"]){
-		return [shamanEncounterOrder objectAtIndex:0];
-	}
-	
-	for (int i = 0; i < [shamanEncounterOrder count]; i++){
-		Encounter *encounter = [shamanEncounterOrder objectAtIndex:i];
-		if ([[encounter title] isEqualToString:currentEncounterTitle] && i != [shamanEncounterOrder count]-1){
-			NSLog(@"returning %@", [[shamanEncounterOrder objectAtIndex:i+1] title]);
-			return [shamanEncounterOrder objectAtIndex:i+1];
-		}
-	}
-	return nil;
-}
-+(Encounter*)nextEncounterForSeer:(NSString*)currentEncounterTitle
-{
-	NSArray *seerEncounterOrder = 
-	[NSArray arrayWithObjects:[SeerIntroEncounter defaultEncounter], [FieryDemonEncounter defaultEncounter], [BringerOfEvilEncounter defaultEncounter],nil];
-	
-	if ([currentEncounterTitle isEqualToString:@"VoidEnc"]){
-		return [seerEncounterOrder objectAtIndex:0];
-	}
-	
-	for (int i = 0; i < [seerEncounterOrder count]; i++){
-		Encounter *encounter = [seerEncounterOrder objectAtIndex:i];
-		if ([[encounter title] isEqualToString:currentEncounterTitle] && i != [seerEncounterOrder count]-1){
-			return [seerEncounterOrder objectAtIndex:i+1];
-		}
-	}
-	return nil;
-}
-
-+(Encounter*)nextEncounter:(NSArray*)completedEncounters andClass:(NSString*)characterClass
-{
-	NSString *furthestEncounter = [completedEncounters objectAtIndex:[completedEncounters count]-1];
-	if ([characterClass isEqualToString:CharacterClassRitualist]){
-		return [Encounter nextEncounterForRitualist:furthestEncounter];
-	}
-	if ([characterClass isEqualToString:CharacterClassSeer]){
-		return [Encounter nextEncounterForSeer:furthestEncounter];
-	}
-	if ([characterClass isEqualToString:CharacterClassShaman]){
-		return [Encounter nextEncounterForShaman:furthestEncounter];
-	}
-	return nil;
+@synthesize raid, boss, activeSpells;
+-(id)initWithRaid:(Raid*)rd andBoss:(Boss*)bs andSpells:(NSArray*)sps{
+    if (self = [super init]){
+        self.raid = rd;
+        self.boss = bs;
+        self.activeSpells  = sps;
+    }
+    return self;
 }
 
 
-@end
-
-
-@implementation RitualistIntroEncounter
-+(id)defaultEncounter
-{
-	RitualistIntroEncounter *alchIntroEnc = [[RitualistIntroEncounter alloc] initWithTitle:@"Ritualist Intro Encounter" RaidSize:10 witches:4 ogres:4 trolls:4 andBoss:[MinorDemon defaultBoss]];
-	[alchIntroEnc setDescription:@"For many weeks now, a Minor Demon has been terrorizing your encampment.  Finally, a small force has come together to annihilate this threat once and for all."];
-	return [alchIntroEnc autorelease];
-}
-@end
-
-@implementation SeerIntroEncounter
-+(id)defaultEncounter
-{
-	SeerIntroEncounter *seerIntroEnc = [[SeerIntroEncounter alloc] initWithTitle:@"Seer Intro Encounter" RaidSize:10 witches:4 ogres:4 trolls:4 andBoss:[MinorDemon defaultBoss]];
-	[seerIntroEnc setDescription:@"For many weeks now, a Minor Demon has been terrorizing your encampment.  Finally, a small force has come together to annihilate this threat once and for all."];
-	return [seerIntroEnc autorelease];
-}
--(void)grantRewardToCharacter:(Character*)charac{
-	[charac addNewSpell:[Bulwark defaultSpell]];
-}
-@end
-
-@implementation ShamanIntroEncounter
-+(id)defaultEncounter
-{
-	ShamanIntroEncounter *shamanIntroEnc = [[ShamanIntroEncounter alloc] initWithTitle:@"Shaman Intro Encounter" RaidSize:10 witches:4 ogres:4 trolls:4 andBoss:[MinorDemon defaultBoss]];
-	[shamanIntroEnc setDescription:@"For many weeks now, a Minor Demon has been terrorizing your encampment.  Finally, a small force has come together to annihilate this threat once and for all."];
-	return [shamanIntroEnc autorelease];
-}
--(void)grantRewardToCharacter:(Character*)charac{
-	[charac	addNewSpell:[WoundWeaving defaultSpell]];
-}
-@end
-
-@implementation FieryDemonEncounter
-+(id)defaultEncounter
-{
-	FieryDemonEncounter *fieryDemonEnc = [[FieryDemonEncounter alloc] initWithTitle:@"Fiery Demon Encounter" RaidSize:15 witches:6 ogres:6 trolls:6 andBoss:[FieryDemon defaultBoss]];
-	[fieryDemonEnc setDescription:@"After defeating the minor demom, a small flame began to grow until the demon was reborn in flames.  Additional reinforcements have rushed to your aid and a new power has ignited inside you."];
-	return [fieryDemonEnc autorelease];
-}
--(void)grantRewardToCharacter:(Character *)charac{
-	if ([[charac characterClass] isEqualToString:CharacterClassShaman]){
-		[charac addNewSpell:[SurgingGrowth defaultSpell]];
-	}
-	if ([[charac characterClass] isEqualToString:CharacterClassSeer]){
-		[charac addNewSpell:[EtherealArmor defaultSpell]];
-	}
-}
-@end
-
-@implementation BringerOfEvilEncounter
-+(id)defaultEncounter
-{
-	BringerOfEvilEncounter *boeEnc = [[BringerOfEvilEncounter alloc] initWithTitle:@"Bringer Of Evil Encounter" RaidSize:25 witches:10 ogres:10 trolls:10 andBoss:[BringerOfEvil defaultBoss]];
-	[boeEnc setDescription:@"With a full army with you, you must engage the source of these demons....The Bringer of Evil himself"];
-	return [boeEnc autorelease];
++(Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer{
+    Raid *basicRaid = nil;
+    Boss *basicBoss = nil;
+    NSMutableArray *spells = [NSMutableArray arrayWithCapacity:4];
+    if (level == 1){
+        basicRaid = [[Raid alloc] init];
+        basicBoss = [Ghoul defaultBoss];
+        
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], nil];
+        
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+        }
+        
+    }
+    
+    if (level == 2){
+        basicRaid = [[Raid alloc] init];
+        basicBoss = [CorruptedTroll defaultBoss];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], nil];
+        
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Guardian defaultGuardian]];
+        }
+    }
+    
+    if (level == 3){
+        basicRaid = [[Raid alloc] init];
+        basicBoss = [Drake defaultBoss];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
+        
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Guardian  defaultGuardian]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+        }
+    }
+    
+    if (level == 4){
+        basicRaid = [[Raid alloc] init];
+        basicBoss = [Trulzar defaultBoss];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Purify defaultSpell], nil];
+        
+        for (int i = 0; i < 4; i++){
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Guardian defaultGuardian]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+    }
+    
+    if (level == 5){
+        basicRaid = [[Raid alloc] init];
+        basicBoss = [DarkCouncil defaultBoss];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell],[Purify defaultSpell], [Regrow defaultSpell], nil];
+        
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Guardian defaultGuardian]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 4; i++){
+            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+        }
+    }
+    
+    if (level == 6){
+        basicRaid = [[Raid alloc] init];
+        basicBoss = [PlaguebringerColossus defaultBoss];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [ForkedHeal defaultSpell], [Regrow defaultSpell], nil];
+        
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+        }
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
+        }
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Guardian defaultGuardian]];
+        }
+    }
+    
+    if (level == 7){
+        basicRaid = [[Raid alloc] init];
+        basicBoss = [SporeRavagers defaultBoss];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [HealingBurst defaultSpell], [Regrow defaultSpell], nil];
+        
+        for (int i = 0; i < 7; i++){
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+        }
+        for (int i = 0; i < 4; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Guardian defaultGuardian]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+        }
+    }
+    
+    if (level == 8){
+        basicRaid = [[Raid alloc] init];
+        basicBoss = [MischievousImps defaultBoss];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [Barrier defaultSpell], [HealingBurst defaultSpell], [Purify defaultSpell], nil];
+        
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Guardian defaultGuardian]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+        }
+    }
+    
+    if (!basicBoss || !basicRaid){
+        return nil;
+    }
+    
+    return [[[Encounter alloc] initWithRaid:[basicRaid autorelease] andBoss:basicBoss andSpells:spells] autorelease];
+    
 }
 @end

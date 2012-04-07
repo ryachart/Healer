@@ -31,7 +31,6 @@
 }
 @property (nonatomic, retain) NSString* title;
 @property (nonatomic, retain) NSString* info;
-@property (nonatomic, retain) NSString* battleID;
 @property (nonatomic,  readwrite) NSInteger damageDealt; //All RaidMembers deal some damage
 @property (readwrite) float lastAttack;
 @property (readwrite) float dodgeChance;

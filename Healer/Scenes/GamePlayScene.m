@@ -404,6 +404,10 @@
     }], nil] ];
 }
 -(void)displayPartcileSystemOnRaidWithName:(NSString*)name{
+    if (self.isServer){
+        NSString* networkMessage = [NSString stringWithFormat:@"STMON|%@", name];
+        [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
+    }
     CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
     CGPoint destination = ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height /2));
     [collisionEffect setPosition:destination];
@@ -676,6 +680,10 @@
         
         if ([message hasPrefix:@"STMOVER|"]){
             [self displayPartcileSystemOverRaidWithName:[message substringFromIndex:8]];
+        }
+        
+        if ([message hasPrefix:@"STMON|"]){
+            [self displayPartcileSystemOnRaidWithName:[message substringFromIndex:6]];
         }
     }
     

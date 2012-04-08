@@ -9,9 +9,12 @@
 #import "cocos2d.h"
 #import <GameKit/GameKit.h>
 
+@class Encounter;
+
 @interface MultiplayerSetupScene : CCScene <GKMatchDelegate>
 @property (nonatomic, retain) GKMatch *match;
 @property (nonatomic, retain) NSString* serverPlayerID;
+@property (nonatomic, retain) Encounter *selectedEncounter;
 
 -(BOOL)isServer;
 

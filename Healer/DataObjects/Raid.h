@@ -22,7 +22,6 @@
 -(void)addRaidMember:(RaidMember*)member;
 -(NSArray*)getAliveMembers;
 
--(NSInteger)classCount:(NSString*)classToCount;
 -(RaidMember*)randomLivingMember;
 
 //Multiplayer

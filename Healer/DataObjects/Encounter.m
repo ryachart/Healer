@@ -178,9 +178,11 @@
     }
     
     if (!basicBoss || !basicRaid){
+        [basicRaid release];
         return nil;
     }
     
+    basicBoss.isMultiplayer = multiplayer;
     return [[[Encounter alloc] initWithRaid:[basicRaid autorelease] andBoss:basicBoss andSpells:spells] autorelease];
     
 }

@@ -11,6 +11,7 @@
 #import "Player.h"
 #import "Boss.h"
 #import "Spell.h"
+#import "Encounter.h"
 #import "GamePlayScene.h"
 #import <GameKit/GameKit.h>
 #import <AVFoundation/AVFoundation.h>
@@ -19,16 +20,17 @@
 @property (nonatomic, retain) Raid *raid;
 @property (nonatomic, retain) Boss *boss;
 @property (nonatomic, assign) CCMenu *menu;
+@property (nonatomic, assign) CCMenu *encounterSelectMenu;
 @property (nonatomic, assign) CCMenuItemLabel *beginButton;
 
 -(void)beginGame;
-
+-(void)encounterSelected:(id)sender;
 -(void)generateRaidMemberFromServerWithClass:(NSString*)className andBattleID:(NSString*)battleID;
 @end
 
 @implementation MultiplayerSetupScene
 @synthesize match, serverPlayerID;
-@synthesize menu, beginButton, raid, boss;
+@synthesize menu, beginButton, raid, boss, selectedEncounter, encounterSelectMenu;
 
 #pragma mark GKMatchDelegate
 
@@ -39,11 +41,25 @@
         [self.beginButton setOpacity:111];
         [self.beginButton setIsEnabled:NO];
         
+        self.encounterSelectMenu = [CCMenu menuWithItems:nil];
+        for (int i = 0; i < 8; i++){
+            Encounter *encounter = [Encounter encounterForLevel:i+1 isMultiplayer:YES];
+            CCMenuItemLabel *levelButton = [[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:[NSString stringWithFormat:@"%@", encounter.boss.title] fontName:@"Arial" fontSize:32] target: self selector:@selector(encounterSelected:)];
+            levelButton.tag = i +1;
+            [levelButton setOpacity:125];
+            levelButton.isEnabled = NO;
+            [self.encounterSelectMenu addChild:levelButton];
+        }
+        [self.encounterSelectMenu setPosition:ccp([CCDirector sharedDirector].winSize.width /2, [CCDirector sharedDirector].winSize.height / 2)];
+        [self.encounterSelectMenu setColor:ccc3(255, 255, 255)];
+        [self.encounterSelectMenu alignItemsInRows:[NSNumber numberWithInt:8]/*,[NSNumber numberWithInt:10]*/, nil];
+        [self addChild:self.encounterSelectMenu];
+        
         self.menu = [CCMenu menuWithItems:self.beginButton, nil];
         
         CGSize winSize = [CCDirector sharedDirector].winSize;
         
-        [self.menu setPosition:ccp(winSize.width * .5, winSize.height * 1/3)];
+        [self.menu setPosition:ccp(winSize.width * .8, winSize.height * .2)];
         [self.menu setColor:ccc3(255, 255, 255)];
         [self addChild:self.menu];
     }
@@ -51,76 +67,90 @@
 }
 
 -(void)serverAddRaidMember:(RaidMember*)member{
-    int i = self.raid.raidMembers.count;
-    [member setBattleID:[NSString stringWithFormat:@"%@%i", [member class], i]];
-    [self.raid addRaidMember:member];
-    [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ADDRM|%@|%@%i",[member class], [member class], i] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+    if (self.isServer){
+        int i = self.raid.raidMembers.count;
+        [member setBattleID:[NSString stringWithFormat:@"%@%i", [member class], i]];
+        [self.raid addRaidMember:member];
+        [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ADDRM|%@|%@%i",[member class], [member class], i] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+    }
+}
+
+-(void)clientEncounterSelected:(int)level{
+    for (CCMenuItemLabel *child in self.encounterSelectMenu.children){
+        [child setOpacity:125];
+    }
+    [(CCMenuItemLabel*)[self.encounterSelectMenu getChildByTag:level] setOpacity:255];
+    self.selectedEncounter = [Encounter encounterForLevel:level isMultiplayer:YES];
+}
+
+-(void)encounterSelected:(CCMenuItemLabel*)sender{
+    int level = sender.tag;
+    if (self.isServer){
+        for (CCMenuItemLabel *child in self.encounterSelectMenu.children){
+            [child setOpacity:125];
+        }
+        [sender setOpacity:255];
+        self.selectedEncounter = [Encounter encounterForLevel:level isMultiplayer:YES];
+        [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ENCSEL|%i|",level] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+        self.beginButton.isEnabled = YES;
+        [self.beginButton setOpacity:255];
+    }
 }
 
 -(void)beginGame{
-    if (!self.raid){
-        self.raid = [[[Raid alloc] init] autorelease];
-    }
-    Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-    [basicPlayer setPlayerID:[GKLocalPlayer localPlayer].playerID];
-    Boss *basicBoss = [SporeRavagers defaultBoss];
-    [basicBoss setIsMultiplayer:YES];
-    [basicPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [HealingBurst defaultSpell], [Regrow defaultSpell], nil]];
-
-    for (int i = 0; i < 7; i++){
-        if (self.isServer){
-            [self serverAddRaidMember:[Soldier defaultSoldier]]; 
+    if (self.isServer && self.encounterSelectMenu){
+        Player *serverPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+        NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
+        for (Spell *spell in self.selectedEncounter.activeSpells){
+            [activeSpells addObject:[[spell class] defaultSpell]];
         }
-    }
-    for (int i = 0; i < 4; i++){
-        if (self.isServer){
-            [self serverAddRaidMember:[Champion defaultChampion]];
+        [serverPlayer setActiveSpells:(NSArray*)activeSpells];
+        
+        
+        NSMutableArray *totalPlayers = [NSMutableArray arrayWithCapacity:4];
+        [totalPlayers addObject:serverPlayer];
+        [serverPlayer release];
+        
+        for (int i = 0; i < match.playerIDs.count; i++){
+            //Add other players
+            Player *clientPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+            [clientPlayer setPlayerID:[match.playerIDs objectAtIndex:i]];
+            NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
+            for (Spell *spell in self.selectedEncounter.activeSpells){
+                [activeSpells addObject:[[spell class] defaultSpell]];
+            }
+            [clientPlayer setActiveSpells:(NSArray*)activeSpells];
+            [totalPlayers addObject:clientPlayer];
+            [clientPlayer release];
         }
-    }
-    for (int i = 0; i < 3; i++){
-        if (self.isServer){
-            [self serverAddRaidMember:[Guardian defaultGuardian]];
-        }
-    }
-    for (int i = 0; i < 3; i++){
-        if (self.isServer){
-            [self serverAddRaidMember:[Wizard defaultWizard]];
-        }
-    }
-    for (int i = 0; i < 3; i++){
-        if (self.isServer){
-            [self serverAddRaidMember:[Demonslayer defaultDemonslayer]];
-        }
-    }
-    
-    GamePlayScene *gps = nil;
-    
-    if (self.isServer){
-        Player *otherPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-        [otherPlayer setIsAudible:NO];
-        [otherPlayer setActiveSpells:[NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [HealingBurst defaultSpell], [Regrow defaultSpell], nil]];
-        [otherPlayer setPlayerID:[[self.match playerIDs] objectAtIndex:0]];
-        gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:basicBoss andPlayers:[NSArray arrayWithObjects:basicPlayer, otherPlayer, nil]];
-        [otherPlayer release];
-    }else{
-        gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:basicBoss andPlayer:basicPlayer];
-    }
-    if (self.isServer){
+        [match sendDataToAllPlayers:[@"BEGIN" dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+        
+        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.selectedEncounter.raid boss:self.selectedEncounter.boss andPlayers:totalPlayers];
+        [self.match setDelegate:gps];
+        [gps setMatch:self.match];
         [gps setIsServer:YES];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
+        [gps release];
     }else{
-        [gps setIsClient:YES];
+        NSLog(@"SERVER DOESNT HAVE A SELECTED ENCOUNTER");
     }
-
-    [gps setLevelNumber:-1];
-    [self.match setDelegate:gps];
-    [gps setMatch:self.match];
-
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
-    [basicPlayer release];
-    [gps release];
     
-    if (self.isServer){
-        [match sendDataToAllPlayers:[[NSString stringWithFormat:@"BEGIN"] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+    if (!self.isServer && self.encounterSelectMenu){
+        Player *clientPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+        NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
+        for (Spell *spell in self.selectedEncounter.activeSpells){
+            [activeSpells addObject:[[spell class] defaultSpell]];
+        }
+        [clientPlayer setActiveSpells:(NSArray*)activeSpells];
+        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.selectedEncounter.raid boss:self.selectedEncounter.boss andPlayer:clientPlayer];
+        [self.match setDelegate:gps];
+        [gps setMatch:self.match];
+        [gps setIsClient:YES];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
+        [gps release];
+        [clientPlayer release];
+    }else{
+        NSLog(@"CLIENT DOESNT HAVE A SELECTED ENCOUNTER");
     }
 }
 
@@ -164,6 +194,10 @@
         NSString* battleID = [messageComponents objectAtIndex:2];
         [self generateRaidMemberFromServerWithClass:className andBattleID:battleID];
     }
+    
+    if ([message hasPrefix:@"ENCSEL|"]){
+        [self clientEncounterSelected:[[message substringFromIndex:7] intValue]];
+    }
     [message release];
 }
 
@@ -191,11 +225,11 @@
                 GKVoiceChat *voiceChannel = [[theMatch voiceChatWithName:@"mender"] retain];
                 [voiceChannel start];
                 [voiceChannel setActive:YES];
-
                 
                 if (self.isServer){
-                    self.beginButton.isEnabled = YES;
-                    [self.beginButton setOpacity:255];
+                    for (CCMenuItemLabel *child in self.encounterSelectMenu.children){
+                        [child setIsEnabled:YES];
+                    }
                 }
             }
             

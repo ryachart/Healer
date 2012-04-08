@@ -17,6 +17,7 @@
 #import "CCShakeScreen.h"
 #import "ParticleSystemCache.h"
 #import "Encounter.h"
+#import "HealableTarget.h"
 
 
 #define NETWORK_THROTTLE 5
@@ -434,6 +435,10 @@
     [self addChild:collisionEffect z:100];
 }
 -(void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target{
+    if (self.isServer){
+        NSString* networkMessage = [NSString stringWithFormat:@"STMTGT|%@|%@", name, target.battleID];
+        [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
+    }
     CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
     CGPoint destination = [self.raidView frameCenterForMember:target];
     [collisionEffect setPosition:destination];
@@ -680,10 +685,6 @@
             [self announce:[message substringFromIndex:5]];
         }
         
-        if ([message hasPrefix:@"PARTEFF|"]){
-            
-        }
-        
         if ([message hasPrefix:@"PRJEFF|"]){
             [self handleProjectileEffectMessage:message];
         }
@@ -694,6 +695,11 @@
         
         if ([message hasPrefix:@"STMON|"]){
             [self displayPartcileSystemOnRaidWithName:[message substringFromIndex:6]];
+        }
+        
+        if ([message hasPrefix:@"STMTGT|"]){
+            NSArray *components = [message componentsSeparatedByString:@"|"];
+            [self displayParticleSystemWithName:[components objectAtIndex:1] onTarget:[self.raid memberForBattleID:[components objectAtIndex:2]]];
         }
     }
     

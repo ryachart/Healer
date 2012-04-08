@@ -283,14 +283,15 @@
     [super combatActions:player theRaid:theRaid gameTime:timeDelta];
     
     self.lastFireballTime += timeDelta;
-    if (self.lastFireballTime > 4.0){
+    float tickTime = self.isMultiplayer ? 2.0 : 4.0;
+    if (self.lastFireballTime > tickTime){
         [self shootFireballAtTarget:[theRaid randomLivingMember] withDelay:0.0];
         self.lastFireballTime = 0;
     }
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (percentage == 50.0){
+    if (self.isMultiplayer ? (percentage == 75.0 || percentage == 50.0 || percentage == 25.0) : (percentage == 50.0) ){
         int i = 0;
         for (RaidMember *member in raid.raidMembers){
             if (!member.isDead){
@@ -348,7 +349,8 @@
     [super combatActions:player theRaid:theRaid gameTime:timeDelta];
     self.lastPoisonTime += timeDelta;
     
-    if (self.lastPoisonTime > 10){ 
+    float tickTime = self.isMultiplayer ? 6 : 10;
+    if (self.lastPoisonTime > tickTime){ 
         if (self.healthPercentage > 10.0){
             [self.announcer announce:@"Trulzar fills an ally with poison."];
             [[AudioController sharedInstance] playTitle:@"trulzar-laugh"];
@@ -407,7 +409,7 @@
     [self.announcer displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     
-    [fireball setValue:-20];
+    [fireball setValue:self.isMultiplayer ? -30 : -20];
     [target addEffect:fireball];
     [fireball release];
 }
@@ -415,8 +417,8 @@
 -(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
     [super combatActions:player theRaid:theRaid gameTime:timeDelta];
     self.lastPoisonballTime += timeDelta;
-    
-    if (self.lastPoisonballTime > 10){ 
+    NSInteger tickTime = self.isMultiplayer ? 5 : 10;
+    if (self.lastPoisonballTime > tickTime){ 
         for (int i = 0; i < 2; i++){
             [self shootProjectileAtTarget:[theRaid randomLivingMember] withDelay:i * 1];
         }
@@ -439,7 +441,7 @@
 -(void)sickenTarget:(RaidMember *)target{
     ExpiresAtFullHealthRHE *infectedWound = [[ExpiresAtFullHealthRHE alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative];
     [infectedWound setTitle:@"pbc-infected-wound"];
-    [infectedWound setValuePerTick:-2];
+    [infectedWound setValuePerTick: self.isMultiplayer ? -4 : -2];
     [infectedWound setNumOfTicks:15];
     [infectedWound setSpriteName:@"poison.png"];
     if (target.health > target.maximumHealth * .98){
@@ -471,7 +473,8 @@
     [super combatActions:player theRaid:theRaid gameTime:timeDelta];
     
     self.lastSickeningTime += timeDelta;
-    if (self.lastSickeningTime > 15.0){
+    float tickTime = self.isMultiplayer ? 7.0 : 15.0;
+    if (self.lastSickeningTime > tickTime){
         for ( int i = 0; i < 2; i++){
             [self sickenTarget:theRaid.randomLivingMember];
         }
@@ -591,7 +594,7 @@
         for (RaidMember *member in raid.raidMembers){
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:300 andEffectType:EffectTypeNegativeInvisible];
             [rhe setTitle:@"spore-ravager-green-mist"];
-            [rhe setValuePerTick:-1];
+            [rhe setValuePerTick:self.isMultiplayer ? -3 : -1];
             [rhe setNumOfTicks:60];
             [member addEffect:rhe];
             [rhe release];
@@ -677,7 +680,8 @@
     [super combatActions:player theRaid:theRaid gameTime:timeDelta];
     if (self.healthPercentage > 30.0){
         self.lastPotionThrow+=timeDelta;
-        if (self.lastPotionThrow > 12){
+        float tickTime = self.isMultiplayer ? 6.0 : 12.0;
+        if (self.lastPotionThrow > tickTime){
             [self throwPotionToTarget:[theRaid randomLivingMember] withDelay:0.0];
             self.lastPotionThrow = 0.0;
             int throwSound = arc4random() %2 + 1;
@@ -692,7 +696,7 @@
         [self.announcer announce:@"An imp grabs a bundle of vials off of a nearby desk."];
     }
     
-    if (percentage == 50.0){
+    if (percentage == 50.0 || self.isMultiplayer ? percentage == 75.0 : percentage == 50.0){
         for (RaidMember *member in raid.raidMembers){
             if (!member.isDead){
                 [self throwPotionToTarget:member withDelay:0.0];
@@ -705,7 +709,7 @@
     if (percentage == 30.0){
         [self.announcer announce:@"All of the imps angrily pounce on their focused target!"];
         frequency /= 2.0;
-        damage *= .75;
+        damage *= self.isMultiplayer ? 1.05 : .75 ;
     }
 }
 @end

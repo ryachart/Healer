@@ -22,36 +22,6 @@
 	return self;
 }
 
--(NSInteger)classCount:(NSString*)classToCount{
-	NSInteger witchCount = 0;
-	NSInteger ogreCount = 0;
-	NSInteger trollCount = 0;
-	
-	for (RaidMember *member in raidMembers){
-		if ([member class] == [Ogre class]){
-			ogreCount++;
-		}
-		if ([member class] == [Witch class]){
-			witchCount++;
-		}
-		if ([member class] == [Troll class]){
-			trollCount++;
-		}
-	}
-	
-	if ([classToCount isEqualToString:RaidMemberTypeOgre]){
-		return ogreCount;
-	}
-	if ([classToCount isEqualToString:RaidMemberTypeTroll]){
-		return trollCount;
-	}
-	if ([classToCount isEqualToString:RaidMemberTypeWitch]){
-		return witchCount;
-	}
-	
-	return 0;
-}
-
 -(void)addRaidMember:(RaidMember*)member
 {
 	if ([raidMembers count] < MAXIMUM_RAID_MEMBERS_ALLOWED && ![raidMembers containsObject:member]){
@@ -59,6 +29,10 @@
         
         if (member.battleID){
             [self.raidMemberBattleIDDictionary setObject:member forKey:member.battleID];
+        }else{
+            member.battleID = [NSString stringWithFormat:@"%@%i",  NSStringFromClass([member class]), self.raidMembers.count];
+            [self.raidMemberBattleIDDictionary setObject:member forKey:member.battleID];
+
         }
 	}
 }

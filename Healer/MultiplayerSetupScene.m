@@ -114,6 +114,7 @@
         for (int i = 0; i < match.playerIDs.count; i++){
             //Add other players
             Player *clientPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+            [clientPlayer setIsAudible:NO];
             [clientPlayer setPlayerID:[match.playerIDs objectAtIndex:i]];
             NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
             for (Spell *spell in self.selectedEncounter.activeSpells){
@@ -137,6 +138,7 @@
     
     if (!self.isServer && self.encounterSelectMenu){
         Player *clientPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+        [clientPlayer setPlayerID:[GKLocalPlayer localPlayer].playerID];
         NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
         for (Spell *spell in self.selectedEncounter.activeSpells){
             [activeSpells addObject:[[spell class] defaultSpell]];

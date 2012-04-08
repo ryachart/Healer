@@ -45,6 +45,20 @@
 	return self;
 }
 
+-(NSString*)asNetworkMessage{
+    NSString *message = [NSString stringWithFormat:@"PLYR|%@|%i|%i|", self.playerID, self.health, self.energy];
+    return message;
+}
+-(void)updateWithNetworkMessage:(NSString*)message{
+    NSArray *components = [message componentsSeparatedByString:@"|"];
+    if ([self.playerID isEqualToString:[components objectAtIndex:1]]){
+        self.health = [[components objectAtIndex:2] intValue];
+        self.energy = [[components objectAtIndex:3] intValue];
+    }else{
+        NSLog(@"IM BEING UPDATED WITH A DIFFERENT PLAYER OBJECT.");
+    }
+}
+
 -(void)dealloc{
     [_spellsOnCooldown release]; _spellsOnCooldown = nil;
     [additionalTargets release]; additionalTargets = nil;

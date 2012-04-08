@@ -42,7 +42,7 @@
 //This function is overriden by each subtype of RaidMember.
 //It allows a RaidMember to be asked to take any combatActions while the games goes on.
 //It also allows a RaidMember to deal damage.
--(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta;
+-(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid players:(NSArray*)players gameTime:(float)timeDelta;
 
 -(NSString*)asNetworkMessage;
 -(void)updateWithNetworkMessage:(NSString*)message;

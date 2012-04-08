@@ -551,6 +551,12 @@
 
 -(void)gameEvent:(ccTime)deltaT
 {
+    BOOL isNetworkUpdate = NO;
+    self.networkThrottle ++;
+    if (self.networkThrottle >= NETWORK_THROTTLE){
+        isNetworkUpdate = YES;
+        self.networkThrottle = 0;
+    }
     if (self.isServer || (!self.isServer && !self.isClient)){
         //Only perform the simulation if we are not the server
         //Data Events
@@ -565,15 +571,13 @@
     }
     
     if (self.isServer){
-        self.networkThrottle++;
         
-        if (self.networkThrottle >= NETWORK_THROTTLE){
+        if (isNetworkUpdate){
             [match sendDataToAllPlayers:[[NSString stringWithFormat:@"BOSSHEALTH|%i", self.boss.health] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
             
             for (RaidMember *member in self.raid.raidMembers){
                 [match sendDataToAllPlayers:[[member asNetworkMessage] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
             }
-            self.networkThrottle = 0;
         }
     }else{
         
@@ -583,8 +587,14 @@
     
     if (self.isServer){
         for (int i = 1; i < self.players.count; i++){
-            [[self.players objectAtIndex:i] combatActions:boss theRaid:raid gameTime:deltaT];
+            Player *clientPlayer = [self.players objectAtIndex:i];
+            [clientPlayer combatActions:boss theRaid:raid gameTime:deltaT];
+            if (isNetworkUpdate){
+                NSArray *playerToNotify = [NSArray arrayWithObject:clientPlayer.playerID];
+                [self.match sendData:[[clientPlayer asNetworkMessage] dataUsingEncoding:NSUTF8StringEncoding]  toPlayers:playerToNotify withDataMode:GKMatchSendDataReliable error:nil];
+            }
         }
+        
     }
     
 	//Update UI
@@ -608,7 +618,7 @@
     NSInteger survivors = 0;
     for (RaidMember *member in raidMembers)
     {
-        [member combatActions:boss raid:raid thePlayer:player gameTime:deltaT];
+        [member combatActions:boss raid:raid players:self.players gameTime:deltaT];
         if (![member isDead]){
             survivors++;
         }
@@ -671,6 +681,10 @@
     if (self.isClient){
         if ([message hasPrefix:@"BOSSHEALTH|"]){
             self.boss.health = [[message substringFromIndex:11] intValue];
+        }
+        
+        if ([message hasPrefix:@"PLYR"]){
+            [self.player updateWithNetworkMessage:message];
         }
         
         if ([message hasPrefix:@"RDMBR|"]){

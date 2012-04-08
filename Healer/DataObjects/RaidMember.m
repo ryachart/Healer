@@ -85,8 +85,9 @@
     return arc4random() % 100 <= (100 * self.dodgeChance);
 }
 
--(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
+-(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid players:(NSArray*)players gameTime:(float)timeDelta
 {
+    Player *thePlayer = [players objectAtIndex:0];
     lastAttack += timeDelta;
     [self performAttackIfAbleOnTarget:theBoss];
     [self updateEffects:theBoss raid:theRaid player:thePlayer time:timeDelta];
@@ -210,11 +211,14 @@
     return self;
 }
 
--(void)combatActions:(Boss *)theBoss raid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta{
-    [super combatActions:theBoss raid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+-(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid players:(NSArray*)players gameTime:(float)timeDelta
+{
+    [super combatActions:theBoss raid:theRaid players:players gameTime:timeDelta];
     lastEnergyGrant += timeDelta;
     if (lastEnergyGrant > 1.0){
-        [thePlayer setEnergy:thePlayer.energy + 6];
+        for (Player *player in players){
+            [player setEnergy:player.energy + 6];
+        }
         lastEnergyGrant = 0.0;
     }
     

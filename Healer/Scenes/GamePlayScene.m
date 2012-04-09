@@ -90,6 +90,8 @@
         [self.player setLogger:self];
         [self.player setAnnouncer:self];
         
+        self.players = [NSArray arrayWithObject:self.player];
+
         self.eventLog = [NSMutableArray arrayWithCapacity:1000];
         
         self.raidView = [[[RaidView alloc] init] autorelease];

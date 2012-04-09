@@ -64,6 +64,7 @@
 
 @interface Trulzar : Boss
 @property (readwrite) NSTimeInterval lastPoisonTime;
+@property (readwrite) NSTimeInterval lastPotionTime;
 @end
 
 @interface DarkCouncil : Boss

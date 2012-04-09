@@ -44,7 +44,7 @@
     if (level == 2){
         basicRaid = [[Raid alloc] init];
         basicBoss = [CorruptedTroll defaultBoss];
-        spells = [NSArray arrayWithObjects:[Heal defaultSpell], nil];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
         
         for (int i = 0; i < 2; i++){
             [basicRaid addRaidMember:[Soldier defaultSoldier]];
@@ -57,7 +57,7 @@
     if (level == 3){
         basicRaid = [[Raid alloc] init];
         basicBoss = [Drake defaultBoss];
-        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [ForkedHeal defaultSpell], nil];
         
         for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Soldier defaultSoldier]];
@@ -76,7 +76,7 @@
     if (level == 4){
         basicRaid = [[Raid alloc] init];
         basicBoss = [Trulzar defaultBoss];
-        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Purify defaultSpell], nil];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [ForkedHeal defaultSpell], [Purify defaultSpell], nil];
         
         for (int i = 0; i < 4; i++){
             [basicRaid addRaidMember:[Soldier defaultSoldier]];
@@ -95,7 +95,7 @@
     if (level == 5){
         basicRaid = [[Raid alloc] init];
         basicBoss = [DarkCouncil defaultBoss];
-        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell],[Purify defaultSpell], [Regrow defaultSpell], nil];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [ForkedHeal defaultSpell],[Purify defaultSpell], [Regrow defaultSpell], nil];
         
         for (int i = 0; i < 5; i++){
             [basicRaid addRaidMember:[Soldier defaultSoldier]];
@@ -114,7 +114,7 @@
     if (level == 6){
         basicRaid = [[Raid alloc] init];
         basicBoss = [PlaguebringerColossus defaultBoss];
-        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [ForkedHeal defaultSpell], [Regrow defaultSpell], nil];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [SwirlingLight defaultSpell], [LightEternal defaultSpell], [Regrow defaultSpell], nil];
         
         for (int i = 0; i < 5; i++){
             [basicRaid addRaidMember:[Soldier defaultSoldier]];
@@ -136,7 +136,7 @@
     if (level == 7){
         basicRaid = [[Raid alloc] init];
         basicBoss = [SporeRavagers defaultBoss];
-        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [HealingBurst defaultSpell], [Regrow defaultSpell], nil];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [OrbsOfLight defaultSpell], [SwirlingLight defaultSpell], [Regrow defaultSpell], nil];
         
         for (int i = 0; i < 7; i++){
             [basicRaid addRaidMember:[Soldier defaultSoldier]];

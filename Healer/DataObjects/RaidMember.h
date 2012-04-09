@@ -69,27 +69,3 @@
 @interface Berserker : RaidMember
 +(Berserker*)defaultBerserker;
 @end
-#pragma mark - Deprecated
-//Witches deal the most damage but take the most damage
-@interface Witch : RaidMember {
-	
-}
-
-+(Witch*)defaultWitch;
-
-@end
-
-//Trolls deal average damage, but slowly regenerate health by themselves
-@interface Troll : RaidMember{
-		
-}
-+(Troll*)defaultTroll;
-
-@end
-
-//Ogres deal the least damage, but take the least damage.
-@interface Ogre : RaidMember {
-
-}
-+(Ogre*)defaultOgre;
-@end

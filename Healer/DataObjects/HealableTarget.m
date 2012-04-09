@@ -12,10 +12,13 @@
 
 @implementation HealableTarget
 @synthesize health, maximumHealth, activeEffects, isFocused;
-@synthesize battleID;
+@synthesize battleID, hasDied;
 
 -(void)setHealth:(NSInteger)newHealth
 {
+    if (self.hasDied){
+        return;
+    }
 	for (HealthAdjustmentModifier* ham in healthAdjustmentModifiers){
 		[ham willChangeHealthFrom:&health toNewHealth:&newHealth];
 	}
@@ -28,23 +31,29 @@
 	if (health > maximumHealth) {
 		health = maximumHealth;
 	}
+    if (health == 0){
+        self.hasDied = YES;
+    }
 }
 
 -(void)addEffect:(Effect*)theEffect
 {
 	if (activeEffects != nil){
-        int currentStacks = 0;
+        NSMutableArray *similarEffects = [NSMutableArray arrayWithCapacity:theEffect.maxStacks];
 		for (Effect *effectFA in activeEffects){
 			if ([effectFA.title isEqualToString:theEffect.title]){
-                currentStacks++;
+                [similarEffects addObject:effectFA];
 			}
 		}
         
-        if (currentStacks >= theEffect.maxStacks){
+        if (similarEffects.count >= theEffect.maxStacks){
             return;
         }
 		
 		[theEffect setTimeApplied:0.0001];
+        for (Effect *simEffect in similarEffects){
+            [simEffect setTimeApplied:0.0001]; //Refresh the duration of the existing versions of the effects if a second one is applied over.
+        }
 		if ([theEffect conformsToProtocol:@protocol(HealthAdjustmentModifier)]){
 			[self addHealthAdjustmentModifier:(HealthAdjustmentModifier*)theEffect];
 		}

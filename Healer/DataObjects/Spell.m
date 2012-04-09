@@ -42,6 +42,29 @@
     [super dealloc];
     
 }
+
+-(NSArray*)lowestHealthTargets:(NSInteger)numTargets fromRaid:(Raid*)raid withRequiredTarget:(RaidMember*)reqTarget{
+    NSMutableArray *myTargets = [NSMutableArray arrayWithCapacity:numTargets];
+    int aliveMembers = [raid.getAliveMembers count];
+    for (int i = 0; i < MIN(numTargets - (reqTarget ? 1 : 0), aliveMembers); i++){
+        int lowestHealth = 100;
+        RaidMember *candidate = nil;
+        for (RaidMember *member in raid.raidMembers){
+            if ([myTargets containsObject:member] || member == reqTarget || member.isDead)
+                continue;
+            
+            if (member.health < lowestHealth){
+                lowestHealth = member.health;
+                candidate = member;
+            }
+        }
+        [myTargets addObject:candidate];
+    }
+    
+    [myTargets addObject:reqTarget];
+    return myTargets;
+}
+
 +(id)defaultSpell{
 	Spell* def = [[[self class] alloc] initWithTitle:@"DefaultSpell" healAmnt:0 energyCost:0 castTime:0.0 andCooldown:0];
 	return [def autorelease];
@@ -169,7 +192,7 @@
 #pragma mark - Simple Game Spells
 @implementation Heal
 +(id)defaultSpell{
-    Heal *heal = [[Heal alloc] initWithTitle:@"Heal" healAmnt:17 energyCost:30 castTime:1.75 andCooldown:0.0];
+    Heal *heal = [[Heal alloc] initWithTitle:@"Heal" healAmnt:40 energyCost:26 castTime:1.75 andCooldown:0.0];
     [heal setDescription:@"Heals your target for a small amount"];
     [[heal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -181,7 +204,7 @@
 
 @implementation GreaterHeal
 +(id)defaultSpell{
-    GreaterHeal *heal = [[GreaterHeal alloc] initWithTitle:@"Greater Heal" healAmnt:50 energyCost:90 castTime:2.25 andCooldown:2.0];
+    GreaterHeal *heal = [[GreaterHeal alloc] initWithTitle:@"Greater Heal" healAmnt:200 energyCost:90 castTime:2.5 andCooldown:2.0];
     [heal setDescription:@"Heals your target for a large amount"];
     [[heal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -192,7 +215,7 @@
 
 @implementation HealingBurst
 +(id)defaultSpell{
-    HealingBurst *heal = [[HealingBurst alloc] initWithTitle:@"Healing Burst" healAmnt:37 energyCost:90 castTime:1.25 andCooldown:5.0];
+    HealingBurst *heal = [[HealingBurst alloc] initWithTitle:@"Healing Burst" healAmnt:80 energyCost:90 castTime:.5 andCooldown:5.0];
     [heal setDescription:@"Heals your target for a moderate amount very quickly"];
     [[heal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -204,14 +227,34 @@
 @implementation ForkedHeal
 +(id)defaultSpell
 {
-	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:76 energyCost:100 castTime:1.75 andCooldown:.5];//10h/e
-	NSArray *forkedPercentages = [NSArray arrayWithObjects:[[[NSNumber alloc] initWithDouble:.50] autorelease], [[[NSNumber alloc] initWithDouble:.50] autorelease], nil];
-	[forkedHeal setTargets:2 withPercentagesPerTarget:forkedPercentages];
+	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:55 energyCost:100 castTime:1.75 andCooldown:.5];//10h/e
     [forkedHeal setDescription:@"Heals up to two simultaneously selected targets."];
     [[forkedHeal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[forkedHeal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
 	[[forkedHeal spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
 	return [forkedHeal autorelease];
+}
+
+-(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
+    NSArray *myTargets = [self lowestHealthTargets:2 fromRaid:theRaid withRequiredTarget:thePlayer.spellTarget];
+    
+    int i = 0; 
+    for (RaidMember *healableTarget in myTargets){
+        if (i == 0){
+            [healableTarget setHealth:healableTarget.health + self.healingAmount];
+        }else{
+            [healableTarget setHealth:healableTarget.health + (int)round(self.healingAmount * .66)];
+        }
+        i++;
+    }
+    
+    [thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
+    
+    
+    if (self.cooldown > 0.0){
+        [[thePlayer spellsOnCooldown] addObject:self];
+        self.cooldownRemaining = self.cooldown;
+    }
 }
 @end
 
@@ -225,7 +268,7 @@
     [hotEffect setSpriteName:@"healing_default.png"];
     [hotEffect setTitle:@"regrow-effect"];
     [hotEffect setNumOfTicks:4];
-    [hotEffect setValuePerTick:13];
+    [hotEffect setValuePerTick:20];
     [regrow setAppliedEffect:hotEffect];
     [hotEffect release];
     return [regrow autorelease];
@@ -248,7 +291,7 @@
 
 @implementation Purify
 +(id)defaultSpell{
-    Purify *purify = [[Purify alloc] initWithTitle:@"Purify" healAmnt:2 energyCost:40 castTime:0.0 andCooldown:5.0];
+    Purify *purify = [[Purify alloc] initWithTitle:@"Purify" healAmnt:5 energyCost:40 castTime:0.0 andCooldown:5.0];
     [purify setDescription:@"Dispels negative spell effects from allies."];
     [[purify spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
     return [purify autorelease];
@@ -271,16 +314,17 @@
 
 @implementation  OrbsOfLight
 +(id)defaultSpell{
-    OrbsOfLight *orbs = [[OrbsOfLight alloc] initWithTitle:@"Orbs of Light" healAmnt:0 energyCost:80 castTime:1.5 andCooldown:4.0];
+    OrbsOfLight *orbs = [[OrbsOfLight alloc] initWithTitle:@"Orbs of Light" healAmnt:0 energyCost:120 castTime:1.5 andCooldown:4.0];
     [orbs setDescription:@"Heals a target for a moderate amount each time it takes damage."];
     [[orbs spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[orbs spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
 	[[orbs spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
     ReactiveHealEffect *rhe = [[ReactiveHealEffect alloc] initWithDuration:20.0 andEffectType:EffectTypePositive];
     [rhe setTitle:@"orbs-of-light-effect"];
+    [rhe setEffectCooldown:2.0];
     [rhe setMaxStacks:1];
     [rhe setSpriteName:@"healing_default.png"];
-    [rhe setAmountPerReaction:20];
+    [rhe setAmountPerReaction:35];
     [orbs setAppliedEffect:rhe];
     [rhe     release];
     
@@ -299,7 +343,7 @@
     [sle setSpriteName:@"healing_default.png"];
     [sle setTitle:@"swirling-light-effect"];
     [sle setNumOfTicks:10];
-    [sle setValuePerTick:2];
+    [sle setValuePerTick:4];
     [swirl setAppliedEffect:sle];
     [sle release];
     return [swirl autorelease];
@@ -308,7 +352,7 @@
 
 @implementation  LightEternal
 +(id)defaultSpell{
-    LightEternal *le = [[LightEternal alloc] initWithTitle:@"Light Eternal" healAmnt:20 energyCost:120 castTime:2.5 andCooldown:15.0];
+    LightEternal *le = [[LightEternal alloc] initWithTitle:@"Light Eternal" healAmnt:65 energyCost:200 castTime:2.5 andCooldown:15.0];
     [le setDescription:@"Heals up to 5 allies with the least health among allies for a moderate amount"];
     [[le spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[le spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -316,23 +360,7 @@
     return [le autorelease];
 }
 -(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
-    NSMutableArray *myTargets = [NSMutableArray arrayWithCapacity:5];
-    [myTargets addObject:thePlayer.spellTarget];
-    int aliveMembers = [theRaid.getAliveMembers count];
-    for (int i = 0; i < MIN(4, aliveMembers); i++){
-        int lowestHealth = 100;
-        RaidMember *candidate = nil;
-        for (RaidMember *member in theRaid.raidMembers){
-            if ([myTargets containsObject:member])
-                continue;
-            
-            if (member.health < lowestHealth){
-                lowestHealth = member.health;
-                candidate = member;
-            }
-        }
-        [myTargets addObject:candidate];
-    }
+    NSArray *myTargets = [self lowestHealthTargets:5 fromRaid:theRaid withRequiredTarget:thePlayer.spellTarget];
     
     for (RaidMember *healableTarget in myTargets){
         [healableTarget setHealth:healableTarget.health + self.healingAmount];

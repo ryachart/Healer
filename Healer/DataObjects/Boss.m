@@ -205,7 +205,7 @@
 
 @implementation Ghoul
 +(id)defaultBoss{
-    Ghoul *ghoul = [[Ghoul alloc]initWithHealth:6750 damage:10 targets:1 frequency:1.5 andChoosesMT:NO];
+    Ghoul *ghoul = [[Ghoul alloc]initWithHealth:6750 damage:25 targets:1 frequency:1.5 andChoosesMT:NO];
     [ghoul setTitle:@"The Night Ghoul"];
     [ghoul setInfo:@"A ghoul has found its way onto a nearby farmer's land.  It has already killed the farmer's wife.  You will accompany a small band of mercenaries to dispatch the ghoul."];
     return [ghoul autorelease];
@@ -230,7 +230,7 @@
 @implementation CorruptedTroll
 @synthesize lastRockTime;
 +(id)defaultBoss{
-    CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:45000 damage:8 targets:1 frequency:1.4 andChoosesMT:YES];
+    CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:45000 damage:12 targets:1 frequency:1.4 andChoosesMT:YES];
     [corTroll setTitle:@"Corrupted Troll"];
     [corTroll setInfo:@"A Troll of Raklor has been identified among the demons brewing in the south.  It has been corrupted and twisted into a foul and terrible creature.  You will journey with a small band of soldiers to the south to dispatch this troll."];
     return  [corTroll autorelease];
@@ -241,7 +241,7 @@
     [self.announcer displayPartcileSystemOverRaidWithName:@"falling_rocks.plist"];
     for (RaidMember *member in theRaid.raidMembers){
         if (!member.isDead){
-            [member setHealth:member.health - 14];
+            [member setHealth:member.health - 45];
         }
     }
 }
@@ -249,7 +249,9 @@
 -(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
     [super combatActions:player theRaid:theRaid gameTime:timeDelta];
     lastRockTime += timeDelta;
-    if (lastRockTime > 25.0){
+    float tickTime = self.isMultiplayer ? 15.0 : 25.0;
+    
+    if (lastRockTime > tickTime){
         [self doCaveInOnRaid:theRaid];
         lastRockTime = 0.0;
     }
@@ -259,7 +261,7 @@
 @implementation Drake 
 @synthesize lastFireballTime;
 +(id)defaultBoss{
-    Drake *drake = [[Drake alloc] initWithHealth:52000 damage:4 targets:1 frequency:1.2 andChoosesMT:NO];
+    Drake *drake = [[Drake alloc] initWithHealth:52000 damage:10 targets:1 frequency:1.2 andChoosesMT:NO];
     [drake setTitle:@"Drake of Soldorn"];
     [drake setInfo:@"After felling the Troll of Raklor, you raided the encampment to discover that the agents of darkness had summoned a Drake of Soldorn.  It is hidden in the Paragon Cliffs.  Take with you a party of blood thirsty fighters and dispatch this beast from our world."];
     return [drake autorelease];
@@ -274,7 +276,7 @@
     [self.announcer displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     
-    [fireball setValue:-24];
+    [fireball setValue:-35];
     [target addEffect:fireball];
     [fireball release];
 }
@@ -283,7 +285,7 @@
     [super combatActions:player theRaid:theRaid gameTime:timeDelta];
     
     self.lastFireballTime += timeDelta;
-    float tickTime = self.isMultiplayer ? 2.0 : 4.0;
+    float tickTime = self.isMultiplayer ? 3.5 : 4.0;
     if (self.lastFireballTime > tickTime){
         [self shootFireballAtTarget:[theRaid randomLivingMember] withDelay:0.0];
         self.lastFireballTime = 0;
@@ -304,13 +306,15 @@
 @end
 
 @implementation Trulzar
-@synthesize lastPoisonTime;
+@synthesize lastPoisonTime, lastPotionTime;
 +(id)defaultBoss{
-    Trulzar *boss = [[Trulzar alloc] initWithHealth:180000 damage:20 targets:10 frequency:2.5 andChoosesMT:NO];
+    Trulzar *boss = [[Trulzar alloc] initWithHealth:120000 damage:40 targets:2 frequency:3.0 andChoosesMT:NO];
     [boss setTitle:@"Trulzar the Maleficar"];
     [boss setInfo:@"King Dralazak himself has posted a bounty for the head of the Trulzar: a warlock who has slaughtered the King's most prized fighter.  The Light Ascendant have done battle with Trulzar in the past and lost many good soldiers.  This would be a great opportunity to prove that your presence will turn the tide of any battles. Take with you your most hearty adventurers for only the strongest will return..."];
     return [boss autorelease];
 }
+
+
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
     if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq andChoosesMT:chooses]){
@@ -327,7 +331,7 @@
     TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
     [self.announcer displayParticleSystemWithName:@"poison_cloud.plist" onTarget:target];
     [poisonEffect setSpriteName:@"poison.png"];
-    [poisonEffect setValuePerTick:-6];
+    [poisonEffect setValuePerTick:-12];
     [poisonEffect setNumOfTicks:30];
     [poisonEffect setTitle:@"trulzar-poison1"];
     [target addEffect:poisonEffect];
@@ -338,18 +342,35 @@
     TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
     [self.announcer displayParticleSystemWithName:@"poison_cloud.plist" onTarget:target];
     [poisonEffect setSpriteName:@"poison.png"];
-    [poisonEffect setValuePerTick:-2];
+    [poisonEffect setValuePerTick:-4];
     [poisonEffect setNumOfTicks:24];
     [poisonEffect setTitle:@"trulzar-poison2"];
     [target addEffect:poisonEffect];
     [poisonEffect release];
 }
 
+-(void)throwPotionToTarget:(RaidMember *)target withDelay:(float)delay{
+    float colTime = (1.5 + delay);
+    
+    //Lightning In a Bottle
+    DelayedHealthEffect *bottleEffect = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
+    
+    ProjectileEffect *bottleVisual = [[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime];
+    [bottleVisual setSpriteColor:ccc3(0, 255, 0)];
+    [self.announcer displayThrowEffect:bottleVisual];
+    [bottleVisual release];
+    
+    [bottleEffect setValue:-45];
+    [target addEffect:bottleEffect];
+    [bottleEffect release];    
+}
+
 -(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
     [super combatActions:player theRaid:theRaid gameTime:timeDelta];
     self.lastPoisonTime += timeDelta;
+    self.lastPotionTime += timeDelta;
     
-    float tickTime = self.isMultiplayer ? 6 : 10;
+    float tickTime = self.isMultiplayer ? 5 : 10;
     if (self.lastPoisonTime > tickTime){ 
         if (self.healthPercentage > 10.0){
             [self.announcer announce:@"Trulzar fills an ally with poison."];
@@ -358,28 +379,15 @@
             self.lastPoisonTime = 0;
         }
     }
+    
+    float potionTickTime = self.isMultiplayer ? 5 : 8;
+    if (self.lastPotionTime > potionTickTime){
+        [self throwPotionToTarget:[theRaid randomLivingMember] withDelay:0.0];
+        self.lastPotionTime = 0.0;
+    }
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-//    if (((int)percentage) % 10 == 0 && ((int)percentage) != 100){
-//        //Every 10% of his life....
-//        for (RaidMember *member in raid.raidMembers){
-//            [self.announcer announce:@"Trulzar's corruption surges in poisoned victims."];
-//            if (!member.isDead){
-//                BOOL isPoisoned = NO;
-//                for (Effect *effect in member.activeEffects){
-//                    if ([effect.title isEqualToString:@"trulzar-poison1"]){
-//                        isPoisoned = YES;
-//                        break;
-//                    }
-//                }
-//                
-//                if (isPoisoned){
-//                    [member setHealth: 1];
-//                }
-//            }
-//        }
-//    }
     
     if (((int)percentage) == 7){
         for (RaidMember *member in raid.raidMembers){
@@ -409,7 +417,7 @@
     [self.announcer displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     
-    [fireball setValue:self.isMultiplayer ? -30 : -20];
+    [fireball setValue:self.isMultiplayer ? -50 : -25];
     [target addEffect:fireball];
     [fireball release];
 }
@@ -417,7 +425,7 @@
 -(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
     [super combatActions:player theRaid:theRaid gameTime:timeDelta];
     self.lastPoisonballTime += timeDelta;
-    NSInteger tickTime = self.isMultiplayer ? 5 : 10;
+    NSInteger tickTime = self.isMultiplayer ? 7.5 : 9;
     if (self.lastPoisonballTime > tickTime){ 
         for (int i = 0; i < 2; i++){
             [self shootProjectileAtTarget:[theRaid randomLivingMember] withDelay:i * 1];
@@ -432,7 +440,7 @@
 @synthesize lastSickeningTime, numBubblesPopped;
 +(id)defaultBoss{
     //427500
-    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:427500 damage:16 targets:2 frequency:2.5 andChoosesMT:YES];
+    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:427500 damage:30 targets:2 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Plaguebringer Colossus"];
     [boss setInfo:@"From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped.  The village people have foreseen their impending doom and sent young and brave hopefuls to join The Light Ascendant in exchange for protection.  You must lead this group to victory against the wretched beast."];
     return [boss autorelease];
@@ -441,7 +449,7 @@
 -(void)sickenTarget:(RaidMember *)target{
     ExpiresAtFullHealthRHE *infectedWound = [[ExpiresAtFullHealthRHE alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative];
     [infectedWound setTitle:@"pbc-infected-wound"];
-    [infectedWound setValuePerTick: self.isMultiplayer ? -4 : -2];
+    [infectedWound setValuePerTick: self.isMultiplayer ? -8 : -4];
     [infectedWound setNumOfTicks:15];
     [infectedWound setSpriteName:@"poison.png"];
     if (target.health > target.maximumHealth * .98){
@@ -461,7 +469,7 @@
             RepeatedHealthEffect *singleTickDot = [[RepeatedHealthEffect alloc] initWithDuration:1.0 andEffectType:EffectTypeNegative];
             [singleTickDot setTitle:@"pbc-pussBubble"];
             [singleTickDot setNumOfTicks:1];
-            [singleTickDot setValuePerTick:-20];
+            [singleTickDot setValuePerTick:-30];
             [singleTickDot setSpriteName:@"poison.png"];
             [member addEffect:singleTickDot];
             [singleTickDot release];
@@ -498,7 +506,7 @@
 @implementation SporeRavagers
 @synthesize focusTarget2, focusTarget3, lastSecondaryAttack, isEnraged;
 +(id)defaultBoss{
-    SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:8 targets:1 frequency:2.5 andChoosesMT:YES];
+    SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:16 targets:1 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Spore Ravagers"];
     [boss setInfo:@" Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate.  Conversely, no villagers have left the town, either..."];
     [boss setCriticalChance:.5];
@@ -542,7 +550,7 @@
     
     for (int i = 0; i < 5; i++){
         RaidMember *member = [raid randomLivingMember];
-        [member setHealth:member.health - 35];
+        [member setHealth:member.health - 40];
     }
     
 }
@@ -594,7 +602,7 @@
         for (RaidMember *member in raid.raidMembers){
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:300 andEffectType:EffectTypeNegativeInvisible];
             [rhe setTitle:@"spore-ravager-green-mist"];
-            [rhe setValuePerTick:self.isMultiplayer ? -3 : -1];
+            [rhe setValuePerTick:self.isMultiplayer ? -5 : -2];
             [rhe setNumOfTicks:60];
             [member addEffect:rhe];
             [rhe release];
@@ -624,7 +632,7 @@
 @implementation MischievousImps
 @synthesize lastPotionThrow;
 +(id)defaultBoss{
-    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:97500 damage:10 targets:1 frequency:3.0 andChoosesMT:YES];
+    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:97500 damage:20 targets:1 frequency:3.0 andChoosesMT:YES];
     [boss setTitle:@"Mischievious Imps"];
     [boss setInfo:@" A local alchemist has posted a small reward for removing a pesky imp infestation from her store.  Sensing something a little more sinister a small party has been dispatched from the Light Ascendant just in case there is more than meets the eye."];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw1" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw1" ofType:@"m4a"]]];
@@ -668,7 +676,7 @@
         [self.announcer displayThrowEffect:bottleVisual];
         [bottleVisual release];
         
-        [(ImpLightningBottle*)bottleEffect setValue:-35];
+        [(ImpLightningBottle*)bottleEffect setValue:-45];
         [target addEffect:bottleEffect];
         [bottleEffect release];
     }

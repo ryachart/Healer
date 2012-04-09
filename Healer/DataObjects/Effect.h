@@ -77,6 +77,8 @@ typedef enum {
 
 
 @interface ReactiveHealEffect : Effect <HealthAdjustmentModifier>
+@property (readwrite) float triggerCooldown;
+@property (nonatomic, readwrite) float effectCooldown;
 @property NSInteger amountPerReaction;
 @end
 

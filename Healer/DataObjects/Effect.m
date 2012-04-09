@@ -153,21 +153,48 @@
 
 
 @implementation ReactiveHealEffect
-@synthesize amountPerReaction;
-
+@synthesize amountPerReaction, triggerCooldown, effectCooldown=_effectCooldown;
+-(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type{
+    if (self = [super initWithDuration:dur andEffectType:type]){
+        self.effectCooldown = 1.0;
+    }
+    return self;
+}
+-(void)setEffectCooldown:(float)effCD{
+    _effectCooldown = effCD;
+    self.triggerCooldown = self.effectCooldown;
+    
+}
 -(id)copy{
     ReactiveHealEffect *copy = [super copy];
     [copy setAmountPerReaction:self.amountPerReaction];
+    [copy setTriggerCooldown:self.triggerCooldown];
+    [copy setEffectCooldown:self.effectCooldown];
     return copy;
+}
+
+-(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta{
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+    if (self.triggerCooldown < self.effectCooldown){
+        self.triggerCooldown += timeDelta;
+    }
 }
 
 -(void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
     
 }
 -(void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth{
-    if (currentHealth < newHealth){
-        [self.target setHealth:self.target.health + self.amountPerReaction];
+    if (currentHealth > newHealth){
+        if (self.triggerCooldown >= self.effectCooldown){
+            self.triggerCooldown = 0.0;
+            DelayedHealthEffect *orbPop = [[DelayedHealthEffect alloc] initWithDuration:0.5 andEffectType:EffectTypePositiveInvisible];
+            [orbPop setValue:self.amountPerReaction];
+            [self.target addEffect:orbPop];
+            [orbPop release];
+        }
     }
+    
+    
 }
 @end
 
@@ -187,7 +214,7 @@
 @implementation SwirlingLightEffect
 
 -(void)tick{
-    int similarEffectCount = 0;
+    int similarEffectCount = 1;
     for (Effect *effect in target.activeEffects){
         if ([effect isEqual:self]){
             similarEffectCount++;
@@ -370,7 +397,7 @@
 +(id)defaultEffect{
 	BulwarkEffect *be = [[BulwarkEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive];
     [be setTitle:@"bulwark-effect"];
-	[be setAmountToShield:40];
+	[be setAmountToShield:60];
     [be setSpriteName:@"healing_default.png"];
     [be setMaxStacks:1];
 	return [be autorelease];

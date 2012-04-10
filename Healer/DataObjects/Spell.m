@@ -60,8 +60,9 @@
         }
         [myTargets addObject:candidate];
     }
-    
-    [myTargets addObject:reqTarget];
+    if (reqTarget){
+        [myTargets addObject:reqTarget];
+    }
     return myTargets;
 }
 

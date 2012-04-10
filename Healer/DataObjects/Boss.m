@@ -390,8 +390,8 @@
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     
     if (((int)percentage) == 7){
+        [self.announcer announce:@"Trulzar cackles as the room fills with noxious poison."];
         for (RaidMember *member in raid.raidMembers){
-            [self.announcer announce:@"Trulzar cackles as the room fills with noxious poison."];
             [self applyWeakPoisonToTarget:member];
         }
     }

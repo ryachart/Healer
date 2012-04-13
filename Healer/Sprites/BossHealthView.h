@@ -10,7 +10,7 @@
 #import "GameObjects.h"
 #import "cocos2d.h"
 
-@interface BossHealthView : CCLayerColor
+@interface BossHealthView : CCLayer
 @property (nonatomic, assign, setter=setBossData:) Boss* bossData;
 @property (nonatomic, retain) CCLabelTTF *bossNameLabel;
 @property (nonatomic, retain) CCLabelTTF *healthLabel;

@@ -229,7 +229,7 @@
 @implementation CorruptedTroll
 @synthesize lastRockTime;
 +(id)defaultBoss{
-    CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:45000 damage:12 targets:1 frequency:1.4 andChoosesMT:YES];
+    CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:45000 damage:22 targets:1 frequency:1.4 andChoosesMT:YES];
     [corTroll setTitle:@"Corrupted Troll"];
     [corTroll setInfo:@"A Troll of Raklor has been identified among the demons brewing in the south.  It has been corrupted and twisted into a foul and terrible creature.  You will journey with a small band of soldiers to the south to dispatch this troll."];
     return  [corTroll autorelease];
@@ -240,7 +240,7 @@
     [self.announcer displayPartcileSystemOverRaidWithName:@"falling_rocks.plist"];
     for (RaidMember *member in theRaid.raidMembers){
         if (!member.isDead){
-            [member setHealth:member.health - 45];
+            [member setHealth:member.health - arc4random() % 10 + 50];
         }
     }
 }
@@ -260,7 +260,7 @@
 @implementation Drake 
 @synthesize lastFireballTime;
 +(id)defaultBoss{
-    Drake *drake = [[Drake alloc] initWithHealth:52000 damage:10 targets:1 frequency:1.2 andChoosesMT:NO];
+    Drake *drake = [[Drake alloc] initWithHealth:52000 damage:16 targets:1 frequency:1.2 andChoosesMT:NO];
     [drake setTitle:@"Drake of Soldorn"];
     [drake setInfo:@"After felling the Troll of Raklor, you raided the encampment to discover that the agents of darkness had summoned a Drake of Soldorn.  It is hidden in the Paragon Cliffs.  Take with you a party of blood thirsty fighters and dispatch this beast from our world."];
     return [drake autorelease];
@@ -275,7 +275,7 @@
     [self.announcer displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     
-    [fireball setValue:-35];
+    [fireball setValue:-(arc4random() % 20 + 25)];
     [target addEffect:fireball];
     [fireball release];
 }
@@ -307,7 +307,7 @@
 @implementation Trulzar
 @synthesize lastPoisonTime, lastPotionTime;
 +(id)defaultBoss{
-    Trulzar *boss = [[Trulzar alloc] initWithHealth:120000 damage:40 targets:2 frequency:3.0 andChoosesMT:NO];
+    Trulzar *boss = [[Trulzar alloc] initWithHealth:120000 damage:50 targets:2 frequency:3.0 andChoosesMT:NO];
     [boss setTitle:@"Trulzar the Maleficar"];
     [boss setInfo:@"King Dralazak himself has posted a bounty for the head of the Trulzar: a warlock who has slaughtered the King's most prized fighter.  The Light Ascendant have done battle with Trulzar in the past and lost many good soldiers.  This would be a great opportunity to prove that your presence will turn the tide of any battles. Take with you your most hearty adventurers for only the strongest will return..."];
     return [boss autorelease];
@@ -334,6 +334,7 @@
     [poisonEffect setNumOfTicks:30];
     [poisonEffect setTitle:@"trulzar-poison1"];
     [target addEffect:poisonEffect];
+    [target setHealth:target.health - arc4random() % 20];
     [poisonEffect release];
 }
 
@@ -416,7 +417,7 @@
     [self.announcer displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     
-    [fireball setValue:self.isMultiplayer ? -50 : -25];
+    [fireball setValue:self.isMultiplayer ? -(arc4random() % 20 + 30) : -(arc4random() % 10 + 30)];
     [target addEffect:fireball];
     [fireball release];
 }
@@ -468,7 +469,7 @@
             RepeatedHealthEffect *singleTickDot = [[RepeatedHealthEffect alloc] initWithDuration:1.0 andEffectType:EffectTypeNegative];
             [singleTickDot setTitle:@"pbc-pussBubble"];
             [singleTickDot setNumOfTicks:1];
-            [singleTickDot setValuePerTick:-30];
+            [singleTickDot setValuePerTick:-50];
             [singleTickDot setSpriteName:@"poison.png"];
             [member addEffect:singleTickDot];
             [singleTickDot release];
@@ -505,7 +506,7 @@
 @implementation SporeRavagers
 @synthesize focusTarget2, focusTarget3, lastSecondaryAttack, isEnraged;
 +(id)defaultBoss{
-    SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:16 targets:1 frequency:2.5 andChoosesMT:YES];
+    SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:24 targets:1 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Spore Ravagers"];
     [boss setInfo:@" Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate.  Conversely, no villagers have left the town, either..."];
     [boss setCriticalChance:.5];
@@ -549,7 +550,7 @@
     
     for (int i = 0; i < 5; i++){
         RaidMember *member = [raid randomLivingMember];
-        [member setHealth:member.health - 40];
+        [member setHealth:member.health - 50];
     }
     
 }
@@ -631,7 +632,7 @@
 @implementation MischievousImps
 @synthesize lastPotionThrow;
 +(id)defaultBoss{
-    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:97500 damage:20 targets:1 frequency:3.0 andChoosesMT:YES];
+    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:97500 damage:34 targets:1 frequency:2.25 andChoosesMT:YES];
     [boss setTitle:@"Mischievious Imps"];
     [boss setInfo:@" A local alchemist has posted a small reward for removing a pesky imp infestation from her store.  Sensing something a little more sinister a small party has been dispatched from the Light Ascendant just in case there is more than meets the eye."];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw1" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw1" ofType:@"m4a"]]];

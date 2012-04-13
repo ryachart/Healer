@@ -138,7 +138,7 @@
     return [[[Guardian alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:150 damageDealt:50 andDmgFrequency:1.0]){
+    if (self = [super initWithHealth:175 damageDealt:50 andDmgFrequency:1.0]){
         self.title = @"Guardian";
         self.dodgeChance = .09;
         self.info = @"The Guardian has high health but low damage.";
@@ -153,7 +153,7 @@
     return [[[Soldier alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:95 damageDealt:62 andDmgFrequency:.80]){
+    if (self = [super initWithHealth:120 damageDealt:62 andDmgFrequency:.80]){
         self.title = @"Soldier";
         self.info = @"The Soldier has moderate health and moderate damage.";
         self.dodgeChance = .07;
@@ -167,7 +167,7 @@
     return [[[Demonslayer alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:75 damageDealt:65 andDmgFrequency:.6]){
+    if (self = [super initWithHealth:100 damageDealt:65 andDmgFrequency:.6]){
         self.title = @"Demonslayer";
         self.info = @"ATheDemonslayer has low health but high damage.";
         self.dodgeChance = .05;
@@ -181,7 +181,7 @@
     return [[[Champion alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:90 damageDealt:80 andDmgFrequency:1.0]){
+    if (self = [super initWithHealth:115 damageDealt:80 andDmgFrequency:1.0]){
         self.title = @"Champion";
         self.info = @"The Champion has more health and deals more damage the more health it has.";
         self.dodgeChance = .07;
@@ -202,7 +202,7 @@
 }
 
 -(id)init{
-    if (self = [super initWithHealth:85 damageDealt:25 andDmgFrequency:1.0]){
+    if (self = [super initWithHealth:125 damageDealt:25 andDmgFrequency:1.0]){
         self.title = @"Wizard";
         self.dodgeChance = .07;
         self.info = @"The Wizard has moderate health and low damage but improves your energy regeneration";
@@ -232,7 +232,7 @@
     return [[[Berserker alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:88 damageDealt:140 andDmgFrequency:1.0]){
+    if (self = [super initWithHealth:107 damageDealt:140 andDmgFrequency:1.0]){
         self.title = @"Berserker";
         self.info = @"The Berserker has moderate health and deals more damage at low health.";
         self.dodgeChance = .07;

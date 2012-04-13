@@ -24,7 +24,6 @@
         // Initialization code
         self.position = frame.origin;
         self.contentSize = frame.size;
-        [self setOpacity:255];
         
         lastHealth = 0;
         CGPoint midPoint = CGPointMake(frame.size.width * .5, frame.size.height * .5);
@@ -35,11 +34,9 @@
         self.bossHealthBack = [ClippingNode node];
         [self.bossHealthBack setContentSize:healthBar.contentSize];
         [self.bossHealthBack setClippingRegion:CGRectMake(0,0, healthBar.contentSize.width -50, healthBar.contentSize.height - 50)];
-        //self.bossHealthBack.position = healthBarFramePosition;
         [healthBar setAnchorPoint:ccp(0,0)];
         [healthBar setPosition:healthBarFramePosition];
         [self.bossHealthBack addChild:healthBar z:1];
-//        [healthBar setPosition:CGPointZero];
         
         self.bossHealthFrame = [CCSprite spriteWithSpriteFrameName:@"boss_health_frame.png"];
         self.bossHealthFrame.anchorPoint = CGPointZero;
@@ -77,16 +74,16 @@
 -(void)updateHealth
 {
     if (bossData && bossData.health < lastHealth){
-        int startingFuzzX = arc4random() % 10;
-        int startingFuzzY = arc4random() % 10;
+        int startingFuzzX = arc4random() % 20 + self.bossHealthBack.clippingRegion.origin.x + self.bossHealthBack.clippingRegion.size.width ;
+        int startingFuzzY = arc4random() % 20;
         int heal = bossData.health - lastHealth;
         CCLabelTTF *shadowLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
         [shadowLabel setColor:ccBLACK];
-        [shadowLabel setPosition:CGPointMake(self.bossHealthBack.scaleX * self.contentSize.width - 1 + startingFuzzX , self.contentSize.height /2 + 1 + startingFuzzY)];
+        [shadowLabel setPosition:CGPointMake(startingFuzzX -1, self.contentSize.height /2 + 1 + startingFuzzY)];
         
         CCLabelTTF *sctLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
         [sctLabel setColor:ccWHITE];
-        [sctLabel setPosition:CGPointMake(self.bossHealthBack.scaleX * self.contentSize.width + startingFuzzX, self.contentSize.height /2 + startingFuzzY)];
+        [sctLabel setPosition:CGPointMake(startingFuzzX, self.contentSize.height /2 + startingFuzzY)];
         
         [self addChild:shadowLabel z:10];
         [self addChild:sctLabel z:11];

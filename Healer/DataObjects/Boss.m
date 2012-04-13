@@ -205,14 +205,13 @@
 
 @implementation Ghoul
 +(id)defaultBoss{
-    Ghoul *ghoul = [[Ghoul alloc]initWithHealth:6750 damage:25 targets:1 frequency:1.5 andChoosesMT:NO];
+    Ghoul *ghoul = [[Ghoul alloc]initWithHealth:6750 damage:20 targets:1 frequency:2.0 andChoosesMT:NO];
     [ghoul setTitle:@"The Night Ghoul"];
     [ghoul setInfo:@"A ghoul has found its way onto a nearby farmer's land.  It has already killed the farmer's wife.  You will accompany a small band of mercenaries to dispatch the ghoul."];
     return [ghoul autorelease];
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    NSLog(@"Percentage: % 1.2f", percentage);
     if (percentage == 75.0){
         [self.announcer announce:@"A putrid limb falls from the ghoul..."];
     }

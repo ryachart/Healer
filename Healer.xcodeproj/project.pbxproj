@@ -155,6 +155,7 @@
 		BF21072315292740001B93D7 /* CCShakeScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21072215292740001B93D7 /* CCShakeScreen.m */; };
 		BF21074A152AAAEB001B93D7 /* Scale9Sprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF210749152AAAEB001B93D7 /* Scale9Sprite.m */; };
 		BF21075D152B5623001B93D7 /* ParticleSystemCache.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21075C152B5623001B93D7 /* ParticleSystemCache.m */; };
+		BF68CBA61537364B0096B6CF /* ClippingNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF68CBA51537364B0096B6CF /* ClippingNode.m */; };
 		BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
 		BF7B721B152CA9AC001999D3 /* CCRoundedRect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7B721A152CA9AC001999D3 /* CCRoundedRect.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
@@ -606,6 +607,8 @@
 		BF210749152AAAEB001B93D7 /* Scale9Sprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Scale9Sprite.m; sourceTree = "<group>"; };
 		BF21075B152B5623001B93D7 /* ParticleSystemCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticleSystemCache.h; sourceTree = "<group>"; };
 		BF21075C152B5623001B93D7 /* ParticleSystemCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParticleSystemCache.m; sourceTree = "<group>"; };
+		BF68CBA41537364B0096B6CF /* ClippingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClippingNode.h; sourceTree = "<group>"; };
+		BF68CBA51537364B0096B6CF /* ClippingNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClippingNode.m; sourceTree = "<group>"; };
 		BF6CC5CE15022496000F1AFF /* PostBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostBattleScene.h; path = Scenes/PostBattleScene.h; sourceTree = "<group>"; };
 		BF6CC5CF15022496000F1AFF /* PostBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostBattleScene.m; path = Scenes/PostBattleScene.m; sourceTree = "<group>"; };
 		BF7B7219152CA9AC001999D3 /* CCRoundedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCRoundedRect.h; sourceTree = "<group>"; };
@@ -1511,6 +1514,8 @@
 				BF210749152AAAEB001B93D7 /* Scale9Sprite.m */,
 				BF7B7219152CA9AC001999D3 /* CCRoundedRect.h */,
 				BF7B721A152CA9AC001999D3 /* CCRoundedRect.m */,
+				BF68CBA41537364B0096B6CF /* ClippingNode.h */,
+				BF68CBA51537364B0096B6CF /* ClippingNode.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1771,6 +1776,7 @@
 				BF7B721B152CA9AC001999D3 /* CCRoundedRect.m in Sources */,
 				BFFB58E6152D69C7005B760E /* MultiplayerSetupScene.m in Sources */,
 				BFD804F51530D17400570A0A /* Encounter.m in Sources */,
+				BF68CBA61537364B0096B6CF /* ClippingNode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

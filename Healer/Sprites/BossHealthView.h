@@ -12,7 +12,6 @@
 
 @interface BossHealthView : CCLayerColor
 @property (nonatomic, assign, setter=setBossData:) Boss* bossData;
-@property (nonatomic, retain) CCLayerColor *healthFrame;
 @property (nonatomic, retain) CCLabelTTF *bossNameLabel;
 @property (nonatomic, retain) CCLabelTTF *healthLabel;
 

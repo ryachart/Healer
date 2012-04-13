@@ -16,12 +16,13 @@
 @property (nonatomic, assign) CCSprite *priorityPositiveEffectSprite;
 @property (nonatomic, assign) CCSprite *priorityNegativeEffectSprite;
 @property (nonatomic, readwrite) NSInteger lastHealth;
+@property (nonatomic, assign) CCSprite *shieldBubble;
 @end
 
 @implementation RaidMemberHealthView
 
 @synthesize memberData, classNameLabel, healthLabel, interactionDelegate, defaultBackgroundColor, isTouched, effectsLabel;
-@synthesize healthBarLayer, lastHealth, isFocusedLabel, priorityNegativeEffectSprite, priorityPositiveEffectSprite;
+@synthesize healthBarLayer, lastHealth, isFocusedLabel, priorityNegativeEffectSprite, priorityPositiveEffectSprite, shieldBubble;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super init])) {
@@ -68,17 +69,36 @@
         [self.effectsLabel setPosition:CGPointMake(frame.size.width * .5, frame.size.height * .85)];
         [self.effectsLabel setContentSize:CGSizeMake(frame.size.width, frame.size.height * .15)];
         [self.effectsLabel setColor:ccc3(0, 0, 0)];
+        
+        self.shieldBubble = [CCSprite spriteWithSpriteFrameName:@"shield_bubble.png"];
+        [self.shieldBubble setVisible:NO];
+        [self.shieldBubble setPosition:ccp(frame.size.width * .5,frame.size.height * .5)];
 			
         [self addChild:self.healthBarLayer];
         [self addChild:self.classNameLabel];
         [self addChild:self.healthLabel];
         [self addChild:self.effectsLabel];
         [self addChild:self.isFocusedLabel];
+        [self addChild:self.shieldBubble z:100]; //Above all else!
 		interactionDelegate = nil;
 		
 		isTouched = NO;
     }
     return self;
+}
+
+-(void)setShieldedOn:(BOOL)isOn{
+    if (isOn && !self.shieldBubble.visible){
+        self.shieldBubble.scale = 0.0;
+        self.shieldBubble.visible = YES;
+        [self.shieldBubble setOpacity:255];
+        [self.shieldBubble stopAllActions];
+        [self.shieldBubble runAction:[CCSequence actions:[CCEaseBackOut actionWithAction:[CCScaleTo actionWithDuration:.33 scale:1.0]], nil]];
+        //Present
+    }else if (self.shieldBubble.visible && !isOn){
+        //Dismiss
+        [self.shieldBubble setVisible:NO];
+    }
 }
 
 -(ccColor3B)colorForPercentage:(float)percentage{
@@ -185,14 +205,21 @@
 	
     Effect *negativeEffect = nil;
     Effect *positiveEffect = nil;
+    BOOL shieldEffectFound = NO;
 	for (Effect *eff in self.memberData.activeEffects){
         if ([eff effectType] == EffectTypePositive){
-            positiveEffect = eff;
+            if ([eff isKindOfClass:[ShieldEffect class]]){
+                shieldEffectFound = YES;
+            }else{
+                positiveEffect = eff;
+            }
         }
         if ([eff effectType] == EffectTypeNegative){
             negativeEffect = eff;
         }
 	}
+    
+    [self setShieldedOn:shieldEffectFound];
     
     if (positiveEffect && positiveEffect.spriteName && !self.memberData.isDead){
         if (!self.priorityPositiveEffectSprite){

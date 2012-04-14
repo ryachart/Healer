@@ -43,27 +43,41 @@
     
 }
 
--(NSArray*)lowestHealthTargets:(NSInteger)numTargets fromRaid:(Raid*)raid withRequiredTarget:(RaidMember*)reqTarget{
-    NSMutableArray *myTargets = [NSMutableArray arrayWithCapacity:numTargets];
-    int aliveMembers = [raid.getAliveMembers count];
-    for (int i = 0; i < MIN(numTargets - (reqTarget ? 1 : 0), aliveMembers); i++){
-        int lowestHealth = 100;
-        RaidMember *candidate = nil;
-        for (RaidMember *member in raid.raidMembers){
-            if ([myTargets containsObject:member] || member == reqTarget || member.isDead)
-                continue;
-            
-            if (member.health < lowestHealth){
-                lowestHealth = member.health;
-                candidate = member;
-            }
+-(RaidMember*)lowestHealthRaidMemberSet:(NSArray*)raid{
+    int lowestHealth = [(RaidMember*)[raid objectAtIndex:0] health];
+    RaidMember *candidate = [raid objectAtIndex:0];
+    for (RaidMember *member in raid){
+        if (member.isDead)
+            continue;
+        if (member.health < lowestHealth){
+            lowestHealth = member.health;
+            candidate = member;
         }
-        [myTargets addObject:candidate];
     }
+    return candidate;
+}
+
+-(NSArray*)lowestHealthTargets:(NSInteger)numTargets fromRaid:(Raid*)raid withRequiredTarget:(RaidMember*)reqTarget{
+    NSMutableArray *finalTargets = [NSMutableArray arrayWithCapacity:numTargets];
+    NSMutableArray *candidates = [NSMutableArray arrayWithArray:[raid getAliveMembers]];
+    [candidates removeObject:reqTarget];
+    
+    
+    int aliveMembers = [raid.getAliveMembers count];
+    int possibleTargets = numTargets - (reqTarget ? 1 : 0);
+    if (possibleTargets > aliveMembers){
+        possibleTargets = aliveMembers;
+    }
+    for (int i = 0; i < possibleTargets; i++){
+        RaidMember *lowestHealthTarget = [self lowestHealthRaidMemberSet:candidates];
+        [finalTargets addObject:lowestHealthTarget];
+        [candidates removeObject:lowestHealthTarget];
+    }
+    
     if (reqTarget){
-        [myTargets addObject:reqTarget];
+        [finalTargets addObject:reqTarget];
     }
-    return myTargets;
+    return finalTargets;
 }
 
 +(id)defaultSpell{

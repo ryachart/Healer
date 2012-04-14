@@ -227,7 +227,7 @@
 @end
 
 @implementation CorruptedTroll
-@synthesize lastRockTime;
+@synthesize lastRockTime, enraging;
 +(id)defaultBoss{
     CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:45000 damage:22 targets:1 frequency:1.4 andChoosesMT:YES];
     [corTroll setTitle:@"Corrupted Troll"];
@@ -240,8 +240,37 @@
     [self.announcer displayPartcileSystemOverRaidWithName:@"falling_rocks.plist"];
     for (RaidMember *member in theRaid.raidMembers){
         if (!member.isDead){
-            [member setHealth:member.health - arc4random() % 10 + 50];
+            NSInteger damageDealt = (arc4random() % 20 + 20);
+            if (member == self.focusTarget){
+                damageDealt = MAX(damageDealt, 25); //The Tank is armored
+            }
+            [member setHealth:member.health - damageDealt];
         }
+    }
+}
+
+-(int)damageDealt{
+    int modDmg = [super damageDealt];
+    if (self.enraging > 0.0){
+        modDmg *= 1.35;
+    }
+    return modDmg;
+}
+
+-(void)startEnraging{
+    [self.announcer announce:@"The Cave Troll Swings his club furiously at the focused target!"];
+    self.enraging += 1.0;
+}
+
+-(void)stopEnraging{
+    [self.announcer announce:@"The Cave Troll is Exhausted!"];
+    self.enraging = 0.0;
+    self.lastRockTime = 0.0;
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    if (percentage == 75.0 || percentage == 50.0 || percentage == 20.0){
+        [self startEnraging];
     }
 }
 
@@ -251,8 +280,17 @@
     float tickTime = self.isMultiplayer ? 15.0 : 25.0;
     
     if (lastRockTime > tickTime){
-        [self doCaveInOnRaid:theRaid];
-        lastRockTime = 0.0;
+        if (!self.enraging){
+            [self doCaveInOnRaid:theRaid];
+            lastRockTime = 0.0;
+        }
+    }
+    
+    if (self.enraging > 0){
+        self.enraging += timeDelta;
+        if (self.enraging > 10.0){
+            [self stopEnraging];
+        }
     }
 }
 @end
@@ -466,10 +504,10 @@
     self.numBubblesPopped++;
     for (RaidMember *member in theRaid.raidMembers){
         if (!member.isDead){
-            RepeatedHealthEffect *singleTickDot = [[RepeatedHealthEffect alloc] initWithDuration:1.0 andEffectType:EffectTypeNegative];
+            RepeatedHealthEffect *singleTickDot = [[RepeatedHealthEffect alloc] initWithDuration:1.5 andEffectType:EffectTypeNegative];
             [singleTickDot setTitle:@"pbc-pussBubble"];
             [singleTickDot setNumOfTicks:1];
-            [singleTickDot setValuePerTick:-50];
+            [singleTickDot setValuePerTick:-70];
             [singleTickDot setSpriteName:@"poison.png"];
             [member addEffect:singleTickDot];
             [singleTickDot release];

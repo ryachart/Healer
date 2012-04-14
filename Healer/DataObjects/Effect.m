@@ -10,7 +10,7 @@
 #import "GameObjects.h"
 #import "AudioController.h"
 @implementation Effect
-@synthesize duration, isExpired, target, effectType, timeApplied, maxStacks, spriteName, title;
+@synthesize duration, isExpired, target, effectType, timeApplied, maxStacks, spriteName, title, ailmentType;
 
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
 {
@@ -102,7 +102,7 @@
 			lastTick = 0.0;
 		}
 		if (self.timeApplied >= duration){
-            [self tick];
+            //[self tick];
 			//The one thing we always do here is expire the effect
 			self.timeApplied = 0.0;
 			isExpired = YES;

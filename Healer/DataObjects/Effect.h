@@ -21,6 +21,13 @@ typedef enum {
     EffectTypeNegativeInvisible
 } EffectType;
 
+typedef enum {
+    AilmentNone,
+    AilmentTrauma,
+    AilmentPoison,
+    AilmentCurse
+} AilmentType;
+
 @interface Effect : NSObject {
 	NSTimeInterval duration;
 	EffectType effectType;
@@ -31,6 +38,7 @@ typedef enum {
 }
 @property (nonatomic, retain) NSString* spriteName;
 @property (nonatomic, retain) NSString* title; //Should be unique
+@property (nonatomic, readwrite) AilmentType ailmentType;
 @property NSTimeInterval duration;
 @property (readwrite) NSInteger maxStacks;
 @property (readwrite) float timeApplied;

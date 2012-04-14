@@ -56,6 +56,7 @@
 
 @interface CorruptedTroll : Boss
 @property (readwrite) NSTimeInterval lastRockTime;
+@property (readwrite) NSTimeInterval enraging;
 @end
 
 @interface Drake : Boss

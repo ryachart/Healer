@@ -675,6 +675,7 @@
         [self.announcer displayPartcileSystemOnRaidWithName:@"green_mist.plist"];
         for (RaidMember *member in raid.raidMembers){
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:300 andEffectType:EffectTypeNegativeInvisible];
+            [rhe setOwner:self];
             [rhe setTitle:@"spore-ravager-green-mist"];
             [rhe setValuePerTick:self.isMultiplayer ? -5 : -2];
             [rhe setNumOfTicks:60];

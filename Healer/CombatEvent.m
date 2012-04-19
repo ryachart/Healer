@@ -24,8 +24,33 @@
 +(CombatEvent*)eventWithSource:(id<EventDataSource>)source target:(id<EventDataSource>)target value:(NSNumber*)value andEventType:(CombatEventType)type{
     return [[[CombatEvent alloc] initWithSource:source target:target value:value andEventType:type] autorelease];
 }
+
+-(NSString*)nameForType:(CombatEventType)type{
+    switch (type) {
+        case CombatEventTypeBegan:
+            return @"Combat Began";
+        case CombatEventTypeHeal:
+            return @"Heal";
+        case CombatEventTypeDamage:
+            return @"Damage";
+        case CombatEventTypeMemberDied:
+            return @"MemberDied";
+        case CombatEventTypeDodge:
+            return @"Dodged";
+        case CombatEventEnded:
+            return @"Combat Ended";
+        default:
+            break;
+    }
+    return nil;
+}
+
+-(NSString*)description{
+    return [self logLine];
+}
+
 -(NSString*)logLine{
-    return [NSString stringWithFormat:@"%@"];
+    return [NSString stringWithFormat:@"SRC:%@|TAR:%@|VAL:%@|TYPE:%@", [self.source sourceName], [self.target targetName], [self.value description], [self nameForType:self.type]];
 }
 -(void)dealloc{
     [super dealloc];

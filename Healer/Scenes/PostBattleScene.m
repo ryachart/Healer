@@ -9,6 +9,7 @@
 #import "PostBattleScene.h"
 #import "QuickPlayScene.h"
 #import "CombatEvent.h"
+#import "Boss.h"
 
 @interface PostBattleScene()
 -(void)done;
@@ -52,8 +53,11 @@
         
         int totalDamageTaken = 0;
         for (CombatEvent *event in eventLog){
-            if (event.type == CombatEventTypeDamage){
-                totalDamageTaken += [[event value] intValue];            }
+            if (event.type == CombatEventTypeDamage && [[event source] isKindOfClass:[Boss class]]){
+                NSInteger dmgVal = [[event value] intValue];
+                if (dmgVal < 0) dmgVal *= -1;
+                totalDamageTaken += dmgVal;            
+            }
         }
         
         CCLabelTTF *healingDoneLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Healing Done: %i", totalHealingDone] dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];

@@ -9,8 +9,9 @@
 #import "Effect.h"
 #import "GameObjects.h"
 #import "AudioController.h"
+#import "Agent.h"
 @implementation Effect
-@synthesize duration, isExpired, target, effectType, timeApplied, maxStacks, spriteName, title, ailmentType;
+@synthesize duration, isExpired, target, effectType, timeApplied, maxStacks, spriteName, title, ailmentType, owner;
 
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
 {
@@ -31,7 +32,7 @@
     copied.maxStacks = self.maxStacks;
     copied.spriteName = self.spriteName;
     copied.title = self.title;
-    
+    copied.owner = self.owner;
     return copied;
 }
 
@@ -112,6 +113,8 @@
 
 -(void)tick{
     if (!target.isDead){
+        CombatEventType eventType = valuePerTick > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:valuePerTick] andEventType:eventType]];
         [target setHealth:[target health] + valuePerTick];
     }
 }
@@ -137,11 +140,13 @@
 	NSInteger healthDelta = *currentHealth - *newHealth;
 	
 	if (healthDelta >= amountToShield){
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:amountToShield] andEventType:CombatEventTypeHeal]];
 		*newHealth += amountToShield;
 		amountToShield = 0;
 		isExpired = YES;
 	}
 	else if (healthDelta < amountToShield){
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:amountToShield] andEventType:CombatEventTypeHeal]];
 		*newHealth += healthDelta;
 		amountToShield -= healthDelta;
 	}
@@ -188,7 +193,9 @@
         if (self.triggerCooldown >= self.effectCooldown){
             self.triggerCooldown = 0.0;
             DelayedHealthEffect *orbPop = [[DelayedHealthEffect alloc] initWithDuration:0.5 andEffectType:EffectTypePositiveInvisible];
+            [orbPop setOwner:self.owner];
             [orbPop setValue:self.amountPerReaction];
+            
             [self.target addEffect:orbPop];
             [orbPop release];
         }
@@ -206,7 +213,11 @@
     return copy;
 }
 -(void)expire{
-    [self.target setHealth:self.target.health + self.value];
+    if (!self.target.isDead){
+        CombatEventType eventType = self.value > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
+        [self.target setHealth:self.target.health + self.value];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]];
+    }
     [super expire];
 }
 @end
@@ -230,7 +241,8 @@
 -(void)tick{
     if (!target.isDead){
         float percentComplete = self.timeApplied / self.duration;
-    
+        CombatEventType eventType = self.valuePerTick > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.valuePerTick] andEventType:eventType]];
         [self.target setHealth:self.target.health + [self valuePerTick] * (int)round(1+percentComplete)];
     }
 }
@@ -244,6 +256,7 @@
     [poisonDoT setSpriteName:@"poison.png"];
     [poisonDoT setValuePerTick:-3];
     [poisonDoT setNumOfTicks:4];
+    [poisonDoT setOwner:self.owner];
     [self.target addEffect:poisonDoT];
     [poisonDoT release];
     [super expire];
@@ -265,6 +278,7 @@
 -(void)expire{
     [self.target setHealth:self.target.health - 15];
     RepeatedHealthEffect *burnDoT = [[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative];
+    [burnDoT setOwner:self.owner];
     [burnDoT setTitle:@"imp-burn-dot"];
     [burnDoT setSpriteName:@"poison.png"];
     [burnDoT setValuePerTick:-20];

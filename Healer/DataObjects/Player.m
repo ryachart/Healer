@@ -45,6 +45,14 @@
 	return self;
 }
 
+-(void)setActiveSpells:(NSArray *)actSpells{
+    for (Spell* spell in actSpells){
+        [spell setOwner:self];
+    }
+    [activeSpells release];
+    activeSpells = [actSpells retain];
+}
+
 -(NSString*)asNetworkMessage{
     NSString *message = [NSString stringWithFormat:@"PLYR|%@|%i|%i|", self.playerID, self.health, self.energy];
     return message;
@@ -239,6 +247,14 @@
 	}
 	
 	return 0.0;
+}
+
+-(NSString*)sourceName{
+    return [NSString stringWithFormat:@"PLAYER:%@", self.battleID];
+}
+
+-(NSString*)targetName{
+    return [self sourceName];
 }
 
 -(BOOL)isDead{

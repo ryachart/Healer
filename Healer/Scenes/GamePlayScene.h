@@ -8,7 +8,6 @@
 
 #import "cocos2d.h"
 #import "GameObjects.h"
-#import "GameUserInterface.h"
 #import "AudioController.h"
 #import "CombatEvent.h"
 #import "Announcer.h"

@@ -33,6 +33,7 @@
 	}
     if (health == 0){
         self.hasDied = YES;
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:self value:nil andEventType:CombatEventTypeMemberDied]];
     }
 }
 

@@ -18,7 +18,9 @@
 #import "ParticleSystemCache.h"
 #import "Encounter.h"
 #import "HealableTarget.h"
-
+#import "PlayerHealthView.h"
+#import "PlayerEnergyView.h"
+#import "PlayerCastBar.h"
 
 #define NETWORK_THROTTLE 5
 
@@ -171,6 +173,7 @@
         selectedRaidMembers = [[NSMutableArray alloc] initWithCapacity:5];
         for (RaidMember *member in raidMembers)
         {
+            [member setLogger:self];
             RaidMemberHealthView *rmhv = [[RaidMemberHealthView alloc] initWithFrame:[raidView vendNextUsableRect]];
             [rmhv setMemberData:member];
             [rmhv setInteractionDelegate:(RaidMemberHealthViewDelegate*)self];

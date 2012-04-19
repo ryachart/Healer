@@ -20,6 +20,7 @@
 @synthesize title;
 @synthesize dodgeChance;
 @synthesize info;
+
 -(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq
 {
     if (self = [super init]){
@@ -34,6 +35,14 @@
         activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
     }
 	return self;
+}
+
+-(NSString *)sourceName {
+    return [NSString stringWithFormat:@"%@:%@", self.title, self.battleID];
+}
+
+-(NSString*)targetName{
+    return self.sourceName;
 }
 
 -(void)performAttackIfAbleOnTarget:(Boss*)target{

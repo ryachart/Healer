@@ -8,12 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import "SpellAudioData.h"
-#import "SpellCardView.h"
 
 @class Boss;
 @class Raid;
 @class Player;
 @class Effect;
+@class Agent;
 
 @interface Spell : NSObject {
 	float castTime;
@@ -36,6 +36,7 @@
 +(id)defaultSpell;
 @property (readonly, retain) NSString *title;
 @property (nonatomic, readonly, retain) NSString* spellID;
+@property (nonatomic, assign) Agent *owner;
 @property (nonatomic, readwrite) NSInteger healingAmount;
 @property NSInteger energyCost;
 @property float castTime;
@@ -46,7 +47,6 @@
 @property (nonatomic, readwrite) float cooldownRemaining;
 @property (nonatomic, readwrite) float cooldown;
 @property (nonatomic, retain) Effect* appliedEffect;
--(SpellCardView*)spellCardView;
 -(NSString*)spellDescription;
 -(BOOL)isInstant;
 -(void)setTargets:(NSInteger)numOfTargets withPercentagesPerTarget:(NSArray*)percentages;

@@ -9,6 +9,7 @@
 #import "GameObjects.h"
 #import	"AudioController.h"
 #import "CombatEvent.h"
+#import "Agent.h"
 
 @interface Spell ()
 @property (nonatomic, retain) NSString *spellID;
@@ -17,7 +18,7 @@
 
 @implementation Spell
 
-@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData, cooldownRemaining, cooldown, spellID, appliedEffect;
+@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData, cooldownRemaining, cooldown, spellID, appliedEffect, owner;
 
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd
 {
@@ -99,11 +100,6 @@
     return finalAmount;
 }
 
--(SpellCardView*)spellCardView{
-	
-	return nil;
-}
-
 -(BOOL)isInstant
 {
 	return castTime == 0.0;
@@ -130,7 +126,9 @@
 
 -(void)applyEffectToTarget:(RaidMember*)target{
     if (self.appliedEffect){
-        [target addEffect:[[self.appliedEffect copy] autorelease]];
+        Effect *effectToApply = [[self.appliedEffect copy] autorelease];
+        [effectToApply setOwner:self.owner];
+        [target addEffect:effectToApply];
     }
 }
 
@@ -140,7 +138,7 @@
         int currentTargetHealth = [thePlayer spellTarget].health;
 		[[thePlayer spellTarget] setHealth:[[thePlayer spellTarget] health] + [self healingAmount]];
         int newHealth = [thePlayer spellTarget].health;
-        [thePlayer.logger logEvent:[CombatEvent eventWithSource:thePlayer target:[thePlayer spellTarget] value:[NSNumber numberWithInt:newHealth - currentTargetHealth] andEventType:CombatEventTypeHeal]]; 
+        [thePlayer.logger logEvent:[CombatEvent eventWithSource:self.owner target:[thePlayer spellTarget] value:[NSNumber numberWithInt:newHealth - currentTargetHealth] andEventType:CombatEventTypeHeal]]; 
 		[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
         [self applyEffectToTarget:thePlayer.spellTarget];
 	}
@@ -155,7 +153,7 @@
                 int currentTargetHealth = currentTarget.health;
 				[currentTarget setHealth:[[thePlayer spellTarget] health] + ([self healingAmount]*PercentageThisTarget)];
                 int newTargetHealth = currentTarget.health;
-                [thePlayer.logger logEvent:[CombatEvent eventWithSource:thePlayer target:currentTarget value:[NSNumber numberWithInt:newTargetHealth - currentTargetHealth] andEventType:CombatEventTypeHeal]]; 
+                [thePlayer.logger logEvent:[CombatEvent eventWithSource:self.owner target:currentTarget value:[NSNumber numberWithInt:newTargetHealth - currentTargetHealth] andEventType:CombatEventTypeHeal]]; 
                 [self applyEffectToTarget:currentTarget];
 			}
 			

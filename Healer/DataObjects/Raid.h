@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "RaidMember.h"
-#import "DataDefinitions.h"
 
+#define MAXIMUM_RAID_MEMBERS_ALLOWED 26
 /* A collection of RaidMembers */
 
 

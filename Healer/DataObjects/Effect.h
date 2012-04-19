@@ -12,6 +12,7 @@
 @class Raid;
 @class Player;
 @class HealableTarget;
+@class Agent;
 
 typedef enum {
 	EffectTypeNeutral,
@@ -39,6 +40,7 @@ typedef enum {
 @property (nonatomic, retain) NSString* spriteName;
 @property (nonatomic, retain) NSString* title; //Should be unique
 @property (nonatomic, readwrite) AilmentType ailmentType;
+@property (nonatomic, assign) Agent *owner;
 @property NSTimeInterval duration;
 @property (readwrite) NSInteger maxStacks;
 @property (readwrite) float timeApplied;

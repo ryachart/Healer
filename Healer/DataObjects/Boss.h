@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "CombatEvent.h"
 #import "Announcer.h"
+#import "Agent.h"
 @class Player;
 @class Raid;
 @class RaidMember;
@@ -17,7 +18,7 @@
   To make special bosses, subclass boss and override
   combatActions.
  */
-@interface Boss : NSObject <EventDataSource> {
+@interface Boss : Agent {
 	NSInteger health;
 	NSInteger maximumHealth;
 	NSInteger damage;

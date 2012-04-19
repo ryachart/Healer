@@ -67,7 +67,6 @@ typedef int CastingDisabledReason;
 @property (assign) NSArray* additionalTargets;
 @property (assign) RaidMember* spellTarget;
 @property (nonatomic, retain) NSString *statusText;
-@property (nonatomic, assign) id<EventLogger> logger;
 @property NSInteger position;
 @property NSInteger maximumEnergy;
 

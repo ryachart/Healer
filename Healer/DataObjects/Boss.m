@@ -81,9 +81,6 @@
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:thisDamage] andEventType:CombatEventTypeDamage]];
         [target setHealth:[target health] - thisDamage];
         
-        if ([target isDead]){
-            [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:nil andEventType:CombatEventTypeMemberDied]];
-        }
     }else{
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:0 andEventType:CombatEventTypeDodge]];
     }
@@ -469,6 +466,45 @@
             [self shootProjectileAtTarget:[theRaid randomLivingMember] withDelay:i * 1];
         }
         self.lastPoisonballTime = 0;
+    }
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    if (percentage == 99.0){
+        [self.announcer announce:@"The room fills with demons and horrors."];
+    }
+    if (percentage == 90.0){
+        //Roth of the Shadows steps forward
+        [self.announcer announce:@"Roth, The Toxin Mage steps forward."];
+    }
+    
+    if (percentage == 80.0){
+        //Roth dies
+        [self.announcer announce:@"Roth falls to his knees and demons spill from his soul."];
+    }
+    
+    if (percentage == 70.0){
+        //Grimgon, The Darkener steps forward
+    }
+    
+    if (percentage == 60.0){
+        //Grimgon Dies
+    }
+    
+    if (percentage == 50.0){
+        //Serevon, Anguish Mage steps forward
+    }
+    
+    if (percentage == 40.0){
+        //Serevon dies
+    }
+    
+    if (percentage == 30.0){
+        //Galcyon, Lord of the Dark Council steps forward
+    }
+    
+    if (percentage == 5.0){
+        //Galcyon, Lord of the Dark Council does his last thing..
     }
 }
 @end

@@ -14,6 +14,10 @@
 @synthesize health, maximumHealth, activeEffects, isFocused;
 @synthesize battleID, hasDied;
 
+-(float)healthPercentage{
+    return (float)self.health/(float)self.maximumHealth;
+}
+
 -(void)setHealth:(NSInteger)newHealth
 {
     if (self.hasDied){

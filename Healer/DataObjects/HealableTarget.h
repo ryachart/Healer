@@ -26,7 +26,7 @@
 @property NSInteger maximumHealth;
 @property (readonly) NSMutableArray *activeEffects;
 @property (nonatomic, readwrite) BOOL isFocused;
-
+@property (nonatomic, readonly) float healthPercentage;
 -(void)setHealth:(NSInteger)newHealth;
 -(BOOL)isDead;
 -(void)addEffect:(Effect*)theEffect;

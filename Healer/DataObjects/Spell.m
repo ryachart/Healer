@@ -45,13 +45,13 @@
 }
 
 -(RaidMember*)lowestHealthRaidMemberSet:(NSArray*)raid{
-    int lowestHealth = [(RaidMember*)[raid objectAtIndex:0] health];
+    float lowestHealth = [(RaidMember*)[raid objectAtIndex:0] healthPercentage];
     RaidMember *candidate = [raid objectAtIndex:0];
     for (RaidMember *member in raid){
         if (member.isDead)
             continue;
-        if (member.health < lowestHealth){
-            lowestHealth = member.health;
+        if (member.healthPercentage <= lowestHealth){
+            lowestHealth = member.healthPercentage;
             candidate = member;
         }
     }

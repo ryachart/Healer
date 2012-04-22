@@ -13,9 +13,10 @@
 
 @interface MultiplayerSetupScene : CCScene <GKMatchDelegate>
 @property (nonatomic, retain) GKMatch *match;
+@property (nonatomic, retain) GKVoiceChat *matchVoiceChat;
 @property (nonatomic, retain) NSString* serverPlayerID;
 @property (nonatomic, retain) Encounter *selectedEncounter;
 
 -(BOOL)isServer;
-
+-(id)initWithPreconfiguredMatch:(GKMatch*)preConMatch andServerID:(NSString*)serverID;
 @end

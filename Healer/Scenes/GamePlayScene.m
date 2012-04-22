@@ -56,7 +56,7 @@
 @synthesize errAnnouncementLabel;
 @synthesize paused;
 @synthesize pauseMenuLayer;
-@synthesize match, isClient, isServer, players, networkThrottle;
+@synthesize match, isClient, isServer, players, networkThrottle, matchVoiceChat, serverPlayerID;
 
 -(id)initWithEncounter:(Encounter*)enc andPlayers:(NSArray*)plyers{
     if (self = [self initWithRaid:enc.raid boss:enc.boss andPlayers:plyers]){
@@ -109,7 +109,7 @@
         [playerStatusBackground setPosition:CGPointMake(795, 535)];
         [self addChild:playerStatusBackground];
         
-        self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(200,40, 400, 50)] autorelease];
+        self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(100,40, 400, 50)] autorelease];
         self.playerHealthView = [[[PlayerHealthView alloc] initWithFrame:CGRectMake(800, 595, 200, 50)] autorelease];
         self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(800, 540, 200, 50)] autorelease];
         self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
@@ -271,6 +271,27 @@
         blockSelf.announcementLabel.string = @"";
         [blockSelf setPaused:NO];
     }], nil]];
+}
+
+-(void)battleEndWithSuccess:(BOOL)success{
+    PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:success andEventLog:self.eventLog];
+    [self setPaused:YES];
+    if (self.isServer){
+        [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"BATTLEEND|%i|", success] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+    }
+    if (self.isServer || self.isClient){
+        [pbs setServerPlayerId:self.serverPlayerID];
+        [pbs setMatch:self.match];
+        [pbs setMatchVoiceChat:self.matchVoiceChat];
+    }
+    if (success){
+        int i = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
+        if (self.levelNumber > i){
+            [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:self.levelNumber] forKey:PlayerHighestLevelCompleted];
+        }
+    }
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:pbs]];
+    [pbs release];
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -629,24 +650,18 @@
         }
         
     }
-	if (survivors == 0)
-	{
-        [self setPaused:YES];
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:[[[PostBattleScene alloc] initWithVictory:NO andEventLog:self.eventLog] autorelease]]];
-	}
-    
-	if ([player isDead]){
-        [self setPaused:YES];
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:[[[PostBattleScene alloc] initWithVictory:NO andEventLog:self.eventLog] autorelease]]];
-	}
-	if ([boss isDead]){
-        int i = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
-        if (self.levelNumber > i){
-            [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:self.levelNumber] forKey:PlayerHighestLevelCompleted];
+    if (!self.isClient){
+        if (survivors == 0)
+        {
+            [self battleEndWithSuccess:NO];
         }
-        [self setPaused:YES];
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:[[[PostBattleScene alloc] initWithVictory:YES andEventLog:self.eventLog] autorelease]]];
-	}
+        if ([player isDead]){
+            [self battleEndWithSuccess:NO];
+        }
+        if ([boss isDead]){
+            [self battleEndWithSuccess:YES];
+        }
+    }
 }
 
 -(void)beginChanneling{
@@ -677,6 +692,15 @@
 
 #pragma mark GKMatchDelegate
 
+-(BOOL)isServer{
+    return [GKLocalPlayer localPlayer].playerID == self.serverPlayerID;
+}
+
+-(void)setIsClient:(BOOL)isCli forServerPlayerId:(NSString *)srverPid{
+    isClient = isCli;
+    self.serverPlayerID = srverPid;
+}
+
 // The match received data sent from the player.
 - (void)match:(GKMatch *)theMatch didReceiveData:(NSData *)data fromPlayer:(NSString *)playerID {    
     if (match != theMatch) return;
@@ -684,6 +708,10 @@
     NSString* message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
     if (self.isClient){
+        
+        if ([message hasPrefix:@"BATTLEEND|"]){
+            [self battleEndWithSuccess:[[message substringToIndex:10] boolValue]];
+        }
         if ([message hasPrefix:@"BOSSHEALTH|"]){
             self.boss.health = [[message substringFromIndex:11] intValue];
         }

@@ -8,15 +8,18 @@
 
 #import "PostBattleScene.h"
 #import "QuickPlayScene.h"
+#import "MultiplayerSetupScene.h"
 #import "CombatEvent.h"
 #import "Boss.h"
+#import <UIKit/UIKit.h>
 
 @interface PostBattleScene()
+@property (nonatomic, readwrite) BOOL canAdvance;
 -(void)done;
 @end
 
 @implementation PostBattleScene
-
+@synthesize matchVoiceChat, match=_match, serverPlayerId, canAdvance;
 
 -(id)initWithVictory:(BOOL)victory andEventLog:(NSArray *)eventLog{
     self = [super init];
@@ -48,7 +51,8 @@
         int raidersLost = 0;
         for (CombatEvent *event in eventLog){
             if (event.type == CombatEventTypeMemberDied){
-                raidersLost ++;            }
+                raidersLost ++;            
+            }
         }
         
         int totalDamageTaken = 0;
@@ -76,10 +80,52 @@
     }
     return self;
 }
+
+-(void)onEnterTransitionDidFinish{
+    [super onEnterTransitionDidFinish];
+    if (self.serverPlayerId == [GKLocalPlayer localPlayer].playerID){
+        self.canAdvance = YES;
+    }
+}
+
+-(void)setMatch:(GKMatch *)mtch{
+    [_match release];
+    _match = [mtch retain];
+    [self.match setDelegate:self];
+}
                             
 -(void)done{
-    QuickPlayScene *qps = [[QuickPlayScene alloc] init];
-    [[CCDirector sharedDirector] replaceScene:qps];
-    [qps release];
+    if (self.serverPlayerId){
+        if (!self.canAdvance){
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Waiting on Game Owner" message:@"You must wait for the game's owner to continue"  delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil];
+            [alertView show];
+            [alertView release];
+            return;
+        }
+        //Go to multiplayer select
+        MultiplayerSetupScene *mss = [[MultiplayerSetupScene alloc] initWithPreconfiguredMatch:self.match andServerID:self.serverPlayerId];
+        self.match.delegate = mss;
+        [mss setMatchVoiceChat:self.matchVoiceChat];
+        [[CCDirector sharedDirector] replaceScene:mss];
+        [mss release];
+        
+    }else{
+        QuickPlayScene *qps = [[QuickPlayScene alloc] init];
+        [[CCDirector sharedDirector] replaceScene:qps];
+        [qps release];
+    }
+}
+
+#pragma mark - GKMatchDelegate
+- (void)match:(GKMatch *)theMatch didReceiveData:(NSData *)data fromPlayer:(NSString *)playerID {    
+    if (self.match != theMatch) return;
+    
+    NSString* message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    if ([message isEqualToString:@"POSTBATTLEEND"]){
+        self.canAdvance = YES;
+    }
+    [message release];
+    
 }
 @end

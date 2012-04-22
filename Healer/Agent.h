@@ -10,5 +10,6 @@
 #import "CombatEvent.h"
 
 @interface Agent : NSObject <EventDataSource>
+@property (nonatomic, readonly) NSString* networkID;
 @property (nonatomic, assign) id<EventLogger> logger;
 @end

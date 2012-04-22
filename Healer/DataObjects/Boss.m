@@ -40,6 +40,10 @@
 	
 }
 
+-(NSString*)networkID{
+    return [NSString stringWithFormat:@"B-%@", self.title];
+}
+
 -(void)setIsMultiplayer:(BOOL)isMultiplayer{
     _isMultiplayer = isMultiplayer;
     

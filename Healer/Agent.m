@@ -10,6 +10,10 @@
 
 @implementation Agent
 @synthesize logger;
+
+-(NSString*)networkID{
+    return [NSString stringWithFormat:@"Agent:%@", self];
+}
 -(NSString*)sourceName{
     return @"";
 }
@@ -17,4 +21,5 @@
 -(NSString *)targetName{
     return @"";
 }
+
 @end

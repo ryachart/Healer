@@ -46,6 +46,14 @@ typedef enum {
 @property (readwrite) float timeApplied;
 @property (readwrite, retain) HealableTarget *target;
 @property (readonly) EffectType effectType;
+
+-(void)reset;
+
+//Weird fucking hacky solution for figuring out the owner in network play
+@property (nonatomic, retain) NSString* ownerNetworkID;
+@property (nonatomic, readwrite) BOOL needsOwnershipResolution;
+
+
 @property BOOL isExpired;
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type;
 
@@ -73,6 +81,7 @@ typedef enum {
 	NSInteger valuePerTick;
 	float lastTick;
 }
+@property (readwrite) NSInteger numHasTicked;
 @property (readwrite) NSInteger numOfTicks;
 @property (readwrite) NSInteger valuePerTick;
 -(void)tick;
@@ -110,6 +119,9 @@ typedef enum {
 @interface ImpLightningBottle : DelayedHealthEffect
 @end
 
+@interface BulwarkEffect : ShieldEffect
++(id)defaultEffect;
+@end
 
 
 #pragma mark - DEPRECATED EFFECTS
@@ -153,9 +165,7 @@ typedef enum {
 +(id)defaultEffect;
 @end
 
-@interface BulwarkEffect : ShieldEffect
-+(id)defaultEffect;
-@end
+
 
 @interface EtherealArmorEffect : Effect <HealthAdjustmentModifier>
 +(id)defaultEffect;

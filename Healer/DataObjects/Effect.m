@@ -10,8 +10,11 @@
 #import "GameObjects.h"
 #import "AudioController.h"
 #import "Agent.h"
+#import "Player.h"
+
 @implementation Effect
-@synthesize duration, isExpired, target, effectType, timeApplied, maxStacks, spriteName, title, ailmentType, owner;
+@synthesize duration, isExpired, target, effectType, timeApplied=_timeApplied, maxStacks, spriteName, title, ailmentType, owner;
+@synthesize needsOwnershipResolution, ownerNetworkID; //HACKY
 
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
 {
@@ -27,6 +30,11 @@
 	return self;
 }
 
+-(void)reset{
+    self.timeApplied = 0.0;
+    self.isExpired = NO;
+}
+
 -(id)copy{
     Effect *copied = [[[self class] alloc] initWithDuration:self.duration andEffectType:self.effectType];
     copied.maxStacks = self.maxStacks;
@@ -36,8 +44,21 @@
     return copied;
 }
 
+-(void)solveOwnershipResolutionForBoss:(Boss*)boss andRaid:(Raid*)raid andPlayer:(Player*)player{
+    if (self.needsOwnershipResolution && self.ownerNetworkID){
+        
+        //For this network hack we only care if it's me or not me.
+        if ([player.networkID isEqualToString:self.ownerNetworkID]){
+            self.owner = player;
+        }
+        self.needsOwnershipResolution = NO;
+        self.ownerNetworkID = nil;
+    }
+}
+
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
+    [self solveOwnershipResolutionForBoss:theBoss andRaid:theRaid andPlayer:thePlayer];
 	if (self.timeApplied != 0.0 && !isExpired)
 	{
         self.timeApplied += timeDelta;
@@ -64,9 +85,9 @@
 -(void)expire{
 
 }
-//EFF|TARGET|TITLE|DURATION|TYPE|SPRITENAME
+//EFF|TARGET|TITLE|DURATION|TYPE|SPRITENAME|OWNER
 -(NSString*)asNetworkMessage{
-    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName];
+    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner];
     
     return message;
 }
@@ -83,7 +104,7 @@
 
 @implementation RepeatedHealthEffect
 
-@synthesize numOfTicks, valuePerTick;
+@synthesize numOfTicks, valuePerTick,numHasTicked;
 
 -(id)copy{
     RepeatedHealthEffect *copy = [super copy];
@@ -92,9 +113,15 @@
     return copy;
 }
 
+-(void)reset{
+    [super reset];
+    lastTick = 0.0;
+    self.numHasTicked = 0.0;
+}
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
-	if (self.timeApplied != 0.0 && !isExpired)
+    [self solveOwnershipResolutionForBoss:theBoss andRaid:theRaid andPlayer:thePlayer];
+	if (!isExpired)
 	{
         self.timeApplied += timeDelta;
 		lastTick += timeDelta;
@@ -103,6 +130,9 @@
 			lastTick = 0.0;
 		}
 		if (self.timeApplied >= duration){
+            if (self.numHasTicked < self.numOfTicks){
+                [self tick];
+            }
             //[self tick];
 			//The one thing we always do here is expire the effect
 			self.timeApplied = 0.0;
@@ -112,6 +142,7 @@
 }
 
 -(void)tick{
+    self.numHasTicked++;
     if (!target.isDead){
         CombatEventType eventType = valuePerTick > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:valuePerTick] andEventType:eventType]];
@@ -289,6 +320,18 @@
 }
 @end
 
+@implementation BulwarkEffect
++(id)defaultEffect{
+	BulwarkEffect *be = [[BulwarkEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive];
+    [be setTitle:@"bulwark-effect"];
+	[be setAmountToShield:60];
+    [be setSpriteName:@"healing_default.png"];
+    [be setMaxStacks:1];
+	return [be autorelease];
+}
+
+@end
+
 
 #pragma mark - DEPRECATED SPELLS
 #pragma mark -
@@ -407,17 +450,7 @@
 
 @end
 
-@implementation BulwarkEffect
-+(id)defaultEffect{
-	BulwarkEffect *be = [[BulwarkEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive];
-    [be setTitle:@"bulwark-effect"];
-	[be setAmountToShield:60];
-    [be setSpriteName:@"healing_default.png"];
-    [be setMaxStacks:1];
-	return [be autorelease];
-}
 
-@end
 
 @implementation EtherealArmorEffect
 +(id)defaultEffect{

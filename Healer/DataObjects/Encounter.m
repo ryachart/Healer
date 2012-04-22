@@ -13,8 +13,12 @@
 #import "Boss.h"
 #import "Spell.h"
 
+@interface Encounter ()
+@property (nonatomic, readwrite) NSInteger levelNumber;
+@end
+
 @implementation Encounter
-@synthesize raid, boss, activeSpells;
+@synthesize raid, boss, activeSpells, levelNumber;
 -(id)initWithRaid:(Raid*)rd andBoss:(Boss*)bs andSpells:(NSArray*)sps{
     if (self = [super init]){
         self.raid = rd;
@@ -183,7 +187,9 @@
     }
     
     basicBoss.isMultiplayer = multiplayer;
-    return [[[Encounter alloc] initWithRaid:[basicRaid autorelease] andBoss:basicBoss andSpells:spells] autorelease];
+    Encounter *encToReturn = [[Encounter alloc] initWithRaid:[basicRaid autorelease] andBoss:basicBoss andSpells:spells];
+    [encToReturn setLevelNumber:level];
+    return [encToReturn autorelease];;
     
 }
 @end

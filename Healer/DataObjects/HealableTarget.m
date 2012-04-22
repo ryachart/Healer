@@ -46,18 +46,21 @@
 	if (activeEffects != nil){
         NSMutableArray *similarEffects = [NSMutableArray arrayWithCapacity:theEffect.maxStacks];
 		for (Effect *effectFA in activeEffects){
-			if ([effectFA.title isEqualToString:theEffect.title]){
+			if ([effectFA.title isEqualToString:theEffect.title] && effectFA.owner == theEffect.owner){
                 [similarEffects addObject:effectFA];
 			}
 		}
         
         if (similarEffects.count >= theEffect.maxStacks){
+            for (Effect *simEffect in similarEffects){
+                [simEffect reset]; //Refresh the duration of the existing versions of the effects if a second one is applied over.
+            }
             return;
         }
 		
-		[theEffect setTimeApplied:0.0001];
+		[theEffect reset];
         for (Effect *simEffect in similarEffects){
-            [simEffect setTimeApplied:0.0001]; //Refresh the duration of the existing versions of the effects if a second one is applied over.
+            [simEffect reset]; //Refresh the duration of the existing versions of the effects if a second one is applied over.
         }
 		if ([theEffect conformsToProtocol:@protocol(HealthAdjustmentModifier)]){
 			[self addHealthAdjustmentModifier:(HealthAdjustmentModifier*)theEffect];

@@ -15,6 +15,9 @@
 @property (nonatomic, assign) CCLabelTTF *isFocusedLabel;
 @property (nonatomic, assign) CCSprite *priorityPositiveEffectSprite;
 @property (nonatomic, assign) CCSprite *priorityNegativeEffectSprite;
+@property (nonatomic, assign) CCLabelTTF *priorityPositiveEffectDurationLabel;
+@property (nonatomic, assign) CCLabelTTF *priorityNegativeEffectDurationLabel;
+
 @property (nonatomic, readwrite) NSInteger lastHealth;
 @property (nonatomic, assign) CCSprite *shieldBubble;
 @end
@@ -22,7 +25,7 @@
 @implementation RaidMemberHealthView
 
 @synthesize memberData, classNameLabel, healthLabel, interactionDelegate, defaultBackgroundColor, isTouched, effectsLabel;
-@synthesize healthBarLayer, lastHealth, isFocusedLabel, priorityNegativeEffectSprite, priorityPositiveEffectSprite, shieldBubble;
+@synthesize healthBarLayer, lastHealth, isFocusedLabel, priorityNegativeEffectSprite, priorityPositiveEffectSprite, shieldBubble, priorityNegativeEffectDurationLabel, priorityPositiveEffectDurationLabel;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super init])) {
@@ -226,7 +229,13 @@
             self.priorityPositiveEffectSprite = [CCSprite spriteWithSpriteFrameName:positiveEffect.spriteName];
             [self.priorityPositiveEffectSprite setContentSize:CGSizeMake(40, 40)];
             [self.priorityPositiveEffectSprite setPosition:CGPointMake(20, self.contentSize.height * .15)];
+            
+            self.priorityPositiveEffectDurationLabel = [CCLabelTTF  labelWithString:@"" dimensions:CGSizeMake(25, 25) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:14.0];
+            [self.priorityPositiveEffectDurationLabel setPosition:CGPointMake(15, 15)];
+            [self.priorityPositiveEffectDurationLabel setColor:ccBLACK];
+            
             [self addChild:self.priorityPositiveEffectSprite z:5];
+            [self.priorityPositiveEffectSprite addChild:self.priorityPositiveEffectDurationLabel];
         }else{
             [self.priorityPositiveEffectSprite stopAllActions];
             [self.priorityPositiveEffectSprite setOpacity:255];
@@ -236,6 +245,10 @@
             CCAction *blinkAction = [CCRepeatForever actionWithAction:[CCSequence actions:[CCFadeTo actionWithDuration:.5 opacity:120], [CCFadeTo actionWithDuration:.5 opacity:255], nil]];
             blinkAction.tag = BLINK_ACTION_TAG;
             [self.priorityPositiveEffectSprite runAction:blinkAction];
+        }
+        
+        if (positiveEffect.duration - positiveEffect.timeApplied < 10.0){
+            [self.priorityPositiveEffectDurationLabel setString:[NSString stringWithFormat:@"%1.1f", positiveEffect.duration - positiveEffect.timeApplied]];
         }
         [self.priorityPositiveEffectSprite setVisible:YES];
     }else{

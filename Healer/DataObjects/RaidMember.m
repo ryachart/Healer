@@ -37,6 +37,9 @@
 	return self;
 }
 
+-(NSString*)networkID{
+    return [NSString stringWithFormat:@"R-%@", self.battleID];
+}
 -(NSString *)sourceName {
     return [NSString stringWithFormat:@"%@:%@", self.title, self.battleID];
 }

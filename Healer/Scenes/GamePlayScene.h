@@ -27,8 +27,6 @@
 @interface GamePlayScene : CCScene <EventLogger, Announcer, GamePlayFTUELayerDelegate, PauseLayerDelegate, GKMatchDelegate> {
 	NSMutableDictionary *memberToHealthView;
 	NSMutableArray *selectedRaidMembers;
-   
-	
 }
 //Interface Elements
 @property (nonatomic, retain) PlayerSpellButton *spellView1;
@@ -48,10 +46,14 @@
 
 
 //Multiplayer
-@property (nonatomic, readwrite) BOOL isServer;
-@property (nonatomic, readwrite) BOOL isClient;
+@property (nonatomic, readonly) BOOL isServer;
+@property (nonatomic, readonly) BOOL isClient;
+@property (nonatomic, retain) NSString *serverPlayerID;
 @property (nonatomic, retain) GKMatch*match;
+@property (nonatomic, retain) GKVoiceChat *matchVoiceChat;
 @property (nonatomic, retain) NSArray *players;
+
+-(void)setIsClient:(BOOL)isClient forServerPlayerId:(NSString*)serverPlayerID;
 
 -(id)initWithRaid:(Raid *)raidToUse boss:(Boss *)bossToUse andPlayers:(NSArray*)players;
 @end

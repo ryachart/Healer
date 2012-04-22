@@ -53,6 +53,10 @@
     activeSpells = [actSpells retain];
 }
 
+-(NSString*)networkID{
+    return [NSString stringWithFormat:@"P-%@", self.playerID];
+}
+
 -(NSString*)asNetworkMessage{
     NSString *message = [NSString stringWithFormat:@"PLYR|%@|%i|%i|", self.playerID, self.health, self.energy];
     return message;

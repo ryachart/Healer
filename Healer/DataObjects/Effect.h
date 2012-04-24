@@ -105,7 +105,6 @@ typedef enum {
 @property NSInteger value;
 @end
 
-
 #pragma mark - Shipping Boss Effects
 @interface TrulzarPoison : RepeatedHealthEffect
 @end
@@ -123,6 +122,13 @@ typedef enum {
 +(id)defaultEffect;
 @end
 
+@interface DamageTakenIncreasedEffect : Effect <HealthAdjustmentModifier>
+@property (nonatomic, readwrite) float percentage;
+@end
+
+@interface DamageTakenDecreasedEffect : Effect <HealthAdjustmentModifier>
+@property (nonatomic, readwrite) float percentage;
+@end
 
 #pragma mark - DEPRECATED EFFECTS
 @interface BigFireball : Effect {

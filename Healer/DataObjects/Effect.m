@@ -59,7 +59,7 @@
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
     [self solveOwnershipResolutionForBoss:theBoss andRaid:theRaid andPlayer:thePlayer];
-	if (self.timeApplied != 0.0 && !isExpired)
+	if (!isExpired)
 	{
         self.timeApplied += timeDelta;
 		if (self.timeApplied >= duration){
@@ -301,6 +301,40 @@
     if (self.target.health > self.target.maximumHealth * .98){
         self.isExpired = YES;
     }
+}
+@end
+
+@implementation DamageTakenDecreasedEffect
+@synthesize percentage;
+-(void)didChangeHealthFrom:(NSInteger )health toNewHealth:(NSInteger )newHealth
+{
+}
+-(void)willChangeHealthFrom:(NSInteger *)health toNewHealth:(NSInteger *)newHealth{
+	
+	if (*health > *newHealth){
+		NSInteger healthDelta = *health - *newHealth;
+        
+		NSInteger newHealthDelta = healthDelta	* (1 - percentage);
+		NSLog(@"Lowering damage taken by %i", *health- newHealthDelta);
+		*newHealth = *health - newHealthDelta;
+	}
+}
+@end
+
+@implementation DamageTakenIncreasedEffect
+@synthesize percentage;
+-(void)didChangeHealthFrom:(NSInteger )health toNewHealth:(NSInteger )newHealth
+{
+}
+-(void)willChangeHealthFrom:(NSInteger *)health toNewHealth:(NSInteger *)newHealth{
+	
+	if (*health > *newHealth){
+		NSInteger healthDelta = *health - *newHealth;
+        
+		NSInteger newHealthDelta = healthDelta	* (1 + percentage);
+		NSLog(@"Increasing damage taken by %i", *health- newHealthDelta);
+		*newHealth = *health - newHealthDelta;
+	}
 }
 
 @end

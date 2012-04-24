@@ -72,6 +72,7 @@ Spells:\
 	Heal\
 Boss:\
 	Ghoul - Duration: 1.5 Minutes.  Deals low damage distributed randomly across all targets.\
+	No abilities\
 \
 \
 Stage 2: \
@@ -85,11 +86,37 @@ Allies: \
 \
 Spells:\
 	Heal\
+	Greater Heal\
 \
 Boss: \
 	Corrupted Troll - Duration 3 Minutes.  Focuses a Main Tank.\
+		Cave In - Deals moderate damage to the entire party\
+		Adrenaline Rush - Deals focused, high damage to the main tank for a brief period of time before becoming exhausted.\
 \
-Stage 3:\
+\pard\pardeftab720
+\cf0 Stage 3:\
+Description: \'a0A local alchemist has posted a small reward for removing a pesky imp infestation from her store. \'a0Sensing something a little more\'a0sinister, a small party has been dispatched from the Light\'a0Ascendancy, just in case there is more than meets the eye.\
+\
+Allies:\
+\'a0 \'a0 \'a01x Soldier\
+\'a0 \'a0 \'a01x Champion\
+\'a0 \'a0 \'a01x Demonslayer\
+\'a0 \'a0 \'a01x Guardian\
+\'a0 \'a0 \'a01x Wizard\
+\
+Spells:\
+\'a0 \'a0 \'a0 Heal\
+\'a0 \'a0 \'a0 Greater Heal\
+\
+Boss:\
+\'a0 \'a0 \'a0Potion Imps(Duration: 2.5 minutes)\
+	Focuses a main tank\
+\'a0 \'a0 	Periodically throws a potion to a raid member.  Red: Fire DoT.  Blue: Moderate damage\
+	At 50%, hurls a random potion at every raid member\
+	At 15%, stops hurling potions and deals increased tank damage.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+Stage 4:\
 Description:  After felling the Troll of Raklor, 
 \b The Light Ascendant 
 \b0 raided the encampment to discover that the agents of darkness had summoned a Drake of Soldorn.  It is hidden in the Paragon Cliffs.\
@@ -104,12 +131,13 @@ Spells: \
 	Greater Heal\
 \
 Boss:\
-	Drake of Soldorn: (Duration 5 Minutes)\
-		Deals low damage distributed among all targets randomly.\
-		At 75%, gains Fury dealing 25% more damage.\
-		At 25%, the drake breathes fire dealing moderate damage to all targets.\
+	Drake of Soldorn: (Duration 2.5 Minutes)\
+		Does not Focus a tank.\
+		Periodically shoots a fireball at a target dealing moderate damage.\
+		At 50%, shoots fireballs at all targets\
+		At 75% and 25% a random raid member is locked in the jaws of the drake and takes high damage.  This turns off all other drake damage for 10 seconds.\
 \
-Stage 4:\
+Stage 5:\
 Description: King Dralazak himself has posted a bounty for the head of the Trulzar, a warlock who has slaughtered the King's most prized fighter.  
 \b The Light Ascendant
 \b0  have done battle with Trulzar in the past and lost many good soldiers.  This would be a great opportunity to prove that your presence will turn the tide of any battles.\
@@ -126,19 +154,17 @@ Spells:\
 	Purify\
 \
 Boss:\
-	Trulzar, the Foul: (Duration 5 Minutes)\
-		Deals low damage to all targets every 10 seconds.\
+	Trulzar, the Maleficar: (Duration 2.5 Minutes)\
+		Deals low damage to a random target periodically\
 		Every 10 seconds, a random target becomes poisoned.  The poison deals increasing damage the longer it stays on a target.\
-		Every 10% of his health, Trulzar lowers the health of any poisoned targets to 1.\
 		At 9% of his health, all targets become poisoned.\
 \
-Stage 5:\
+Stage 6:\
 Description: The Theranorian Seers have infiltrated the minds of the Council of Dark Summoners and discovered their location.  King Dralazak has sent word to of this discovery to  
 \b The Light Ascendant.   \
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
-\b0 \cf0 Allies:\
+\b0 Allies:\
 	5 x Soldier\
 	5 x Guardian\
 	3 x Demonslayer\
@@ -152,13 +178,18 @@ Spells:\
 \
 Boss:\
 	Council of Dark Summoners: (Duration 5 Minutes)\
-		Deals low damage to random targets.\
-		Every 30 seconds, effects a target with crippling darkness reducing damage dealt to zero.\
-		Every 13 seconds, any targets effected with crippling darkness are killed instantly.  All other targets sustain low damage.\
-		Every 5 seconds, a random target is reduced to 50% of its current health.\
-		\
+		4 Summoners: 	Roth, The Toxin Mage\
+					Grimgon, The Dark Cloud\
+					Serevon, The Tormentor\
+					Galcyon, Overlord of Darkness\
+	\
+	Abilities:\
+		Roth :  Focuses a victim (not a main tank).  Poisons the victim  if he is not poisoned.  Whenever the poison is dispelled it deals light damage to the entire raid.  The poison deals increasing damage the longer it is on the target.  \
+		Grimgon : Periodically fires poisonous fireballs at members of the raid for low damage.  When a target is hit, their healing received is reduced by 25% for 4 seconds.\
+		Serevon : Periodically summons a dark cloud over the target that reduces healing received by 95%.  The dark cloud deals more damage the less health the target has.  The dark cloud can not be dispelled.  Serevon deals light melee damage to random targets.\
+		Galcyon : When he begins, he casts a poisonous purple cloud over the entire raid dealing moderate periodic damage over 10 seconds.  This fades after about 5 seconds. He then announces that he begins drawing life force from the room. 5 seconds later,   all targets take 50 damage, but then are healed for 60 1 second after.  He repeats this process 10 seconds later until he is killed.\
 \
-Stage 6: \
+Stage 7: \
 Description: From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped.  The village people have foreseen their impending doom and sent young and brave hopefuls to join 
 \b The Light Ascendant
 \b0  in exchange for protection.\
@@ -180,11 +211,11 @@ Boss:\
 	Plaguebringer Colossus: (Duration: 5 minutes)\
 	Chooses a Main Tank\
 	Deals moderate damage to random targets every few seconds.\
-	Every 20% of his health, a puss bubble bursts from the colossus dealing high damage to all targets and reducing the damage of the colossus by 10%.\
-	Every 15 seconds,  2 targets are dealt light damage and infected.  Infected targets take light damage every 2 seconds until healed to full.\
+	Every 20% of his health, a puss bubble bursts from the colossus dealing high damage to all targets.\
+	Every 15 seconds,  2 targets are struck and begin bleeding.  They bleed for light damage until healed to full.  This effect can not be dispelled.\
 	\
 \pard\pardeftab720
-\cf0 Stage 7:\'a0\
+\cf0 Stage 8:\'a0\
 Description: \'a0Royal scouts report toxic spores are bursting from the remains of the\'a0colossus, slain a few days prior\'a0near the outskirts of Theranore. \'a0The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate. \'a0Conversely, no villagers have left the town, either...\
 \
 Allies:\
@@ -196,7 +227,6 @@ Allies:\
 \
 Spells:\
 \'a0 \'a0 \'a0Heal\
-\'a0 \'a0 \'a0Healing Burst\
 \'a0 \'a0 \'a0Greater Heal\
 \'a0 \'a0 \'a0Forked Heal\
 \'a0 \'a0 \'a0Regrow\
@@ -209,7 +239,7 @@ Boss:\
 \'a0 \'a0 \'a0At 33%, the another ravager dies, exploding for high damage to five targets. \'a0The last ravager is left focusing one target, but enrages dealing high damage to that tank.\
 \
 \
-Stage *8 \'a0Might be too tough for Stage 8, but can be incorporated later.\
+Stage 9: \'a0\
 Description: \'a0A noblewoman has posted a reward for information regarding the disappearance of her son's scouting party from an outpost near the Estinwald woodlands. \'a0There are rumors that the forest is enchanted, and once inside, it is nigh impossible to navigate ones way out. \'a0Earlier in the way, returned reporting that the outpost had been overrun by forest.\
 \
 Allies:\
@@ -223,38 +253,41 @@ Spells:\
 \'a0 \'a0 \'a0Heal\
 \'a0 \'a0 \'a0Greater Heal\
 \'a0 \'a0 \'a0Regrow\
-\'a0 \'a0 \'a0Barrier\
+\'a0 \'a0  Light Eternal\
 \
 Boss:\
-\'a0 \'a0 \'a0Greater Treant: \'a0(Duration: 5 Minutes)\
+\'a0 \'a0 \'a0Greater Treant: \'a0\
 \'a0 \'a0 \'a0At the start of the encounter, the Greater Treant chooses a main tank. \'a0It attacks for moderate damage.\
 \'a0 \'a0 \'a0Every 25%, it rears back and strikes with a large branch in a vicious sweeping arch, dealing heavy damage to the entire party.\
 \'a0 \'a0 \'a0Every 10%, the Treant hurls a boulder into a group of allies, dealing moderate damage to 3-5 targets.\
 \'a0 \'a0 \'a0Periodically, the Treant rips its roots from the soil, causing the ground to quake, dealing light damage to the entire party.\
 \
-Stage 9:\
-Description: \'a0A local alchemist has posted a small reward for removing a pesky imp infestation from her store. \'a0Sensing something a little more\'a0sinister, a small party has been dispatched from the Light\'a0Ascendancy, just in case there is more than meets the eye.\
+\
+Stage 10:\
 \
 Allies:\
-\'a0 \'a0 \'a01x Soldier\
-\'a0 \'a0 \'a01x Champion\
-\'a0 \'a0 \'a01x Demonslayer\
-\'a0 \'a0 \'a01x Guardian\
-\'a0 \'a0 \'a01x Wizard\
+\'a0 \'a0 \'a05x Soldier\
+\'a0 \'a0 \'a05x Champion\
+\'a0 \'a0 \'a03x Guardian\
+\'a0 \'a0 \'a03x Wizard\
+\'a0 \'a0 \'a04x Berserker\
 \
-Spells:\
-\'a0 \'a0 \'a0 Heal\
-\'a0 \'a0 \'a0 Healing Burst\
-\'a0 \'a0 \'a0 Barrier\
-\'a0 \'a0 \'a0 Purify\
+Twin Champions of Baraghast:\
+	Chooses two tanks.  One tank takes moderate steady damage.  The other tank takes a large sum of damage infrequently.  \
+	Periodically one of the champions hurls an axe at a random non-tank raid member.  This axe hurl deals damage equal to 90% of that target's health.  4 Seconds later, if that target has less than 50% health the target is executed and instantly killed by the other champion's sword. (The Flash Heal test)\
+	Periodically, three targets are struck with a gushing wound.  The gushing would ticks every 3 seconds.  Each tick deals more damage than the last.  Lasts 9 seconds.\
+	At 50%, the champions switch to different tanks.\
+	At 25%, the axe throw + execution combo happens more frequently and is almost unsaveable\
 \
-Boss:\
-\'a0 \'a0 \'a0Potion Imps/ Homunculous (Duration: 5 minutes)\
-\'a0 \'a0 \'a0As the fight begins, the imps choose a target to pick on. \'a0They attack for light damage. "Notification: The imps are mixing potions!"\
-\'a0 \'a0 \'a0For the first 70% of the encounter, the imps frequently throw potion globes at party members. \'a0(The thrown globe has a 33.3% chance to be one of three different potions).\
-\'a0 \'a0 \'a0 \'a0 \'a0 -Liquid Fire - The globe breaks, igniting its target on fire, dealing moderate damage over 12 seconds.\
-\'a0 \'a0 \'a0 \'a0 \'a0 -Lightning in a Bottle - The globe breaks, shocking its target for heavy damage.\
-\'a0 \'a0 \'a0 \'a0 \'a0 -Infectious Growth - The globe breaks, dealing light damage to its target, but infecting it with a fungus. \'a0The fungus acts as a DOT dealing light damage to all of the other party members. \'a0It continues to spread, increasing damage per stack, if left un-cleansed.\
-\'a0 \'a0 \'a0For the last 30% of the encounter (Notification at 35%: \'a0The imps have consumed the mixture!", the imps combine into a homunculous creature. \'a0It now attacks the main tank chosen at the beginning of the encounter, for heavy damage (Tank and spank at this point).\
+Stage 11:\
 \
-Sorry if this one is overly complicated, but I liked the idea of the potion-tossing. \'a0Randomizes the encounter a little.}
+Allies:\
+	\'a0 \'a05x Soldier\
+	\'a0 \'a05x Champion\
+\'a0 	\'a0 \'a03x Guardian\
+\'a0 	\'a0 \'a03x Wizard\
+\'a0 	\'a0 \'a04x Berserker\
+\
+Baraghast:\
+	\
+	}

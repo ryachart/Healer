@@ -37,6 +37,7 @@
 @property (nonatomic, readwrite) float criticalChance;
 @property (nonatomic, retain) NSString* title;
 @property (nonatomic, assign) id<EventLogger> logger;
+@property (nonatomic, readwrite) NSInteger phase;
 @property NSInteger maximumHealth;
 
 @property (nonatomic, readwrite) float lastAttack;
@@ -70,7 +71,9 @@
 @end
 
 @interface DarkCouncil : Boss
+@property (nonatomic, retain) RaidMember *rothVictim;
 @property (readwrite) NSTimeInterval lastPoisonballTime;
+@property (readwrite) NSTimeInterval lastDarkCloud;
 @end
 
 @interface PlaguebringerColossus: Boss
@@ -88,4 +91,13 @@
 
 @interface MischievousImps: Boss
 @property (readwrite) NSTimeInterval lastPotionThrow;
+@end
+
+@interface BefouledTreat : Boss
+@end
+
+@interface TwinChampions : Boss
+@end
+
+@interface Baraghast : Boss
 @end

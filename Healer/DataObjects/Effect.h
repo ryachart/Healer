@@ -59,6 +59,7 @@ typedef enum {
 
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta;
 -(void)expire;
+-(void)effectWillBeDispelled:(Raid*)raid player:(Player*)player;
 
 //Multiplayer
 -(NSString*)asNetworkMessage;
@@ -109,13 +110,24 @@ typedef enum {
 @interface TrulzarPoison : RepeatedHealthEffect
 @end
 
-@interface CouncilPoisonball : DelayedHealthEffect
+@interface CouncilPoison : RepeatedHealthEffect <HealthAdjustmentModifier>
+@end
+@interface CouncilPoisonball : DelayedHealthEffect 
 @end
 
 @interface ExpiresAtFullHealthRHE: RepeatedHealthEffect
 @end
 
 @interface ImpLightningBottle : DelayedHealthEffect
+@end
+
+@interface RothPoison : RepeatedHealthEffect
+@property (nonatomic, readwrite) NSInteger dispelDamageValue;
+@property (nonatomic, readwrite) NSInteger baseValue;
+@end
+
+@interface DarkCloudEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
+@property (nonatomic, readwrite) NSInteger baseValue;
 @end
 
 @interface BulwarkEffect : ShieldEffect

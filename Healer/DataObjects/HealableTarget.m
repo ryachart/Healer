@@ -12,7 +12,7 @@
 
 @implementation HealableTarget
 @synthesize health, maximumHealth, activeEffects, isFocused;
-@synthesize battleID, hasDied;
+@synthesize battleID, hasDied, healthAdjustmentModifiers;
 
 -(float)healthPercentage{
     return (float)self.health/(float)self.maximumHealth;

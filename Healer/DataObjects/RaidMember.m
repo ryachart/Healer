@@ -69,8 +69,8 @@
 	}
     
     for (Effect *effect in effectsToRemove){
+        [self.healthAdjustmentModifiers removeObject:effect];
         [activeEffects removeObject:effect];
-        
     }
 }
 

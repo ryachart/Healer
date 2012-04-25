@@ -75,11 +75,22 @@
 	
 }
 
+-(NSString*)title{
+    if (title){
+        return title;
+    }
+    return NSStringFromClass([self class]);
+}
+
 -(BOOL)isEqual:(Effect*)object{
     if ([self.title isEqualToString:object.title]){
         return YES;
     }
     return NO;
+}
+
+-(void)effectWillBeDispelled:(Raid*)raid player:(Player*)player{
+    
 }
 
 -(void)expire{
@@ -280,18 +291,32 @@
 
 @end
 
+@implementation CouncilPoison
+-(void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
+    if (*currentHealth < *newHealth){
+		NSInteger healthDelta = *currentHealth - *newHealth;
+		NSInteger newHealthDelta = healthDelta * .5;
+		*newHealth = *currentHealth - newHealthDelta;
+	}
+}
+-(void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth{
+    
+}
+@end
+
 @implementation CouncilPoisonball
 -(void)expire{
-    RepeatedHealthEffect *poisonDoT = [[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative];
+    CouncilPoison *poisonDoT = [[CouncilPoison alloc] initWithDuration:6 andEffectType:EffectTypeNegative];
     [poisonDoT setTitle:@"council-ball-dot"];
     [poisonDoT setSpriteName:@"poison.png"];
-    [poisonDoT setValuePerTick:-3];
-    [poisonDoT setNumOfTicks:4];
+    [poisonDoT setValuePerTick:-4];
+    [poisonDoT setNumOfTicks:3];
     [poisonDoT setOwner:self.owner];
     [self.target addEffect:poisonDoT];
     [poisonDoT release];
     [super expire];
 }
+
 @end
 
 @implementation  ExpiresAtFullHealthRHE
@@ -315,7 +340,6 @@
 		NSInteger healthDelta = *health - *newHealth;
         
 		NSInteger newHealthDelta = healthDelta	* (1 - percentage);
-		NSLog(@"Lowering damage taken by %i", *health- newHealthDelta);
 		*newHealth = *health - newHealthDelta;
 	}
 }
@@ -332,11 +356,9 @@
 		NSInteger healthDelta = *health - *newHealth;
         
 		NSInteger newHealthDelta = healthDelta	* (1 + percentage);
-		NSLog(@"Increasing damage taken by %i", *health- newHealthDelta);
 		*newHealth = *health - newHealthDelta;
 	}
 }
-
 @end
 
 @implementation ImpLightningBottle 
@@ -363,10 +385,56 @@
     [be setMaxStacks:1];
 	return [be autorelease];
 }
-
 @end
 
+@implementation RothPoison
+@synthesize dispelDamageValue, baseValue;
+-(void)setValuePerTick:(NSInteger)valPerTick{
+    if (self.baseValue == 0){
+        self.baseValue = valPerTick;
+    }
+    valuePerTick = valPerTick;
+}
 
+-(void)tick{
+    [super tick];
+    self.valuePerTick = self.baseValue * self.numHasTicked;
+}
+-(void)effectWillBeDispelled:(Raid *)raid player:(Player *)player{
+    for (RaidMember*member in raid.raidMembers){
+        [member setHealth:member.health + self.dispelDamageValue];
+    }
+}
+@end 
+
+
+@implementation DarkCloudEffect 
+@synthesize baseValue;
+
+-(void)setValuePerTick:(NSInteger)valPerTick{
+    if (self.baseValue == 0){
+        self.baseValue = valPerTick;
+    }
+    valuePerTick = valPerTick;
+}
+-(void)tick{
+    self.valuePerTick = (2 - self.target.healthPercentage) * baseValue;
+    [super tick];
+}
+-(void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
+    if (*currentHealth < *newHealth){
+		NSInteger healthDelta = *currentHealth - *newHealth;
+		NSInteger newHealthDelta = healthDelta * .05;
+		*newHealth = *currentHealth - newHealthDelta;
+	}
+}
+-(void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth{
+    
+}
+-(void)expire{
+    [super expire];
+}
+@end
 #pragma mark - DEPRECATED SPELLS
 #pragma mark -
 #pragma mark Shaman Spells

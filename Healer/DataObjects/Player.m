@@ -120,6 +120,7 @@
 		[effect combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:timeDelta];
 		if ([effect isExpired]){
 			[effect expire];
+            [self.healthAdjustmentModifiers removeObject:effect];
 			[activeEffects removeObjectAtIndex:i];
 		}
 	}

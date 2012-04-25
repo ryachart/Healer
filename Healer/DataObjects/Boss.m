@@ -18,7 +18,7 @@
 @end
 
 @implementation Boss
-@synthesize lastAttack, health, maximumHealth, title, logger, focusTarget, announcer, criticalChance, info, isMultiplayer=_isMultiplayer;
+@synthesize lastAttack, health, maximumHealth, title, logger, focusTarget, announcer, criticalChance, info, isMultiplayer=_isMultiplayer,phase;
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
     if (self = [super init]){
@@ -439,12 +439,35 @@
 @end
 
 @implementation DarkCouncil
-@synthesize lastPoisonballTime;
+@synthesize lastPoisonballTime, rothVictim, lastDarkCloud;
 +(id)defaultBoss{
     DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:292500 damage:5 targets:5 frequency:.75 andChoosesMT:NO];
     [boss setTitle:@"Council of Dark Summoners"];
     [boss setInfo:@"The Theranorian Seers have infiltrated the minds of the Council of Dark Summoners and discovered their location.  King Dralazak has sent word to of this discovery to  The Light Ascendant."];
     return [boss autorelease];
+}
+
+-(RaidMember*)chooseVictimInRaid:(Raid*)raid{
+    RaidMember *victim = nil;
+    while (!victim){
+        RaidMember *member = [raid randomLivingMember];
+        if ([member isKindOfClass:[Demonslayer class]]){
+            continue;
+        }
+        victim = member;    
+    }
+    return victim;
+}
+
+-(void)summonDarkCloud:(Raid*)raid{
+    for (RaidMember *member in raid.raidMembers){
+        DarkCloudEffect *dcEffect = [[DarkCloudEffect alloc] initWithDuration:6 andEffectType:EffectTypeNegativeInvisible];
+        [dcEffect setValuePerTick:5];
+        [dcEffect setNumOfTicks:3];
+        [member addEffect:dcEffect];
+        [dcEffect release];
+    }
+    [self.announcer displayPartcileSystemOnRaidWithName:@"purple_mist.plist"];
 }
 
 -(void)shootProjectileAtTarget:(RaidMember*)target withDelay:(float)delay{
@@ -463,51 +486,87 @@
 
 -(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
     [super combatActions:player theRaid:theRaid gameTime:timeDelta];
-    self.lastPoisonballTime += timeDelta;
-    NSInteger tickTime = self.isMultiplayer ? 7.5 : 9;
-    if (self.lastPoisonballTime > tickTime){ 
-        for (int i = 0; i < 2; i++){
-            [self shootProjectileAtTarget:[theRaid randomLivingMember] withDelay:i * 1];
+    if (self.phase == 1){
+        //Roth
+        if (![[self.rothVictim activeEffects] containsObject:[[[RothPoison alloc] init] autorelease]] || self.rothVictim.isDead){
+            self.rothVictim = [self chooseVictimInRaid:theRaid];
+            RothPoison *poison = [[RothPoison alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative];
+            [poison setSpriteName:@"poison.png"];
+            [poison setNumOfTicks:15];
+            [poison setValuePerTick:-10];
+            [poison setDispelDamageValue:-20];
+            [self.rothVictim addEffect:[poison autorelease]];
         }
-        self.lastPoisonballTime = 0;
     }
+    
+    if (self.phase == 2){
+        //Grimgon
+        self.lastPoisonballTime += timeDelta;
+        float tickTime = self.isMultiplayer ? 7.5 : 9;
+        if (self.lastPoisonballTime > tickTime){ 
+            for (int i = 0; i < 2; i++){
+                [self shootProjectileAtTarget:[theRaid randomLivingMember] withDelay:i * 1];
+            }
+            self.lastPoisonballTime = 0;
+        }
+    }
+    
+    if (self.phase == 3){
+        //Serevon
+        self.lastDarkCloud += timeDelta;
+        float tickTime = 18.0;
+        if (self.lastDarkCloud > tickTime){
+            [self summonDarkCloud:theRaid];
+            self.lastDarkCloud = 0.0;
+        }
+    }
+    
+    if (self.phase == 4){
+        
+    }
+
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (percentage == 99.0){
-        [self.announcer announce:@"The room fills with demons and horrors."];
+        damage = 0;
+        [self.announcer announce:@"The room fills with demonic laughter."];
     }
-    if (percentage == 90.0){
+    if (percentage == 97.0){
         //Roth of the Shadows steps forward
+        self.phase = 1;
         [self.announcer announce:@"Roth, The Toxin Mage steps forward."];
     }
     
-    if (percentage == 80.0){
+    if (percentage == 75.0){
         //Roth dies
-        [self.announcer announce:@"Roth falls to his knees and demons spill from his soul."];
-    }
-    
-    if (percentage == 70.0){
-        //Grimgon, The Darkener steps forward
-    }
-    
-    if (percentage == 60.0){
-        //Grimgon Dies
+        [self.announcer announce:@"Roth falls to his knees.  Grimgon, The Darkener takes his place."];
+        self.phase = 2;
     }
     
     if (percentage == 50.0){
+        [self.announcer announce:@"Grimgon fades to nothing.  Serevon, Anguish Mage cackles with glee."];
         //Serevon, Anguish Mage steps forward
+        self.phase = 3;
+        targets = 1;
+        damage = 20;
     }
     
-    if (percentage == 40.0){
-        //Serevon dies
-    }
-    
-    if (percentage == 30.0){
+    if (percentage == 25.0){
         //Galcyon, Lord of the Dark Council steps forward
+        [self.announcer announce:@"Galcyon, Overlord of Darkness pushes away Serevon's corpse and slithers into the fray."];
+        self.phase = 4;
+    }
+    
+    if (percentage == 23.0){
+        for (RaidMember *member in raid.raidMembers){
+            [self shootProjectileAtTarget:member withDelay:0.0];
+        }
     }
     
     if (percentage == 5.0){
+        [self.announcer announce:@"Galycon cries out as steel and magic burns through his flesh."];
+        [self summonDarkCloud:raid];
         //Galcyon, Lord of the Dark Council does his last thing..
     }
 }

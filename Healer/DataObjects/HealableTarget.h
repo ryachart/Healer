@@ -18,8 +18,8 @@
 	NSInteger maximumHealth;
 	
 	NSMutableArray *activeEffects;
-	NSMutableArray *healthAdjustmentModifiers;
 }
+@property (nonatomic, retain) NSMutableArray *healthAdjustmentModifiers;
 @property (nonatomic, retain) NSString* battleID;
 @property (nonatomic, readwrite) BOOL hasDied;
 @property (nonatomic, setter=setHealth:) NSInteger health;

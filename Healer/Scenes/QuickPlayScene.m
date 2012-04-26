@@ -12,11 +12,12 @@
 #import "HealerStartScene.h"
 #import "Encounter.h"
 
+#define NUM_ENCOUNTERS 9
+
 @interface QuickPlayScene ()
 @property (retain) CCMenu *menu;
 
 -(void)beginGameWithSelectedLevel:(id)sender;
-
 -(void)back;
 
 @end
@@ -29,7 +30,7 @@
         [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:100] forKey:PlayerHighestLevelCompleted];
 #endif
         self.menu = [CCMenu menuWithItems:nil];
-        for (int i = 0; i < 8; i++){
+        for (int i = 0; i < NUM_ENCOUNTERS; i++){
             CCMenuItemLabel *levelButton = [[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:[NSString stringWithFormat:@"Level %i", i + 1] fontName:@"Arial" fontSize:32] target: self selector:@selector(beginGameWithSelectedLevel:)];
             levelButton.tag = i +1;
             if (i > ([[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue] )){
@@ -39,7 +40,7 @@
         }
         [self.menu setPosition:ccp([CCDirector sharedDirector].winSize.width /2, [CCDirector sharedDirector].winSize.height / 2)];
         [self.menu setColor:ccc3(255, 255, 255)];
-        [self.menu alignItemsInRows:[NSNumber numberWithInt:8]/*,[NSNumber numberWithInt:10]*/, nil];
+        [self.menu alignItemsInRows:[NSNumber numberWithInt:NUM_ENCOUNTERS]/*,[NSNumber numberWithInt:10]*/, nil];
         [self addChild:self.menu];
         
         

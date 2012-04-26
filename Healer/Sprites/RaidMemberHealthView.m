@@ -249,6 +249,8 @@
         
         if (positiveEffect.duration - positiveEffect.timeApplied < 10.0){
             [self.priorityPositiveEffectDurationLabel setString:[NSString stringWithFormat:@"%1.1f", positiveEffect.duration - positiveEffect.timeApplied]];
+        }else{
+            [self.priorityPositiveEffectDurationLabel setString:@""];
         }
         [self.priorityPositiveEffectSprite setVisible:YES];
     }else{

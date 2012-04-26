@@ -181,6 +181,29 @@
         }
     }
     
+    if (level == 9){
+        basicRaid = [[Raid alloc] init];
+        basicBoss = [BefouledTreat defaultBoss];
+        spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
+        
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+        }
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Guardian defaultGuardian]];
+        }
+        for (int i = 0; i < 4; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+        }
+        
+    }
+    
     if (!basicBoss || !basicRaid){
         [basicRaid release];
         return nil;

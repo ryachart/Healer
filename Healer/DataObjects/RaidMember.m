@@ -244,7 +244,7 @@
     return [[[Berserker alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:107 damageDealt:140 andDmgFrequency:1.0]){
+    if (self = [super initWithHealth:107 damageDealt:180 andDmgFrequency:1.0]){
         self.title = @"Berserker";
         self.info = @"The Berserker has moderate health and deals more damage at low health.";
         self.dodgeChance = .07;
@@ -253,7 +253,7 @@
 }
 
 -(int)damageDealt{
-    int baseDamage = self.damageDealt;
+    int baseDamage = [super damageDealt];
     return baseDamage - self.health;
 }
 @end

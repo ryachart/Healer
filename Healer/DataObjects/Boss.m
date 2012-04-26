@@ -588,7 +588,7 @@
     [infectedWound setTitle:@"pbc-infected-wound"];
     [infectedWound setValuePerTick: self.isMultiplayer ? -8 : -4];
     [infectedWound setNumOfTicks:15];
-    [infectedWound setSpriteName:@"poison.png"];
+    [infectedWound setSpriteName:@"bleeding.png"];
     if (target.health > target.maximumHealth * .98){
         //Force the health under .98 so it doesnt immediately expire when applied.
         [target setHealth:target.health * .94];
@@ -856,6 +856,62 @@
         [self.announcer announce:@"All of the imps angrily pounce on their focused target!"];
         frequency /= 2.0;
         damage *= self.isMultiplayer ? 1.05 : .75 ;
+    }
+}
+@end
+
+@implementation BefouledTreat
+@synthesize lastRootquake;
++(id)defaultBoss{
+    BefouledTreat *boss = [[BefouledTreat alloc] initWithHealth:400000 damage:43 targets:1 frequency:3.0 andChoosesMT:YES];
+    [boss setTitle:@"Befouled Treant"];
+    [boss setInfo:@"The Akarus, an ancient tree that has sheltered travelers across the Gungoro Plains, has become tainted with the foul energy of Baraghast.  It is lashing its way through villagers and farmers.  This once great tree must be ended for good."];
+    return [boss autorelease];
+}
+
+-(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
+    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+    
+    float tickTime = 30.0;
+    self.lastRootquake += timeDelta;
+    if (self.lastRootquake > tickTime){
+        [self performRootquakeOnRaid:theRaid];
+        self.lastRootquake = 0.0;
+    }
+}
+
+-(void)performBranchAttackOnRaid:(Raid*)raid{
+    for (RaidMember *member in raid.raidMembers){
+        [member setHealth:member.health - 26];
+        RepeatedHealthEffect *lashDoT = [[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative];
+        [lashDoT setOwner:self];
+        [lashDoT setTitle:@"lash"];
+        [lashDoT setValuePerTick:-4];
+        [lashDoT setNumOfTicks:5];
+        [lashDoT setSpriteName:@"bleeding.png"];
+        [member addEffect:[lashDoT autorelease]];
+    }
+}
+
+-(void)performRootquakeOnRaid:(Raid*)raid{
+    [self.announcer announce:@"The Treant's roots move the earth."];
+    [self.announcer displayScreenShakeForDuration:6.0];
+    for (RaidMember *member in raid.raidMembers){
+        RepeatedHealthEffect *rootquake = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegativeInvisible];
+        [rootquake setOwner:self];
+        [rootquake setValuePerTick:-7];
+        [rootquake setNumOfTicks:4];
+        [rootquake setTitle:@"rootquake"];
+        [member addEffect:[rootquake autorelease]];
+    }
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    if (percentage == 97.0 || percentage == 75.0 || percentage == 51.0 || percentage == 30.0){
+        [self.announcer announce:@"The Befouled Treant's pulls its enormous branches back to lash out at your allies."];
+    }
+    if (percentage == 96.0 || percentage == 74.0 || percentage == 50.0 || percentage == 29.0){
+        [self performBranchAttackOnRaid:raid];
     }
 }
 @end

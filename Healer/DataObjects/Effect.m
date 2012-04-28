@@ -312,6 +312,7 @@
     [poisonDoT setValuePerTick:-4];
     [poisonDoT setNumOfTicks:3];
     [poisonDoT setOwner:self.owner];
+    [poisonDoT setAilmentType:AilmentPoison];
     [self.target addEffect:poisonDoT];
     [poisonDoT release];
     [super expire];

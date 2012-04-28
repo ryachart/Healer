@@ -11,6 +11,8 @@
 #import "Shop.h"
 #import "ShopItemNode.h"
 #import "ShopItem.h"
+#import "BackgroundSprite.h"
+
 @interface StoreScene ()
 @property (nonatomic, assign) CCLabelTTF *goldLabel;
 -(void)itemSelected:(ShopItemNode*)item;
@@ -20,7 +22,8 @@
 @implementation StoreScene
 @synthesize goldLabel;
 -(id)init{
-    if (self = [super init]){        
+    if (self = [super init]){  
+        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"stone-bg-ipad"] autorelease]];
         NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
         

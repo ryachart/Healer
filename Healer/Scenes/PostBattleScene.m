@@ -16,6 +16,7 @@
 #import <UIKit/UIKit.h>
 #import "Shop.h"
 #import "StoreScene.h"
+#import "BackgroundSprite.h"
 
 @interface PostBattleScene()
 @property (nonatomic, readwrite) BOOL canAdvance;
@@ -28,6 +29,7 @@
 -(id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog levelNumber:(NSInteger)levelNumber andIsMultiplayer:(BOOL)isMultiplayer{
     self = [super init];
     if (self){
+        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"stone-bg-ipad"] autorelease]];
         if (victory){
             CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"VICTORY!" fontName:@"Arial" fontSize:72];
             [victoryLabel setPosition:CGPointMake(512, 384)];
@@ -54,7 +56,7 @@
                 }];
                 
                 CCMenu *visitStoreMenu = [CCMenu menuWithItems:visitShopButton, nil];
-                [visitStoreMenu setPosition:CGPointMake(800, 100)];
+                [visitStoreMenu setPosition:CGPointMake(600, 100)];
                 [self addChild:visitStoreMenu];
             }
         }else{

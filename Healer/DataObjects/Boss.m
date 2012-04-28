@@ -266,7 +266,7 @@
 -(void)stopEnraging{
     [self.announcer announce:@"The Cave Troll is Exhausted!"];
     self.enraging = 0.0;
-    self.lastRockTime = 0.0;
+    self.lastRockTime = 5.0;
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
@@ -346,7 +346,7 @@
 @implementation Trulzar
 @synthesize lastPoisonTime, lastPotionTime;
 +(id)defaultBoss{
-    Trulzar *boss = [[Trulzar alloc] initWithHealth:120000 damage:50 targets:2 frequency:3.0 andChoosesMT:NO];
+    Trulzar *boss = [[Trulzar alloc] initWithHealth:400000 damage:50 targets:2 frequency:3.0 andChoosesMT:NO];
     [boss setTitle:@"Trulzar the Maleficar"];
     [boss setInfo:@"King Dralazak himself has posted a bounty for the head of the Trulzar: a warlock who has slaughtered the King's most prized fighter.  The Light Ascendant have done battle with Trulzar in the past and lost many good soldiers.  This would be a great opportunity to prove that your presence will turn the tide of any battles. Take with you your most hearty adventurers for only the strongest will return..."];
     return [boss autorelease];
@@ -368,6 +368,7 @@
 -(void)applyPoisonToTarget:(RaidMember*)target{
     TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
     [self.announcer displayParticleSystemWithName:@"poison_cloud.plist" onTarget:target];
+    [poisonEffect setAilmentType:AilmentPoison];
     [poisonEffect setSpriteName:@"poison.png"];
     [poisonEffect setValuePerTick:-12];
     [poisonEffect setNumOfTicks:30];
@@ -381,6 +382,7 @@
     TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
     [self.announcer displayParticleSystemWithName:@"poison_cloud.plist" onTarget:target];
     [poisonEffect setSpriteName:@"poison.png"];
+    [poisonEffect setAilmentType:AilmentPoison];
     [poisonEffect setValuePerTick:-4];
     [poisonEffect setNumOfTicks:24];
     [poisonEffect setTitle:@"trulzar-poison2"];
@@ -492,6 +494,7 @@
             self.rothVictim = [self chooseVictimInRaid:theRaid];
             RothPoison *poison = [[RothPoison alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative];
             [poison setSpriteName:@"poison.png"];
+            [poison setAilmentType:AilmentPoison];
             [poison setNumOfTicks:15];
             [poison setValuePerTick:-10];
             [poison setDispelDamageValue:-20];
@@ -577,7 +580,7 @@
 @synthesize lastSickeningTime, numBubblesPopped;
 +(id)defaultBoss{
     //427500
-    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:427500 damage:30 targets:2 frequency:2.5 andChoosesMT:YES];
+    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:250000 damage:30 targets:2 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Plaguebringer Colossus"];
     [boss setInfo:@"From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped.  The village people have foreseen their impending doom and sent young and brave hopefuls to join The Light Ascendant in exchange for protection.  You must lead this group to victory against the wretched beast."];
     return [boss autorelease];
@@ -586,12 +589,13 @@
 -(void)sickenTarget:(RaidMember *)target{
     ExpiresAtFullHealthRHE *infectedWound = [[ExpiresAtFullHealthRHE alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative];
     [infectedWound setTitle:@"pbc-infected-wound"];
+    [infectedWound setAilmentType:AilmentTrauma];
     [infectedWound setValuePerTick: self.isMultiplayer ? -8 : -4];
     [infectedWound setNumOfTicks:15];
     [infectedWound setSpriteName:@"bleeding.png"];
-    if (target.health > target.maximumHealth * .98){
-        //Force the health under .98 so it doesnt immediately expire when applied.
-        [target setHealth:target.health * .94];
+    if (target.health > target.maximumHealth * .58){
+        // Spike the health for funsies!
+        [target setHealth:target.health * .58];
     }
     [target addEffect:infectedWound];
     [infectedWound release];
@@ -606,7 +610,8 @@
             RepeatedHealthEffect *singleTickDot = [[RepeatedHealthEffect alloc] initWithDuration:1.5 andEffectType:EffectTypeNegative];
             [singleTickDot setTitle:@"pbc-pussBubble"];
             [singleTickDot setNumOfTicks:1];
-            [singleTickDot setValuePerTick:-70];
+            [singleTickDot setAilmentType:AilmentPoison];
+            [singleTickDot setValuePerTick:-50];
             [singleTickDot setSpriteName:@"poison.png"];
             [member addEffect:singleTickDot];
             [singleTickDot release];
@@ -643,7 +648,7 @@
 @implementation SporeRavagers
 @synthesize focusTarget2, focusTarget3, lastSecondaryAttack, isEnraged;
 +(id)defaultBoss{
-    SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:24 targets:1 frequency:2.5 andChoosesMT:YES];
+    SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:19 targets:1 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Spore Ravagers"];
     [boss setInfo:@" Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate.  Conversely, no villagers have left the town, either..."];
     [boss setCriticalChance:.5];
@@ -770,7 +775,7 @@
 @implementation MischievousImps
 @synthesize lastPotionThrow;
 +(id)defaultBoss{
-    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:97500 damage:34 targets:1 frequency:2.25 andChoosesMT:YES];
+    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:50000 damage:27 targets:1 frequency:2.25 andChoosesMT:YES];
     [boss setTitle:@"Mischievious Imps"];
     [boss setInfo:@" A local alchemist has posted a small reward for removing a pesky imp infestation from her store.  Sensing something a little more sinister a small party has been dispatched from the Light Ascendant just in case there is more than meets the eye."];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw1" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw1" ofType:@"m4a"]]];
@@ -842,7 +847,7 @@
         [self.announcer announce:@"An imp grabs a bundle of vials off of a nearby desk."];
     }
     
-    if (percentage == 50.0 || self.isMultiplayer ? percentage == 75.0 : percentage == 50.0){
+    if (self.isMultiplayer && percentage == 75.0){
         for (RaidMember *member in raid.raidMembers){
             if (!member.isDead){
                 [self throwPotionToTarget:member withDelay:0.0];
@@ -852,7 +857,17 @@
         [[AudioController sharedInstance] playTitle:[NSString stringWithFormat:@"imp_throw1"]];
     }
     
-    if (percentage == 30.0){
+    if (percentage == 50.0){
+        for (RaidMember *member in raid.raidMembers){
+            if (!member.isDead){
+                [self throwPotionToTarget:member withDelay:0.0];
+            }
+        }
+        [self.announcer announce:@"An imp angrily hurls the entire case of flasks at you!"];
+        [[AudioController sharedInstance] playTitle:[NSString stringWithFormat:@"imp_throw1"]];
+    }
+    
+    if (percentage == 20.0){
         [self.announcer announce:@"All of the imps angrily pounce on their focused target!"];
         frequency /= 2.0;
         damage *= self.isMultiplayer ? 1.05 : .75 ;
@@ -863,7 +878,7 @@
 @implementation BefouledTreat
 @synthesize lastRootquake;
 +(id)defaultBoss{
-    BefouledTreat *boss = [[BefouledTreat alloc] initWithHealth:400000 damage:43 targets:1 frequency:3.0 andChoosesMT:YES];
+    BefouledTreat *boss = [[BefouledTreat alloc] initWithHealth:100000 damage:35 targets:1 frequency:3.0 andChoosesMT:YES];
     [boss setTitle:@"Befouled Treant"];
     [boss setInfo:@"The Akarus, an ancient tree that has sheltered travelers across the Gungoro Plains, has become tainted with the foul energy of Baraghast.  It is lashing its way through villagers and farmers.  This once great tree must be ended for good."];
     return [boss autorelease];
@@ -886,6 +901,7 @@
         RepeatedHealthEffect *lashDoT = [[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative];
         [lashDoT setOwner:self];
         [lashDoT setTitle:@"lash"];
+        [lashDoT setAilmentType:AilmentTrauma];
         [lashDoT setValuePerTick:-4];
         [lashDoT setNumOfTicks:5];
         [lashDoT setSpriteName:@"bleeding.png"];
@@ -899,7 +915,7 @@
     for (RaidMember *member in raid.raidMembers){
         RepeatedHealthEffect *rootquake = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegativeInvisible];
         [rootquake setOwner:self];
-        [rootquake setValuePerTick:-7];
+        [rootquake setValuePerTick:-4];
         [rootquake setNumOfTicks:4];
         [rootquake setTitle:@"rootquake"];
         [member addEffect:[rootquake autorelease]];

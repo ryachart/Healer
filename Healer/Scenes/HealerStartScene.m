@@ -12,6 +12,7 @@
 #import "PersistantDataManager.h"
 #import "Shop.h"
 #import "StoreScene.h"
+#import "BackgroundSprite.h"
 
 @interface HealerStartScene ()
 @property (assign) CCMenu* menu;
@@ -37,7 +38,8 @@
 
 -(id)init{
     if (self = [super init]){
-        //Perform Scene Setup
+        //Perform Scene Setup   
+        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"stone-bg-ipad"] autorelease]];
         
         self.multiplayerButton = [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Multiplayer" fontName:@"Arial" fontSize:32] target:self selector:@selector(multiplayerSelected)] autorelease];
         self.quickPlayButton= [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Play" fontName:@"Arial" fontSize:32] target:self selector:@selector(quickPlaySelected)] autorelease];

@@ -15,6 +15,7 @@
 #import "RaidMemberPreBattleCard.h"
 #import "QuickPlayScene.h"
 #import "SpellInfoNode.h"
+#import "BackgroundSprite.h"
 
 #define SPELL_ITEM_TAG 43234
 
@@ -38,6 +39,7 @@
 @synthesize changingSpells;
 -(id)initWithRaid:(Raid*)raid boss:(Boss*)boss andPlayer:(Player*)player{
     if (self = [super init]){
+        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"stone-bg-ipad"] autorelease]];
         self.raid = raid;
         self.player = player;
         self.boss = boss;
@@ -54,7 +56,7 @@
         [changeLabel setColor:ccBLUE];
         CCMenu *changeButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:changeLabel target:self selector:@selector(changeSpells)], nil];
         [changeButton setPosition:CGPointMake(900, 650)];
-        [self addChild:changeButton z:10];
+        [self addChild:changeButton z:2];
         
         CCLayerColor *spellsGroupingBackground = [CCLayerColor layerWithColor:ccc4(255, 255, 255, 255)];
         [spellsGroupingBackground setPosition:ccp([CCDirector sharedDirector].winSize.width * .7, [CCDirector sharedDirector].winSize.height * .25)];
@@ -160,7 +162,7 @@
         AddRemoveSpellLayer *arsl = [[AddRemoveSpellLayer alloc] initWithCurrentSpells:self.player.activeSpells];
         [arsl setPosition:CGPointMake(-1024, 0)];
         [arsl setDelegate:self];
-        [self addChild:arsl];
+        [self addChild:arsl z:100];
         [arsl runAction:[CCMoveTo actionWithDuration:.5 position:CGPointMake(0, 0)]];
     }
 }

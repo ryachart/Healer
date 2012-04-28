@@ -12,6 +12,7 @@
 #import "HealerStartScene.h"
 #import "Encounter.h"
 #import "Shop.h"
+#import "BackgroundSprite.h"
 
 #define NUM_ENCOUNTERS 9
 
@@ -30,6 +31,7 @@
 #if DEBUG
 //        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:100] forKey:PlayerHighestLevelCompleted];
 #endif
+        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"stone-bg-ipad"] autorelease]];
         self.menu = [CCMenu menuWithItems:nil];
         for (int i = 0; i < NUM_ENCOUNTERS; i++){
             CCMenuItemLabel *levelButton = [[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:[NSString stringWithFormat:@"Level %i", i + 1] fontName:@"Arial" fontSize:32] target: self selector:@selector(beginGameWithSelectedLevel:)];
@@ -70,6 +72,15 @@
     for (Spell *spell in encounter.recommendedSpells){
         if ([Shop playerHasSpell:spell]){
             [activeSpells addObject:[[spell class] defaultSpell]];
+        }
+    }
+    
+    //Add other spells the player has
+    for (Spell *spell in [Shop allOwnedSpells]){
+        if (activeSpells.count < 4){
+            if (![activeSpells containsObject:spell]){
+                [activeSpells addObject:spell];
+            }
         }
     }
     [basicPlayer setActiveSpells:(NSArray*)activeSpells];

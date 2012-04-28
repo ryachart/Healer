@@ -151,13 +151,13 @@
         for (int i = 0; i < 5; i++){
             [basicRaid addRaidMember:[Champion defaultChampion]];
         }
-        for (int i = 0; i < 5; i++){
+        for (int i = 0; i < 4; i++){
             [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
         }
         for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
-        for (int i = 0; i < 2; i++){
+        for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
         }
     }

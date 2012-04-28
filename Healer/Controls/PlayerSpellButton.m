@@ -22,7 +22,7 @@
         self.contentSize = frame.size;
         [self setOpacity:255];
         self.isTouchEnabled = YES;
-        [self setColor:ccc3(111, 111, 111)];
+        [self setColor:ccc3(0, 0, 200)];
         // Initialization code
         
         self.cooldownCountLayer = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 175)];
@@ -82,7 +82,7 @@
 
 -(void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
 	[interactionDelegate spellButtonUnselected:self];
-    [self setColor:ccc3(111, 111, 111)];
+    [self setColor:ccc3(0, 0, 200)];
 }
 - (void)dealloc {
     [super dealloc];

@@ -52,7 +52,7 @@
 	if (rectsToUse == nil){
 		self.rectsToUse = [[[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED] autorelease];
 		int numCols = 5;
-		int numRows = 5;
+		int numRows = 4;
 	
 		float cellWidth = (self.contentSize.width * .95) / numCols; //We save 10% of the view for some semblance of a border
 		float cellHeight = (self.contentSize.height * .95) / numRows ;
@@ -79,7 +79,7 @@
 {
 	NSInteger rectToUse = nextRectToUse;
 	nextRectToUse++;
-	if (rectToUse >= 25)
+	if (rectToUse >= 20)
 		return CGRectMake(0,0,0,0);
 	
 	return [[rectsToUse objectAtIndex:rectToUse] frame];

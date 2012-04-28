@@ -326,7 +326,7 @@
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
     Effect *effectToRemove = nil;
     for (Effect *effect in [thePlayer.spellTarget activeEffects]){
-        if (effect.effectType == EffectTypeNegative){
+        if (effect.effectType == EffectTypeNegative && (effect.ailmentType == AilmentCurse || effect.ailmentType == AilmentPoison)){
             effectToRemove = effect;
             break;
         }

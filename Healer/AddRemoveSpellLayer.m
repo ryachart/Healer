@@ -17,10 +17,12 @@
 @interface AddRemoveSpellLayer ()
 @property (nonatomic, retain) NSMutableArray *unusedSpells;
 @property (nonatomic, retain) NSMutableArray *usedSpells;
-@property (nonatomic, assign) CCMenu *unusedSpellsMenu;
-@property (nonatomic, assign) CCMenu *usedSpellsMenu;
+@property (nonatomic, retain) CCMenu *unusedSpellsMenu;
+@property (nonatomic, retain) CCMenu *usedSpellsMenu;
 
 -(void)configureMenus;
+-(void)addSpell:(id)sender;
+-(void)removeSpell:(id)sender;
 @end
 
 @implementation AddRemoveSpellLayer
@@ -39,6 +41,21 @@
         [self addChild: dismissButton];
         
         [self configureMenus];
+        
+        CCLabelTTF *inactiveSpellsLabel = [CCLabelTTF labelWithString:@"Inactive Spells:" fontName:@"Arial" fontSize:40.0];
+        [inactiveSpellsLabel setPosition:CGPointMake(300, 700)];
+        
+        
+        CCLabelTTF *activeSpellsLabel = [CCLabelTTF labelWithString:@"Active Spells:" fontName:@"Arial" fontSize:40.0];
+        [activeSpellsLabel setPosition:CGPointMake(640, 700)];
+        
+        [self addChild:inactiveSpellsLabel];
+        [self addChild:activeSpellsLabel];
+        
+        CCLayerColor *dividerLine = [CCLayerColor layerWithColor:ccc4(255, 255, 255, 255)];
+        [dividerLine setContentSize:CGSizeMake(2, 768)];
+        [dividerLine setPosition:CGPointMake(490, 0)];
+        [self addChild: dividerLine];
     }
     return self;
 }
@@ -54,7 +71,7 @@
 
 -(void)addSpell:(id)sender{
     SpellMenuItemLabel *label = (SpellMenuItemLabel*)sender;
-    
+    [label retain];
     Spell *spellToAdd = [label spell];
     
     if (self.usedSpells.count < 4){
@@ -64,11 +81,12 @@
     }else{
         
     }
+    [label autorelease];
 }
 
 -(void)removeSpell:(id)sender{
     SpellMenuItemLabel *label = (SpellMenuItemLabel*)sender;
-    
+    [label retain];
     Spell *spellToRemove = [label spell];
     
     if (self.usedSpells.count > 1){
@@ -78,6 +96,7 @@
     }else{
         
     }
+    [label autorelease];
 }
 
 -(void)configureMenus{

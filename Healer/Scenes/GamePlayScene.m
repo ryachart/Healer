@@ -21,6 +21,7 @@
 #import "PlayerHealthView.h"
 #import "PlayerEnergyView.h"
 #import "PlayerCastBar.h"
+#import "BackgroundSprite.h"
 
 #define NETWORK_THROTTLE 5
 
@@ -83,6 +84,7 @@
     if (self = [super init]){
         NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
+        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"stone-bg-ipad"] autorelease]];
         paused = YES;
         self.raid = raidToUse;
         self.boss = bossToUse;
@@ -98,7 +100,7 @@
         
         self.raidView = [[[RaidView alloc] init] autorelease];
         [self.raidView setPosition:CGPointMake(10, 100)];
-        [self.raidView setContentSize:CGSizeMake(500, 500)];
+        [self.raidView setContentSize:CGSizeMake(500, 400)];
         [self.raidView setColor:ccGRAY];
         [self.raidView setOpacity:255];
         [self addChild:self.raidView];

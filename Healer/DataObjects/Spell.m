@@ -44,6 +44,19 @@
     
 }
 
+-(BOOL)isEqual:(id)object{
+    Spell *spell = (Spell*)object;
+    
+    if ([self.title isEqualToString:spell.title]){
+        return YES;
+    }
+    return NO;
+}
+
+-(NSUInteger)hash{
+    return [self.title hash];
+}
+
 -(RaidMember*)lowestHealthRaidMemberSet:(NSArray*)raid{
     float lowestHealth = [(RaidMember*)[raid objectAtIndex:0] healthPercentage];
     RaidMember *candidate = [raid objectAtIndex:0];

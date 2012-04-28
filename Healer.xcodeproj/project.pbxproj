@@ -150,12 +150,18 @@
 		BF21072315292740001B93D7 /* CCShakeScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21072215292740001B93D7 /* CCShakeScreen.m */; };
 		BF21074A152AAAEB001B93D7 /* Scale9Sprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF210749152AAAEB001B93D7 /* Scale9Sprite.m */; };
 		BF21075D152B5623001B93D7 /* ParticleSystemCache.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21075C152B5623001B93D7 /* ParticleSystemCache.m */; };
+		BF448C57154BA4D1009401A6 /* AddRemoveSpellLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */; };
+		BF448C5A154BB04A009401A6 /* SpellInfoNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C59154BB04A009401A6 /* SpellInfoNode.m */; };
 		BF68CBA61537364B0096B6CF /* ClippingNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF68CBA51537364B0096B6CF /* ClippingNode.m */; };
 		BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
 		BF7B721B152CA9AC001999D3 /* CCRoundedRect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7B721A152CA9AC001999D3 /* CCRoundedRect.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
 		BF8249D71526D7C2000B554B /* RaidMemberPreBattleCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */; };
 		BF8A50F415236D6300BEC882 /* GamePlayFTUELayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */; };
+		BFB46407154A25DD00503E30 /* StoreScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46406154A25DD00503E30 /* StoreScene.m */; };
+		BFB4640C154A262800503E30 /* ShopItemNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB4640B154A262800503E30 /* ShopItemNode.m */; };
+		BFB46411154A268900503E30 /* Shop.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46410154A268900503E30 /* Shop.m */; };
+		BFB46414154A26A100503E30 /* ShopItem.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46413154A26A100503E30 /* ShopItem.m */; };
 		BFB99F1B15257F6D007EE559 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = BFB99F1A15257F6D007EE559 /* Sounds */; };
 		BFC1022F153F90BA00884677 /* Agent.m in Sources */ = {isa = PBXBuildFile; fileRef = BFC1022E153F90BA00884677 /* Agent.m */; };
 		BFD804F51530D17400570A0A /* Encounter.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD804F41530D17400570A0A /* Encounter.m */; };
@@ -561,6 +567,10 @@
 		BF210749152AAAEB001B93D7 /* Scale9Sprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Scale9Sprite.m; sourceTree = "<group>"; };
 		BF21075B152B5623001B93D7 /* ParticleSystemCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticleSystemCache.h; sourceTree = "<group>"; };
 		BF21075C152B5623001B93D7 /* ParticleSystemCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParticleSystemCache.m; sourceTree = "<group>"; };
+		BF448C55154BA4D1009401A6 /* AddRemoveSpellLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddRemoveSpellLayer.h; sourceTree = "<group>"; };
+		BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddRemoveSpellLayer.m; sourceTree = "<group>"; };
+		BF448C58154BB04A009401A6 /* SpellInfoNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellInfoNode.h; sourceTree = "<group>"; };
+		BF448C59154BB04A009401A6 /* SpellInfoNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpellInfoNode.m; sourceTree = "<group>"; };
 		BF68CBA41537364B0096B6CF /* ClippingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClippingNode.h; sourceTree = "<group>"; };
 		BF68CBA51537364B0096B6CF /* ClippingNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClippingNode.m; sourceTree = "<group>"; };
 		BF6CC5CE15022496000F1AFF /* PostBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostBattleScene.h; path = Scenes/PostBattleScene.h; sourceTree = "<group>"; };
@@ -574,6 +584,14 @@
 		BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RaidMemberPreBattleCard.m; sourceTree = "<group>"; };
 		BF8A50F215236D6300BEC882 /* GamePlayFTUELayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlayFTUELayer.h; sourceTree = "<group>"; };
 		BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlayFTUELayer.m; sourceTree = "<group>"; };
+		BFB46405154A25DD00503E30 /* StoreScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreScene.h; sourceTree = "<group>"; };
+		BFB46406154A25DD00503E30 /* StoreScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreScene.m; sourceTree = "<group>"; };
+		BFB4640A154A262800503E30 /* ShopItemNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopItemNode.h; sourceTree = "<group>"; };
+		BFB4640B154A262800503E30 /* ShopItemNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopItemNode.m; sourceTree = "<group>"; };
+		BFB4640F154A268900503E30 /* Shop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shop.h; sourceTree = "<group>"; };
+		BFB46410154A268900503E30 /* Shop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Shop.m; sourceTree = "<group>"; };
+		BFB46412154A26A100503E30 /* ShopItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopItem.h; sourceTree = "<group>"; };
+		BFB46413154A26A100503E30 /* ShopItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopItem.m; sourceTree = "<group>"; };
 		BFB99F1A15257F6D007EE559 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = SOURCE_ROOT; };
 		BFC1022D153F90BA00884677 /* Agent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Agent.h; sourceTree = "<group>"; };
 		BFC1022E153F90BA00884677 /* Agent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Agent.m; sourceTree = "<group>"; };
@@ -692,6 +710,7 @@
 		386DD03A145DFF2D0086763E /* Model Objects */ = {
 			isa = PBXGroup;
 			children = (
+				BFB4640E154A267100503E30 /* Shop */,
 				387E7B77145E290A006D9266 /* Game States */,
 				387E7B76145E28FB006D9266 /* Protocols */,
 				387E7B75145E28F5006D9266 /* Groups */,
@@ -1251,6 +1270,8 @@
 				BF80763215214A04001EB2B3 /* PreBattleScene.m */,
 				BFFB58E4152D69C7005B760E /* MultiplayerSetupScene.h */,
 				BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */,
+				BFB46405154A25DD00503E30 /* StoreScene.h */,
+				BFB46406154A25DD00503E30 /* StoreScene.m */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -1389,6 +1410,8 @@
 		38F0504413C2618900BCADCB /* View Objects */ = {
 			isa = PBXGroup;
 			children = (
+				BF448C53154BA49E009401A6 /* UI Layers */,
+				BFB46409154A260D00503E30 /* Store Views */,
 				BF210746152AAACC001B93D7 /* UI */,
 				BF210759152B5612001B93D7 /* Caches */,
 				BF05579C15268CEF006B4781 /* Descriptors */,
@@ -1438,6 +1461,37 @@
 				BF21075C152B5623001B93D7 /* ParticleSystemCache.m */,
 			);
 			name = Caches;
+			sourceTree = "<group>";
+		};
+		BF448C53154BA49E009401A6 /* UI Layers */ = {
+			isa = PBXGroup;
+			children = (
+				BF448C55154BA4D1009401A6 /* AddRemoveSpellLayer.h */,
+				BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */,
+				BF448C58154BB04A009401A6 /* SpellInfoNode.h */,
+				BF448C59154BB04A009401A6 /* SpellInfoNode.m */,
+			);
+			name = "UI Layers";
+			sourceTree = "<group>";
+		};
+		BFB46409154A260D00503E30 /* Store Views */ = {
+			isa = PBXGroup;
+			children = (
+				BFB4640A154A262800503E30 /* ShopItemNode.h */,
+				BFB4640B154A262800503E30 /* ShopItemNode.m */,
+			);
+			name = "Store Views";
+			sourceTree = "<group>";
+		};
+		BFB4640E154A267100503E30 /* Shop */ = {
+			isa = PBXGroup;
+			children = (
+				BFB4640F154A268900503E30 /* Shop.h */,
+				BFB46410154A268900503E30 /* Shop.m */,
+				BFB46412154A26A100503E30 /* ShopItem.h */,
+				BFB46413154A26A100503E30 /* ShopItem.m */,
+			);
+			name = Shop;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1665,6 +1719,12 @@
 				BFD804F51530D17400570A0A /* Encounter.m in Sources */,
 				BF68CBA61537364B0096B6CF /* ClippingNode.m in Sources */,
 				BFC1022F153F90BA00884677 /* Agent.m in Sources */,
+				BFB46407154A25DD00503E30 /* StoreScene.m in Sources */,
+				BFB4640C154A262800503E30 /* ShopItemNode.m in Sources */,
+				BFB46411154A268900503E30 /* Shop.m in Sources */,
+				BFB46414154A26A100503E30 /* ShopItem.m in Sources */,
+				BF448C57154BA4D1009401A6 /* AddRemoveSpellLayer.m in Sources */,
+				BF448C5A154BB04A009401A6 /* SpellInfoNode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

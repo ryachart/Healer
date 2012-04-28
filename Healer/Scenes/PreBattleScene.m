@@ -14,25 +14,34 @@
 #import "GamePlayScene.h"
 #import "RaidMemberPreBattleCard.h"
 #import "QuickPlayScene.h"
+#import "SpellInfoNode.h"
+
+#define SPELL_ITEM_TAG 43234
 
 @interface PreBattleScene ()
 @property (nonatomic, readwrite) NSInteger maxPlayers;
+@property (nonatomic, readwrite) BOOL changingSpells;
+@property (nonatomic, retain) NSMutableArray *spellInfoNodes;
 @property (nonatomic, retain) Player *player;
 @property (nonatomic, retain) Boss *boss;
 @property (nonatomic, retain) Raid *raid;
 
 -(void)back;
 -(void)doneButton;
+-(void)changeSpells;
+-(void)configureSpells;
+
 @end
 
 @implementation PreBattleScene
-@synthesize raid = _raid, boss = _boss, player = _player, maxPlayers, levelNumber;
-
+@synthesize raid = _raid, boss = _boss, player = _player, maxPlayers, levelNumber, spellInfoNodes;
+@synthesize changingSpells;
 -(id)initWithRaid:(Raid*)raid boss:(Boss*)boss andPlayer:(Player*)player{
     if (self = [super init]){
         self.raid = raid;
         self.player = player;
         self.boss = boss;
+        self.spellInfoNodes = [NSMutableArray arrayWithCapacity:5];
         
         self.maxPlayers = raid.raidMembers.count; //Assume the number of players in the raid passed in is our max
         
@@ -40,6 +49,12 @@
         [doneButton setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .8, [CCDirector sharedDirector].winSize.height * .05 )];
         
         [self addChild:doneButton];
+        
+        CCLabelTTF *changeLabel = [CCLabelTTF labelWithString:@"Change Spells" fontName:@"Arial" fontSize:24.0];
+        [changeLabel setColor:ccBLUE];
+        CCMenu *changeButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:changeLabel target:self selector:@selector(changeSpells)], nil];
+        [changeButton setPosition:CGPointMake(900, 650)];
+        [self addChild:changeButton z:10];
         
         CCLayerColor *spellsGroupingBackground = [CCLayerColor layerWithColor:ccc4(255, 255, 255, 255)];
         [spellsGroupingBackground setPosition:ccp([CCDirector sharedDirector].winSize.width * .7, [CCDirector sharedDirector].winSize.height * .25)];
@@ -52,48 +67,7 @@
         [activeSpellsLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .75, [CCDirector sharedDirector].winSize.height * .85)];
         [self addChild:activeSpellsLabel];
         
-        int i = 0;
-        for (Spell *activeSpell in self.player.activeSpells){
-            CCLayerColor *spellIcon = [CCLayerColor layerWithColor:ccc4(255, 0, 0, 255)];
-            [spellIcon setContentSize:CGSizeMake(100, 100)];
-            [spellIcon setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .7, 530 - (105 * i))];
-            
-            CCLabelTTF *spellNamePH = [CCLabelTTF labelWithString:activeSpell.title fontName:@"Arial" fontSize:20];
-            [spellNamePH setPosition:ccp(50,50)];
-            [spellIcon addChild:spellNamePH];
-            
-            CCLayerColor *spellDetailsBackground = [CCLayerColor layerWithColor:ccc4(0, 255, 0, 255)];
-            [spellDetailsBackground setContentSize:CGSizeMake(200, 100)];
-            [spellDetailsBackground setPosition:CGPointMake(814, 530 - (105 * i))];
-            [self addChild:spellIcon];
-            [self addChild:spellDetailsBackground];
-            
-            CCLabelTTF *spellDetailsLabel = [CCLabelTTF labelWithString:activeSpell.description dimensions:CGSizeMake(200, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:14];
-            [spellDetailsLabel setColor:ccBLACK];
-            [spellDetailsLabel setPosition:ccp(102,14)];
-            
-            CCLabelTTF *spellCostLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cost: %i", activeSpell.energyCost] dimensions:CGSizeMake(200, 20) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:14];
-            [spellCostLabel setColor:ccBLACK];
-            [spellCostLabel setPosition:ccp(102, 86)];
-            
-            CCLabelTTF *spellCastTimeLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cast Time: %1.2f", activeSpell.castTime] dimensions:CGSizeMake(200, 20) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:14];
-            [spellCastTimeLabel setColor:ccBLACK];
-            [spellCastTimeLabel setPosition:ccp(102, 70)];
-            
-            CCLabelTTF *spellCooldownLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cooldown: %1.2f", activeSpell.cooldown] dimensions:CGSizeMake(200, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:14];
-            [spellCooldownLabel setColor:ccBLACK];
-            [spellCooldownLabel setPosition:ccp(102, 44)];
-            
-            
-            [spellDetailsBackground addChild:   spellDetailsLabel];
-            [spellDetailsBackground addChild:   spellCostLabel];
-            [spellDetailsBackground addChild:   spellCastTimeLabel];
-            [spellDetailsBackground addChild:   spellCooldownLabel];
-            
-            i++;
-        }
-        
-        
+        [self configureSpells];
 
         CCLabelTTF *alliesLabel = [CCLabelTTF labelWithString:@"Your Allies:" fontName:@"Arial" fontSize:32];
         [alliesLabel setPosition:ccp(120, 680)];
@@ -112,7 +86,7 @@
             [raidMemberTypes setObject:number forKey:member.title];
         }
         
-        i = 0;
+        int i = 0;
         for (NSString *types in raidMemberTypes){
             RaidMember *member = nil;
             for (RaidMember *thisMember in self.raid.raidMembers){
@@ -138,7 +112,7 @@
             CCLabelTTF *bossNameLabel = [CCLabelTTF labelWithString:self.boss.title fontName:@"Arial" fontSize:32.0];
             [yourEnemyLAbel setPosition:CGPointMake(520, 600)];
             [bossNameLabel setPosition:CGPointMake(520, 550)];
-            CCLabelTTF *bossLabel = [CCLabelTTF labelWithString:self.boss.info dimensions:CGSizeMake(300, 500) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0 ];
+            CCLabelTTF *bossLabel = [CCLabelTTF labelWithString:self.boss.info dimensions:CGSizeMake(300, 500) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
             
             [bossLabel setPosition:CGPointMake(525, 250)];
             [self addChild:bossLabel];
@@ -148,6 +122,25 @@
         
     }
     return self;
+}
+
+-(void)configureSpells{
+    for (SpellInfoNode *node in self.spellInfoNodes){
+        [node removeFromParentAndCleanup:YES];
+    }
+    
+    [self.spellInfoNodes removeAllObjects];
+    
+    int i = 0;
+    for (Spell *activeSpell in self.player.activeSpells){
+        SpellInfoNode *spellInfoNode = [[SpellInfoNode alloc] initWithSpell:activeSpell];
+        [spellInfoNode setPosition:CGPointMake(716, 530 - (105 * i))];
+        [self.spellInfoNodes addObject:spellInfoNode];
+        [self addChild:spellInfoNode];
+        [spellInfoNode release];
+        i++;
+    }
+
 }
 
 -(void)back{
@@ -160,4 +153,22 @@
     [gps release];
 
 }
+
+-(void)changeSpells{
+    if (!self.changingSpells){
+        self.changingSpells = YES;
+        AddRemoveSpellLayer *arsl = [[AddRemoveSpellLayer alloc] initWithCurrentSpells:self.player.activeSpells];
+        [arsl setPosition:CGPointMake(-1024, 0)];
+        [arsl setDelegate:self];
+        [self addChild:arsl];
+        [arsl runAction:[CCMoveTo actionWithDuration:.5 position:CGPointMake(0, 0)]];
+    }
+}
+
+-(void)spellSwitchDidCompleteWithActiveSpells:(NSArray *)actives{
+    self.player.activeSpells = actives;
+    [self configureSpells];
+    self.changingSpells = NO;
+}
+
 @end

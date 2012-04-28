@@ -301,7 +301,6 @@
 
 -(void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    
 	if (interactionDelegate != nil){
         BOOL wasTouched = isTouched;
 		isTouched = NO;

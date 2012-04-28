@@ -16,8 +16,6 @@
 @interface RaidMemberHealthView : CCLayerColor {
 	HealableTarget* memberData;
 	RaidMemberHealthViewDelegate *interactionDelegate;
-	
-	
 }
 @property (nonatomic, assign, setter=setMemberData:) HealableTarget* memberData;
 @property (nonatomic, retain) CCRoundedRect *healthBarLayer;

@@ -233,8 +233,8 @@
 #if DEBUG
     if (self.levelNumber == 1){
         [self gameEvent:0.0]; //Bump the UI
-        self.levelNumber = 0;
-    }
+        [self battleBegin];
+    }else
 #endif
     if (self.levelNumber == 1){
         [self gameEvent:0.0]; //Bump the UI
@@ -274,7 +274,7 @@
 }
 
 -(void)battleEndWithSuccess:(BOOL)success{
-    PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:success andEventLog:self.eventLog];
+    PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:success eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:self.isClient || self.isServer];
     [self setPaused:YES];
     if (self.isServer){
         [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"BATTLEEND|%i|", success] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
@@ -283,12 +283,6 @@
         [pbs setServerPlayerId:self.serverPlayerID];
         [pbs setMatch:self.match];
         [pbs setMatchVoiceChat:self.matchVoiceChat];
-    }
-    if (success){
-        int i = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
-        if (self.levelNumber > i){
-            [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:self.levelNumber] forKey:PlayerHighestLevelCompleted];
-        }
     }
     [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:pbs]];
     [pbs release];

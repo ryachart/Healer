@@ -11,6 +11,7 @@
 #import "PreBattleScene.h"
 #import "HealerStartScene.h"
 #import "Encounter.h"
+#import "Shop.h"
 
 #define NUM_ENCOUNTERS 9
 
@@ -27,7 +28,7 @@
 -(id)init{
     if (self = [super init]){
 #if DEBUG
-        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:100] forKey:PlayerHighestLevelCompleted];
+//        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:100] forKey:PlayerHighestLevelCompleted];
 #endif
         self.menu = [CCMenu menuWithItems:nil];
         for (int i = 0; i < NUM_ENCOUNTERS; i++){
@@ -66,8 +67,10 @@
     Encounter *encounter = [Encounter encounterForLevel:level isMultiplayer:NO];
     Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
     NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
-    for (Spell *spell in encounter.activeSpells){
-        [activeSpells addObject:[[spell class] defaultSpell]];
+    for (Spell *spell in encounter.recommendedSpells){
+        if ([Shop playerHasSpell:spell]){
+            [activeSpells addObject:[[spell class] defaultSpell]];
+        }
     }
     [basicPlayer setActiveSpells:(NSArray*)activeSpells];
     

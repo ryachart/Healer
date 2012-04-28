@@ -9,25 +9,29 @@
 #import "HealerStartScene.h"
 #import "AppDelegate.h"
 #import "MultiplayerSetupScene.h"
-
+#import "PersistantDataManager.h"
+#import "Shop.h"
+#import "StoreScene.h"
 
 @interface HealerStartScene ()
-@property (retain) CCMenu* menu;
-@property (retain) CCMenuItemLabel* multiplayerButton;
-@property (retain) CCMenuItemLabel* quickPlayButton;
+@property (assign) CCMenu* menu;
+@property (assign) CCMenuItemLabel* multiplayerButton;
+@property (assign) CCMenuItemLabel* quickPlayButton;
+@property (assign) CCMenuItemLabel* storeButton;
 @property (nonatomic, retain) UIViewController* presentingViewController;
 @property (readwrite) BOOL matchStarted;
 
 -(void)multiplayerSelected;
 -(void)quickPlaySelected;
 -(void)settingsSelected;
-
+-(void)storeSelected;
 @end
 
 @implementation HealerStartScene
 @synthesize menu;
 @synthesize multiplayerButton;
 @synthesize quickPlayButton;
+@synthesize storeButton;
 @synthesize presentingViewController;
 @synthesize matchStarted;
 
@@ -37,16 +41,24 @@
         
         self.multiplayerButton = [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Multiplayer" fontName:@"Arial" fontSize:32] target:self selector:@selector(multiplayerSelected)] autorelease];
         self.quickPlayButton= [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Play" fontName:@"Arial" fontSize:32] target:self selector:@selector(quickPlaySelected)] autorelease];
-        [self.quickPlayButton setPosition:ccp(0, 100)];
         
-        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.multiplayerButton, nil];
+        self.storeButton = [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Shop" fontName:@"Arial" fontSize:32] target:self selector:@selector(storeSelected)] autorelease];
         
+        
+        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, self.multiplayerButton, nil];
+        
+        [self.menu alignItemsVerticallyWithPadding:20.0];
         CGSize winSize = [CCDirector sharedDirector].winSize;
         
-        [self.menu setPosition:ccp(winSize.width * .5, winSize.height * 1/3)];
+        [self.menu setPosition:ccp(winSize.width * .5, winSize.height * .5)];
         [self.menu setColor:ccc3(255, 255, 255)];
         [self addChild:self.menu];
         
+        int playerGold = [Shop localPlayerGold];
+        CCLabelTTF *goldLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold: %i", playerGold] fontName:@"Arial" fontSize:32.0];
+        
+        [goldLabel setPosition:CGPointMake(900, 50)];
+        [self addChild:goldLabel];
         
     }
     return self;
@@ -118,8 +130,12 @@
 -(void)quickPlaySelected
 {
 	QuickPlayScene *qpS = [QuickPlayScene new];
-	[[CCDirector sharedDirector] replaceScene:qpS];
+	[[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:qpS]];
 	[qpS release];
+}
+
+-(void)storeSelected{
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:[[[StoreScene alloc] init] autorelease]]];
 }
 
 -(void)settingsSelected

@@ -102,3 +102,34 @@
 
 @interface Baraghast : Boss
 @end
+
+@interface CrazedSeer : Boss
+@end
+
+@interface GatekeeperDelsarn : Boss
+@end
+
+@interface SkeletalDragon: Boss
+@end
+
+@interface ColossusOfBone : Boss
+@end
+
+@interface OverseerOfDelsarn : Boss
+@end
+
+@interface TheUnspeakable : Boss
+@end
+
+@interface BaraghastReborn : Boss
+@end
+
+@interface AvatarOfTorment1 : Boss
+@end
+
+@interface AvatarOfTorment2 : Boss
+@end
+
+@interface SoulOfTorment : Boss
+@end
+

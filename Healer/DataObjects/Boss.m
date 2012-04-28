@@ -915,3 +915,40 @@
     }
 }
 @end
+
+
+@implementation TwinChampions
+@end
+
+@implementation Baraghast
+@end
+
+@implementation CrazedSeer
+@end
+
+@implementation GatekeeperDelsarn
+@end
+
+@implementation SkeletalDragon
+@end
+
+@implementation ColossusOfBone 
+@end
+
+@implementation OverseerOfDelsarn 
+@end
+
+@implementation TheUnspeakable
+@end
+
+@implementation BaraghastReborn
+@end
+
+@implementation AvatarOfTorment1
+@end
+
+@implementation AvatarOfTorment2
+@end
+
+@implementation SoulOfTorment
+@end

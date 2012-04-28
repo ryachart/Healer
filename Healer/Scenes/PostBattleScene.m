@@ -11,7 +11,11 @@
 #import "MultiplayerSetupScene.h"
 #import "CombatEvent.h"
 #import "Boss.h"
+#import "Encounter.h"
+#import "PersistantDataManager.h"
 #import <UIKit/UIKit.h>
+#import "Shop.h"
+#import "StoreScene.h"
 
 @interface PostBattleScene()
 @property (nonatomic, readwrite) BOOL canAdvance;
@@ -21,13 +25,38 @@
 @implementation PostBattleScene
 @synthesize matchVoiceChat, match=_match, serverPlayerId, canAdvance;
 
--(id)initWithVictory:(BOOL)victory andEventLog:(NSArray *)eventLog{
+-(id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog levelNumber:(NSInteger)levelNumber andIsMultiplayer:(BOOL)isMultiplayer{
     self = [super init];
     if (self){
         if (victory){
             CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"VICTORY!" fontName:@"Arial" fontSize:72];
             [victoryLabel setPosition:CGPointMake(512, 384)];
             [self addChild:victoryLabel];
+            
+            NSInteger reward = 0;
+            int i = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
+            if (levelNumber > i){
+                [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:levelNumber] forKey:PlayerHighestLevelCompleted];
+                reward = [Encounter goldForLevelNumber:levelNumber isFirstWin:YES isMultiplayer:isMultiplayer];
+            }else{
+                reward = [Encounter goldForLevelNumber:levelNumber isFirstWin:NO isMultiplayer:isMultiplayer];
+            }
+
+            [Shop playerEarnsGold:reward];
+            CCLabelTTF *goldEarned = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold Earned: %i", reward] fontName:@"Arial" fontSize:32.0];
+            
+            [goldEarned setPosition:CGPointMake(800, 150)];
+            [self addChild:goldEarned];
+            
+            if (!isMultiplayer){
+                CCMenuItemLabel *visitShopButton = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Visit Shop" fontName:@"Arial" fontSize:32.0] block:^(id sender){
+                    [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInR transitionWithDuration:.5 scene:[[StoreScene new] autorelease]]];
+                }];
+                
+                CCMenu *visitStoreMenu = [CCMenu menuWithItems:visitShopButton, nil];
+                [visitStoreMenu setPosition:CGPointMake(800, 100)];
+                [self addChild:visitStoreMenu];
+            }
         }else{
             CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"DEFEAT!" fontName:@"Arial" fontSize:72];
             [victoryLabel setPosition:CGPointMake(512, 384)];

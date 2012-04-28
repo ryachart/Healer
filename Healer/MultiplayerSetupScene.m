@@ -130,7 +130,7 @@
     if (self.isServer && self.encounterSelectMenu && self.waitingOnPlayers.count == 0){
         Player *serverPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
         NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
-        for (Spell *spell in self.selectedEncounter.activeSpells){
+        for (Spell *spell in self.selectedEncounter.recommendedSpells){
             [activeSpells addObject:[[spell class] defaultSpell]];
         }
         [serverPlayer setActiveSpells:(NSArray*)activeSpells];
@@ -146,7 +146,7 @@
             [clientPlayer setIsAudible:NO];
             [clientPlayer setPlayerID:[match.playerIDs objectAtIndex:i]];
             NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
-            for (Spell *spell in self.selectedEncounter.activeSpells){
+            for (Spell *spell in self.selectedEncounter.recommendedSpells){
                 [activeSpells addObject:[[spell class] defaultSpell]];
             }
             [clientPlayer setActiveSpells:(NSArray*)activeSpells];
@@ -169,7 +169,7 @@
         Player *clientPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
         [clientPlayer setPlayerID:[GKLocalPlayer localPlayer].playerID];
         NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
-        for (Spell *spell in self.selectedEncounter.activeSpells){
+        for (Spell *spell in self.selectedEncounter.recommendedSpells){
             [activeSpells addObject:[[spell class] defaultSpell]];
         }
         [clientPlayer setActiveSpells:(NSArray*)activeSpells];

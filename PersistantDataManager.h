@@ -12,9 +12,3 @@
 
 extern NSString* const PlayerHighestLevelAttempted;
 extern NSString* const PlayerHighestLevelCompleted;
-
-@interface PersistantDataManager : NSObject {
-}
-+(id)sharedInstance;
-
-@end

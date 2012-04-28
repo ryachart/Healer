@@ -346,7 +346,7 @@
 @implementation Trulzar
 @synthesize lastPoisonTime, lastPotionTime;
 +(id)defaultBoss{
-    Trulzar *boss = [[Trulzar alloc] initWithHealth:400000 damage:50 targets:2 frequency:3.0 andChoosesMT:NO];
+    Trulzar *boss = [[Trulzar alloc] initWithHealth:320000 damage:50 targets:2 frequency:3.0 andChoosesMT:NO];
     [boss setTitle:@"Trulzar the Maleficar"];
     [boss setInfo:@"King Dralazak himself has posted a bounty for the head of the Trulzar: a warlock who has slaughtered the King's most prized fighter.  The Light Ascendant have done battle with Trulzar in the past and lost many good soldiers.  This would be a great opportunity to prove that your presence will turn the tide of any battles. Take with you your most hearty adventurers for only the strongest will return..."];
     return [boss autorelease];
@@ -356,13 +356,15 @@
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
     if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq andChoosesMT:chooses]){
-        [[AudioController sharedInstance] addNewPlayerWithTitle:@"trulzar-laugh" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/trulzar-laugh" ofType:@"m4a"]]];
+        [[AudioController sharedInstance] addNewPlayerWithTitle:@"trulzar_laugh" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/trulzar_laugh" ofType:@"m4a"]]];
+        [[AudioController sharedInstance] addNewPlayerWithTitle:@"trulzar_death" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/trulzar_death" ofType:@"m4a"]]];
     }
     return self;
 }
 
 -(void)dealloc{
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"trulzar-laugh"];
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"trulzar_laugh"];
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"trulzar_death"];
     [super dealloc];
 }
 -(void)applyPoisonToTarget:(RaidMember*)target{
@@ -415,7 +417,7 @@
     if (self.lastPoisonTime > tickTime){ 
         if (self.healthPercentage > 10.0){
             [self.announcer announce:@"Trulzar fills an ally with poison."];
-            [[AudioController sharedInstance] playTitle:@"trulzar-laugh"];
+            [[AudioController sharedInstance] playTitle:@"trulzar_laugh"];
             [self applyPoisonToTarget:[theRaid randomLivingMember]];
             self.lastPoisonTime = 0;
         }
@@ -432,6 +434,7 @@
     
     if (((int)percentage) == 7){
         [self.announcer announce:@"Trulzar cackles as the room fills with noxious poison."];
+        [[AudioController sharedInstance] playTitle:@"trulzar_death"];
         for (RaidMember *member in raid.raidMembers){
             [self applyWeakPoisonToTarget:member];
         }
@@ -446,7 +449,27 @@
     DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:292500 damage:5 targets:5 frequency:.75 andChoosesMT:NO];
     [boss setTitle:@"Council of Dark Summoners"];
     [boss setInfo:@"The Theranorian Seers have infiltrated the minds of the Council of Dark Summoners and discovered their location.  King Dralazak has sent word to of this discovery to  The Light Ascendant."];
+    [[AudioController sharedInstance] addNewPlayerWithTitle:@"roth_entrance" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/roth_entrance" ofType:@"m4a"]]];
+    [[AudioController sharedInstance] addNewPlayerWithTitle:@"roth_death" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/roth_death" ofType:@"m4a"]]];
+    [[AudioController sharedInstance] addNewPlayerWithTitle:@"grimgon_entrance" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/grimgon_entrance" ofType:@"m4a"]]];
+    [[AudioController sharedInstance] addNewPlayerWithTitle:@"grimgon_death" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/grimgon_death" ofType:@"m4a"]]];
+    [[AudioController sharedInstance] addNewPlayerWithTitle:@"serevon_entrance" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/serevon_entrance" ofType:@"m4a"]]];
+    [[AudioController sharedInstance] addNewPlayerWithTitle:@"serevon_death" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/serevon_death" ofType:@"m4a"]]];
+    [[AudioController sharedInstance] addNewPlayerWithTitle:@"galcyon_entrance" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/galcyon_entrance" ofType:@"m4a"]]];
+    [[AudioController sharedInstance] addNewPlayerWithTitle:@"galcyon_death" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/galcyon_death" ofType:@"m4a"]]];
     return [boss autorelease];
+}
+
+-(void)dealloc{
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"roth_entrance"];
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"roth_death"];
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"grimgon_entrance"];
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"grimgon_death"];
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"serevon_entrance"];
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"serevon_death"];
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"galcyon_entrance"];
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"galcyon_death"];
+    [super dealloc];
 }
 
 -(RaidMember*)chooseVictimInRaid:(Raid*)raid{
@@ -464,7 +487,7 @@
 -(void)summonDarkCloud:(Raid*)raid{
     for (RaidMember *member in raid.raidMembers){
         DarkCloudEffect *dcEffect = [[DarkCloudEffect alloc] initWithDuration:6 andEffectType:EffectTypeNegativeInvisible];
-        [dcEffect setValuePerTick:5];
+        [dcEffect setValuePerTick:7];
         [dcEffect setNumOfTicks:3];
         [member addEffect:dcEffect];
         [dcEffect release];
@@ -539,26 +562,39 @@
         //Roth of the Shadows steps forward
         self.phase = 1;
         [self.announcer announce:@"Roth, The Toxin Mage steps forward."];
+        [[AudioController sharedInstance] playTitle:@"roth_entrance"];
     }
     
     if (percentage == 75.0){
         //Roth dies
+        [[AudioController sharedInstance] playTitle:@"roth_death"];
         [self.announcer announce:@"Roth falls to his knees.  Grimgon, The Darkener takes his place."];
         self.phase = 2;
     }
+    if (percentage == 74.0){
+        [[AudioController sharedInstance] playTitle:@"grimgon_entrance"];
+    }
     
     if (percentage == 50.0){
+        [[AudioController sharedInstance] playTitle:@"grimgon_death"];
         [self.announcer announce:@"Grimgon fades to nothing.  Serevon, Anguish Mage cackles with glee."];
         //Serevon, Anguish Mage steps forward
         self.phase = 3;
         targets = 1;
         damage = 20;
     }
+    if (percentage == 49.0){
+        [[AudioController sharedInstance] playTitle:@"serevon_entrance"];
+    }
     
     if (percentage == 25.0){
         //Galcyon, Lord of the Dark Council steps forward
+        [[AudioController sharedInstance] playTitle:@"serevon_death"];
         [self.announcer announce:@"Galcyon, Overlord of Darkness pushes away Serevon's corpse and slithers into the fray."];
         self.phase = 4;
+    }
+    if (percentage == 24.0){
+        [[AudioController sharedInstance] playTitle:@"galcyon_entrance"];
     }
     
     if (percentage == 23.0){
@@ -568,6 +604,7 @@
     }
     
     if (percentage == 5.0){
+        [[AudioController sharedInstance] playTitle:@"galcyon_death"];
         [self.announcer announce:@"Galycon cries out as steel and magic burns through his flesh."];
         [self summonDarkCloud:raid];
         //Galcyon, Lord of the Dark Council does his last thing..

@@ -17,6 +17,7 @@
 #import "Shop.h"
 #import "StoreScene.h"
 #import "BackgroundSprite.h"
+#import "TestFlight.h"
 
 @interface PostBattleScene()
 @property (nonatomic, readwrite) BOOL canAdvance;
@@ -39,6 +40,7 @@
             int i = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
             if (levelNumber > i){
                 [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:levelNumber] forKey:PlayerHighestLevelCompleted];
+                [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",i]];
                 reward = [Encounter goldForLevelNumber:levelNumber isFirstWin:YES isMultiplayer:isMultiplayer];
             }else{
                 reward = [Encounter goldForLevelNumber:levelNumber isFirstWin:NO isMultiplayer:isMultiplayer];
@@ -55,8 +57,9 @@
                     [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInR transitionWithDuration:.5 scene:[[StoreScene new] autorelease]]];
                 }];
                 
+                [visitShopButton.label setColor:ccBLUE];
                 CCMenu *visitStoreMenu = [CCMenu menuWithItems:visitShopButton, nil];
-                [visitStoreMenu setPosition:CGPointMake(600, 100)];
+                [visitStoreMenu setPosition:CGPointMake(770, 90)];
                 [self addChild:visitStoreMenu];
             }
         }else{

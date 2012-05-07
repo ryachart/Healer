@@ -11,6 +11,9 @@
 #import "AppDelegate.h"
 #import "GameConfig.h"
 #import "RootViewController.h"
+#import "TestFlight.h"
+
+#define TestFlightToken @"a0f29ba29227f7587269ec6e6fc30455_NzU1NTQyMDEyLTA0LTI4IDIyOjQ4OjA4Ljk4NzkzMQ"
 
 @implementation AppDelegate
 
@@ -48,6 +51,7 @@
 		[CCDirector setDirectorType:kCCDirectorTypeDefault];
 	
 	
+    [TestFlight takeOff:TestFlightToken];
 	CCDirector *director = [CCDirector sharedDirector];
 	
 	// Init the View Controller

@@ -154,6 +154,9 @@
 		BF448C5A154BB04A009401A6 /* SpellInfoNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C59154BB04A009401A6 /* SpellInfoNode.m */; };
 		BF68CBA61537364B0096B6CF /* ClippingNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF68CBA51537364B0096B6CF /* ClippingNode.m */; };
 		BF69866C154C7B5F0016F25E /* BackgroundSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF69866B154C7B5F0016F25E /* BackgroundSprite.m */; };
+		BF698673154CE45A0016F25E /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF69866F154CE45A0016F25E /* libTestFlight.a */; };
+		BF698674154CE45A0016F25E /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF698670154CE45A0016F25E /* README.txt */; };
+		BF698675154CE45A0016F25E /* release_notes.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF698671154CE45A0016F25E /* release_notes.txt */; };
 		BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
 		BF7B721B152CA9AC001999D3 /* CCRoundedRect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7B721A152CA9AC001999D3 /* CCRoundedRect.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
@@ -576,6 +579,10 @@
 		BF68CBA51537364B0096B6CF /* ClippingNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClippingNode.m; sourceTree = "<group>"; };
 		BF69866A154C7B5F0016F25E /* BackgroundSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundSprite.h; sourceTree = "<group>"; };
 		BF69866B154C7B5F0016F25E /* BackgroundSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackgroundSprite.m; sourceTree = "<group>"; };
+		BF69866F154CE45A0016F25E /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
+		BF698670154CE45A0016F25E /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+		BF698671154CE45A0016F25E /* release_notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.txt; sourceTree = "<group>"; };
+		BF698672154CE45A0016F25E /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		BF6CC5CE15022496000F1AFF /* PostBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostBattleScene.h; path = Scenes/PostBattleScene.h; sourceTree = "<group>"; };
 		BF6CC5CF15022496000F1AFF /* PostBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostBattleScene.m; path = Scenes/PostBattleScene.m; sourceTree = "<group>"; };
 		BF7B7219152CA9AC001999D3 /* CCRoundedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCRoundedRect.h; sourceTree = "<group>"; };
@@ -619,6 +626,7 @@
 				38024DBA13C2564D003D36F2 /* UIKit.framework in Frameworks */,
 				38024DBC13C2564D003D36F2 /* Foundation.framework in Frameworks */,
 				38024DBE13C2564D003D36F2 /* CoreGraphics.framework in Frameworks */,
+				BF698673154CE45A0016F25E /* libTestFlight.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -645,6 +653,7 @@
 		38024DAE13C2564D003D36F2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF69866E154CE45A0016F25E /* TestFlightSDK1.0 */,
 				386DD204145E07100086763E /* FontLabel */,
 				386DD210145E07100086763E /* TouchJSON */,
 				386DD03F145E06E20086763E /* cocos2d */,
@@ -1479,6 +1488,17 @@
 			name = "UI Layers";
 			sourceTree = "<group>";
 		};
+		BF69866E154CE45A0016F25E /* TestFlightSDK1.0 */ = {
+			isa = PBXGroup;
+			children = (
+				BF69866F154CE45A0016F25E /* libTestFlight.a */,
+				BF698670154CE45A0016F25E /* README.txt */,
+				BF698671154CE45A0016F25E /* release_notes.txt */,
+				BF698672154CE45A0016F25E /* TestFlight.h */,
+			);
+			path = TestFlightSDK1.0;
+			sourceTree = "<group>";
+		};
 		BFB46409154A260D00503E30 /* Store Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -1582,6 +1602,8 @@
 				BFB99F1B15257F6D007EE559 /* Sounds in Resources */,
 				BF0557B51526BC02006B4781 /* assets in Resources */,
 				BF21071F15291E5F001B93D7 /* emitters in Resources */,
+				BF698674154CE45A0016F25E /* README.txt in Resources */,
+				BF698675154CE45A0016F25E /* release_notes.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1794,6 +1816,10 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/TestFlightSDK1.0\"",
+				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
 				PROVISIONING_PROFILE = "";
@@ -1815,6 +1841,10 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/TestFlightSDK1.0\"",
+				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
 				PROVISIONING_PROFILE = "";
@@ -1853,6 +1883,10 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/TestFlightSDK1.0\"",
+				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
 				PROVISIONING_PROFILE = "";

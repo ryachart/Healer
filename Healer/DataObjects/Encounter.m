@@ -64,7 +64,7 @@
     if (level == 3){
         basicRaid = [[Raid alloc] init];
         basicBoss = [MischievousImps defaultBoss];
-        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Purify defaultSpell], nil];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
         
         for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Soldier defaultSoldier]];
@@ -124,7 +124,7 @@
     if (level == 6){
         basicRaid = [[Raid alloc] init];
         basicBoss = [PlaguebringerColossus defaultBoss];
-        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [ForkedHeal defaultSpell],[Purify defaultSpell], [Regrow defaultSpell], nil];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [ForkedHeal defaultSpell], [Regrow defaultSpell], nil];
         
         for (int i = 0; i < 5; i++){
             [basicRaid addRaidMember:[Soldier defaultSoldier]];
@@ -165,7 +165,7 @@
     if (level == 8){
         basicRaid = [[Raid alloc] init];
         basicBoss = [Trulzar defaultBoss];
-        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [LightEternal defaultSpell], [Regrow defaultSpell], nil];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Purify defaultSpell], [Regrow defaultSpell], nil];
         
         for (int i = 0; i < 7; i++){
             [basicRaid addRaidMember:[Soldier defaultSoldier]];
@@ -187,7 +187,7 @@
     if (level == 9){
         basicRaid = [[Raid alloc] init];
         basicBoss = [DarkCouncil defaultBoss];
-        spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
+        spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [Purify defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         for (int i = 0; i < 5; i++){
             [basicRaid addRaidMember:[Soldier defaultSoldier]];
@@ -210,7 +210,7 @@
     if (level == 10){
         basicRaid = [[Raid alloc] init];
         basicBoss = [TwinChampions defaultBoss];
-        spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
+        spells = [NSArray arrayWithObjects:[Heal  defaultSpell], [GreaterHeal defaultSpell] , [Barrier defaultSpell], [HealingBurst defaultSpell], nil];
         
         for (int i = 0; i < 5; i++){
             [basicRaid addRaidMember:[Soldier defaultSoldier]];

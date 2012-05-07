@@ -155,9 +155,9 @@
 -(void)tick{
     self.numHasTicked++;
     if (!target.isDead){
-        CombatEventType eventType = valuePerTick > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
+        CombatEventType eventType = self.valuePerTick > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:valuePerTick] andEventType:eventType]];
-        [target setHealth:[target health] + valuePerTick];
+        [target setHealth:[target health] + self.valuePerTick];
     }
 }
 
@@ -248,14 +248,19 @@
 @end
 
 @implementation  DelayedHealthEffect
-@synthesize value;
+@synthesize value, appliedEffect;
 -(id)copy{
     DelayedHealthEffect *copy = [super copy];
     [copy setValue:self.value];
+    [copy setAppliedEffect:self.appliedEffect];
     return copy;
 }
 -(void)expire{
     if (!self.target.isDead){
+        if (self.appliedEffect){
+            [self.target addEffect:self.appliedEffect];
+            self.appliedEffect = nil;
+        }
         CombatEventType eventType = self.value > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
         [self.target setHealth:self.target.health + self.value];
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]];
@@ -389,12 +394,12 @@
 @end
 
 @implementation RothPoison
-@synthesize dispelDamageValue, baseValue;
+@synthesize dispelDamageValue, baseValue, valuePerTick=_valuePerTick;
 -(void)setValuePerTick:(NSInteger)valPerTick{
     if (self.baseValue == 0){
         self.baseValue = valPerTick;
     }
-    valuePerTick = valPerTick;
+    _valuePerTick = valPerTick;
 }
 
 -(void)tick{
@@ -410,13 +415,13 @@
 
 
 @implementation DarkCloudEffect 
-@synthesize baseValue;
+@synthesize baseValue, valuePerTick=_valuePerTick;
 
 -(void)setValuePerTick:(NSInteger)valPerTick{
     if (self.baseValue == 0){
         self.baseValue = valPerTick;
     }
-    valuePerTick = valPerTick;
+    _valuePerTick = valPerTick;
 }
 -(void)tick{
     self.valuePerTick = (2 - self.target.healthPercentage) * baseValue;
@@ -434,6 +439,36 @@
 }
 -(void)expire{
     [super expire];
+}
+@end
+
+@implementation  ExecutionEffect
+@synthesize effectivePercentage;
+-(id)copy{
+    ExecutionEffect * copy = [super copy];
+    [copy setEffectivePercentage:self.effectivePercentage];
+    return copy;
+}
+
+-(void)expire{
+    if (self.target.healthPercentage <= effectivePercentage && !self.target.isDead){
+        CombatEventType eventType = self.value > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
+        [self.target setHealth:self.target.health + self.value];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]]; 
+    }
+}
+@end
+
+@implementation IntensifyingRepeatedHealthEffect
+@synthesize increasePerTick;
+-(id)copy{
+    IntensifyingRepeatedHealthEffect *copy = [super copy];
+    [copy setIncreasePerTick:self.increasePerTick];
+    return copy;
+}
+-(void)tick{
+    [super tick];
+    self.valuePerTick *= (1 + increasePerTick);
 }
 @end
 #pragma mark - DEPRECATED SPELLS
@@ -470,15 +505,15 @@
 	if (self.timeApplied != 0.0 && !isExpired)
 	{
 		lastTick += timeDelta;
-		if (lastTick  >= (duration/numOfTicks)){
-			[target setHealth:[target health] + valuePerTick];
+		if (lastTick  >= (duration/self.numOfTicks)){
+			[target setHealth:[target health] + self.valuePerTick];
 			//NSLog(@"Tick");
-			valuePerTick += 1;
+			self.valuePerTick += 1;
 			lastTick = 0.0;
 		}
 		if (self.timeApplied >= duration){
-			[target setHealth:[target health] + valuePerTick];
-			[target setHealth:[target health] + valuePerTick*2];
+			[target setHealth:[target health] + self.valuePerTick];
+			[target setHealth:[target health] + self.valuePerTick*2];
 			//NSLog(@"Tick");
 			//Here we do some effect, but we have to subclass Effects to decide what that is
 			//NSLog(@"Expired");

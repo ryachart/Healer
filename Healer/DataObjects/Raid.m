@@ -36,6 +36,18 @@
         }
 	}
 }
+
+-(NSInteger)deadCount{
+    NSInteger deadCount = 0;
+    
+    for (HealableTarget *member in self.raidMembers){
+        if (member.isDead){
+            deadCount++;
+        }
+    }
+    return deadCount;
+}
+
 -(NSArray*)getAliveMembers
 {
 	NSMutableArray *aliveMembers = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];

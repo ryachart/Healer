@@ -286,7 +286,7 @@
         [pbs setMatch:self.match];
         [pbs setMatchVoiceChat:self.matchVoiceChat];
     }
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:pbs]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:pbs]];
     [pbs release];
 }
 
@@ -689,6 +689,9 @@
 #pragma mark GKMatchDelegate
 
 -(BOOL)isServer{
+    if (![GKLocalPlayer localPlayer].playerID){
+        return NO;
+    }
     return [GKLocalPlayer localPlayer].playerID == self.serverPlayerID;
 }
 

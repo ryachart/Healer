@@ -17,10 +17,10 @@
 	NSMutableArray *raidMembers;
 }
 @property (readonly) NSMutableArray *raidMembers;
--(id) init;
 
 -(void)addRaidMember:(RaidMember*)member;
 -(NSArray*)getAliveMembers;
+-(NSInteger)deadCount;
 
 -(RaidMember*)randomLivingMember;
 

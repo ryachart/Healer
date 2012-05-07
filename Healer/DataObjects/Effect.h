@@ -78,8 +78,6 @@ typedef enum {
 #pragma mark - Shipping Spell Effects
 @interface RepeatedHealthEffect : Effect
 {
-	NSInteger numOfTicks;
-	NSInteger valuePerTick;
 	float lastTick;
 }
 @property (readwrite) NSInteger numHasTicked;
@@ -104,6 +102,7 @@ typedef enum {
 
 @interface DelayedHealthEffect : Effect
 @property NSInteger value;
+@property (nonatomic, retain) Effect *appliedEffect;
 @end
 
 #pragma mark - Shipping Boss Effects
@@ -112,6 +111,7 @@ typedef enum {
 
 @interface CouncilPoison : RepeatedHealthEffect <HealthAdjustmentModifier>
 @end
+
 @interface CouncilPoisonball : DelayedHealthEffect 
 @end
 
@@ -140,6 +140,14 @@ typedef enum {
 
 @interface DamageTakenDecreasedEffect : Effect <HealthAdjustmentModifier>
 @property (nonatomic, readwrite) float percentage;
+@end
+
+@interface ExecutionEffect : DelayedHealthEffect
+@property (nonatomic, readwrite) float effectivePercentage;
+@end
+
+@interface IntensifyingRepeatedHealthEffect : RepeatedHealthEffect
+@property (nonatomic, readwrite) float increasePerTick;
 @end
 
 #pragma mark - DEPRECATED EFFECTS

@@ -15,6 +15,7 @@
 @interface Boss ()
 @property (nonatomic, retain) RaidMember *focusTarget;
 -(int)damageDealt;
+-(RaidMember*)highestHealthMemberInRaid:(Raid*)theRaid excluding:(NSArray*)array;
 @end
 
 @implementation Boss
@@ -84,23 +85,31 @@
         }
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:thisDamage] andEventType:CombatEventTypeDamage]];
         [target setHealth:[target health] - thisDamage];
+        [self.announcer displayParticleSystemWithName:@"blood_spurt.plist" onTarget:target];
         
     }else{
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:0 andEventType:CombatEventTypeDodge]];
     }
 }
 
+-(RaidMember*)highestHealthMemberInRaid:(Raid*)theRaid excluding:(NSArray*)members{
+    if (!members){
+        members = [NSArray array];
+    }
+    RaidMember *tempTarget = [theRaid.raidMembers objectAtIndex:0];
+    int highestHealth = ((RaidMember*)[theRaid.raidMembers objectAtIndex:0]).maximumHealth;
+    for (int i = 1; i < theRaid.raidMembers.count; i++){
+        if (((RaidMember*)[theRaid.raidMembers objectAtIndex:i]).maximumHealth > highestHealth && ![members containsObject:[theRaid.raidMembers objectAtIndex:i]]){
+            highestHealth = ((RaidMember*)[theRaid.raidMembers objectAtIndex:i]).maximumHealth;
+            tempTarget = ((RaidMember*)[theRaid.raidMembers objectAtIndex:i]);
+        }
+    }
+    return tempTarget;
+}
+
 -(void)chooseMainTankInRaid:(Raid *)theRaid{
     if (choosesMainTank && !self.focusTarget){
-        int highestHealth = ((RaidMember*)[theRaid.raidMembers objectAtIndex:0]).maximumHealth;
-        RaidMember *tempTarget = [theRaid.raidMembers objectAtIndex:0];
-        for (int i = 1; i < theRaid.raidMembers.count; i++){
-            if (((RaidMember*)[theRaid.raidMembers objectAtIndex:i]).maximumHealth > highestHealth){
-                highestHealth = ((RaidMember*)[theRaid.raidMembers objectAtIndex:i]).maximumHealth;
-                tempTarget = ((RaidMember*)[theRaid.raidMembers objectAtIndex:i]);
-            }
-        }
-        self.focusTarget = tempTarget;
+        self.focusTarget = [self highestHealthMemberInRaid:theRaid excluding:nil];
         [self.focusTarget setIsFocused:YES];
     }
 }
@@ -300,8 +309,8 @@
 @synthesize lastFireballTime;
 +(id)defaultBoss{
     Drake *drake = [[Drake alloc] initWithHealth:52000 damage:16 targets:1 frequency:1.2 andChoosesMT:NO];
-    [drake setTitle:@"Drake of Soldorn"];
-    [drake setInfo:@"After felling the Troll of Raklor, you raided the encampment to discover that the agents of darkness had summoned a Drake of Soldorn.  It is hidden in the Paragon Cliffs.  Take with you a party of blood thirsty fighters and dispatch this beast from our world."];
+    [drake setTitle:@"Tainted Drake"];
+    [drake setInfo:@"A Tainted Drake is hidden in the Paragon Cliffs. You and your allies must stop the beast from doing any more damage to the Kingdom.  The king will provide you with a great reward for defeating the beast."];
     return [drake autorelease];
 }
 
@@ -348,7 +357,7 @@
 +(id)defaultBoss{
     Trulzar *boss = [[Trulzar alloc] initWithHealth:320000 damage:50 targets:2 frequency:3.0 andChoosesMT:NO];
     [boss setTitle:@"Trulzar the Maleficar"];
-    [boss setInfo:@"King Dralazak himself has posted a bounty for the head of the Trulzar: a warlock who has slaughtered the King's most prized fighter.  The Light Ascendant have done battle with Trulzar in the past and lost many good soldiers.  This would be a great opportunity to prove that your presence will turn the tide of any battles. Take with you your most hearty adventurers for only the strongest will return..."];
+    [boss setInfo:@"Before the dark winds came, Trulzar was an aide to the King of Theranore and a teacher at the Academy of Alchemists.  Since the Dark winds, Trulzar has drawn into seclusion.  No one had heard from him for years until a brash student who had heard of his exploits paid him a visit.  The student was not heard from for days until a walking corpse that was later identified as the student was slaughtered at the gates by guardsmen.  Trulzar has been identified as a Maleficar by the Theranorian Sages."];
     return [boss autorelease];
 }
 
@@ -446,9 +455,9 @@
 @implementation DarkCouncil
 @synthesize lastPoisonballTime, rothVictim, lastDarkCloud;
 +(id)defaultBoss{
-    DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:292500 damage:5 targets:5 frequency:.75 andChoosesMT:NO];
+    DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:340000 damage:5 targets:5 frequency:.75 andChoosesMT:NO];
     [boss setTitle:@"Council of Dark Summoners"];
-    [boss setInfo:@"The Theranorian Seers have infiltrated the minds of the Council of Dark Summoners and discovered their location.  King Dralazak has sent word to of this discovery to  The Light Ascendant."];
+    [boss setInfo:@"A note scribbled in blood was found in Trulzar's quarters.  It mentions a Council responsible for The Dark Winds plaguing Theranore.  Go to the crypt beneath The Hollow and discover what this Council is up to."];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"roth_entrance" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/roth_entrance" ofType:@"m4a"]]];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"roth_death" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/roth_death" ofType:@"m4a"]]];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"grimgon_entrance" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/grimgon_entrance" ofType:@"m4a"]]];
@@ -487,7 +496,7 @@
 -(void)summonDarkCloud:(Raid*)raid{
     for (RaidMember *member in raid.raidMembers){
         DarkCloudEffect *dcEffect = [[DarkCloudEffect alloc] initWithDuration:6 andEffectType:EffectTypeNegativeInvisible];
-        [dcEffect setValuePerTick:7];
+        [dcEffect setValuePerTick:-5];
         [dcEffect setNumOfTicks:3];
         [member addEffect:dcEffect];
         [dcEffect release];
@@ -687,7 +696,7 @@
 +(id)defaultBoss{
     SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:19 targets:1 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Spore Ravagers"];
-    [boss setInfo:@" Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate.  Conversely, no villagers have left the town, either..."];
+    [boss setInfo:@"Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate. Conversely, no villagers have left the town, either..."];
     [boss setCriticalChance:.5];
     return [boss autorelease];
 }
@@ -917,7 +926,7 @@
 +(id)defaultBoss{
     BefouledTreat *boss = [[BefouledTreat alloc] initWithHealth:100000 damage:35 targets:1 frequency:3.0 andChoosesMT:YES];
     [boss setTitle:@"Befouled Treant"];
-    [boss setInfo:@"The Akarus, an ancient tree that has sheltered travelers across the Gungoro Plains, has become tainted with the foul energy of Baraghast.  It is lashing its way through villagers and farmers.  This once great tree must be ended for good."];
+    [boss setInfo:@"The Akarus, an ancient tree that has sheltered travelers across the Gungoro Plains, has become tainted with the foul energy of The Dark Winds.  It is lashing its way through villagers and farmers.  This once great tree must be ended for good."];
     return [boss autorelease];
 }
 
@@ -971,6 +980,110 @@
 
 
 @implementation TwinChampions
+@synthesize lastFocusTarget2Attack, lastAxecution, focusTarget2, lastGushingWound;
++(id)defaultBoss{
+    TwinChampions *boss = [[TwinChampions alloc] initWithHealth:430000 damage:12 targets:1 frequency:1.25 andChoosesMT:YES];
+    [boss setTitle:@"Twin Champions of Baraghast"];
+    [boss setInfo:@"You and your soldiers have taken the fight straight to the warcamps of Baraghast--Leader of the Dark Horde.  You have been met outside the gates by only two heavily armored demon warriors.  These Champions of Baraghast will stop at nothing to keep you from finding Baraghast."];
+    return [boss autorelease];
+}
+-(void)performAxecutionOnRaid:(Raid*)theRaid{
+    RaidMember *target = nil;
+    
+    while (!target || target == self.focusTarget || target == self.focusTarget2){
+        target = [theRaid randomLivingMember];
+    }
+    
+    [target setHealth:target.maximumHealth * .4];
+    ExecutionEffect *effect = [[ExecutionEffect alloc] initWithDuration:4.0 andEffectType:EffectTypeNegative];
+    [effect setOwner:self];
+    [effect setValue:-200];
+    [effect setSpriteName:@"execution.png"];
+    [effect setEffectivePercentage:.5];
+    [effect setAilmentType:AilmentTrauma];
+    
+    [target addEffect:effect];
+    [effect release];
+}
+
+-(void)performGushingWoundOnRaid:(Raid*)theRaid{
+    for (int i = 0; i < 2; i++){
+        RaidMember *target = nil;
+        
+        while (!target || target == self.focusTarget || target == self.focusTarget2){
+            target = [theRaid randomLivingMember];
+        }
+        
+        DelayedHealthEffect *axeThrownEffect = [[DelayedHealthEffect alloc] initWithDuration:1.5 andEffectType:EffectTypeNegativeInvisible];
+        [axeThrownEffect setOwner:self];
+        [axeThrownEffect setValue:-30];
+        
+        IntensifyingRepeatedHealthEffect *gushingWoundEffect = [[IntensifyingRepeatedHealthEffect alloc] initWithDuration:9.0 andEffectType:EffectTypeNegative];
+        [gushingWoundEffect setSpriteName:@"bleeding.png"];
+        [gushingWoundEffect setAilmentType:AilmentTrauma];
+        [gushingWoundEffect setIncreasePerTick:.5];
+        [gushingWoundEffect setValuePerTick:-28];
+        [gushingWoundEffect setNumOfTicks:3];
+        [gushingWoundEffect setOwner:self];
+        [gushingWoundEffect setTitle:@"gushingwound"];
+        
+        [axeThrownEffect setAppliedEffect:gushingWoundEffect];
+        
+        [target addEffect:axeThrownEffect];
+        
+        ProjectileEffect *axeVisual = [[ProjectileEffect alloc] initWithSpriteName:@"axe.png" target:target andCollisionTime:1.5];
+        [self.announcer displayThrowEffect:axeVisual];
+        [axeVisual release];
+        [gushingWoundEffect release];
+        [axeThrownEffect release];
+    }
+}
+
+-(void)swapTanks{
+    [self.announcer announce:@"The Twin Champions Swap Focus Targets."];
+    RaidMember *tempSwap = self.focusTarget2;
+    self.focusTarget2 = self.focusTarget;
+    self.focusTarget2 = tempSwap;
+}
+
+-(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
+    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+    
+    self.lastAxecution += timeDelta;
+    self.lastFocusTarget2Attack += timeDelta;
+    self.lastGushingWound += timeDelta;
+    
+    float axecutionTickTime = 30.0;
+    float gushingWoundTickTime = 18.0;
+    
+    if (self.lastAxecution >= axecutionTickTime){
+        [self performAxecutionOnRaid:theRaid];
+        self.lastAxecution = 0.0;
+    }
+    
+    if (self.lastFocusTarget2Attack >= (frequency * 2.25)){
+        if (!self.focusTarget2){
+             self.focusTarget2 = [self highestHealthMemberInRaid:theRaid excluding:[NSArray arrayWithObject:self.focusTarget]];
+            [self.focusTarget2 setIsFocused:YES];
+        }
+        NSInteger tempDamage = damage;
+        damage *= 2;
+        [self damageTarget:self.focusTarget2];
+        damage = tempDamage;
+        self.lastFocusTarget2Attack = 0.0;
+    }
+    
+    if (self.lastGushingWound >= gushingWoundTickTime){
+        [self performGushingWoundOnRaid:theRaid];
+        self.lastGushingWound = 0.0;
+    }
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    if (percentage == 80.0 || percentage == 60.0 || percentage == 40.0 || percentage == 20.0){
+        [self swapTanks];
+    }
+}
 @end
 
 @implementation Baraghast

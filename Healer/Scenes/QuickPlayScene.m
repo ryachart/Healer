@@ -14,7 +14,7 @@
 #import "Shop.h"
 #import "BackgroundSprite.h"
 
-#define NUM_ENCOUNTERS 9
+#define NUM_ENCOUNTERS 10
 
 @interface QuickPlayScene ()
 @property (retain) CCMenu *menu;
@@ -28,15 +28,22 @@
 @synthesize menu;
 -(id)init{
     if (self = [super init]){
-#if DEBUG
-//        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:100] forKey:PlayerHighestLevelCompleted];
+#if TARGET_IPHONE_SIMULATOR
+        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:100] forKey:PlayerHighestLevelCompleted];
 #endif
         [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"stone-bg-ipad"] autorelease]];
         self.menu = [CCMenu menuWithItems:nil];
         for (int i = 0; i < NUM_ENCOUNTERS; i++){
-            CCMenuItemLabel *levelButton = [[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:[NSString stringWithFormat:@"Level %i", i + 1] fontName:@"Arial" fontSize:32] target: self selector:@selector(beginGameWithSelectedLevel:)];
+            NSString *levelLabelText = nil;
+            if (i  > ([[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue] )){
+                levelLabelText = @"????";
+            }else{
+                levelLabelText = [Encounter encounterForLevel:i+1 isMultiplayer:NO].boss.title;
+            }
+            CCMenuItemLabel *levelButton = [[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:levelLabelText fontName:@"Arial" fontSize:32] target: self selector:@selector(beginGameWithSelectedLevel:)];
+            [levelButton.label setColor:ccBLACK];
             levelButton.tag = i +1;
-            if (i > ([[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue] )){
+            if (i  > ([[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue] )){
                 levelButton.opacity = 125;
             }
             [self.menu addChild:levelButton];

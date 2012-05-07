@@ -98,6 +98,10 @@
 @end
 
 @interface TwinChampions : Boss
+@property (nonatomic, retain) RaidMember *focusTarget2;
+@property (nonatomic, readwrite) NSTimeInterval lastFocusTarget2Attack;
+@property (nonatomic, readwrite) NSTimeInterval lastAxecution;
+@property (nonatomic, readwrite) NSTimeInterval lastGushingWound;
 @end
 
 @interface Baraghast : Boss

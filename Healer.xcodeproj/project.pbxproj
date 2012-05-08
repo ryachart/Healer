@@ -724,7 +724,6 @@
 			children = (
 				BFB4640E154A267100503E30 /* Shop */,
 				387E7B77145E290A006D9266 /* Game States */,
-				387E7B76145E28FB006D9266 /* Protocols */,
 				387E7B75145E28F5006D9266 /* Groups */,
 				387E7B71145E288B006D9266 /* Manipulators */,
 				387E7B70145E284F006D9266 /* Agents */,
@@ -1389,13 +1388,6 @@
 				387E7AFA145E1263006D9266 /* Raid.m */,
 			);
 			name = Groups;
-			sourceTree = "<group>";
-		};
-		387E7B76145E28FB006D9266 /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Protocols;
 			sourceTree = "<group>";
 		};
 		387E7B77145E290A006D9266 /* Game States */ = {

@@ -46,6 +46,8 @@ typedef enum {
 @property (readwrite) float timeApplied;
 @property (readwrite, retain) HealableTarget *target;
 @property (readonly) EffectType effectType;
+@property (readwrite) float failureChance;
+@property (readonly) BOOL shouldFail;
 
 -(void)reset;
 

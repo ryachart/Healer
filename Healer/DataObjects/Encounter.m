@@ -219,15 +219,14 @@
             [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Guardian defaultGuardian]];
-        }
-        for (int i = 0; i < 4; i++){
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 4; i++){
             [basicRaid addRaidMember:[Berserker defaultBerserker]];
         }
-        
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Guardian defaultGuardian]];
+        }
     }
     
     if (level == 11){

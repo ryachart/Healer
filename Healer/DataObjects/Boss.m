@@ -322,7 +322,8 @@
     [fireballVisual setCollisionParticleName:@"fire_explosion.plist"];
     [self.announcer displayProjectileEffect:fireballVisual];
     [fireballVisual release];
-    
+    [fireball setOwner:self];
+    [fireball setFailureChance:.15];
     [fireball setValue:-(arc4random() % 20 + 25)];
     [target addEffect:fireball];
     [fireball release];
@@ -982,7 +983,7 @@
 @implementation TwinChampions
 @synthesize lastFocusTarget2Attack, lastAxecution, focusTarget2, lastGushingWound;
 +(id)defaultBoss{
-    TwinChampions *boss = [[TwinChampions alloc] initWithHealth:430000 damage:12 targets:1 frequency:1.25 andChoosesMT:YES];
+    TwinChampions *boss = [[TwinChampions alloc] initWithHealth:430000 damage:14 targets:1 frequency:1.25 andChoosesMT:YES];
     [boss setTitle:@"Twin Champions of Baraghast"];
     [boss setInfo:@"You and your soldiers have taken the fight straight to the warcamps of Baraghast--Leader of the Dark Horde.  You have been met outside the gates by only two heavily armored demon warriors.  These Champions of Baraghast will stop at nothing to keep you from finding Baraghast."];
     return [boss autorelease];
@@ -993,9 +994,9 @@
     while (!target || target == self.focusTarget || target == self.focusTarget2){
         target = [theRaid randomLivingMember];
     }
-    
+    [self.announcer announce:@"An Ally Has been chosen for Execution..."];
     [target setHealth:target.maximumHealth * .4];
-    ExecutionEffect *effect = [[ExecutionEffect alloc] initWithDuration:4.0 andEffectType:EffectTypeNegative];
+    ExecutionEffect *effect = [[ExecutionEffect alloc] initWithDuration:3.0 andEffectType:EffectTypeNegative];
     [effect setOwner:self];
     [effect setValue:-200];
     [effect setSpriteName:@"execution.png"];
@@ -1007,7 +1008,7 @@
 }
 
 -(void)performGushingWoundOnRaid:(Raid*)theRaid{
-    for (int i = 0; i < 2; i++){
+    for (int i = 0; i < 1; i++){
         RaidMember *target = nil;
         
         while (!target || target == self.focusTarget || target == self.focusTarget2){
@@ -1043,7 +1044,7 @@
     [self.announcer announce:@"The Twin Champions Swap Focus Targets."];
     RaidMember *tempSwap = self.focusTarget2;
     self.focusTarget2 = self.focusTarget;
-    self.focusTarget2 = tempSwap;
+    self.focusTarget = tempSwap;
 }
 
 -(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
@@ -1061,16 +1062,20 @@
         self.lastAxecution = 0.0;
     }
     
-    if (self.lastFocusTarget2Attack >= (frequency * 2.25)){
+    if (self.lastFocusTarget2Attack >= (frequency * 5.0)){
         if (!self.focusTarget2){
              self.focusTarget2 = [self highestHealthMemberInRaid:theRaid excluding:[NSArray arrayWithObject:self.focusTarget]];
             [self.focusTarget2 setIsFocused:YES];
         }
         NSInteger tempDamage = damage;
-        damage *= 2;
+        damage *= 4.0;
         [self damageTarget:self.focusTarget2];
         damage = tempDamage;
         self.lastFocusTarget2Attack = 0.0;
+        if (self.focusTarget2.isDead){
+            [self damageTarget:[theRaid randomLivingMember]];
+            damage *= 4.0;
+        }
     }
     
     if (self.lastGushingWound >= gushingWoundTickTime){

@@ -12,9 +12,12 @@
 #import "Agent.h"
 #import "Player.h"
 
+#define FUZZ(value, range) (((arc4random() % ((int)range * 2) + (100 - (int)range)))/100.0 * (int)value)
+
+
 @implementation Effect
 @synthesize duration, isExpired, target, effectType, timeApplied=_timeApplied, maxStacks, spriteName, title, ailmentType, owner;
-@synthesize needsOwnershipResolution, ownerNetworkID; //HACKY
+@synthesize needsOwnershipResolution, ownerNetworkID, failureChance; //HACKY
 
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
 {
@@ -28,6 +31,10 @@
         self.title = nil;
     }
 	return self;
+}
+
+-(BOOL)shouldFail{
+    return (arc4random() % 1000) <= (failureChance * 1000);
 }
 
 -(void)reset{
@@ -155,9 +162,13 @@
 -(void)tick{
     self.numHasTicked++;
     if (!target.isDead){
-        CombatEventType eventType = self.valuePerTick > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:valuePerTick] andEventType:eventType]];
-        [target setHealth:[target health] + self.valuePerTick];
+        if (self.shouldFail){
+            
+        }else{
+            CombatEventType eventType = self.valuePerTick > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
+            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:valuePerTick] andEventType:eventType]];
+            [target setHealth:[target health] + FUZZ(self.valuePerTick, 15.0)];
+        }
     }
 }
 
@@ -257,13 +268,17 @@
 }
 -(void)expire{
     if (!self.target.isDead){
-        if (self.appliedEffect){
-            [self.target addEffect:self.appliedEffect];
-            self.appliedEffect = nil;
+        if (self.shouldFail){
+            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:0 andEventType:CombatEventTypeDodge]];
+        }else{
+            if (self.appliedEffect){
+                [self.target addEffect:self.appliedEffect];
+                self.appliedEffect = nil;
+            }
+            CombatEventType eventType = self.value > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
+            [self.target setHealth:self.target.health + self.value];
+            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]];
         }
-        CombatEventType eventType = self.value > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
-        [self.target setHealth:self.target.health + self.value];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]];
     }
     [super expire];
 }
@@ -311,16 +326,20 @@
 
 @implementation CouncilPoisonball
 -(void)expire{
-    CouncilPoison *poisonDoT = [[CouncilPoison alloc] initWithDuration:6 andEffectType:EffectTypeNegative];
-    [poisonDoT setTitle:@"council-ball-dot"];
-    [poisonDoT setSpriteName:@"poison.png"];
-    [poisonDoT setValuePerTick:-4];
-    [poisonDoT setNumOfTicks:3];
-    [poisonDoT setOwner:self.owner];
-    [poisonDoT setAilmentType:AilmentPoison];
-    [self.target addEffect:poisonDoT];
-    [poisonDoT release];
-    [super expire];
+    if (self.shouldFail){
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:0 andEventType:CombatEventTypeDodge]];
+    }else{
+        CouncilPoison *poisonDoT = [[CouncilPoison alloc] initWithDuration:6 andEffectType:EffectTypeNegative];
+        [poisonDoT setTitle:@"council-ball-dot"];
+        [poisonDoT setSpriteName:@"poison.png"];
+        [poisonDoT setValuePerTick:-4];
+        [poisonDoT setNumOfTicks:3];
+        [poisonDoT setOwner:self.owner];
+        [poisonDoT setAilmentType:AilmentPoison];
+        [self.target addEffect:poisonDoT];
+        [poisonDoT release];
+        [super expire];
+    }
 }
 
 @end

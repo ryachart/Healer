@@ -16,6 +16,9 @@ static NSArray *shopItems = nil;
 @implementation Shop
 
 +(BOOL)playerCanAffordShopItem:(ShopItem*)item{
+#if TARGET_IPHONE_SIMULATOR
+    return YES;
+#endif
     return [Shop localPlayerGold] >= [item goldCost];
 }
 +(BOOL)playerHasShopItem:(ShopItem*)item{

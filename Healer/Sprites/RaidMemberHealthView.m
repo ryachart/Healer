@@ -262,7 +262,12 @@
             self.priorityNegativeEffectSprite = [CCSprite spriteWithSpriteFrameName:negativeEffect.spriteName];
             [self.priorityNegativeEffectSprite setContentSize:CGSizeMake(40, 40)];
             [self.priorityNegativeEffectSprite setPosition:CGPointMake(20, self.contentSize.height * .8)];
+            
+            self.priorityNegativeEffectDurationLabel = [CCLabelTTF  labelWithString:@"" dimensions:CGSizeMake(25, 25) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:14.0];
+            [self.priorityNegativeEffectDurationLabel setPosition:CGPointMake(15, 15)];
+            [self.priorityNegativeEffectDurationLabel setColor:ccWHITE];
             [self addChild:self.priorityNegativeEffectSprite z:5];
+            [self.priorityNegativeEffectSprite addChild:self.priorityNegativeEffectDurationLabel];
         }else{
             [self.priorityNegativeEffectSprite stopAllActions];
             [self.priorityNegativeEffectSprite setOpacity:255];
@@ -276,6 +281,12 @@
         [self.priorityNegativeEffectSprite setVisible:YES];
     }else{
         [self.priorityNegativeEffectSprite setVisible:NO];
+    }
+    
+    if (negativeEffect.duration - negativeEffect.timeApplied < 10.0){
+        [self.priorityNegativeEffectDurationLabel setString:[NSString stringWithFormat:@"%1.1f", negativeEffect.duration - negativeEffect.timeApplied]];
+    }else{
+        [self.priorityNegativeEffectDurationLabel setString:@""];
     }
 
 	if (![healthText isEqualToString:[healthLabel string]]){

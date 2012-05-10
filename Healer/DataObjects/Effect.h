@@ -48,6 +48,8 @@ typedef enum {
 @property (readonly) EffectType effectType;
 @property (readwrite) float failureChance;
 @property (readonly) BOOL shouldFail;
+@property (readwrite) float healingDoneMultiplierAdjustment;
+@property (readwrite) float damageDoneMultiplierAdjustment;
 
 -(void)reset;
 

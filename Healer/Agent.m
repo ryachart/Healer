@@ -10,6 +10,14 @@
 @implementation Agent
 @synthesize logger;
 
+-(float)healingDoneMultiplier{
+    return 1.0;
+}
+
+-(float)damageDoneMultiplier{
+    return 1.0;
+}
+
 -(NSString*)networkID{
     return [NSString stringWithFormat:@"Agent:%@", self];
 }

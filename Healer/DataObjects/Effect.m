@@ -16,7 +16,7 @@
 
 
 @implementation Effect
-@synthesize duration, isExpired, target, effectType, timeApplied=_timeApplied, maxStacks, spriteName, title, ailmentType, owner;
+@synthesize duration, isExpired, target, effectType, timeApplied=_timeApplied, maxStacks, spriteName, title, ailmentType, owner, healingDoneMultiplierAdjustment, damageDoneMultiplierAdjustment;
 @synthesize needsOwnershipResolution, ownerNetworkID, failureChance; //HACKY
 
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
@@ -26,9 +26,6 @@
         isExpired = NO;
         effectType = type;
         self.maxStacks = 1;
-        self.timeApplied = 0.0;
-        self.spriteName = nil;
-        self.title = nil;
     }
 	return self;
 }
@@ -105,7 +102,7 @@
 }
 //EFF|TARGET|TITLE|DURATION|TYPE|SPRITENAME|OWNER
 -(NSString*)asNetworkMessage{
-    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner];
+    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@|%f|%f", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner, self.healingDoneMultiplierAdjustment, self.damageDoneMultiplierAdjustment];
     
     return message;
 }
@@ -115,6 +112,8 @@
         self.title = [messageComponents objectAtIndex:1];
         self.timeApplied = [[messageComponents objectAtIndex:3] doubleValue];
         self.spriteName = [messageComponents objectAtIndex:5];
+        self.healingDoneMultiplierAdjustment = [[messageComponents objectAtIndex:6] floatValue];
+        self.damageDoneMultiplierAdjustment = [[messageComponents objectAtIndex:7] floatValue];
     }
     return self;
 }
@@ -159,6 +158,7 @@
 	}
 }
 
+
 -(void)tick{
     self.numHasTicked++;
     if (!target.isDead){
@@ -166,8 +166,9 @@
             
         }else{
             CombatEventType eventType = self.valuePerTick > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
+            float modifier = self.valuePerTick > 0 ? self.owner.healingDoneMultiplier : self.owner.damageDoneMultiplier;
             [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:valuePerTick] andEventType:eventType]];
-            [target setHealth:[target health] + FUZZ(self.valuePerTick, 15.0)];
+            [target setHealth:[target health] + FUZZ(self.valuePerTick, 15.0) * modifier];
         }
     }
 }
@@ -247,7 +248,7 @@
             self.triggerCooldown = 0.0;
             DelayedHealthEffect *orbPop = [[DelayedHealthEffect alloc] initWithDuration:0.5 andEffectType:EffectTypePositiveInvisible];
             [orbPop setOwner:self.owner];
-            [orbPop setValue:self.amountPerReaction];
+            [orbPop setValue:self.amountPerReaction * self.owner.healingDoneMultiplier];
             
             [self.target addEffect:orbPop];
             [orbPop release];
@@ -276,7 +277,8 @@
                 self.appliedEffect = nil;
             }
             CombatEventType eventType = self.value > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
-            [self.target setHealth:self.target.health + self.value];
+            float modifier = self.value > 0 ? self.owner.healingDoneMultiplier : self.owner.damageDoneMultiplier;
+            [self.target setHealth:self.target.health + (self.value * modifier)];
             [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]];
         }
     }
@@ -294,7 +296,7 @@
         }
     }
     
-    [self.target setHealth:self.target.health + (int)round((self.valuePerTick * (similarEffectCount * .25)))];
+    [self.target setHealth:self.target.health + (int)round((self.owner.healingDoneMultiplier * self.valuePerTick * (similarEffectCount * .25)))];
 }
 @end
 
@@ -305,7 +307,7 @@
         float percentComplete = self.timeApplied / self.duration;
         CombatEventType eventType = self.valuePerTick > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.valuePerTick] andEventType:eventType]];
-        [self.target setHealth:self.target.health + [self valuePerTick] * (int)round(1+percentComplete)];
+        [self.target setHealth:self.target.health + self.owner.damageDoneMultiplier * ([self valuePerTick] * (int)round(1+percentComplete))];
     }
 }
 
@@ -388,7 +390,7 @@
 
 @implementation ImpLightningBottle 
 -(void)expire{
-    [self.target setHealth:self.target.health - 15];
+    [self.target setHealth:self.target.health - (15 * self.owner.damageDoneMultiplier)];
     RepeatedHealthEffect *burnDoT = [[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative];
     [burnDoT setOwner:self.owner];
     [burnDoT setTitle:@"imp-burn-dot"];
@@ -427,7 +429,7 @@
 }
 -(void)effectWillBeDispelled:(Raid *)raid player:(Player *)player{
     for (RaidMember*member in raid.raidMembers){
-        [member setHealth:member.health + self.dispelDamageValue];
+        [member setHealth:member.health + (self.dispelDamageValue * self.owner.damageDoneMultiplier)];
     }
 }
 @end 

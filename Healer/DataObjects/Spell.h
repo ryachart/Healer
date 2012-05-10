@@ -103,6 +103,10 @@
 @interface LightEternal : Spell //Prayer of Smart Healing
 @end
 
+@interface Respite : Spell //Mana Prayer
+@end
+
+
 ////BASIC TEST SPELLS/////
 @interface QuickHeal : Spell
 

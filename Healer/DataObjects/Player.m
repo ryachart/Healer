@@ -40,7 +40,6 @@
             castingDisabledReasons[i] = NO;
         }
         
-        activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
     }
 	return self;
 }
@@ -74,9 +73,24 @@
 -(void)dealloc{
     [_spellsOnCooldown release]; _spellsOnCooldown = nil;
     [additionalTargets release]; additionalTargets = nil;
-    [activeEffects release]; 
-    activeEffects = nil; 
     [super dealloc];
+}
+
+-(void)updateEffects:(Boss*)theBoss raid:(Raid*)theRaid player:(Player*)thePlayer time:(float)timeDelta{
+    NSMutableArray *effectsToRemove = [NSMutableArray arrayWithCapacity:5];
+	for (int i = 0; i < [activeEffects count]; i++){
+		Effect *effect = [activeEffects objectAtIndex:i];
+		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+		if ([effect isExpired]){
+			[effect expire];
+            [effectsToRemove addObject:effect];
+		}
+	}
+    
+    for (Effect *effect in effectsToRemove){
+        [self.healthAdjustmentModifiers removeObject:effect];
+        [activeEffects removeObject:effect];
+    }
 }
 
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid gameTime:(float)timeDelta
@@ -114,16 +128,18 @@
         [self setEnergy:energy + energyRegenPerSecond + [self channelingBonus]];
         lastEnergyRegen = 0.0;
     }
+    
+    [self updateEffects:theBoss raid:theRaid player:self time:timeDelta];
 	
-	for (int i = 0; i < [activeEffects count]; i++){
-		Effect *effect = [activeEffects objectAtIndex:i];
-		[effect combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:timeDelta];
-		if ([effect isExpired]){
-			[effect expire];
-            [self.healthAdjustmentModifiers removeObject:effect];
-			[activeEffects removeObjectAtIndex:i];
-		}
-	}
+//	for (int i = 0; i < [activeEffects count]; i++){
+//		Effect *effect = [activeEffects objectAtIndex:i];
+//		[effect combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:timeDelta];
+//		if ([effect isExpired]){
+//			[effect expire];
+//            [self.healthAdjustmentModifiers removeObject:effect];
+//			[activeEffects removeObjectAtIndex:i];
+//		}
+//	}
     
     NSMutableArray *spellsOffCooldown = [NSMutableArray  arrayWithCapacity:4];
     for (Spell *spell in [self spellsOnCooldown]){

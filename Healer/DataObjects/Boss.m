@@ -19,7 +19,7 @@
 @end
 
 @implementation Boss
-@synthesize lastAttack, health, maximumHealth, title, logger, focusTarget, announcer, criticalChance, info, isMultiplayer=_isMultiplayer,phase;
+@synthesize lastAttack,title, logger, focusTarget, announcer, criticalChance, info, isMultiplayer=_isMultiplayer,phase;
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
     if (self = [super init]){
@@ -41,6 +41,23 @@
 	
 }
 
+-(void)updateEffects:(Boss*)theBoss raid:(Raid*)theRaid player:(Player*)thePlayer time:(float)timeDelta{
+    NSMutableArray *effectsToRemove = [NSMutableArray arrayWithCapacity:5];
+	for (int i = 0; i < [activeEffects count]; i++){
+		Effect *effect = [activeEffects objectAtIndex:i];
+		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+		if ([effect isExpired]){
+			[effect expire];
+            [effectsToRemove addObject:effect];
+		}
+	}
+    
+    for (Effect *effect in effectsToRemove){
+        [self.healthAdjustmentModifiers removeObject:effect];
+        [activeEffects removeObject:effect];
+    }
+}
+
 -(NSString*)networkID{
     return [NSString stringWithFormat:@"B-%@", self.title];
 }
@@ -54,7 +71,7 @@
 }
 -(int)damageDealt{
     
-    float multiplyModifier = 1;
+    float multiplyModifier = self.damageDoneMultiplier;
     int additiveModifier = 0;
     
     if (choosesMainTank && self.focusTarget.isDead){
@@ -62,11 +79,11 @@
     }
     
     if (self.isMultiplayer){
-        multiplyModifier *= 1.5;
+        multiplyModifier += 1.5;
     }
     
     if (self.criticalChance != 0.0 && arc4random() % 100 < (self.criticalChance * 100)){
-        multiplyModifier *= 1.5;
+        multiplyModifier += 1.5;
     }
     
     return (int)round((float)damage/(float)targets * multiplyModifier) + additiveModifier;
@@ -185,6 +202,7 @@
     [self chooseMainTankInRaid:theRaid];
 	
     [self performStandardAttackOnTheRaid:theRaid andPlayer:player withTime:theTime];
+    [self updateEffects:self raid:theRaid player:player time:theTime];
 }
 
 -(void)setHealth:(NSInteger)newHealth
@@ -254,7 +272,7 @@
             if (member == self.focusTarget){
                 damageDealt = MAX(damageDealt, 25); //The Tank is armored
             }
-            [member setHealth:member.health - damageDealt];
+            [member setHealth:member.health - damageDealt * self.damageDoneMultiplier];
         }
     }
 }
@@ -380,19 +398,21 @@
 -(void)applyPoisonToTarget:(RaidMember*)target{
     TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
     [self.announcer displayParticleSystemWithName:@"poison_cloud.plist" onTarget:target];
+    [poisonEffect setOwner:self];
     [poisonEffect setAilmentType:AilmentPoison];
     [poisonEffect setSpriteName:@"poison.png"];
     [poisonEffect setValuePerTick:-12];
     [poisonEffect setNumOfTicks:30];
     [poisonEffect setTitle:@"trulzar-poison1"];
     [target addEffect:poisonEffect];
-    [target setHealth:target.health - arc4random() % 20];
+    [target setHealth:target.health - (arc4random() % 20) * self.damageDoneMultiplier];
     [poisonEffect release];
 }
 
 -(void)applyWeakPoisonToTarget:(RaidMember*)target{
     TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
     [self.announcer displayParticleSystemWithName:@"poison_cloud.plist" onTarget:target];
+    [poisonEffect setOwner:self];
     [poisonEffect setSpriteName:@"poison.png"];
     [poisonEffect setAilmentType:AilmentPoison];
     [poisonEffect setValuePerTick:-4];
@@ -413,6 +433,7 @@
     [self.announcer displayThrowEffect:bottleVisual];
     [bottleVisual release];
     
+    [bottleEffect setOwner:self];
     [bottleEffect setValue:-45];
     [target addEffect:bottleEffect];
     [bottleEffect release];    
@@ -497,6 +518,7 @@
 -(void)summonDarkCloud:(Raid*)raid{
     for (RaidMember *member in raid.raidMembers){
         DarkCloudEffect *dcEffect = [[DarkCloudEffect alloc] initWithDuration:6 andEffectType:EffectTypeNegativeInvisible];
+        [dcEffect setOwner:self];
         [dcEffect setValuePerTick:-5];
         [dcEffect setNumOfTicks:3];
         [member addEffect:dcEffect];
@@ -514,6 +536,7 @@
     [self.announcer displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     
+    [fireball setOwner:self];
     [fireball setValue:self.isMultiplayer ? -(arc4random() % 20 + 30) : -(arc4random() % 10 + 30)];
     [target addEffect:fireball];
     [fireball release];
@@ -526,6 +549,7 @@
         if (![[self.rothVictim activeEffects] containsObject:[[[RothPoison alloc] init] autorelease]] || self.rothVictim.isDead){
             self.rothVictim = [self chooseVictimInRaid:theRaid];
             RothPoison *poison = [[RothPoison alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative];
+            [poison setOwner:self];
             [poison setSpriteName:@"poison.png"];
             [poison setAilmentType:AilmentPoison];
             [poison setNumOfTicks:15];
@@ -635,6 +659,7 @@
 
 -(void)sickenTarget:(RaidMember *)target{
     ExpiresAtFullHealthRHE *infectedWound = [[ExpiresAtFullHealthRHE alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative];
+    [infectedWound setOwner:self];
     [infectedWound setTitle:@"pbc-infected-wound"];
     [infectedWound setAilmentType:AilmentTrauma];
     [infectedWound setValuePerTick: self.isMultiplayer ? -8 : -4];
@@ -655,6 +680,7 @@
     for (RaidMember *member in theRaid.raidMembers){
         if (!member.isDead){
             RepeatedHealthEffect *singleTickDot = [[RepeatedHealthEffect alloc] initWithDuration:1.5 andEffectType:EffectTypeNegative];
+            [singleTickDot setOwner:self];
             [singleTickDot setTitle:@"pbc-pussBubble"];
             [singleTickDot setNumOfTicks:1];
             [singleTickDot setAilmentType:AilmentPoison];
@@ -739,7 +765,7 @@
     
     for (int i = 0; i < 5; i++){
         RaidMember *member = [raid randomLivingMember];
-        [member setHealth:member.health - 50];
+        [member setHealth:member.health - 50 * self.damageDoneMultiplier];
     }
     
 }
@@ -854,6 +880,7 @@
         [self.announcer displayThrowEffect:bottleVisual];
         [bottleVisual release];
         
+        [bottleEffect setOwner:self];
         [target addEffect:bottleEffect];
         [bottleEffect release];
         
@@ -866,6 +893,7 @@
         [self.announcer displayThrowEffect:bottleVisual];
         [bottleVisual release];
         
+        [bottleEffect setOwner:self];
         [(ImpLightningBottle*)bottleEffect setValue:-45];
         [target addEffect:bottleEffect];
         [bottleEffect release];
@@ -944,7 +972,7 @@
 
 -(void)performBranchAttackOnRaid:(Raid*)raid{
     for (RaidMember *member in raid.raidMembers){
-        [member setHealth:member.health - 26];
+        [member setHealth:member.health - 26 * self.damageDoneMultiplier];
         RepeatedHealthEffect *lashDoT = [[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative];
         [lashDoT setOwner:self];
         [lashDoT setTitle:@"lash"];

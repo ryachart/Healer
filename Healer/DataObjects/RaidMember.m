@@ -32,7 +32,6 @@
         self.title = @"NOTITLE";
         self.info = @"NOINFO";
         self.dodgeChance = 0.0;
-        activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
     }
 	return self;
 }
@@ -52,7 +51,7 @@
 	if (lastAttack >= damageFrequency && !self.isDead){
 		lastAttack = 0.0;
 		
-		[target setHealth:[target health] - self.damageDealt];
+		[target setHealth:[target health] - (self.damageDealt * self.damageDoneMultiplier)];
 		
 	}
 }
@@ -75,7 +74,6 @@
 }
 
 -(void)dealloc{
-    [activeEffects release]; activeEffects = nil;
     [super dealloc];
 }
 
@@ -193,7 +191,7 @@
     return [[[Champion alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:115 damageDealt:80 andDmgFrequency:1.0]){
+    if (self = [super initWithHealth:115 damageDealt:88 andDmgFrequency:1.1]){
         self.title = @"Champion";
         self.info = @"The Champion has more health and deals more damage the more health it has.";
         self.dodgeChance = .07;
@@ -214,7 +212,7 @@
 }
 
 -(id)init{
-    if (self = [super initWithHealth:125 damageDealt:25 andDmgFrequency:1.0]){
+    if (self = [super initWithHealth:125 damageDealt:30 andDmgFrequency:1.2]){
         self.title = @"Wizard";
         self.dodgeChance = .07;
         self.info = @"The Wizard has moderate health and low damage but improves your energy regeneration";
@@ -244,7 +242,7 @@
     return [[[Berserker alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:107 damageDealt:180 andDmgFrequency:1.0]){
+    if (self = [super initWithHealth:107 damageDealt:126 andDmgFrequency:.7]){
         self.title = @"Berserker";
         self.info = @"The Berserker has moderate health and deals more damage at low health.";
         self.dodgeChance = .07;

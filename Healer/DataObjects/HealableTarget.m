@@ -14,6 +14,32 @@
 @synthesize health, maximumHealth, activeEffects, isFocused;
 @synthesize battleID, hasDied, healthAdjustmentModifiers;
 
+-(id)init{
+    if (self = [super init]){
+        activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
+    }
+    return self;
+}
+
+-(float)healingDoneMultiplier{
+    float base = [super healingDoneMultiplier];
+    
+    for (Effect *eff in self.activeEffects){
+        base += [eff healingDoneMultiplierAdjustment];
+    }
+    
+    return base;
+}
+
+-(float)damageDoneMultiplier{
+    float base = [super damageDoneMultiplier];
+    
+    for (Effect *eff in self.activeEffects){
+        base += [eff damageDoneMultiplierAdjustment];
+    }
+    return base;
+}
+
 -(float)healthPercentage{
     return (float)self.health/(float)self.maximumHealth;
 }
@@ -95,6 +121,7 @@
 }
 
 -(void)dealloc{
+    [activeEffects release]; activeEffects = nil;
     [healthAdjustmentModifiers release]; healthAdjustmentModifiers = nil;
     [super dealloc];
 }

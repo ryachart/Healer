@@ -9,7 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "CombatEvent.h"
 #import "Announcer.h"
-#import "Agent.h"
+#import "HealableTarget.h"
+
 @class Player;
 @class Raid;
 @class RaidMember;
@@ -18,9 +19,9 @@
   To make special bosses, subclass boss and override
   combatActions.
  */
-@interface Boss : Agent {
-	NSInteger health;
-	NSInteger maximumHealth;
+@interface Boss : HealableTarget {
+//	NSInteger health;
+//	NSInteger maximumHealth;
 	NSInteger damage;
 	NSInteger targets;
 	float frequency;
@@ -33,12 +34,10 @@
 @property (nonatomic, readwrite) BOOL isMultiplayer;
 @property (nonatomic, retain) NSString * info;
 @property (nonatomic, retain) id <Announcer> announcer;
-@property (nonatomic, setter=setHealth:) NSInteger health;
 @property (nonatomic, readwrite) float criticalChance;
 @property (nonatomic, retain) NSString* title;
 @property (nonatomic, assign) id<EventLogger> logger;
 @property (nonatomic, readwrite) NSInteger phase;
-@property NSInteger maximumHealth;
 
 @property (nonatomic, readwrite) float lastAttack;
 

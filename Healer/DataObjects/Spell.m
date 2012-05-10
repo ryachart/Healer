@@ -110,7 +110,7 @@
     int fuzz = arc4random() % (fuzzRange + 1);
     
     finalAmount += fuzz * (arc4random() % 2 == 0 ? -1 : 1);
-    return finalAmount;
+    return finalAmount * self.owner.healingDoneMultiplier;
 }
 
 -(BOOL)isInstant

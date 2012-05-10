@@ -3,7 +3,6 @@
 //  Healer
 //
 //  Created by Ryan Hart on 3/31/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
 //
 
 #import "CCLayer.h"

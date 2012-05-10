@@ -1269,20 +1269,20 @@
 			isa = PBXGroup;
 			children = (
 				BF21072015292726001B93D7 /* Animations */,
-				387E7B3E145E1382006D9266 /* GamePlayScene.h */,
-				387E7B3F145E1382006D9266 /* GamePlayScene.m */,
-				387E7B42145E1382006D9266 /* QuickPlayScene.h */,
-				387E7B43145E1382006D9266 /* QuickPlayScene.m */,
 				387E7B44145E1382006D9266 /* HealerStartScene.h */,
 				387E7B45145E1382006D9266 /* HealerStartScene.m */,
-				BF6CC5CE15022496000F1AFF /* PostBattleScene.h */,
-				BF6CC5CF15022496000F1AFF /* PostBattleScene.m */,
+				387E7B42145E1382006D9266 /* QuickPlayScene.h */,
+				387E7B43145E1382006D9266 /* QuickPlayScene.m */,
 				BF80763115214A04001EB2B3 /* PreBattleScene.h */,
 				BF80763215214A04001EB2B3 /* PreBattleScene.m */,
-				BFFB58E4152D69C7005B760E /* MultiplayerSetupScene.h */,
-				BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */,
+				387E7B3E145E1382006D9266 /* GamePlayScene.h */,
+				387E7B3F145E1382006D9266 /* GamePlayScene.m */,
+				BF6CC5CE15022496000F1AFF /* PostBattleScene.h */,
+				BF6CC5CF15022496000F1AFF /* PostBattleScene.m */,
 				BFB46405154A25DD00503E30 /* StoreScene.h */,
 				BFB46406154A25DD00503E30 /* StoreScene.m */,
+				BFFB58E4152D69C7005B760E /* MultiplayerSetupScene.h */,
+				BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";

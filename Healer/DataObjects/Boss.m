@@ -988,6 +988,37 @@
     [boss setInfo:@"You and your soldiers have taken the fight straight to the warcamps of Baraghast--Leader of the Dark Horde.  You have been met outside the gates by only two heavily armored demon warriors.  These Champions of Baraghast will stop at nothing to keep you from finding Baraghast."];
     return [boss autorelease];
 }
+
+-(void)axeSweepThroughRaid:(Raid*)theRaid{
+    self.lastAttack = -7.0;
+    self.lastAxecution  = -7.0;
+    self.lastFocusTarget2Attack = -7.0;
+    self.lastGushingWound = -7.0; 
+    //Set all the other abilities to be on a long cooldown...
+    
+    [self.announcer announce:@"The Champions Break off from the Guardians and sweep through your allies"];
+    NSInteger deadCount = [theRaid deadCount];
+    for (int i = 0; i < theRaid.raidMembers.count/2; i++){
+        NSInteger index = theRaid.raidMembers.count - i - 1;
+
+        RaidMember *member = [theRaid.raidMembers objectAtIndex:index];
+        RaidMember *member2 = [theRaid.raidMembers objectAtIndex:i];
+        
+        DelayedHealthEffect *axeSweepEffect = [[DelayedHealthEffect alloc] initWithDuration:i * .5 andEffectType:EffectTypeNegativeInvisible];
+        [axeSweepEffect setOwner:self];
+        [axeSweepEffect setTitle:@"axesweep"];
+        [axeSweepEffect setValue:-24 * (1 + (deadCount/theRaid.raidMembers.count))];
+        [axeSweepEffect setFailureChance:.1];     
+        DelayedHealthEffect *axeSweep2 = [axeSweepEffect copy];
+        [member addEffect:axeSweepEffect];
+        [member2 addEffect:axeSweep2];
+        
+        [axeSweepEffect release];
+        [axeSweep2 release];
+        
+    }
+}
+
 -(void)performAxecutionOnRaid:(Raid*)theRaid{
     RaidMember *target = nil;
     
@@ -1041,7 +1072,6 @@
 }
 
 -(void)swapTanks{
-    [self.announcer announce:@"The Twin Champions Swap Focus Targets."];
     RaidMember *tempSwap = self.focusTarget2;
     self.focusTarget2 = self.focusTarget;
     self.focusTarget = tempSwap;
@@ -1086,6 +1116,7 @@
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (percentage == 80.0 || percentage == 60.0 || percentage == 40.0 || percentage == 20.0){
+        [self axeSweepThroughRaid:raid];
         [self swapTanks];
     }
 }

@@ -3,7 +3,6 @@
 //  Healer
 //
 //  Created by Ryan Hart on 3/26/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
 //
 
 #import "PreBattleScene.h"

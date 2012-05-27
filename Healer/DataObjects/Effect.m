@@ -19,6 +19,14 @@
 @synthesize duration, isExpired, target, effectType, timeApplied=_timeApplied, maxStacks, spriteName, title, ailmentType, owner, healingDoneMultiplierAdjustment, damageDoneMultiplierAdjustment;
 @synthesize needsOwnershipResolution, ownerNetworkID, failureChance; //HACKY
 
+
+-(void)dealloc{
+    [spriteName release];
+    [title release];
+    [target release];
+    [ownerNetworkID release];
+    [super dealloc];
+}
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
 {
     if (self = [super init]){
@@ -261,6 +269,10 @@
 
 @implementation  DelayedHealthEffect
 @synthesize value, appliedEffect;
+-(void)dealloc{
+    [appliedEffect release];
+    [super dealloc];
+}
 -(id)copy{
     DelayedHealthEffect *copy = [super copy];
     [copy setValue:self.value];

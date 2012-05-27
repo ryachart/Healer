@@ -20,6 +20,8 @@
 
 @interface PostBattleScene()
 @property (nonatomic, readwrite) BOOL canAdvance;
+- (BOOL)writeApplicationData:(NSData *)data toFile:(NSString *)fileName;
+- (NSString*)timeStringForTimeInterval:(NSTimeInterval)interval;
 -(void)done;
 @end
 
@@ -110,8 +112,42 @@
         [self addChild:damageTakenLabel];
         [self addChild:playersLostLabel];
         
+        NSTimeInterval fightDuration = [[[eventLog lastObject] timeStamp] timeIntervalSinceDate:[[eventLog objectAtIndex:0] timeStamp]];
+        NSString *durationText = [@"Duration: " stringByAppendingString:[self timeStringForTimeInterval:fightDuration]];
+        
+        CCLabelTTF *durationLabel = [CCLabelTTF labelWithString:durationText dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
+        [durationLabel setPosition:CGPointMake(200, 240)];
+        [self addChild:durationLabel];
+        
+#if DEBUG
+        NSMutableArray *events = [NSMutableArray arrayWithCapacity:eventLog.count];
+        for (CombatEvent *event in eventLog){
+            [events addObject:[event logLine]];
+        }
+        //Save the Combat Log to disk...
+        
+        [self writeApplicationData:(NSData*)events toFile:[NSString stringWithFormat:@"%@-%@", [[eventLog   objectAtIndex:0] timeStamp], [[eventLog lastObject] timeStamp]]];
+#endif
     }
     return self;
+}
+
+- (NSString*)timeStringForTimeInterval:(NSTimeInterval)interval{
+    NSInteger minutes = interval / 60;
+    NSInteger seconds = (int)interval % 60;
+    
+    return [NSString stringWithFormat:@"%02d:%02d", minutes, seconds];
+}
+         
+- (BOOL)writeApplicationData:(NSData *)data toFile:(NSString *)fileName {
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString *documentsDirectory = [paths objectAtIndex:0];
+	if (!documentsDirectory) {
+		NSLog(@"Documents directory not found!");
+		return NO;
+	}
+	NSString *appFile = [documentsDirectory stringByAppendingPathComponent:fileName];
+	return ([data writeToFile:appFile atomically:YES]);
 }
 
 -(void)onEnterTransitionDidFinish{

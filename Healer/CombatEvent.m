@@ -8,7 +8,7 @@
 #import "CombatEvent.h"
 
 @implementation CombatEvent
-@synthesize type = _type, value, source, target;
+@synthesize type = _type, value, source, target, timeStamp;
 -(id)initWithSource:(id<EventDataSource>)src target:(id<EventDataSource>)trgt value:(NSNumber*)val andEventType:(CombatEventType)typ{
     self = [super init];
     if (self){
@@ -16,6 +16,7 @@
         self.target = trgt;
         self.value = val;
         self.type = typ;
+        self.timeStamp = [NSDate date];
     }
     return self;
 }
@@ -49,7 +50,7 @@
 }
 
 -(NSString*)logLine{
-    return [NSString stringWithFormat:@"SRC:%@|TAR:%@|VAL:%@|TYPE:%@", [self.source sourceName], [self.target targetName], [self.value description], [self nameForType:self.type]];
+    return [NSString stringWithFormat:@"[%@][SRC:%@][TAR:%@][VAL:%@][TYPE:%@]",[self.timeStamp description] ,[self.source sourceName], [self.target targetName], [self.value description], [self nameForType:self.type]];
 }
 -(void)dealloc{
     [super dealloc];

@@ -8,6 +8,7 @@
 #import "ShopItemNode.h"
 #import "ShopItem.h"
 #import "Shop.h"
+#import "ShopItemExtendedNode.h"
 
 @interface ShopItemNode ()
 @property (nonatomic, assign) id target;
@@ -40,7 +41,7 @@
         
         self.costLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cost %i", itm.goldCost] dimensions:CGSizeMake(140, 20) alignment:UITextAlignmentRight fontName:@"Arial" fontSize:20.0];
         [self.costLabel setPosition:ccp(50, 25)];
-        [self.costLabel setColor:ccYELLOW];
+        [self.costLabel setColor:ccGREEN];
         
         [menuItem addChild:costLabel];
         
@@ -51,9 +52,7 @@
 
 -(void)checkPlayerHasItem{
     if ([Shop playerHasShopItem:self.item]){
-        [background setOpacity:122];
-        [titleLabel setOpacity:122];
-        [costLabel setVisible:NO];
+        [costLabel setString:@"Known"];
     }
 }
 

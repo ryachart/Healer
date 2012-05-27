@@ -121,6 +121,7 @@
 }
 
 -(void)dealloc{
+    [battleID release];
     [activeEffects release]; activeEffects = nil;
     [healthAdjustmentModifiers release]; healthAdjustmentModifiers = nil;
     [super dealloc];

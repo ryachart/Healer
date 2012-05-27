@@ -566,6 +566,7 @@
         for (RaidMemberHealthView *rmhv in self.raidView.children){
             if (rmhv.memberData == dodgedTarget){
                 [rmhv displaySCT:@"Dodge!"];
+                break;
             }
         }
     }

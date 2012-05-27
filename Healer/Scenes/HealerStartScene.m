@@ -46,8 +46,11 @@
         
         self.storeButton = [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Shop" fontName:@"Arial" fontSize:32] target:self selector:@selector(storeSelected)] autorelease];
         
+        CCMenuItemLabel *divinityButton = [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Divinity" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(divinitySelected)] autorelease];
+        [divinityButton setOpacity:122];
+        [divinityButton setIsEnabled:NO];
         
-        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, self.multiplayerButton, nil];
+        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, self.multiplayerButton, divinityButton, nil];
         
         [self.menu alignItemsVerticallyWithPadding:20.0];
         CGSize winSize = [CCDirector sharedDirector].winSize;
@@ -143,6 +146,10 @@
 -(void)settingsSelected
 {
 	//No behavior defined yet.
+    
+}
+
+-(void)divinitySelected{
     
 }
 

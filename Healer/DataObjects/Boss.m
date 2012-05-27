@@ -19,7 +19,13 @@
 @end
 
 @implementation Boss
-@synthesize lastAttack,title, logger, focusTarget, announcer, criticalChance, info, isMultiplayer=_isMultiplayer,phase;
+@synthesize lastAttack,title, logger, focusTarget, announcer, criticalChance, info, isMultiplayer=_isMultiplayer,phase, duration;
+-(void)dealloc{
+    [info release];
+    [announcer release];
+    [title release];
+    [super dealloc];
+}
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
     if (self = [super init]){
@@ -102,7 +108,9 @@
         }
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:thisDamage] andEventType:CombatEventTypeDamage]];
         [target setHealth:[target health] - thisDamage];
-        [self.announcer displayParticleSystemWithName:@"blood_spurt.plist" onTarget:target];
+        if (thisDamage > 0){
+            [self.announcer displayParticleSystemWithName:@"blood_spurt.plist" onTarget:target];
+        }
         
     }else{
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:0 andEventType:CombatEventTypeDodge]];
@@ -190,7 +198,7 @@
         //This isnt there yet. We only want it to fire if we rounded up!
     }else{
         if (roundedPercentage < 100 && roundedPercentage > 0){
-            for (int i = 100; i > roundedPercentage; i--){
+            for (int i = 100; i >= roundedPercentage; i--){
                 if (!healthThresholdCrossed[i]){
                     [self healthPercentageReached:i withRaid:theRaid andPlayer:player];
                     healthThresholdCrossed[i] = YES;;
@@ -198,7 +206,7 @@
             }
         }
     }
-
+    self.duration += theTime;
     [self chooseMainTankInRaid:theRaid];
 	
     [self performStandardAttackOnTheRaid:theRaid andPlayer:player withTime:theTime];
@@ -272,6 +280,7 @@
             if (member == self.focusTarget){
                 damageDealt = MAX(damageDealt, 25); //The Tank is armored
             }
+            [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:damageDealt] andEventType:CombatEventTypeDamage]];
             [member setHealth:member.health - damageDealt * self.damageDoneMultiplier];
         }
     }
@@ -405,7 +414,10 @@
     [poisonEffect setNumOfTicks:30];
     [poisonEffect setTitle:@"trulzar-poison1"];
     [target addEffect:poisonEffect];
-    [target setHealth:target.health - (arc4random() % 20) * self.damageDoneMultiplier];
+    
+    NSInteger upfrontDamage = (arc4random() % 20) * self.damageDoneMultiplier;
+    [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:upfrontDamage] andEventType:CombatEventTypeDamage]];
+    [target setHealth:target.health - upfrontDamage];
     [poisonEffect release];
 }
 
@@ -492,6 +504,7 @@
 }
 
 -(void)dealloc{
+    [rothVictim release];
     [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"roth_entrance"];
     [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"roth_death"];
     [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"grimgon_entrance"];
@@ -667,7 +680,9 @@
     [infectedWound setSpriteName:@"bleeding.png"];
     if (target.health > target.maximumHealth * .58){
         // Spike the health for funsies!
+        NSInteger preHealth = target.health;
         [target setHealth:target.health * .58];
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:preHealth - target.health] andEventType:CombatEventTypeDamage]];
     }
     [target addEffect:infectedWound];
     [infectedWound release];
@@ -720,6 +735,11 @@
 
 @implementation SporeRavagers
 @synthesize focusTarget2, focusTarget3, lastSecondaryAttack, isEnraged;
+-(void)dealloc{
+    [focusTarget2 release];
+    [focusTarget3 release];
+    [super dealloc];
+}
 +(id)defaultBoss{
     SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:19 targets:1 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Spore Ravagers"];
@@ -1010,6 +1030,10 @@
 
 @implementation TwinChampions
 @synthesize lastFocusTarget2Attack, lastAxecution, focusTarget2, lastGushingWound;
+-(void)dealloc{
+    [focusTarget2 release];
+    [super dealloc];
+}
 +(id)defaultBoss{
     TwinChampions *boss = [[TwinChampions alloc] initWithHealth:430000 damage:14 targets:1 frequency:1.25 andChoosesMT:YES];
     [boss setTitle:@"Twin Champions of Baraghast"];

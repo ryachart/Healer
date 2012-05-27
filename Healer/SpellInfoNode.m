@@ -24,7 +24,7 @@
         [spellDetailsBackground setPosition:CGPointMake(100,0)];
         [self addChild:spellIcon];
         
-        CCLabelTTF *spellDetailsLabel = [CCLabelTTF labelWithString:spell.description dimensions:CGSizeMake(200, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:14];
+        CCLabelTTF *spellDetailsLabel = [CCLabelTTF labelWithString:spell.info dimensions:CGSizeMake(200, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:14];
         [spellDetailsLabel setColor:ccBLACK];
         [spellDetailsLabel setPosition:ccp(102,14)];
         

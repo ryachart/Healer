@@ -14,6 +14,11 @@
 @implementation Raid
 
 @synthesize raidMembers, raidMemberBattleIDDictionary;
+-(void)dealloc{
+    [raidMemberBattleIDDictionary release];
+    [super dealloc];
+}
+
 -(id)init{
     if (self = [super init]){
         raidMembers = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];

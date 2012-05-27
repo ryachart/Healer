@@ -38,7 +38,7 @@
 @property (nonatomic, retain) NSString* title;
 @property (nonatomic, assign) id<EventLogger> logger;
 @property (nonatomic, readwrite) NSInteger phase;
-
+@property (nonatomic, readwrite) NSTimeInterval duration;
 @property (nonatomic, readwrite) float lastAttack;
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses;

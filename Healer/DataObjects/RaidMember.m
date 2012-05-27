@@ -74,6 +74,8 @@
 }
 
 -(void)dealloc{
+    [title release];
+    [info release];
     [super dealloc];
 }
 

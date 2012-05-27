@@ -71,6 +71,11 @@
 }
 
 -(void)dealloc{
+    [activeSpells release];
+    [announcer release];
+    [spellBeingCast release];
+    [statusText release];
+    [playerID release];
     [_spellsOnCooldown release]; _spellsOnCooldown = nil;
     [additionalTargets release]; additionalTargets = nil;
     [super dealloc];

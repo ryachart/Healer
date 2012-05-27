@@ -43,6 +43,7 @@
 @property (nonatomic, setter=setTargets:) NSInteger targets;
 @property (nonatomic, copy) NSArray *percentagesPerTarget;
 @property (retain, getter=description) NSString *description;
+@property (nonatomic, readonly) NSString* info;
 @property (retain, readonly) SpellAudioData *spellAudioData;
 @property (nonatomic, readwrite) float cooldownRemaining;
 @property (nonatomic, readwrite) float cooldown;

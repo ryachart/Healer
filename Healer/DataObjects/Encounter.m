@@ -19,6 +19,14 @@
 
 @implementation Encounter
 @synthesize raid, boss, requiredSpells, recommendedSpells, levelNumber;
+
+- (void)dealloc{
+    [raid release];
+    [boss release];
+    [requiredSpells release];
+    [recommendedSpells release];
+    [super dealloc];
+}
 -(id)initWithRaid:(Raid*)rd andBoss:(Boss*)bs andSpells:(NSArray*)sps{
     if (self = [super init]){
         self.raid = rd;
@@ -63,6 +71,25 @@
     
     if (level == 3){
         basicRaid = [[Raid alloc] init];
+        basicBoss = [Drake defaultBoss];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell],[GreaterHeal defaultSpell], nil];
+        
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Guardian  defaultGuardian]];
+        }
+        for (int i = 0; i < 2; i++){
+            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+        }
+    }
+    
+    if (level == 4){
+        basicRaid = [[Raid alloc] init];
         basicBoss = [MischievousImps defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
         
@@ -79,25 +106,6 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
-        }
-    }
-    
-    if (level == 4){
-        basicRaid = [[Raid alloc] init];
-        basicBoss = [Drake defaultBoss];
-        spells = [NSArray arrayWithObjects:[Heal defaultSpell],[GreaterHeal defaultSpell], nil];
-        
-        for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Wizard defaultWizard]];
-        }
-        for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Guardian  defaultGuardian]];
-        }
-        for (int i = 0; i < 2; i++){
             [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
         }
     }

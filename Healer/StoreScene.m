@@ -13,13 +13,16 @@
 #import "BackgroundSprite.h"
 
 @interface StoreScene ()
+@property (nonatomic, assign) ShopItemExtendedNode *extendedNode;
+@property (nonatomic, assign) CCLayerColor *darkenLayer;
 @property (nonatomic, assign) CCLabelTTF *goldLabel;
+@property (nonatomic, assign) ShopItemNode *possibleChangedNode;
 -(void)itemSelected:(ShopItemNode*)item;
 -(void)back;
 @end
 
 @implementation StoreScene
-@synthesize goldLabel;
+@synthesize goldLabel, extendedNode, darkenLayer, possibleChangedNode;
 -(id)init{
     if (self = [super init]){  
         [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"stone-bg-ipad"] autorelease]];
@@ -41,8 +44,8 @@
         
         int i = 0;
         for (ShopItem *item in [Shop allShopItems]){
-            int xOrigin = 100;
-            int yOrigin = 100;
+            int xOrigin = 300;
+            int yOrigin = 200;
             int width = 200;
             int height = 100;
             xOrigin += width * (i % 3);
@@ -53,16 +56,48 @@
             [itemNode release];
             i++;
         };
+        
+        self.darkenLayer = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 0)];
+        [self addChild:self.darkenLayer z:50];
     }
     return self;
 }
 
 -(void)itemSelected:(ShopItemNode*)item{
-    if ([Shop playerCanAffordShopItem:[item item]] && ![Shop playerHasShopItem:[item item]]){
-        [Shop purchaseItem:[item item]];
-        self.goldLabel.string = [NSString stringWithFormat:@"Gold: %i", [Shop localPlayerGold]];
-        [item checkPlayerHasItem];
+    if (self.extendedNode){
+        [self.darkenLayer runAction:[CCFadeTo actionWithDuration:1.0 opacity:0]];
+        [self.extendedNode runAction:[CCSequence actions:[CCScaleTo actionWithDuration:1.0 scale:0.0], [CCCallBlockN actionWithBlock:^(CCNode *node){
+            [node removeFromParentAndCleanup:YES];
+        }],nil]];
+        self.extendedNode = nil;
+        self.possibleChangedNode = nil;
+        return;
     }
+    self.possibleChangedNode = item;
+    [self.darkenLayer runAction:[CCFadeTo   actionWithDuration:.33 opacity:122]];
+    
+    self.extendedNode = [[[ShopItemExtendedNode alloc] initWithShopItem:[item item]] autorelease];
+    [extendedNode setDelegate:self];
+    [extendedNode setScale:0.0];
+    [extendedNode setPosition:CGPointMake(self.contentSize.width /2, self.contentSize.height /2)];
+    [self addChild:extendedNode z:100];
+    [extendedNode runAction:[CCScaleTo actionWithDuration:.33 scale:1.0]];
+    //    if ([Shop playerCanAffordShopItem:[item item]] && ![Shop playerHasShopItem:[item item]]){
+    //        [Shop purchaseItem:[item item]];
+    //        self.goldLabel.string = [NSString stringWithFormat:@"Gold: %i", [Shop localPlayerGold]];
+    //        [item checkPlayerHasItem];
+    //    }
+}
+
+- (void)extendedNodeDidCompleteForShopItem:(ShopItem*)item andNode:(ShopItemExtendedNode *)node{
+    [self.darkenLayer runAction:[CCFadeTo  actionWithDuration:.33 opacity:0]];
+    [node runAction:[CCSequence actions:[CCScaleTo actionWithDuration:.33 scale:0.0], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [node removeFromParentAndCleanup:YES];
+    }],nil]];
+    [self.possibleChangedNode checkPlayerHasItem];
+    self.extendedNode = nil;
+    self.possibleChangedNode = nil;
+    self.goldLabel.string = [NSString stringWithFormat:@"Gold: %i", [Shop localPlayerGold]];
 }
 
 -(void)back{

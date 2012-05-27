@@ -6,7 +6,8 @@
 //
 
 #import "cocos2d.h"
+#import "ShopItemExtendedNode.h"
 
-@interface StoreScene : CCScene 
+@interface StoreScene : CCScene <ShopItemExtendedNodeDelegate>
 
 @end

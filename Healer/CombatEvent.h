@@ -26,6 +26,7 @@ typedef enum {
 
 
 @interface CombatEvent : NSObject
+@property (nonatomic, retain) NSDate *timeStamp;
 @property (nonatomic, retain) id <EventDataSource> source;
 @property (nonatomic, retain) id <EventDataSource> target;
 @property (nonatomic, retain) NSNumber *value;

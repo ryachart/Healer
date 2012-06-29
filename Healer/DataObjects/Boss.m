@@ -1077,6 +1077,7 @@
         Crush *crushAbility = [[Crush alloc] init];
         [crushAbility setTitle:@"crush"];
         [crushAbility setCooldown:20];
+        [crushAbility setTarget:self.autoAttack.focusTarget];
         [self addAbility:crushAbility];
         [crushAbility release];
     }

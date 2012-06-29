@@ -15,6 +15,7 @@
 #import "Boss.h"
 #import "Effect.h"
 #import "Spell.h"
+#import "CombatEvent.h"
 
 @interface Ability ()
 @end
@@ -275,7 +276,7 @@
         [crushEffect setOwner:self.owner];
         [crushEffect setTitle:@"crush"];
         [crushEffect setSpriteName:@"crush.png"];
-        [crushEffect setValue:110];
+        [crushEffect setValue:-110];
         [target addEffect:crushEffect];
         [crushEffect release];
     }
@@ -289,6 +290,7 @@
     NSInteger deathWaveDamage = (int)round(1200.0 / livingMemberCount);
     for (RaidMember *member in theRaid.getAliveMembers){
         [member setHealth:member.health - (deathWaveDamage * self.owner.damageDoneMultiplier)];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(deathWaveDamage * self.owner.damageDoneMultiplier)] andEventType:CombatEventTypeDamage]]; 
     }
     [(Boss*)self.owner ownerDidExecuteAbility:self];
 }

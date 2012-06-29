@@ -26,10 +26,6 @@
     [super dealloc];
 }
 
-- (void)gainRandomAbility {
-    //TODO
-}
-
 - (void)ownerDidExecuteAbility:(Ability*)ability {
     
 }
@@ -1140,7 +1136,7 @@
     
     StackingDamage *damageStacker = [[StackingDamage alloc] init];
     [damageStacker setAbilityValue:10];
-    [damageStacker setCooldown:60];
+    [damageStacker setCooldown:30];
     [endlessVoid addAbility:damageStacker];
     [damageStacker release];
     

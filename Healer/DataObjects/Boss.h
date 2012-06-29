@@ -47,7 +47,6 @@
 - (void)setAttackDamage:(NSInteger)damage; //Configures all Attacks' abilityValues
 - (void)setAttackSpeed:(float)frequency; //Configures all Attack's cooldown values
 
-- (void)gainRandomAbility;
 - (void)ownerDidExecuteAbility:(Ability*)ability;
 @end
 

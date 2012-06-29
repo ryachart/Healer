@@ -16,6 +16,7 @@
 #import "Effect.h"
 #import "Spell.h"
 #import "CombatEvent.h"
+#import "ProjectileEffect.h"
 
 @interface Ability ()
 @end
@@ -185,6 +186,26 @@
 }
 @end
 
+@implementation Fireball 
+
+- (void) triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    RaidMember *target = [theRaid randomLivingMember];
+    NSTimeInterval colTime = 1.75;
+    DelayedHealthEffect *fireball = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
+    
+    ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:@"fireball.png" target:target andCollisionTime:colTime];
+    [fireballVisual setCollisionParticleName:@"fire_explosion.plist"];
+    [[(Boss*)self.owner announcer] displayProjectileEffect:fireballVisual];
+    [fireballVisual release];
+    [fireball setOwner:self.owner];
+    [fireball setFailureChance:.15];
+    [fireball setValue:-(arc4random() % self.abilityValue + (self.abilityValue / 2))];
+    [target addEffect:fireball];
+    [fireball release];
+}
+
+@end
+
 @implementation  StackingDamage
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players{
@@ -294,4 +315,38 @@
     }
     [(Boss*)self.owner ownerDidExecuteAbility:self];
 }
+@end
+
+@implementation RandomAbilityGenerator
+
++ (NSArray*)allAbilities {
+    NSMutableArray *allAbilities = [NSMutableArray arrayWithCapacity:10];
+    
+    Deathwave *dwAbility = [[Deathwave alloc] init];
+    [dwAbility setTitle:@"random-deathweave"];
+    [dwAbility setCooldown:32.0];
+    [dwAbility setFailureChance:.05];
+    [allAbilities addObject:[dwAbility autorelease]];
+    
+    BaraghastRoar *roar = [[BaraghastRoar alloc] init];
+    [roar setTitle:@"random-roar"];
+    [roar setCooldown:24.0];
+    [roar setFailureChance:.05];
+    [allAbilities addObject:[roar autorelease]];
+    
+    Fireball *fbAbility = [[Fireball alloc] init];
+    [fbAbility setTitle:@"random-fireball"];
+    [fbAbility setAbilityValue:50];
+    [fbAbility setCooldown:12.0];
+    [fbAbility setFailureChance:.05];
+    [allAbilities addObject:[fbAbility autorelease]];
+    
+    Fireball *quickFireball = [[Fireball alloc] init];
+    [quickFireball setTitle:@"random-quickfirebal"];
+    [quickFireball setAbilityValue:10];
+    [quickFireball setCooldown:3.0];
+    [quickFireball setFailureChance:.1];
+    [allAbilities addObject:[quickFireball autorelease]];
+}
+
 @end

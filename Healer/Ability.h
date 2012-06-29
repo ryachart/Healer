@@ -36,6 +36,9 @@
 @property (nonatomic, retain) RaidMember *focusTarget;
 @end
 
+@interface Fireball : Ability
+@end
+
 @interface StackingDamage : Ability
 @end
 
@@ -55,4 +58,7 @@
 @end
 
 @interface Deathwave : Ability 
+@end
+
+@interface RandomAbilityGenerator : Ability 
 @end

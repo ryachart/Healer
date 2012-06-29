@@ -902,7 +902,7 @@
 @synthesize firstFocusedAttack, secondFocusedAttack;
 @synthesize lastAxecution, lastGushingWound;
 +(id)defaultBoss{
-    NSInteger damage = 14;
+    NSInteger damage = 16;
     float frequency = 1.25;
     TwinChampions *boss = [[TwinChampions alloc] initWithHealth:430000 damage:damage targets:1 frequency:frequency andChoosesMT:YES];
     [boss setFirstFocusedAttack:[[boss abilities] objectAtIndex:0]];
@@ -982,7 +982,7 @@
         [gushingWoundEffect setSpriteName:@"bleeding.png"];
         [gushingWoundEffect setAilmentType:AilmentTrauma];
         [gushingWoundEffect setIncreasePerTick:.5];
-        [gushingWoundEffect setValuePerTick:-25];
+        [gushingWoundEffect setValuePerTick:-28];
         [gushingWoundEffect setNumOfTicks:3];
         [gushingWoundEffect setOwner:self];
         [gushingWoundEffect setTitle:@"gushingwound"];

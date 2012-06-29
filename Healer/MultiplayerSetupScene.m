@@ -50,7 +50,7 @@
 
 -(id)init{
     if (self = [super init]){
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"stone-bg-ipad"] autorelease]];
+        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease]];
         self.beginButton= [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Begin" fontName:@"Arial" fontSize:32] target:self selector:@selector(beginGame)] autorelease];
         [self.beginButton setOpacity:111];
         [self.beginButton setIsEnabled:NO];

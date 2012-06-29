@@ -84,7 +84,7 @@
     if (self = [super init]){
         NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"stone-bg-ipad"] autorelease]];
+        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease]];
         paused = YES;
         self.raid = raidToUse;
         self.boss = bossToUse;
@@ -583,7 +583,7 @@
     if (self.isServer || (!self.isServer && !self.isClient)){
         //Only perform the simulation if we are not the server
         //Data Events
-        [boss combatActions:player theRaid:raid gameTime:deltaT];
+        [boss combatActions:self.players theRaid:raid gameTime:deltaT];
         if ([playerMoveButton isMoving]){
             [player disableCastingWithReason:CastingDisabledReasonMoving];
             [player setPosition:[player position]+1];

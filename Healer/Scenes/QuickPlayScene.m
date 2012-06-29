@@ -14,13 +14,14 @@
 #import "Shop.h"
 #import "BackgroundSprite.h"
 
-#define NUM_ENCOUNTERS 10
+#define NUM_ENCOUNTERS 11
 
 @interface QuickPlayScene ()
 @property (retain) CCMenu *menu;
 
 -(void)beginGameWithSelectedLevel:(id)sender;
 -(void)back;
+- (void)beginEndlessVoidEncounter:(id)sender;
 
 @end
 
@@ -31,7 +32,7 @@
 #if TARGET_IPHONE_SIMULATOR
         [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:100] forKey:PlayerHighestLevelCompleted];
 #endif
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"stone-bg-ipad"] autorelease]];
+        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease]];
         self.menu = [CCMenu menuWithItems:nil];
         for (int i = 0; i < NUM_ENCOUNTERS; i++){
             NSString *levelLabelText = nil;
@@ -58,6 +59,12 @@
         [backButton setPosition:CGPointMake(30, [CCDirector sharedDirector].winSize.height * .9)];
         [backButton setColor:ccWHITE];
         [self addChild:backButton];
+        
+        CCMenu *endlessButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"The Endless Void" fontName:@"Arial" fontSize:28.0] target:self selector:@selector(beginEndlessVoidEncounter:)], nil];
+        [endlessButton setRotation:-45.0];
+        [endlessButton setPosition:CGPointMake(-275, [CCDirector sharedDirector].winSize.height * .45)];
+        [endlessButton setColor:ccWHITE];
+        [self addChild:endlessButton];
     }
     return self;
 }
@@ -101,6 +108,37 @@
 
     }
     [basicPlayer release];
+}
+
+- (void)beginEndlessVoidEncounter:(id)sender{
+    Encounter *encounter = [Encounter survivalEncounterIsMultiplayer:NO];
+    Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+    NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
+    for (Spell *spell in encounter.recommendedSpells){
+        if ([Shop playerHasSpell:spell]){
+            [activeSpells addObject:[[spell class] defaultSpell]];
+        }
+    }
+    
+    //Add other spells the player has
+    for (Spell *spell in [Shop allOwnedSpells]){
+        if (activeSpells.count < 4){
+            if (![activeSpells containsObject:spell]){
+                [activeSpells addObject:spell];
+            }
+        }
+    }
+    [basicPlayer setActiveSpells:(NSArray*)activeSpells];
+    
+    if (encounter.boss && basicPlayer && encounter.raid){
+        
+        PreBattleScene *pbs = [[PreBattleScene alloc] initWithRaid:encounter.raid boss:encounter.boss andPlayer:basicPlayer];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:pbs]];
+        [pbs release];
+        
+    }
+    [basicPlayer release];
+
 }
 
 -(void)back

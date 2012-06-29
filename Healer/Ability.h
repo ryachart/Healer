@@ -10,29 +10,49 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum {
-    TargetPreferenceRandom,     //Choose a new target every use
-    TargetPreferenceStatic,     //Choose a target once and use that unless it dies
-    TargetPreferenceGuardian,   //Choose a Guardian unless there are none.
-    TargetPreferenceWizard     //Choose a Wizard unless there are none
-    
-} TargetPreference;
-
-@class Raid, Player, Boss, Agent, HealableTarget;
+@class Raid, RaidMember, Player, Boss, Agent, HealableTarget;
 @interface Ability : NSObject
 
 @property (nonatomic, readwrite) float failureChance;
-@property (nonatomic, readwrite) NSTimeInterval cooldown;
+@property (nonatomic, readwrite) NSTimeInterval timeApplied;
+@property (nonatomic, readwrite) NSTimeInterval cooldown; //9999 denotes an ability that must be triggered
 @property (nonatomic, retain ) NSString *title;
 @property (nonatomic, retain) Agent *owner;
 @property (nonatomic, readwrite) NSInteger abilityValue; //Damage or DoT value or something
-@property (nonatomic, retain) NSArray *targets;
+@property (nonatomic, readwrite) BOOL isDisabled;
 
--(void)combatActions:(Raid*)theRaid boss:(Boss*)theBoss player:(Player*)thePlayer gameTime:(float)timeDelta;
+- (void)combatActions:(Raid*)theRaid boss:(Boss*)theBoss players:(NSArray*)players gameTime:(float)timeDelta;
+- (void)triggerAbilityForRaid:(Raid*)theRaid andPlayers:(NSArray*)players;
+- (BOOL)checkFailed;
 @end
 
 
-@interface BasicAttack : Ability
-
+@interface Attack : Ability
+- (RaidMember *)targetFromRaid:(Raid*)raid;
 -(id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd;
+@end
+
+@interface FocusedAttack : Attack
+@property (nonatomic, retain) RaidMember *focusTarget;
+@end
+
+@interface StackingDamage : Ability
+@end
+
+@interface BaraghastBreakOff : Ability
+@property (nonatomic, retain) FocusedAttack *ownerAutoAttack;
+@end
+
+@interface BaraghastRoar : Ability
+@end
+
+@interface Debilitate : Ability 
+@property (nonatomic, readwrite) NSInteger numTargets;
+@end
+
+@interface Crush : Ability
+@property (nonatomic, assign) RaidMember *target;
+@end
+
+@interface Deathwave : Ability 
 @end

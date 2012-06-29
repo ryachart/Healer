@@ -70,29 +70,32 @@ typedef int CastingDisabledReason;
 @property NSInteger position;
 @property NSInteger maximumEnergy;
 
--(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen;
+- (id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen;
 
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid gameTime:(float)timeDelta;
+- (void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid gameTime:(float)timeDelta;
 
--(void)disableCastingWithReason:(CastingDisabledReason)reason;
--(void)enableCastingWithReason:(CastingDisabledReason)reason;
+- (void)disableCastingWithReason:(CastingDisabledReason)reason;
+- (void)enableCastingWithReason:(CastingDisabledReason)reason;
 
--(void)beginCasting:(Spell*)theSpell withTargets:(NSArray*)targets;
--(BOOL)canCast;
--(NSTimeInterval) remainingCastTime;
+- (void)beginCasting:(Spell*)theSpell withTargets:(NSArray*)targets;
+- (BOOL)canCast;
+- (NSTimeInterval) remainingCastTime;
+
+- (void)interrupt;
 
 //Channeling Info
--(int)channelingBonus;
--(void)startChanneling;
--(void)stopChanneling;
--(NSTimeInterval)channelingTime;
+- (int)channelingBonus;
+- (void)startChanneling;
+- (void)stopChanneling;
+- (NSTimeInterval)channelingTime;
 
--(BOOL)isDead;
--(void)setEnergy:(NSInteger)newEnergy;
+- (BOOL)isDead;
+- (void)setEnergy:(NSInteger)newEnergy;
 
 
--(NSString*)asNetworkMessage;
--(void)updateWithNetworkMessage:(NSString*)message;
+- (NSString*)initialStateMessage; //For notifying servers what our player state looks like
+- (NSString*)asNetworkMessage;
+- (void)updateWithNetworkMessage:(NSString*)message;
 
 //Multiplayer
 @property (nonatomic, retain) NSString* playerID;

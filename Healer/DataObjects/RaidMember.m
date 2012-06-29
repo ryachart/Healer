@@ -20,8 +20,9 @@
 @synthesize title;
 @synthesize dodgeChance;
 @synthesize info;
+@synthesize positioning;
 
--(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq
+-(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position
 {
     if (self = [super init]){
         maximumHealth = hlth;
@@ -32,6 +33,7 @@
         self.title = @"NOTITLE";
         self.info = @"NOINFO";
         self.dodgeChance = 0.0;
+        positioning = position;
     }
 	return self;
 }
@@ -150,7 +152,7 @@
     return [[[Guardian alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:175 damageDealt:50 andDmgFrequency:1.0]){
+    if (self = [super initWithHealth:175 damageDealt:50 andDmgFrequency:1.0 andPositioning:Melee]){
         self.title = @"Guardian";
         self.dodgeChance = .09;
         self.info = @"The Guardian has high health but low damage.";
@@ -165,7 +167,7 @@
     return [[[Soldier alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:120 damageDealt:62 andDmgFrequency:.80]){
+    if (self = [super initWithHealth:120 damageDealt:62 andDmgFrequency:.80 andPositioning:Melee]){
         self.title = @"Soldier";
         self.info = @"The Soldier has moderate health and moderate damage.";
         self.dodgeChance = .07;
@@ -174,14 +176,14 @@
 }
 @end
 
-@implementation  Demonslayer
-+(Demonslayer*)defaultDemonslayer{
-    return [[[Demonslayer alloc] init] autorelease];
+@implementation  Archer
++(Archer*)defaultArcher{
+    return [[[Archer alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:100 damageDealt:65 andDmgFrequency:.6]){
-        self.title = @"Demonslayer";
-        self.info = @"ATheDemonslayer has low health but high damage.";
+    if (self = [super initWithHealth:100 damageDealt:65 andDmgFrequency:.6 andPositioning:Ranged]){
+        self.title = @"Archer";
+        self.info = @"The Archer has low health but deals high damage.";
         self.dodgeChance = .05;
     }
     return self;
@@ -193,9 +195,9 @@
     return [[[Champion alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:115 damageDealt:88 andDmgFrequency:1.1]){
+    if (self = [super initWithHealth:115 damageDealt:88 andDmgFrequency:1.1 andPositioning:Melee]){
         self.title = @"Champion";
-        self.info = @"The Champion has more health and deals more damage the more health it has.";
+        self.info = @"The Champion has more health and deals more damage when healed to full";
         self.dodgeChance = .07;
     }
     return self;
@@ -214,7 +216,7 @@
 }
 
 -(id)init{
-    if (self = [super initWithHealth:125 damageDealt:30 andDmgFrequency:1.2]){
+    if (self = [super initWithHealth:125 damageDealt:30 andDmgFrequency:1.2 andPositioning:Ranged]){
         self.title = @"Wizard";
         self.dodgeChance = .07;
         self.info = @"The Wizard has moderate health and low damage but improves your energy regeneration";
@@ -239,14 +241,14 @@
 }
 @end
 
-@implementation Berserker
-+(Berserker*)defaultBerserker{
-    return [[[Berserker alloc] init] autorelease];
+@implementation Warlock
++(Warlock*)defaultWarlock{
+    return [[[Warlock alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:107 damageDealt:126 andDmgFrequency:.7]){
-        self.title = @"Berserker";
-        self.info = @"The Berserker has moderate health and deals more damage at low health.";
+    if (self = [super initWithHealth:107 damageDealt:126 andDmgFrequency:.7 andPositioning:Ranged]){
+        self.title = @"Warlock";
+        self.info = @"The Warlock has moderate health and deals more damage at low health.";
         self.dodgeChance = .07;
     }
     return self;

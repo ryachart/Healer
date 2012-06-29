@@ -1,4 +1,4 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf320
+{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf470
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;}
 {\colortbl;\red255\green255\blue255;}
 \margl1440\margr1440\vieww10800\viewh8400\viewkind0
@@ -37,10 +37,10 @@ You have the shoes of a giant to fill to save the lands from the coming darkness
 The Allies:\
 	Soldier - 75 Health, 75 DPS, 7% Dodge\
 	Guardian - 100 Health, 50 DPS, 9% Dodge\
-	Demonslayer - 50 Health, 100 DPS, 5% Dodge\
+	Archer - 50 Health, 100 DPS, 5% Dodge, Ranged\
 	Champion - 80 Health.  DPS is equal to its current health. 7% Dodge\
-	Wizard - 75 Health.  25 DPS.  Improves your energy regen by 1 while alive. 7%Dodge\
-	Berserker - 80 Health.  DPS is equal to 140 minus current health. 7%Dodge\
+	Wizard - 75 Health.  25 DPS.  Improves your energy regen by 1 while alive. 7%Dodge Ranged\
+	Warlock - 80 Health.  DPS is equal to 140 minus current health. 7%Dodge, Ranged\
 	\
 The Spells:\
 	\ul Single Target\ulnone \
@@ -303,20 +303,95 @@ Allies:\
 \
 Baraghast, Warlord of the Damned:\
 	Abilities:\
-		Slayer: Chooses a Guardian and deals increasing amounts of damage to that Guardian over the course of 1 minute.  At the end of 1 minute, Baraghast instantly kills the Guardian. If there are no remaining Tanks, Baraghast will use his Roar Ability repeatedly.  This encounter requires 5 Guardians.\
-		Roar: Baraghast Roars, dealing moderate damage to the entire raid interrupting all spell casting and resetting all attack cool downs.  \
-		Choose: Every 20% of health, Baraghast puts a debuff on 2 targets that deals increasing damage.  When the first target is healed, the debuff falls off that target and the other target is instantly brought to 1% health.\
-	Phase 2: (At 50% health, Baraghast gains these abilities)\
+Everyone 20% Baraghast gains a new ability at random.  When the fight begins Baraghast gains a random ability.  Baraghast focuses a tank.\
+		Break Off: Every 25 - 45 seconds Baraghast stops damage his focus'd target and begins dealing high damage to a second target.  He deals 20% of that target's maximum health every 1 second for 5 seconds before switching back to his main target.\
+		Roar: Baraghast Roars, dealing light damage to the entire raid interrupting all spell casting and resetting all attack cool downs.  (Screenshake)\
+		Crush: Baraghast debuffs his focus target causing it to take a large amount of damage after 5 seconds.\
+		Deathwave: Periodically deal high damage to the entire raid. After doing so, roar, crush, and the auto attack are given a longer cool down. (Think Electrocute Nefarian)\
 		Debilitate: Strikes up to 3 targets for light damage.  Those targets gain a debuff that lasts until they are fully healed.  While Debilitated, the targets deal no damage.\
-		\
-	Phase 3: (At 20% health, Baraghast gains these abilities)\
-		Last Stand of the Damned:\
-			Baraghast casts off his armor and begins swinging his axe violently.  He now takes 300% damage but his attack speed is doubled.  He also roars more frequently.  \
 \
 Stage 12:\
 \
 Crazed Seer:\
+	Shadowbolt - The Crazed Seer's auto attack is to simply throw a shadow bolt at a random target.\
+	Invert Healing (debuff causes healing to do damage instead.  Can be purified)\
+	Mana Burn - Places a debuff on targets that burns off 100 of a player's energy if that target is healed.  It also deals damage over 12 seconds.  Cannot be purified.\
+	Steal Healing - Damages the entire raid for 33 % of their health.  If any of the targets are healed in the next 5 seconds, Crazed Seer gains health equal to 20x the healing received.\
+	Spell Lock - The Seer chooses two spells at random from each player and puts them on cool down for 10 seconds.  \
+	Horrifying Laugh - Deals moderate damage to the entire raid.\
+	Intensifying Bolts - Every minute, the crazed seer gains an additional shadow bolt ability.\
+	\
+	\
+Stage 13:\
+\
+Gatekeeper of Delsarn:\
+	Focuses a main tank\
+	Grip of Delsarn - Reduces all healing done to a random target by 100% and deals damage equal to 14% of the target's maximum health every 2 seconds for 10 seconds. Cannot target the tank.\
+	Impale - Deals 80% of a target's health worth of damage and leaves a bleed effect that deals 25% of a target's health after 5 seconds.\
+	Phase 2: (75%)\
+	Gatekeeper of Delsarn opens the gates.\
+	Pestilence of Delsarn:\
+	Covers the raid in a pestilence that lasts 20 seconds.  While affected by pestilence, the raid takes 4% of their maximum health worth of damage every 2 seconds.  This effect happens once. \
+	Phase 3: (50%)\
+	Gatekeeper of Delsarn summons two blood drinkers.\
+	Blood drinkers focus two additional tanks.  If either tank dies, the Gatekeeper's maximum health is restored by 10%.\
+	Phase 4: (25%) \
+	Blood drinkers are slain and stop focusing the additional tanks.\
+	Drink in Death - The Gatekeeper gains a buff of 10% additional damage dealt for each fallen ally.\
 	\
 \
+Stage 14:\
+	Skeletal Dragon\
+	Phase 1: The Air\
+		While in the air, the Skeletal Dragon rains bones and fire upon your raid.\
+	Bone Throw - Deals 60% health of damage to the target and throws them to the ground.  They will deal no damage until they are healed to above 50%.\
+	Sweeping Flame - Burns a column of allies for 50% of their maximum health.\
+	Lift and Drop - The Skeletal Dragon lifts and ally.  10 seconds later the ally falls to the ground and takes 99% worth of health in damage.\
+	Phase 2 : The Ground (66%)\
+	Auto Attack is periodically one of these:\
+		-Sweeping Strike - All Melee take 50% of their health in damage. \
+		-Flame Volley - All Ranged take 50% of their health in damage.\
+	Tail Lash - Swings it's tail dealing high damage to the entire raid.\
 	\
-	}
+	Phase 3 : Take Off + Air (33%)\
+	At the beginning of Phase 3, the Skeletal Dragon will Lift and Drop 4 raid members.\
+	It then gains Bone Throw and Sweeping Flame again\
+	\
+	Phase 4: Fallen to the Ground (5 %)\
+	Skeletal Dragon falls from the sky on to your raid dealing massive damage to everyone distributed across the number of surviving allies.  This effect will kill your entire raid if you have less than 10 allies remaining.\
+	\
+\
+Stage 15:\
+	Colossus of Bone\
+	Bonequake - Large AoE followed by small dot and screen shake. 20-30 second CD\
+	Crushing Punch - Every 10 seconds, the colossus smashes his fist down onto a raid member and deals 87% of their health in damage.\
+	Bone Throw - Tosses a bone at a random raid member every few seconds.\
+	High damage & tightly tuned.  This fight should feel simple and difficult.\
+\
+Stage 16:\
+	Overseer of Delsarn\
+	Phase 1:  (100- 90%)\
+		Extremely high damage from projectiles.  Lots of projectiles.  1 of these at random every 1.5 seconds.\
+	Blood bolt - Deals 33% life in damage to a target.  Reduces healing received by 50% for 3 seconds.\
+	Shadow bolt - Deals 10% life in damage to a target and then another 28% over 8 seconds.\
+	Fire bolt - Deals 45% life in damage to a target.\
+	Phase 2:\
+		Overseer of Delsarn loses the bolts and engages directly.  He deals 95% of a guardian's health to a focus target every 6 seconds.\
+		Blood Blast - blasts random targets with blood dealing 30% damage and reducing healing received by 50% for 3 seconds.\
+	Phase 3: (60%)\
+		Every 30 seconds, the Overseer will call a minion.  The minion lasts 30 seconds and is one of the following:\
+	Minion of Flame - Pulses flame over the entire raid dealing 2% worth of damage every 3 seconds\
+	Minion of Blood - Pulses Blood over the entire raid reducing healing received by 25%.\
+	Phase 4: (30%)\
+		The Overseer now does 95% worth of damage to a random target instead of to a focus target.  He continues to blood blast.\
+	Phase 5: (10 %)\
+	The Overseer summons both a minion of flame and a minion of blood simultaneously.\
+	\
+	\
+	\
+Stage 17:\
+	The Unspeakable\
+	\
+	Blinded\
+	Frozen\
+}

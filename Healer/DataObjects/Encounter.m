@@ -36,6 +36,9 @@
     return self;
 }
 
++ (Encounter*)randomMultiplayerEncounter{
+    return [Encounter encounterForLevel:(arc4random() % 5 + 6) isMultiplayer:YES];
+}
 
 +(Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer{
     Raid *basicRaid = nil;
@@ -84,7 +87,7 @@
             [basicRaid addRaidMember:[Guardian  defaultGuardian]];
         }
         for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+            [basicRaid addRaidMember:[Archer defaultArcher]];
         }
     }
     
@@ -106,7 +109,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+            [basicRaid addRaidMember:[Archer defaultArcher]];
         }
     }
     
@@ -122,7 +125,7 @@
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
         }
         for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+            [basicRaid addRaidMember:[Archer defaultArcher]];
         }
         for (int i = 0; i < 2; i++){
             [basicRaid addRaidMember:[Wizard defaultWizard]];
@@ -144,7 +147,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+            [basicRaid addRaidMember:[Archer defaultArcher]];
         }
     }
     
@@ -160,7 +163,7 @@
             [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+            [basicRaid addRaidMember:[Archer defaultArcher]];
         }
         for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Wizard defaultWizard]];
@@ -188,7 +191,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Demonslayer defaultDemonslayer]];
+            [basicRaid addRaidMember:[Archer defaultArcher]];
         }
     }
     
@@ -210,7 +213,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -230,7 +233,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
@@ -255,7 +258,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -278,7 +281,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -301,7 +304,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -324,7 +327,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -347,7 +350,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -370,7 +373,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -393,7 +396,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -416,7 +419,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -439,7 +442,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -462,7 +465,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -485,7 +488,7 @@
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -582,6 +585,35 @@
     }
     
     return gold;
+}
+
++ (Encounter*)survivalEncounterIsMultiplayer:(BOOL)multiplayer{
+    Raid *basicRaid = nil;
+    Boss *basicBoss = nil;
+    NSArray *spells = nil;
+    basicRaid = [[Raid alloc] init];
+    basicBoss = [TheEndlessVoid defaultBoss];
+    spells = [NSArray arrayWithObjects:[Heal  defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
+    
+    for (int i = 0; i < 5; i++){
+        [basicRaid addRaidMember:[Soldier defaultSoldier]];
+    }
+    for (int i = 0; i < 5; i++){
+        [basicRaid addRaidMember:[Champion defaultChampion]];
+    }
+    for (int i = 0; i < 3; i++){
+        [basicRaid addRaidMember:[Wizard defaultWizard]];
+    }
+    for (int i = 0; i < 4; i++){
+        [basicRaid addRaidMember:[Warlock defaultWarlock]];
+    }
+    for (int i = 0; i < 3; i++){
+        [basicRaid addRaidMember:[Guardian defaultGuardian]];
+    }
+    
+    basicBoss.isMultiplayer = multiplayer;
+    Encounter *encToReturn = [[Encounter alloc] initWithRaid:[basicRaid autorelease] andBoss:basicBoss andSpells:spells];
+    return [encToReturn autorelease];;
 }
 
 @end

@@ -11,37 +11,78 @@
 #import "RaidMember.h"
 #import "AudioController.h"
 #import "ProjectileEffect.h"
+#import "Ability.h"
 
 @interface Boss ()
-@property (nonatomic, retain) RaidMember *focusTarget;
--(int)damageDealt;
--(RaidMember*)highestHealthMemberInRaid:(Raid*)theRaid excluding:(NSArray*)array;
 @end
 
 @implementation Boss
-@synthesize lastAttack,title, logger, focusTarget, announcer, criticalChance, info, isMultiplayer=_isMultiplayer,phase, duration;
+@synthesize title, logger, announcer, criticalChance, info, isMultiplayer=_isMultiplayer,phase, duration, abilities;
 -(void)dealloc{
+    [abilities release];
     [info release];
     [announcer release];
     [title release];
     [super dealloc];
 }
 
+- (void)gainRandomAbility {
+    //TODO
+}
+
+- (void)ownerDidExecuteAbility:(Ability*)ability {
+    
+}
+
+- (void)addAbility:(Ability*)ab{
+    ab.owner = self;
+    [self.abilities addObject:ab];
+}
+
+- (void)removeAbility:(Ability*)ab{
+    [self.abilities removeObject:ab];
+}
+
+- (void)setAttackDamage:(NSInteger)damage{
+    for (Ability *ab in self.abilities){
+        if ([ab isKindOfClass:[Attack class]]){
+            [ab setAbilityValue:damage];
+        }
+    }
+}
+
+- (void)setAttackSpeed:(float)frequency{
+    for (Ability *ab in self.abilities){
+        if ([ab isKindOfClass:[Attack class]]){
+            [ab setCooldown:frequency];
+        }
+    }
+}
+
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
     if (self = [super init]){
         health = hlth;
         maximumHealth = hlth;
-        damage = dmg;
-        targets = trgets;
-        frequency = freq;
-        choosesMainTank = chooses;
-        lastAttack = 0.0f;
         title = @"";
         self.criticalChance = 0.0;
+        self.abilities = [NSMutableArray arrayWithCapacity:5];
         for (int i = 0; i < 101; i++){
             healthThresholdCrossed[i] = NO;
         }
         self.isMultiplayer = NO;
+        
+        for (int i = 0; i < trgets; i++){
+            if (chooses && i == 0){
+                FocusedAttack *focusedAttack = [[FocusedAttack alloc] initWithDamage:dmg/trgets andCooldown:freq];
+                [self addAbility:focusedAttack];
+                [focusedAttack release];
+            }else{
+                Attack *attack = [[Attack alloc] initWithDamage:dmg/trgets andCooldown:freq];
+                [self addAbility:attack];
+                [attack release];
+            }
+        }
+        
     }
 	return self;
 	
@@ -75,122 +116,15 @@
 -(float)healthPercentage{
     return (float)self.health / (float)self.maximumHealth * 100;
 }
--(int)damageDealt{
-    
-    float multiplyModifier = self.damageDoneMultiplier;
-    int additiveModifier = 0;
-    
-    if (choosesMainTank && self.focusTarget.isDead){
-        multiplyModifier *= 3; //The tank died.  Outgoing damage is now tripled
-    }
-    
-    if (self.isMultiplayer){
-        multiplyModifier += 1.5;
-    }
-    
-    if (self.criticalChance != 0.0 && arc4random() % 100 < (self.criticalChance * 100)){
-        multiplyModifier += 1.5;
-    }
-    
-    return (int)round((float)damage/(float)targets * multiplyModifier) + additiveModifier;
-}
+
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid*)raid andPlayer:(Player*)player{
     //The main entry point for health based triggers
 }
 
--(void)damageTarget:(RaidMember*)target{
-    if (![target raidMemberShouldDodgeAttack:0.0]){
-        int thisDamage = self.damageDealt;
-        
-        if (target.isFocused){
-            thisDamage = (int)round(thisDamage * 1.2);
-        }
-        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:thisDamage] andEventType:CombatEventTypeDamage]];
-        [target setHealth:[target health] - thisDamage];
-        if (thisDamage > 0){
-            [self.announcer displayParticleSystemWithName:@"blood_spurt.plist" onTarget:target];
-        }
-        
-    }else{
-        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:0 andEventType:CombatEventTypeDodge]];
-    }
-}
-
--(RaidMember*)highestHealthMemberInRaid:(Raid*)theRaid excluding:(NSArray*)members{
-    if (!members){
-        members = [NSArray array];
-    }
-    RaidMember *tempTarget = [theRaid.raidMembers objectAtIndex:0];
-    int highestHealth = ((RaidMember*)[theRaid.raidMembers objectAtIndex:0]).maximumHealth;
-    for (int i = 1; i < theRaid.raidMembers.count; i++){
-        if (((RaidMember*)[theRaid.raidMembers objectAtIndex:i]).maximumHealth > highestHealth && ![members containsObject:[theRaid.raidMembers objectAtIndex:i]]){
-            highestHealth = ((RaidMember*)[theRaid.raidMembers objectAtIndex:i]).maximumHealth;
-            tempTarget = ((RaidMember*)[theRaid.raidMembers objectAtIndex:i]);
-        }
-    }
-    return tempTarget;
-}
-
--(void)chooseMainTankInRaid:(Raid *)theRaid{
-    if (choosesMainTank && !self.focusTarget){
-        self.focusTarget = [self highestHealthMemberInRaid:theRaid excluding:nil];
-        [self.focusTarget setIsFocused:YES];
-    }
-}
-
--(void)performStandardAttackOnTheRaid:(Raid*)theRaid andPlayer:(Player*)thePlayer withTime:(float)theTime{
-    self.lastAttack+= theTime;
-
-    if (self.lastAttack >= frequency){
-		
-		self.lastAttack = 0;
-		
-		NSArray* victims = [theRaid getAliveMembers];
-		
-		RaidMember *target = nil;
-		
-        if (choosesMainTank && !self.focusTarget.isDead){
-            [self damageTarget:self.focusTarget];
-            if (self.focusTarget.isDead){
-                [self.announcer announce:[NSString stringWithFormat:@"%@ frenzies upon killing its focused target.", self.title]];
-                
-            }
-        }
-		if (targets <= [victims count]){
-			for (int i = 0; i < targets - (int)(choosesMainTank && !self.focusTarget.isDead); i++){
-				do{
-					NSInteger targetIndex = arc4random() % [victims count];
-					
-					target = [victims objectAtIndex:targetIndex];
-				} while ([target isDead]);
-				
-                [self damageTarget:target];
-			}
-		}
-		else{
-			for (int i = 0; i < targets - (int)(choosesMainTank && !self.focusTarget.isDead); i++){
-				do{
-                    if ([victims count] <= 0){
-                        break;
-                    }
-					NSInteger targetIndex = arc4random() % [victims count];
-					
-					target = [victims objectAtIndex:targetIndex];
-				} while ([target isDead]);
-                [self damageTarget:target];
-				
-				if ([[theRaid getAliveMembers] count] == 0){
-					i = targets;
-				}
-			}
-		}
-		
-	}
-
-}
--(void) combatActions:(Player*)player theRaid:(Raid*)theRaid gameTime:(float)theTime
+- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
 {
+    Player *player = [players objectAtIndex:0]; //The first player is the local player
     float healthPercentage = ((float)self.health/(float)self.maximumHealth) * 100;
     int roundedPercentage = (int)round(healthPercentage);
     int integerOnlyPercentage = (int)healthPercentage;
@@ -206,11 +140,12 @@
             }
         }
     }
-    self.duration += theTime;
-    [self chooseMainTankInRaid:theRaid];
-	
-    [self performStandardAttackOnTheRaid:theRaid andPlayer:player withTime:theTime];
-    [self updateEffects:self raid:theRaid player:player time:theTime];
+    self.duration += timeDelta;
+    
+    for (Ability *ability in self.abilities){
+        [ability combatActions:theRaid boss:self players:players gameTime:timeDelta];
+    }
+    [self updateEffects:self raid:theRaid player:player time:timeDelta];
 }
 
 -(void)setHealth:(NSInteger)newHealth
@@ -266,6 +201,7 @@
 @synthesize lastRockTime, enraging;
 +(id)defaultBoss{
     CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:45000 damage:22 targets:1 frequency:1.4 andChoosesMT:YES];
+    
     [corTroll setTitle:@"Corrupted Troll"];
     [corTroll setInfo:@"A Troll of Raklor has been identified among the demons brewing in the south.  It has been corrupted and twisted into a foul and terrible creature.  You will journey with a small band of soldiers to the south to dispatch this troll."];
     return  [corTroll autorelease];
@@ -277,7 +213,7 @@
     for (RaidMember *member in theRaid.raidMembers){
         if (!member.isDead){
             NSInteger damageDealt = (arc4random() % 20 + 20);
-            if (member == self.focusTarget){
+            if (member.isFocused){
                 damageDealt = MAX(damageDealt, 25); //The Tank is armored
             }
             [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:damageDealt] andEventType:CombatEventTypeDamage]];
@@ -286,17 +222,16 @@
     }
 }
 
--(int)damageDealt{
-    int modDmg = [super damageDealt];
-    if (self.enraging > 0.0){
-        modDmg *= 1.35;
-    }
-    return modDmg;
-}
-
 -(void)startEnraging{
     [self.announcer announce:@"The Cave Troll Swings his club furiously at the focused target!"];
     self.enraging += 1.0;
+    Effect *enragingEffect = [[Effect alloc] initWithDuration:9 andEffectType:EffectTypePositiveInvisible];
+    [enragingEffect setTarget:self];
+    [enragingEffect setOwner:self];
+    [enragingEffect setTitle:@"troll-temp-enrage"];
+    [enragingEffect setDamageDoneMultiplierAdjustment:.35];
+    [self addEffect:enragingEffect];
+    [enragingEffect release];
 }
 
 -(void)stopEnraging{
@@ -311,8 +246,9 @@
     }
 }
 
--(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
-    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+{
+    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
     lastRockTime += timeDelta;
     float tickTime = self.isMultiplayer ? 15.0 : 25.0;
     
@@ -356,8 +292,9 @@
     [fireball release];
 }
 
--(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
-    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+{
+    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
     
     self.lastFireballTime += timeDelta;
     float tickTime = self.isMultiplayer ? 3.5 : 4.0;
@@ -451,8 +388,9 @@
     [bottleEffect release];    
 }
 
--(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
-    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+{
+    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
     self.lastPoisonTime += timeDelta;
     self.lastPotionTime += timeDelta;
     
@@ -489,7 +427,7 @@
 @implementation DarkCouncil
 @synthesize lastPoisonballTime, rothVictim, lastDarkCloud;
 +(id)defaultBoss{
-    DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:340000 damage:5 targets:5 frequency:.75 andChoosesMT:NO];
+    DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:340000 damage:0 targets:1 frequency:.75 andChoosesMT:NO];
     [boss setTitle:@"Council of Dark Summoners"];
     [boss setInfo:@"A note scribbled in blood was found in Trulzar's quarters.  It mentions a Council responsible for The Dark Winds plaguing Theranore.  Go to the crypt beneath The Hollow and discover what this Council is up to."];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"roth_entrance" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/roth_entrance" ofType:@"m4a"]]];
@@ -520,7 +458,7 @@
     RaidMember *victim = nil;
     while (!victim){
         RaidMember *member = [raid randomLivingMember];
-        if ([member isKindOfClass:[Demonslayer class]]){
+        if ([member isKindOfClass:[Archer class]]){
             continue;
         }
         victim = member;    
@@ -530,9 +468,9 @@
 
 -(void)summonDarkCloud:(Raid*)raid{
     for (RaidMember *member in raid.raidMembers){
-        DarkCloudEffect *dcEffect = [[DarkCloudEffect alloc] initWithDuration:6 andEffectType:EffectTypeNegativeInvisible];
+        DarkCloudEffect *dcEffect = [[DarkCloudEffect alloc] initWithDuration:5 andEffectType:EffectTypeNegativeInvisible];
         [dcEffect setOwner:self];
-        [dcEffect setValuePerTick:-5];
+        [dcEffect setValuePerTick:-3];
         [dcEffect setNumOfTicks:3];
         [member addEffect:dcEffect];
         [dcEffect release];
@@ -555,8 +493,9 @@
     [fireball release];
 }
 
--(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
-    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+{
+    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
     if (self.phase == 1){
         //Roth
         if (![[self.rothVictim activeEffects] containsObject:[[[RothPoison alloc] init] autorelease]] || self.rothVictim.isDead){
@@ -602,7 +541,7 @@
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (percentage == 99.0){
-        damage = 0;
+        [self setAttackDamage:0];
         [self.announcer announce:@"The room fills with demonic laughter."];
     }
     if (percentage == 97.0){
@@ -627,8 +566,7 @@
         [self.announcer announce:@"Grimgon fades to nothing.  Serevon, Anguish Mage cackles with glee."];
         //Serevon, Anguish Mage steps forward
         self.phase = 3;
-        targets = 1;
-        damage = 20;
+        [self setAttackDamage:20];
     }
     if (percentage == 49.0){
         [[AudioController sharedInstance] playTitle:@"serevon_entrance"];
@@ -692,6 +630,14 @@
 -(void)burstPussBubbleOnRaid:(Raid*)theRaid{
     [self.announcer announce:@"A putrid sac of filth bursts onto your allies"];
     self.numBubblesPopped++;
+    //Boss does 10% less damage for each bubble popped
+    Effect *reducedDamageEffect = [[Effect alloc] initWithDuration:300 andEffectType:EffectTypePositiveInvisible];
+    [reducedDamageEffect setTarget:self];
+    [reducedDamageEffect setOwner:self];
+    [reducedDamageEffect setDamageDoneMultiplierAdjustment:-0.1];
+    [self addEffect:reducedDamageEffect];
+    [reducedDamageEffect release];
+    
     for (RaidMember *member in theRaid.raidMembers){
         if (!member.isDead){
             RepeatedHealthEffect *singleTickDot = [[RepeatedHealthEffect alloc] initWithDuration:1.5 andEffectType:EffectTypeNegative];
@@ -707,8 +653,9 @@
     }
 }
      
--(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
-    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+{
+    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
     
     self.lastSickeningTime += timeDelta;
     float tickTime = self.isMultiplayer ? 7.0 : 15.0;
@@ -720,11 +667,6 @@
     }
 }
 
--(int)damageDealt{
-    int dmg = [super damageDealt];
-    return dmg * (1 - self.numBubblesPopped * .1);
-}
-
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (((int)percentage) % 20 == 0 && percentage != 100){
         [self burstPussBubbleOnRaid:raid];
@@ -734,98 +676,30 @@
 @end
 
 @implementation SporeRavagers
-@synthesize focusTarget2, focusTarget3, lastSecondaryAttack, isEnraged;
--(void)dealloc{
-    [focusTarget2 release];
-    [focusTarget3 release];
-    [super dealloc];
-}
+@synthesize isEnraged, secondTargetAttack, thirdTargetAttack;
 +(id)defaultBoss{
     SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:19 targets:1 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Spore Ravagers"];
     [boss setInfo:@"Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate. Conversely, no villagers have left the town, either..."];
     [boss setCriticalChance:.5];
+    
+    FocusedAttack *secondFocusedAttack = [[FocusedAttack alloc] initWithDamage:19 andCooldown:2.6];
+    [boss addAbility:secondFocusedAttack];
+    [boss setSecondTargetAttack:secondFocusedAttack];
+    [secondFocusedAttack release];
+    FocusedAttack *thirdFocusedAttack = [[FocusedAttack alloc] initWithDamage:19 andCooldown:2.7];
+    [boss addAbility:thirdFocusedAttack];
+    [boss setThirdTargetAttack:thirdFocusedAttack];
+    [thirdFocusedAttack release];
     return [boss autorelease];
-}
--(void)chooseSecondAndThirdFocusTargetsFromRaid:(Raid*)raid{
-    int highestHealth = ((RaidMember*)[raid.raidMembers objectAtIndex:0]).maximumHealth;
-    NSMutableArray *selectableMembers = [NSMutableArray arrayWithArray:raid.raidMembers];
-    [selectableMembers removeObject:self.focusTarget];
-    
-    RaidMember *tempTarget = [selectableMembers objectAtIndex:0];
-    for (int i = 1; i < selectableMembers.count; i++){
-        if (((RaidMember*)[selectableMembers objectAtIndex:i]).maximumHealth > highestHealth){
-            highestHealth = ((RaidMember*)[selectableMembers objectAtIndex:i]).maximumHealth;
-            tempTarget = ((RaidMember*)[selectableMembers objectAtIndex:i]);
-        }
-    }
-    self.focusTarget2 = tempTarget;
-    [self.focusTarget2 setIsFocused:YES];
-    
-    [selectableMembers removeObject:self.focusTarget2];
-    
-    
-    tempTarget = [selectableMembers objectAtIndex:0];
-    highestHealth = tempTarget.maximumHealth;
-    for (int i = 1; i < selectableMembers.count; i++){
-        if (((RaidMember*)[selectableMembers objectAtIndex:i]).maximumHealth > highestHealth){
-            highestHealth = ((RaidMember*)[selectableMembers objectAtIndex:i]).maximumHealth;
-            tempTarget = ((RaidMember*)[selectableMembers objectAtIndex:i]);
-        }
-    }
-    self.focusTarget3 = tempTarget;
-    [self.focusTarget3 setIsFocused:YES];
-    
 }
 
 -(void)ravagerDiedFocusing:(RaidMember*)focus andRaid:(Raid*)raid{
     [self.announcer announce:@"A Spore Ravager falls to the ground and explodes!"];
-    
     [focus setIsFocused:NO];
-    
     for (int i = 0; i < 5; i++){
         RaidMember *member = [raid randomLivingMember];
         [member setHealth:member.health - 50 * self.damageDoneMultiplier];
-    }
-    
-}
-
--(int)damageDealt{
-    float multiplyModifier = 1;
-    
-    if (self.isEnraged){
-        multiplyModifier *= 2.25;
-    }
-    
-    if ((self.focusTarget.isDead ) || (self.focusTarget2 && self.focusTarget2.isDead ) || (self.focusTarget3 && self.focusTarget3.isDead )){
-        multiplyModifier *= 3; //The tank died.  Outgoing damage is now tripled
-    }
-    
-    if (self.isMultiplayer){
-        multiplyModifier *= 1.5;
-    }
-    
-    if (self.criticalChance && arc4random() % 100 < (self.criticalChance * 100)){
-        multiplyModifier *= 1.5;
-    }
-    
-    return (int)round((float)damage/(float)targets * multiplyModifier);
-}
-
--(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
-    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
-    
-    if (!self.focusTarget2 && !self.focusTarget3 && self.healthPercentage > 90.0){
-        [self chooseSecondAndThirdFocusTargetsFromRaid:theRaid];
-    }
-    
-    self.lastSecondaryAttack += timeDelta;
-    if (self.lastSecondaryAttack > frequency){
-        if (self.focusTarget2)
-        [self damageTarget:self.focusTarget2];
-        if (self.focusTarget3)
-        [self damageTarget:self.focusTarget3];
-        self.lastSecondaryAttack = 0.0;
     }
 }
 
@@ -845,21 +719,22 @@
         }
     }
     if (percentage == 66.0){
-        [self ravagerDiedFocusing:self.focusTarget3 andRaid:raid];
-        if (!self.focusTarget3.isDead){
-            self.focusTarget3 = nil;
-        }
+        [self ravagerDiedFocusing:self.thirdTargetAttack.focusTarget andRaid:raid];
+        [self removeAbility:self.thirdTargetAttack];
     }
     if (percentage == 33.0){
-        [self ravagerDiedFocusing:self.focusTarget2 andRaid:raid];
-        if (!self.focusTarget2.isDead){
-            self.focusTarget2 = nil;
-        }
+        [self ravagerDiedFocusing:self.secondTargetAttack.focusTarget andRaid:raid];
+        [self removeAbility:self.secondTargetAttack];
     }
     
     if (percentage == 30.0){
         [self.announcer announce:@"The last remaining Spore Ravager glows with rage."];
-        self.isEnraged = YES;
+        Effect *enragedEffect = [[Effect alloc] initWithDuration:300 andEffectType:EffectTypePositiveInvisible];
+        [enragedEffect setTarget:self];
+        [enragedEffect setOwner:self];
+        [enragedEffect setDamageDoneMultiplierAdjustment:1.25];
+        [self addEffect:enragedEffect];
+        [enragedEffect release];
     }
 }
 
@@ -880,11 +755,6 @@
     [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"imp_throw1"];
     [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"imp_throw2"];
     [super dealloc];
-}
-
--(int)damageDealt{
-    int dmg = [super damageDealt];
-    return dmg;
 }
 
 -(void)throwPotionToTarget:(RaidMember *)target withDelay:(float)delay{
@@ -921,9 +791,9 @@
     
 }
 
--(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
-    
-    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+{
+    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
     if (self.healthPercentage > 30.0){
         self.lastPotionThrow+=timeDelta;
         float tickTime = self.isMultiplayer ? 6.0 : 12.0;
@@ -964,8 +834,7 @@
     
     if (percentage == 20.0){
         [self.announcer announce:@"All of the imps angrily pounce on their focused target!"];
-        frequency /= 2.0;
-        damage *= self.isMultiplayer ? 1.05 : .75 ;
+        [self setAttackSpeed:1.2];
     }
 }
 @end
@@ -979,8 +848,9 @@
     return [boss autorelease];
 }
 
--(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
-    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+{
+    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
     
     float tickTime = 30.0;
     self.lastRootquake += timeDelta;
@@ -1029,22 +899,28 @@
 
 
 @implementation TwinChampions
-@synthesize lastFocusTarget2Attack, lastAxecution, focusTarget2, lastGushingWound;
--(void)dealloc{
-    [focusTarget2 release];
-    [super dealloc];
-}
+@synthesize firstFocusedAttack, secondFocusedAttack;
+@synthesize lastAxecution, lastGushingWound;
 +(id)defaultBoss{
-    TwinChampions *boss = [[TwinChampions alloc] initWithHealth:430000 damage:14 targets:1 frequency:1.25 andChoosesMT:YES];
+    NSInteger damage = 14;
+    float frequency = 1.25;
+    TwinChampions *boss = [[TwinChampions alloc] initWithHealth:430000 damage:damage targets:1 frequency:frequency andChoosesMT:YES];
+    [boss setFirstFocusedAttack:[[boss abilities] objectAtIndex:0]];
+    
+    FocusedAttack *secondFA = [[FocusedAttack alloc] initWithDamage:damage * 4 andCooldown:frequency * 5];
+    [boss setSecondFocusedAttack:secondFA];
+    [boss addAbility:secondFA];
+    [secondFA release];
+    
     [boss setTitle:@"Twin Champions of Baraghast"];
     [boss setInfo:@"You and your soldiers have taken the fight straight to the warcamps of Baraghast--Leader of the Dark Horde.  You have been met outside the gates by only two heavily armored demon warriors.  These Champions of Baraghast will stop at nothing to keep you from finding Baraghast."];
     return [boss autorelease];
 }
 
 -(void)axeSweepThroughRaid:(Raid*)theRaid{
-    self.lastAttack = -7.0;
     self.lastAxecution  = -7.0;
-    self.lastFocusTarget2Attack = -7.0;
+    self.firstFocusedAttack.timeApplied = -7.0;
+    self.secondFocusedAttack.timeApplied = -7.0;
     self.lastGushingWound = -7.0; 
     //Set all the other abilities to be on a long cooldown...
     
@@ -1074,7 +950,7 @@
 -(void)performAxecutionOnRaid:(Raid*)theRaid{
     RaidMember *target = nil;
     
-    while (!target || target == self.focusTarget || target == self.focusTarget2){
+    while (!target || target.isFocused){
         target = [theRaid randomLivingMember];
     }
     [self.announcer announce:@"An Ally Has been chosen for Execution..."];
@@ -1094,19 +970,19 @@
     for (int i = 0; i < 1; i++){
         RaidMember *target = nil;
         
-        while (!target || target == self.focusTarget || target == self.focusTarget2){
+        while (!target || target.isFocused){
             target = [theRaid randomLivingMember];
         }
         
         DelayedHealthEffect *axeThrownEffect = [[DelayedHealthEffect alloc] initWithDuration:1.5 andEffectType:EffectTypeNegativeInvisible];
         [axeThrownEffect setOwner:self];
-        [axeThrownEffect setValue:-30];
+        [axeThrownEffect setValue:-25];
         
         IntensifyingRepeatedHealthEffect *gushingWoundEffect = [[IntensifyingRepeatedHealthEffect alloc] initWithDuration:9.0 andEffectType:EffectTypeNegative];
         [gushingWoundEffect setSpriteName:@"bleeding.png"];
         [gushingWoundEffect setAilmentType:AilmentTrauma];
         [gushingWoundEffect setIncreasePerTick:.5];
-        [gushingWoundEffect setValuePerTick:-28];
+        [gushingWoundEffect setValuePerTick:-25];
         [gushingWoundEffect setNumOfTicks:3];
         [gushingWoundEffect setOwner:self];
         [gushingWoundEffect setTitle:@"gushingwound"];
@@ -1124,16 +1000,16 @@
 }
 
 -(void)swapTanks{
-    RaidMember *tempSwap = self.focusTarget2;
-    self.focusTarget2 = self.focusTarget;
-    self.focusTarget = tempSwap;
+    RaidMember *tempSwap = self.secondFocusedAttack.focusTarget;
+    self.secondFocusedAttack.focusTarget = self.firstFocusedAttack.focusTarget;
+    self.firstFocusedAttack.focusTarget = tempSwap;
 }
 
--(void)combatActions:(Player *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta{
-    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+{
+    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
     
     self.lastAxecution += timeDelta;
-    self.lastFocusTarget2Attack += timeDelta;
     self.lastGushingWound += timeDelta;
     
     float axecutionTickTime = 30.0;
@@ -1142,22 +1018,6 @@
     if (self.lastAxecution >= axecutionTickTime){
         [self performAxecutionOnRaid:theRaid];
         self.lastAxecution = 0.0;
-    }
-    
-    if (self.lastFocusTarget2Attack >= (frequency * 5.0)){
-        if (!self.focusTarget2){
-             self.focusTarget2 = [self highestHealthMemberInRaid:theRaid excluding:[NSArray arrayWithObject:self.focusTarget]];
-            [self.focusTarget2 setIsFocused:YES];
-        }
-        NSInteger tempDamage = damage;
-        damage *= 4.0;
-        [self damageTarget:self.focusTarget2];
-        damage = tempDamage;
-        self.lastFocusTarget2Attack = 0.0;
-        if (self.focusTarget2.isDead){
-            [self damageTarget:[theRaid randomLivingMember]];
-            damage *= 4.0;
-        }
     }
     
     if (self.lastGushingWound >= gushingWoundTickTime){
@@ -1175,6 +1035,70 @@
 @end
 
 @implementation Baraghast
+@synthesize autoAttack, remainingAbilities;
++(id)defaultBoss{
+    Baraghast *boss = [[Baraghast alloc] initWithHealth:450000 damage:14 targets:1 frequency:1.25 andChoosesMT:YES];
+    [boss setAutoAttack:[[boss abilities] objectAtIndex:0]];
+    [boss setTitle:@"Baraghast, Warlord of the Damned"];
+    [boss setInfo:@"With his champions defeated, Baraghast himself confronts you and your allies."];
+    return [boss autorelease];
+}
+
+- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+{
+    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
+
+}
+
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+    if (percentage == 99.0) {
+        BaraghastRoar *roar = [[BaraghastRoar alloc] init];
+        [roar setTitle:@"baraghast-roar"];
+        [roar setCooldown:18.0];
+        [roar setOwner:self];
+        [self addAbility:roar];
+        [roar release];
+    }
+    
+    if (percentage == 80.0) {
+        [self.announcer announce:@"Baraghast glowers beyond the Guardian at the rest of your allies"];
+        BaraghastBreakOff *breakOff = [[BaraghastBreakOff alloc] init];
+        [breakOff setTitle:@"break-off"];
+        [breakOff setCooldown:25];
+        [breakOff setOwner:self];
+        [breakOff setOwnerAutoAttack:self.autoAttack];
+        
+        [self addAbility:breakOff];
+        [breakOff release];
+    }
+    
+    if (percentage == 60.0) {
+        [self.announcer announce:@"Baraghast fills with rage."];
+        Crush *crushAbility = [[Crush alloc] init];
+        [crushAbility setTitle:@"crush"];
+        [crushAbility setCooldown:20];
+        [self addAbility:crushAbility];
+        [crushAbility release];
+    }
+    
+    if (percentage == 33.0) {
+        [self.announcer announce:@"A Dark Energy Surges Beneath Baraghast..."];
+        Deathwave *dwAbility = [[Deathwave alloc] init];
+        [dwAbility setTitle:@"deathwave"];
+        [dwAbility setCooldown:32.0];
+        [self addAbility:dwAbility];
+        [dwAbility release];
+    }
+
+}
+
+- (void)ownerDidExecuteAbility:(Ability*)ability {
+    if ([ability.title isEqualToString:@"deathwave"]){
+        for (Ability *ab in self.abilities){
+            [ab setTimeApplied:0];
+        }
+    }
+}
 @end
 
 @implementation CrazedSeer
@@ -1205,4 +1129,20 @@
 @end
 
 @implementation SoulOfTorment
+@end
+
+@implementation TheEndlessVoid
++(id)defaultBoss{
+    TheEndlessVoid *endlessVoid = [[TheEndlessVoid alloc] initWithHealth:99999999 damage:40 targets:4 frequency:1.3 andChoosesMT:YES];
+    [endlessVoid setTitle:@"The Endless Void"];
+    [endlessVoid setInfo:@"An immortal foe that can not be vanquished.  Withstand as long as you can."];
+    
+    StackingDamage *damageStacker = [[StackingDamage alloc] init];
+    [damageStacker setAbilityValue:10];
+    [damageStacker setCooldown:60];
+    [endlessVoid addAbility:damageStacker];
+    [damageStacker release];
+    
+     return [endlessVoid autorelease];
+}
 @end

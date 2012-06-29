@@ -100,6 +100,16 @@
 
 }
 
+- (void)removeEffect:(Effect *)theEffect{
+    if (activeEffects != nil){
+        [theEffect setTarget:nil];
+        if ([self.healthAdjustmentModifiers containsObject:theEffect]){
+            [self.healthAdjustmentModifiers removeObject:theEffect];
+        }
+    [self.activeEffects removeObject:theEffect];
+    }
+}
+
 -(void)addHealthAdjustmentModifier:(HealthAdjustmentModifier*)hamod{
 	if (healthAdjustmentModifiers == nil){
 		healthAdjustmentModifiers = [[NSMutableArray alloc] initWithCapacity:5];

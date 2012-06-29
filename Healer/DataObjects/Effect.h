@@ -13,6 +13,7 @@
 @class Player;
 @class HealableTarget;
 @class Agent;
+@class Ability;
 
 typedef enum {
 	EffectTypeNeutral,
@@ -152,6 +153,17 @@ typedef enum {
 
 @interface IntensifyingRepeatedHealthEffect : RepeatedHealthEffect
 @property (nonatomic, readwrite) float increasePerTick;
+@end
+
+@interface WanderingSpiritEffect : RepeatedHealthEffect 
+@property (nonatomic, assign) Raid *raid;
+@end
+
+@interface BreakOffEffect : RepeatedHealthEffect
+@property (nonatomic, retain) Ability *reenableAbility;
+@end
+
+@interface DebilitateEffect : ExpiresAtFullHealthRHE 
 @end
 
 #pragma mark - DEPRECATED EFFECTS

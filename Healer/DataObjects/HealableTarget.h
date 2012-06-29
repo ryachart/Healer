@@ -27,8 +27,9 @@
 @property (readonly) NSMutableArray *activeEffects;
 @property (nonatomic, readwrite) BOOL isFocused;
 @property (nonatomic, readonly) float healthPercentage;
--(void)setHealth:(NSInteger)newHealth;
--(BOOL)isDead;
--(void)addEffect:(Effect*)theEffect;
--(void)addHealthAdjustmentModifier:(HealthAdjustmentModifier*)hamod;
+- (void)setHealth:(NSInteger)newHealth;
+- (BOOL)isDead;
+- (void)addEffect:(Effect*)theEffect;
+- (void)removeEffect:(Effect*)theEffect;
+- (void)addHealthAdjustmentModifier:(HealthAdjustmentModifier*)hamod;
 @end

@@ -11,6 +11,8 @@
 #import "AudioController.h"
 #import "Agent.h"
 #import "Player.h"
+#import "Ability.h"
+
 
 #define FUZZ(value, range) (((arc4random() % ((int)range * 2) + (100 - (int)range)))/100.0 * (int)value)
 
@@ -78,9 +80,7 @@
 			//Here we do some effect, but we have to subclass Effects to decide what that is
 			//The one thing we always do here is expire the effect
 			self.timeApplied = 0.0;
-			isExpired = YES;
-			[thePlayer setStatusText:@""];
-			
+			isExpired = YES;			
 		}
 		
 	}
@@ -504,6 +504,50 @@
     self.valuePerTick *= (1 + increasePerTick);
 }
 @end
+
+@implementation WanderingSpiritEffect
+@synthesize raid;
+
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta{
+    if (!self.raid) {
+        self.raid = theRaid;
+    }
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+}
+
+- (void)reset{
+    //Because WanderingSpirit Swaps targets we never want to reset it's time applied
+    isExpired = NO;
+}
+- (void)tick{
+    [super tick];
+    RaidMember *candidate = [[self.raid lowestHealthTargets:1 withRequiredTarget:nil] objectAtIndex:0];
+    if (candidate != self.target){
+        [self retain];
+        [self.target removeEffect:self];
+        [candidate addEffect:self];
+        [self release];
+    }
+}
+@end
+
+@implementation BreakOffEffect
+@synthesize reenableAbility;
+- (id)copy{
+    BreakOffEffect *copy = [super copy];
+    [copy setReenableAbility:self.reenableAbility];
+    return copy;
+}
+
+- (void)dealloc{
+    [reenableAbility release];
+    [super dealloc];
+}
+- (void)expire{
+    [self.reenableAbility setIsDisabled:NO];
+    [super expire];
+}
+@end
 #pragma mark - DEPRECATED SPELLS
 #pragma mark -
 #pragma mark Shaman Spells
@@ -694,4 +738,13 @@
     [ac removeAudioPlayerWithTitle:@"FireballImpact"];	
 }
 
+@end
+
+@implementation DebilitateEffect 
+- (NSInteger)valuePerTick {
+    return 0;
+}
+- (float)damageDoneMultiplierAdjustment {
+    return -1.0;
+}
 @end

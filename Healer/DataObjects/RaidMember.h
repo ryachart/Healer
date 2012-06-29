@@ -22,6 +22,12 @@
 @class Boss;
 @class Raid;
 @class Player;
+
+typedef enum {
+    Ranged,
+    Melee,
+} Positioning;
+
 @interface RaidMember : HealableTarget {
 	float damageFrequency; //All Raid members deal damage at some frequency
 	
@@ -34,9 +40,10 @@
 @property (nonatomic,  readwrite) NSInteger damageDealt; //All RaidMembers deal some damage
 @property (readwrite) float lastAttack;
 @property (readwrite) float dodgeChance;
--(float)dps;
+@property (readonly) Positioning positioning;
 
--(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq;
+-(float)dps;
+-(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position;
 -(BOOL)raidMemberShouldDodgeAttack:(float)modifer;
 
 //This function is overriden by each subtype of RaidMember.
@@ -55,8 +62,8 @@
 @interface Soldier : RaidMember 
 +(Soldier*)defaultSoldier;
 @end
-@interface Demonslayer : RaidMember 
-+(Demonslayer*)defaultDemonslayer;
+@interface Archer : RaidMember 
++(Archer*)defaultArcher;
 @end
 @interface Wizard : RaidMember{
     float lastEnergyGrant;
@@ -66,6 +73,6 @@
 @interface Champion : RaidMember 
 +(Champion *)defaultChampion;
 @end
-@interface Berserker : RaidMember
-+(Berserker*)defaultBerserker;
+@interface Warlock : RaidMember
++(Warlock*)defaultWarlock;
 @end

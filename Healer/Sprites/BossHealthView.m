@@ -42,8 +42,8 @@
         self.bossHealthFrame.anchorPoint = CGPointZero;
         self.bossHealthFrame.position = healthBarFramePosition;
         
-        self.bossNameLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:32.0];
-        self.bossNameLabel.position = CGPointMake(200, 50);
+        self.bossNameLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:32.0];
+        self.bossNameLabel.position = CGPointMake(300, 70);
         self.bossNameLabel.contentSize = frame.size;
         [self.bossNameLabel setColor:ccWHITE];
         

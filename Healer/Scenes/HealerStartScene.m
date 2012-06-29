@@ -39,7 +39,7 @@
 -(id)init{
     if (self = [super init]){
         //Perform Scene Setup   
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"stone-bg-ipad"] autorelease]];
+        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease]];
         
         self.multiplayerButton = [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Multiplayer" fontName:@"Arial" fontSize:32] target:self selector:@selector(multiplayerSelected)] autorelease];
         self.quickPlayButton= [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Play" fontName:@"Arial" fontSize:32] target:self selector:@selector(quickPlaySelected)] autorelease];
@@ -70,6 +70,14 @@
 }
 
 -(void)multiplayerSelected{
+#if DEBUG
+    MultiplayerSetupScene *mpss = [[MultiplayerSetupScene alloc] init];
+//    [mpss setMatch:theMatch];
+//    theMatch.delegate = mpss;    
+    [[CCDirector sharedDirector] replaceScene:mpss];
+    [mpss release];
+    return;
+#endif
     static BOOL authenticationAttempted = NO;
     GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
     if (![localPlayer isAuthenticated]){

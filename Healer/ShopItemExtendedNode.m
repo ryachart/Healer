@@ -39,13 +39,13 @@
         [self addChild:background z:0];
         [background setScale:3.0];
         
-        self.itemName = [CCLabelTTF labelWithString:self.item.title dimensions:CGSizeMake(200, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:32.0];
+        self.itemName = [CCLabelTTF labelWithString:self.item.title dimensions:CGSizeMake(300, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:32.0];
         self.itemName.color = ccBLACK;
         
         self.itemCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold: %i",self.item.goldCost] dimensions:CGSizeMake(200, 40) alignment:UITextAlignmentRight fontName:@"Arial" fontSize:32.0];
         self.itemCost.color = ccBLACK;
         
-        self.itemCooldown = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cooldown: %1.2f",self.item.purchasedSpell.cooldown] dimensions:CGSizeMake(200, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:28.0];
+        self.itemCooldown = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cooldown: %1.2f",self.item.purchasedSpell.cooldown] dimensions:CGSizeMake(300, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:28.0];
         self.itemCooldown.color = ccBLACK;
         
         self.itemEnergyCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cost: %i Energy",self.item.purchasedSpell.energyCost] dimensions:CGSizeMake(200, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:28.0];
@@ -63,11 +63,11 @@
         NSInteger rightEdge = halfWidth - 130;
         NSInteger bottomEdge = -halfHeight + 36;
         
-        self.itemName.position = CGPointMake(leftEdge, topEdge);
+        self.itemName.position = CGPointMake(leftEdge + 50, topEdge);
         self.itemCost.position = CGPointMake(rightEdge, topEdge);
         self.itemEnergyCost.position = CGPointMake(leftEdge, topEdge - 34);
         self.itemCastTime.position = CGPointMake(leftEdge, topEdge - 72);
-        self.itemCooldown.position = CGPointMake(leftEdge, topEdge - 112);
+        self.itemCooldown.position = CGPointMake(leftEdge + 50, topEdge - 112);
         self.itemDescription.position = CGPointMake(0, topEdge - 162);
         
         [self addChild:self.itemName];

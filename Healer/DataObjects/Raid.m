@@ -81,4 +81,42 @@
 -(RaidMember*)memberForBattleID:(NSString *)battleID{
     return [self.raidMemberBattleIDDictionary objectForKey:battleID];
 }
+
+-(RaidMember*)lowestHealthRaidMemberSet:(NSArray*)raid{
+    float lowestHealth = [(RaidMember*)[raid objectAtIndex:0] healthPercentage];
+    RaidMember *candidate = [raid objectAtIndex:0];
+    for (RaidMember *member in raid){
+        if (member.isDead)
+            continue;
+        if (member.healthPercentage <= lowestHealth){
+            lowestHealth = member.healthPercentage;
+            candidate = member;
+        }
+    }
+    return candidate;
+}
+
+-(NSArray*)lowestHealthTargets:(NSInteger)numTargets withRequiredTarget:(RaidMember*)reqTarget{
+    NSMutableArray *finalTargets = [NSMutableArray arrayWithCapacity:numTargets];
+    NSMutableArray *candidates = [NSMutableArray arrayWithArray:[self getAliveMembers]];
+    [candidates removeObject:reqTarget];
+    
+    
+    int aliveMembers = [[self getAliveMembers] count];
+    int possibleTargets = numTargets - (reqTarget ? 1 : 0);
+    if (possibleTargets > aliveMembers){
+        possibleTargets = aliveMembers;
+    }
+    for (int i = 0; i < possibleTargets; i++){
+        RaidMember *lowestHealthTarget = [self lowestHealthRaidMemberSet:candidates];
+        [finalTargets addObject:lowestHealthTarget];
+        [candidates removeObject:lowestHealthTarget];
+    }
+    
+    if (reqTarget){
+        [finalTargets addObject:reqTarget];
+    }
+    return finalTargets;
+}
+
 @end

@@ -19,9 +19,10 @@
 //@property (nonatomic, retain) NSArray *activeSpells; //An Array of Spell Classnames
 @property (nonatomic, readonly) NSInteger levelNumber;
 
--(id)initWithRaid:(Raid*)raid andBoss:(Boss*)boss andSpells:(NSArray*)spells; 
+- (id)initWithRaid:(Raid*)raid andBoss:(Boss*)boss andSpells:(NSArray*)spells; 
 
-
-+(Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer;
-+(NSInteger)goldForLevelNumber:(NSInteger)levelNumber isFirstWin:(BOOL)isFirstWin isMultiplayer:(BOOL)isMultiplayer;
++ (Encounter*)randomMultiplayerEncounter;
++ (Encounter*)survivalEncounterIsMultiplayer:(BOOL)multiplayer;
++ (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer;
++ (NSInteger)goldForLevelNumber:(NSInteger)levelNumber isFirstWin:(BOOL)isFirstWin isMultiplayer:(BOOL)isMultiplayer;
 @end

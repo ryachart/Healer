@@ -13,12 +13,12 @@
 
 @interface Spell ()
 @property (nonatomic, retain) NSString *spellID;
-
+@property (nonatomic, readwrite) NSTimeInterval tempCooldown;
 @end
 
 @implementation Spell
 
-@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData, cooldownRemaining, cooldown, spellID, appliedEffect, owner, info;
+@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData, cooldownRemaining, cooldown, spellID, appliedEffect, owner, info, tempCooldown;
 
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd
 {
@@ -47,6 +47,17 @@
     
 }
 
+- (float)cooldown {
+    return cooldown + self.tempCooldown;
+}
+
+- (void)applyTemporaryCooldown:(NSTimeInterval)tempCD {
+    self.cooldownRemaining = tempCD;
+    self.tempCooldown = tempCD;
+    [[(Player*)self.owner spellsOnCooldown] addObject:self];
+
+}
+
 -(BOOL)isEqual:(id)object{
     Spell *spell = (Spell*)object;
     
@@ -58,43 +69,6 @@
 
 -(NSUInteger)hash{
     return [self.title hash];
-}
-
--(RaidMember*)lowestHealthRaidMemberSet:(NSArray*)raid{
-    float lowestHealth = [(RaidMember*)[raid objectAtIndex:0] healthPercentage];
-    RaidMember *candidate = [raid objectAtIndex:0];
-    for (RaidMember *member in raid){
-        if (member.isDead)
-            continue;
-        if (member.healthPercentage <= lowestHealth){
-            lowestHealth = member.healthPercentage;
-            candidate = member;
-        }
-    }
-    return candidate;
-}
-
--(NSArray*)lowestHealthTargets:(NSInteger)numTargets fromRaid:(Raid*)raid withRequiredTarget:(RaidMember*)reqTarget{
-    NSMutableArray *finalTargets = [NSMutableArray arrayWithCapacity:numTargets];
-    NSMutableArray *candidates = [NSMutableArray arrayWithArray:[raid getAliveMembers]];
-    [candidates removeObject:reqTarget];
-    
-    
-    int aliveMembers = [raid.getAliveMembers count];
-    int possibleTargets = numTargets - (reqTarget ? 1 : 0);
-    if (possibleTargets > aliveMembers){
-        possibleTargets = aliveMembers;
-    }
-    for (int i = 0; i < possibleTargets; i++){
-        RaidMember *lowestHealthTarget = [self lowestHealthRaidMemberSet:candidates];
-        [finalTargets addObject:lowestHealthTarget];
-        [candidates removeObject:lowestHealthTarget];
-    }
-    
-    if (reqTarget){
-        [finalTargets addObject:reqTarget];
-    }
-    return finalTargets;
 }
 
 +(id)defaultSpell{
@@ -191,6 +165,7 @@
     
     if (self.cooldownRemaining < 0){
         self.cooldownRemaining = 0;
+        self.tempCooldown = 0;
     }
 }
 -(void)spellBeganCasting{
@@ -269,7 +244,7 @@
 }
 
 -(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
-    NSArray *myTargets = [self lowestHealthTargets:2 fromRaid:theRaid withRequiredTarget:thePlayer.spellTarget];
+    NSArray *myTargets = [theRaid lowestHealthTargets:2 withRequiredTarget:thePlayer.spellTarget];
     
     int i = 0; 
     for (RaidMember *healableTarget in myTargets){
@@ -394,7 +369,7 @@
     return [le autorelease];
 }
 -(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
-    NSArray *myTargets = [self lowestHealthTargets:5 fromRaid:theRaid withRequiredTarget:thePlayer.spellTarget];
+    NSArray *myTargets = [theRaid lowestHealthTargets:5  withRequiredTarget:thePlayer.spellTarget];
     
     for (RaidMember *healableTarget in myTargets){
         [healableTarget setHealth:healableTarget.health + self.healingAmount];
@@ -409,6 +384,36 @@
     }
 }
 
+@end
+
+
+@implementation Respite
++ (id)defaultSpell{
+    Respite *respite = [[Respite alloc] initWithTitle:@"Respite" healAmnt:0 energyCost:0 castTime:0.0 andCooldown:60.0];
+    [respite setDescription:@"Restores 360 Mana to the caster."];
+    return [respite autorelease];
+}
+
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
+    [thePlayer setEnergy:thePlayer.energy + 360];
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+
+}
+@end
+
+@implementation WanderingSpirit
++ (id)defaultSpell {
+    WanderingSpirit *ws = [[WanderingSpirit alloc] initWithTitle:@"Wandering Spirit" healAmnt:0 energyCost:200 castTime:0.0 andCooldown:15.0];
+    WanderingSpiritEffect *wse = [[WanderingSpiritEffect alloc] initWithDuration:14.0 andEffectType:EffectTypePositive];
+    [wse setTitle:@"wandering-spirit-effect"];
+    [wse setSpriteName:@"wandering-spirit.png"];
+    [wse setValuePerTick:24];
+    [wse setNumOfTicks:8.0];
+    [ws setAppliedEffect:wse];
+    [wse release];
+    [ws setDescription:@"For 14 seconds, a spirit will wander through your allies restoring a moderate amount of health to the injured."];
+    return [ws autorelease];
+}
 @end
 
 #pragma mark -

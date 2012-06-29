@@ -26,4 +26,5 @@
 
 //Multiplayer
 -(RaidMember*)memberForBattleID:(NSString*)battleID;
+-(NSArray*)lowestHealthTargets:(NSInteger)numTargets withRequiredTarget:(RaidMember*)reqTarget;
 @end

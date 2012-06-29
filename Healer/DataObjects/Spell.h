@@ -48,15 +48,16 @@
 @property (nonatomic, readwrite) float cooldownRemaining;
 @property (nonatomic, readwrite) float cooldown;
 @property (nonatomic, retain) Effect* appliedEffect;
--(NSString*)spellDescription;
--(BOOL)isInstant;
--(void)setTargets:(NSInteger)numOfTargets withPercentagesPerTarget:(NSArray*)percentages;
+- (NSString*)spellDescription;
+- (BOOL)isInstant;
+- (void)setTargets:(NSInteger)numOfTargets withPercentagesPerTarget:(NSArray*)percentages;
+- (void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime;
+- (void)updateCooldowns:(float)theTime;
+- (void)spellBeganCasting;
+- (void)spellEndedCasting;
+- (void)spellInterrupted;
+- (void)applyTemporaryCooldown:(NSTimeInterval)tempCD;
 
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime;
--(void)updateCooldowns:(float)theTime;
--(void)spellBeganCasting;
--(void)spellEndedCasting;
--(void)spellInterrupted;
 
 @end
 
@@ -104,9 +105,11 @@
 @interface LightEternal : Spell //Prayer of Smart Healing
 @end
 
-@interface Respite : Spell //Mana Prayer
+@interface WanderingSpirit : Spell //Prayer of Auto-Mending
 @end
 
+@interface Respite : Spell //Mana Prayer
+@end
 
 ////BASIC TEST SPELLS/////
 @interface QuickHeal : Spell

@@ -44,7 +44,7 @@
 	return self;
 }
 
--(void)setActiveSpells:(NSArray *)actSpells{
+- (void)setActiveSpells:(NSArray *)actSpells{
     for (Spell* spell in actSpells){
         [spell setOwner:self];
     }
@@ -52,15 +52,19 @@
     activeSpells = [actSpells retain];
 }
 
--(NSString*)networkID{
+- (NSString*)initialStateMessage{
+    return @"ERRR:UNIMPL";
+}
+
+- (NSString*)networkID{
     return [NSString stringWithFormat:@"P-%@", self.playerID];
 }
 
--(NSString*)asNetworkMessage{
+- (NSString*)asNetworkMessage{
     NSString *message = [NSString stringWithFormat:@"PLYR|%@|%i|%i|", self.playerID, self.health, self.energy];
     return message;
 }
--(void)updateWithNetworkMessage:(NSString*)message{
+- (void)updateWithNetworkMessage:(NSString*)message{
     NSArray *components = [message componentsSeparatedByString:@"|"];
     if ([self.playerID isEqualToString:[components objectAtIndex:1]]){
         self.health = [[components objectAtIndex:2] intValue];
@@ -103,13 +107,7 @@
 	if (isCasting){
         castStart+= timeDelta;
 		if ([spellTarget isDead]){
-            if (self.isAudible){
-                [spellBeingCast spellInterrupted];
-            }
-			spellTarget = nil;
-			spellBeingCast = nil;
-			isCasting = NO;
-			castStart = 0.0f;
+            [self interrupt];
 		}
 		else if ([self remainingCastTime] <= 0){
 			//SPELL END CAST
@@ -158,6 +156,16 @@
         [self.spellsOnCooldown removeObject:spellToRemove];
     }
 	
+}
+
+- (void)interrupt{
+    if (self.isAudible){
+        [spellBeingCast spellInterrupted];
+    }
+    spellTarget = nil;
+    spellBeingCast = nil;
+    isCasting = NO;
+    castStart = 0.0f;
 }
 
 -(NSTimeInterval) remainingCastTime

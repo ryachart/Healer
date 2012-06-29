@@ -95,6 +95,8 @@ static NSArray *shopItems = nil;
         ShopItem *orbsOfLight = [[ShopItem alloc] initWithSpell:[OrbsOfLight defaultSpell]];
         ShopItem *swirlingLight = [[ShopItem alloc] initWithSpell:[SwirlingLight defaultSpell]];
         ShopItem *lightEternal = [[ShopItem alloc] initWithSpell:[LightEternal defaultSpell]];
+        ShopItem *respite = [[ShopItem alloc] initWithSpell:[Respite defaultSpell]];
+        ShopItem *wanderingSpirit = [[ShopItem alloc] initWithSpell:[WanderingSpirit defaultSpell]];
         
         [items addObject:[greaterHeal autorelease]];
         [items addObject:[purify autorelease]];
@@ -105,6 +107,8 @@ static NSArray *shopItems = nil;
         [items addObject:[barrier autorelease]];
         [items addObject:[orbsOfLight autorelease]];
         [items addObject:[swirlingLight autorelease]];
+        [items addObject:[respite autorelease]];
+        [items addObject:[wanderingSpirit autorelease]];
         shopItems = [items retain];
     }
     return shopItems;

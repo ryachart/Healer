@@ -79,14 +79,19 @@
         
         if (similarEffects.count >= theEffect.maxStacks){
             for (Effect *simEffect in similarEffects){
-                [simEffect reset]; //Refresh the duration of the existing versions of the effects if a second one is applied over.
+                if (simEffect.effectType != EffectTypeNegativeInvisible && simEffect.effectType != EffectTypePositiveInvisible) {
+                    [simEffect reset]; //Refresh the duration of the existing versions of the effects if a second one is applied over.
+                }
             }
             return;
         }
 		
 		[theEffect reset];
         for (Effect *simEffect in similarEffects){
-            [simEffect reset]; //Refresh the duration of the existing versions of the effects if a second one is applied over.
+            if (simEffect.effectType != EffectTypeNegativeInvisible && simEffect.effectType != EffectTypePositiveInvisible) {
+
+                [simEffect reset]; //Refresh the duration of the existing versions of the effects if a second one is applied over.
+            }
         }
 		if ([theEffect conformsToProtocol:@protocol(HealthAdjustmentModifier)]){
 			[self addHealthAdjustmentModifier:(HealthAdjustmentModifier*)theEffect];

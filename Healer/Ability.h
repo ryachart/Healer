@@ -37,6 +37,7 @@
 @end
 
 @interface Fireball : Ability
+@property (nonatomic, retain) NSString* spriteName;
 @end
 
 @interface StackingDamage : Ability
@@ -61,4 +62,18 @@
 @end
 
 @interface RandomAbilityGenerator : Ability 
+@end
+
+@interface InvertedHealing : Ability
+@property (nonatomic, readwrite) NSInteger numTargets;
+@end
+
+@interface SoulBurn : Ability
+@end
+
+@interface GainAbility : Ability
+@property (nonatomic, retain) Ability *abilityToGain;
+@end
+
+@interface RaidDamage : Ability 
 @end

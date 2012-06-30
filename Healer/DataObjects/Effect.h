@@ -166,6 +166,15 @@ typedef enum {
 @interface DebilitateEffect : ExpiresAtFullHealthRHE 
 @end
 
+@interface InvertedHealingEffect : Effect <HealthAdjustmentModifier>
+@property (nonatomic, readwrite) float percentageConvertedToDamage;
+@end
+
+@interface SoulBurnEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
+@property (nonatomic, readwrite) NSInteger energyToBurn;
+@property (nonatomic, readwrite) BOOL needsToBurnEnergy;
+@end
+
 #pragma mark - DEPRECATED EFFECTS
 @interface BigFireball : Effect {
 	NSInteger lastPosition;

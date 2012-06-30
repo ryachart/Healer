@@ -14,10 +14,13 @@
 #import "Ability.h"
 
 @interface Boss ()
+@property (nonatomic, retain) NSMutableArray *queuedAbilitiesToAdd;
+@property (nonatomic, readwrite) BOOL shouldQueueAbilityAdds;
 @end
 
 @implementation Boss
 @synthesize title, logger, announcer, criticalChance, info, isMultiplayer=_isMultiplayer,phase, duration, abilities;
+@synthesize queuedAbilitiesToAdd, shouldQueueAbilityAdds;
 -(void)dealloc{
     [abilities release];
     [info release];
@@ -30,7 +33,20 @@
     
 }
 
+- (void)dequeueAbilityAdds {
+    if (self.queuedAbilitiesToAdd.count > 0){
+        for (Ability *ability in self.queuedAbilitiesToAdd){
+            [self addAbility:ability];
+        }
+        [self.queuedAbilitiesToAdd removeAllObjects];
+    }
+}
+
 - (void)addAbility:(Ability*)ab{
+    if (self.shouldQueueAbilityAdds){
+        [self.queuedAbilitiesToAdd addObject:ab];
+        return;
+    }
     ab.owner = self;
     [self.abilities addObject:ab];
 }
@@ -78,7 +94,7 @@
                 [attack release];
             }
         }
-        
+        self.queuedAbilitiesToAdd = [NSMutableArray arrayWithCapacity:1];
     }
 	return self;
 	
@@ -138,9 +154,13 @@
     }
     self.duration += timeDelta;
     
+    self.shouldQueueAbilityAdds = YES;
     for (Ability *ability in self.abilities){
         [ability combatActions:theRaid boss:self players:players gameTime:timeDelta];
     }
+    self.shouldQueueAbilityAdds = NO;
+    [self dequeueAbilityAdds];
+    
     [self updateEffects:self raid:theRaid player:player time:timeDelta];
 }
 
@@ -1099,6 +1119,49 @@
 @end
 
 @implementation CrazedSeer
++ (id)defaultBoss {
+    CrazedSeer *seer = [[CrazedSeer alloc] initWithHealth:390000 damage:0 targets:0 frequency:0 andChoosesMT:NO];
+    [seer setTitle:@"Crazed Seer Tyonath"];
+    [seer setInfo:@"Seer Tyonath was tormented and tortured after his capture by the Dark Horde.  The Darkness has driven him mad.  He guards the secrets to Baraghast's origin in the vaults beneath the Dark Horde's largest encampment - Serevilost."];
+    
+    Fireball *fireballAbility = [[Fireball alloc] init];
+    [fireballAbility setSpriteName:@"purple_fireball.png"];
+    [fireballAbility setAbilityValue:-12];
+    [fireballAbility setCooldown:4];
+    [seer addAbility:fireballAbility];
+    [fireballAbility release];
+    
+    InvertedHealing *invHeal = [[InvertedHealing alloc] init];
+    [invHeal setNumTargets:3];
+    [invHeal setCooldown:6.0];
+    [seer addAbility:invHeal];
+    [invHeal release];
+    
+    SoulBurn *sb = [[SoulBurn alloc] init];
+    [sb setCooldown:16.0];
+    [seer addAbility:sb];
+    [sb release];
+    
+    GainAbility *gainShadowbolts = [[GainAbility alloc] init];
+    [gainShadowbolts setCooldown:60];
+    [gainShadowbolts setAbilityToGain:fireballAbility];
+    [seer addAbility:gainShadowbolts];
+    [gainShadowbolts release];
+    
+    RaidDamage *horrifyingLaugh = [[RaidDamage alloc] init];
+    [horrifyingLaugh setAbilityValue:15];
+    [horrifyingLaugh setCooldown:25];
+    [seer addAbility:horrifyingLaugh];
+    [horrifyingLaugh release];
+    
+    
+    return [seer autorelease];
+    
+}
+
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+    
+}
 @end
 
 @implementation GatekeeperDelsarn

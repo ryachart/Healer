@@ -24,6 +24,16 @@
 @implementation Ability
 @synthesize failureChance, cooldown, title, owner, abilityValue;
 @synthesize timeApplied, isDisabled;
+
+- (id)copy {
+    Ability *ab = [[[self class] alloc] init];
+    [ab setFailureChance:self.failureChance];
+    [ab setCooldown:self.cooldown];
+    [ab setTitle:self.title];
+    [ab setOwner:self.owner];
+    [ab setAbilityValue:self.abilityValue];
+    return ab;
+}
 - (void)dealloc{
     [owner release];
     [title release];
@@ -126,6 +136,12 @@
     [super dealloc];
 }
 
+- (id)copy {
+    FocusedAttack *copy = [super copy];
+    [copy setFocusTarget:self.focusTarget];
+    return copy;
+}
+
 - (RaidMember*)mainTankFromRaid:(Raid*)raid{
     RaidMember *mainTank = nil;
     
@@ -187,19 +203,34 @@
 @end
 
 @implementation Fireball 
+@synthesize spriteName;
+
+- (void)dealloc {
+    [spriteName release];
+    [super dealloc];
+}
+
+- (id)copy {
+    Fireball *fbCopy = [super copy];
+    [fbCopy setSpriteName:self.spriteName];
+    return fbCopy;
+}
 
 - (void) triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     RaidMember *target = [theRaid randomLivingMember];
     NSTimeInterval colTime = 1.75;
     DelayedHealthEffect *fireball = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
     
-    ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:@"fireball.png" target:target andCollisionTime:colTime];
+    ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:self.spriteName target:target andCollisionTime:colTime];
     [fireballVisual setCollisionParticleName:@"fire_explosion.plist"];
     [[(Boss*)self.owner announcer] displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     [fireball setOwner:self.owner];
     [fireball setFailureChance:.15];
-    [fireball setValue:-(arc4random() % self.abilityValue + (self.abilityValue / 2))];
+    [fireball setTitle:@"fireball-dhe"];
+    [fireball setMaxStacks:10];
+    NSInteger damage = (arc4random() % ABS(self.abilityValue) + ABS((self.abilityValue / 2)));
+    [fireball setValue:-damage];
     [target addEffect:fireball];
     [fireball release];
 }
@@ -271,6 +302,12 @@
 @implementation Debilitate 
 @synthesize numTargets;
 
+- (id)copy {
+    Debilitate *copy = [super copy];
+    [copy setNumTargets:self.numTargets];
+    return copy;
+}
+
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     for (int i = 0; i < self.numTargets; i++){
         RaidMember *target = [theRaid randomLivingMember];
@@ -278,8 +315,6 @@
         [debilitateEffect setOwner:self.owner];
         [debilitateEffect setTitle:@"baraghast-debilitate"];
         [debilitateEffect setSpriteName:@"bleeding.png"];
-        [debilitateEffect setValuePerTick:0];
-        [debilitateEffect setNumOfTicks:1];
         [target addEffect:debilitateEffect];
         [debilitateEffect release];
         [target setHealth:target.health * (self.abilityValue * self.owner.damageDoneMultiplier)];
@@ -289,6 +324,12 @@
 
 @implementation Crush 
 @synthesize target;
+
+- (id)copy {
+    Crush *copy = [super copy];
+    [copy setTarget:self.target];
+    return copy;
+}
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     if (self.target){
@@ -336,12 +377,14 @@
     
     Fireball *fbAbility = [[Fireball alloc] init];
     [fbAbility setTitle:@"random-fireball"];
+    [fbAbility setSpriteName:@"fireball.png"];
     [fbAbility setAbilityValue:50];
     [fbAbility setCooldown:12.0];
     [fbAbility setFailureChance:.05];
     [allAbilities addObject:[fbAbility autorelease]];
     
     Fireball *quickFireball = [[Fireball alloc] init];
+    [quickFireball setSpriteName:@"fireball.png"];
     [quickFireball setTitle:@"random-quickfirebal"];
     [quickFireball setAbilityValue:10];
     [quickFireball setCooldown:3.0];
@@ -364,6 +407,68 @@
     
     //EXPLODES IF YOU HEAL THEM
     return allAbilities;
+}
+@end
+
+@implementation InvertedHealing
+@synthesize numTargets;
+- (id)copy {
+    InvertedHealing *copy = [super copy];
+    [copy setNumTargets:self.numTargets];
+    return copy;
+}
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    for (int i = 0; i < self.numTargets; i++){
+        RaidMember *target = [theRaid randomLivingMember];
+        InvertedHealingEffect *effect = [[InvertedHealingEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegative];
+        [effect setSpriteName:@"healing_inverted.png"];
+        [effect setTitle:@"inverted-healing"];
+        [effect setPercentageConvertedToDamage:.5];
+        [effect setOwner:self.owner];
+        [target addEffect:effect];
+        [effect release];
+    }
+}
+@end
+
+@implementation SoulBurn 
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    RaidMember *target = [theRaid randomLivingMember];
+    SoulBurnEffect *sbe = [[SoulBurnEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative];
+    [sbe setSpriteName:@"soul_burn.png"];
+    [sbe setTitle:@"soul-burn"];
+    [sbe setValuePerTick:-20];
+    [sbe setNumOfTicks:6];
+    [sbe setOwner:self.owner];
+    [sbe setEnergyToBurn:75];
+    [target addEffect:sbe];
+    [sbe release];
+}
+@end
+
+@implementation GainAbility
+@synthesize abilityToGain;
+- (void)dealloc {
+    [abilityToGain release];
+    [super dealloc];
+}
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    Ability *newAbility = [self.abilityToGain copy];
+    [(Boss*)self.owner addAbility:newAbility];
+    [newAbility release];
+}
+@end
+
+@implementation RaidDamage
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    NSArray *livingMembers = theRaid.getAliveMembers;
+    
+    for (RaidMember *member in livingMembers){
+        NSInteger damage = self.abilityValue * self.owner.damageDoneMultiplier;
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member  value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
+        [member setHealth:member.health - damage];
+    }
 }
 
 @end

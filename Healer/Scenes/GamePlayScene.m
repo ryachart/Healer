@@ -84,7 +84,7 @@
     if (self = [super init]){
         NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease]];
+        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"battle-background-ipad"] autorelease]];
         paused = YES;
         self.raid = raidToUse;
         self.boss = bossToUse;

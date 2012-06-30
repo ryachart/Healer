@@ -14,7 +14,7 @@
 #import "Shop.h"
 #import "BackgroundSprite.h"
 
-#define NUM_ENCOUNTERS 11
+#define NUM_ENCOUNTERS 12
 
 @interface QuickPlayScene ()
 @property (retain) CCMenu *menu;

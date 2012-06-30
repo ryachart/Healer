@@ -43,7 +43,7 @@
     [percentagesPerTarget release];percentagesPerTarget = nil;
     [spellID release];
     [description release];
-    [appliedEffect release];
+    [appliedEffect release]; 
     [super dealloc];
     
 }
@@ -59,7 +59,6 @@
     self.cooldownRemaining = tempCD;
     self.tempCooldown = tempCD;
     [[(Player*)self.owner spellsOnCooldown] addObject:self];
-
 }
 
 -(BOOL)isEqual:(id)object{

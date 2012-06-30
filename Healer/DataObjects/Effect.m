@@ -269,17 +269,22 @@
 
 @implementation  DelayedHealthEffect
 @synthesize value, appliedEffect;
--(void)dealloc{
+- (void)dealloc{
     [appliedEffect release];
     [super dealloc];
 }
--(id)copy{
+- (id)copy{
     DelayedHealthEffect *copy = [super copy];
     [copy setValue:self.value];
     [copy setAppliedEffect:self.appliedEffect];
     return copy;
 }
--(void)expire{
+
+- (void)reset {
+    [super reset];
+}
+
+- (void)expire{
     if (!self.target.isDead){
         if (self.shouldFail){
             [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:0 andEventType:CombatEventTypeDodge]];
@@ -546,6 +551,47 @@
 - (void)expire{
     [self.reenableAbility setIsDisabled:NO];
     [super expire];
+}
+@end
+
+@implementation InvertedHealingEffect
+@synthesize percentageConvertedToDamage;
+- (id)copy {
+    InvertedHealingEffect *copy = [super copy];
+    [copy setPercentageConvertedToDamage:self.percentageConvertedToDamage];
+    return copy;
+}
+- (void)willChangeHealthFrom:(NSInteger*)currentHealth toNewHealth:(NSInteger*)newHealth {
+    if (*currentHealth < *newHealth){
+		NSInteger healthDelta = *currentHealth - *newHealth;
+		NSInteger newHealthDelta = -(healthDelta * self.percentageConvertedToDamage);
+		*newHealth = *currentHealth - newHealthDelta;
+	}
+}
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth{
+    
+}
+@end
+
+@implementation SoulBurnEffect 
+@synthesize energyToBurn, needsToBurnEnergy;
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta {
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+    
+    if (self.needsToBurnEnergy){
+        [thePlayer setEnergy:thePlayer.energy - self.energyToBurn];
+        self.needsToBurnEnergy = NO;
+    }
+}
+
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth {
+    
+}
+
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth{
+    if (currentHealth < newHealth){
+        self.needsToBurnEnergy = YES;
+    }
 }
 @end
 #pragma mark - DEPRECATED SPELLS

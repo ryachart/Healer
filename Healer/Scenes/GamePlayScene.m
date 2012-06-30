@@ -469,6 +469,26 @@
 
 }
 
+- (void)displaySprite:(NSString*)spriteName overRaidForDuration:(float)duration {
+    if (!spriteName){
+        return;
+    }
+    CCSprite *sprite = [CCSprite spriteWithSpriteFrameName:spriteName];
+    CGFloat scaleTo = 1.0;
+    if ([spriteName isEqualToString:@"shield_bubble.png"]){
+        //SPECIAL CASES LULZ!!!! =D
+        scaleTo = 5.0;
+    }
+    [sprite setScale:0.0];
+    [sprite setPosition:ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height/2))];
+    [self addChild:sprite];
+    [sprite runAction:[CCSequence actions:[CCScaleTo actionWithDuration:.33 scale:scaleTo],[CCDelayTime actionWithDuration:duration],[CCFadeOut actionWithDuration:.5] ,[CCCallBlockN actionWithBlock:^(CCNode*node){
+        [node removeFromParentAndCleanup:YES];
+        
+    }], nil]];
+    
+}
+
 -(void)displayProjectileEffect:(ProjectileEffect*)effect{
     if (self.isServer){
         effect.type = ProjectileEffectTypeNormal;

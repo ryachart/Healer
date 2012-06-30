@@ -27,6 +27,7 @@
         healingAmount = healAmnt;
         energyCost = nrgyCost;
         castTime = time;
+        self.tempCooldown = 0.0;
         self.cooldown = cd;
         isMultitouch = NO;
         spellAudioData = [[SpellAudioData alloc] init];
@@ -48,7 +49,10 @@
 }
 
 - (float)cooldown {
-    return cooldown + self.tempCooldown;
+    if (self.tempCooldown != 0.0){
+        return self.tempCooldown;
+    }
+    return cooldown;
 }
 
 - (void)applyTemporaryCooldown:(NSTimeInterval)tempCD {
@@ -413,6 +417,28 @@
     [wse release];
     [ws setDescription:@"For 14 seconds, a spirit will wander through your allies restoring a moderate amount of health to the injured."];
     return [ws autorelease];
+}
+@end
+
+@implementation WardOfAncients
++ (id)defaultSpell {
+    WardOfAncients *woa = [[WardOfAncients alloc] initWithTitle:@"Ward of Ancients" healAmnt:0 energyCost:100 castTime:2.0 andCooldown:45.0];
+    [woa setDescription:@"Covers your entire party is a protective barrier that reduces incoming damage by 40% for 6 seconds."];
+    return [woa autorelease];
+}
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
+    NSArray *aliveMembers = [theRaid getAliveMembers];
+    [theBoss.announcer displaySprite:@"shield_bubble.png" overRaidForDuration:6.0];
+    for (RaidMember*member in aliveMembers){
+        DamageTakenDecreasedEffect *dtde = [[DamageTakenDecreasedEffect alloc] initWithDuration:6 andEffectType:EffectTypeNegativeInvisible];
+        [dtde setTitle:@"ward-of-ancients-effect"];
+        [dtde setPercentage:.4];
+        [dtde setOwner:self.owner];
+        [member addEffect:dtde];
+        [dtde release];
+    }
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+    
 }
 @end
 

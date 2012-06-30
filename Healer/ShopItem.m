@@ -54,6 +54,9 @@
     if ([spell isEqualToString:@"Respite"]){
         return 500;
     }
+    if ([spell isEqualToString:@"Ward of Ancients"]){
+        return 500;
+    }
     
     //WTF
     if ([spell isEqualToString:@"Swirling Light"]){

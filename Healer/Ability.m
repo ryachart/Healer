@@ -347,6 +347,23 @@
     [quickFireball setCooldown:3.0];
     [quickFireball setFailureChance:.1];
     [allAbilities addObject:[quickFireball autorelease]];
+    
+    //Trulzar Poison
+    
+    //Mortal Strike Cloud
+    
+    //Highly Lethal Bleed
+    
+    //Crush
+    
+    //Focus Target Enrage
+    
+    //Dispel-Explosion
+    
+    //Dot everyone
+    
+    //EXPLODES IF YOU HEAL THEM
+    return allAbilities;
 }
 
 @end

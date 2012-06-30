@@ -111,6 +111,9 @@
 @interface Respite : Spell //Mana Prayer
 @end
 
+@interface WardOfAncients : Spell
+@end
+
 ////BASIC TEST SPELLS/////
 @interface QuickHeal : Spell
 

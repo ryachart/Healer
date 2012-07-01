@@ -10,14 +10,19 @@
 extern NSString* const PlayerGold;
 
 @interface Shop : NSObject
-+(BOOL)playerCanAffordShopItem:(ShopItem*)item;
-+(BOOL)playerHasSpell:(Spell*)spell;
-+(BOOL)playerHasShopItem:(ShopItem*)item;
-+(void)purchaseItem:(ShopItem*)item;
-+(NSInteger)localPlayerGold;
-+(void)playerEarnsGold:(NSInteger)gold;
-+(void)playerLosesGold:(NSInteger)gold;
-+(NSArray*)allShopItems;
-+(NSArray*)purchasedItems;
-+(NSArray*)allOwnedSpells;
++ (BOOL)playerCanAffordShopItem:(ShopItem*)item;
++ (BOOL)playerHasSpell:(Spell*)spell;
++ (BOOL)playerHasShopItem:(ShopItem*)item;
++ (void)purchaseItem:(ShopItem*)item;
++ (NSInteger)localPlayerGold;
++ (void)playerEarnsGold:(NSInteger)gold;
++ (void)playerLosesGold:(NSInteger)gold;
++ (NSArray*)allShopItems;
++ (NSArray*)purchasedItems;
++ (NSArray*)allOwnedSpells;
+
+//Divinity
++ (NSInteger)costForNextDivinityTier;
++ (NSInteger)numDivinityTiersPurchased;
++ (void)purchaseNextDivinityTier;
 @end

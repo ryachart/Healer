@@ -25,17 +25,29 @@
         self.position = frame.origin;
         self.contentSize = frame.size;
         
+        CCSprite *portraitSprite = [CCSprite spriteWithSpriteFrameName:@"boss_portrait_back.png"];
+        [portraitSprite setAnchorPoint:CGPointZero];
+        [self addChild:portraitSprite z:10];
+        
+        CCSprite *portrait = [CCSprite spriteWithSpriteFrameName:@"boss_default.png"];
+        [portrait setAnchorPoint:CGPointZero];
+        [portraitSprite addChild:portrait];
+        
+        
         lastHealth = 0;
-        CGPoint midPoint = CGPointMake(frame.size.width * .5, frame.size.height * .5);
-        CGPoint healthBarFramePosition = CGPointMake(-50, -50);
+        CGPoint healthBarFramePosition = CGPointMake(0, 0);
+        
+        CCSprite *boss_plate_sprite = [CCSprite spriteWithSpriteFrameName:@"boss_plate.png"];
+        [boss_plate_sprite setAnchorPoint:CGPointZero];
+        [self addChild:boss_plate_sprite];
         
         CCSprite *healthBar = [CCSprite spriteWithSpriteFrameName:@"boss_health_back.png"];
         
         self.bossHealthBack = [ClippingNode node];
         [self.bossHealthBack setContentSize:healthBar.contentSize];
-        [self.bossHealthBack setClippingRegion:CGRectMake(0,0, healthBar.contentSize.width -50, healthBar.contentSize.height - 50)];
+        [self.bossHealthBack setClippingRegion:CGRectMake(0,0, healthBar.contentSize.width, healthBar.contentSize.height)];
         [healthBar setAnchorPoint:ccp(0,0)];
-        [healthBar setPosition:healthBarFramePosition];
+        [healthBar setPosition:CGPointMake(20, 0)];
         [self.bossHealthBack addChild:healthBar z:1];
         
         self.bossHealthFrame = [CCSprite spriteWithSpriteFrameName:@"boss_health_frame.png"];
@@ -43,14 +55,14 @@
         self.bossHealthFrame.position = healthBarFramePosition;
         
         self.bossNameLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:32.0];
-        self.bossNameLabel.position = CGPointMake(300, 70);
+        self.bossNameLabel.position = CGPointMake(300, 160);
         self.bossNameLabel.contentSize = frame.size;
-        [self.bossNameLabel setColor:ccWHITE];
+        [self.bossNameLabel setColor:ccBLACK];
         
         self.healthLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:32.0];
-        [self.healthLabel setColor:ccWHITE];
-        self.healthLabel.position = midPoint;
+        [self.healthLabel setColor:ccBLACK];
         self.healthLabel.contentSize = CGSizeMake(frame.size.width * .5, frame.size.height * .25);
+        [self.healthLabel setPosition:CGPointMake(300, 120)];
 
         [self addChild:self.bossHealthBack];
         [self addChild:self.bossHealthFrame];
@@ -79,11 +91,11 @@
         int heal = bossData.health - lastHealth;
         CCLabelTTF *shadowLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
         [shadowLabel setColor:ccBLACK];
-        [shadowLabel setPosition:CGPointMake(startingFuzzX -1, self.contentSize.height /2 + 1 + startingFuzzY)];
+        [shadowLabel setPosition:CGPointMake(startingFuzzX -1, self.contentSize.height + 1 + startingFuzzY)];
         
         CCLabelTTF *sctLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
         [sctLabel setColor:ccWHITE];
-        [sctLabel setPosition:CGPointMake(startingFuzzX, self.contentSize.height /2 + startingFuzzY)];
+        [sctLabel setPosition:CGPointMake(startingFuzzX, self.contentSize.height + startingFuzzY)];
         
         [self addChild:shadowLabel z:10];
         [self addChild:sctLabel z:11];

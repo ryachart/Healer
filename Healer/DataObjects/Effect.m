@@ -594,6 +594,20 @@
     }
 }
 @end
+
+
+@implementation GripEffect
+-(void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
+    if (*currentHealth < *newHealth){
+		NSInteger healthDelta = *currentHealth - *newHealth;
+		NSInteger newHealthDelta = healthDelta * .02;
+		*newHealth = *currentHealth - newHealthDelta;
+	}
+}
+-(void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth{
+    
+}
+@end
 #pragma mark - DEPRECATED SPELLS
 #pragma mark -
 #pragma mark Shaman Spells

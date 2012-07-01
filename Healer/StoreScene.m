@@ -26,7 +26,7 @@
 -(id)init{
     if (self = [super init]){  
         [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease]];
-        NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
+        NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"shop-sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
         
         CCMenuItemLabel *back = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Back" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(back)];
@@ -74,7 +74,7 @@
         return;
     }
     self.possibleChangedNode = item;
-    [self.darkenLayer runAction:[CCFadeTo   actionWithDuration:.33 opacity:122]];
+    [self.darkenLayer runAction:[CCFadeTo   actionWithDuration:.33 opacity:177]];
     
     self.extendedNode = [[[ShopItemExtendedNode alloc] initWithShopItem:[item item]] autorelease];
     [extendedNode setDelegate:self];

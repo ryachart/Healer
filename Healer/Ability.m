@@ -421,6 +421,7 @@
     for (int i = 0; i < self.numTargets; i++){
         RaidMember *target = [theRaid randomLivingMember];
         InvertedHealingEffect *effect = [[InvertedHealingEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegative];
+        [effect setAilmentType:AilmentCurse];
         [effect setSpriteName:@"healing_inverted.png"];
         [effect setTitle:@"inverted-healing"];
         [effect setPercentageConvertedToDamage:.5];
@@ -470,5 +471,62 @@
         [member setHealth:member.health - damage];
     }
 }
+@end
 
+@implementation Grip
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    RaidMember *target = [theRaid randomLivingMember];
+    int i = 0;
+    while (target.isFocused && i < 20) {
+        i++; //If the only thing left is the tank, dont infinite loop
+        target = [theRaid randomLivingMember];
+    }
+    
+    GripEffect *gripEff = [[GripEffect alloc] initWithDuration:10 andEffectType:EffectTypeNegative];
+    [gripEff setAilmentType:AilmentCurse];
+    [gripEff setSpriteName:@"grip.png"];
+    [gripEff setOwner:self.owner];
+    [gripEff setValuePerTick:-17];
+    [gripEff setNumOfTicks:5];
+    [gripEff setTitle:@"gatekeeper-grip"];
+    [target addEffect:gripEff];
+    [gripEff release];
+}
+@end
+
+@implementation Impale 
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    DelayedHealthEffect *finishHimEffect = [[DelayedHealthEffect alloc] initWithDuration:5 andEffectType:EffectTypeNegative];
+    [finishHimEffect setSpriteName:@"bleeding.png"];
+    
+    RaidMember *target = [theRaid randomLivingMember];
+    
+    NSInteger damage = self.abilityValue * self.owner.damageDoneMultiplier;
+    [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target  value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
+    [target setHealth:target.health - damage];
+    [finishHimEffect setAilmentType:AilmentTrauma];
+    [finishHimEffect setValue: -1 * damage * .4];
+    [finishHimEffect setOwner:self.owner];
+    [finishHimEffect setTitle:@"impale-finisher"];
+    [target addEffect:finishHimEffect];
+    [finishHimEffect release];
+    
+}
+@end
+
+@implementation BloodDrinker 
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    if ([self checkFailed]){
+        return;
+    }
+    RaidMember *target = [self targetFromRaid:theRaid];
+    [self damageTarget:target];
+    if (self.focusTarget == target && self.focusTarget.isDead){
+        self.focusTarget = nil;
+        Boss *theBoss = (Boss*)self.owner;
+        [theBoss setHealth:theBoss.health + theBoss.maximumHealth * .1];
+        [theBoss.announcer announce:[NSString stringWithFormat:@"A Blood Drinker heals %@ upon defeating its foe.", theBoss.title]];
+    }
+}
 @end

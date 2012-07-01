@@ -19,7 +19,6 @@
 @class RaidView;
 @class Chargable;
 @class BossHealthView;
-@class PlayerHealthView;
 @class PlayerEnergyView;
 @class PlayerMoveButton;
 @class PlayerCastBar;
@@ -35,7 +34,6 @@
 @property (nonatomic, retain) PlayerSpellButton *spellView4;
 @property (nonatomic, retain) RaidView* raidView;
 @property (nonatomic, retain) BossHealthView *bossHealthView;
-@property (nonatomic, retain) PlayerHealthView *playerHealthView;
 @property (nonatomic, retain) PlayerEnergyView *playerEnergyView;
 @property (nonatomic, retain) PlayerMoveButton *playerMoveButton;
 @property (nonatomic, retain) PlayerCastBar *playerCastBar;

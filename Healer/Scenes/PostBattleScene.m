@@ -17,20 +17,32 @@
 #import "StoreScene.h"
 #import "BackgroundSprite.h"
 #import "TestFlight.h"
+#import "Divinity.h"
+#import "DivinityConfigScene.h"
+#import "AudioController.h"
 
 @interface PostBattleScene()
 @property (nonatomic, readwrite) BOOL canAdvance;
+@property (nonatomic, readwrite) NSInteger levelNumber;
+@property (nonatomic, readwrite) BOOL isMultiplayer;
+@property (nonatomic, readwrite) BOOL isVictory;
 - (BOOL)writeApplicationData:(NSData *)data toFile:(NSString *)fileName;
 - (NSString*)timeStringForTimeInterval:(NSTimeInterval)interval;
--(void)done;
+- (void)done;
+- (void)showDivinityUnlocked;
+- (void)goToDivinity;
 @end
 
 @implementation PostBattleScene
 @synthesize matchVoiceChat, match=_match, serverPlayerId, canAdvance;
-
--(id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog levelNumber:(NSInteger)levelNumber andIsMultiplayer:(BOOL)isMultiplayer{
+@synthesize levelNumber, isMultiplayer;
+@synthesize isVictory;
+-(id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog levelNumber:(NSInteger)levelNum andIsMultiplayer:(BOOL)isMult{
     self = [super init];
     if (self){
+        self.levelNumber = levelNum;
+        self.isMultiplayer = isMult;
+        self.isVictory = victory;
         [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease]];
         if (victory){
             CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"VICTORY!" fontName:@"Arial" fontSize:72];
@@ -39,12 +51,12 @@
             
             NSInteger reward = 0;
             int i = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
-            if (levelNumber > i){
-                [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:levelNumber] forKey:PlayerHighestLevelCompleted];
+            if (self.levelNumber > i){
+                [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:self.levelNumber] forKey:PlayerHighestLevelCompleted];
                 [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",i]];
-                reward = [Encounter goldForLevelNumber:levelNumber isFirstWin:YES isMultiplayer:isMultiplayer];
+                reward = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:YES isMultiplayer:self.isMultiplayer];
             }else{
-                reward = [Encounter goldForLevelNumber:levelNumber isFirstWin:NO isMultiplayer:isMultiplayer];
+                reward = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:NO isMultiplayer:self.isMultiplayer];
             }
 
             [Shop playerEarnsGold:reward];
@@ -53,7 +65,7 @@
             [goldEarned setPosition:CGPointMake(800, 150)];
             [self addChild:goldEarned];
             
-            if (!isMultiplayer){
+            if (!self.isMultiplayer){
                 CCMenuItemLabel *visitShopButton = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Visit Shop" fontName:@"Arial" fontSize:32.0] block:^(id sender){
                     [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInR transitionWithDuration:.5 scene:[[StoreScene new] autorelease]]];
                 }];
@@ -128,6 +140,7 @@
         
         [self writeApplicationData:(NSData*)events toFile:[NSString stringWithFormat:@"%@-%@", [[eventLog   objectAtIndex:0] timeStamp], [[eventLog lastObject] timeStamp]]];
 #endif
+
     }
     return self;
 }
@@ -150,11 +163,20 @@
 	return ([data writeToFile:appFile atomically:YES]);
 }
 
--(void)onEnterTransitionDidFinish{
+- (void)onEnterTransitionDidFinish{
     [super onEnterTransitionDidFinish];
     if (self.serverPlayerId == [GKLocalPlayer localPlayer].playerID){
         self.canAdvance = YES;
     }
+    if (self.levelNumber >= 10 && ![Divinity isDivinityUnlocked] && !self.isMultiplayer && self.isVictory){
+        [Divinity unlockDivinity];
+        [self showDivinityUnlocked];
+    }
+}
+
+- (void)onExit {
+    [[AudioController sharedInstance] stopAll];
+    [[AudioController sharedInstance] playTitle:@"title" looping:10];
 }
 
 -(void)setMatch:(GKMatch *)mtch{
@@ -183,6 +205,28 @@
         [[CCDirector sharedDirector] replaceScene:qps];
         [qps release];
     }
+}
+
+- (void)showDivinityUnlocked {
+    CCMenuItemLabel *goToDivinity = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Go to Divinity" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(goToDivinity)];
+    CCMenu *goToDivinityMenu = [CCMenu menuWithItems:goToDivinity, nil];
+    [goToDivinityMenu setOpacity:0];
+    [goToDivinityMenu setPosition:CGPointMake(512, 520)];
+    [self addChild:goToDivinityMenu];
+    
+    CCLabelTTF *divinityUnlocked = [CCLabelTTF labelWithString:@"DIVINITY UNLOCKED!" dimensions:CGSizeMake(600, 200) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:72.0];
+    [divinityUnlocked setColor:ccYELLOW];
+    [divinityUnlocked setPosition:CGPointMake(512, 614)];
+    [divinityUnlocked setScale:3.0];
+    [divinityUnlocked setOpacity:0];
+    [self addChild:divinityUnlocked];
+    
+    [divinityUnlocked runAction:[CCSequence actions:[CCSpawn actions:[CCFadeIn actionWithDuration:1.5], [CCScaleTo actionWithDuration:.5 scale:1.0], nil], [CCCallBlock actionWithBlock:^{[goToDivinityMenu runAction:[CCFadeIn actionWithDuration:1.0]];}], nil]];
+    
+}
+                                                                    
+- (void)goToDivinity{
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
 }
 
 #pragma mark - GKMatchDelegate

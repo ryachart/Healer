@@ -8,7 +8,9 @@
 #import "Shop.h"
 #import "Spell.h"
 #import "ShopItem.h"
+
 NSString* const PlayerGold = @"com.healer.no-touch98741562234.gold";
+NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
 
 static NSArray *shopItems = nil;
 
@@ -114,5 +116,49 @@ static NSArray *shopItems = nil;
         shopItems = [items retain];
     }
     return shopItems;
+}
+
++ (NSInteger)costForNextDivinityTier {
+    NSInteger numPurchased = [Shop numDivinityTiersPurchased];
+    NSInteger val = -1;
+    switch (numPurchased) {
+        case 0:
+            val = 100;
+            break;
+        case 1:
+            val = 1000;
+            break;
+        case 2:
+            val = 5000;
+            break;
+        case 3:
+            val = 10000;
+            break;
+        case 4:
+            val = 20000;
+            break;
+        default:
+            break;
+    }
+    return val;
+}
+
++ (NSInteger)numDivinityTiersPurchased {
+    return [[NSUserDefaults standardUserDefaults] integerForKey:DivinityTiersUnlocked];
+}
+
++ (void)purchaseNextDivinityTier {
+    if ([Shop localPlayerGold] >= [Shop costForNextDivinityTier]){
+        [Shop playerLosesGold:[Shop costForNextDivinityTier]];
+    }else {
+        return;
+    }
+    NSInteger currentTiers = [Shop numDivinityTiersPurchased];
+    if (currentTiers == 5){
+        return; //You have em all =D
+    }
+    currentTiers++;
+    [[NSUserDefaults standardUserDefaults] setInteger:currentTiers forKey:DivinityTiersUnlocked];
+    
 }
 @end

@@ -98,21 +98,11 @@ static AudioController* sharedController = nil;
 {
 	if ([audioPlayers count] > 0){
 		AVAudioPlayer *player = [audioPlayers objectForKey:title];
+#if DEBUG
+        [player setVolume:.1];
+#endif
 		[player setNumberOfLoops:0];
 		if ([player isPlaying]){
-			/*if (dupPlayers < 1){
-				AVAudioPlayer *tempNewPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:[player url] error:nil];
-				[tempNewPlayer setDelegate:self];
-				[audioPlayers setObject:tempNewPlayer forKey:[NSString stringWithFormat:@"%@", tempNewPlayer]];
-				[tempNewPlayer play];
-				dupPlayers++;
-			
-				NSTimer* delayTimer = [[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:[tempNewPlayer duration]] interval:0.0 target:self selector:@selector(delayedRelease:) userInfo:tempNewPlayer repeats:NO];
-				[[NSRunLoop mainRunLoop] addTimer:delayTimer forMode:NSDefaultRunLoopMode];
-				[delayTimer release];
-			}
-			else {*/
-				//NSLog(@"Too many sounds playing...rejecting this one");
 			[player setCurrentTime:0.0];
 		}
 		else{

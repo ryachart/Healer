@@ -15,14 +15,7 @@
 		38024DBA13C2564D003D36F2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38024DB913C2564D003D36F2 /* UIKit.framework */; };
 		38024DBC13C2564D003D36F2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38024DBB13C2564D003D36F2 /* Foundation.framework */; };
 		38024DBE13C2564D003D36F2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38024DBD13C2564D003D36F2 /* CoreGraphics.framework */; };
-		38024DC213C2564D003D36F2 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 38024DC113C2564D003D36F2 /* Default.png */; };
 		38024DC413C2564D003D36F2 /* fps_images.png in Resources */ = {isa = PBXBuildFile; fileRef = 38024DC313C2564D003D36F2 /* fps_images.png */; };
-		38024DC613C2564D003D36F2 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 38024DC513C2564D003D36F2 /* Icon-72.png */; };
-		38024DC813C2564D003D36F2 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 38024DC713C2564D003D36F2 /* Icon-Small-50.png */; };
-		38024DCA13C2564D003D36F2 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 38024DC913C2564D003D36F2 /* Icon-Small.png */; };
-		38024DCC13C2564D003D36F2 /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 38024DCB13C2564D003D36F2 /* Icon-Small@2x.png */; };
-		38024DCE13C2564D003D36F2 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 38024DCD13C2564D003D36F2 /* Icon.png */; };
-		38024DD013C2564D003D36F2 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 38024DCF13C2564D003D36F2 /* Icon@2x.png */; };
 		38024DD313C2564D003D36F2 /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 38024DD213C2564D003D36F2 /* iTunesArtwork */; };
 		38024F0A13C2564E003D36F2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 38024F0913C2564E003D36F2 /* main.m */; };
 		38024F0D13C2564E003D36F2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 38024F0C13C2564E003D36F2 /* AppDelegate.m */; };
@@ -163,6 +156,13 @@
 		BF7B721B152CA9AC001999D3 /* CCRoundedRect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7B721A152CA9AC001999D3 /* CCRoundedRect.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
 		BF8249D71526D7C2000B554B /* RaidMemberPreBattleCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */; };
+		BF865F1A159F8542007F5DBF /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF865F19159F8542007F5DBF /* Default-Landscape@2x~ipad.png */; };
+		BF865F1F159F8555007F5DBF /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF865F1E159F8555007F5DBF /* Default-Landscape~ipad.png */; };
+		BF865F21159F8652007F5DBF /* healer@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF865F20159F8651007F5DBF /* healer@2x.png */; };
+		BF865F23159F8655007F5DBF /* healer.png in Resources */ = {isa = PBXBuildFile; fileRef = BF865F22159F8655007F5DBF /* healer.png */; };
+		BF865F26159F9878007F5DBF /* Divinity.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F25159F9878007F5DBF /* Divinity.m */; };
+		BF865F29159F9C1F007F5DBF /* DivinityConfigScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F28159F9C1F007F5DBF /* DivinityConfigScene.m */; };
+		BF865F2C15A031FB007F5DBF /* BasicButton.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F2B15A031FB007F5DBF /* BasicButton.m */; };
 		BF8A50F415236D6300BEC882 /* GamePlayFTUELayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */; };
 		BFB46407154A25DD00503E30 /* StoreScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46406154A25DD00503E30 /* StoreScene.m */; };
 		BFB4640C154A262800503E30 /* ShopItemNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB4640B154A262800503E30 /* ShopItemNode.m */; };
@@ -197,12 +197,6 @@
 		38024DBD13C2564D003D36F2 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		38024DC113C2564D003D36F2 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = Resources/Default.png; sourceTree = "<group>"; };
 		38024DC313C2564D003D36F2 /* fps_images.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fps_images.png; path = Resources/fps_images.png; sourceTree = "<group>"; };
-		38024DC513C2564D003D36F2 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "Resources/Icon-72.png"; sourceTree = "<group>"; };
-		38024DC713C2564D003D36F2 /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small-50.png"; path = "Resources/Icon-Small-50.png"; sourceTree = "<group>"; };
-		38024DC913C2564D003D36F2 /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small.png"; path = "Resources/Icon-Small.png"; sourceTree = "<group>"; };
-		38024DCB13C2564D003D36F2 /* Icon-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small@2x.png"; path = "Resources/Icon-Small@2x.png"; sourceTree = "<group>"; };
-		38024DCD13C2564D003D36F2 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = Resources/Icon.png; sourceTree = "<group>"; };
-		38024DCF13C2564D003D36F2 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@2x.png"; path = "Resources/Icon@2x.png"; sourceTree = "<group>"; };
 		38024DD113C2564D003D36F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Resources/Info.plist; sourceTree = "<group>"; };
 		38024DD213C2564D003D36F2 /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; name = iTunesArtwork; path = Resources/iTunesArtwork; sourceTree = "<group>"; };
 		38024F0813C2564E003D36F2 /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
@@ -598,6 +592,17 @@
 		BF80764C1522DACC001EB2B3 /* Announcer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Announcer.h; sourceTree = "<group>"; };
 		BF8249D51526D7C2000B554B /* RaidMemberPreBattleCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RaidMemberPreBattleCard.h; sourceTree = "<group>"; };
 		BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RaidMemberPreBattleCard.m; sourceTree = "<group>"; };
+		BF865F19159F8542007F5DBF /* Default-Landscape@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape@2x~ipad.png"; path = "../Default-Landscape@2x~ipad.png"; sourceTree = "<group>"; };
+		BF865F1C159F8545007F5DBF /* Default-Portrait@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Portrait@2x~ipad.png"; path = "../Default-Portrait@2x~ipad.png"; sourceTree = "<group>"; };
+		BF865F1E159F8555007F5DBF /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape~ipad.png"; path = "../Default-Landscape~ipad.png"; sourceTree = "<group>"; };
+		BF865F20159F8651007F5DBF /* healer@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "healer@2x.png"; path = "../healer@2x.png"; sourceTree = "<group>"; };
+		BF865F22159F8655007F5DBF /* healer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = healer.png; path = ../healer.png; sourceTree = "<group>"; };
+		BF865F24159F9878007F5DBF /* Divinity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Divinity.h; path = Healer/Divinity.h; sourceTree = "<group>"; };
+		BF865F25159F9878007F5DBF /* Divinity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Divinity.m; path = Healer/Divinity.m; sourceTree = "<group>"; };
+		BF865F27159F9C1E007F5DBF /* DivinityConfigScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DivinityConfigScene.h; path = Scenes/DivinityConfigScene.h; sourceTree = "<group>"; };
+		BF865F28159F9C1F007F5DBF /* DivinityConfigScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DivinityConfigScene.m; path = Scenes/DivinityConfigScene.m; sourceTree = "<group>"; };
+		BF865F2A15A031FB007F5DBF /* BasicButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicButton.h; sourceTree = "<group>"; };
+		BF865F2B15A031FB007F5DBF /* BasicButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BasicButton.m; sourceTree = "<group>"; };
 		BF8A50F215236D6300BEC882 /* GamePlayFTUELayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlayFTUELayer.h; sourceTree = "<group>"; };
 		BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlayFTUELayer.m; sourceTree = "<group>"; };
 		BFB46405154A25DD00503E30 /* StoreScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreScene.h; sourceTree = "<group>"; };
@@ -699,17 +704,16 @@
 		38024DC013C2564D003D36F2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BF865F22159F8655007F5DBF /* healer.png */,
+				BF865F20159F8651007F5DBF /* healer@2x.png */,
+				BF865F1E159F8555007F5DBF /* Default-Landscape~ipad.png */,
+				BF865F1C159F8545007F5DBF /* Default-Portrait@2x~ipad.png */,
+				BF865F19159F8542007F5DBF /* Default-Landscape@2x~ipad.png */,
 				BF21071E15291E5F001B93D7 /* emitters */,
 				BF0557B41526BC02006B4781 /* assets */,
 				BF0557AC1526BBA6006B4781 /* build-spritesheet.sh */,
 				38024DC113C2564D003D36F2 /* Default.png */,
 				38024DC313C2564D003D36F2 /* fps_images.png */,
-				38024DC513C2564D003D36F2 /* Icon-72.png */,
-				38024DC713C2564D003D36F2 /* Icon-Small-50.png */,
-				38024DC913C2564D003D36F2 /* Icon-Small.png */,
-				38024DCB13C2564D003D36F2 /* Icon-Small@2x.png */,
-				38024DCD13C2564D003D36F2 /* Icon.png */,
-				38024DCF13C2564D003D36F2 /* Icon@2x.png */,
 				38024DD113C2564D003D36F2 /* Info.plist */,
 				38024DD213C2564D003D36F2 /* iTunesArtwork */,
 			);
@@ -1289,6 +1293,8 @@
 				BFB46406154A25DD00503E30 /* StoreScene.m */,
 				BFFB58E4152D69C7005B760E /* MultiplayerSetupScene.h */,
 				BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */,
+				BF865F27159F9C1E007F5DBF /* DivinityConfigScene.h */,
+				BF865F28159F9C1F007F5DBF /* DivinityConfigScene.m */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -1298,6 +1304,8 @@
 			children = (
 				387E7AE6145E0F70006D9266 /* PersistantDataManager.h */,
 				387E7AE7145E0F70006D9266 /* PersistantDataManager.m */,
+				BF865F24159F9878007F5DBF /* Divinity.h */,
+				BF865F25159F9878007F5DBF /* Divinity.m */,
 			);
 			name = "Persistent Stores";
 			path = ..;
@@ -1484,6 +1492,8 @@
 				BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */,
 				BF448C58154BB04A009401A6 /* SpellInfoNode.h */,
 				BF448C59154BB04A009401A6 /* SpellInfoNode.m */,
+				BF865F2A15A031FB007F5DBF /* BasicButton.h */,
+				BF865F2B15A031FB007F5DBF /* BasicButton.m */,
 			);
 			name = "UI Layers";
 			sourceTree = "<group>";
@@ -1591,14 +1601,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				38024DC213C2564D003D36F2 /* Default.png in Resources */,
 				38024DC413C2564D003D36F2 /* fps_images.png in Resources */,
-				38024DC613C2564D003D36F2 /* Icon-72.png in Resources */,
-				38024DC813C2564D003D36F2 /* Icon-Small-50.png in Resources */,
-				38024DCA13C2564D003D36F2 /* Icon-Small.png in Resources */,
-				38024DCC13C2564D003D36F2 /* Icon-Small@2x.png in Resources */,
-				38024DCE13C2564D003D36F2 /* Icon.png in Resources */,
-				38024DD013C2564D003D36F2 /* Icon@2x.png in Resources */,
 				38024DD313C2564D003D36F2 /* iTunesArtwork in Resources */,
 				38F04EEA13C2593500BCADCB /* GameDefaults.plist in Resources */,
 				BFB99F1B15257F6D007EE559 /* Sounds in Resources */,
@@ -1606,6 +1609,10 @@
 				BF21071F15291E5F001B93D7 /* emitters in Resources */,
 				BF698674154CE45A0016F25E /* README.txt in Resources */,
 				BF698675154CE45A0016F25E /* release_notes.txt in Resources */,
+				BF865F1A159F8542007F5DBF /* Default-Landscape@2x~ipad.png in Resources */,
+				BF865F1F159F8555007F5DBF /* Default-Landscape~ipad.png in Resources */,
+				BF865F21159F8652007F5DBF /* healer@2x.png in Resources */,
+				BF865F23159F8655007F5DBF /* healer.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1757,6 +1764,9 @@
 				BF69866C154C7B5F0016F25E /* BackgroundSprite.m in Sources */,
 				BF4E508D155C9C4400FC4EE0 /* Ability.m in Sources */,
 				BF0DCF64156C6DEE005E74C7 /* ShopItemExtendedNode.m in Sources */,
+				BF865F26159F9878007F5DBF /* Divinity.m in Sources */,
+				BF865F29159F9C1F007F5DBF /* DivinityConfigScene.m in Sources */,
+				BF865F2C15A031FB007F5DBF /* BasicButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1811,7 +1821,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Alexei Gousev (557BVTLW6Y)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1826,7 +1836,7 @@
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "BBCFE04C-1E90-4B0A-A896-61F33641B711";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 2;
 				WRAPPER_EXTENSION = app;
@@ -1837,7 +1847,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Alexei Gousev (557BVTLW6Y)";
 				COPY_PHASE_STRIP = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Healer/Prefix.pch;
@@ -1851,7 +1861,7 @@
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "BBCFE04C-1E90-4B0A-A896-61F33641B711";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
@@ -1879,7 +1889,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Alexei Gousev (557BVTLW6Y)";
 				COPY_PHASE_STRIP = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Healer/Prefix.pch;
@@ -1893,7 +1903,7 @@
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "BBCFE04C-1E90-4B0A-A896-61F33641B711";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;

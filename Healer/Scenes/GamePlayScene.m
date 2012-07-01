@@ -49,7 +49,7 @@
 @synthesize player;
 @synthesize raidView;
 @synthesize spellView1, spellView2, spellView3, spellView4;
-@synthesize bossHealthView, playerHealthView, playerEnergyView, playerMoveButton, playerCastBar;
+@synthesize bossHealthView, playerEnergyView, playerMoveButton, playerCastBar;
 @synthesize alertStatus;
 @synthesize levelNumber;
 @synthesize eventLog;
@@ -82,8 +82,11 @@
 -(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse
 {
     if (self = [super init]){
+        [[AudioController sharedInstance] addNewPlayerWithTitle:@"battle" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/battle" ofType:@"mp3"]]];
         NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
+        NSString *battleAssetsPath = [[NSBundle mainBundle] pathForResource:@"battle-sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:battleAssetsPath];
         [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"battle-background-ipad"] autorelease]];
         paused = YES;
         self.raid = raidToUse;
@@ -99,21 +102,18 @@
         self.eventLog = [NSMutableArray arrayWithCapacity:1000];
         
         self.raidView = [[[RaidView alloc] init] autorelease];
-        [self.raidView setPosition:CGPointMake(10, 100)];
+        [self.raidView setPosition:CGPointMake(50, 150)];
         [self.raidView setContentSize:CGSizeMake(500, 400)];
-        [self.raidView setColor:ccGRAY];
-        [self.raidView setOpacity:255];
         [self addChild:self.raidView];
         
-        self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(100, 660, 884, 80)] autorelease];
+        self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(100, 560, 884, 80)] autorelease];
         CCLayerColor *playerStatusBackground = [CCLayerColor layerWithColor:ccc4(100, 100, 100, 200)];
-        [playerStatusBackground setContentSize:CGSizeMake(210, 120)];
-        [playerStatusBackground setPosition:CGPointMake(795, 535)];
+        [playerStatusBackground setContentSize:CGSizeMake(210, 60)];
+        [playerStatusBackground setPosition:CGPointMake(795, 480)];
         [self addChild:playerStatusBackground];
         
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(100,40, 400, 50)] autorelease];
-        self.playerHealthView = [[[PlayerHealthView alloc] initWithFrame:CGRectMake(800, 595, 200, 50)] autorelease];
-        self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(800, 540, 200, 50)] autorelease];
+        self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(800, 485, 200, 50)] autorelease];
         self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
         [self.announcementLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .65)];
         [self.announcementLabel setColor:ccYELLOW];
@@ -126,7 +126,6 @@
         
         [self addChild:self.bossHealthView];
         [self addChild:self.playerCastBar];
-        [self addChild:self.playerHealthView];
         [self addChild:self.playerEnergyView];
         [self addChild:self.announcementLabel z:100];
         [self addChild:self.errAnnouncementLabel z:99];
@@ -182,8 +181,6 @@
             [raidView addRaidMemberHealthView:rmhv];
         }
         [bossHealthView setBossData:boss];
-        [playerHealthView setMemberData:player];
-        [playerHealthView setInteractionDelegate:(PlayerHealthViewDelegate*)self];
         [playerEnergyView setChannelDelegate:(ChannelingDelegate*)self];
         
         
@@ -248,6 +245,8 @@
         [self gameEvent:0.0]; //Bump the UI
         [self battleBegin];
     }
+    [[AudioController sharedInstance] stopAll];
+    [[AudioController sharedInstance] playTitle:@"battle" looping:20];
 }
 
 -(void)ftueLayerDidComplete:(CCNode*)ftueLayer{
@@ -295,10 +294,9 @@
 -(void)thisMemberSelected:(RaidMemberHealthView*)hv
 {
 	if ([[hv memberData] isDead]) return;
-    [hv setOpacity:255];
 	if ([selectedRaidMembers count] == 0){
 		[selectedRaidMembers addObject:hv];
-		[hv setColor:ccc3(0, 0, 255)];
+		[hv setSelectionState:RaidViewSelectionStateSelected];
 	}
 	else if ([selectedRaidMembers objectAtIndex:0] == hv){
 		//Here we do nothing because the already selected object has been reselected
@@ -307,14 +305,13 @@
 		RaidMemberHealthView *currentTarget = [selectedRaidMembers objectAtIndex:0];
 		if ([currentTarget isTouched]){
 			[selectedRaidMembers addObject:hv];
-			[hv setColor:ccc3(255, 0, 255)];
+			[hv setSelectionState:RaidViewSelectionStateAltSelected];
 		}
 		else{
-            [currentTarget setOpacity:0];
-			//[currentTarget setColor:[currentTarget defaultBackgroundColor]];
+            [currentTarget setSelectionState:RaidViewSelectionStateNone];
 			[selectedRaidMembers removeObjectAtIndex:0];
 			[selectedRaidMembers insertObject:hv atIndex:0];
-            [hv setColor:ccc3(0, 0, 255)];
+            [hv setSelectionState:RaidViewSelectionStateSelected];
 		}
 		
 	}
@@ -325,14 +322,14 @@
     if ([[hv memberData] isDead]) return;
 	if (hv != [selectedRaidMembers objectAtIndex:0]){
 		[selectedRaidMembers removeObject:hv];
-        [hv setOpacity:0];
-		[hv setColor:[hv defaultBackgroundColor]];
+        [hv setSelectionState:RaidViewSelectionStateNone];
 	}
 	
 }
 
 -(void)playerSelected:(PlayerHealthView *)hv
 {
+    return;
 	if ([[hv memberData] isDead]) return;
 	if ([selectedRaidMembers count] == 0){
 		[selectedRaidMembers addObject:hv];
@@ -358,6 +355,7 @@
 }
 -(void)playerUnselected:(PlayerHealthView *)hv
 {
+    return;
 	if (hv != [selectedRaidMembers objectAtIndex:0]){
 		[selectedRaidMembers removeObject:hv];
 		[hv setColor:ccBLUE];
@@ -434,13 +432,16 @@
         [node setPosition:CGPointMake(0, 0)];
     }], nil] ];
 }
--(void)displayPartcileSystemOnRaidWithName:(NSString*)name{
+-(void)displayPartcileSystemOnRaidWithName:(NSString*)name forDuration:(float)duration{
     if (self.isServer){
         NSString* networkMessage = [NSString stringWithFormat:@"STMON|%@", name];
         [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
     }
     CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
     CGPoint destination = ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height /2));
+    if (duration != -1.0){
+        [collisionEffect setDuration:duration];
+    }
     [collisionEffect setPosition:destination];
     [collisionEffect setAutoRemoveOnFinish:YES];
     [self addChild:collisionEffect z:100];
@@ -583,7 +584,7 @@
     if (event.type == CombatEventTypeDodge){
         RaidMember *dodgedTarget = (RaidMember*)event.target;
         
-        for (RaidMemberHealthView *rmhv in self.raidView.children){
+        for (RaidMemberHealthView *rmhv in self.raidView.raidViews){
             if (rmhv.memberData == dodgedTarget){
                 [rmhv displaySCT:@"Dodge!"];
                 break;
@@ -643,7 +644,6 @@
 	//Update UI
 	[raidView updateRaidHealth];
 	[bossHealthView updateHealth];
-	[playerHealthView updateHealth];
 	[playerCastBar updateTimeRemaining:[player remainingCastTime] ofMaxTime:[[player spellBeingCast] castTime] forSpell:[player spellBeingCast]];
 	[playerEnergyView updateWithEnergy:[player energy] andMaxEnergy:[player maximumEnergy]];
 	[alertStatus setString:[player statusText]];
@@ -652,9 +652,6 @@
 	[self.spellView3 updateUI];
 	[self.spellView4 updateUI];
 	
-    
-    
-    
     
 	//Determine if there will be another iteration of the gamestate
     NSMutableArray *raidMembers = [raid raidMembers];
@@ -761,7 +758,7 @@
         }
         
         if ([message hasPrefix:@"STMON|"]){
-            [self displayPartcileSystemOnRaidWithName:[message substringFromIndex:6]];
+            [self displayPartcileSystemOnRaidWithName:[message substringFromIndex:6] forDuration:-1.0];
         }
         
         if ([message hasPrefix:@"STMTGT|"]){

@@ -21,5 +21,5 @@
 - (void)displayThrowEffect:(ProjectileEffect*)effect;
 - (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target;
 - (void)displayPartcileSystemOverRaidWithName:(NSString*)name;
-- (void)displayPartcileSystemOnRaidWithName:(NSString*)name;
+- (void)displayPartcileSystemOnRaidWithName:(NSString*)name forDuration:(float)duration;
 @end

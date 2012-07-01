@@ -77,3 +77,12 @@
 
 @interface RaidDamage : Ability 
 @end
+
+@interface Grip : Ability
+@end
+
+@interface Impale : Ability 
+@end
+
+@interface BloodDrinker : FocusedAttack 
+@end

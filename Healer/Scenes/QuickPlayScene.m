@@ -14,13 +14,13 @@
 #import "Shop.h"
 #import "BackgroundSprite.h"
 
-#define NUM_ENCOUNTERS 12
+#define NUM_ENCOUNTERS 13
 
 @interface QuickPlayScene ()
 @property (retain) CCMenu *menu;
 
--(void)beginGameWithSelectedLevel:(id)sender;
--(void)back;
+- (void)beginGameWithSelectedLevel:(id)sender;
+- (void)back;
 - (void)beginEndlessVoidEncounter:(id)sender;
 
 @end

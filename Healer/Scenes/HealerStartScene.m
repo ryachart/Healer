@@ -13,12 +13,17 @@
 #import "Shop.h"
 #import "StoreScene.h"
 #import "BackgroundSprite.h"
+#import "Divinity.h"
+#import "DivinityConfigScene.h"
+#import "BasicButton.h"
+#import "AudioController.h"
+
 
 @interface HealerStartScene ()
 @property (assign) CCMenu* menu;
-@property (assign) CCMenuItemLabel* multiplayerButton;
-@property (assign) CCMenuItemLabel* quickPlayButton;
-@property (assign) CCMenuItemLabel* storeButton;
+@property (assign) CCMenuItem* multiplayerButton;
+@property (assign) CCMenuItem* quickPlayButton;
+@property (assign) CCMenuItem* storeButton;
 @property (nonatomic, retain) UIViewController* presentingViewController;
 @property (readwrite) BOOL matchStarted;
 
@@ -38,32 +43,44 @@
 
 -(id)init{
     if (self = [super init]){
+#if DEBUG
+        [Divinity unlockDivinity];
+#endif
+        [[AudioController sharedInstance] addNewPlayerWithTitle:@"title" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/title" ofType:@"m4a"]]];
         //Perform Scene Setup   
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease]];
+        NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
+        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"title-ipad"] autorelease]];
         
-        self.multiplayerButton = [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Multiplayer" fontName:@"Arial" fontSize:32] target:self selector:@selector(multiplayerSelected)] autorelease];
-        self.quickPlayButton= [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Play" fontName:@"Arial" fontSize:32] target:self selector:@selector(quickPlaySelected)] autorelease];
+        self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
+        [self.multiplayerButton setIsEnabled:NO];
         
-        self.storeButton = [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Shop" fontName:@"Arial" fontSize:32] target:self selector:@selector(storeSelected)] autorelease];
+        self.quickPlayButton= [BasicButton basicButtonWithTarget:self andSelector:@selector(quickPlaySelected) andTitle:@"Play"];
         
-        CCMenuItemLabel *divinityButton = [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Divinity" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(divinitySelected)] autorelease];
-        [divinityButton setOpacity:122];
-        [divinityButton setIsEnabled:NO];
+        self.storeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(storeSelected) andTitle:@"Spell Shop"];
+        
+        CCMenuItem *divinityButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(divinitySelected) andTitle:@"Divinity"];
+        if (![Divinity isDivinityUnlocked]){
+            [divinityButton setIsEnabled:NO];
+        }
         
         self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, self.multiplayerButton, divinityButton, nil];
         
         [self.menu alignItemsVerticallyWithPadding:20.0];
         CGSize winSize = [CCDirector sharedDirector].winSize;
         
-        [self.menu setPosition:ccp(winSize.width * .5, winSize.height * .5)];
+        [self.menu setPosition:ccp(winSize.width * .9, winSize.height * .5)];
         [self.menu setColor:ccc3(255, 255, 255)];
         [self addChild:self.menu];
         
         int playerGold = [Shop localPlayerGold];
+        CCSprite *goldBG = [CCSprite spriteWithSpriteFrameName:@"gold_bg.png"];
         CCLabelTTF *goldLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold: %i", playerGold] fontName:@"Arial" fontSize:32.0];
-        
-        [goldLabel setPosition:CGPointMake(900, 50)];
-        [self addChild:goldLabel];
+        [goldLabel setColor:ccBLACK];
+        [goldLabel setPosition:CGPointMake(goldBG.contentSize.width /2 , goldBG.contentSize.height /2 )];
+        [goldBG setPosition:CGPointMake(900, 50)];
+        [self addChild:goldBG];
+        [goldBG addChild:goldLabel];
         
     }
     return self;
@@ -109,6 +126,10 @@
     
 }
 
+- (void)onEnterTransitionDidFinish {
+    [[AudioController sharedInstance] playTitle:@"title" looping:10];
+    [super onEnterTransitionDidFinish];
+}
 
 - (void)matchmakerViewControllerWasCancelled:(GKMatchmakerViewController *)viewController {
     [self.presentingViewController dismissViewControllerAnimated:NO completion:nil];
@@ -158,7 +179,7 @@
 }
 
 -(void)divinitySelected{
-    
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
 }
 
 

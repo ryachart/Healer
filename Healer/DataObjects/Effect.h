@@ -175,6 +175,9 @@ typedef enum {
 @property (nonatomic, readwrite) BOOL needsToBurnEnergy;
 @end
 
+@interface GripEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
+@end
+
 #pragma mark - DEPRECATED EFFECTS
 @interface BigFireball : Effect {
 	NSInteger lastPosition;

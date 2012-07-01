@@ -276,7 +276,7 @@
     [[regrow spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
     
     RepeatedHealthEffect *hotEffect = [[RepeatedHealthEffect alloc] initWithDuration:12.0 andEffectType:EffectTypePositive];
-    [hotEffect setSpriteName:@"healing_default.png"];
+    [hotEffect setSpriteName:@"regrow.png"];
     [hotEffect setTitle:@"regrow-effect"];
     [hotEffect setNumOfTicks:4];
     [hotEffect setValuePerTick:30];
@@ -335,7 +335,7 @@
     [rhe setTitle:@"orbs-of-light-effect"];
     [rhe setEffectCooldown:2.0];
     [rhe setMaxStacks:1];
-    [rhe setSpriteName:@"healing_default.png"];
+    [rhe setSpriteName:@"regrow.png"];
     [rhe setAmountPerReaction:35];
     [orbs setAppliedEffect:rhe];
     [rhe     release];
@@ -352,7 +352,7 @@
 	[[swirl spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
     SwirlingLightEffect *sle = [[SwirlingLightEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];
     [sle setMaxStacks:4];
-    [sle setSpriteName:@"healing_default.png"];
+    [sle setSpriteName:@"swirling_light.png"];
     [sle setTitle:@"swirling-light-effect"];
     [sle setNumOfTicks:10];
     [sle setValuePerTick:4];
@@ -409,7 +409,7 @@
     WanderingSpirit *ws = [[WanderingSpirit alloc] initWithTitle:@"Wandering Spirit" healAmnt:0 energyCost:200 castTime:0.0 andCooldown:15.0];
     WanderingSpiritEffect *wse = [[WanderingSpiritEffect alloc] initWithDuration:14.0 andEffectType:EffectTypePositive];
     [wse setTitle:@"wandering-spirit-effect"];
-    [wse setSpriteName:@"wandering-spirit.png"];
+    [wse setSpriteName:@"wandering_spirit.png"];
     [wse setValuePerTick:24];
     [wse setNumOfTicks:8.0];
     [ws setAppliedEffect:wse];
@@ -422,7 +422,7 @@
 @implementation WardOfAncients
 + (id)defaultSpell {
     WardOfAncients *woa = [[WardOfAncients alloc] initWithTitle:@"Ward of Ancients" healAmnt:0 energyCost:100 castTime:2.0 andCooldown:45.0];
-    [woa setDescription:@"Covers your entire party is a protective barrier that reduces incoming damage by 40% for 6 seconds."];
+    [woa setDescription:@"Covers your entire party in a protective barrier that reduces incoming damage by 40% for 6 seconds."];
     return [woa autorelease];
 }
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{

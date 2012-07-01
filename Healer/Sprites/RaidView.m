@@ -9,55 +9,62 @@
 #import "RaidView.h"
 
 
+@interface RaidView ()
+@property (nonatomic, assign) CCSprite *backgroundSprite;
+@end
+
 @implementation RaidView
-@synthesize rectsToUse;
+@synthesize rectsToUse, backgroundSprite, raidViews;
+
+- (id)init {
+    if (self = [super init]){
+        self.backgroundSprite = [CCSprite spriteWithSpriteFrameName:@"raid_view_back.png"];
+        [self.backgroundSprite setAnchorPoint:CGPointZero];
+        [self addChild:self.backgroundSprite];
+        
+        self.raidViews = [NSMutableArray arrayWithCapacity:20];
+        self.scale = 1.2;
+    }
+    return self;
+}
 
 -(BOOL)addRaidMemberHealthView:(RaidMemberHealthView*)healthView
 {
 	if (nextRectToUse-1 < MAXIMUM_RAID_MEMBERS_ALLOWED){
 		[self addChild:healthView];
-		if (nextRectToUse % 2 == 0){
-//			[healthView setBackgroundColor:[UIColor grayColor]];
-//			[healthView setDefaultBackgroundColor:[UIColor grayColor]];
-		}
-		else {
-//			[healthView setBackgroundColor:[UIColor darkGrayColor]];
-//			[healthView setDefaultBackgroundColor:[UIColor darkGrayColor]];
-		}
-
+        [self.raidViews addObject:healthView];
 		return YES;
 	}
 	return NO;
 }
 
 -(CGPoint)frameCenterForMember:(RaidMember*)raidMember{
-    for (RaidMemberHealthView *rmhv in self.children){
+    for (RaidMemberHealthView *rmhv in self.raidViews){
         if (rmhv.memberData == raidMember){
             CGPoint framePosition = rmhv.position;
             return [self convertToWorldSpace:ccpAdd(framePosition, ccp(rmhv.contentSize.width /2 ,rmhv.contentSize.height /2))];
         }
     }
-    NSLog(@"Member not found!");
     return CGPointZero;
 }
 
 -(void)updateRaidHealth
 {
-	for (RaidMemberHealthView *rmhv in self.children){
+	for (RaidMemberHealthView *rmhv in self.raidViews){
 		[rmhv updateHealth];
 	}
-	
 }
+
 -(void)spawnRects{
 	if (rectsToUse == nil){
 		self.rectsToUse = [[[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED] autorelease];
 		int numCols = 5;
 		int numRows = 4;
 	
-		float cellWidth = (self.contentSize.width * .95) / numCols; //We save 10% of the view for some semblance of a border
-		float cellHeight = (self.contentSize.height * .95) / numRows ;
-		float borderWidthSize = self.contentSize.width * .025;
-		float borderHeightSize = self.contentSize.height * .025;
+		float cellWidth = (self.contentSize.width * .95) / numCols;
+		float cellHeight = (self.contentSize.height * .88) / numRows ;
+		float borderWidthSize = self.contentSize.width * .05;
+		float borderHeightSize = self.contentSize.height * .015;
 	
 		for (int y = 0; y < numRows; y++){
 		
@@ -85,15 +92,9 @@
 	return [[rectsToUse objectAtIndex:rectToUse] frame];
 }
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
-
 - (void)dealloc {
+    [raidViews release];
+    [rectsToUse release];
     [super dealloc];
 }
 

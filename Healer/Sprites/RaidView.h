@@ -14,11 +14,12 @@
 /* A RaidView contains an Array of all the Raid member health views and lays them 
    out based on the frame size.
  */
-@interface RaidView : CCLayerColor {
-	
+@interface RaidView : CCLayer {
 	NSInteger nextRectToUse;
 }
 @property (nonatomic, retain) NSMutableArray *rectsToUse;
+@property (nonatomic, retain) NSMutableArray *raidViews;
+
 //Returns Yes is successful, no otherwise.
 -(BOOL)addRaidMemberHealthView:(RaidMemberHealthView*)healthView;
 

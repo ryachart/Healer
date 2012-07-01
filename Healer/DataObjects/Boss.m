@@ -491,7 +491,7 @@
         [member addEffect:dcEffect];
         [dcEffect release];
     }
-    [self.announcer displayPartcileSystemOnRaidWithName:@"purple_mist.plist"];
+    [self.announcer displayPartcileSystemOnRaidWithName:@"purple_mist.plist" forDuration:-1.0];
 }
 
 -(void)shootProjectileAtTarget:(RaidMember*)target withDelay:(float)delay{
@@ -723,7 +723,7 @@
     
     if (percentage == 96.0){
         [self.announcer announce:@"A putrid green mist fills the area..."];
-        [self.announcer displayPartcileSystemOnRaidWithName:@"green_mist.plist"];
+        [self.announcer displayPartcileSystemOnRaidWithName:@"green_mist.plist" forDuration:-1.0];
         for (RaidMember *member in raid.raidMembers){
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:300 andEffectType:EffectTypeNegativeInvisible];
             [rhe setOwner:self];
@@ -1158,13 +1158,83 @@
     return [seer autorelease];
     
 }
-
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
-    
-}
 @end
 
 @implementation GatekeeperDelsarn
++ (id)defaultBoss{
+    GatekeeperDelsarn *boss = [[GatekeeperDelsarn alloc] initWithHealth:300000 damage:40 targets:1 frequency:2.1 andChoosesMT:YES];
+    [boss setInfo:@"Delsarn is the name the Theronian Seers have given to the land that exists beyond the rift discovered within the tome that Seer Tyonath left behind.  The Gatekeeper is a foul beast that stands between your party and passage into Delsarn."];
+    [boss setTitle:@"Gatekeeper of Delsarn"];
+    
+    Grip *gripAbility = [[Grip alloc] init];
+    [gripAbility setTitle:@"grip-ability"];
+    [gripAbility setCooldown:22];
+    [boss addAbility:gripAbility];
+    [gripAbility release];
+    
+    Impale *impaleAbility = [[Impale alloc] init];
+    [impaleAbility setTitle:@"gatekeeper-impale"];
+    [impaleAbility setCooldown:16];
+    [boss addAbility:impaleAbility];
+    [impaleAbility setAbilityValue:92];
+    [impaleAbility release];
+    
+    
+    return [boss autorelease];
+}
+
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+    if (percentage == 75.0){
+        //Pestilence
+        [self.announcer displayPartcileSystemOnRaidWithName:@"green_mist.plist" forDuration:20];
+        NSArray *livingMembers = [raid getAliveMembers];
+        for (RaidMember *member in livingMembers){
+            RepeatedHealthEffect *pestilenceDot = [[RepeatedHealthEffect alloc] initWithDuration:20 andEffectType:EffectTypeNegativeInvisible];
+            [pestilenceDot setValuePerTick:-5];
+            [pestilenceDot setOwner:self];
+            [pestilenceDot setNumOfTicks:10];
+            [pestilenceDot setTitle:@"gatekeeper-pestilence"];
+            [member addEffect:pestilenceDot];
+            [pestilenceDot release];
+        }
+    }
+    
+    if (percentage == 50.0) {
+        [self.announcer announce:@"The Gatekeeper summons two BloodDrinker Demons to his side."];
+        //Blood drinkers
+        BloodDrinker *ability = [[BloodDrinker alloc] initWithDamage:20 andCooldown:1.25];
+        [ability setTitle:@"gatekeeper-blooddrinker"];
+        [self addAbility:ability];
+        [ability release];
+        
+        BloodDrinker *ability2 = [[BloodDrinker alloc] initWithDamage:20 andCooldown:1.25];
+        [ability2 setTitle:@"gatekeeper-blooddrinker"];
+        [self addAbility:ability2];
+        [ability2 release];
+    }
+    
+    if (percentage == 25.0) {
+        [self.announcer announce:@"The Blood Drinkers are slain."];
+        for (Ability *ability in self.abilities) {
+            if ([ability.title isEqualToString:@"gatekeeper-blooddrinker"]){
+                [ability setIsDisabled:YES];
+                [[(BloodDrinker*)ability focusTarget] setIsFocused:NO];
+            }
+        }
+    }
+    if (percentage == 23.0) {
+        //Drink in death +10% damage for each ally slain so far.
+        [self.announcer announce:@"The Gatekeeper grows strong for each slain ally"];
+        NSInteger dead = [raid deadCount];
+        for (int i = 0; i < dead; i++){
+            Effect *enrageEffect = [[Effect alloc] initWithDuration:600 andEffectType:EffectTypePositiveInvisible];
+            [enrageEffect setOwner:self];
+            [enrageEffect setTitle:@"drink-in-death"];
+            [enrageEffect setDamageDoneMultiplierAdjustment:.2];
+            [self addEffect:[enrageEffect autorelease]];
+        }
+    }
+}
 @end
 
 @implementation SkeletalDragon

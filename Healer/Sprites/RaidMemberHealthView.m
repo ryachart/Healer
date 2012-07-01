@@ -8,6 +8,7 @@
 
 #import "RaidMemberHealthView.h"
 #import "CCRoundedRect.h"
+#import "ClippingNode.h"
 
 #define HEALTH_BAR_BORDER 6
 
@@ -15,8 +16,12 @@
 @property (nonatomic, assign) CCLabelTTF *isFocusedLabel;
 @property (nonatomic, assign) CCSprite *priorityPositiveEffectSprite;
 @property (nonatomic, assign) CCSprite *priorityNegativeEffectSprite;
-@property (nonatomic, assign) CCLabelTTF *priorityPositiveEffectDurationLabel;
-@property (nonatomic, assign) CCLabelTTF *priorityNegativeEffectDurationLabel;
+
+@property (nonatomic, assign) ClippingNode *healthBarClippingNode;
+@property (nonatomic, assign) CCSprite *raidFrameTexture;
+@property (nonatomic, assign) CCSprite *healthBarMask;
+@property (nonatomic, assign) CCSprite *selectionSprite;
+@property (nonatomic, assign) CCSprite *classIconSprite;
 
 @property (nonatomic, readwrite) NSInteger lastHealth;
 @property (nonatomic, assign) CCSprite *shieldBubble;
@@ -24,64 +29,58 @@
 
 @implementation RaidMemberHealthView
 
-@synthesize memberData, classNameLabel, healthLabel, interactionDelegate, defaultBackgroundColor, isTouched, effectsLabel;
-@synthesize healthBarLayer, lastHealth, isFocusedLabel, priorityNegativeEffectSprite, priorityPositiveEffectSprite, shieldBubble, priorityNegativeEffectDurationLabel, priorityPositiveEffectDurationLabel;
+@synthesize memberData, healthLabel, interactionDelegate, isTouched;
+@synthesize lastHealth, isFocusedLabel, priorityNegativeEffectSprite, priorityPositiveEffectSprite, shieldBubble;
+@synthesize classIconSprite;
+
+@synthesize raidFrameTexture, healthBarClippingNode,  healthBarMask, selectionState, selectionSprite;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super init])) {
         // Initialization code
-        
         self.position = frame.origin;
         self.contentSize = frame.size;
         
         self.lastHealth = 0;
         
-//        self.healthBarLayer = [CCLayerColor layerWithColor:ccc4(0, 255, 0, 255) width:frame.size.width - (HEALTH_BAR_BORDER *2) height:frame.size.height - (HEALTH_BAR_BORDER *2)];
-//        self.healthBarLayer.position = CGPointMake(HEALTH_BAR_BORDER, HEALTH_BAR_BORDER);
+        self.selectionSprite = [CCSprite spriteWithSpriteFrameName:@"raid_frame_selection.png"];
+        self.selectionSprite.anchorPoint = CGPointZero;
+        [self addChild:self.selectionSprite];
+        self.selectionSprite.visible = NO;
         
-        float backgroundBorderWidth = 4.0;
-        CCRoundedRect *barBackgroundAndBorder = [[[CCRoundedRect alloc] initWithRectSize:CGSizeMake(frame.size.width - (HEALTH_BAR_BORDER * 2), frame.size.height - (HEALTH_BAR_BORDER * 2))] autorelease];
-        [barBackgroundAndBorder setFillColor:ccc4(255,255,255, 255)];
-        [barBackgroundAndBorder setRadius:6.0];
-        [barBackgroundAndBorder setBorderWidth:backgroundBorderWidth];
-        [barBackgroundAndBorder setBorderColor:ccc4(0, 0, 0, 255)];
-        [barBackgroundAndBorder setPosition:CGPointMake(HEALTH_BAR_BORDER, HEALTH_BAR_BORDER)];
-        [self addChild:barBackgroundAndBorder];
+        self.healthBarClippingNode = [ClippingNode node];
+        self.healthBarMask = [CCSprite spriteWithSpriteFrameName:@"raid_frame_bar_mask.png"];
+        [self.healthBarMask setAnchorPoint:CGPointZero];
+        self.healthBarMask.position = CGPointMake(0, 0);
+        [self.healthBarMask setColor:ccGREEN];
         
-        self.healthBarLayer = [[[CCRoundedRect alloc] initWithRectSize:CGSizeMake(frame.size.width - ((HEALTH_BAR_BORDER + backgroundBorderWidth/2) * 2), frame.size.height - ((HEALTH_BAR_BORDER+ backgroundBorderWidth/2 ) * 2))] autorelease];
-        self.healthBarLayer.position = CGPointMake(HEALTH_BAR_BORDER + backgroundBorderWidth/2, HEALTH_BAR_BORDER + backgroundBorderWidth/2);
-        self.healthBarLayer.radius = 6.0;
-        self.healthBarLayer.borderWidth = 0.0;
-        self.healthBarLayer.borderColor = ccc4(0, 0, 0, 0);
+        [self.healthBarClippingNode setPosition:CGPointMake(0, 8)];
+        [self.healthBarClippingNode setContentSize:self.healthBarMask.contentSize];
+        [self.healthBarClippingNode setAnchorPoint:CGPointZero];
+        [self.healthBarClippingNode setClippingRegion:CGRectMake(0, 0, self.healthBarMask.contentSize.width, self.healthBarMask.contentSize.height)];
+        [self.healthBarClippingNode addChild:self.healthBarMask];
+        [self addChild:self.healthBarClippingNode];
         
-		self.classNameLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0f];            
-        [self.classNameLabel setPosition:CGPointMake(frame.size.width * .5, 14)];
-        [self.classNameLabel setContentSize:CGSizeMake(frame.size.width, frame.size.height)];
-        [self.classNameLabel setColor:ccc3(0, 0, 0)];
+        self.raidFrameTexture = [CCSprite spriteWithSpriteFrameName:@"raid_frame.png"];
+        [self.raidFrameTexture setAnchorPoint:CGPointZero];
+        [self addChild:self.raidFrameTexture z:5];
         
         self.isFocusedLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:15.0];
-        [self.isFocusedLabel setPosition:CGPointMake(50, 54)];
+        [self.isFocusedLabel setPosition:CGPointMake(50, 64)];
         [self.isFocusedLabel setColor:ccBLACK];
         
 		self.healthLabel =  [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0f];   
-        [self.healthLabel setPosition:CGPointMake(frame.size.width * .5, frame.size.height * .34)];
+        [self.healthLabel setPosition:CGPointMake(frame.size.width * .7, frame.size.height * .5)];
         [self.healthLabel setContentSize:CGSizeMake(frame.size.width * .5, frame.size.height * .25)];
         [self.healthLabel setColor:ccc3(0, 0, 0)];
                 
-		self.effectsLabel =  [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0f];
-        [self.effectsLabel setPosition:CGPointMake(frame.size.width * .5, frame.size.height * .85)];
-        [self.effectsLabel setContentSize:CGSizeMake(frame.size.width, frame.size.height * .15)];
-        [self.effectsLabel setColor:ccc3(0, 0, 0)];
         
         self.shieldBubble = [CCSprite spriteWithSpriteFrameName:@"shield_bubble.png"];
         [self.shieldBubble setVisible:NO];
         [self.shieldBubble setPosition:ccp(frame.size.width * .5,frame.size.height * .5)];
-			
-        [self addChild:self.healthBarLayer];
-        [self addChild:self.classNameLabel];
-        [self addChild:self.healthLabel];
-        [self addChild:self.effectsLabel];
-        [self addChild:self.isFocusedLabel];
+    
+        [self addChild:self.healthLabel z:10];
+        [self addChild:self.isFocusedLabel z:11];
         [self addChild:self.shieldBubble z:100]; //Above all else!
 		interactionDelegate = nil;
 		
@@ -127,8 +126,15 @@
 {
 	memberData = rdMember;
 	self.lastHealth = memberData.health;
-    [self.classNameLabel setString:rdMember.title];
-
+    
+    NSString* classIconSpriteFrameName = [NSString stringWithFormat:@"class_icon_%@.png", [rdMember title].lowercaseString];
+    if (!self.classIconSprite){
+        self.classIconSprite = [CCSprite spriteWithSpriteFrameName:classIconSpriteFrameName];
+        [self.classIconSprite setPosition:CGPointMake(52, 40)];
+        [self addChild:self.classIconSprite z:15];
+    } else{
+        [self.classIconSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:classIconSpriteFrameName]];
+    }
 }
 
 -(void)onEnter{
@@ -150,8 +156,8 @@
     [sctLabel setColor:ccGREEN];
     [sctLabel setPosition:CGPointMake(self.contentSize.width /2 , self.contentSize.height /2)];
     
-    [self addChild:shadowLabel z:10];
-    [self addChild:sctLabel z:11];
+    [self addChild:shadowLabel z:100];
+    [self addChild:sctLabel z:100];
     
     [sctLabel runAction:[CCSequence actions:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
         [node removeFromParentAndCleanup:YES];
@@ -171,16 +177,71 @@
         
     }
     
+    switch (self.selectionState) {
+        case RaidViewSelectionStateNone:
+            self.selectionSprite.visible = NO;
+            break;
+        case RaidViewSelectionStateSelected:
+            [self.selectionSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"raid_frame_selection.png"]];
+            self.selectionSprite.visible = YES;
+            break;
+        case RaidViewSelectionStateAltSelected:
+            [self.selectionSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"raid_frame_alt_selection.png"]];
+            self.selectionSprite.visible = YES;
+            break;
+        default:
+            break;
+    }
+    
     if (memberData && memberData.health < self.lastHealth){
         int damage = lastHealth - memberData.health;
         
         if ((float)damage / memberData.maximumHealth >= .33){
-            [self displaySCT:@"Euagh!"];
+            NSString* sctString = nil;
+            NSInteger roll = arc4random() % 5;
+            switch (roll) {
+                case 0:
+                    sctString = @"Ooof!";
+                    break;
+                case 1:
+                    sctString = @"Hrggh!";
+                    break;
+                case 2:
+                    sctString = @"Ouch!";
+                    break;
+                case 3:
+                    sctString = @"Euagh!";
+                    break;
+                case 4:
+                    sctString = @"Augh!";
+                    break;
+                default:
+                    break;
+            }
+            [self displaySCT:sctString];
         }
         
         if ((float)memberData.health / memberData.maximumHealth <= .25){
             if (memberData.health != 0){
-                [self displaySCT:@"Help!"];
+                NSInteger roll = arc4random() % 3;
+                NSString *sctString = nil;
+                switch (roll) {
+                    case 0:
+                        sctString = @"Help!";
+                        break;
+                    case 1:
+                        sctString = @"Please!";
+                        break;
+                    case 2:
+                        sctString = @"I'm dying!";
+                        break;
+                    case 3:
+                        sctString = @"Save me!";
+                        break;
+                    default:
+                        break;
+                }
+                [self displaySCT:sctString];
             }
         }
     }
@@ -194,16 +255,13 @@
 	NSString *healthText;
 	if (memberData.health >= 1){
 		healthText = [NSString stringWithFormat:@"%3.1f\%", (((float)memberData.health) / memberData.maximumHealth)*100];
-		self.healthBarLayer.size = CGSizeMake(self.healthBarLayer.size.width,(int)round((self.contentSize.height - ((HEALTH_BAR_BORDER + 2.0 ) * 2) ) * (((float)memberData.health) / memberData.maximumHealth)));
+        self.healthBarMask.position = CGPointMake(0, -(self.healthBarMask.contentSize.height) * (1 - memberData.healthPercentage));
         ccColor3B colorForPerc = [self colorForPercentage:(((float)memberData.health) / memberData.maximumHealth)];
-        [self.healthBarLayer setFillColor:ccc4(colorForPerc.r, colorForPerc.g, colorForPerc.b, 255)];
+        [self.healthBarMask setColor:colorForPerc];
 	}
 	else {
 		healthText = @"Dead";
-        self.healthBarLayer.size = CGSizeMake(self.healthBarLayer.size.width, 0);
-        self.healthBarLayer.visible = NO;
-		[self setColor:ccc3(255, 0, 0)];
-        [self setOpacity:255];
+        [self.raidFrameTexture setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"raid_frame_dead.png"]];
 	}
 	
     Effect *negativeEffect = nil;
@@ -227,15 +285,8 @@
     if (positiveEffect && positiveEffect.spriteName && !self.memberData.isDead){
         if (!self.priorityPositiveEffectSprite){
             self.priorityPositiveEffectSprite = [CCSprite spriteWithSpriteFrameName:positiveEffect.spriteName];
-            [self.priorityPositiveEffectSprite setContentSize:CGSizeMake(40, 40)];
-            [self.priorityPositiveEffectSprite setPosition:CGPointMake(20, self.contentSize.height * .15)];
-            
-            self.priorityPositiveEffectDurationLabel = [CCLabelTTF  labelWithString:@"" dimensions:CGSizeMake(25, 25) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:14.0];
-            [self.priorityPositiveEffectDurationLabel setPosition:CGPointMake(15, 15)];
-            [self.priorityPositiveEffectDurationLabel setColor:ccBLACK];
-            
+            [self.priorityPositiveEffectSprite setPosition:CGPointMake(50, 40)];
             [self addChild:self.priorityPositiveEffectSprite z:5];
-            [self.priorityPositiveEffectSprite addChild:self.priorityPositiveEffectDurationLabel];
         }else{
             [self.priorityPositiveEffectSprite stopAllActions];
             [self.priorityPositiveEffectSprite setOpacity:255];
@@ -247,11 +298,6 @@
             [self.priorityPositiveEffectSprite runAction:blinkAction];
         }
         
-        if (positiveEffect.duration - positiveEffect.timeApplied < 10.0){
-            [self.priorityPositiveEffectDurationLabel setString:[NSString stringWithFormat:@"%1.1f", positiveEffect.duration - positiveEffect.timeApplied]];
-        }else{
-            [self.priorityPositiveEffectDurationLabel setString:@""];
-        }
         [self.priorityPositiveEffectSprite setVisible:YES];
     }else{
         [self.priorityPositiveEffectSprite setVisible:NO];
@@ -260,14 +306,8 @@
     if (negativeEffect && negativeEffect.spriteName && !self.memberData.isDead){
         if (!self.priorityNegativeEffectSprite){
             self.priorityNegativeEffectSprite = [CCSprite spriteWithSpriteFrameName:negativeEffect.spriteName];
-            [self.priorityNegativeEffectSprite setContentSize:CGSizeMake(40, 40)];
-            [self.priorityNegativeEffectSprite setPosition:CGPointMake(20, self.contentSize.height * .8)];
-            
-            self.priorityNegativeEffectDurationLabel = [CCLabelTTF  labelWithString:@"" dimensions:CGSizeMake(25, 25) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:14.0];
-            [self.priorityNegativeEffectDurationLabel setPosition:CGPointMake(15, 15)];
-            [self.priorityNegativeEffectDurationLabel setColor:ccWHITE];
+            [self.priorityNegativeEffectSprite setPosition:CGPointMake(50, 40)];
             [self addChild:self.priorityNegativeEffectSprite z:5];
-            [self.priorityNegativeEffectSprite addChild:self.priorityNegativeEffectDurationLabel];
         }else{
             [self.priorityNegativeEffectSprite stopAllActions];
             [self.priorityNegativeEffectSprite setOpacity:255];
@@ -281,12 +321,6 @@
         [self.priorityNegativeEffectSprite setVisible:YES];
     }else{
         [self.priorityNegativeEffectSprite setVisible:NO];
-    }
-    
-    if (negativeEffect.duration - negativeEffect.timeApplied < 10.0){
-        [self.priorityNegativeEffectDurationLabel setString:[NSString stringWithFormat:@"%1.1f", negativeEffect.duration - negativeEffect.timeApplied]];
-    }else{
-        [self.priorityNegativeEffectDurationLabel setString:@""];
     }
 
 	if (![healthText isEqualToString:[healthLabel string]]){
@@ -322,6 +356,8 @@
 }
 
 - (void)dealloc {
+    [healthLabel release];
+    [interactionDelegate release];
     [super dealloc];
 }
 

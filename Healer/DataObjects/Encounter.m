@@ -40,7 +40,7 @@
     return [Encounter encounterForLevel:(arc4random() % 5 + 6) isMultiplayer:YES];
 }
 
-+(Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer{
++ (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer{
     Raid *basicRaid = nil;
     Boss *basicBoss = nil;
     NSMutableArray *spells = [NSMutableArray arrayWithCapacity:4];

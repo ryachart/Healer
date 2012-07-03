@@ -12,6 +12,7 @@
 #import "Agent.h"
 
 @interface Spell ()
+@property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *spellID;
 @property (nonatomic, readwrite) NSTimeInterval tempCooldown;
 @end
@@ -23,7 +24,7 @@
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd
 {
     if (self = [super init]){
-        title = [ttle retain];
+        self.title = ttle;
         healingAmount = healAmnt;
         energyCost = nrgyCost;
         castTime = time;

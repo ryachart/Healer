@@ -17,7 +17,7 @@
 @property (nonatomic, readwrite) NSTimeInterval timeApplied;
 @property (nonatomic, readwrite) NSTimeInterval cooldown; //9999 denotes an ability that must be triggered
 @property (nonatomic, retain ) NSString *title;
-@property (nonatomic, retain) Agent *owner;
+@property (nonatomic, assign) Agent *owner;
 @property (nonatomic, readwrite) NSInteger abilityValue; //Damage or DoT value or something
 @property (nonatomic, readwrite) BOOL isDisabled;
 

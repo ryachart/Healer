@@ -25,7 +25,7 @@ typedef enum {
 }
 @property (nonatomic, assign, setter=setMemberData:) HealableTarget* memberData;
 @property (nonatomic, retain) CCLabelTTF *healthLabel;
-@property (nonatomic, retain) RaidMemberHealthViewDelegate *interactionDelegate;
+@property (nonatomic, assign) RaidMemberHealthViewDelegate *interactionDelegate;
 @property (nonatomic) BOOL isTouched;
 @property (nonatomic, readwrite) RaidViewSelectionState selectionState;
 -(void)setMemberData:(HealableTarget*)rdMember;

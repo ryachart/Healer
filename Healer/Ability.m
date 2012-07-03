@@ -35,7 +35,6 @@
     return ab;
 }
 - (void)dealloc{
-    [owner release];
     [title release];
     [super dealloc];
 }

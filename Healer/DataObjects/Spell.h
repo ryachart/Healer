@@ -26,7 +26,7 @@
 
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd;
 +(id)defaultSpell;
-@property (readonly, retain) NSString *title;
+@property (nonatomic, readonly, retain) NSString *title;
 @property (nonatomic, readonly, retain) NSString* spellID;
 @property (nonatomic, assign) Agent *owner;
 @property (nonatomic, readwrite) NSInteger healingAmount;

@@ -25,12 +25,14 @@
 }
 -(void)setBeginSound:(NSURL*)soundPath andTitle:(NSString*)title
 {
+    [beginSound release];
 	beginSound = [soundPath retain];
 	self.beginTitle = title;
 	
 }
 -(void)setInterruptedSound:(NSURL*)soundPath andTitle:(NSString*)title
 {
+    [interruptedSound release];
 	interruptedSound = [soundPath retain];
 	self.interruptedTitle = title;
 	
@@ -38,6 +40,7 @@
 -(void)setFinishedSound:(NSURL*)soundPath andTitle:(NSString*)title
 {
     NSAssert(soundPath, @"Attempt to initialize a song with a nil path and title %@", title);
+    [finishedSound release];
 	finishedSound = [soundPath retain];
 	self.finishedTitle = title;
 }

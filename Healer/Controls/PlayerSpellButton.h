@@ -18,7 +18,7 @@
 }
 @property (nonatomic, retain) CCLabelTTF *spellTitle;
 @property (nonatomic, retain, setter=setSpellData:) Spell *spellData;
-@property (retain) PlayerSpellButtonDelegate *interactionDelegate;
+@property (nonatomic, assign) PlayerSpellButtonDelegate *interactionDelegate;
 - (id)initWithFrame:(CGRect)frame;
 -(void)setSpellData:(Spell*)theSpell;
 -(void)updateUI;

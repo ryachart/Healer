@@ -26,6 +26,7 @@
     [info release];
     [announcer release];
     [title release];
+    [queuedAbilitiesToAdd release];
     [super dealloc];
 }
 
@@ -192,7 +193,7 @@
 
 @implementation Ghoul
 +(id)defaultBoss{
-    Ghoul *ghoul = [[Ghoul alloc]initWithHealth:6750 damage:20 targets:1 frequency:2.0 andChoosesMT:NO];
+    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:6750 damage:20 targets:1 frequency:2.0 andChoosesMT:NO];
     [ghoul setTitle:@"The Night Ghoul"];
     [ghoul setInfo:@"A ghoul has found its way onto a nearby farmer's land.  It has already killed the farmer's wife.  You will accompany a small band of mercenaries to dispatch the ghoul."];
     return [ghoul autorelease];

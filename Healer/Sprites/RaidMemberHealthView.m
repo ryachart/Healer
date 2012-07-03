@@ -359,7 +359,6 @@
 - (void)dealloc {
     [memberData release];
     [healthLabel release];
-    [interactionDelegate release];
     [super dealloc];
 }
 

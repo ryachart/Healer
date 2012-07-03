@@ -48,6 +48,7 @@
                 levelButton.opacity = 125;
             }
             [self.menu addChild:levelButton];
+            [levelButton release];
         }
         [self.menu setPosition:ccp([CCDirector sharedDirector].winSize.width /2, [CCDirector sharedDirector].winSize.height / 2)];
         [self.menu setColor:ccc3(255, 255, 255)];

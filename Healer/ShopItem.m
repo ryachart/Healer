@@ -91,4 +91,10 @@
     }
     return self;
 }
+
+- (void)dealloc {
+    [shopDescription release];
+    [spell release];
+    [super dealloc];
+}
 @end

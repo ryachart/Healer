@@ -24,7 +24,6 @@
 @class PlayerCastBar;
 /* This is the screen we see while involved in a raid */
 @interface GamePlayScene : CCScene <EventLogger, Announcer, GamePlayFTUELayerDelegate, PauseLayerDelegate, GKMatchDelegate> {
-	NSMutableDictionary *memberToHealthView;
 	NSMutableArray *selectedRaidMembers;
 }
 //Interface Elements

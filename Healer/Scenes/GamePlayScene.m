@@ -692,6 +692,26 @@
 }
 
 - (void)dealloc {
+    [spellView1 release];
+    [spellView2 release];
+    [spellView3 release];
+    [spellView4 release];
+    [raidView release];
+    [bossHealthView release];
+    [playerEnergyView release];
+    [playerMoveButton release];
+    [playerCastBar release];
+    [alertStatus release];
+    [eventLog release];
+    [serverPlayerID release];
+    [match release];
+    [matchVoiceChat release];
+    [players release];
+    [selectedRaidMembers release];
+    [raid release];
+    [boss release];
+    [player release];
+    
 	AudioController *ac = [AudioController sharedInstance];
 	for (Spell* aSpell in [player activeSpells]){
 		[[aSpell spellAudioData] releaseSpellAudio];

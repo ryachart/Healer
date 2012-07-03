@@ -52,5 +52,10 @@
 	}
 }
 
+- (void)dealloc {
+    [timeRemaining release];
+    [castBar release];
+    [super dealloc];
+}
 
 @end

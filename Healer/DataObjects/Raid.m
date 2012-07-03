@@ -15,6 +15,7 @@
 
 @synthesize raidMembers, raidMemberBattleIDDictionary;
 -(void)dealloc{
+    [raidMembers release];
     [raidMemberBattleIDDictionary release];
     [super dealloc];
 }
@@ -69,11 +70,15 @@
 
 -(RaidMember*)randomLivingMember{
     RaidMember *selectedMember = nil;
-    
+    int safety = 0;
     do {
         selectedMember = [self.raidMembers objectAtIndex:arc4random() % self.raidMembers.count];
         if (selectedMember.isDead)
             selectedMember = nil;
+        safety++;
+        if (safety > 25){
+            break;
+        }
     }while (!selectedMember);
     return selectedMember;
 }

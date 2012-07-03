@@ -472,12 +472,17 @@
 
 -(RaidMember*)chooseVictimInRaid:(Raid*)raid{
     RaidMember *victim = nil;
+    int safety = 0;
     while (!victim){
         RaidMember *member = [raid randomLivingMember];
         if ([member isKindOfClass:[Archer class]]){
             continue;
         }
-        victim = member;    
+        victim = member;  
+        safety++;
+        if (safety > 25){
+            break;
+        }
     }
     return victim;
 }
@@ -966,8 +971,13 @@
 -(void)performAxecutionOnRaid:(Raid*)theRaid{
     RaidMember *target = nil;
     
+    int safety = 0;
     while (!target || target.isFocused){
         target = [theRaid randomLivingMember];
+        safety++;
+        if (safety > 25){
+            break;
+        }
     }
     [self.announcer announce:@"An Ally Has been chosen for Execution..."];
     [target setHealth:target.maximumHealth * .4];
@@ -986,8 +996,13 @@
     for (int i = 0; i < 1; i++){
         RaidMember *target = nil;
         
+        int safety = 0;
         while (!target || target.isFocused){
             target = [theRaid randomLivingMember];
+            safety++;
+            if (safety > 25){
+                break;
+            }
         }
         
         DelayedHealthEffect *axeThrownEffect = [[DelayedHealthEffect alloc] initWithDuration:1.5 andEffectType:EffectTypeNegativeInvisible];
@@ -1052,6 +1067,11 @@
 
 @implementation Baraghast
 @synthesize autoAttack, remainingAbilities;
+- (void)dealloc {
+    [remainingAbilities release];
+    [super dealloc];
+}
+
 +(id)defaultBoss{
     Baraghast *boss = [[Baraghast alloc] initWithHealth:450000 damage:14 targets:1 frequency:1.25 andChoosesMT:YES];
     [boss setAutoAttack:[[boss abilities] objectAtIndex:0]];

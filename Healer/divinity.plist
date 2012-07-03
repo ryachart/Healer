@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>healing-hands</key>
+	<string>Your Heal spell has a 10% chance to cause 50% more healing.</string>
+	<key>blessed-power</key>
+	<string>Your Heal spell casts 10% faster.</string>
+	<key>warding-touch</key>
+	<string>Your Heal Spell leaves an effect on its target reducing damage taken by 5%.</string>
+	<key>surging-glory</key>
+	<string>Light Eternal heals for 20% less, but costs 20% less energy and casts 10% faster.</string>
+	<key>sunlight</key>
+	<string>While Regrow is active on a target, that target takes 5% less damage.</string>
+	<key>after-light</key>
+	<string>Forked Heal targets have an effect placed on them that heals for 10% of the healing done by forked heal over 8 seconds.</string>
+	<key>shining-aegis</key>
+	<string>While under the Ward of Ancients, allies are healed for a small amount each second.</string>
+	<key>ancient-knowledge</key>
+	<string>Casting Greater Heal causes you to regenerate energy 50% faster for 10 seconds.</string>
+	<key>purity-of-soul</key>
+	<string>Purify now removes curses and poisons from your entire raid instead of just your target.</string>
+	<key>searing-power</key>
+	<string>Whenever you heal an ally, that ally&apos;s damage is increased by 50% for 10 seconds.</string>
+	<key>repel-the-darkness</key>
+	<string>Whenever you cast Purify, you deal a large amount of damage to your enemies</string>
+	<key>torrent-of-faith</key>
+	<string>Whenever you cast your Heal spell, you strike all enemies for moderate damage.</string>
+	<key>godstouch</key>
+	<string>All of your healing done is increased by 10% and all of your spell costs are reduced by 10%.</string>
+	<key>the-chosen</key>
+	<string>If an ally would die, instead it is healed to 30% of its maximum health.  This effect can only occur once every 60 seconds.</string>
+	<key>avatar</key>
+	<string>Heal, Greater Heal, Forked Heal, and Light Eternal heal an additional random target for 20% of their healing.</string>
+</dict>
+</plist>

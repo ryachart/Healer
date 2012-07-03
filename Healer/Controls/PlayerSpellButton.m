@@ -85,6 +85,9 @@
     [self setColor:ccc3(0, 0, 200)];
 }
 - (void)dealloc {
+    [spellData release];
+    [interactionDelegate release];
+    [spellTitle release];
     [super dealloc];
 }
 

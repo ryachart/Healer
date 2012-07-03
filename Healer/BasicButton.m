@@ -34,4 +34,16 @@
     
 }
 
++ (CCMenu *)spriteButtonWithSpriteFrameName:(NSString*)frameName target:(id)target andSelector:(SEL)selector {
+    CCSprite *basicButton = [CCSprite spriteWithSpriteFrameName:frameName];
+    CCSprite *basicButtonSelected = [CCSprite spriteWithSpriteFrameName:frameName];
+    CCSprite *basicButtonDisabled = [CCSprite spriteWithSpriteFrameName:frameName];
+    [basicButtonDisabled setColor:ccBLACK];
+    [basicButtonSelected setOpacity:200];
+    
+    CCMenuItemSprite *menuItem = [CCMenuItemSprite itemFromNormalSprite:basicButton selectedSprite:basicButtonSelected disabledSprite:basicButtonDisabled target:target selector:selector];
+    
+    return [CCMenu menuWithItems:menuItem, nil];
+}
+
 @end

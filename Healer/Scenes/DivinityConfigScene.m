@@ -15,6 +15,7 @@
 
 @interface DivinityConfigScene  ()
 - (void)back;
+- (void)divinityTierSelected:(id)sender;
 
 @end
 
@@ -35,25 +36,30 @@
             [dividerLine setPosition:CGPointMake(0, (768/5 * (i + 1)))];
             [self addChild:dividerLine];
         }
-        
+        NSInteger nextTier = [Shop numDivinityTiersPurchased];
         for (int i = 0; i < 5; i++){
             NSArray *choices = [Divinity divinityChoicesForTier:i];
             for (int j = 0; j < 3; j++){
-                CCSprite *choice = [CCSprite spriteWithSpriteFrameName:@"default_divinity.png"];
+                CCMenu *choice = [BasicButton spriteButtonWithSpriteFrameName:@"default_divinity.png" target:self andSelector:@selector(divinityTierSelected:)];
                 CCLabelTTF *choiceTitle =  [CCLabelTTF labelWithString:[choices objectAtIndex:j] dimensions:CGSizeMake(200, 100) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:16.0];
-                CCLabelTTF *choiceDesc = [CCLabelTTF labelWithString:[Divinity descriptionForChoice:[choices objectAtIndex:j]] dimensions:CGSizeMake(200, 100) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:16.0];
-                [choiceDesc setPosition:CGPointMake(-80, -10)];
-                [choiceTitle setPosition:CGPointMake(35, -50)];
+                CCLabelTTF *choiceDesc = [CCLabelTTF labelWithString:[Divinity descriptionForChoice:[choices objectAtIndex:j]] dimensions:CGSizeMake(180, 120) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:14.0];
                 [choice setOpacity:122];
-                [choice setPosition:CGPointMake(200 + (250 * j), (768/5 * (5 - i) - 80))];
+                [choice setPosition:CGPointMake(210 + (270 * j), (768/5 * (5 - i) - 80))];
                 [self addChild:choice];
-                [choice addChild:choiceTitle];
-                [choice addChild:choiceDesc];
+                [choiceDesc setPosition:CGPointMake(choice.position.x-120, choice.position.y-30)];
+                [choiceTitle setPosition:CGPointMake(choice.position.x, choice.position.y -90)];
+                
+                [self addChild:choiceTitle];
+                [self addChild:choiceDesc];
+                
+                if (i + 1 > nextTier) {
+                    [choiceTitle setOpacity:200];
+                    [choiceDesc setOpacity:200];
+                }
             }
 
         }
         
-        NSInteger nextTier = [Shop numDivinityTiersPurchased]; 
         CCMenuItem *buyNextTierButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(buyNextTierSelected) andTitle:@"Buy Tier"];
         
         CCMenu *buyNextTierMenu = [CCMenu menuWithItems:buyNextTierButton, nil];
@@ -74,4 +80,7 @@
     [[CCDirector sharedDirector] replaceScene:[[[HealerStartScene alloc] init] autorelease]];
 }
 
+- (void)divinityTierSelected:(id)sender {
+    
+}
 @end

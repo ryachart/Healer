@@ -251,6 +251,10 @@
 
 @implementation BaraghastBreakOff
 @synthesize ownerAutoAttack;
+- (void)dealloc {
+    [ownerAutoAttack release];
+    [super dealloc];
+}
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players{
     BreakOffEffect *breakoff = [[BreakOffEffect alloc] initWithDuration:5 andEffectType:EffectTypeNegativeInvisible];
     [breakoff setOwner:self.owner];
@@ -265,8 +269,13 @@
     if (aliveMembers.count == 1 && [aliveMembers objectAtIndex:0] == self.ownerAutoAttack.focusTarget){
         selectTarget = self.ownerAutoAttack.focusTarget;
     }else {
+        int safety = 0;
         while (!selectTarget || selectTarget == self.ownerAutoAttack.focusTarget){
             selectTarget = [theRaid randomLivingMember];
+            safety++;
+            if (safety > 25){
+                break;
+            }
         }
     }
     [breakoff setTarget:selectTarget];

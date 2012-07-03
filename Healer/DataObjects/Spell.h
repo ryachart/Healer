@@ -22,16 +22,8 @@
 	NSInteger energyCost;
 	NSArray *percentagesPerTarget;
 	BOOL isMultitouch;
-	NSString *title;
-	
-	
-	NSString *description;
-	
-	SpellAudioData *spellAudioData;
-	
-	NSDate *spellCastTime;
-	
 }
+
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd;
 +(id)defaultSpell;
 @property (readonly, retain) NSString *title;

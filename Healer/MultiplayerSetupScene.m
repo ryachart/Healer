@@ -34,6 +34,17 @@
 @synthesize match, serverPlayerID, matchVoiceChat, waitingOnPlayers, isPreconfiguredMatch;
 @synthesize menu, beginButton, raid, boss, selectedEncounter, encounterSelectMenu;
 
+- (void)dealloc {
+    [match release];
+    [matchVoiceChat release];
+    [serverPlayerID release];
+    [selectedEncounter release];
+    [waitingOnPlayers release];
+    [raid release];
+    [boss release];
+    [super dealloc];
+}
+
 #pragma mark GKMatchDelegate
 
 -(id)initWithPreconfiguredMatch:(GKMatch*)preConMatch andServerID:(NSString*)serverID{

@@ -22,6 +22,11 @@
 @implementation ShopItemNode
 @synthesize item, target, selector;
 @synthesize background, costLabel, titleLabel;
+- (void)dealloc {
+    [item release];
+    [super dealloc];
+}
+
 -(id)initWithShopItem:(ShopItem*)itm target:(id)tar selector:(SEL)selc{
     CCSprite *bg = [CCSprite spriteWithSpriteFrameName:@"shopitem-bg.png"];
     CCSprite *selectedBackground = [CCSprite spriteWithSpriteFrameName:@"shopitem-bg.png"];

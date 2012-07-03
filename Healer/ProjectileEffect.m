@@ -16,6 +16,15 @@
 
 @implementation ProjectileEffect
 @synthesize spriteName, target, collisionTime, delay, spriteColor, collisionParticleName, type;
+
+- (void)dealloc {
+    [collisionParticleName release];
+    [target release];
+    [spriteName release];
+    [target release];
+    [super dealloc];
+}
+
 -(id)initWithSpriteName:(NSString*)sprtName target:(RaidMember*)trgt andCollisionTime:(NSTimeInterval)colTime{
     if (self=[super init]){
         self.spriteName = sprtName;

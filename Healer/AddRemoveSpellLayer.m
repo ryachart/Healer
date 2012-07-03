@@ -11,6 +11,10 @@
 
 @implementation SpellMenuItemLabel
 @synthesize spell;
+- (void)dealloc{
+    [spell release];
+    [super dealloc];
+}
 @end
 
 @interface AddRemoveSpellLayer ()
@@ -27,6 +31,14 @@
 @implementation AddRemoveSpellLayer
 @synthesize unusedSpells, usedSpells, unusedSpellsMenu, usedSpellsMenu;
 @synthesize delegate;
+
+- (void)dealloc {
+    [unusedSpells release];
+    [usedSpells release];
+    [unusedSpellsMenu release];
+    [usedSpellsMenu release];
+    [super dealloc];
+}
 
 -(id)initWithCurrentSpells:(NSArray *)spells{
     if (self = [super initWithColor:ccc4(0, 0, 0, 222)]){

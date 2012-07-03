@@ -53,6 +53,10 @@
     return [NSString stringWithFormat:@"[%@][SRC:%@][TAR:%@][VAL:%@][TYPE:%@]",[self.timeStamp description] ,[self.source sourceName], [self.target targetName], [self.value description], [self nameForType:self.type]];
 }
 -(void)dealloc{
+    [source release];
+    [target release];
+    [value release];
+    [timeStamp release];
     [super dealloc];
 }
 @end

@@ -37,6 +37,13 @@
 @synthesize matchVoiceChat, match=_match, serverPlayerId, canAdvance;
 @synthesize levelNumber, isMultiplayer;
 @synthesize isVictory;
+- (void)dealloc {
+    [_match release];
+    [serverPlayerId release];
+    [matchVoiceChat release];
+    [super dealloc];
+}
+
 -(id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog levelNumber:(NSInteger)levelNum andIsMultiplayer:(BOOL)isMult{
     self = [super init];
     if (self){

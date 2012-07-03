@@ -82,11 +82,6 @@
     [extendedNode setPosition:CGPointMake(self.contentSize.width /2, self.contentSize.height /2)];
     [self addChild:extendedNode z:100];
     [extendedNode runAction:[CCScaleTo actionWithDuration:.33 scale:1.0]];
-    //    if ([Shop playerCanAffordShopItem:[item item]] && ![Shop playerHasShopItem:[item item]]){
-    //        [Shop purchaseItem:[item item]];
-    //        self.goldLabel.string = [NSString stringWithFormat:@"Gold: %i", [Shop localPlayerGold]];
-    //        [item checkPlayerHasItem];
-    //    }
 }
 
 - (void)extendedNodeDidCompleteForShopItem:(ShopItem*)item andNode:(ShopItemExtendedNode *)node{

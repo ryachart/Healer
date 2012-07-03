@@ -127,6 +127,8 @@
 
 
 - (void)dealloc {
+    [bossNameLabel release];
+    [healthLabel release];
     [super dealloc];
 }
 

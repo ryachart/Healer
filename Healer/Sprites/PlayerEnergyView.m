@@ -61,6 +61,7 @@
 		
 }
 - (void)dealloc {
+    [channelDelegate release];
     [super dealloc];
 }
 

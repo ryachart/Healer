@@ -58,4 +58,9 @@
     }
     return self;
 }
+
+- (void)dealloc {
+    [raidMember release];
+    [super dealloc];
+}
 @end

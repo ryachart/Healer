@@ -36,6 +36,14 @@
 @implementation PreBattleScene
 @synthesize raid = _raid, boss = _boss, player = _player, maxPlayers, levelNumber, spellInfoNodes;
 @synthesize changingSpells;
+
+- (void)dealloc {
+    [spellInfoNodes release];
+    [_player release];
+    [_boss release];
+    [_raid release];
+    [super dealloc];
+}
 -(id)initWithRaid:(Raid*)raid boss:(Boss*)boss andPlayer:(Player*)player{
     if (self = [super init]){
         [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease]];

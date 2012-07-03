@@ -72,9 +72,12 @@
 }
 
 -(void)dealloc{
-	[super dealloc];
 	[beginSound release];
 	[interruptedSound release];
 	[finishedSound release];
+    [beginTitle release];
+    [interruptedTitle release];
+    [finishedTitle release];
+    [super dealloc];
 }
 @end

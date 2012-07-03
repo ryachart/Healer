@@ -148,6 +148,7 @@
 
 
 - (void)dealloc {
+    [menu release];
     [super dealloc];
 }
 

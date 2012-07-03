@@ -13,6 +13,8 @@
 NSString* const IsDivinityUnlockedKey = @"com.healer.isDivinityUnlocked";
 NSString* const DivinityConfig = @"com.healer.divinityConfig";
 
+static NSDictionary *divinityInfo = nil;
+
 @implementation Divinity
 
 + (BOOL)isDivinityUnlocked {
@@ -26,26 +28,26 @@ NSString* const DivinityConfig = @"com.healer.divinityConfig";
         case 0:
             [choices addObject:@"Healing Hands"];
             [choices addObject:@"Blessed Power"];
-            [choices addObject:@"Grace"];
+            [choices addObject:@"Warding Touch"];
             break;
         case 1:
             [choices addObject:@"Surging Glory"];
             [choices addObject:@"Sunlight"];
-            [choices addObject:@"Radiance"];
+            [choices addObject:@"After Light"];
             break;
         case 2:
-            [choices addObject:@"Aegis"];
+            [choices addObject:@"Shining Aegis"];
             [choices addObject:@"Ancient Knowledge"];
-            [choices addObject:@"Strength of Kings"];
+            [choices addObject:@"Purity of Soul"];
             break;
         case 3:
-            [choices addObject:@"Light of Freylos"];
-            [choices addObject:@"Mystic Alignment"];
+            [choices addObject:@"Searing Power"];
+            [choices addObject:@"Repel The Darkness"];
             [choices addObject:@"Torrent of Faith"];
             break;
         case 4:
             [choices addObject:@"Godstouch"];
-            [choices addObject:@"Purity"];
+            [choices addObject:@"The Chosen"];
             [choices addObject:@"Avatar"];
             break;
         default:
@@ -54,8 +56,25 @@ NSString* const DivinityConfig = @"com.healer.divinityConfig";
     return choices;
 }
 
++ (NSString*)choiceTitleToKey:(NSString*)title {
+    return [[title lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"-"];
+}
+
++ (void)loadDivinityInfo {
+    NSString *pathToDict = [[NSBundle mainBundle] pathForResource:@"divinity" ofType:@"plist"];
+    divinityInfo = [[NSDictionary dictionaryWithContentsOfFile:pathToDict] retain];
+}
+
 + (NSString*)descriptionForChoice:(NSString *)choice {
-    return @"Not yet in! Sorry :(";
+    if (!divinityInfo){
+        [self loadDivinityInfo];
+    }
+    NSString* desc = [divinityInfo objectForKey:[Divinity choiceTitleToKey:choice]];
+    
+    if (!desc){
+        return @"Unfinished!";
+    }
+    return desc;
 }
 
 + (void)unlockDivinity {

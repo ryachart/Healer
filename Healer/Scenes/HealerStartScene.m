@@ -187,6 +187,7 @@
     self.menu = nil;
     self.multiplayerButton = nil;
     self.quickPlayButton = nil;
+    [presentingViewController release];
     [super dealloc];
 }
 

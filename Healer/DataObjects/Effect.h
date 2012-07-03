@@ -34,9 +34,6 @@ typedef enum {
 	NSTimeInterval duration;
 	EffectType effectType;
 	BOOL isExpired;
-	HealableTarget *target;
-	
-	NSMutableArray *audioTitles;
 }
 @property (nonatomic, retain) NSString* spriteName;
 @property (nonatomic, retain) NSString* title; //Should be unique
@@ -45,7 +42,7 @@ typedef enum {
 @property NSTimeInterval duration;
 @property (readwrite) NSInteger maxStacks;
 @property (readwrite) float timeApplied;
-@property (readwrite, retain) HealableTarget *target;
+@property (nonatomic, retain) HealableTarget *target;
 @property (readonly) EffectType effectType;
 @property (readwrite) float failureChance;
 @property (readonly) BOOL shouldFail;

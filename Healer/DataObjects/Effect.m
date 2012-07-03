@@ -169,14 +169,14 @@
 
 -(void)tick{
     self.numHasTicked++;
-    if (!target.isDead){
+    if (!self.target.isDead){
         if (self.shouldFail){
             
         }else{
             CombatEventType eventType = self.valuePerTick > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
             float modifier = self.valuePerTick > 0 ? self.owner.healingDoneMultiplier : self.owner.damageDoneMultiplier;
             [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:valuePerTick] andEventType:eventType]];
-            [target setHealth:[target health] + FUZZ(self.valuePerTick, 15.0) * modifier];
+            [self.target setHealth:[self.target health] + FUZZ(self.valuePerTick, 15.0) * modifier];
         }
     }
 }
@@ -287,7 +287,7 @@
 - (void)expire{
     if (!self.target.isDead){
         if (self.shouldFail){
-            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:0 andEventType:CombatEventTypeDodge]];
+            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:0 andEventType:CombatEventTypeDodge]];
         }else{
             if (self.appliedEffect){
                 [self.target addEffect:self.appliedEffect];
@@ -307,7 +307,7 @@
 
 -(void)tick{
     int similarEffectCount = 1;
-    for (Effect *effect in target.activeEffects){
+    for (Effect *effect in self.target.activeEffects){
         if ([effect isEqual:self]){
             similarEffectCount++;
         }
@@ -320,7 +320,7 @@
 
 @implementation TrulzarPoison
 -(void)tick{
-    if (!target.isDead){
+    if (!self.target.isDead){
         float percentComplete = self.timeApplied / self.duration;
         CombatEventType eventType = self.valuePerTick > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.valuePerTick] andEventType:eventType]];
@@ -346,7 +346,7 @@
 @implementation CouncilPoisonball
 -(void)expire{
     if (self.shouldFail){
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:0 andEventType:CombatEventTypeDodge]];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:0 andEventType:CombatEventTypeDodge]];
     }else{
         CouncilPoison *poisonDoT = [[CouncilPoison alloc] initWithDuration:6 andEffectType:EffectTypeNegative];
         [poisonDoT setTitle:@"council-ball-dot"];
@@ -643,14 +643,14 @@
 	{
 		lastTick += timeDelta;
 		if (lastTick  >= (duration/self.numOfTicks)){
-			[target setHealth:[target health] + self.valuePerTick];
+			[self.target setHealth:[self.target health] + self.valuePerTick];
 			//NSLog(@"Tick");
 			self.valuePerTick += 1;
 			lastTick = 0.0;
 		}
 		if (self.timeApplied >= duration){
-			[target setHealth:[target health] + self.valuePerTick];
-			[target setHealth:[target health] + self.valuePerTick*2];
+			[self.target setHealth:[self.target health] + self.valuePerTick];
+			[self.target setHealth:[self.target health] + self.valuePerTick*2];
 			//NSLog(@"Tick");
 			//Here we do some effect, but we have to subclass Effects to decide what that is
 			//NSLog(@"Expired");
@@ -745,57 +745,6 @@
 		NSLog(@"Lowering damage taken by %i", *health- newHealthDelta);
 		*newHealth = *health - newHealthDelta;
 	}
-}
-
-@end
-
-@implementation BigFireball
-
-@synthesize lastPosition;
-
--(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type{
-	if (self = [super initWithDuration:dur andEffectType:type]){
-		AudioController* ac = [AudioController sharedInstance];
-		audioTitles = [[NSMutableArray alloc] initWithCapacity:2];
-		[audioTitles addObject:[NSString stringWithFormat:@"FireballStart%@", self]];
-		[audioTitles addObject:[NSString stringWithFormat:@"FireballImpact%@", self]];
-		[ac addNewPlayerWithTitle:[audioTitles objectAtIndex:0] andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/FireballStart" ofType:@"wav"]]];
-		[ac addNewPlayerWithTitle:[audioTitles objectAtIndex:1] andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/FireBallImpact" ofType:@"wav"]]];
-		[ac playTitle:[audioTitles objectAtIndex:0]];
-	}
-	
-	return self;
-}
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
-{
-	if (self.timeApplied != 0.0 && !isExpired)
-	{
-		self.timeApplied += timeDelta;
-		[thePlayer setStatusText:[NSString stringWithFormat:@"A Fireball will strike you in %1.2f seconds. Move!",duration - self.timeApplied]];
-		if (timeDelta >= duration){
-			//Here we do some effect, but we have to subclass Effects to decide what that is
-			
-			NSInteger movementDelta = [thePlayer position] - lastPosition;
-			if (movementDelta < 30){
-				[thePlayer setHealth:[thePlayer health] - 50];
-				AudioController *ac = [AudioController sharedInstance];
-				[ac playTitle:[audioTitles objectAtIndex:1]];
-			}
-			self.timeApplied = 0.0;
-			isExpired = YES;
-			lastPosition = [thePlayer position];
-			[thePlayer setStatusText:@""];
-			
-		}
-		
-	}
-	
-}
-
--(void)expire{
-    AudioController* ac = [AudioController sharedInstance];
-    [ac removeAudioPlayerWithTitle:@"FireballStart"];
-    [ac removeAudioPlayerWithTitle:@"FireballImpact"];	
 }
 
 @end

@@ -20,7 +20,8 @@ typedef enum {
 	EffectTypePositive,
 	EffectTypeNegative, 
     EffectTypePositiveInvisible,
-    EffectTypeNegativeInvisible
+    EffectTypeNegativeInvisible, 
+    EffectTypeDivinity
 } EffectType;
 
 typedef enum {
@@ -74,6 +75,13 @@ typedef enum {
 -(void)willChangeHealthFrom:(NSInteger*)currentHealth toNewHealth:(NSInteger*)newHealth;
 -(void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth;
 
+@end
+
+#pragma mark - Divinity Effects
+
+@interface DivinityEffect : Effect
+@property (nonatomic, retain) NSString* divinityKey;
+- (id)initWithDivinityKey:(NSString*)divinityKey;
 @end
 
 
@@ -174,6 +182,9 @@ typedef enum {
 
 @interface GripEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
 @end
+
+
+
 
 #pragma mark - DEPRECATED EFFECTS
 @interface BigFireball : Effect {

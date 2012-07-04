@@ -13,10 +13,7 @@
 
 
 /* This is the start screen. */
-@interface HealerStartScene : CCScene <GKMatchmakerViewControllerDelegate> {
-	
-}
-
+@interface HealerStartScene : CCScene <GKMatchmakerViewControllerDelegate>
 
 
 

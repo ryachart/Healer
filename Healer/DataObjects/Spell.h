@@ -14,6 +14,7 @@
 @class Player;
 @class Effect;
 @class Agent;
+@class RaidMember;
 
 @interface Spell : NSObject {
 	float castTime;
@@ -31,7 +32,7 @@
 @property (nonatomic, assign) Agent *owner;
 @property (nonatomic, readwrite) NSInteger healingAmount;
 @property NSInteger energyCost;
-@property float castTime;
+@property (nonatomic, readwrite) float castTime;
 @property (nonatomic, setter=setTargets:) NSInteger targets;
 @property (nonatomic, copy) NSArray *percentagesPerTarget;
 @property (retain, getter=description) NSString *description;
@@ -40,6 +41,7 @@
 @property (nonatomic, readwrite) float cooldownRemaining;
 @property (nonatomic, readwrite) float cooldown;
 @property (nonatomic, retain) Effect* appliedEffect;
+@property (nonatomic, readwrite) BOOL hasCheckedDivinity;
 - (NSString*)spellDescription;
 - (BOOL)isInstant;
 - (void)setTargets:(NSInteger)numOfTargets withPercentagesPerTarget:(NSArray*)percentages;
@@ -50,7 +52,10 @@
 - (void)spellInterrupted;
 - (void)applyTemporaryCooldown:(NSTimeInterval)tempCD;
 
-
+//Subclass overrides
+- (void)checkDivinity;
+- (void)willHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount;
+- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount;
 @end
 
 
@@ -68,6 +73,9 @@
 
 //SIMPLE GAME SPELLS
 @interface Heal : Spell //Basic Efficient Low throughput Heal
+@property (nonatomic, readwrite) BOOL hasHealingHands;
+@property (nonatomic, readwrite) BOOL hasBlessedPower;
+@property (nonatomic, readwrite) BOOL hasWardingTouch;
 @end
 
 @interface GreaterHeal : Spell //Simple High cost high efficiency Heal

@@ -175,7 +175,7 @@
     if (self.serverPlayerId == [GKLocalPlayer localPlayer].playerID){
         self.canAdvance = YES;
     }
-    if (self.levelNumber >= 10 && ![Divinity isDivinityUnlocked] && !self.isMultiplayer && self.isVictory){
+    if (self.levelNumber >= 6 && ![Divinity isDivinityUnlocked] && !self.isMultiplayer && self.isVictory){
         [Divinity unlockDivinity];
         [self showDivinityUnlocked];
     }

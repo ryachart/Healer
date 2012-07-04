@@ -127,8 +127,11 @@
 }
 
 - (void)onEnterTransitionDidFinish {
-    [[AudioController sharedInstance] playTitle:@"title" looping:10];
-    [super onEnterTransitionDidFinish];
+    if (![[AudioController sharedInstance] isTitlePlaying:@"title"]) {
+        [[AudioController sharedInstance] stopAll];
+        [[AudioController sharedInstance] playTitle:@"title" looping:10];
+        [super onEnterTransitionDidFinish];
+    }
 }
 
 - (void)matchmakerViewControllerWasCancelled:(GKMatchmakerViewController *)viewController {

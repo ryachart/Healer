@@ -13,6 +13,7 @@
 #import "Encounter.h"
 #import "Shop.h"
 #import "BackgroundSprite.h"
+#import "Divinity.h"
 
 #define NUM_ENCOUNTERS 13
 
@@ -104,6 +105,9 @@
         
         PreBattleScene *pbs = [[PreBattleScene alloc] initWithRaid:encounter.raid boss:encounter.boss andPlayer:basicPlayer];
         [pbs setLevelNumber:level];
+        if ([Divinity isDivinityUnlocked]){
+            [basicPlayer setDivinityConfig:[Divinity localDivinityConfig]];
+        }
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:pbs]];
         [pbs release];
 
@@ -134,6 +138,9 @@
     if (encounter.boss && basicPlayer && encounter.raid){
         
         PreBattleScene *pbs = [[PreBattleScene alloc] initWithRaid:encounter.raid boss:encounter.boss andPlayer:basicPlayer];
+        if ([Divinity isDivinityUnlocked]){
+            [basicPlayer setDivinityConfig:[Divinity localDivinityConfig]];
+        }
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:pbs]];
         [pbs release];
         

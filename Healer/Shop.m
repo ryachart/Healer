@@ -123,7 +123,7 @@ static NSArray *shopItems = nil;
     NSInteger val = -1;
     switch (numPurchased) {
         case 0:
-            val = 100;
+            val = 200;
             break;
         case 1:
             val = 1000;

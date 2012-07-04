@@ -33,5 +33,6 @@
 -(void)stopAll;
 -(void)removeAudioPlayerWithTitle:(NSString*)title;
 -(void)removeAll;
+- (BOOL)isTitlePlaying:(NSString*)title;
 
 @end

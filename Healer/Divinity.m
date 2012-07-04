@@ -82,7 +82,7 @@ static NSDictionary *divinityInfo = nil;
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-+ (void)setDivinityConfig:(NSString *)choice forTier:(NSString *)tier {
++ (void)selectChoice:(NSString*)choice forTier:(NSInteger)tier{
     NSDictionary *divinityConfig = [[NSUserDefaults standardUserDefaults] dictionaryForKey:DivinityConfig];
     
     if (!divinityConfig){
@@ -91,14 +91,40 @@ static NSDictionary *divinityInfo = nil;
     
     NSMutableDictionary *newConfig = [NSMutableDictionary dictionaryWithDictionary:divinityConfig];
     
-    [newConfig setObject:choice forKey:tier];
+    [newConfig setObject:choice forKey:[NSString stringWithFormat:@"tier-%i", tier]];
     
     [[NSUserDefaults standardUserDefaults] setObject:newConfig forKey:DivinityConfig];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-+ (NSArray*)effectsForCurrentConfiguration {
-    return nil;
++ (NSArray*)effectsForConfiguration:(NSDictionary*)configuration {
+    NSMutableArray *effects = [NSMutableArray arrayWithCapacity:5];
+    NSString *tier0choice = [configuration objectForKey:[NSString stringWithFormat:@"tier-%i", 0]];
+    if (tier0choice){
+        if ([tier0choice isEqualToString:@"Healing Hands"]){
+            DivinityEffect *divEff = [[DivinityEffect alloc] initWithDivinityKey:tier0choice];
+            [effects addObject:[divEff autorelease]];
+        }else if ([tier0choice isEqualToString:@"Blessed Power"]){
+            DivinityEffect *divEff = [[DivinityEffect alloc] initWithDivinityKey:tier0choice];
+            [effects addObject:[divEff autorelease]];
+        }else if ([tier0choice isEqualToString:@"Warding Touch"]){
+            DivinityEffect *divEff = [[DivinityEffect alloc] initWithDivinityKey:tier0choice];
+            [effects addObject:[divEff autorelease]];
+        }else {
+            NSAssert(nil, @"tier0choice not found");
+        }
+    }
+    return effects;
+}
+
++ (NSString*)selectedChoiceForTier:(NSInteger)tier {
+    NSDictionary *config =  [[NSUserDefaults standardUserDefaults] dictionaryForKey:DivinityConfig];
+    
+    return [config objectForKey:[NSString stringWithFormat:@"tier-%i", tier]];
+}
+
++ (NSDictionary*)localDivinityConfig {
+    return [[NSUserDefaults standardUserDefaults] dictionaryForKey:DivinityConfig];
 }
 
 @end

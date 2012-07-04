@@ -7,7 +7,7 @@
 	<key>blessed-power</key>
 	<string>Your Heal spell casts 10% faster.</string>
 	<key>warding-touch</key>
-	<string>Your Heal Spell leaves an effect on its target reducing damage taken by 5%.</string>
+	<string>Your Heal Spell leaves an effect on its target reducing damage taken by 5% for 15 seconds.</string>
 	<key>surging-glory</key>
 	<string>Light Eternal heals for 20% less, but costs 20% less energy and casts 10% faster.</string>
 	<key>sunlight</key>

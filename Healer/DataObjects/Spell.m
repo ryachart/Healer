@@ -19,7 +19,7 @@
 
 @implementation Spell
 
-@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData, cooldownRemaining, cooldown, spellID, appliedEffect, owner, info, tempCooldown;
+@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData, cooldownRemaining, cooldown, spellID, appliedEffect, owner, info, tempCooldown, hasCheckedDivinity;
 
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd
 {
@@ -47,6 +47,14 @@
     [appliedEffect release]; 
     [super dealloc];
     
+}
+
+- (void)willHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount{
+    //Override with a subclass
+}
+
+- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount{
+    //Override with a subclass
 }
 
 - (float)cooldown {
@@ -130,13 +138,25 @@
     }
 }
 
+- (void)checkDivinity {
+    self.hasCheckedDivinity = YES;
+}
+
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
+    if (!self.hasCheckedDivinity) {
+        [self checkDivinity];
+    }
+    
 	if ([self targets] <= 1){
         int currentTargetHealth = [thePlayer spellTarget].health;
-		[[thePlayer spellTarget] setHealth:[[thePlayer spellTarget] health] + [self healingAmount]];
+        NSInteger amount = [self healingAmount];
+        [self willHealTarget:[thePlayer spellTarget] inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:amount];
+		[[thePlayer spellTarget] setHealth:[[thePlayer spellTarget] health] + amount];
         int newHealth = [thePlayer spellTarget].health;
-        [thePlayer.logger logEvent:[CombatEvent eventWithSource:self.owner target:[thePlayer spellTarget] value:[NSNumber numberWithInt:newHealth - currentTargetHealth] andEventType:CombatEventTypeHeal]]; 
+        NSInteger finalAmount = newHealth - currentTargetHealth;
+        [self didHealTarget:[thePlayer spellTarget] inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
+        [thePlayer.logger logEvent:[CombatEvent eventWithSource:self.owner target:[thePlayer spellTarget] value:[NSNumber numberWithInt:finalAmount] andEventType:CombatEventTypeHeal]]; 
 		[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
         [self applyEffectToTarget:thePlayer.spellTarget];
 	}
@@ -149,9 +169,13 @@
 			else{
 				double PercentageThisTarget = [[[self percentagesPerTarget] objectAtIndex:i] doubleValue];
                 int currentTargetHealth = currentTarget.health;
-				[currentTarget setHealth:[[thePlayer spellTarget] health] + ([self healingAmount]*PercentageThisTarget)];
+                NSInteger amount = ([self healingAmount]*PercentageThisTarget);
+                [self willHealTarget:currentTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:amount];
+				[currentTarget setHealth:[[thePlayer spellTarget] health] + amount];
                 int newTargetHealth = currentTarget.health;
-                [thePlayer.logger logEvent:[CombatEvent eventWithSource:self.owner target:currentTarget value:[NSNumber numberWithInt:newTargetHealth - currentTargetHealth] andEventType:CombatEventTypeHeal]]; 
+                NSInteger finalAmount = newTargetHealth - currentTargetHealth;
+                [self didHealTarget:currentTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
+                [thePlayer.logger logEvent:[CombatEvent eventWithSource:self.owner target:currentTarget value:[NSNumber numberWithInt:finalAmount] andEventType:CombatEventTypeHeal]]; 
                 [self applyEffectToTarget:currentTarget];
 			}
 			
@@ -203,6 +227,7 @@
 
 #pragma mark - Simple Game Spells
 @implementation Heal
+@synthesize hasBlessedPower, hasWardingTouch, hasHealingHands;
 +(id)defaultSpell{
     Heal *heal = [[Heal alloc] initWithTitle:@"Heal" healAmnt:35 energyCost:22 castTime:1.75 andCooldown:0.0];
     [heal setDescription:@"Heals your target for a small amount."];
@@ -210,6 +235,55 @@
 	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
 	[[heal spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
     return [heal autorelease];
+}
+
+- (void)checkDivinity {
+    Player *owningPlayer = (Player*)self.owner;
+    if (owningPlayer.divinityConfig){
+        for (Effect *eff in owningPlayer.activeEffects){
+            if (eff.effectType == EffectTypeDivinity){
+                if ([[(DivinityEffect*)eff divinityKey] isEqualToString:@"Blessed Power"]){
+                    self.hasBlessedPower = YES;
+                    break;
+                } else if ([[(DivinityEffect*)eff divinityKey] isEqualToString:@"Healing Hands"]){
+                    self.hasHealingHands = YES;
+                    break;
+                } else if ([[(DivinityEffect*)eff divinityKey] isEqualToString:@"Warding Touch"]){
+                    self.hasWardingTouch = YES;
+                }
+            }
+        }
+    } else {
+        NSLog(@"Owning Player does not have a divinity config");
+    }
+    [super checkDivinity];
+}
+
+- (float)castTime {
+    float mod = 1.0;
+    if (self.hasBlessedPower){
+        mod = .9;
+    }
+    return castTime * mod;
+}
+
+- (void)didHealTarget:(RaidMember *)target inRaid:(Raid *)raid withBoss:(Boss *)boss andPlayers:(NSArray *)players forAmount:(NSInteger)amount {
+    if (self.hasHealingHands) {
+        if (arc4random() % 100 < 10){
+            NSInteger critBonus = (int)round(amount * .5);
+            [target setHealth:target.health + critBonus]; //A Crit!
+            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:critBonus] andEventType:CombatEventTypeHeal]]; 
+        }
+    }
+    
+    if (self.hasWardingTouch){
+        DamageTakenDecreasedEffect *reduceDamage = [[DamageTakenDecreasedEffect alloc] initWithDuration:15 andEffectType:EffectTypeNegativeInvisible];
+        [reduceDamage setTitle:@"heal-div-wardingtouch"];
+        [reduceDamage setOwner:self.owner];
+        [reduceDamage setPercentage:.05];
+        [target addEffect:reduceDamage];
+        [reduceDamage release];
+    }
 }
 
 @end

@@ -10,8 +10,5 @@
 #import "GameObjects.h"
 #import "GamePlayScene.h"
 
-@interface QuickPlayScene : CCScene    {
-
-}
-
+@interface QuickPlayScene : CCScene 
 @end

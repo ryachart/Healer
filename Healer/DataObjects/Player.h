@@ -62,6 +62,7 @@ typedef int CastingDisabledReason;
 @property (nonatomic, retain) NSArray *activeSpells;
 @property (nonatomic, retain) id<Announcer> announcer;
 @property (nonatomic, readonly)  NSMutableSet *spellsOnCooldown;
+@property (nonatomic, retain) NSDictionary *divinityConfig;
 @property (retain) Spell *spellBeingCast;
 @property (nonatomic, setter=setEnergy:) NSInteger energy;
 @property (retain) NSArray* additionalTargets;

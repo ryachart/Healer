@@ -51,6 +51,10 @@ static AudioController* sharedController = nil;
 	
 }
 
+- (BOOL)isTitlePlaying:(NSString*)title {
+    return [[audioPlayers objectForKey:title] isPlaying];
+}
+
 -(void)addNewPlayerWithTitle:(NSString*)title andURL:(NSURL*)url
 {
 	NSError *err = nil;

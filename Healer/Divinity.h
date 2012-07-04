@@ -8,13 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString* const DivinityTier1Key;
-extern NSString* const DivinityTier2Key;
-extern NSString* const DivinityTier3Key;
-extern NSString* const DivinityTier4Key;
-extern NSString* const DivinityTier5Key;
-
-
 @interface Divinity : NSObject
 
 + (NSArray*)divinityChoicesForTier:(NSInteger)tier;
@@ -23,7 +16,11 @@ extern NSString* const DivinityTier5Key;
 + (BOOL)isDivinityUnlocked;
 + (void)unlockDivinity;
 
-+ (void)setDivinityConfig:(NSString*)choice forTier:(NSString*)tier;
-+ (NSArray*)effectsForCurrentConfiguration;
++ (void)selectChoice:(NSString*)choice forTier:(NSInteger)tier;
++ (NSString*)selectedChoiceForTier:(NSInteger)tier;
+
++ (NSArray*)effectsForConfiguration:(NSDictionary*)configuration;
+
++ (NSDictionary*)localDivinityConfig;
 
 @end

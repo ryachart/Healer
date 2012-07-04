@@ -1844,7 +1844,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Alexei Gousev (557BVTLW6Y)";
-				COPY_PHASE_STRIP = NO;
+				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Healer/Prefix.pch;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";

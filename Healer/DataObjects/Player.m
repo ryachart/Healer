@@ -10,11 +10,13 @@
 #import "GameObjects.h"
 #import "AudioController.h"
 #import <GameKit/GameKit.h>
+#import "Divinity.h"
 
 @implementation Player
 
 @synthesize activeSpells, spellBeingCast, energy, maximumEnergy, spellTarget, additionalTargets, statusText;
 @synthesize position, logger, spellsOnCooldown=_spellsOnCooldown, announcer, playerID, isAudible;
+@synthesize divinityConfig;
 
 -(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen
 {
@@ -42,6 +44,26 @@
         
     }
 	return self;
+}
+
+- (void)setDivinityConfig:(NSDictionary *)divCnfg {
+    [divinityConfig release];
+    divinityConfig = [divCnfg retain];
+    
+    NSMutableArray *divinityEffectsToRemove = [NSMutableArray arrayWithCapacity:5];
+    for (Effect *effect in self.activeEffects){
+        if (effect.effectType == EffectTypeDivinity){
+            [divinityEffectsToRemove addObject:effect];
+        }
+    }
+    for (Effect* effect in divinityEffectsToRemove){
+        [self.activeEffects removeObject:effect];
+    }
+    NSArray *newDivinityEffects = [Divinity effectsForConfiguration:divinityConfig];
+    for (Effect *effect in newDivinityEffects){
+        [self addEffect:effect];
+    }
+    
 }
 
 - (void)setActiveSpells:(NSArray *)actSpells{
@@ -82,6 +104,7 @@
     [playerID release];
     [_spellsOnCooldown release]; _spellsOnCooldown = nil;
     [additionalTargets release]; additionalTargets = nil;
+    [divinityConfig release];
     [super dealloc];
 }
 
@@ -133,16 +156,6 @@
     }
     
     [self updateEffects:theBoss raid:theRaid player:self time:timeDelta];
-	
-//	for (int i = 0; i < [activeEffects count]; i++){
-//		Effect *effect = [activeEffects objectAtIndex:i];
-//		[effect combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:timeDelta];
-//		if ([effect isExpired]){
-//			[effect expire];
-//            [self.healthAdjustmentModifiers removeObject:effect];
-//			[activeEffects removeObjectAtIndex:i];
-//		}
-//	}
     
     NSMutableArray *spellsOffCooldown = [NSMutableArray  arrayWithCapacity:4];
     for (Spell *spell in [self spellsOnCooldown]){

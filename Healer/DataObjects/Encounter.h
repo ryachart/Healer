@@ -10,8 +10,7 @@
 
 @class Raid;
 @class Boss;
-@interface Encounter : NSObject {
-}
+@interface Encounter : NSObject
 @property (nonatomic, retain) Raid *raid;
 @property (nonatomic, retain) Boss *boss;
 @property (nonatomic, retain) NSArray *requiredSpells;

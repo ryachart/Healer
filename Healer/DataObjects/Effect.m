@@ -73,10 +73,10 @@
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
     [self solveOwnershipResolutionForBoss:theBoss andRaid:theRaid andPlayer:thePlayer];
-	if (!isExpired)
+	if (!isExpired && duration != -1)
 	{
         self.timeApplied += timeDelta;
-		if (self.timeApplied >= duration){
+		if (self.timeApplied >= duration ){
 			//Here we do some effect, but we have to subclass Effects to decide what that is
 			//The one thing we always do here is expire the effect
 			self.timeApplied = 0.0;
@@ -127,6 +127,25 @@
 }
 @end
 
+#pragma mark - Divinity Effects
+
+@implementation DivinityEffect
+@synthesize divinityKey;
+- (void)dealloc {
+    [divinityKey release];
+    [super dealloc];
+}
+- (id)initWithDivinityKey:(NSString *)divKey {
+    if (self=[super initWithDuration:-1 andEffectType:EffectTypeDivinity]){
+        self.divinityKey = divKey;
+        self.title = divKey;
+    }
+    return self;
+}
+
+@end
+
+#pragma mark - Shipping Spell Effects
 @implementation RepeatedHealthEffect
 
 @synthesize numOfTicks, valuePerTick,numHasTicked;
@@ -146,7 +165,7 @@
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
     [self solveOwnershipResolutionForBoss:theBoss andRaid:theRaid andPlayer:thePlayer];
-	if (!isExpired)
+	if (!isExpired && duration != -1)
 	{
         self.timeApplied += timeDelta;
 		lastTick += timeDelta;

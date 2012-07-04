@@ -26,7 +26,7 @@
 }
 @property (nonatomic, readwrite) BOOL isMultiplayer;
 @property (nonatomic, retain) NSString * info;
-@property (nonatomic, retain) id <Announcer> announcer;
+@property (nonatomic, assign) id <Announcer> announcer;
 @property (nonatomic, readwrite) float criticalChance;
 @property (nonatomic, retain) NSString* title;
 @property (nonatomic, assign) id<EventLogger> logger;

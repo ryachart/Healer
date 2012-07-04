@@ -86,6 +86,7 @@
 }
 - (void)dealloc {
     [spellData release];
+
     [spellTitle release];
     [super dealloc];
 }

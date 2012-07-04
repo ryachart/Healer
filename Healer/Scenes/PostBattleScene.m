@@ -74,10 +74,7 @@
             [self addChild:goldEarned];
             
             if (!self.isMultiplayer){
-                CCMenuItemLabel *visitShopButton = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Visit Shop" fontName:@"Arial" fontSize:32.0] block:^(id sender){
-                    [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInR transitionWithDuration:.5 scene:[[StoreScene new] autorelease]]];
-                }];
-                
+                CCMenuItemLabel *visitShopButton = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Visit Shop" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(goToStore)];                
                 [visitShopButton.label setColor:ccBLUE];
                 CCMenu *visitStoreMenu = [CCMenu menuWithItems:visitShopButton, nil];
                 [visitStoreMenu setPosition:CGPointMake(770, 90)];
@@ -233,8 +230,12 @@
     
 }
                                                                     
-- (void)goToDivinity{
+- (void)goToDivinity {
     [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
+}
+
+- (void)goToStore {
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInR transitionWithDuration:.5 scene:[[StoreScene new] autorelease]]];
 }
 
 #pragma mark - GKMatchDelegate

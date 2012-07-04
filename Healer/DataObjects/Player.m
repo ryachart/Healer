@@ -98,7 +98,6 @@
 
 -(void)dealloc{
     [activeSpells release];
-    [announcer release];
     [spellBeingCast release];
     [statusText release];
     [playerID release];

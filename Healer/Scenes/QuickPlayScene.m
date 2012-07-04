@@ -18,7 +18,7 @@
 #define NUM_ENCOUNTERS 13
 
 @interface QuickPlayScene ()
-@property (retain) CCMenu *menu;
+@property (assign) CCMenu *menu;
 
 - (void)beginGameWithSelectedLevel:(id)sender;
 - (void)back;
@@ -95,7 +95,7 @@
     for (Spell *spell in [Shop allOwnedSpells]){
         if (activeSpells.count < 4){
             if (![activeSpells containsObject:spell]){
-                [activeSpells addObject:spell];
+                [activeSpells addObject:[[spell class] defaultSpell]];
             }
         }
     }
@@ -152,12 +152,6 @@
 -(void)back
 {
     [[CCDirector sharedDirector] replaceScene:[[[HealerStartScene alloc] init] autorelease]];
-}
-
-
-- (void)dealloc {
-    [menu release];
-    [super dealloc];
 }
 
 

@@ -24,7 +24,6 @@
 -(void)dealloc{
     [abilities release];
     [info release];
-    [announcer release];
     [title release];
     [queuedAbilitiesToAdd release];
     [super dealloc];

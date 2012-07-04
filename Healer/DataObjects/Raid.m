@@ -88,6 +88,9 @@
 }
 
 -(RaidMember*)lowestHealthRaidMemberSet:(NSArray*)raid{
+    if (raid.count == 0){
+        return nil;
+    }
     float lowestHealth = [(RaidMember*)[raid objectAtIndex:0] healthPercentage];
     RaidMember *candidate = [raid objectAtIndex:0];
     for (RaidMember *member in raid){
@@ -114,8 +117,10 @@
     }
     for (int i = 0; i < possibleTargets; i++){
         RaidMember *lowestHealthTarget = [self lowestHealthRaidMemberSet:candidates];
-        [finalTargets addObject:lowestHealthTarget];
-        [candidates removeObject:lowestHealthTarget];
+        if (lowestHealthTarget){
+            [finalTargets addObject:lowestHealthTarget];
+            [candidates removeObject:lowestHealthTarget];
+        }
     }
     
     if (reqTarget){

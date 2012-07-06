@@ -10,6 +10,8 @@
 #import	"AudioController.h"
 #import "CombatEvent.h"
 #import "Agent.h"
+#import "Announcer.h"
+#import "Player.h"
 
 @interface Spell ()
 @property (nonatomic, retain) NSString *title;
@@ -62,6 +64,15 @@
         return self.tempCooldown;
     }
     return cooldown;
+}
+
+- (float)castTime {
+    if (!self.owner){
+        return castTime;
+    }
+    Player *owningPlayer = (Player*)self.owner;
+    float finalCastTime = castTime * owningPlayer.castTimeAdjustment;
+    return finalCastTime;
 }
 
 - (void)applyTemporaryCooldown:(NSTimeInterval)tempCD {
@@ -259,14 +270,6 @@
     [super checkDivinity];
 }
 
-- (float)castTime {
-    float mod = 1.0;
-    if (self.hasBlessedPower){
-        mod = .9;
-    }
-    return castTime * mod;
-}
-
 - (void)didHealTarget:(RaidMember *)target inRaid:(Raid *)raid withBoss:(Boss *)boss andPlayers:(NSArray *)players forAmount:(NSInteger)amount {
     if (self.hasHealingHands) {
         if (arc4random() % 100 < 10){
@@ -283,6 +286,19 @@
         [reduceDamage setPercentage:.05];
         [target addEffect:reduceDamage];
         [reduceDamage release];
+    }
+    
+    if (self.hasBlessedPower) {
+        if (arc4random() % 100 < 10){
+            [[(Player*)self.owner announcer] announce:@"Your mind is filled with power."];
+            Effect *castTimeReduction = [[Effect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
+            [castTimeReduction setTitle:@"blessed-power-haste"];
+            [castTimeReduction setOwner:self.owner];
+            [castTimeReduction setSpriteName:@"default_divinity.png"];
+            [castTimeReduction setCastTimeAdjustment:.25];
+            [(Player*)self.owner addEffect:castTimeReduction];
+            [castTimeReduction release];
+        }
     }
 }
 

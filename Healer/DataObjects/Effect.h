@@ -49,6 +49,7 @@ typedef enum {
 @property (readonly) BOOL shouldFail;
 @property (readwrite) float healingDoneMultiplierAdjustment;
 @property (readwrite) float damageDoneMultiplierAdjustment;
+@property (nonatomic, readwrite) float castTimeAdjustment;
 
 -(void)reset;
 
@@ -83,7 +84,6 @@ typedef enum {
 @property (nonatomic, retain) NSString* divinityKey;
 - (id)initWithDivinityKey:(NSString*)divinityKey;
 @end
-
 
 #pragma mark - Shipping Spell Effects
 @interface RepeatedHealthEffect : Effect

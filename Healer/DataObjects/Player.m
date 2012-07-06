@@ -17,6 +17,7 @@
 @synthesize activeSpells, spellBeingCast, energy, maximumEnergy, spellTarget, additionalTargets, statusText;
 @synthesize position, logger, spellsOnCooldown=_spellsOnCooldown, announcer, playerID, isAudible;
 @synthesize divinityConfig;
+@synthesize castTimeAdjustment;
 
 -(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen
 {
@@ -35,6 +36,7 @@
         position = 0;
         maxChannelTime = 5;
         castStart = 0.0f;
+        self.castTimeAdjustment = 1.0;
         
         _spellsOnCooldown = [[NSMutableSet setWithCapacity:4] retain];
         
@@ -44,6 +46,17 @@
         
     }
 	return self;
+}
+
+- (void)cacheCastTimeAdjustment {
+    float adjustment = 1.0;
+    
+    for (Effect *effect in self.activeEffects) {
+        adjustment -= effect.castTimeAdjustment;
+    }
+    
+    adjustment = MAX(adjustment, .5);
+    self.castTimeAdjustment = adjustment;
 }
 
 - (void)setDivinityConfig:(NSDictionary *)divCnfg {
@@ -63,7 +76,18 @@
     for (Effect *effect in newDivinityEffects){
         [self addEffect:effect];
     }
+    [self cacheCastTimeAdjustment];
     
+}
+
+- (void)addEffect:(Effect *)theEffect {
+    [super addEffect:theEffect];
+    [self cacheCastTimeAdjustment];
+}
+
+- (void)removeEffect:(Effect *)theEffect {
+    [super removeEffect:theEffect];
+    [self cacheCastTimeAdjustment];
 }
 
 - (void)setActiveSpells:(NSArray *)actSpells{
@@ -122,6 +146,7 @@
         [self.healthAdjustmentModifiers removeObject:effect];
         [activeEffects removeObject:effect];
     }
+    [self cacheCastTimeAdjustment];
 }
 
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid gameTime:(float)timeDelta

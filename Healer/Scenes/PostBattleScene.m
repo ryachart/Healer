@@ -185,7 +185,7 @@
             
             if (totalHealingDone >= (totalDamageTaken * .33)){
                 partialProgressReward = (fightDuration / 60.0 * (encounterRewardForSuccess * .05));
-                partialProgressReward =  MAX(partialProgressReward, encounterRewardForSuccess * .5);
+                partialProgressReward =  MIN(partialProgressReward, encounterRewardForSuccess * .5);
             }
             reward = partialProgressReward;
         }

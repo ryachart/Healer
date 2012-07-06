@@ -70,6 +70,7 @@ typedef int CastingDisabledReason;
 @property (nonatomic, retain) NSString *statusText;
 @property NSInteger position;
 @property NSInteger maximumEnergy;
+@property (nonatomic, readwrite) float castTimeAdjustment;
 
 - (id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen;
 

@@ -74,6 +74,7 @@
             Player *iPlayer = [self.players objectAtIndex:i];
             [iPlayer setLogger:self];
             [iPlayer setAnnouncer:self];
+            [iPlayer initializeForCombat];
         }
     }
     return self;
@@ -96,6 +97,7 @@
         self.player = playerToUse;
         [self.player setLogger:self];
         [self.player setAnnouncer:self];
+        [self.player initializeForCombat];
         
         self.players = [NSArray arrayWithObject:self.player];
 

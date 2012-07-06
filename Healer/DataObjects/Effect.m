@@ -192,10 +192,18 @@
         if (self.shouldFail){
             
         }else{
-            CombatEventType eventType = self.valuePerTick > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
-            float modifier = self.valuePerTick > 0 ? self.owner.healingDoneMultiplier : self.owner.damageDoneMultiplier;
-            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:valuePerTick] andEventType:eventType]];
-            [self.target setHealth:[self.target health] + FUZZ(self.valuePerTick, 15.0) * modifier];
+            NSInteger amount = FUZZ(self.valuePerTick, 15.0);
+            CombatEventType eventType = amount > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
+            float modifier = amount > 0 ? self.owner.healingDoneMultiplier : self.owner.damageDoneMultiplier;
+            NSInteger preHealth = self.target.health;
+            [self.target setHealth:[self.target health] + amount * modifier];
+            NSInteger finalAmount = self.target.health - preHealth;
+            if ([self.owner isKindOfClass:[Player class]]){
+                [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self];
+            }else {
+                //This is boss damage in the form of dots
+                [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:amount] andEventType:eventType]];
+            }
         }
     }
 }
@@ -314,8 +322,14 @@
             }
             CombatEventType eventType = self.value > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
             float modifier = self.value > 0 ? self.owner.healingDoneMultiplier : self.owner.damageDoneMultiplier;
+            NSInteger preHealth = self.target.health;
             [self.target setHealth:self.target.health + (self.value * modifier)];
-            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]];
+            NSInteger finalAmount = self.target.health - preHealth;
+            if ([self.owner isKindOfClass:[Player class]]){
+                [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self];
+            }else {
+                [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]];
+            }
         }
     }
     [super expire];
@@ -331,8 +345,10 @@
             similarEffectCount++;
         }
     }
-    
+    NSInteger preHealth = self.target.health;
     [self.target setHealth:self.target.health + (int)round((self.owner.healingDoneMultiplier * self.valuePerTick * (similarEffectCount * .25)))];
+    NSInteger finalAmount = self.target.health - preHealth;
+    [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self];
 }
 @end
 
@@ -430,7 +446,7 @@
     RepeatedHealthEffect *burnDoT = [[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative];
     [burnDoT setOwner:self.owner];
     [burnDoT setTitle:@"imp-burn-dot"];
-    [burnDoT setSpriteName:@"poison.png"];
+    [burnDoT setSpriteName:@"burning.png"];
     [burnDoT setValuePerTick:-20];
     [burnDoT setNumOfTicks:4];
     [self.target addEffect:burnDoT];

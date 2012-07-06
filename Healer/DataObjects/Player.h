@@ -31,6 +31,7 @@ typedef int CastingDisabledReason;
 @class Raid;
 @class Spell;
 @class RaidMember;
+@class Effect;
 
 @interface Player : HealableTarget {
 	//In Game Data
@@ -94,11 +95,14 @@ typedef int CastingDisabledReason;
 - (BOOL)isDead;
 - (void)setEnergy:(NSInteger)newEnergy;
 
+- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell;
+- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect;
 
 - (NSString*)initialStateMessage; //For notifying servers what our player state looks like
 - (NSString*)asNetworkMessage;
 - (void)updateWithNetworkMessage:(NSString*)message;
 
+- (BOOL)hasDivinityEffectWithTitle:(NSString*)title;
 //Multiplayer
 @property (nonatomic, retain) NSString* playerID;
 @property (nonatomic, readwrite) BOOL isAudible; //Turn off other sounds;

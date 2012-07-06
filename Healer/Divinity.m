@@ -99,19 +99,11 @@ static NSDictionary *divinityInfo = nil;
 
 + (NSArray*)effectsForConfiguration:(NSDictionary*)configuration {
     NSMutableArray *effects = [NSMutableArray arrayWithCapacity:5];
-    NSString *tier0choice = [configuration objectForKey:[NSString stringWithFormat:@"tier-%i", 0]];
-    if (tier0choice){
-        if ([tier0choice isEqualToString:@"Healing Hands"]){
-            DivinityEffect *divEff = [[DivinityEffect alloc] initWithDivinityKey:tier0choice];
+    for (int i = 0; i < 5; i++){
+        NSString *tierChoice = [configuration objectForKey:[NSString stringWithFormat:@"tier-%i", i]];
+        if (tierChoice){
+            DivinityEffect *divEff = [[DivinityEffect alloc] initWithDivinityKey:tierChoice];
             [effects addObject:[divEff autorelease]];
-        }else if ([tier0choice isEqualToString:@"Blessed Power"]){
-            DivinityEffect *divEff = [[DivinityEffect alloc] initWithDivinityKey:tier0choice];
-            [effects addObject:[divEff autorelease]];
-        }else if ([tier0choice isEqualToString:@"Warding Touch"]){
-            DivinityEffect *divEff = [[DivinityEffect alloc] initWithDivinityKey:tier0choice];
-            [effects addObject:[divEff autorelease]];
-        }else {
-            NSAssert(nil, @"tier0choice not found");
         }
     }
     return effects;

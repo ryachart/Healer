@@ -10,6 +10,10 @@
 @implementation Agent
 @synthesize logger;
 
+- (void)initializeForCombat {
+    
+}
+
 -(float)healingDoneMultiplier{
     return 1.0;
 }

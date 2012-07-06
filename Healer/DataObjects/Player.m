@@ -11,6 +11,7 @@
 #import "AudioController.h"
 #import <GameKit/GameKit.h>
 #import "Divinity.h"
+#import "CombatEvent.h"
 
 @implementation Player
 
@@ -48,6 +49,12 @@
 	return self;
 }
 
+- (void)initializeForCombat {
+    for (Spell *spell in self.activeSpells) {
+        [spell checkDivinity];
+    }
+}
+
 - (void)cacheCastTimeAdjustment {
     float adjustment = 1.0;
     
@@ -78,6 +85,19 @@
     }
     [self cacheCastTimeAdjustment];
     
+}
+
+- (BOOL)hasDivinityEffectWithTitle:(NSString*)title {
+    if (self.divinityConfig){
+        for (Effect *eff in self.activeEffects){
+            if (eff.effectType == EffectTypeDivinity){
+                if ([[(DivinityEffect*)eff divinityKey] isEqualToString:title]){
+                    return YES;
+                }
+            }
+        }
+    }
+    return NO;
 }
 
 - (void)addEffect:(Effect *)theEffect {
@@ -330,5 +350,18 @@
 
 -(BOOL)isDead{
 	return health <= 0;
+}
+
+- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell {
+    if (amount > 0){
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:amount] andEventType:CombatEventTypeHeal]]; 
+    }
+}
+
+- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect {
+    if (amount > 0){
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:amount] andEventType:CombatEventTypeHeal]]; 
+    }
+
 }
 @end

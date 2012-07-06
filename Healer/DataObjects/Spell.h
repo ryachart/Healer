@@ -29,7 +29,7 @@
 +(id)defaultSpell;
 @property (nonatomic, readonly, retain) NSString *title;
 @property (nonatomic, readonly, retain) NSString* spellID;
-@property (nonatomic, assign) Agent *owner;
+@property (nonatomic, assign) Player *owner;
 @property (nonatomic, readwrite) NSInteger healingAmount;
 @property NSInteger energyCost;
 @property (nonatomic, readwrite) float castTime;
@@ -41,7 +41,6 @@
 @property (nonatomic, readwrite) float cooldownRemaining;
 @property (nonatomic, readwrite) float cooldown;
 @property (nonatomic, retain) Effect* appliedEffect;
-@property (nonatomic, readwrite) BOOL hasCheckedDivinity;
 - (NSString*)spellDescription;
 - (BOOL)isInstant;
 - (void)setTargets:(NSInteger)numOfTargets withPercentagesPerTarget:(NSArray*)percentages;
@@ -51,6 +50,7 @@
 - (void)spellEndedCasting;
 - (void)spellInterrupted;
 - (void)applyTemporaryCooldown:(NSTimeInterval)tempCD;
+
 
 //Subclass overrides
 - (void)checkDivinity;
@@ -82,9 +82,11 @@
 @end
 
 @interface ForkedHeal : Spell //Two target heal with good efficiency
+@property (nonatomic, readwrite) BOOL hasAfterLight;
 @end
 
 @interface Regrow : Spell //Instant cast 12 second HoT
+@property (nonatomic, readwrite) BOOL hasSunlight;
 @end
 
 @interface Barrier : Spell //Fast cast expensive Absorb
@@ -103,6 +105,7 @@
 @end
 
 @interface LightEternal : Spell //Prayer of Smart Healing
+@property (nonatomic, readwrite) BOOL hasSurgingGlory;
 @end
 
 @interface WanderingSpirit : Spell //Prayer of Auto-Mending

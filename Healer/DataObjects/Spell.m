@@ -21,7 +21,7 @@
 
 @implementation Spell
 
-@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData, cooldownRemaining, cooldown, spellID, appliedEffect, owner, info, tempCooldown, hasCheckedDivinity;
+@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData, cooldownRemaining, cooldown, spellID, appliedEffect, owner, info, tempCooldown;
 
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd
 {
@@ -70,8 +70,7 @@
     if (!self.owner){
         return castTime;
     }
-    Player *owningPlayer = (Player*)self.owner;
-    float finalCastTime = castTime * owningPlayer.castTimeAdjustment;
+    float finalCastTime = castTime * self.owner.castTimeAdjustment;
     return finalCastTime;
 }
 
@@ -150,14 +149,11 @@
 }
 
 - (void)checkDivinity {
-    self.hasCheckedDivinity = YES;
+    //For subclass overrides
 }
 
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
-    if (!self.hasCheckedDivinity) {
-        [self checkDivinity];
-    }
     
 	if ([self targets] <= 1){
         int currentTargetHealth = [thePlayer spellTarget].health;
@@ -167,7 +163,7 @@
         int newHealth = [thePlayer spellTarget].health;
         NSInteger finalAmount = newHealth - currentTargetHealth;
         [self didHealTarget:[thePlayer spellTarget] inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
-        [thePlayer.logger logEvent:[CombatEvent eventWithSource:self.owner target:[thePlayer spellTarget] value:[NSNumber numberWithInt:finalAmount] andEventType:CombatEventTypeHeal]]; 
+        [self.owner playerDidHealFor:finalAmount onTarget:thePlayer.spellTarget fromSpell:self];
 		[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
         [self applyEffectToTarget:thePlayer.spellTarget];
 	}
@@ -186,7 +182,7 @@
                 int newTargetHealth = currentTarget.health;
                 NSInteger finalAmount = newTargetHealth - currentTargetHealth;
                 [self didHealTarget:currentTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
-                [thePlayer.logger logEvent:[CombatEvent eventWithSource:self.owner target:currentTarget value:[NSNumber numberWithInt:finalAmount] andEventType:CombatEventTypeHeal]]; 
+                [self.owner playerDidHealFor:finalAmount onTarget:currentTarget fromSpell:self];
                 [self applyEffectToTarget:currentTarget];
 			}
 			
@@ -249,25 +245,9 @@
 }
 
 - (void)checkDivinity {
-    Player *owningPlayer = (Player*)self.owner;
-    if (owningPlayer.divinityConfig){
-        for (Effect *eff in owningPlayer.activeEffects){
-            if (eff.effectType == EffectTypeDivinity){
-                if ([[(DivinityEffect*)eff divinityKey] isEqualToString:@"Blessed Power"]){
-                    self.hasBlessedPower = YES;
-                    break;
-                } else if ([[(DivinityEffect*)eff divinityKey] isEqualToString:@"Healing Hands"]){
-                    self.hasHealingHands = YES;
-                    break;
-                } else if ([[(DivinityEffect*)eff divinityKey] isEqualToString:@"Warding Touch"]){
-                    self.hasWardingTouch = YES;
-                }
-            }
-        }
-    } else {
-        NSLog(@"Owning Player does not have a divinity config");
-    }
-    [super checkDivinity];
+    self.hasBlessedPower = [self.owner hasDivinityEffectWithTitle:@"Blessed Power"];
+    self.hasHealingHands = [self.owner hasDivinityEffectWithTitle:@"Healing Hands"];
+    self.hasWardingTouch = [self.owner hasDivinityEffectWithTitle:@"Warding Touch"];
 }
 
 - (void)didHealTarget:(RaidMember *)target inRaid:(Raid *)raid withBoss:(Boss *)boss andPlayers:(NSArray *)players forAmount:(NSInteger)amount {
@@ -275,7 +255,7 @@
         if (arc4random() % 100 < 10){
             NSInteger critBonus = (int)round(amount * .5);
             [target setHealth:target.health + critBonus]; //A Crit!
-            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:critBonus] andEventType:CombatEventTypeHeal]]; 
+            [self.owner playerDidHealFor:critBonus onTarget:target fromSpell:self];
         }
     }
     
@@ -290,7 +270,7 @@
     
     if (self.hasBlessedPower) {
         if (arc4random() % 100 < 10){
-            [[(Player*)self.owner announcer] announce:@"Your mind is filled with power."];
+            [[self.owner announcer] announce:@"Your mind is filled with power."];
             Effect *castTimeReduction = [[Effect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
             [castTimeReduction setTitle:@"blessed-power-haste"];
             [castTimeReduction setOwner:self.owner];
@@ -327,6 +307,7 @@
 @end
 
 @implementation ForkedHeal
+@synthesize hasAfterLight;
 +(id)defaultSpell
 {
 	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:55 energyCost:100 castTime:1.75 andCooldown:0.0];//10h/e
@@ -337,17 +318,26 @@
 	return [forkedHeal autorelease];
 }
 
+- (void)checkDivinity {
+    self.hasAfterLight = [self.owner hasDivinityEffectWithTitle:@"After Light"];
+}
+
 -(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
     NSArray *myTargets = [theRaid lowestHealthTargets:2 withRequiredTarget:thePlayer.spellTarget];
     
     int i = 0; 
     for (RaidMember *healableTarget in myTargets){
-        if (i == 0){
-            [healableTarget setHealth:healableTarget.health + self.healingAmount];
-        }else{
-            [healableTarget setHealth:healableTarget.health + (int)round(self.healingAmount * .66)];
+        int currentTargetHealth = healableTarget.health;
+        NSInteger amount = [self healingAmount];
+        if (i != 0) {
+            amount *= .66;
         }
-        i++;
+        [self willHealTarget:healableTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:amount];
+		[healableTarget setHealth:[healableTarget health] + amount];
+        int newHealth = healableTarget.health;
+        NSInteger finalAmount = newHealth - currentTargetHealth;
+        [self didHealTarget:healableTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
+        [self.owner playerDidHealFor:finalAmount onTarget:healableTarget fromSpell:self];
     }
     
     [thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
@@ -358,9 +348,27 @@
         self.cooldownRemaining = self.cooldown;
     }
 }
+
+- (void)didHealTarget:(RaidMember *)target inRaid:(Raid *)raid withBoss:(Boss *)boss andPlayers:(NSArray *)players forAmount:(NSInteger)amount {
+    if (self.hasAfterLight) {
+        RepeatedHealthEffect *afterLightEffect = [[RepeatedHealthEffect alloc] initWithDuration:8.0 andEffectType:EffectTypePositiveInvisible];
+        [afterLightEffect setNumOfTicks:8];
+        [afterLightEffect setValuePerTick:(int)round(.1*amount/8.0)];
+        [afterLightEffect setTitle:@"after-light-effect"];
+        [afterLightEffect setOwner:self.owner];
+        [target addEffect:afterLightEffect];
+        [afterLightEffect release];
+    }
+    
+}
 @end
 
 @implementation Regrow
+@synthesize hasSunlight;
+- (void)checkDivinity {
+    self.hasSunlight = [self.owner hasDivinityEffectWithTitle:@"Sunlight"];
+}
+
 +(id)defaultSpell{
     Regrow *regrow = [[Regrow alloc] initWithTitle:@"Regrow" healAmnt:0 energyCost:90 castTime:0.0 andCooldown:1.0];
     [regrow setDescription:@"Heals for a large amount over 12 seconds."];
@@ -376,6 +384,17 @@
     return [regrow autorelease];
 }
 
+- (void)didHealTarget:(RaidMember *)target inRaid:(Raid *)raid withBoss:(Boss *)boss andPlayers:(NSArray *)players forAmount:(NSInteger)amount {
+    if (self.hasSunlight) {
+        DamageTakenDecreasedEffect *damageReduction = [[DamageTakenDecreasedEffect alloc] initWithDuration:self.appliedEffect.duration andEffectType:EffectTypePositiveInvisible];
+        [damageReduction setPercentage:.05];
+        [damageReduction setTitle:@"regrow-sunlight-dr"];
+        [damageReduction setOwner:self.owner];
+        [target addEffect:damageReduction];
+        [damageReduction release];
+    }
+    
+}
 @end
 
 @implementation  Barrier
@@ -454,7 +473,14 @@
 @end
 
 @implementation  LightEternal
-+(id)defaultSpell{
+@synthesize hasSurgingGlory;
+
+- (void)checkDivinity {
+    self.hasSurgingGlory = [(Player*)self.owner hasDivinityEffectWithTitle:@"Surging Glory"];
+    [super checkDivinity];
+}
+
++ (id)defaultSpell {
     LightEternal *le = [[LightEternal alloc] initWithTitle:@"Light Eternal" healAmnt:66 energyCost:220 castTime:2.25 andCooldown:0.0];
     [le setDescription:@"Heals up to 5 allies with the least health among allies for a moderate amount."];
     [[le spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
@@ -462,11 +488,43 @@
 	[[le spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
     return [le autorelease];
 }
--(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
+
+- (NSInteger)energyCost {
+    NSInteger baseCost = [super energyCost];
+    if (self.hasSurgingGlory){
+        baseCost *= .8;
+    }
+    return baseCost;
+}
+
+- (NSInteger)healingAmount {
+    NSInteger baseAmount = [super healingAmount];
+    if (self.hasSurgingGlory){
+        baseAmount *= .8;
+    }
+    return baseAmount;
+}
+
+- (float)castTime {
+    float time = [super castTime];
+    if (self.hasSurgingGlory) {
+        time *= .9;
+    }
+    return time;
+}
+
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime {
     NSArray *myTargets = [theRaid lowestHealthTargets:5  withRequiredTarget:thePlayer.spellTarget];
     
     for (RaidMember *healableTarget in myTargets){
-        [healableTarget setHealth:healableTarget.health + self.healingAmount];
+        int currentTargetHealth = healableTarget.health;
+        NSInteger amount = [self healingAmount];
+        [self willHealTarget:healableTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:amount];
+		[healableTarget setHealth:[healableTarget health] + amount];
+        int newHealth = healableTarget.health;
+        NSInteger finalAmount = newHealth - currentTargetHealth;
+        [self didHealTarget:healableTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
+        [self.owner playerDidHealFor:finalAmount onTarget:healableTarget fromSpell:self];
     }
     
     [thePlayer setEnergy:[thePlayer energy] - [self energyCost]];

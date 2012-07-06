@@ -21,7 +21,7 @@
 #import "DivinityConfigScene.h"
 #import "AudioController.h"
 
-@interface PostBattleScene()
+@interface PostBattleScene ()
 @property (nonatomic, readwrite) BOOL canAdvance;
 @property (nonatomic, readwrite) NSInteger levelNumber;
 @property (nonatomic, readwrite) BOOL isMultiplayer;
@@ -106,46 +106,11 @@
         self.isVictory = victory;
         BackgroundSprite *background = [[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease];
         [self addChild:background];
-        if (victory){
-            [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",levelNum]];
-            CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"VICTORY!" fontName:@"Arial" fontSize:72];
-            [victoryLabel setPosition:CGPointMake(512, 384)];
-            [self addChild:victoryLabel];
-            
-            NSInteger reward = 0;
-            int i = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
-            if (self.levelNumber > i){
-                [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:self.levelNumber] forKey:PlayerHighestLevelCompleted];
-                reward = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:YES isMultiplayer:self.isMultiplayer];
-            }else{
-                reward = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:NO isMultiplayer:self.isMultiplayer];
-            }
-
-            [Shop playerEarnsGold:reward];
-            CCLabelTTF *goldEarned = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold Earned: %i", reward] fontName:@"Arial" fontSize:32.0];
-            
-            [goldEarned setPosition:CGPointMake(800, 150)];
-            [self addChild:goldEarned];
-            
-            if (!self.isMultiplayer){
-                CCMenuItemLabel *visitShopButton = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Visit Shop" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(goToStore)];                
-                [visitShopButton.label setColor:ccBLUE];
-                CCMenu *visitStoreMenu = [CCMenu menuWithItems:visitShopButton, nil];
-                [visitStoreMenu setPosition:CGPointMake(770, 90)];
-                [self addChild:visitStoreMenu];
-            }
-        }else{
-            [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelFailed:%i",levelNum]];
-            CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"DEFEAT!" fontName:@"Arial" fontSize:72];
-            [victoryLabel setPosition:CGPointMake(512, 384)];
-            [self addChild:victoryLabel];
-        }
-    
-        CCMenuItemLabel *done = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Continue" fontName:@"Arial" fontSize:32] target:self selector:@selector(done)];
-        
-        CCMenu *menu = [CCMenu menuWithItems:done, nil];
-        menu.position = CGPointMake(512, 200);
-        [self addChild:menu];
+        NSInteger reward = 0;
+       
+        int i = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
+        BOOL isFirstWin = self.levelNumber > i;
+        NSTimeInterval fightDuration = [[[eventLog lastObject] timeStamp] timeIntervalSinceDate:[[eventLog objectAtIndex:0] timeStamp]];
         
         int totalHealingDone = 0;
         
@@ -171,6 +136,76 @@
             }
         }
         
+        if (victory){
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",levelNum]];
+            CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"VICTORY!" fontName:@"Arial" fontSize:72];
+            [victoryLabel setPosition:CGPointMake(512, 384)];
+            [self addChild:victoryLabel];
+            
+            
+
+            if (isFirstWin){
+                [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:self.levelNumber] forKey:PlayerHighestLevelCompleted];
+            }
+            reward = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:isFirstWin isMultiplayer:self.isMultiplayer];
+            
+            if (!self.isMultiplayer){
+                CCMenuItemLabel *visitShopButton = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Visit Shop" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(goToStore)];                
+                [visitShopButton.label setColor:ccBLUE];
+                CCMenu *visitStoreMenu = [CCMenu menuWithItems:visitShopButton, nil];
+                [visitStoreMenu setPosition:CGPointMake(770, 90)];
+                [self addChild:visitStoreMenu];
+            }
+            NSInteger oldRating = [PlayerDataManager levelRatingForLevel:self.levelNumber];
+            NSInteger rating = [self calculateRatingForNumDead:numDead];
+            CCLabelTTF *scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Score: %i/10", rating] dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:36.0];
+            [scoreLabel setPosition:CGPointMake(200, 300)];
+            [self addChild:scoreLabel];
+            
+            if (rating > oldRating){
+                [PlayerDataManager setLevelRating:rating forLevel:self.levelNumber];
+                CCLabelTTF *newHighScore = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"New High Score!"] dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:40.0];
+                [newHighScore setColor:ccGREEN];
+                [newHighScore setPosition:CGPointMake(200, 360)];
+                [self addChild:newHighScore];
+                [newHighScore runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
+            }
+            
+        }else{
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelFailed:%i",levelNum]];
+            CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"DEFEAT!" fontName:@"Arial" fontSize:72];
+            [victoryLabel setPosition:CGPointMake(512, 384)];
+            [self addChild:victoryLabel];
+            
+            //Partial Progress Reward
+            //5 % of the Reward per minute of encounter up to a maximum of 50% encounter reward
+            
+            NSInteger encounterRewardForSuccess = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:isFirstWin isMultiplayer:self.isMultiplayer];
+            NSInteger partialProgressReward = 0;
+            
+            if (totalHealingDone >= (totalDamageTaken * .33)){
+                partialProgressReward = (fightDuration / 60.0 * (encounterRewardForSuccess * .05));
+                partialProgressReward =  MAX(partialProgressReward, encounterRewardForSuccess * .5);
+            }
+            reward = partialProgressReward;
+        }
+        
+        if (reward > 0){
+            [Shop playerEarnsGold:reward];
+            CCLabelTTF *goldEarned = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold Earned: %i", reward] fontName:@"Arial" fontSize:32.0];
+            
+            [goldEarned setPosition:CGPointMake(800, 150)];
+            [self addChild:goldEarned];
+        }
+    
+        CCMenuItemLabel *done = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Continue" fontName:@"Arial" fontSize:32] target:self selector:@selector(done)];
+        
+        CCMenu *menu = [CCMenu menuWithItems:done, nil];
+        menu.position = CGPointMake(512, 200);
+        [self addChild:menu];
+        
+
+        
         CCLabelTTF *healingDoneLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Healing Done: %i", totalHealingDone] dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
         [healingDoneLabel setPosition:CGPointMake(200, 200)];
         
@@ -184,22 +219,6 @@
         [self addChild:damageTakenLabel];
         [self addChild:playersLostLabel];
         
-        NSInteger oldRating = [PlayerDataManager levelRatingForLevel:self.levelNumber];
-        NSInteger rating = [self calculateRatingForNumDead:numDead];
-        CCLabelTTF *scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Score: %i/10", rating] dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:36.0];
-        [scoreLabel setPosition:CGPointMake(200, 300)];
-        [self addChild:scoreLabel];
-        
-        if (rating > oldRating){
-            [PlayerDataManager setLevelRating:rating forLevel:self.levelNumber];
-            CCLabelTTF *newHighScore = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"New High Score!"] dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:40.0];
-            [newHighScore setColor:ccGREEN];
-            [newHighScore setPosition:CGPointMake(200, 360)];
-            [self addChild:newHighScore];
-            [newHighScore runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
-        }
-        
-        NSTimeInterval fightDuration = [[[eventLog lastObject] timeStamp] timeIntervalSinceDate:[[eventLog objectAtIndex:0] timeStamp]];
         NSString *durationText = [@"Duration: " stringByAppendingString:[self timeStringForTimeInterval:fightDuration]];
         
         CCLabelTTF *durationLabel = [CCLabelTTF labelWithString:durationText dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];

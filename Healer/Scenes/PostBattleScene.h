@@ -6,6 +6,7 @@
 //
 
 #import "cocos2d.h"
+#import <Foundation/Foundation.h>
 #import <GameKit/GameKit.h>
 
 @interface PostBattleScene : CCScene <GKMatchDelegate>

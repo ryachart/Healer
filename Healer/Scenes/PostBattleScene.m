@@ -31,6 +31,7 @@
 - (void)done;
 - (void)showDivinityUnlocked;
 - (void)goToDivinity;
+- (NSInteger)calculateRatingForNumDead:(NSInteger)numDead;
 @end
 
 @implementation PostBattleScene
@@ -44,7 +45,60 @@
     [super dealloc];
 }
 
--(id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog levelNumber:(NSInteger)levelNum andIsMultiplayer:(BOOL)isMult{
+- (NSInteger)calculateRatingForNumDead:(NSInteger)numDead {
+    NSInteger rating = 0;
+    
+    switch (numDead) {
+        case 0:
+            rating = 10;
+            break;
+        case 1:
+            rating = 9;
+            break;
+        case 2:
+        case 3:
+            rating = 8;
+            break;
+        case 4:
+        case 5:
+            rating = 7;
+            break;
+        case 6:
+        case 7:
+            rating = 6;
+            break;
+        case 8:
+        case 9:
+            rating = 6;
+            break;
+        case 10:
+        case 11:
+            rating = 5;
+            break;
+        case 12:
+        case 13:
+            rating = 4;
+            break;
+        case 14:
+        case 15:
+            rating = 3;
+            break;
+        case 16:
+        case 17:
+            rating = 2;
+            break;
+        case 18:
+        case 19:
+            rating = 1;
+            break;
+        default:
+            rating = 0;
+            break;
+    }
+    return rating;
+}
+
+- (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog levelNumber:(NSInteger)levelNum andIsMultiplayer:(BOOL)isMult andFallenMembers:(NSInteger)numDead{
     self = [super init];
     if (self){
         self.levelNumber = levelNum;
@@ -53,6 +107,7 @@
         BackgroundSprite *background = [[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease];
         [self addChild:background];
         if (victory){
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",levelNum]];
             CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"VICTORY!" fontName:@"Arial" fontSize:72];
             [victoryLabel setPosition:CGPointMake(512, 384)];
             [self addChild:victoryLabel];
@@ -61,7 +116,6 @@
             int i = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
             if (self.levelNumber > i){
                 [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:self.levelNumber] forKey:PlayerHighestLevelCompleted];
-                [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",i]];
                 reward = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:YES isMultiplayer:self.isMultiplayer];
             }else{
                 reward = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:NO isMultiplayer:self.isMultiplayer];
@@ -81,6 +135,7 @@
                 [self addChild:visitStoreMenu];
             }
         }else{
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelFailed:%i",levelNum]];
             CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"DEFEAT!" fontName:@"Arial" fontSize:72];
             [victoryLabel setPosition:CGPointMake(512, 384)];
             [self addChild:victoryLabel];
@@ -128,6 +183,21 @@
         [self addChild:healingDoneLabel];
         [self addChild:damageTakenLabel];
         [self addChild:playersLostLabel];
+        
+        NSInteger oldRating = [PlayerDataManager levelRatingForLevel:self.levelNumber];
+        NSInteger rating = [self calculateRatingForNumDead:numDead];
+        CCLabelTTF *scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Score: %i/10", rating] dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:36.0];
+        [scoreLabel setPosition:CGPointMake(200, 300)];
+        [self addChild:scoreLabel];
+        
+        if (rating > oldRating){
+            [PlayerDataManager setLevelRating:rating forLevel:self.levelNumber];
+            CCLabelTTF *newHighScore = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"New High Score!"] dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:40.0];
+            [newHighScore setColor:ccGREEN];
+            [newHighScore setPosition:CGPointMake(200, 360)];
+            [self addChild:newHighScore];
+            [newHighScore runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
+        }
         
         NSTimeInterval fightDuration = [[[eventLog lastObject] timeStamp] timeIntervalSinceDate:[[eventLog objectAtIndex:0] timeStamp]];
         NSString *durationText = [@"Duration: " stringByAppendingString:[self timeStringForTimeInterval:fightDuration]];
@@ -182,6 +252,7 @@
 - (void)onExit {
     [[AudioController sharedInstance] stopAll];
     [[AudioController sharedInstance] playTitle:@"title" looping:10];
+    [super onExit];
 }
 
 -(void)setMatch:(GKMatch *)mtch{

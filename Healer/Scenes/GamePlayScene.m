@@ -275,7 +275,8 @@
 }
 
 -(void)battleEndWithSuccess:(BOOL)success{
-    PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:success eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:self.isClient || self.isServer];
+    NSInteger numDead = self.raid.raidMembers.count - self.raid.getAliveMembers.count;
+    PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:success eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:self.isClient || self.isServer andFallenMembers:numDead];
     [self setPaused:YES];
     if (self.isServer){
         [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"BATTLEEND|%i|", success] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];

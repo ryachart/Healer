@@ -40,7 +40,13 @@
             if (i  > ([[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue] )){
                 levelLabelText = @"????";
             }else{
-                levelLabelText = [Encounter encounterForLevel:i+1 isMultiplayer:NO].boss.title;
+                NSString* bossTitle = [Encounter encounterForLevel:i+1 isMultiplayer:NO].boss.title;
+                NSString* finalString = bossTitle;
+                NSInteger levelRating = [PlayerDataManager levelRatingForLevel:i+ 1];
+                if (levelRating > 0) {
+                    finalString = [finalString stringByAppendingFormat:@" %i/10", levelRating];
+                }
+                levelLabelText = finalString;          
             }
             CCMenuItemLabel *levelButton = [[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:levelLabelText fontName:@"Arial" fontSize:32] target: self selector:@selector(beginGameWithSelectedLevel:)];
             [levelButton.label setColor:ccBLACK];

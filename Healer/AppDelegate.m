@@ -51,6 +51,7 @@
 	
 	
     [TestFlight takeOff:TestFlightToken];
+    [TestFlight setDeviceIdentifier:[UIDevice currentDevice].uniqueIdentifier];
 	CCDirector *director = [CCDirector sharedDirector];
 	
 	// Init the View Controller

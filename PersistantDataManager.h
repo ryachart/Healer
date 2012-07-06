@@ -12,3 +12,13 @@
 
 extern NSString* const PlayerHighestLevelAttempted;
 extern NSString* const PlayerHighestLevelCompleted;
+
+@interface PlayerDataManager 
+
++ (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level;
++ (NSInteger)levelRatingForLevel:(NSInteger)level;
+
+//DEBUG
++ (void)clearLevelRatings;
+
+@end

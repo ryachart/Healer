@@ -322,11 +322,16 @@
             }
             CombatEventType eventType = self.value > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
             float modifier = self.value > 0 ? self.owner.healingDoneMultiplier : self.owner.damageDoneMultiplier;
+            NSInteger amount = self.value * modifier;
             NSInteger preHealth = self.target.health;
-            [self.target setHealth:self.target.health + (self.value * modifier)];
+            [self.target setHealth:self.target.health + amount];
             NSInteger finalAmount = self.target.health - preHealth;
             if ([self.owner isKindOfClass:[Player class]]){
                 [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self];
+                NSInteger overheal = amount - finalAmount;
+                if (overheal > 0){
+                    [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:overheal] andEventType:CombatEventTypeOverheal]];
+                }
             }else {
                 [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]];
             }
@@ -349,6 +354,10 @@
     [self.target setHealth:self.target.health + (int)round((self.owner.healingDoneMultiplier * self.valuePerTick * (similarEffectCount * .25)))];
     NSInteger finalAmount = self.target.health - preHealth;
     [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self];
+    NSInteger overheal = self.valuePerTick - finalAmount;
+    if (overheal > 0){
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:overheal] andEventType:CombatEventTypeOverheal]];
+    }
 }
 @end
 

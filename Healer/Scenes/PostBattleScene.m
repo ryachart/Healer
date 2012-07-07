@@ -136,6 +136,13 @@
             }
         }
         
+        int overheal = 0;
+        for (CombatEvent *event in eventLog) {
+            if (event.type == CombatEventTypeOverheal) {
+                overheal += [[event value] intValue];
+            }
+        }
+        
         if (victory){
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",levelNum]];
             CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"VICTORY!" fontName:@"Arial" fontSize:72];
@@ -204,18 +211,20 @@
         menu.position = CGPointMake(512, 200);
         [self addChild:menu];
         
-
-        
         CCLabelTTF *healingDoneLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Healing Done: %i", totalHealingDone] dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
         [healingDoneLabel setPosition:CGPointMake(200, 200)];
         
+        CCLabelTTF *overhealingDoneLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Overhealing: %i", overheal] dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
+        [overhealingDoneLabel setPosition:CGPointMake(200, 160)];
+        
         CCLabelTTF *damageTakenLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Damage Taken: %i", totalDamageTaken] dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
-        [damageTakenLabel setPosition:CGPointMake(200, 135)];
+        [damageTakenLabel setPosition:CGPointMake(200, 120)];
         
         CCLabelTTF *playersLostLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Allies Lost:  %i", raidersLost] dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
-        [playersLostLabel setPosition:CGPointMake(200, 90)];
+        [playersLostLabel setPosition:CGPointMake(200, 80)];
         
         [self addChild:healingDoneLabel];
+        [self addChild:overhealingDoneLabel];
         [self addChild:damageTakenLabel];
         [self addChild:playersLostLabel];
         

@@ -164,6 +164,10 @@
         NSInteger finalAmount = newHealth - currentTargetHealth;
         [self didHealTarget:[thePlayer spellTarget] inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
         [self.owner playerDidHealFor:finalAmount onTarget:thePlayer.spellTarget fromSpell:self];
+        NSInteger overheal = amount - finalAmount;
+        if (overheal > 0){
+            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:[thePlayer spellTarget] value:[NSNumber numberWithInt:overheal] andEventType:CombatEventTypeOverheal]];
+        }
 		[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
         [self applyEffectToTarget:thePlayer.spellTarget];
 	}
@@ -183,6 +187,10 @@
                 NSInteger finalAmount = newTargetHealth - currentTargetHealth;
                 [self didHealTarget:currentTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
                 [self.owner playerDidHealFor:finalAmount onTarget:currentTarget fromSpell:self];
+                NSInteger overheal = amount - finalAmount;
+                if (overheal > 0){
+                    [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:[thePlayer spellTarget] value:[NSNumber numberWithInt:overheal] andEventType:CombatEventTypeOverheal]];
+                }
                 [self applyEffectToTarget:currentTarget];
 			}
 			
@@ -338,6 +346,10 @@
         NSInteger finalAmount = newHealth - currentTargetHealth;
         [self didHealTarget:healableTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
         [self.owner playerDidHealFor:finalAmount onTarget:healableTarget fromSpell:self];
+        NSInteger overheal = amount - finalAmount;
+        if (overheal > 0){
+            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:[thePlayer spellTarget] value:[NSNumber numberWithInt:overheal] andEventType:CombatEventTypeOverheal]];
+        }
     }
     
     [thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
@@ -525,6 +537,10 @@
         NSInteger finalAmount = newHealth - currentTargetHealth;
         [self didHealTarget:healableTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
         [self.owner playerDidHealFor:finalAmount onTarget:healableTarget fromSpell:self];
+        NSInteger overheal = amount - finalAmount;
+        if (overheal > 0){
+            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:[thePlayer spellTarget] value:[NSNumber numberWithInt:overheal] andEventType:CombatEventTypeOverheal]];
+        }
     }
     
     [thePlayer setEnergy:[thePlayer energy] - [self energyCost]];

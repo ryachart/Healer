@@ -39,6 +39,8 @@
             return @"Dodged";
         case CombatEventEnded:
             return @"Combat Ended";
+        case CombatEventTypeOverheal:
+            return @"Overheal";
         default:
             break;
     }

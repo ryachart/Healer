@@ -185,13 +185,13 @@
             [self addChild:victoryLabel];
             
             //Partial Progress Reward
-            //5 % of the Reward per minute of encounter up to a maximum of 50% encounter reward
+            //10 % of the Reward per minute of encounter up to a maximum of 50% encounter reward
             
             NSInteger encounterRewardForSuccess = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:isFirstWin isMultiplayer:self.isMultiplayer];
             NSInteger partialProgressReward = 0;
             
             if (totalHealingDone >= (totalDamageTaken * .33)){
-                partialProgressReward = (fightDuration / 60.0 * (encounterRewardForSuccess * .05));
+                partialProgressReward = (fightDuration / 60.0 * (encounterRewardForSuccess * .10));
                 partialProgressReward =  MIN(partialProgressReward, encounterRewardForSuccess * .5);
             }
             reward = partialProgressReward;

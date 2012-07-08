@@ -157,8 +157,8 @@
             reward = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:isFirstWin isMultiplayer:self.isMultiplayer];
             
             if (!self.isMultiplayer){
-                CCMenuItemLabel *visitShopButton = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Visit Shop" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(goToStore)];                
-                [visitShopButton.label setColor:ccBLUE];
+                CCMenuItemLabel *visitShopButton = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Visit Shop" fontName:@"Arial" fontSize:44.0] target:self selector:@selector(goToStore)];                
+                [visitShopButton.label setColor:ccWHITE];
                 CCMenu *visitStoreMenu = [CCMenu menuWithItems:visitShopButton, nil];
                 [visitStoreMenu setPosition:CGPointMake(770, 90)];
                 [self addChild:visitStoreMenu];

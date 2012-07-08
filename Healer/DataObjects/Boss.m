@@ -699,16 +699,16 @@
 @implementation SporeRavagers
 @synthesize isEnraged, secondTargetAttack, thirdTargetAttack;
 +(id)defaultBoss{
-    SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:19 targets:1 frequency:2.5 andChoosesMT:YES];
+    SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:15 targets:1 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Spore Ravagers"];
     [boss setInfo:@"Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate. Conversely, no villagers have left the town, either..."];
     [boss setCriticalChance:.5];
     
-    FocusedAttack *secondFocusedAttack = [[FocusedAttack alloc] initWithDamage:19 andCooldown:2.6];
+    FocusedAttack *secondFocusedAttack = [[FocusedAttack alloc] initWithDamage:15 andCooldown:2.6];
     [boss addAbility:secondFocusedAttack];
     [boss setSecondTargetAttack:secondFocusedAttack];
     [secondFocusedAttack release];
-    FocusedAttack *thirdFocusedAttack = [[FocusedAttack alloc] initWithDamage:19 andCooldown:2.7];
+    FocusedAttack *thirdFocusedAttack = [[FocusedAttack alloc] initWithDamage:15 andCooldown:2.7];
     [boss addAbility:thirdFocusedAttack];
     [boss setThirdTargetAttack:thirdFocusedAttack];
     [thirdFocusedAttack release];
@@ -732,7 +732,7 @@
         for (RaidMember *member in raid.raidMembers){
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:300 andEffectType:EffectTypeNegativeInvisible];
             [rhe setOwner:self];
-            [rhe setTitle:@"spore-ravager-green-mist"];
+            [rhe setTitle:@"spore-ravager-mist"];
             [rhe setValuePerTick:self.isMultiplayer ? -5 : -2];
             [rhe setNumOfTicks:60];
             [member addEffect:rhe];

@@ -36,18 +36,18 @@
 
     //Tier 4
     if ([spell isEqualToString:@"Barrier"]){
-        return 500;
+        return 300;
     }
     if ([spell isEqualToString:@"Healing Burst"]){
-        return 500;
+        return 300;
     }
     
     //Tier 5
     if ([spell isEqualToString:@"Light Eternal"]){
-        return 600;
+        return 400;
     }
     if ([spell isEqualToString:@"Wandering Spirit"]){
-        return 600;
+        return 400;
     }
     
     //Specials
@@ -60,10 +60,10 @@
     
     //WTF
     if ([spell isEqualToString:@"Swirling Light"]){
-        return 2000;
+        return 750;
     }
     if ([spell isEqualToString:@"Orbs of Light"]){
-        return 2000;
+        return 750;
     }
 
 

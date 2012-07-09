@@ -37,7 +37,7 @@
         self.menu = [CCMenu menuWithItems:nil];
         for (int i = 0; i < NUM_ENCOUNTERS; i++){
             NSString *levelLabelText = nil;
-            if (i  > ([[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue] )){
+            if (i  > [PlayerDataManager highestLevelCompleted]){
                 levelLabelText = @"????";
             }else{
                 NSString* bossTitle = [Encounter encounterForLevel:i+1 isMultiplayer:NO].boss.title;

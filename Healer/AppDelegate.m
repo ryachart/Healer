@@ -11,6 +11,8 @@
 #import "GameConfig.h"
 #import "RootViewController.h"
 #import "TestFlight.h"
+#import "Parse/Parse.h"
+#import "PersistantDataManager.h"
 
 #define TestFlightToken @"a0f29ba29227f7587269ec6e6fc30455_NzU1NTQyMDEyLTA0LTI4IDIyOjQ4OjA4Ljk4NzkzMQ"
 
@@ -52,6 +54,12 @@
 	
     [TestFlight takeOff:TestFlightToken];
     [TestFlight setDeviceIdentifier:[UIDevice currentDevice].uniqueIdentifier];
+    
+    [Parse setApplicationId:@"BajbrSl60Pz6ukDojWg8CAaUdCU7FoWr7UJCiJPs"
+                  clientKey:@"2CSX0jPgh7K4X7PfWbmfPdyo3G8OfCqSa41JW4BZ"];
+    
+    
+    
 	CCDirector *director = [CCDirector sharedDirector];
 	
 	// Init the View Controller
@@ -133,6 +141,7 @@
 
 -(void) applicationDidEnterBackground:(UIApplication*)application {
 	[[CCDirector sharedDirector] stopAnimation];
+    [PlayerDataManager saveRemotePlayer];
 }
 
 -(void) applicationWillEnterForeground:(UIApplication*)application {
@@ -149,6 +158,9 @@
 	[window release];
 	
 	[director end];	
+    
+    [PlayerDataManager saveRemotePlayer];
+
 }
 
 - (void)applicationSignificantTimeChange:(UIApplication *)application {

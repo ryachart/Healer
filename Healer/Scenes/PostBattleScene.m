@@ -243,7 +243,7 @@
         
         [self writeApplicationData:(NSData*)events toFile:[NSString stringWithFormat:@"%@-%@", [[eventLog   objectAtIndex:0] timeStamp], [[eventLog lastObject] timeStamp]]];
 #endif
-
+        [PlayerDataManager saveRemotePlayer];
     }
     return self;
 }

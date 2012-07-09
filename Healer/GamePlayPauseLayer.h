@@ -9,7 +9,8 @@
 
 @protocol PauseLayerDelegate <NSObject>
 
--(void)pauseLayerDidFinish;
+- (void)pauseLayerDidFinish;
+- (void)pauseLayerDidQuit;
 
 @end
 

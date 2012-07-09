@@ -79,8 +79,12 @@ NSString* const PlayerRemoteObjectIdKey = @"com.healer.playerRemoteObjectID";
         } else {
             PFObject *newPlayerObject = [PFObject objectWithClassName:@"player"];
             [PlayerDataManager setPlayerObjectInformation:newPlayerObject];
-            [newPlayerObject saveEventually];
-            [[NSUserDefaults standardUserDefaults] setObject:newPlayerObject.objectId forKey:PlayerRemoteObjectIdKey];
+            [newPlayerObject saveEventually:^(BOOL succeeded, NSError* error){
+                if (newPlayerObject.objectId){
+                    [[NSUserDefaults standardUserDefaults] setObject:newPlayerObject.objectId forKey:PlayerRemoteObjectIdKey];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+            }];
         }
         [[UIApplication sharedApplication] endBackgroundTask:backgroundExceptionIdentifer];
     });

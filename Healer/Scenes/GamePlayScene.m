@@ -230,6 +230,11 @@
     [self setPaused:NO];
 }
 
+- (void)pauseLayerDidQuit {
+    [self.pauseMenuLayer removeFromParentAndCleanup:YES];
+    [self battleEndWithSuccess:NO];
+}
+
 -(void)onEnterTransitionDidFinish{
 #if DEBUG
     if (self.levelNumber == 1){

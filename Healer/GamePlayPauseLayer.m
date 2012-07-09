@@ -26,7 +26,7 @@
 }
 
 -(void)quit{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:[[[QuickPlayScene alloc] init] autorelease]]];
+    [self.delegate pauseLayerDidQuit];
 }
 
 

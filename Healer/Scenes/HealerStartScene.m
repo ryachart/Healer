@@ -8,7 +8,6 @@
 
 #import "HealerStartScene.h"
 #import "AppDelegate.h"
-#import "MultiplayerSetupScene.h"
 #import "PersistantDataManager.h"
 #import "Shop.h"
 #import "StoreScene.h"
@@ -17,6 +16,7 @@
 #import "DivinityConfigScene.h"
 #import "BasicButton.h"
 #import "AudioController.h"
+#import "MultiplayerQueueScene.h"
 
 
 @interface HealerStartScene ()
@@ -24,8 +24,6 @@
 @property (assign) CCMenuItem* multiplayerButton;
 @property (assign) CCMenuItem* quickPlayButton;
 @property (assign) CCMenuItem* storeButton;
-@property (nonatomic, retain) UIViewController* presentingViewController;
-@property (readwrite) BOOL matchStarted;
 
 -(void)multiplayerSelected;
 -(void)quickPlaySelected;
@@ -38,8 +36,6 @@
 @synthesize multiplayerButton;
 @synthesize quickPlayButton;
 @synthesize storeButton;
-@synthesize presentingViewController;
-@synthesize matchStarted;
 
 -(id)init{
     if (self = [super init]){
@@ -53,7 +49,6 @@
         [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"title-ipad"] autorelease]];
         
         self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
-        [self.multiplayerButton setIsEnabled:NO];
         
         self.quickPlayButton= [BasicButton basicButtonWithTarget:self andSelector:@selector(quickPlaySelected) andTitle:@"Play"];
         
@@ -64,7 +59,10 @@
             [divinityButton setIsEnabled:NO];
         }
         
-        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, self.multiplayerButton, divinityButton, nil];
+        NSString *difficultyTitle = [PlayerDataManager hardMode] ? @"Normal Mode" : @"Hard Mode";
+        CCMenuItem *hardModeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(hardModeToggled:) andTitle:difficultyTitle];
+        [hardModeButton setIsEnabled:NO];
+        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, self.multiplayerButton, divinityButton, hardModeButton, nil];
         
         [self.menu alignItemsVerticallyWithPadding:20.0];
         CGSize winSize = [CCDirector sharedDirector].winSize;
@@ -87,43 +85,9 @@
 }
 
 -(void)multiplayerSelected{
-#if DEBUG
-    MultiplayerSetupScene *mpss = [[MultiplayerSetupScene alloc] init];
-//    [mpss setMatch:theMatch];
-//    theMatch.delegate = mpss;    
-    [[CCDirector sharedDirector] replaceScene:mpss];
-    [mpss release];
-    return;
-#endif
-    static BOOL authenticationAttempted = NO;
-    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
-    if (![localPlayer isAuthenticated]){
-        if (authenticationAttempted){
-            return;
-        }
-        [localPlayer authenticateWithCompletionHandler:^(NSError *error){
-            [self multiplayerSelected];
-            authenticationAttempted = YES;
-        }];
-    }else{
-        GKMatchRequest *request = [[GKMatchRequest  alloc] init];
-        [request setMaxPlayers:2];
-        [request setMinPlayers:2];
-        
-        GKMatchmakerViewController *mmvc = 
-        [[GKMatchmakerViewController alloc] initWithMatchRequest:request];
-        mmvc.matchmakerDelegate = self;
-        
-        [request release];
-            
-        [[CCDirector sharedDirector] pause];
-        self.presentingViewController = (UIViewController*)[(AppDelegate*)[[UIApplication sharedApplication] delegate] viewController];
-        [self.presentingViewController presentViewController:mmvc animated:NO completion:nil];
-        
-        
-        [mmvc release];
-    }
-    
+    MultiplayerQueueScene *queueScene = [[MultiplayerQueueScene alloc] init];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:1.0 scene:queueScene]];
+    [queueScene release];
 }
 
 - (void)onEnterTransitionDidFinish {
@@ -132,35 +96,6 @@
         [[AudioController sharedInstance] playTitle:@"title" looping:10];
         [super onEnterTransitionDidFinish];
     }
-}
-
-- (void)matchmakerViewControllerWasCancelled:(GKMatchmakerViewController *)viewController {
-    [self.presentingViewController dismissViewControllerAnimated:NO completion:nil];
-    [[CCDirector sharedDirector] resume];
-}
-
-// Matchmaking has failed with an error
-- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFailWithError:(NSError *)error {
-    [self.presentingViewController dismissViewControllerAnimated:NO completion:nil];    [[CCDirector sharedDirector] resume];
-    NSLog(@"Error finding match: %@", error.localizedDescription);    
-}
-
-// A peer-to-peer match has been found, the game should start
-- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFindMatch:(GKMatch *)theMatch {
-    [self.presentingViewController dismissViewControllerAnimated:NO completion:nil];
-    [[CCDirector sharedDirector] resume];
-
-//    theMatch.delegate = self;
-    if (!self.matchStarted && theMatch.expectedPlayerCount == 0) {
-        NSLog(@"Ready to start match!");
-    }
-    
-    MultiplayerSetupScene *mpss = [[MultiplayerSetupScene alloc] init];
-    [mpss setMatch:theMatch];
-    theMatch.delegate = mpss;    
-    [[CCDirector sharedDirector] replaceScene:mpss];
-    [mpss release];
-    
 }
 
 
@@ -185,12 +120,16 @@
     [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
 }
 
+- (void)hardModeToggled:(id)sender {
+    [PlayerDataManager setHardMode:![PlayerDataManager hardMode]];
+    NSString *difficultyTitle = [PlayerDataManager hardMode] ? @"Normal Mode" : @"Hard Mode";
+    [(BasicButton*)sender setTitle:difficultyTitle];
+}
 
 - (void)dealloc {
     self.menu = nil;
     self.multiplayerButton = nil;
     self.quickPlayButton = nil;
-    [presentingViewController release];
     [super dealloc];
 }
 

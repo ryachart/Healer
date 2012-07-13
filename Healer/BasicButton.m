@@ -10,7 +10,7 @@
 
 @implementation BasicButton
 
-+ (CCMenuItemSprite*)basicButtonWithTarget:(id)target andSelector:(SEL)selector andTitle:(NSString*)title {
++ (BasicButton*)basicButtonWithTarget:(id)target andSelector:(SEL)selector andTitle:(NSString*)title {
     CCSprite *basicButton = [CCSprite spriteWithSpriteFrameName:@"rect_button.png"];
     CCSprite *basicButtonSelected = [CCSprite spriteWithSpriteFrameName:@"rect_button.png"];
     CCSprite *basicButtonDisabled = [CCSprite spriteWithSpriteFrameName:@"rect_button.png"];
@@ -30,7 +30,7 @@
     [basicButtonSelected addChild:titleLabelSelected];
     [basicButtonDisabled addChild:titleLabelDisabled];
     
-    return [CCMenuItemSprite itemFromNormalSprite:basicButton selectedSprite:basicButtonSelected disabledSprite:basicButtonDisabled target:target selector:selector];
+    return [BasicButton itemFromNormalSprite:basicButton selectedSprite:basicButtonSelected disabledSprite:basicButtonDisabled target:target selector:selector];
     
 }
 
@@ -44,6 +44,26 @@
     CCMenuItemSprite *menuItem = [CCMenuItemSprite itemFromNormalSprite:basicButton selectedSprite:basicButtonSelected disabledSprite:basicButtonDisabled target:target selector:selector];
     
     return [CCMenu menuWithItems:menuItem, nil];
+}
+
+- (void)setTitle:(NSString *)title {
+    for (CCNode *node in self.disabledImage.children) {
+        if ([node isKindOfClass:[CCLabelTTF class]]){
+            [(CCLabelTTF*)node setString:title];
+        }
+    }
+    
+    for (CCNode *node in self.normalImage.children) {
+        if ([node isKindOfClass:[CCLabelTTF class]]){
+            [(CCLabelTTF*)node setString:title];
+        }
+    }
+    
+    for (CCNode *node in self.selectedImage.children) {
+        if ([node isKindOfClass:[CCLabelTTF class]]){
+            [(CCLabelTTF*)node setString:title];
+        }
+    }
 }
 
 @end

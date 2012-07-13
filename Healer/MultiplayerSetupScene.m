@@ -24,15 +24,17 @@
 @property (nonatomic, assign) CCMenuItemLabel *beginButton;
 @property (nonatomic, retain) NSMutableArray *waitingOnPlayers;
 @property (nonatomic, readwrite) BOOL isPreconfiguredMatch;
+@property (nonatomic, readwrite) BOOL isCommittedToReady;
 
 -(void)beginGame;
--(void)encounterSelected:(id)sender;
+-(void)encounterSelected:(NSInteger)encounterNumber;
 -(void)generateRaidMemberFromServerWithClass:(NSString*)className andBattleID:(NSString*)battleID;
 @end
 
 @implementation MultiplayerSetupScene
 @synthesize match, serverPlayerID, matchVoiceChat, waitingOnPlayers, isPreconfiguredMatch;
 @synthesize menu, beginButton, raid, boss, selectedEncounter, encounterSelectMenu;
+@synthesize isCommittedToReady;
 
 - (void)dealloc {
     [match release];
@@ -47,8 +49,11 @@
 
 #pragma mark GKMatchDelegate
 
--(id)initWithPreconfiguredMatch:(GKMatch*)preConMatch andServerID:(NSString*)serverID{
-    if (self = [self init]){
+- (id)initWithPreconfiguredMatch:(GKMatch*)preConMatch andServerID:(NSString*)serverID andLevelNumber:(NSInteger)levelNum{
+    Encounter *encounter = [Encounter encounterForLevel:levelNum isMultiplayer:YES];
+    Player *player = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+    [Encounter configurePlayer:player forRecSpells:encounter.recommendedSpells];
+    if (self = [super initWithRaid:encounter.raid boss:encounter.boss andPlayer:player]){
         self.match = preConMatch;
         self.serverPlayerID = serverID;
         self.isPreconfiguredMatch = YES;
@@ -59,49 +64,40 @@
     return self;
 }
 
--(id)init{
-    if (self = [super init]){
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease]];
-        self.beginButton= [[[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:@"Begin" fontName:@"Arial" fontSize:32] target:self selector:@selector(beginGame)] autorelease];
-        [self.beginButton setOpacity:111];
-        [self.beginButton setIsEnabled:NO];
-        
-        self.encounterSelectMenu = [CCMenu menuWithItems:nil];
-        for (int i = 0; i < 8; i++){
-            Encounter *encounter = [Encounter encounterForLevel:i+1 isMultiplayer:YES];
-            CCMenuItemLabel *levelButton = [[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:[NSString stringWithFormat:@"%@", encounter.boss.title] fontName:@"Arial" fontSize:32] target: self selector:@selector(encounterSelected:)];
-            levelButton.tag = i +1;
-            [levelButton setOpacity:125];
-            levelButton.isEnabled = NO;
-            [self.encounterSelectMenu addChild:levelButton];
-        }
-        [self.encounterSelectMenu setPosition:ccp([CCDirector sharedDirector].winSize.width /2, [CCDirector sharedDirector].winSize.height / 2)];
-        [self.encounterSelectMenu setColor:ccc3(255, 255, 255)];
-        [self.encounterSelectMenu alignItemsInRows:[NSNumber numberWithInt:8]/*,[NSNumber numberWithInt:10]*/, nil];
-        [self addChild:self.encounterSelectMenu];
-        
-        self.menu = [CCMenu menuWithItems:self.beginButton, nil];
-        
-        CGSize winSize = [CCDirector sharedDirector].winSize;
-        
-        [self.menu setPosition:ccp(winSize.width * .8, winSize.height * .2)];
-        [self.menu setColor:ccc3(255, 255, 255)];
-        [self addChild:self.menu];
+- (void)changeSpells {
+    if (!self.isCommittedToReady) {
+        [super changeSpells];
     }
-    return self;
+}
+
+- (void)doneButton{
+    if (!self.isServer){ 
+        [match sendData:[[NSString stringWithFormat:@"SPELLS|%@", self.player.spellsAsNetworkMessage] dataUsingEncoding:NSUTF8StringEncoding] toPlayers:[NSArray arrayWithObject:self.serverPlayerID] withDataMode:GKSendDataReliable error:nil];
+        self.isCommittedToReady = YES;
+    }
+    else if (self.waitingOnPlayers.count == 0) {
+        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss andPlayer:self.player];
+        [gps setLevelNumber:self.levelNumber];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
+        [gps release];
+    }
 }
 
 -(void)onEnterTransitionDidFinish{
     [super onEnterTransitionDidFinish];
     if (self.isPreconfiguredMatch){
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+        [[AVAudioSession sharedInstance] setActive:YES error:nil];
+        
+        self.matchVoiceChat = [self.match voiceChatWithName:@"general"];
+        [self.matchVoiceChat start];
+        [self.matchVoiceChat setActive:YES];
+        
         if (self.isServer){
             [match sendDataToAllPlayers:[@"POSTBATTLEEND" dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
             for (CCMenuItemLabel *child in self.encounterSelectMenu.children){
                 [child setIsEnabled:YES];
             }
-        }
-        else{
-            [self.match sendData:[@"PLRDY" dataUsingEncoding:NSUTF8StringEncoding] toPlayers:[NSArray arrayWithObject:self.serverPlayerID] withDataMode:GKMatchSendDataReliable error:nil];
         }
     }
 }
@@ -123,13 +119,12 @@
     self.selectedEncounter = [Encounter encounterForLevel:level isMultiplayer:YES];
 }
 
--(void)encounterSelected:(CCMenuItemLabel*)sender{
-    int level = sender.tag;
+-(void)encounterSelected:(NSInteger)encounterNumber{
+    int level = encounterNumber;
     if (self.isServer){
         for (CCMenuItemLabel *child in self.encounterSelectMenu.children){
             [child setOpacity:125];
         }
-        [sender setOpacity:255];
         self.selectedEncounter = [Encounter encounterForLevel:level isMultiplayer:YES];
         [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ENCSEL|%i|",level] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
         self.beginButton.isEnabled = YES;
@@ -259,31 +254,6 @@
     
     switch (state) {
         case GKPlayerStateConnected: 
-            // handle a new player connection.
-            NSLog(@"Player connected!");
-            if (theMatch.expectedPlayerCount == 0){
-                NSString* localPlayerID = [GKLocalPlayer localPlayer].playerID;
-                
-                if ([[localPlayerID substringFromIndex:2] intValue] < [[[[theMatch playerIDs] objectAtIndex:0] substringFromIndex:2] intValue]){
-                    self.serverPlayerID = localPlayerID;
-                }else{
-                    self.serverPlayerID = [[theMatch playerIDs] objectAtIndex:0];
-                }
-                [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ACKSERVER: %@", self.serverPlayerID] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
-                
-                [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
-                [[AVAudioSession sharedInstance] setActive:YES error:nil];
-                
-                self.matchVoiceChat = [theMatch voiceChatWithName:@"mender"];
-                [self.matchVoiceChat start];
-                [self.matchVoiceChat setActive:YES];
-                
-                if (self.isServer){
-                    for (CCMenuItemLabel *child in self.encounterSelectMenu.children){
-                        [child setIsEnabled:YES];
-                    }
-                }
-            }
             
             break; 
         case GKPlayerStateDisconnected:

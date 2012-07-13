@@ -20,6 +20,7 @@
 #import "Divinity.h"
 #import "DivinityConfigScene.h"
 #import "AudioController.h"
+#import "HealerStartScene.h"
 
 @interface PostBattleScene ()
 @property (nonatomic, readwrite) BOOL canAdvance;
@@ -297,12 +298,14 @@
             [alertView release];
             return;
         }
+        
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
         //Go to multiplayer select
-        MultiplayerSetupScene *mss = [[MultiplayerSetupScene alloc] initWithPreconfiguredMatch:self.match andServerID:self.serverPlayerId];
-        self.match.delegate = mss;
-        [mss setMatchVoiceChat:self.matchVoiceChat];
-        [[CCDirector sharedDirector] replaceScene:mss];
-        [mss release];
+//        MultiplayerSetupScene *mss = [[MultiplayerSetupScene alloc] initWithPreconfiguredMatch:self.match andServerID:self.serverPlayerId andLevelNumber:<#(NSInteger)#>];
+//        self.match.delegate = mss;
+//        [mss setMatchVoiceChat:self.matchVoiceChat];
+//        [[CCDirector sharedDirector] replaceScene:mss];
+//        [mss release];
         
     }else{
         QuickPlayScene *qps = [[QuickPlayScene alloc] init];

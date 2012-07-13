@@ -15,9 +15,19 @@
 NSString* const PlayerHighestLevelAttempted = @"com.healer.playerHighestLevelAttempted";
 NSString* const PlayerHighestLevelCompleted = @"com.healer.playerHighestLevelCompleted";
 NSString* const PlayerLevelRatingKeyPrefix = @"com.healer.playerLevelRatingForLevel";
-NSString* const PlayerRemoteObjectIdKey = @"com.healer.playerRemoteObjectID";
+NSString* const PlayerRemoteObjectIdKey = @"com.healer.playerRemoteObjectID1";
+NSString* const PlayerDifficultySettingKey = @"com.healer.hardMode";
 
 @implementation PlayerDataManager 
+
++ (BOOL)hardMode {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:PlayerDifficultySettingKey];
+}
+
++ (void)setHardMode:(BOOL)isOn {
+    [[NSUserDefaults standardUserDefaults] setBool:isOn forKey:PlayerDifficultySettingKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
 + (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level {
     [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:rating] forKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%d", level]];
@@ -79,12 +89,20 @@ NSString* const PlayerRemoteObjectIdKey = @"com.healer.playerRemoteObjectID";
         } else {
             PFObject *newPlayerObject = [PFObject objectWithClassName:@"player"];
             [PlayerDataManager setPlayerObjectInformation:newPlayerObject];
-            [newPlayerObject saveEventually:^(BOOL succeeded, NSError* error){
+            if (![newPlayerObject save]) {
+                [newPlayerObject saveEventually:^(BOOL succeeded, NSError* error){
+                    if (newPlayerObject.objectId){
+                        [[NSUserDefaults standardUserDefaults] setObject:newPlayerObject.objectId forKey:PlayerRemoteObjectIdKey];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
+                    }
+                }];
+            }else {
                 if (newPlayerObject.objectId){
                     [[NSUserDefaults standardUserDefaults] setObject:newPlayerObject.objectId forKey:PlayerRemoteObjectIdKey];
                     [[NSUserDefaults standardUserDefaults] synchronize];
                 }
-            }];
+            }
+            
         }
         [[UIApplication sharedApplication] endBackgroundTask:backgroundExceptionIdentifer];
     });

@@ -200,6 +200,10 @@
             NSInteger finalAmount = self.target.health - preHealth;
             if ([self.owner isKindOfClass:[Player class]]){
                 [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self];
+                NSInteger overheal = amount - finalAmount;
+                if (overheal > 0){
+                    [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:overheal] andEventType:CombatEventTypeOverheal]];
+                }
             }else {
                 //This is boss damage in the form of dots
                 [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:amount] andEventType:eventType]];

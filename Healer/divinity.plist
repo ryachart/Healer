@@ -13,7 +13,7 @@
 	<key>sunlight</key>
 	<string>While Regrow is active on a target, that target takes 5% less damage.</string>
 	<key>after-light</key>
-	<string>Forked Heal targets have an effect placed on them that heals for 10% of the healing done by forked heal over 8 seconds.</string>
+	<string>Forked Heal targets have an effect placed on them that heals for 20% of the healing done by forked heal over 8 seconds.</string>
 	<key>shining-aegis</key>
 	<string>While under the Ward of Ancients, allies are healed for a small amount each second.</string>
 	<key>ancient-knowledge</key>

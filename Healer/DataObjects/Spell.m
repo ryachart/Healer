@@ -365,7 +365,7 @@
     if (self.hasAfterLight) {
         RepeatedHealthEffect *afterLightEffect = [[RepeatedHealthEffect alloc] initWithDuration:8.0 andEffectType:EffectTypePositiveInvisible];
         [afterLightEffect setNumOfTicks:8];
-        [afterLightEffect setValuePerTick:(int)round(.1*amount/8.0)];
+        [afterLightEffect setValuePerTick:(int)round(.2*amount/8.0)];
         [afterLightEffect setTitle:@"after-light-effect"];
         [afterLightEffect setOwner:self.owner];
         [target addEffect:afterLightEffect];

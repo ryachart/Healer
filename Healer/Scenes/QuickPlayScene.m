@@ -90,22 +90,7 @@
     
     Encounter *encounter = [Encounter encounterForLevel:level isMultiplayer:NO];
     Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-    NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
-    for (Spell *spell in encounter.recommendedSpells){
-        if ([Shop playerHasSpell:spell]){
-            [activeSpells addObject:[[spell class] defaultSpell]];
-        }
-    }
-    
-    //Add other spells the player has
-    for (Spell *spell in [Shop allOwnedSpells]){
-        if (activeSpells.count < 4){
-            if (![activeSpells containsObject:spell]){
-                [activeSpells addObject:[[spell class] defaultSpell]];
-            }
-        }
-    }
-    [basicPlayer setActiveSpells:(NSArray*)activeSpells];
+    [Encounter configurePlayer:basicPlayer forRecSpells:encounter.recommendedSpells];
     
     if (encounter.boss && basicPlayer && encounter.raid){
         
@@ -124,22 +109,7 @@
 - (void)beginEndlessVoidEncounter:(id)sender{
     Encounter *encounter = [Encounter survivalEncounterIsMultiplayer:NO];
     Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-    NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
-    for (Spell *spell in encounter.recommendedSpells){
-        if ([Shop playerHasSpell:spell]){
-            [activeSpells addObject:[[spell class] defaultSpell]];
-        }
-    }
-    
-    //Add other spells the player has
-    for (Spell *spell in [Shop allOwnedSpells]){
-        if (activeSpells.count < 4){
-            if (![activeSpells containsObject:spell]){
-                [activeSpells addObject:spell];
-            }
-        }
-    }
-    [basicPlayer setActiveSpells:(NSArray*)activeSpells];
+    [Encounter configurePlayer:basicPlayer forRecSpells:encounter.recommendedSpells];
     
     if (encounter.boss && basicPlayer && encounter.raid){
         

@@ -22,12 +22,9 @@
 @property (nonatomic, readwrite) NSInteger maxPlayers;
 @property (nonatomic, readwrite) BOOL changingSpells;
 @property (nonatomic, retain) NSMutableArray *spellInfoNodes;
-@property (nonatomic, retain) Player *player;
-@property (nonatomic, retain) Boss *boss;
-@property (nonatomic, retain) Raid *raid;
+
 
 -(void)back;
--(void)doneButton;
 -(void)changeSpells;
 -(void)configureSpells;
 
@@ -160,7 +157,6 @@
     [gps setLevelNumber:self.levelNumber];
     [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
     [gps release];
-
 }
 
 -(void)changeSpells{

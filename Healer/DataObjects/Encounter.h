@@ -10,6 +10,7 @@
 
 @class Raid;
 @class Boss;
+@class Player;
 @interface Encounter : NSObject
 @property (nonatomic, retain) Raid *raid;
 @property (nonatomic, retain) Boss *boss;
@@ -24,4 +25,5 @@
 + (Encounter*)survivalEncounterIsMultiplayer:(BOOL)multiplayer;
 + (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer;
 + (NSInteger)goldForLevelNumber:(NSInteger)levelNumber isFirstWin:(BOOL)isFirstWin isMultiplayer:(BOOL)isMultiplayer;
++ (void)configurePlayer:(Player*)player forRecSpells:(NSArray*)spells;
 @end

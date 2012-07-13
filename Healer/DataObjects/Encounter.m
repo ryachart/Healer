@@ -12,6 +12,8 @@
 #import "RaidMember.h"
 #import "Boss.h"
 #import "Spell.h"
+#import "Shop.h"
+
 
 @interface Encounter ()
 @property (nonatomic, readwrite) NSInteger levelNumber;
@@ -614,6 +616,25 @@
     basicBoss.isMultiplayer = multiplayer;
     Encounter *encToReturn = [[Encounter alloc] initWithRaid:[basicRaid autorelease] andBoss:basicBoss andSpells:spells];
     return [encToReturn autorelease];;
+}
+
++ (void)configurePlayer:(Player*)player forRecSpells:(NSArray*)spells {
+    NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
+    for (Spell *spell in spells){
+        if ([Shop playerHasSpell:spell]){
+            [activeSpells addObject:[[spell class] defaultSpell]];
+        }
+    }
+    
+    //Add other spells the player has
+    for (Spell *spell in [Shop allOwnedSpells]){
+        if (activeSpells.count < 4){
+            if (![activeSpells containsObject:spell]){
+                [activeSpells addObject:[[spell class] defaultSpell]];
+            }
+        }
+    }
+    [player setActiveSpells:(NSArray*)activeSpells];
 }
 
 @end

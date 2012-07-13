@@ -126,6 +126,14 @@
     return [NSString stringWithFormat:@"P-%@", self.playerID];
 }
 
+- (NSString*)spellsAsNetworkMessage {
+    NSMutableString *spellsMessage = [NSMutableString stringWithCapacity:40];
+    for (Spell *spell in self.activeSpells) {
+        [spellsMessage appendFormat:@"%@|", spell.class];
+    }
+    return spellsMessage;
+}
+
 - (NSString*)asNetworkMessage{
     NSString *message = [NSString stringWithFormat:@"PLYR|%@|%i|%i|", self.playerID, self.health, self.energy];
     return message;

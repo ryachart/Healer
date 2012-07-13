@@ -152,6 +152,7 @@
 		BF698674154CE45A0016F25E /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF698670154CE45A0016F25E /* README.txt */; };
 		BF698675154CE45A0016F25E /* release_notes.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF698671154CE45A0016F25E /* release_notes.txt */; };
 		BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
+		BF730C4015ABC1BD00E09B81 /* MultiplayerQueueScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */; };
 		BF7B721B152CA9AC001999D3 /* CCRoundedRect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7B721A152CA9AC001999D3 /* CCRoundedRect.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
 		BF8249D71526D7C2000B554B /* RaidMemberPreBattleCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */; };
@@ -588,6 +589,8 @@
 		BF698672154CE45A0016F25E /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		BF6CC5CE15022496000F1AFF /* PostBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostBattleScene.h; path = Scenes/PostBattleScene.h; sourceTree = "<group>"; };
 		BF6CC5CF15022496000F1AFF /* PostBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostBattleScene.m; path = Scenes/PostBattleScene.m; sourceTree = "<group>"; };
+		BF730C3E15ABC1BD00E09B81 /* MultiplayerQueueScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiplayerQueueScene.h; sourceTree = "<group>"; };
+		BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiplayerQueueScene.m; sourceTree = "<group>"; };
 		BF7B7219152CA9AC001999D3 /* CCRoundedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCRoundedRect.h; sourceTree = "<group>"; };
 		BF7B721A152CA9AC001999D3 /* CCRoundedRect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCRoundedRect.m; sourceTree = "<group>"; };
 		BF80763115214A04001EB2B3 /* PreBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreBattleScene.h; path = Scenes/PreBattleScene.h; sourceTree = "<group>"; };
@@ -660,10 +663,6 @@
 		38024DA013C2564D003D36F2 = {
 			isa = PBXGroup;
 			children = (
-				BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */,
-				BFA5464615AA0CED00F9B167 /* CFNetwork.framework */,
-				BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */,
-				BFA5464215AA0C3600F9B167 /* Security.framework */,
 				38024DBF13C2564D003D36F2 /* Healer */,
 				38024DAE13C2564D003D36F2 /* Frameworks */,
 				38024DAC13C2564D003D36F2 /* Products */,
@@ -722,6 +721,10 @@
 		38024DC013C2564D003D36F2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */,
+				BFA5464615AA0CED00F9B167 /* CFNetwork.framework */,
+				BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */,
+				BFA5464215AA0C3600F9B167 /* Security.framework */,
 				BF865F22159F8655007F5DBF /* healer.png */,
 				BF865F20159F8651007F5DBF /* healer@2x.png */,
 				BF865F1E159F8555007F5DBF /* Default-Landscape~ipad.png */,
@@ -1313,6 +1316,8 @@
 				BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */,
 				BF865F27159F9C1E007F5DBF /* DivinityConfigScene.h */,
 				BF865F28159F9C1F007F5DBF /* DivinityConfigScene.m */,
+				BF730C3E15ABC1BD00E09B81 /* MultiplayerQueueScene.h */,
+				BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -1783,6 +1788,7 @@
 				BF865F26159F9878007F5DBF /* Divinity.m in Sources */,
 				BF865F29159F9C1F007F5DBF /* DivinityConfigScene.m in Sources */,
 				BF865F2C15A031FB007F5DBF /* BasicButton.m in Sources */,
+				BF730C4015ABC1BD00E09B81 /* MultiplayerQueueScene.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

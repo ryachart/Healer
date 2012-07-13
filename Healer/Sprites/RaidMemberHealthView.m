@@ -23,6 +23,12 @@
 @property (nonatomic, assign) CCSprite *selectionSprite;
 @property (nonatomic, assign) CCSprite *classIconSprite;
 
+
+@property (nonatomic, assign) ClippingNode *pEffectClippingNode;
+@property (nonatomic, assign) CCSprite *pEffectDurationBack;
+@property (nonatomic, assign) ClippingNode *nEffectClippingNode;
+@property (nonatomic, assign) CCSprite *nEffectDurationBack;
+
 @property (nonatomic, readwrite) NSInteger lastHealth;
 @property (nonatomic, assign) CCSprite *shieldBubble;
 @end
@@ -32,6 +38,8 @@
 @synthesize memberData, healthLabel, interactionDelegate, isTouched;
 @synthesize lastHealth, isFocusedLabel, priorityNegativeEffectSprite, priorityPositiveEffectSprite, shieldBubble;
 @synthesize classIconSprite;
+@synthesize pEffectDurationBack, pEffectClippingNode;
+@synthesize nEffectDurationBack, nEffectClippingNode;
 
 @synthesize raidFrameTexture, healthBarClippingNode,  healthBarMask, selectionState, selectionSprite;
 
@@ -73,6 +81,26 @@
         [self.healthLabel setPosition:CGPointMake(frame.size.width * .7, frame.size.height * .5)];
         [self.healthLabel setContentSize:CGSizeMake(frame.size.width * .5, frame.size.height * .25)];
         [self.healthLabel setColor:ccc3(0, 0, 0)];
+        
+        self.pEffectClippingNode = [ClippingNode node];
+        self.pEffectDurationBack = [CCSprite spriteWithSpriteFrameName:@"effect_bottom_mask.png"];
+        [self.pEffectDurationBack setOpacity:70];
+        [self.pEffectDurationBack setColor:ccGREEN];
+        self.pEffectDurationBack.anchorPoint = CGPointMake(0, 0);
+        self.pEffectClippingNode.clippingRegion = CGRectMake(0,0,self.pEffectDurationBack.contentSize.width, 0);
+        [self.pEffectClippingNode setPosition:CGPointMake(8, 9)];
+        [self.pEffectClippingNode addChild:self.pEffectDurationBack];
+        [self addChild:self.pEffectClippingNode z:5];
+        
+        self.nEffectClippingNode = [ClippingNode node];
+        self.nEffectDurationBack = [CCSprite spriteWithSpriteFrameName:@"effect_top_mask.png"];
+        [self.nEffectDurationBack setOpacity:70];
+        [self.nEffectDurationBack setColor:ccRED];
+        self.nEffectDurationBack.anchorPoint = CGPointMake(0, 0);
+        self.nEffectClippingNode.clippingRegion = CGRectMake(0,0,self.nEffectDurationBack.contentSize.width, 0);
+        [self.nEffectClippingNode setPosition:CGPointMake(8, 44)];
+        [self.nEffectClippingNode addChild:self.nEffectDurationBack];
+        [self addChild:self.nEffectClippingNode z:5];
                 
         
         self.shieldBubble = [CCSprite spriteWithSpriteFrameName:@"shield_bubble.png"];
@@ -293,6 +321,8 @@
             [self.priorityPositiveEffectSprite setOpacity:255];
             [self.priorityPositiveEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:positiveEffect.spriteName]];
         }
+        
+        [self.pEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.pEffectDurationBack.contentSize.width, self.pEffectDurationBack.contentSize.height * (1- (positiveEffect.timeApplied/positiveEffect.duration)))];
         if (positiveEffect.timeApplied/positiveEffect.duration > .8 && ![self.priorityPositiveEffectSprite getActionByTag:BLINK_ACTION_TAG]){
             CCAction *blinkAction = [CCRepeatForever actionWithAction:[CCSequence actions:[CCFadeTo actionWithDuration:.5 opacity:120], [CCFadeTo actionWithDuration:.5 opacity:255], nil]];
             blinkAction.tag = BLINK_ACTION_TAG;
@@ -314,6 +344,7 @@
             [self.priorityNegativeEffectSprite setOpacity:255];
             [self.priorityNegativeEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:negativeEffect.spriteName]];
         }
+        [self.nEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.nEffectDurationBack.contentSize.width, self.nEffectDurationBack.contentSize.height * (1- (negativeEffect.timeApplied/negativeEffect.duration)))];
         if (negativeEffect.timeApplied/negativeEffect.duration > .8 && ![self.priorityNegativeEffectSprite getActionByTag:BLINK_ACTION_TAG]){
             CCAction *blinkAction = [CCRepeatForever actionWithAction:[CCSequence actions:[CCFadeTo actionWithDuration:.5 opacity:120], [CCFadeTo actionWithDuration:.5 opacity:255], nil]];
             blinkAction.tag = BLINK_ACTION_TAG;

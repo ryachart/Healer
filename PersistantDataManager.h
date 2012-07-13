@@ -9,13 +9,15 @@
 #import <Foundation/Foundation.h>
 #import <Parse/Parse.h>
 #define MAX_CHARACTERS 5
-#define SAVE_FILE_NAME @"SavedCharacterData"
 
 extern NSString* const PlayerHighestLevelAttempted;
 extern NSString* const PlayerHighestLevelCompleted;
 extern NSString* const PlayerRemoteObjectIdKey;
 
 @interface PlayerDataManager 
+
++ (BOOL)hardMode;
++ (void)setHardMode:(BOOL)isOn;
 
 + (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level;
 + (NSInteger)levelRatingForLevel:(NSInteger)level;

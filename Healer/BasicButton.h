@@ -10,6 +10,8 @@
 
 @interface BasicButton : CCMenuItemSprite
 
-+ (CCMenuItemSprite*)basicButtonWithTarget:(id)target andSelector:(SEL)selector andTitle:(NSString*)title;
++ (BasicButton*)basicButtonWithTarget:(id)target andSelector:(SEL)selector andTitle:(NSString*)title;
 + (CCMenu *)spriteButtonWithSpriteFrameName:(NSString*)frameName target:(id)target andSelector:(SEL)selector;
+
+- (void)setTitle:(NSString*)title;
 @end

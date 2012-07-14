@@ -124,6 +124,7 @@
     HealerStartScene *startScene = [[HealerStartScene alloc] init];
 	[[CCDirector sharedDirector] runWithScene: startScene];
     [startScene release];
+    [PlayerDataManager saveRemotePlayer];
 }
 
 

@@ -129,7 +129,7 @@
 - (NSString*)spellsAsNetworkMessage {
     NSMutableString *spellsMessage = [NSMutableString stringWithCapacity:40];
     for (Spell *spell in self.activeSpells) {
-        [spellsMessage appendFormat:@"%@|", spell.class];
+        [spellsMessage appendFormat:@"|%@", spell.class];
     }
     return spellsMessage;
 }
@@ -349,7 +349,7 @@
 }
 
 -(NSString*)sourceName{
-    return [NSString stringWithFormat:@"PLAYER:%@", self.battleID];
+    return [NSString stringWithFormat:@"PLAYER:%@", self.playerID];
 }
 
 -(NSString*)targetName{

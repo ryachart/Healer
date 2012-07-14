@@ -23,7 +23,6 @@
 #import "HealerStartScene.h"
 
 @interface PostBattleScene ()
-@property (nonatomic, readwrite) BOOL canAdvance;
 @property (nonatomic, readwrite) NSInteger levelNumber;
 @property (nonatomic, readwrite) BOOL isMultiplayer;
 @property (nonatomic, readwrite) BOOL isVictory;
@@ -36,7 +35,7 @@
 @end
 
 @implementation PostBattleScene
-@synthesize matchVoiceChat, match=_match, serverPlayerId, canAdvance;
+@synthesize matchVoiceChat, match=_match, serverPlayerId;
 @synthesize levelNumber, isMultiplayer;
 @synthesize isVictory;
 - (void)dealloc {
@@ -269,9 +268,6 @@
 
 - (void)onEnterTransitionDidFinish{
     [super onEnterTransitionDidFinish];
-    if (self.serverPlayerId == [GKLocalPlayer localPlayer].playerID){
-        self.canAdvance = YES;
-    }
     if (self.levelNumber >= 6 && ![Divinity isDivinityUnlocked] && !self.isMultiplayer && self.isVictory){
         [Divinity unlockDivinity];
         [self showDivinityUnlocked];
@@ -291,22 +287,8 @@
 }
                             
 -(void)done{
-    if (self.serverPlayerId){
-        if (!self.canAdvance){
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Waiting on Game Owner" message:@"You must wait for the game's owner to continue"  delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil];
-            [alertView show];
-            [alertView release];
-            return;
-        }
-        
+    if (self.isMultiplayer){
         [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
-        //Go to multiplayer select
-//        MultiplayerSetupScene *mss = [[MultiplayerSetupScene alloc] initWithPreconfiguredMatch:self.match andServerID:self.serverPlayerId andLevelNumber:<#(NSInteger)#>];
-//        self.match.delegate = mss;
-//        [mss setMatchVoiceChat:self.matchVoiceChat];
-//        [[CCDirector sharedDirector] replaceScene:mss];
-//        [mss release];
-        
     }else{
         QuickPlayScene *qps = [[QuickPlayScene alloc] init];
         [[CCDirector sharedDirector] replaceScene:qps];
@@ -346,9 +328,6 @@
     
     NSString* message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
-    if ([message isEqualToString:@"POSTBATTLEEND"]){
-        self.canAdvance = YES;
-    }
     [message release];
     
 }

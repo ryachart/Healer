@@ -15,6 +15,7 @@
 #import <GameKit/GameKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import "BackgroundSprite.h"
+#import "MultiplayerQueueScene.h"
 
 @interface MultiplayerSetupScene ()
 @property (nonatomic, retain) Raid *raid;
@@ -23,11 +24,11 @@
 @property (nonatomic, assign) CCMenu *encounterSelectMenu;
 @property (nonatomic, assign) CCMenuItemLabel *beginButton;
 @property (nonatomic, retain) NSMutableArray *waitingOnPlayers;
+@property (nonatomic, retain) NSMutableDictionary *otherPlayers;
 @property (nonatomic, readwrite) BOOL isPreconfiguredMatch;
 @property (nonatomic, readwrite) BOOL isCommittedToReady;
 
 -(void)beginGame;
--(void)encounterSelected:(NSInteger)encounterNumber;
 -(void)generateRaidMemberFromServerWithClass:(NSString*)className andBattleID:(NSString*)battleID;
 @end
 
@@ -35,13 +36,14 @@
 @synthesize match, serverPlayerID, matchVoiceChat, waitingOnPlayers, isPreconfiguredMatch;
 @synthesize menu, beginButton, raid, boss, selectedEncounter, encounterSelectMenu;
 @synthesize isCommittedToReady;
-
+@synthesize otherPlayers;
 - (void)dealloc {
     [match release];
     [matchVoiceChat release];
     [serverPlayerID release];
     [selectedEncounter release];
     [waitingOnPlayers release];
+    [otherPlayers release];
     [raid release];
     [boss release];
     [super dealloc];
@@ -59,9 +61,25 @@
         self.isPreconfiguredMatch = YES;
         if (self.isServer){
             self.waitingOnPlayers = [NSMutableArray arrayWithArray: self.match.playerIDs];
+            self.otherPlayers = [NSMutableDictionary  dictionaryWithCapacity:self.match.playerIDs.count];
         }
     }
+    [player release];
+
     return self;
+}
+
+- (BOOL)canBegin {
+    if (!self.isServer){
+        return NO;
+    }
+    BOOL canBegin = YES;
+    for (NSString *playerID in self.waitingOnPlayers){
+        if (![self.otherPlayers objectForKey:playerID]){
+            canBegin = NO;
+        }
+    }
+    return canBegin;
 }
 
 - (void)changeSpells {
@@ -70,15 +88,34 @@
     }
 }
 
+- (void)back{
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:1.0 scene:[[[MultiplayerQueueScene alloc] init] autorelease]]];
+}
+
 - (void)doneButton{
-    if (!self.isServer){ 
-        [match sendData:[[NSString stringWithFormat:@"SPELLS|%@", self.player.spellsAsNetworkMessage] dataUsingEncoding:NSUTF8StringEncoding] toPlayers:[NSArray arrayWithObject:self.serverPlayerID] withDataMode:GKSendDataReliable error:nil];
+    if (!self.isServer && !self.isCommittedToReady){ 
+        [match sendData:[[NSString stringWithFormat:@"SPELLS%@", self.player.spellsAsNetworkMessage] dataUsingEncoding:NSUTF8StringEncoding] toPlayers:[NSArray arrayWithObject:self.serverPlayerID] withDataMode:GKSendDataReliable error:nil];
         self.isCommittedToReady = YES;
     }
-    else if (self.waitingOnPlayers.count == 0) {
-        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss andPlayer:self.player];
-        [gps setLevelNumber:self.levelNumber];
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
+    else if ([self canBegin]) {
+        NSMutableArray *allPlayers = [NSMutableArray arrayWithCapacity:2];
+        [allPlayers addObject:self.player];
+        
+        for (NSString* playerID in self.waitingOnPlayers) {
+            Player *otherPlayer = [self.otherPlayers objectForKey:playerID];
+            [otherPlayer setPlayerID:playerID];
+            [otherPlayer setIsAudible:NO];
+            [allPlayers addObject:otherPlayer];
+        }
+        [self.player setPlayerID:self.serverPlayerID];
+        [self.boss setIsMultiplayer:YES];
+        [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"BEGIN"] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
+        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss andPlayers:allPlayers];
+        [self.match setDelegate:gps];
+        [gps setServerPlayerID:self.serverPlayerID];
+        [gps setMatch:self.match];
+        [gps setMatchVoiceChat:self.matchVoiceChat];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:.5 scene:gps]];
         [gps release];
     }
 }
@@ -92,13 +129,6 @@
         self.matchVoiceChat = [self.match voiceChatWithName:@"general"];
         [self.matchVoiceChat start];
         [self.matchVoiceChat setActive:YES];
-        
-        if (self.isServer){
-            [match sendDataToAllPlayers:[@"POSTBATTLEEND" dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
-            for (CCMenuItemLabel *child in self.encounterSelectMenu.children){
-                [child setIsEnabled:YES];
-            }
-        }
     }
 }
 
@@ -111,85 +141,15 @@
     }
 }
 
--(void)clientEncounterSelected:(int)level{
-    for (CCMenuItemLabel *child in self.encounterSelectMenu.children){
-        [child setOpacity:125];
-    }
-    [(CCMenuItemLabel*)[self.encounterSelectMenu getChildByTag:level] setOpacity:255];
-    self.selectedEncounter = [Encounter encounterForLevel:level isMultiplayer:YES];
-}
-
--(void)encounterSelected:(NSInteger)encounterNumber{
-    int level = encounterNumber;
-    if (self.isServer){
-        for (CCMenuItemLabel *child in self.encounterSelectMenu.children){
-            [child setOpacity:125];
-        }
-        self.selectedEncounter = [Encounter encounterForLevel:level isMultiplayer:YES];
-        [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ENCSEL|%i|",level] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
-        self.beginButton.isEnabled = YES;
-        [self.beginButton setOpacity:255];
-    }
-}
-
 -(void)beginGame{
-    if (self.isServer && self.encounterSelectMenu && self.waitingOnPlayers.count == 0){
-        Player *serverPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-        NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
-        for (Spell *spell in self.selectedEncounter.recommendedSpells){
-            [activeSpells addObject:[[spell class] defaultSpell]];
-        }
-        [serverPlayer setActiveSpells:(NSArray*)activeSpells];
-        
-        
-        NSMutableArray *totalPlayers = [NSMutableArray arrayWithCapacity:4];
-        [totalPlayers addObject:serverPlayer];
-        [serverPlayer release];
-        
-        for (int i = 0; i < match.playerIDs.count; i++){
-            //Add other players
-            Player *clientPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-            [clientPlayer setIsAudible:NO];
-            [clientPlayer setPlayerID:[match.playerIDs objectAtIndex:i]];
-            NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
-            for (Spell *spell in self.selectedEncounter.recommendedSpells){
-                [activeSpells addObject:[[spell class] defaultSpell]];
-            }
-            [clientPlayer setActiveSpells:(NSArray*)activeSpells];
-            [totalPlayers addObject:clientPlayer];
-            [clientPlayer release];
-        }
-        [match sendDataToAllPlayers:[@"BEGIN" dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
-        
-        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.selectedEncounter.raid boss:self.selectedEncounter.boss andPlayers:totalPlayers];
-        [self.match setDelegate:gps];
-        [gps setMatch:self.match];
-        [gps setServerPlayerID:[GKLocalPlayer localPlayer].playerID];
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
-        [gps release];
-    }else{
-        NSLog(@"SERVER DOESNT HAVE A SELECTED ENCOUNTER");
-    }
-    
-    if (!self.isServer && self.encounterSelectMenu){
-        Player *clientPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
-        [clientPlayer setPlayerID:[GKLocalPlayer localPlayer].playerID];
-        NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
-        for (Spell *spell in self.selectedEncounter.recommendedSpells){
-            [activeSpells addObject:[[spell class] defaultSpell]];
-        }
-        [clientPlayer setActiveSpells:(NSArray*)activeSpells];
-        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.selectedEncounter.raid boss:self.selectedEncounter.boss andPlayer:clientPlayer];
-        [self.match setDelegate:gps];
-        [gps setMatch:self.match];
-        [gps setMatchVoiceChat:self.matchVoiceChat];
-        [gps setIsClient:YES forServerPlayerId:self.serverPlayerID];
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
-        [gps release];
-        [clientPlayer release];
-    }else{
-        NSLog(@"CLIENT DOESNT HAVE A SELECTED ENCOUNTER");
-    }
+    [self.player setPlayerID:[GKLocalPlayer localPlayer].playerID];
+    GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss andPlayer:self.player];
+    [self.match setDelegate:gps];
+    [gps setMatch:self.match];
+    [gps setMatchVoiceChat:self.matchVoiceChat];
+    [gps setIsClient:YES forServerPlayerId:self.serverPlayerID];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
+    [gps release];
 }
 
 -(BOOL)isServer{
@@ -221,9 +181,29 @@
     if (self.isServer){
         if ([message isEqualToString:@"PLRDY"]){
             [self.waitingOnPlayers removeObject:playerID];
-            if (self.selectedEncounter){
-                [match sendData:[[NSString stringWithFormat:@"ENCSEL|%i|",self.selectedEncounter.levelNumber] dataUsingEncoding:NSUTF8StringEncoding] toPlayers:[NSArray arrayWithObject:playerID] withDataMode:GKSendDataReliable error:nil];
+        }
+        
+        if ([message hasPrefix:@"SPELLS"]) {
+            NSMutableArray *playerSpells = [NSMutableArray arrayWithCapacity:4];
+            NSArray *components = [message componentsSeparatedByString:@"|"];
+            for (int i = 1; i < components.count; i++){
+                NSString* spellClassName = [components objectAtIndex:i];
+                Class spellClass = NSClassFromString(spellClassName);
+                NSLog(@"Got a className: %@", spellClassName);
+                Spell *spellFromClass = [spellClass defaultSpell];
+                NSLog(@"Created a %@", spellFromClass);
+                if (spellFromClass){
+                    [playerSpells addObject:spellFromClass];
+                }else {
+                    NSLog(@"ERR: No spell by that name: %@", spellClassName);
+                }
             }
+            
+            Player *otherPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+            [otherPlayer setActiveSpells:playerSpells];
+            [self.otherPlayers setObject:otherPlayer forKey:playerID];
+            [otherPlayer release];
+            
         }
     }
     
@@ -242,9 +222,6 @@
         [self generateRaidMemberFromServerWithClass:className andBattleID:battleID];
     }
     
-    if ([message hasPrefix:@"ENCSEL|"]){
-        [self clientEncounterSelected:[[message substringFromIndex:7] intValue]];
-    }
     [message release];
 }
 
@@ -259,6 +236,11 @@
         case GKPlayerStateDisconnected:
             // a player just disconnected. 
             NSLog(@"Player disconnected!");
+            if ([theMatch playerIDs].count == 0){
+                UIAlertView *noPlayersLeft = [[[UIAlertView alloc] initWithTitle:@"Player Disconnected" message:@"There are no remaining players.  This game will not be able to continue." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil] autorelease];
+                [noPlayersLeft show];
+            }
+            
             break;
     }                     
 }

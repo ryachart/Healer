@@ -9,7 +9,7 @@
 #import "cocos2d.h"
 #import <GameKit/GameKit.h>
 
-@interface MultiplayerQueueScene : CCScene <GKMatchmakerViewControllerDelegate>
+@interface MultiplayerQueueScene : CCScene <GKMatchmakerViewControllerDelegate, GKMatchDelegate>
 @property (nonatomic, retain) UIViewController* presentingViewController;
 
 @end

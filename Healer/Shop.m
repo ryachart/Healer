@@ -77,7 +77,7 @@ static NSArray *shopItems = nil;
 +(NSArray*)allOwnedSpells{
     NSMutableArray *allSpells = [NSMutableArray arrayWithCapacity:20];
     for (ShopItem *item in [Shop purchasedItems]){
-        [allSpells addObject:[item purchasedSpell]];
+        [allSpells addObject:[[[item purchasedSpell] class] defaultSpell]];
     }
     [allSpells addObject:[Heal defaultSpell]];
     return allSpells;

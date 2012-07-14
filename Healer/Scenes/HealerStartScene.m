@@ -24,6 +24,7 @@
 @property (assign) CCMenuItem* multiplayerButton;
 @property (assign) CCMenuItem* quickPlayButton;
 @property (assign) CCMenuItem* storeButton;
+@property (nonatomic, readwrite) BOOL authenticationAttempted;
 
 -(void)multiplayerSelected;
 -(void)quickPlaySelected;
@@ -36,7 +37,7 @@
 @synthesize multiplayerButton;
 @synthesize quickPlayButton;
 @synthesize storeButton;
-
+@synthesize authenticationAttempted;
 -(id)init{
     if (self = [super init]){
 #if DEBUG
@@ -59,10 +60,10 @@
             [divinityButton setIsEnabled:NO];
         }
         
-        NSString *difficultyTitle = [PlayerDataManager hardMode] ? @"Normal Mode" : @"Hard Mode";
-        CCMenuItem *hardModeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(hardModeToggled:) andTitle:difficultyTitle];
-        [hardModeButton setIsEnabled:NO];
-        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, self.multiplayerButton, divinityButton, hardModeButton, nil];
+//        NSString *difficultyTitle = [PlayerDataManager hardMode] ? @"Normal Mode" : @"Hard Mode";
+//        CCMenuItem *hardModeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(hardModeToggled:) andTitle:difficultyTitle];
+//        [hardModeButton setIsEnabled:NO];
+        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, self.multiplayerButton, divinityButton/*, hardModeButton*/, nil];
         
         [self.menu alignItemsVerticallyWithPadding:20.0];
         CGSize winSize = [CCDirector sharedDirector].winSize;
@@ -85,9 +86,26 @@
 }
 
 -(void)multiplayerSelected{
-    MultiplayerQueueScene *queueScene = [[MultiplayerQueueScene alloc] init];
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:1.0 scene:queueScene]];
-    [queueScene release];
+    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+    if (![localPlayer isAuthenticated]){
+        [localPlayer authenticateWithCompletionHandler:^(NSError *error){
+                if (!error) {
+                    MultiplayerQueueScene *queueScene = [[MultiplayerQueueScene alloc] init];
+                    [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:queueScene]];
+                    [queueScene release];
+                    self.authenticationAttempted = YES;
+                }else
+                {
+                    self.authenticationAttempted = NO;
+                    NSLog(@"%@", error);
+                }
+            }];
+    } else{
+        MultiplayerQueueScene *queueScene = [[MultiplayerQueueScene alloc] init];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:queueScene]];
+        [queueScene release];
+    }
+
 }
 
 - (void)onEnterTransitionDidFinish {

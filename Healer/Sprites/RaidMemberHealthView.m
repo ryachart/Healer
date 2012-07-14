@@ -289,6 +289,8 @@
         [self.healthBarMask setColor:colorForPerc];
 	}
 	else {
+        [self.nEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.nEffectDurationBack.contentSize.width, 0)];
+        [self.pEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.pEffectDurationBack.contentSize.width, 0)];
 		healthText = @"Dead";
         [self.raidFrameTexture setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"raid_frame_dead.png"]];
 	}
@@ -331,6 +333,7 @@
         
         [self.priorityPositiveEffectSprite setVisible:YES];
     }else{
+        [self.pEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.pEffectDurationBack.contentSize.width, 0)];
         [self.priorityPositiveEffectSprite setVisible:NO];
     }
     
@@ -352,6 +355,7 @@
         }
         [self.priorityNegativeEffectSprite setVisible:YES];
     }else{
+        [self.nEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.nEffectDurationBack.contentSize.width, 0)];
         [self.priorityNegativeEffectSprite setVisible:NO];
     }
 

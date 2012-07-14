@@ -18,6 +18,7 @@
 @property (readwrite) BOOL authenticationAttempted;
 @property (nonatomic, retain) NSString* serverPlayerId;
 @property (nonatomic, retain) GKMatch *match;
+@property (nonatomic, assign) CCLabelTTF *currentActivityLabel;
 @end
 
 @implementation MultiplayerQueueScene
@@ -26,6 +27,8 @@
 @synthesize authenticationAttempted;
 @synthesize match;
 @synthesize serverPlayerId;
+@synthesize currentActivityLabel;
+
 - (void)dealloc {
     [presentingViewController release];
     [serverPlayerId release];
@@ -52,6 +55,29 @@
         [self addChild:backButton];
     }
     return self;
+}
+
+
+- (void)onEnterTransitionDidFinish {
+    [super onEnterTransitionDidFinish];
+    [[GKMatchmaker sharedMatchmaker] queryActivityWithCompletionHandler:^(NSInteger activity, NSError *error){
+        if (!error) {
+            [self gotActivity:activity];
+        }else {
+            NSLog(@"Error Fetching Activity: %@", [error description]);
+        }
+    
+    }];
+}
+
+- (void)gotActivity:(NSInteger)activity {
+    if (!self.currentActivityLabel){
+        self.currentActivityLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Server Activity: %i", activity] dimensions:CGSizeMake(300, 50) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:28.0];
+        [self.currentActivityLabel setPosition:CGPointMake(512, 40)];
+        [self addChild:self.currentActivityLabel];
+    }else {
+        self.currentActivityLabel.string = [NSString stringWithFormat:@"Server Activity: %i", activity];
+    }
 }
 
 - (void)queueRandom {
@@ -112,6 +138,7 @@
     }
     
     self.match = theMatch;
+    self.match.delegate = self;
 }
 
 // The player state changed (eg. connected or disconnected)
@@ -137,8 +164,8 @@
                     [match sendDataToAllPlayers:[[NSString stringWithFormat:@"LEVELNUM|%i", encounterNumber] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
                     
                     MultiplayerSetupScene *mpss = [[MultiplayerSetupScene alloc] initWithPreconfiguredMatch:self.match andServerID:self.serverPlayerId andLevelNumber:encounterNumber];
-                    [[CCDirector sharedDirector] replaceScene:mpss];
                     self.match.delegate = mpss;
+                    [[CCDirector sharedDirector] replaceScene:mpss];
                     [mpss release];
                 }
 
@@ -163,8 +190,8 @@
     if ([message hasPrefix:@"LEVELNUM"]){
         components = [message componentsSeparatedByString:@"|"];
         MultiplayerSetupScene *mpss = [[MultiplayerSetupScene alloc] initWithPreconfiguredMatch:self.match andServerID:self.serverPlayerId andLevelNumber:[[components objectAtIndex:1] intValue]];
-        [[CCDirector sharedDirector] replaceScene:mpss];
         self.match.delegate = mpss;
+        [[CCDirector sharedDirector] replaceScene:mpss];
         [mpss release];
     }
 

@@ -440,7 +440,7 @@
     }
     [effectToRemove effectWillBeDispelled:theRaid player:thePlayer];
     [effectToRemove expire];
-    [thePlayer.spellTarget.activeEffects removeObject:effectToRemove];
+    [thePlayer.spellTarget removeEffect:effectToRemove];
     
 }
 

@@ -15,7 +15,8 @@
 @property (nonatomic, retain) Player *player;
 @property (nonatomic, retain) Boss *boss;
 @property (nonatomic, retain) Raid *raid;
--(id)initWithRaid:(Raid*)raid boss:(Boss*)boss andPlayer:(Player*)player;
--(void)doneButton;
--(void)changeSpells;
+- (id)initWithRaid:(Raid*)raid boss:(Boss*)boss andPlayer:(Player*)player;
+- (void)doneButton;
+- (void)changeSpells;
+- (void)back;
 @end

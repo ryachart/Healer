@@ -482,6 +482,10 @@
     if (!spriteName){
         return;
     }
+    if (self.isServer){
+        NSString* networkMessage = [NSString stringWithFormat:@"SPRTOV|%@|%1.3f", spriteName, duration];
+        [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
+    }
     CCSprite *sprite = [CCSprite spriteWithSpriteFrameName:spriteName];
     CGFloat scaleTo = 1.0;
     if ([spriteName isEqualToString:@"shield_bubble.png"]){
@@ -792,6 +796,11 @@
         if ([message hasPrefix:@"STMTGT|"]){
             NSArray *components = [message componentsSeparatedByString:@"|"];
             [self displayParticleSystemWithName:[components objectAtIndex:1] onTarget:[self.raid memberForBattleID:[components objectAtIndex:2]]];
+        }
+        
+        if ([message hasPrefix:@"SPRTOV|"]){
+            NSArray *components = [message componentsSeparatedByString:@"|"];
+            [self displaySprite:[components objectAtIndex:1] overRaidForDuration:[[components objectAtIndex:2] floatValue]];
         }
     }
     

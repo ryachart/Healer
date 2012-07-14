@@ -10,15 +10,24 @@
 #import "Shop.h"
 #import "Spell.h"
 
-
+static dispatch_queue_t parse_queue = nil;
 
 NSString* const PlayerHighestLevelAttempted = @"com.healer.playerHighestLevelAttempted";
 NSString* const PlayerHighestLevelCompleted = @"com.healer.playerHighestLevelCompleted";
+NSString* const PLayerHighestLevelAttemptedHM = @"com.healer.playerHighestLevelAttemptedHM";
+NSString* const PLayerHighestLevelCompletedHM = @"com.healer.playerHighestLevelCompletedHM";
 NSString* const PlayerLevelRatingKeyPrefix = @"com.healer.playerLevelRatingForLevel";
-NSString* const PlayerRemoteObjectIdKey = @"com.healer.playerRemoteObjectID1";
+NSString* const PlayerRemoteObjectIdKey = @"com.healer.playerRemoteObjectID3";
 NSString* const PlayerDifficultySettingKey = @"com.healer.hardMode";
 
 @implementation PlayerDataManager 
+
++ (dispatch_queue_t)parseQueue {
+    if (!parse_queue){
+        parse_queue = dispatch_queue_create("com.healer.parse-dispatch-queue", 0);
+    }
+    return parse_queue;
+}
 
 + (BOOL)hardMode {
     return [[NSUserDefaults standardUserDefaults] boolForKey:PlayerDifficultySettingKey];
@@ -78,9 +87,9 @@ NSString* const PlayerDifficultySettingKey = @"com.healer.hardMode";
 
 + (void)saveRemotePlayer {
     NSInteger backgroundExceptionIdentifer = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{}];
-    dispatch_async(dispatch_get_main_queue(), ^{ 
+    dispatch_async([PlayerDataManager parseQueue], ^{ 
         NSString* playerObjectID = [[NSUserDefaults standardUserDefaults] objectForKey:PlayerRemoteObjectIdKey];
-        
+        NSLog(@"Fetching Player with id %@", playerObjectID);
         if (playerObjectID){
             PFQuery *playerObjectQuery = [PFQuery queryWithClassName:@"player"];
             PFObject *playerObject = [playerObjectQuery getObjectWithId:playerObjectID];
@@ -89,14 +98,7 @@ NSString* const PlayerDifficultySettingKey = @"com.healer.hardMode";
         } else {
             PFObject *newPlayerObject = [PFObject objectWithClassName:@"player"];
             [PlayerDataManager setPlayerObjectInformation:newPlayerObject];
-            if (![newPlayerObject save]) {
-                [newPlayerObject saveEventually:^(BOOL succeeded, NSError* error){
-                    if (newPlayerObject.objectId){
-                        [[NSUserDefaults standardUserDefaults] setObject:newPlayerObject.objectId forKey:PlayerRemoteObjectIdKey];
-                        [[NSUserDefaults standardUserDefaults] synchronize];
-                    }
-                }];
-            }else {
+            if ([newPlayerObject save]) {
                 if (newPlayerObject.objectId){
                     [[NSUserDefaults standardUserDefaults] setObject:newPlayerObject.objectId forKey:PlayerRemoteObjectIdKey];
                     [[NSUserDefaults standardUserDefaults] synchronize];

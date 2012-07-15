@@ -102,6 +102,7 @@ static AudioController* sharedController = nil;
 {
 	if ([audioPlayers count] > 0){
 		AVAudioPlayer *player = [audioPlayers objectForKey:title];
+        [player setVolume:.3];
 #if DEBUG
         [player setVolume:.1];
 #endif

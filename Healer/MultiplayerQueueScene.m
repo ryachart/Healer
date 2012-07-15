@@ -159,7 +159,7 @@
                 }
                 [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ACKSERVER: %@", self.serverPlayerId] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
                 
-                if (self.serverPlayerId == localPlayerID) {
+                if ([self.serverPlayerId isEqualToString:localPlayerID]) {
                     NSInteger encounterNumber = [Encounter randomMultiplayerEncounter].levelNumber;
                     [match sendDataToAllPlayers:[[NSString stringWithFormat:@"LEVELNUM|%i", encounterNumber] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
                     

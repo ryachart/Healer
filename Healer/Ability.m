@@ -91,7 +91,7 @@
     int additiveModifier = 0;
     
     if ([[self bossOwner] isMultiplayer]){
-        multiplyModifier += 1.5;
+        multiplyModifier += 1.2;
     }
     
     float criticalChance = [self bossOwner].criticalChance;

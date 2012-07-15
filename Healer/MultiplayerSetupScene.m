@@ -89,6 +89,9 @@
 }
 
 - (void)back{
+    if (self.matchVoiceChat){
+        [self.matchVoiceChat stop];
+    }
     [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:1.0 scene:[[[MultiplayerQueueScene alloc] init] autorelease]]];
 }
 

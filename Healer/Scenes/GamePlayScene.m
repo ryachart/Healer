@@ -231,6 +231,9 @@
 }
 
 - (void)pauseLayerDidQuit {
+    if (self.matchVoiceChat){
+        [self.matchVoiceChat stop];
+    }
     [self.pauseMenuLayer removeFromParentAndCleanup:YES];
     [self battleEndWithSuccess:NO];
 }

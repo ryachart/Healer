@@ -369,6 +369,9 @@
                             
 - (void)done{
     if (self.isMultiplayer){
+        if (self.matchVoiceChat){
+            [self.matchVoiceChat stop];
+        }
         [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
     }else{
         QuickPlayScene *qps = [[QuickPlayScene alloc] init];

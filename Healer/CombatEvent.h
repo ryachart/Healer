@@ -27,6 +27,9 @@ typedef enum {
 @end
 
 
+extern NSString* const PlayerHealingDoneKey;
+extern NSString* const PlayerOverHealingDoneKey;
+
 @interface CombatEvent : NSObject
 @property (nonatomic, retain) NSDate *timeStamp;
 @property (nonatomic, retain) id <EventDataSource> source;
@@ -37,6 +40,7 @@ typedef enum {
 
 -(NSString*)logLine;
 
++ (NSDictionary*)statsForPlayer:(NSString*)playerId fromLog:(NSArray*)log;
 @end
 
 

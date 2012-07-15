@@ -884,6 +884,7 @@
 -(void)performBranchAttackOnRaid:(Raid*)raid{
     for (RaidMember *member in raid.raidMembers){
         [member setHealth:member.health - 26 * self.damageDoneMultiplier];
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:26 * self.damageDoneMultiplier] andEventType:CombatEventTypeDamage]];
         RepeatedHealthEffect *lashDoT = [[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative];
         [lashDoT setOwner:self];
         [lashDoT setTitle:@"lash"];

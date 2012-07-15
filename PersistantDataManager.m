@@ -38,6 +38,10 @@ NSString* const PlayerDifficultySettingKey = @"com.healer.hardMode";
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
++ (BOOL)isMultiplayerUnlocked {
+    return [PlayerDataManager highestLevelCompleted] >= 6;
+}
+
 + (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level {
     [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:rating] forKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%d", level]];
 }

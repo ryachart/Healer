@@ -19,6 +19,8 @@ extern NSString* const PlayerRemoteObjectIdKey;
 + (BOOL)hardMode;
 + (void)setHardMode:(BOOL)isOn;
 
++ (BOOL)isMultiplayerUnlocked;
+
 + (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level;
 + (NSInteger)levelRatingForLevel:(NSInteger)level;
 + (NSInteger)highestLevelCompleted;

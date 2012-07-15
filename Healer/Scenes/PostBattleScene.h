@@ -16,5 +16,4 @@
 
 - (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog levelNumber:(NSInteger)levelNumber andIsMultiplayer:(BOOL)isMultiplayer andFallenMembers:(NSInteger)numDead;
 
-
 @end

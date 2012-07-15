@@ -6,6 +6,10 @@
 //
 
 #import "CombatEvent.h"
+#import "Player.h"
+
+NSString* const PlayerHealingDoneKey = @"com.healer.eventlog.healingdone";
+NSString* const PlayerOverHealingDoneKey = @"com.healer.eventlog.overhealingdone";
 
 @implementation CombatEvent
 @synthesize type = _type, value, source, target, timeStamp;
@@ -62,5 +66,26 @@
     [value release];
     [timeStamp release];
     [super dealloc];
+}
+
++ (NSDictionary*)statsForPlayer:(NSString*)playerId fromLog:(NSArray*)log {
+    NSInteger playerHealingDone = 0;
+    NSInteger playerOverheal = 0;
+    for (CombatEvent *event in log){
+        if (event.type == CombatEventTypeHeal) {
+            if ([[(Player*)event.source playerID] isEqualToString:playerId] || !playerId){
+                playerHealingDone += [[event value] intValue];
+            }
+        }
+        if (event.type == CombatEventTypeOverheal) {
+            if ([[(Player*)event.source playerID] isEqualToString:playerId] || !playerId){
+                playerOverheal += [[event value] intValue];
+            }
+        }
+    }
+    
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithInt:playerHealingDone], PlayerHealingDoneKey, 
+        [NSNumber numberWithInt:playerOverheal], PlayerOverHealingDoneKey, nil];
 }
 @end

@@ -126,9 +126,11 @@
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
         [[AVAudioSession sharedInstance] setActive:YES error:nil];
         
-        self.matchVoiceChat = [self.match voiceChatWithName:@"general"];
-        [self.matchVoiceChat start];
-        [self.matchVoiceChat setActive:YES];
+        if (!self.matchVoiceChat) {
+            self.matchVoiceChat = [self.match voiceChatWithName:@"general"];
+            [self.matchVoiceChat start];
+            [self.matchVoiceChat setActive:YES];
+        }
         
         if (self.isServer){
             self.continueLabel.string = @"Waiting...";

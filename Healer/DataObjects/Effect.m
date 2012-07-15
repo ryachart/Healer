@@ -495,6 +495,7 @@
 -(void)effectWillBeDispelled:(Raid *)raid player:(Player *)player{
     for (RaidMember*member in raid.raidMembers){
         [member setHealth:member.health + (self.dispelDamageValue * self.owner.damageDoneMultiplier)];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:self.dispelDamageValue * self.owner.damageDoneMultiplier] andEventType:CombatEventTypeDamage]];
     }
 }
 @end 

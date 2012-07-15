@@ -297,6 +297,7 @@
     }
     for (RaidMember *member in theRaid.raidMembers ){
         [member setHealth:member.health - (15.0 * self.owner.damageDoneMultiplier)];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(15.0 * self.owner.damageDoneMultiplier)]  andEventType:CombatEventTypeDamage]];
         for (Effect *effect in member.activeEffects){
             if (effect.effectType == EffectTypePositive){
                 [effect setIsExpired:YES];
@@ -327,6 +328,7 @@
         [target addEffect:debilitateEffect];
         [debilitateEffect release];
         [target setHealth:target.health * (self.abilityValue * self.owner.damageDoneMultiplier)];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:(self.abilityValue * self.owner.damageDoneMultiplier)] andEventType:CombatEventTypeDamage]]; 
     }
 }
 @end
@@ -478,6 +480,7 @@
         NSInteger damage = self.abilityValue * self.owner.damageDoneMultiplier;
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member  value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
         [member setHealth:member.health - damage];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member  value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
     }
 }
 @end

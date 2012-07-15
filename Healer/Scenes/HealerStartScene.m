@@ -86,6 +86,14 @@
 }
 
 -(void)multiplayerSelected{
+    if (![PlayerDataManager isMultiplayerUnlocked]){
+        UIAlertView *mplayerNotUnlocked = [[UIAlertView alloc] initWithTitle:@"Multiplayer not Unlocked!" message:@"Multiplayer is unlocked after slaying the Plaguebringer Colossus." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [mplayerNotUnlocked show];
+        [mplayerNotUnlocked release];
+        
+        return;
+    }
+    
     GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
     if (![localPlayer isAuthenticated]){
         [localPlayer authenticateWithCompletionHandler:^(NSError *error){

@@ -15,6 +15,7 @@ typedef enum {
     CombatEventTypeOverheal,
     CombatEventTypeDamage,
     CombatEventTypeMemberDied,
+    CombatEventTypePlayerInterrupted,
     CombatEventEnded
 } CombatEventType;
 

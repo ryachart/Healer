@@ -293,6 +293,7 @@
             [[player spellBeingCast] applyTemporaryCooldown:2.0];
         }
         [player interrupt];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:player value:[NSNumber numberWithFloat:2.0]  andEventType:CombatEventTypePlayerInterrupted]];
     }
     for (RaidMember *member in theRaid.raidMembers ){
         [member setHealth:member.health - (15.0 * self.owner.damageDoneMultiplier)];

@@ -41,6 +41,8 @@
             return @"Combat Ended";
         case CombatEventTypeOverheal:
             return @"Overheal";
+        case CombatEventTypePlayerInterrupted:
+            return @"Interrupted";
         default:
             break;
     }

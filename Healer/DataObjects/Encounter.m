@@ -39,7 +39,11 @@
 }
 
 + (Encounter*)randomMultiplayerEncounter{
-    return [Encounter encounterForLevel:(arc4random() % 5 + 6) isMultiplayer:YES];
+    NSInteger roll = (arc4random() % 5 + 6);
+#if DEBUG
+    roll = 11;
+#endif
+    return [Encounter encounterForLevel:roll isMultiplayer:YES];
 }
 
 + (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer{

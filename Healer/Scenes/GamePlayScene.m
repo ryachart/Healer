@@ -603,6 +603,16 @@
             }
         }
     }
+    
+    if (event.type == CombatEventTypePlayerInterrupted) {
+        if (self.isServer){
+            NSString* playerId = [(Player*)event.target playerID];
+            if (playerId) {
+                [self.match sendData:[[NSString stringWithFormat:@"INTERP|%1.3f", [[event value] floatValue]] dataUsingEncoding:NSUTF8StringEncoding] toPlayers:[NSArray arrayWithObject:playerId] withDataMode:GKMatchSendDataReliable error:nil];
+            }
+        
+        }
+    }
 }
 
 -(void)gameEvent:(ccTime)deltaT
@@ -801,6 +811,14 @@
         if ([message hasPrefix:@"SPRTOV|"]){
             NSArray *components = [message componentsSeparatedByString:@"|"];
             [self displaySprite:[components objectAtIndex:1] overRaidForDuration:[[components objectAtIndex:2] floatValue]];
+        }
+        
+        if ([message hasPrefix:@"INTERP|"]){
+            NSArray *components = [message componentsSeparatedByString:@"|"];
+            if ([self.player spellBeingCast]){
+                [[player spellBeingCast] applyTemporaryCooldown:[[components objectAtIndex:1] floatValue]];
+            }
+            [self.player interrupt];
         }
     }
     

@@ -15,6 +15,8 @@
 @property (nonatomic, retain) Player *player;
 @property (nonatomic, retain) Boss *boss;
 @property (nonatomic, retain) Raid *raid;
+@property (nonatomic, assign) CCLabelTTF *continueLabel;
+
 - (id)initWithRaid:(Raid*)raid boss:(Boss*)boss andPlayer:(Player*)player;
 - (void)doneButton;
 - (void)changeSpells;

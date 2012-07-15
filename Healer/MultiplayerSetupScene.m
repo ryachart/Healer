@@ -129,6 +129,12 @@
         self.matchVoiceChat = [self.match voiceChatWithName:@"general"];
         [self.matchVoiceChat start];
         [self.matchVoiceChat setActive:YES];
+        
+        if (self.isServer){
+            self.continueLabel.string = @"Waiting...";
+        }else {
+            self.continueLabel.string = @"Commit";
+        }
     }
 }
 
@@ -203,6 +209,11 @@
             [otherPlayer setActiveSpells:playerSpells];
             [self.otherPlayers setObject:otherPlayer forKey:playerID];
             [otherPlayer release];
+            
+            
+            if ([self canBegin]){
+                self.continueLabel.string = @"Battle!";
+            }
             
         }
     }

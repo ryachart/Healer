@@ -33,6 +33,7 @@
 @implementation PreBattleScene
 @synthesize raid = _raid, boss = _boss, player = _player, maxPlayers, levelNumber, spellInfoNodes;
 @synthesize changingSpells;
+@synthesize continueLabel;
 
 - (void)dealloc {
     [spellInfoNodes release];
@@ -51,7 +52,8 @@
         
         self.maxPlayers = raid.raidMembers.count; //Assume the number of players in the raid passed in is our max
         
-        CCMenu *doneButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Battle!" fontName:@"Arial" fontSize:32] target:self selector:@selector(doneButton)], nil];
+        self.continueLabel = [CCLabelTTF labelWithString:@"Battle!" fontName:@"Arial" fontSize:32];
+        CCMenu *doneButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:self.continueLabel target:self selector:@selector(doneButton)], nil];
         [doneButton setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .8, [CCDirector sharedDirector].winSize.height * .05 )];
         
         [self addChild:doneButton];

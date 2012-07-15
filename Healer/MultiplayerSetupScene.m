@@ -123,10 +123,9 @@
 -(void)onEnterTransitionDidFinish{
     [super onEnterTransitionDidFinish];
     if (self.isPreconfiguredMatch){
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
-        [[AVAudioSession sharedInstance] setActive:YES error:nil];
-        
         if (!self.matchVoiceChat) {
+            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+            [[AVAudioSession sharedInstance] setActive:YES error:nil];
             self.matchVoiceChat = [self.match voiceChatWithName:@"general"];
             [self.matchVoiceChat start];
             [self.matchVoiceChat setActive:YES];

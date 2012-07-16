@@ -170,11 +170,12 @@
                 partialProgressReward =  MIN(partialProgressReward, encounterRewardForSuccess * .5);
             }
             reward = partialProgressReward;
-            
-            if (reward > 0){
-                [Shop playerEarnsGold:reward];
-            }
         }
+        
+        if (reward > 0){
+            [Shop playerEarnsGold:reward];
+        }
+        
         [PlayerDataManager saveRemotePlayer];
         
         //UI

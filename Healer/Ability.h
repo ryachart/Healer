@@ -10,7 +10,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class Raid, RaidMember, Player, Boss, Agent, HealableTarget;
+@class Raid, RaidMember, Player, Boss, Agent, HealableTarget, AbilityDescriptor;
 @interface Ability : NSObject
 
 @property (nonatomic, readwrite) float failureChance;
@@ -20,7 +20,7 @@
 @property (nonatomic, assign) Agent *owner;
 @property (nonatomic, readwrite) NSInteger abilityValue; //Damage or DoT value or something
 @property (nonatomic, readwrite) BOOL isDisabled;
-
+@property (nonatomic, retain) AbilityDescriptor *descriptor;
 - (void)combatActions:(Raid*)theRaid boss:(Boss*)theBoss players:(NSArray*)players gameTime:(float)timeDelta;
 - (void)triggerAbilityForRaid:(Raid*)theRaid andPlayers:(NSArray*)players;
 - (BOOL)checkFailed;

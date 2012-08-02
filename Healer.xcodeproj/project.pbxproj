@@ -143,6 +143,7 @@
 		BF21072315292740001B93D7 /* CCShakeScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21072215292740001B93D7 /* CCShakeScreen.m */; };
 		BF21074A152AAAEB001B93D7 /* Scale9Sprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF210749152AAAEB001B93D7 /* Scale9Sprite.m */; };
 		BF21075D152B5623001B93D7 /* ParticleSystemCache.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21075C152B5623001B93D7 /* ParticleSystemCache.m */; };
+		BF26BFC615CA0B5D00B7132D /* AbilityDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = BF26BFC515CA0B5D00B7132D /* AbilityDescriptor.m */; };
 		BF448C57154BA4D1009401A6 /* AddRemoveSpellLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */; };
 		BF448C5A154BB04A009401A6 /* SpellInfoNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C59154BB04A009401A6 /* SpellInfoNode.m */; };
 		BF4E508D155C9C4400FC4EE0 /* Ability.m in Sources */ = {isa = PBXBuildFile; fileRef = BF4E508C155C9C4400FC4EE0 /* Ability.m */; };
@@ -573,6 +574,8 @@
 		BF210749152AAAEB001B93D7 /* Scale9Sprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Scale9Sprite.m; sourceTree = "<group>"; };
 		BF21075B152B5623001B93D7 /* ParticleSystemCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticleSystemCache.h; sourceTree = "<group>"; };
 		BF21075C152B5623001B93D7 /* ParticleSystemCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParticleSystemCache.m; sourceTree = "<group>"; };
+		BF26BFC415CA0B5D00B7132D /* AbilityDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbilityDescriptor.h; sourceTree = "<group>"; };
+		BF26BFC515CA0B5D00B7132D /* AbilityDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbilityDescriptor.m; sourceTree = "<group>"; };
 		BF448C55154BA4D1009401A6 /* AddRemoveSpellLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddRemoveSpellLayer.h; sourceTree = "<group>"; };
 		BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddRemoveSpellLayer.m; sourceTree = "<group>"; };
 		BF448C58154BB04A009401A6 /* SpellInfoNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellInfoNode.h; sourceTree = "<group>"; };
@@ -1391,6 +1394,8 @@
 				387E7AFE145E1263006D9266 /* Spell.m */,
 				BF4E508B155C9C4400FC4EE0 /* Ability.h */,
 				BF4E508C155C9C4400FC4EE0 /* Ability.m */,
+				BF26BFC415CA0B5D00B7132D /* AbilityDescriptor.h */,
+				BF26BFC515CA0B5D00B7132D /* AbilityDescriptor.m */,
 			);
 			name = Manipulators;
 			sourceTree = "<group>";
@@ -1789,6 +1794,7 @@
 				BF865F29159F9C1F007F5DBF /* DivinityConfigScene.m in Sources */,
 				BF865F2C15A031FB007F5DBF /* BasicButton.m in Sources */,
 				BF730C4015ABC1BD00E09B81 /* MultiplayerQueueScene.m in Sources */,
+				BF26BFC615CA0B5D00B7132D /* AbilityDescriptor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

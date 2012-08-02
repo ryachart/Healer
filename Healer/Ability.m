@@ -32,10 +32,12 @@
     [ab setTitle:self.title];
     [ab setOwner:self.owner];
     [ab setAbilityValue:self.abilityValue];
+    [ab setDescriptor:self.descriptor];
     return ab;
 }
 - (void)dealloc{
     [title release];
+    [_descriptor dealloc];
     [super dealloc];
 }
 

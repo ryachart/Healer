@@ -26,7 +26,20 @@
     [info release];
     [title release];
     [queuedAbilitiesToAdd release];
+    [_abilityDescriptors release];
     [super dealloc];
+}
+
+- (NSMutableArray*)abilityDescriptors {
+    NSMutableArray *activeAbilitiesDescriptors = [NSMutableArray arrayWithCapacity:4];
+    
+    for (Ability *ab in self.abilities) {
+        if (ab.descriptor){
+            [activeAbilitiesDescriptors addObject:ab.descriptor];
+        }
+    }
+    
+    return [NSMutableArray arrayWithArray:[_abilityDescriptors arrayByAddingObjectsFromArray:activeAbilitiesDescriptors]];
 }
 
 - (void)ownerDidExecuteAbility:(Ability*)ability {

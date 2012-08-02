@@ -33,6 +33,7 @@
 @property (nonatomic, readwrite) NSInteger phase;
 @property (nonatomic, readwrite) NSTimeInterval duration;
 @property (nonatomic, retain) NSMutableArray *abilities;
+@property (nonatomic, retain) NSMutableArray *abilityDescriptors;
 
 - (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses;
 - (void)combatActions:(NSArray*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta;

@@ -33,6 +33,7 @@
 @end
 
 @interface FocusedAttack : Attack
+@property (nonatomic, readwrite ) BOOL enrageApplied;
 @property (nonatomic, retain) RaidMember *focusTarget;
 @end
 

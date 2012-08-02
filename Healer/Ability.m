@@ -129,6 +129,7 @@
 
 @implementation FocusedAttack
 @synthesize focusTarget;
+@synthesize enrageApplied;
 
 - (void)dealloc{
     [focusTarget release];
@@ -188,16 +189,19 @@
     }
     RaidMember *target = [self targetFromRaid:theRaid];
     [self damageTarget:target];
-    if (self.focusTarget == target && self.focusTarget.isDead){
-        Effect *enrageEffect = [[Effect alloc] initWithDuration:600 andEffectType:EffectTypePositiveInvisible];
-        [enrageEffect setOwner:self.owner];
-        [enrageEffect setTitle:@"Enraged"];
-        [enrageEffect setTarget:[self bossOwner]];
-        [enrageEffect setDamageDoneMultiplierAdjustment:2.0];
-        [[self bossOwner] addEffect:[enrageEffect autorelease]];
-        [[self bossOwner].announcer announce:[NSString stringWithFormat:@"%@ glows with power after defeating its focused target.", [self bossOwner].title]];
+    if (self.focusTarget.isDead){
+        self.focusTarget = target;
+        if (!self.enrageApplied){
+            Effect *enrageEffect = [[Effect alloc] initWithDuration:600 andEffectType:EffectTypePositiveInvisible];
+            [enrageEffect setOwner:self.owner];
+            [enrageEffect setTitle:@"Enraged"];
+            [enrageEffect setTarget:[self bossOwner]];
+            [enrageEffect setDamageDoneMultiplierAdjustment:2.0];
+            [[self bossOwner] addEffect:[enrageEffect autorelease]];
+            [[self bossOwner].announcer announce:[NSString stringWithFormat:@"%@ glows with power after defeating its focused target.", [self bossOwner].title]];
+            self.enrageApplied = YES;
+        }
     }
-    
 }
 @end
 

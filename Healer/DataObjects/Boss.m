@@ -699,16 +699,16 @@
 @implementation SporeRavagers
 @synthesize isEnraged, secondTargetAttack, thirdTargetAttack;
 +(id)defaultBoss{
-    SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:15 targets:1 frequency:2.5 andChoosesMT:YES];
+    SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:14 targets:1 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Spore Ravagers"];
     [boss setInfo:@"Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate. Conversely, no villagers have left the town, either..."];
     [boss setCriticalChance:.5];
     
-    FocusedAttack *secondFocusedAttack = [[FocusedAttack alloc] initWithDamage:15 andCooldown:2.6];
+    FocusedAttack *secondFocusedAttack = [[FocusedAttack alloc] initWithDamage:14 andCooldown:2.6];
     [boss addAbility:secondFocusedAttack];
     [boss setSecondTargetAttack:secondFocusedAttack];
     [secondFocusedAttack release];
-    FocusedAttack *thirdFocusedAttack = [[FocusedAttack alloc] initWithDamage:15 andCooldown:2.7];
+    FocusedAttack *thirdFocusedAttack = [[FocusedAttack alloc] initWithDamage:14 andCooldown:2.7];
     [boss addAbility:thirdFocusedAttack];
     [boss setThirdTargetAttack:thirdFocusedAttack];
     [thirdFocusedAttack release];
@@ -733,7 +733,7 @@
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:300 andEffectType:EffectTypeNegativeInvisible];
             [rhe setOwner:self];
             [rhe setTitle:@"spore-ravager-mist"];
-            [rhe setValuePerTick:self.isMultiplayer ? -5 : -2];
+            [rhe setValuePerTick:self.isMultiplayer ? -4 : -2];
             [rhe setNumOfTicks:60];
             [member addEffect:rhe];
             [rhe release];
@@ -924,8 +924,8 @@
 @synthesize firstFocusedAttack, secondFocusedAttack;
 @synthesize lastAxecution, lastGushingWound;
 +(id)defaultBoss{
-    NSInteger damage = 16;
-    float frequency = 1.25;
+    NSInteger damage = 15;
+    float frequency = 1.30;
     TwinChampions *boss = [[TwinChampions alloc] initWithHealth:430000 damage:damage targets:1 frequency:frequency andChoosesMT:YES];
     [boss setFirstFocusedAttack:[[boss abilities] objectAtIndex:0]];
     
@@ -957,7 +957,7 @@
         DelayedHealthEffect *axeSweepEffect = [[DelayedHealthEffect alloc] initWithDuration:i * .5 andEffectType:EffectTypeNegativeInvisible];
         [axeSweepEffect setOwner:self];
         [axeSweepEffect setTitle:@"axesweep"];
-        [axeSweepEffect setValue:-24 * (1 + (deadCount/theRaid.raidMembers.count))];
+        [axeSweepEffect setValue:-20 * (1 + ((float)deadCount/(float)theRaid.raidMembers.count))];
         [axeSweepEffect setFailureChance:.1];     
         DelayedHealthEffect *axeSweep2 = [axeSweepEffect copy];
         [member addEffect:axeSweepEffect];
@@ -982,7 +982,7 @@
     }
     [self.announcer announce:@"An Ally Has been chosen for Execution..."];
     [target setHealth:target.maximumHealth * .4];
-    ExecutionEffect *effect = [[ExecutionEffect alloc] initWithDuration:3.0 andEffectType:EffectTypeNegative];
+    ExecutionEffect *effect = [[ExecutionEffect alloc] initWithDuration:3.5 andEffectType:EffectTypeNegative];
     [effect setOwner:self];
     [effect setValue:-200];
     [effect setSpriteName:@"execution.png"];
@@ -1014,7 +1014,7 @@
         [gushingWoundEffect setSpriteName:@"bleeding.png"];
         [gushingWoundEffect setAilmentType:AilmentTrauma];
         [gushingWoundEffect setIncreasePerTick:.5];
-        [gushingWoundEffect setValuePerTick:-28];
+        [gushingWoundEffect setValuePerTick:-25];
         [gushingWoundEffect setNumOfTicks:3];
         [gushingWoundEffect setOwner:self];
         [gushingWoundEffect setTitle:@"gushingwound"];
@@ -1074,7 +1074,7 @@
 }
 
 +(id)defaultBoss{
-    Baraghast *boss = [[Baraghast alloc] initWithHealth:450000 damage:14 targets:1 frequency:1.25 andChoosesMT:YES];
+    Baraghast *boss = [[Baraghast alloc] initWithHealth:450000 damage:12 targets:1 frequency:1.25 andChoosesMT:YES];
     [boss setAutoAttack:[[boss abilities] objectAtIndex:0]];
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
     [boss setInfo:@"With his champions defeated, Baraghast himself confronts you and your allies."];

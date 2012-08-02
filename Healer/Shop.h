@@ -25,4 +25,10 @@ extern NSString* const PlayerGold;
 + (NSInteger)costForNextDivinityTier;
 + (NSInteger)numDivinityTiersPurchased;
 + (void)purchaseNextDivinityTier;
+
+//Shop Categories
++ (NSArray*)essentialsShopItems;
++ (NSArray*)topShelfShopItems;
++ (NSArray*)archivesShopItems;
++ (NSArray*)vaultShopItems;
 @end

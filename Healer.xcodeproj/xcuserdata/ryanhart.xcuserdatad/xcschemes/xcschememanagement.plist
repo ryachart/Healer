@@ -9,10 +9,20 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>MakeAssets.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>38024DAA13C2564D003D36F2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BF0557C11526BD39006B4781</key>
 		<dict>
 			<key>primary</key>
 			<true/>

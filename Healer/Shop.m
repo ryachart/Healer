@@ -85,37 +85,71 @@ static NSArray *shopItems = nil;
 
 
 +(NSArray*)allShopItems{
+    
+    
     if (!shopItems){
         NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
         
-        ShopItem *greaterHeal = [[ShopItem alloc] initWithSpell:[GreaterHeal defaultSpell]];
-        ShopItem *forkedHeal = [[ShopItem alloc] initWithSpell:[ForkedHeal defaultSpell]];
-        ShopItem *purify = [[ShopItem alloc] initWithSpell:[Purify defaultSpell]];
-        ShopItem *regrow = [[ShopItem alloc] initWithSpell:[Regrow defaultSpell]];
-        ShopItem *healingBurst = [[ShopItem alloc] initWithSpell:[HealingBurst defaultSpell]];
-        ShopItem *barrier = [[ShopItem alloc] initWithSpell:[Barrier defaultSpell]];
-        ShopItem *orbsOfLight = [[ShopItem alloc] initWithSpell:[OrbsOfLight defaultSpell]];
-        ShopItem *swirlingLight = [[ShopItem alloc] initWithSpell:[SwirlingLight defaultSpell]];
-        ShopItem *lightEternal = [[ShopItem alloc] initWithSpell:[LightEternal defaultSpell]];
-        ShopItem *respite = [[ShopItem alloc] initWithSpell:[Respite defaultSpell]];
-        ShopItem *wanderingSpirit = [[ShopItem alloc] initWithSpell:[WanderingSpirit defaultSpell]];
-        ShopItem *wardOfAncients = [[ShopItem alloc] initWithSpell:[WardOfAncients defaultSpell]];
+        [items addObjectsFromArray:[Shop essentialsShopItems]];
+        [items addObjectsFromArray:[Shop topShelfShopItems]];
+        [items addObjectsFromArray:[Shop archivesShopItems]];
+        [items addObjectsFromArray:[Shop vaultShopItems]];
         
-        [items addObject:[greaterHeal autorelease]];
-        [items addObject:[purify autorelease]];
-        [items addObject:[forkedHeal autorelease]];
-        [items addObject:[regrow autorelease]];
-        [items addObject:[lightEternal autorelease]];
-        [items addObject:[healingBurst autorelease]];
-        [items addObject:[barrier autorelease]];
-        [items addObject:[orbsOfLight autorelease]];
-        [items addObject:[swirlingLight autorelease]];
-        [items addObject:[respite autorelease]];
-        [items addObject:[wanderingSpirit autorelease]];
-        [items addObject:[wardOfAncients autorelease]];
         shopItems = [items retain];
     }
     return shopItems;
+}
+
++ (NSArray*)essentialsShopItems {
+    NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
+
+    ShopItem *greaterHeal = [[ShopItem alloc] initWithSpell:[GreaterHeal defaultSpell]];
+    ShopItem *regrow = [[ShopItem alloc] initWithSpell:[Regrow defaultSpell]];
+    ShopItem *healingBurst = [[ShopItem alloc] initWithSpell:[HealingBurst defaultSpell]];
+
+    [items addObject:[greaterHeal autorelease]];
+    [items addObject:[regrow autorelease]];
+    [items addObject:[healingBurst autorelease]];
+
+
+    return items;
+}
+
++ (NSArray*)topShelfShopItems {
+    NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
+    ShopItem *purify = [[ShopItem alloc] initWithSpell:[Purify defaultSpell]];
+    [items addObject:[purify autorelease]];
+    ShopItem *forkedHeal = [[ShopItem alloc] initWithSpell:[ForkedHeal defaultSpell]];
+    [items addObject:[forkedHeal autorelease]];
+    ShopItem *barrier = [[ShopItem alloc] initWithSpell:[Barrier defaultSpell]];
+    [items addObject:[barrier autorelease]];
+    ShopItem *lightEternal = [[ShopItem alloc] initWithSpell:[LightEternal defaultSpell]];
+    [items addObject:[lightEternal autorelease]];
+
+    return items;
+    
+}
++ (NSArray*)archivesShopItems {
+    NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
+    ShopItem *orbsOfLight = [[ShopItem alloc] initWithSpell:[OrbsOfLight defaultSpell]];
+    ShopItem *swirlingLight = [[ShopItem alloc] initWithSpell:[SwirlingLight defaultSpell]];
+    [items addObject:[orbsOfLight autorelease]];
+    [items addObject:[swirlingLight autorelease]];
+    return items;
+    
+}
++ (NSArray*)vaultShopItems {
+    NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
+    ShopItem *respite = [[ShopItem alloc] initWithSpell:[Respite defaultSpell]];
+    ShopItem *wanderingSpirit = [[ShopItem alloc] initWithSpell:[WanderingSpirit defaultSpell]];
+    ShopItem *wardOfAncients = [[ShopItem alloc] initWithSpell:[WardOfAncients defaultSpell]];
+    
+    
+    [items addObject:[respite autorelease]];
+    [items addObject:[wanderingSpirit autorelease]];
+    [items addObject:[wardOfAncients autorelease]];
+    return items;
+    
 }
 
 + (NSInteger)costForNextDivinityTier {

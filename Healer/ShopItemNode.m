@@ -46,7 +46,7 @@
         
         self.costLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cost %i", itm.goldCost] dimensions:CGSizeMake(140, 20) alignment:UITextAlignmentRight fontName:@"Arial" fontSize:20.0];
         [self.costLabel setPosition:ccp(50, 25)];
-        [self.costLabel setColor:ccGREEN];
+        [self.costLabel setColor:ccc3(0, 100, 0)];
         
         [menuItem addChild:costLabel];
         

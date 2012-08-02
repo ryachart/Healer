@@ -8,6 +8,7 @@
 #import "Shop.h"
 #import "Spell.h"
 #import "ShopItem.h"
+#import "PersistantDataManager.h"
 
 NSString* const PlayerGold = @"com.healer.no-touch98741562234.gold";
 NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
@@ -98,6 +99,21 @@ static NSArray *shopItems = nil;
         shopItems = [items retain];
     }
     return shopItems;
+}
+
++ (ShopCategory)highestCategoryUnlocked {
+    NSInteger highestLevelCompleted = [PlayerDataManager highestLevelCompleted];
+    ShopCategory category = ShopCategoryEssentials;
+    if (highestLevelCompleted > 3){
+        category = ShopCategoryTopShelf;
+    }
+    if (highestLevelCompleted > 6){
+        category = ShopCategoryArchives;
+    }
+    if (highestLevelCompleted > 9){
+        category = ShopCategoryVault;
+    }
+    return category;
 }
 
 + (NSArray*)essentialsShopItems {

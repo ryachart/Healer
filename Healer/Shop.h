@@ -9,6 +9,13 @@
 
 extern NSString* const PlayerGold;
 
+typedef enum {
+    ShopCategoryEssentials,
+    ShopCategoryTopShelf,
+    ShopCategoryArchives,
+    ShopCategoryVault
+} ShopCategory;
+
 @interface Shop : NSObject
 + (BOOL)playerCanAffordShopItem:(ShopItem*)item;
 + (BOOL)playerHasSpell:(Spell*)spell;
@@ -27,6 +34,7 @@ extern NSString* const PlayerGold;
 + (void)purchaseNextDivinityTier;
 
 //Shop Categories
++ (ShopCategory)highestCategoryUnlocked;
 + (NSArray*)essentialsShopItems;
 + (NSArray*)topShelfShopItems;
 + (NSArray*)archivesShopItems;

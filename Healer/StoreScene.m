@@ -20,9 +20,13 @@
 @property (nonatomic, assign) CCLabelTTF *goldLabel;
 @property (nonatomic, assign) ShopItemNode *possibleChangedNode;
 @property (nonatomic, retain) NSMutableArray *itemNodes;
+@property (nonatomic, assign) BasicButton *essentialsButton;
+@property (nonatomic, assign) BasicButton *topShelfButton;
+@property (nonatomic, assign) BasicButton *archivesButton;
+@property (nonatomic, assign) BasicButton *vaultButton;
 - (void)itemSelected:(ShopItemNode*)item;
 - (void)back;
-- (void)configureShopForCategory:(StoreCategory)category;
+- (void)configureShopForCategory:(ShopCategory)category;
 @end
 
 @implementation StoreScene
@@ -51,7 +55,29 @@
         [self.goldLabel setPosition:CGPointMake(900, 50)];
         [self addChild:self.goldLabel];
         
-        [self configureShopForCategory:StoreCategoryEssentials];
+        self.essentialsButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(configureEssentials) andTitle:@"Essentials"];
+        
+        self.topShelfButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(configureTopShelf) andTitle:@"Top Shelf"];
+        if ([Shop highestCategoryUnlocked] < ShopCategoryTopShelf){
+            [self.topShelfButton setIsEnabled:NO];
+        }
+        
+        self.archivesButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(configureArchives) andTitle:@"Archives"];
+        if ([Shop highestCategoryUnlocked] < ShopCategoryArchives){
+            [self.archivesButton setIsEnabled:NO];
+        }
+        
+        self.vaultButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(configureVault) andTitle:@"The Vault"];
+        if ([Shop highestCategoryUnlocked] < ShopCategoryVault){
+            [self.vaultButton setIsEnabled:NO];
+        }
+        
+        CCMenu *pageConfigMenu = [CCMenu menuWithItems:self.essentialsButton, self.topShelfButton, self.archivesButton, self.vaultButton, nil];
+        [pageConfigMenu alignItemsVertically];
+        [pageConfigMenu setPosition:CGPointMake(920, 250)];
+        [self addChild:pageConfigMenu];
+        
+        [self configureShopForCategory:ShopCategoryEssentials];
         
         self.darkenLayer = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 0)];
         [self addChild:self.darkenLayer z:50];
@@ -59,20 +85,36 @@
     return self;
 }
 
-- (void)configureShopForCategory:(StoreCategory)category {
+- (void)configureEssentials {
+    [self configureShopForCategory:ShopCategoryEssentials];
+}
+
+- (void)configureTopShelf {
+    [self configureShopForCategory:ShopCategoryTopShelf];
+}
+
+- (void)configureArchives {
+    [self configureShopForCategory:ShopCategoryArchives];
+}
+
+- (void)configureVault {
+    [self configureShopForCategory:ShopCategoryVault];
+}
+
+- (void)configureShopForCategory:(ShopCategory)category {
     NSArray *itemsToDisplay = nil;
     
     switch (category) {
-        case StoreCategoryEssentials:
+        case ShopCategoryEssentials:
             itemsToDisplay = [Shop essentialsShopItems];
             break;
-        case StoreCategoryTopShelf:
+        case ShopCategoryTopShelf:
             itemsToDisplay = [Shop topShelfShopItems];
             break;
-        case StoreCategoryArchives:
+        case ShopCategoryArchives:
             itemsToDisplay = [Shop archivesShopItems];
             break;
-        case StoreCategoryVault:
+        case ShopCategoryVault:
             itemsToDisplay = [Shop vaultShopItems];
             break;
         default:

@@ -23,7 +23,7 @@
         return 100;
     }
     if ([spell isEqualToString:@"Purify"]){
-        return 150;
+        return 10;
     }
 
     //Tier 3

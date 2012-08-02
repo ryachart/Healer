@@ -199,10 +199,15 @@
 }
 
 -(void)setPaused:(BOOL)newPaused{
+    
     if (self.paused == newPaused)
         return;
     
     paused = newPaused;
+    
+    if (self.isClient || self.isServer){
+        return; //Cant pause multiplayerg
+    }
     
     if (self.paused){
         [self unschedule:@selector(gameEvent:)];

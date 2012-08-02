@@ -12,8 +12,8 @@
 @property (nonatomic, retain) NSString *shopDescription;
 @property (nonatomic, readonly) NSString* shopSprite;
 @property (nonatomic, readonly) NSString* title;
--(Spell*)purchasedSpell;
+- (Spell*)purchasedSpell;
 
-+(ShopItem*)shopItemWithSpell:(Spell*)spell;
--(id)initWithSpell:(Spell*)spell;
++ (ShopItem*)shopItemWithSpell:(Spell*)spell;
+- (id)initWithSpell:(Spell*)spell;
 @end

@@ -8,6 +8,13 @@
 #import "cocos2d.h"
 #import "ShopItemExtendedNode.h"
 
+typedef enum {
+    StoreCategoryEssentials,
+    StoreCategoryTopShelf,
+    StoreCategoryArchives,
+    StoreCategoryVault
+} StoreCategory;
+
 @interface StoreScene : CCScene <ShopItemExtendedNodeDelegate>
 
 @end

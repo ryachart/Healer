@@ -11,18 +11,27 @@
 #import "ShopItemNode.h"
 #import "ShopItem.h"
 #import "BackgroundSprite.h"
+#import "BasicButton.h"
+
 
 @interface StoreScene ()
 @property (nonatomic, assign) ShopItemExtendedNode *extendedNode;
 @property (nonatomic, assign) CCLayerColor *darkenLayer;
 @property (nonatomic, assign) CCLabelTTF *goldLabel;
 @property (nonatomic, assign) ShopItemNode *possibleChangedNode;
--(void)itemSelected:(ShopItemNode*)item;
--(void)back;
+@property (nonatomic, retain) NSMutableArray *itemNodes;
+- (void)itemSelected:(ShopItemNode*)item;
+- (void)back;
+- (void)configureShopForCategory:(StoreCategory)category;
 @end
 
 @implementation StoreScene
 @synthesize goldLabel, extendedNode, darkenLayer, possibleChangedNode;
+- (void)dealloc {
+    [_itemNodes release];
+    [super dealloc];
+}
+
 -(id)init{
     if (self = [super init]){  
         [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease]];
@@ -42,25 +51,53 @@
         [self.goldLabel setPosition:CGPointMake(900, 50)];
         [self addChild:self.goldLabel];
         
-        int i = 0;
-        for (ShopItem *item in [Shop allShopItems]){
-            int xOrigin = 300;
-            int yOrigin = 200;
-            int width = 200;
-            int height = 100;
-            xOrigin += width * (i % 3);
-            yOrigin += height * (3 - (i / 3));
-            ShopItemNode *itemNode = [[ShopItemNode alloc] initWithShopItem:item target:self selector:@selector(itemSelected:)];
-            [itemNode setPosition:CGPointMake(xOrigin, yOrigin)];
-            [self addChild:itemNode];
-            [itemNode release];
-            i++;
-        };
+        [self configureShopForCategory:StoreCategoryEssentials];
         
         self.darkenLayer = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 0)];
         [self addChild:self.darkenLayer z:50];
     }
     return self;
+}
+
+- (void)configureShopForCategory:(StoreCategory)category {
+    NSArray *itemsToDisplay = nil;
+    
+    switch (category) {
+        case StoreCategoryEssentials:
+            itemsToDisplay = [Shop essentialsShopItems];
+            break;
+        case StoreCategoryTopShelf:
+            itemsToDisplay = [Shop topShelfShopItems];
+            break;
+        case StoreCategoryArchives:
+            itemsToDisplay = [Shop archivesShopItems];
+            break;
+        case StoreCategoryVault:
+            itemsToDisplay = [Shop vaultShopItems];
+            break;
+        default:
+            break;
+    }
+    
+    for (ShopItemNode *shopItemNode in self.itemNodes) {
+        [shopItemNode removeFromParentAndCleanup:YES];
+    }
+    self.itemNodes = [NSMutableArray arrayWithCapacity:10];
+    int i = 0;
+    for (ShopItem *item in itemsToDisplay){
+        int xOrigin = 300;
+        int yOrigin = 200;
+        int width = 200;
+        int height = 100;
+        xOrigin += width * (i % 3);
+        yOrigin += height * (3 - (i / 3));
+        ShopItemNode *itemNode = [[ShopItemNode alloc] initWithShopItem:item target:self selector:@selector(itemSelected:)];
+        [itemNode setPosition:CGPointMake(xOrigin, yOrigin)];
+        [self addChild:itemNode];
+        [itemNode release];
+        [self.itemNodes addObject:itemNode];
+        i++;
+    };
 }
 
 -(void)itemSelected:(ShopItemNode*)item{

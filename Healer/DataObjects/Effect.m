@@ -657,6 +657,18 @@
     
 }
 @end
+
+@implementation TouchOfLightEffect
+
+- (void)tick {
+    if (self.target.healthPercentage < 1.0){
+        Player *owningPlayer = (Player*)self.owner;
+        [owningPlayer setEnergy:owningPlayer.energy + 12];
+    }
+    [super tick];
+}
+@end
+
 #pragma mark - DEPRECATED SPELLS
 #pragma mark -
 #pragma mark Shaman Spells

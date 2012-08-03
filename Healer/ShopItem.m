@@ -44,10 +44,10 @@
     
     //Tier 5
     if ([spell isEqualToString:@"Light Eternal"]){
-        return 400;
+        return 300;
     }
     if ([spell isEqualToString:@"Wandering Spirit"]){
-        return 400;
+        return 300;
     }
     
     //Specials
@@ -64,6 +64,12 @@
     }
     if ([spell isEqualToString:@"Orbs of Light"]){
         return 750;
+    }
+    if ([spell isEqualToString:@"Touch of Light"]){
+        return 300;
+    }
+    if ([spell isEqualToString:@"Soaring Spirit"]){
+        return 300;
     }
 
 

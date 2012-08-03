@@ -68,6 +68,21 @@
 	return [aliveMembers autorelease];
 }
 
+- (RaidMember*)randomLivingMemberWithPositioning:(Positioning)pos {
+    RaidMember *selectedMember = nil;
+    int safety = 0;
+    do {
+        selectedMember = [self randomLivingMember];
+        if (selectedMember.positioning != pos)
+            selectedMember = nil;
+        safety++;
+        if (safety > 25){
+            break;
+        }
+    }while (!selectedMember);
+    return selectedMember;
+}
+
 -(RaidMember*)randomLivingMember{
     RaidMember *selectedMember = nil;
     int safety = 0;

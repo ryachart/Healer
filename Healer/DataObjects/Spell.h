@@ -117,84 +117,13 @@
 @interface WardOfAncients : Spell
 @end
 
-////BASIC TEST SPELLS/////
-@interface QuickHeal : Spell
-
+@interface TouchOfLight : Spell
 @end
 
-@interface SuperHeal : Spell
-
+@interface SoaringSpirit : Spell
 @end
 
-@interface SurgeOfLife : Spell
-
-@end
-
-@interface HealingBreath : Spell
-
-@end
-
-@interface GloriousBeam : Spell
-
-@end
-
-////SHAMAN SPELLS///////
-@interface RoarOfLife : Spell
-
-@end
-
-@interface WoundWeaving : Spell
-
-@end
-
-@interface SurgingGrowth : Spell
-
-@end
-
-@interface FieryAdrenaline : Spell
-
-@end
-
-@interface TwoWinds : Spell
-
-@end
-
-@interface SymbioticConnection : Spell
-
-@end
-
-@interface UnleashedNature : Spell
-
-@end
-
-
-////SEER SPELLS/////
-
-@interface ShiningAegis : Spell
-@end
-
-@interface Bulwark : Spell
-@end
-
-@interface EtherealArmor : Spell
-@end
-
-/*
-@interface Guardian : Spell
-@end
-
-@interface BlessedDefenses: Spell
-@end
-
-@interface BondOfStrength : Spell
-@end
-
-@interface ChainOfFortitude : Spell
-@end
-*/
 ////RITUALIST SPELLS/////
-
-
 @interface HastyBrew : Spell <Chargable>{
 	NSDate *chargeStart;
 	NSDate *chargeEnd;

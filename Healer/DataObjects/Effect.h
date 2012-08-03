@@ -115,6 +115,9 @@ typedef enum {
 @property (nonatomic, retain) Effect *appliedEffect;
 @end
 
+@interface TouchOfLightEffect : RepeatedHealthEffect
+@end
+
 #pragma mark - Shipping Boss Effects
 @interface TrulzarPoison : RepeatedHealthEffect
 @end

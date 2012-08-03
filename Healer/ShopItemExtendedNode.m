@@ -53,7 +53,7 @@
         
         self.itemCastTime = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cast Time: %1.2f",self.item.purchasedSpell.castTime] dimensions:CGSizeMake(200, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:28.0];
         self.itemCastTime.color = ccBLACK;
-        self.itemDescription = [CCLabelTTF labelWithString:self.item.purchasedSpell.spellDescription dimensions:CGSizeMake(400, 80) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:20.0];
+        self.itemDescription = [CCLabelTTF labelWithString:self.item.purchasedSpell.spellDescription dimensions:CGSizeMake(300, 300) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:18.0];
         self.itemDescription.color = ccBLACK;
         
         NSInteger halfWidth = background.contentSize.width * 3 / 2;
@@ -68,7 +68,7 @@
         self.itemEnergyCost.position = CGPointMake(leftEdge, topEdge - 34);
         self.itemCastTime.position = CGPointMake(leftEdge, topEdge - 72);
         self.itemCooldown.position = CGPointMake(leftEdge + 50, topEdge - 112);
-        self.itemDescription.position = CGPointMake(0, topEdge - 162);
+        self.itemDescription.position = CGPointMake(rightEdge - 80, topEdge - 210);
         
         [self addChild:self.itemName];
         [self addChild:self.itemCost];

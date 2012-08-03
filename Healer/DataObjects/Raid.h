@@ -18,13 +18,14 @@
 }
 @property (readonly) NSMutableArray *raidMembers;
 
--(void)addRaidMember:(RaidMember*)member;
--(NSArray*)getAliveMembers;
--(NSInteger)deadCount;
+- (void)addRaidMember:(RaidMember*)member;
+- (NSArray*)getAliveMembers;
+- (NSInteger)deadCount;
 
--(RaidMember*)randomLivingMember;
+- (RaidMember*)randomLivingMember;
+- (RaidMember*)randomLivingMemberWithPositioning:(Positioning)pos;
 
 //Multiplayer
--(RaidMember*)memberForBattleID:(NSString*)battleID;
--(NSArray*)lowestHealthTargets:(NSInteger)numTargets withRequiredTarget:(RaidMember*)reqTarget;
+- (RaidMember*)memberForBattleID:(NSString*)battleID;
+- (NSArray*)lowestHealthTargets:(NSInteger)numTargets withRequiredTarget:(RaidMember*)reqTarget;
 @end

@@ -1203,6 +1203,7 @@
     Grip *gripAbility = [[Grip alloc] init];
     [gripAbility setTitle:@"grip-ability"];
     [gripAbility setCooldown:22];
+    [gripAbility setAbilityValue:-17];
     [boss addAbility:gripAbility];
     [gripAbility release];
     
@@ -1224,7 +1225,7 @@
         NSArray *livingMembers = [raid getAliveMembers];
         for (RaidMember *member in livingMembers){
             RepeatedHealthEffect *pestilenceDot = [[RepeatedHealthEffect alloc] initWithDuration:20 andEffectType:EffectTypeNegativeInvisible];
-            [pestilenceDot setValuePerTick:-5];
+            [pestilenceDot setValuePerTick:-4];
             [pestilenceDot setOwner:self];
             [pestilenceDot setNumOfTicks:10];
             [pestilenceDot setTitle:@"gatekeeper-pestilence"];
@@ -1236,12 +1237,12 @@
     if (percentage == 50.0) {
         [self.announcer announce:@"The Gatekeeper summons two BloodDrinker Demons to his side."];
         //Blood drinkers
-        BloodDrinker *ability = [[BloodDrinker alloc] initWithDamage:20 andCooldown:1.25];
+        BloodDrinker *ability = [[BloodDrinker alloc] initWithDamage:12 andCooldown:1.25];
         [ability setTitle:@"gatekeeper-blooddrinker"];
         [self addAbility:ability];
         [ability release];
         
-        BloodDrinker *ability2 = [[BloodDrinker alloc] initWithDamage:20 andCooldown:1.25];
+        BloodDrinker *ability2 = [[BloodDrinker alloc] initWithDamage:12 andCooldown:1.25];
         [ability2 setTitle:@"gatekeeper-blooddrinker"];
         [self addAbility:ability2];
         [ability2 release];
@@ -1272,6 +1273,15 @@
 @end
 
 @implementation SkeletalDragon
++ (id)defaultBoss{
+    SkeletalDragon *boss = [[SkeletalDragon alloc] initWithHealth:300000 damage:0 targets:0 frequency:100 andChoosesMT:NO];
+    [boss setInfo:@"After moving beyond the gates of Delsarn, you encounter a horrifying Skeletal Dragon.  It assaults your party and bars the way."];
+    [boss setTitle:@"Skeletal Dragon"];
+    
+    
+    
+    return [boss autorelease];
+}
 @end
 
 @implementation ColossusOfBone 

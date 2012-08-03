@@ -11,7 +11,6 @@
 #import "Agent.h"
 #import "HealableTarget.h"
 #import "Player.h"
-#import "RaidMember.h"
 #import "Boss.h"
 #import "Effect.h"
 #import "Spell.h"
@@ -71,23 +70,6 @@
 
 }
 
-@end
-
-@implementation Attack
-- (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd{
-    if (self = [super init]){
-        self.abilityValue = dmg;
-        self.cooldown = cd;
-        self.failureChance = .05;
-    }
-    return self;
-}
-- (RaidMember*)targetFromRaid:(Raid*)raid{
-    return [raid randomLivingMember];
-}
-
-
-
 - (int)damageDealt{
     float multiplyModifier = self.owner.damageDoneMultiplier;
     int additiveModifier = 0;
@@ -117,6 +99,21 @@
     }else{
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:0 andEventType:CombatEventTypeDodge]];
     }
+}
+
+@end
+
+@implementation Attack
+- (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd{
+    if (self = [super init]){
+        self.abilityValue = dmg;
+        self.cooldown = cd;
+        self.failureChance = .05;
+    }
+    return self;
+}
+- (RaidMember*)targetFromRaid:(Raid*)raid{
+    return [raid randomLivingMember];
 }
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players{
@@ -366,7 +363,7 @@
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     [[(Boss*)self.owner announcer] displayScreenShakeForDuration:1.0];
     NSInteger livingMemberCount = theRaid.getAliveMembers.count;
-    NSInteger deathWaveDamage = (int)round(1200.0 / livingMemberCount);
+    NSInteger deathWaveDamage = (int)round(1000.0 / livingMemberCount);
     for (RaidMember *member in theRaid.getAliveMembers){
         [member setHealth:member.health - (deathWaveDamage * self.owner.damageDoneMultiplier)];
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(deathWaveDamage * self.owner.damageDoneMultiplier)] andEventType:CombatEventTypeDamage]]; 
@@ -505,7 +502,7 @@
     [gripEff setAilmentType:AilmentCurse];
     [gripEff setSpriteName:@"grip.png"];
     [gripEff setOwner:self.owner];
-    [gripEff setValuePerTick:-17];
+    [gripEff setValuePerTick:self.abilityValue];
     [gripEff setNumOfTicks:5];
     [gripEff setTitle:@"gatekeeper-grip"];
     [target addEffect:gripEff];
@@ -546,5 +543,30 @@
         [theBoss setHealth:theBoss.health + theBoss.maximumHealth * .1];
         [theBoss.announcer announce:[NSString stringWithFormat:@"A Blood Drinker heals %@ upon defeating its foe.", theBoss.title]];
     }
+}
+@end
+
+@implementation TargetTypeAttack
+
+- (NSArray *)targetsFromRaid:(Raid*)theRaid {
+    NSMutableArray *targets = [NSMutableArray arrayWithCapacity:self.numTargets];
+    for (int i = 0; i < self.numTargets; i++){
+        RaidMember *candidate = [theRaid randomLivingMemberWithPositioning:self.targetPositioningType];
+        if (![targets containsObject:candidate]){
+            [targets addObject:candidate];
+        }
+    }
+    return (NSArray*)targets;
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    if ([self checkFailed]) {
+        return;
+    }
+    NSArray *targets = [self targetsFromRaid:theRaid];
+    for (RaidMember *target in targets) {
+        [self damageTarget:target];
+    }
+    
 }
 @end

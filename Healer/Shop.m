@@ -147,10 +147,14 @@ static NSArray *shopItems = nil;
 }
 + (NSArray*)archivesShopItems {
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
+    ShopItem *touchOfLight = [[ShopItem alloc] initWithSpell:[TouchOfLight defaultSpell]];
     ShopItem *orbsOfLight = [[ShopItem alloc] initWithSpell:[OrbsOfLight defaultSpell]];
     ShopItem *swirlingLight = [[ShopItem alloc] initWithSpell:[SwirlingLight defaultSpell]];
+    ShopItem *soaringSpirit = [[ShopItem alloc] initWithSpell:[SoaringSpirit defaultSpell]];
+    [items addObject:[soaringSpirit autorelease]];
     [items addObject:[orbsOfLight autorelease]];
     [items addObject:[swirlingLight autorelease]];
+    [items addObject:[touchOfLight autorelease]];
     return items;
     
 }

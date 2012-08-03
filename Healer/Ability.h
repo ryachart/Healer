@@ -9,8 +9,9 @@
 
 
 #import <Foundation/Foundation.h>
+#import "RaidMember.h"
 
-@class Raid, RaidMember, Player, Boss, Agent, HealableTarget, AbilityDescriptor;
+@class Raid, Player, Boss, Agent, HealableTarget, AbilityDescriptor;
 @interface Ability : NSObject
 
 @property (nonatomic, readwrite) float failureChance;
@@ -86,4 +87,9 @@
 @end
 
 @interface BloodDrinker : FocusedAttack 
+@end
+
+@interface TargetTypeAttack : Ability
+@property (nonatomic, readwrite) Positioning targetPositioningType;
+@property (nonatomic, readwrite) NSInteger numTargets;
 @end

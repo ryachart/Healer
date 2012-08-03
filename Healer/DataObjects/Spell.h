@@ -123,6 +123,9 @@
 @interface SoaringSpirit : Spell
 @end
 
+@interface FadingLight : Spell
+@end
+
 ////RITUALIST SPELLS/////
 @interface HastyBrew : Spell <Chargable>{
 	NSDate *chargeStart;

@@ -619,7 +619,8 @@
     
     TouchOfLightEffect *tolEffect = [[TouchOfLightEffect alloc] initWithDuration:4.0 andEffectType:EffectTypePositive];
     [tolEffect setTitle:@"tol-effect"];
-    [tolEffect setValuePerTick:62];
+    [tolEffect setSpriteName:@"touch_of_light.png"];
+    [tolEffect setValuePerTick:2];
     [tolEffect setNumOfTicks:4];
     [tolEffect setOwner:self.owner];
     [[self.owner spellTarget] addEffect:tolEffect];
@@ -631,7 +632,6 @@
 @implementation SoaringSpirit
 + (id)defaultSpell {
     SoaringSpirit *ss = [[SoaringSpirit alloc] initWithTitle:@"Soaring Spirit" healAmnt:0 energyCost:50 castTime:0 andCooldown:35.0];
-    [ss setTitle:@"Soaring Spirit"];
     [ss setDescription:@"Releases your inner light increasing your healing done and reduces cast times by 20% for 7.5 seconds."];
     return [ss autorelease];
 }
@@ -641,6 +641,7 @@
     
     [self.owner.announcer announce:@"You are filled with spiritual power."];
     Effect *soaringSpiritEffect = [[Effect alloc] initWithDuration:7.5 andEffectType:EffectTypePositive];
+    [soaringSpiritEffect setOwner:self.owner];
     [soaringSpiritEffect setHealingDoneMultiplierAdjustment:.2];
     [soaringSpiritEffect setCastTimeAdjustment:.2];
     [self.owner addEffect:soaringSpiritEffect];
@@ -648,6 +649,28 @@
 }
 @end
 
+@implementation FadingLight
++ (id)defaultSpell {
+    FadingLight *fl = [[FadingLight alloc] initWithTitle:@"Fading Light" healAmnt:0 energyCost:90 castTime:0.0 andCooldown:2.0];
+    [fl setDescription:@"Heals for a large amount over 10 seconds.  The healing done starts high but decreases each tick."];
+    return [fl autorelease];
+}
+
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime {
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+    
+    IntensifyingRepeatedHealthEffect *fadingLightEffect = [[IntensifyingRepeatedHealthEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositive];
+    [fadingLightEffect setOwner:self.owner];
+    [fadingLightEffect setTitle:@"fading-light-effect"];
+    [fadingLightEffect setSpriteName:@"fading_light.png"];
+    [fadingLightEffect setNumOfTicks:5];
+    [fadingLightEffect setIncreasePerTick:-0.5];
+    [fadingLightEffect setValuePerTick:40];
+    [thePlayer.spellTarget addEffect:fadingLightEffect];
+    [fadingLightEffect release];
+}
+
+@end
 #pragma mark -
 #pragma mark Test Spells
 @implementation HastyBrew

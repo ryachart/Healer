@@ -141,6 +141,8 @@ static NSArray *shopItems = nil;
     [items addObject:[barrier autorelease]];
     ShopItem *lightEternal = [[ShopItem alloc] initWithSpell:[LightEternal defaultSpell]];
     [items addObject:[lightEternal autorelease]];
+    ShopItem *fadingLight = [[ShopItem alloc] initWithSpell:[FadingLight defaultSpell]];
+    [items addObject:[fadingLight autorelease]];
 
     return items;
     

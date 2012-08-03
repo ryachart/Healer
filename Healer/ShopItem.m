@@ -71,6 +71,9 @@
     if ([spell isEqualToString:@"Soaring Spirit"]){
         return 300;
     }
+    if ([spell isEqualToString:@"Fading Light"]) {
+        return 200;
+    }
 
 
     return 10000;

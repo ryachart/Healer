@@ -16,6 +16,7 @@
 @class RaidMember;
 @class Effect;
 @class Ability;
+@class AbilityDescriptor;
 /*A collection of data regarding a boss.
   To make special bosses, subclass boss and override
   combatActions.
@@ -33,7 +34,7 @@
 @property (nonatomic, readwrite) NSInteger phase;
 @property (nonatomic, readwrite) NSTimeInterval duration;
 @property (nonatomic, retain) NSMutableArray *abilities;
-@property (nonatomic, retain) NSMutableArray *abilityDescriptors;
+@property (nonatomic, retain) NSArray *abilityDescriptors;
 
 - (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses;
 - (void)combatActions:(NSArray*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta;
@@ -43,8 +44,9 @@
 + (id)defaultBoss;
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid*)raid andPlayer:(Player*)player;
 - (void)addAbility:(Ability*)ability;
-- (void)removeAbility: (Ability*)ability;
-
+- (void)removeAbility:(Ability*)ability;
+- (void)addAbilityDescriptor:(AbilityDescriptor*)descriptor;
+- (void)clearExtraDescriptors;
 - (void)setAttackDamage:(NSInteger)damage; //Configures all Attacks' abilityValues
 - (void)setAttackSpeed:(float)frequency; //Configures all Attack's cooldown values
 
@@ -116,12 +118,21 @@
 @end
 
 @interface SkeletalDragon: Boss
+@property (nonatomic, retain) Ability *boneThrowAbility;
+@property (nonatomic, retain) Ability *sweepingFlame;
+@property (nonatomic, retain) Ability *tailLash;
+@property (nonatomic, retain) FocusedAttack *tankDamage;
 @end
 
 @interface ColossusOfBone : Boss
+@property (nonatomic, readwrite) BOOL hasShownCrushingPunchThisCooldown;
+@property (nonatomic, retain) Ability *boneQuake;
+@property (nonatomic, retain) Ability *crushingPunch;
 @end
 
 @interface OverseerOfDelsarn : Boss
+@property (nonatomic, retain) Ability *projectilesAbility;
+@property (nonatomic, retain) NSMutableArray *demonAbilities;
 @end
 
 @interface TheUnspeakable : Boss

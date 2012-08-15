@@ -73,8 +73,9 @@
     int safety = 0;
     do {
         selectedMember = [self randomLivingMember];
-        if (selectedMember.positioning != pos)
+        if (selectedMember.positioning != pos){
             selectedMember = nil;
+        }
         safety++;
         if (safety > 25){
             break;
@@ -116,10 +117,19 @@
             candidate = member;
         }
     }
+    
+    if (candidate.healthPercentage == 1.0){
+        return [raid objectAtIndex:arc4random() % raid.count];
+    }
+    
     return candidate;
 }
 
--(NSArray*)lowestHealthTargets:(NSInteger)numTargets withRequiredTarget:(RaidMember*)reqTarget{
+- (RaidMember*)lowestHealthMember {
+    return [[self lowestHealthTargets:1 withRequiredTarget:nil] objectAtIndex:0];
+}
+
+- (NSArray*)lowestHealthTargets:(NSInteger)numTargets withRequiredTarget:(RaidMember*)reqTarget{
     NSMutableArray *finalTargets = [NSMutableArray arrayWithCapacity:numTargets];
     NSMutableArray *candidates = [NSMutableArray arrayWithArray:[self getAliveMembers]];
     [candidates removeObject:reqTarget];

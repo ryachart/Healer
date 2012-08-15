@@ -24,7 +24,7 @@
         // Initialization code
         self.position = frame.origin;
         self.contentSize = frame.size;
-        
+
         CCSprite *portraitSprite = [CCSprite spriteWithSpriteFrameName:@"boss_portrait_back.png"];
         [portraitSprite setAnchorPoint:CGPointZero];
         [self addChild:portraitSprite z:10];
@@ -63,7 +63,7 @@
         [self.healthLabel setColor:ccBLACK];
         self.healthLabel.contentSize = CGSizeMake(frame.size.width * .5, frame.size.height * .25);
         [self.healthLabel setPosition:CGPointMake(300, 120)];
-
+        
         [self addChild:self.bossHealthBack];
         [self addChild:self.bossHealthFrame];
         [self addChild:self.bossNameLabel z:10];
@@ -80,6 +80,13 @@
 	
 	[self.bossNameLabel setString:[bossData title]];
 	lastHealth = theBoss.health;
+    
+    [self.abilityDescriptionsView removeFromParentAndCleanup:YES];
+    self.abilityDescriptionsView = [[[BossAbilityDescriptionsView alloc] initWithBoss:self.bossData] autorelease];
+    [self.abilityDescriptionsView setAnchorPoint:CGPointZero];
+    [self.abilityDescriptionsView setPosition:CGPointMake(-470, -320)];
+    [self.abilityDescriptionsView setDelegate:self];
+    [self addChild:self.abilityDescriptionsView];
 	
 }
 
@@ -111,7 +118,7 @@
     lastHealth = bossData.health;
 	NSString *healthText;
 	if (bossData.health >= 1){
-		healthText = [NSString stringWithFormat:@"%3.1f%", (((float)bossData.health) / bossData.maximumHealth)*100];
+		healthText = [NSString stringWithFormat:@"%3.1f%%", (((float)bossData.health) / bossData.maximumHealth)*100];
 	}
 	else {
 		healthText = @"Dead";
@@ -123,6 +130,12 @@
     
     double percentageOfHealth = ((float)[self.bossData health])/[self.bossData maximumHealth];
     [self.bossHealthBack setClippingRegion:CGRectMake(0-(self.bossHealthBack.clippingRegion.size.width * (1 - percentageOfHealth)), self.bossHealthBack.clippingRegion.origin.y, self.bossHealthBack.clippingRegion.size.width, self.bossHealthBack.clippingRegion.size.height)];
+    
+    [self.abilityDescriptionsView update];
+}
+
+- (void)abilityDescriptionViewDidSelectAbility:(AbilityDescriptor *)descriptor {
+    [self.delegate bossHealthViewShouldDisplayAbility:descriptor];
 }
 
 

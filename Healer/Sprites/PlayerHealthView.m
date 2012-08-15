@@ -95,7 +95,7 @@
     self.healthBar.contentSize = CGSizeMake(healthPercentage * self.contentSize.width, self.healthBar.contentSize.height);
 	if (memberData.health >= 1){
         
-		healthText = [NSString stringWithFormat:@"Health: %3.1f%", (healthPercentage)*100];
+		healthText = [NSString stringWithFormat:@"Health: %3.1f%%", (healthPercentage)*100];
 	}
 	else {
 		healthText = @"Dead";

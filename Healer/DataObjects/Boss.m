@@ -12,6 +12,8 @@
 #import "AudioController.h"
 #import "ProjectileEffect.h"
 #import "Ability.h"
+#import "AbilityDescriptor.h"
+
 
 @interface Boss ()
 @property (nonatomic, retain) NSMutableArray *queuedAbilitiesToAdd;
@@ -30,16 +32,25 @@
     [super dealloc];
 }
 
-- (NSMutableArray*)abilityDescriptors {
+- (NSArray*)abilityDescriptors {
     NSMutableArray *activeAbilitiesDescriptors = [NSMutableArray arrayWithCapacity:4];
     
     for (Ability *ab in self.abilities) {
-        if (ab.descriptor){
+        if (ab.descriptor && !ab.isDisabled){
             [activeAbilitiesDescriptors addObject:ab.descriptor];
         }
     }
     
-    return [NSMutableArray arrayWithArray:[_abilityDescriptors arrayByAddingObjectsFromArray:activeAbilitiesDescriptors]];
+    return [_abilityDescriptors arrayByAddingObjectsFromArray:activeAbilitiesDescriptors];
+}
+
+- (void)addAbilityDescriptor:(AbilityDescriptor*)descriptor {
+    [(NSMutableArray*)_abilityDescriptors addObject:descriptor];
+}
+
+- (void)clearExtraDescriptors {
+    [_abilityDescriptors release];
+    _abilityDescriptors = [NSMutableArray arrayWithCapacity:5];
 }
 
 - (void)ownerDidExecuteAbility:(Ability*)ability {
@@ -91,6 +102,7 @@
         title = @"";
         self.criticalChance = 0.0;
         self.abilities = [NSMutableArray arrayWithCapacity:5];
+        self.abilityDescriptors = [NSMutableArray arrayWithCapacity:5];
         for (int i = 0; i < 101; i++){
             healthThresholdCrossed[i] = NO;
         }
@@ -233,6 +245,21 @@
     
     [corTroll setTitle:@"Corrupted Troll"];
     [corTroll setInfo:@"A Troll of Raklor has been identified among the demons brewing in the south.  It has been corrupted and twisted into a foul and terrible creature.  You will journey with a small band of soldiers to the south to dispatch this troll."];
+    
+    AbilityDescriptor *caveIn = [[AbilityDescriptor alloc] init];
+    [caveIn setAbilityDescription:@"Occasionally, the Corrupted Troll will smash the roof causing rocks to fall onto your allies."];
+    [caveIn setIconName:@"unknown_ability.png"];
+    [caveIn setAbilityName:@"Cave In"];
+    [corTroll addAbilityDescriptor:caveIn];
+    [caveIn release];
+    
+    AbilityDescriptor *frenzy = [[AbilityDescriptor alloc] init];
+    [frenzy setAbilityDescription:@"Occasionally, the Corrupted Troll will attack his Focused target furiously dealing high damage."];
+    [frenzy setIconName:@"unknown_ability.png"];
+    [frenzy setAbilityName:@"Frenzy"];
+    [corTroll addAbilityDescriptor:frenzy];
+    [frenzy release];
+    
     return  [corTroll autorelease];
 }
 -(void)doCaveInOnRaid:(Raid*)theRaid{
@@ -303,6 +330,14 @@
     Drake *drake = [[Drake alloc] initWithHealth:52000 damage:16 targets:1 frequency:1.2 andChoosesMT:NO];
     [drake setTitle:@"Tainted Drake"];
     [drake setInfo:@"A Tainted Drake is hidden in the Paragon Cliffs. You and your allies must stop the beast from doing any more damage to the Kingdom.  The king will provide you with a great reward for defeating the beast."];
+    
+    AbilityDescriptor *fireball = [[AbilityDescriptor alloc] init];
+    [fireball setAbilityDescription:@"The Drake hurls deadly Fireballs at your allies."];
+    [fireball setIconName:@"unknown_ability.png"];
+    [fireball setAbilityName:@"Spit Fireball"];
+    [drake addAbilityDescriptor:fireball];
+    [fireball release];
+    
     return [drake autorelease];
 }
 
@@ -352,6 +387,13 @@
     Trulzar *boss = [[Trulzar alloc] initWithHealth:320000 damage:50 targets:2 frequency:3.0 andChoosesMT:NO];
     [boss setTitle:@"Trulzar the Maleficar"];
     [boss setInfo:@"Before the dark winds came, Trulzar was an aide to the King of Theranore and a teacher at the Academy of Alchemists.  Since the Dark winds, Trulzar has drawn into seclusion.  No one had heard from him for years until a brash student who had heard of his exploits paid him a visit.  The student was not heard from for days until a walking corpse that was later identified as the student was slaughtered at the gates by guardsmen.  Trulzar has been identified as a Maleficar by the Theranorian Sages."];
+    
+    AbilityDescriptor *poison = [[AbilityDescriptor alloc] init];
+    [poison setAbilityDescription:@"Trulzar fills an allies veins with poison dealing increasing damage over time.  This effect may be removed with the Purify spell."];
+    [poison setIconName:@"unknown_ability.png"];
+    [poison setAbilityName:@"Necrotic Venom"];
+    [boss addAbilityDescriptor:poison];
+    [poison release];
     return [boss autorelease];
 }
 
@@ -583,9 +625,16 @@
         self.phase = 1;
         [self.announcer announce:@"Roth, The Toxin Mage steps forward."];
         [[AudioController sharedInstance] playTitle:@"roth_entrance"];
+        AbilityDescriptor *rothDesc = [[AbilityDescriptor alloc] init];
+        [rothDesc setAbilityDescription:@"Roth channels a curse on an ally dealing increasing damage over time.  When this curse is dispelled it will explode dealing moderate damage to all of your allies."];
+        [rothDesc setIconName:@"unknown_ability.png"];
+        [rothDesc setAbilityName:@"Curse of Detonation"];
+        [self addAbilityDescriptor:rothDesc];
+        [rothDesc release];
     }
     
     if (percentage == 75.0){
+        [self clearExtraDescriptors];
         //Roth dies
         [[AudioController sharedInstance] playTitle:@"roth_death"];
         [self.announcer announce:@"Roth falls to his knees.  Grimgon, The Darkener takes his place."];
@@ -593,9 +642,16 @@
     }
     if (percentage == 74.0){
         [[AudioController sharedInstance] playTitle:@"grimgon_entrance"];
+        AbilityDescriptor *grimgonDesc = [[AbilityDescriptor alloc] init];
+        [grimgonDesc setAbilityDescription:@"Grimgon fires vile green bolts at his enemies dealing damage and causing the targets to have healing done to them reduced by 50%."];
+        [grimgonDesc setIconName:@"unknown_ability.png"];
+        [grimgonDesc setAbilityName:@"Poisonball"];
+        [self addAbilityDescriptor:grimgonDesc];
+        [grimgonDesc release];
     }
     
     if (percentage == 50.0){
+        [self clearExtraDescriptors];
         [[AudioController sharedInstance] playTitle:@"grimgon_death"];
         [self.announcer announce:@"Grimgon fades to nothing.  Serevon, Anguish Mage cackles with glee."];
         //Serevon, Anguish Mage steps forward
@@ -604,9 +660,16 @@
     }
     if (percentage == 49.0){
         [[AudioController sharedInstance] playTitle:@"serevon_entrance"];
+        AbilityDescriptor *serevonDesc = [[AbilityDescriptor alloc] init];
+        [serevonDesc setAbilityDescription:@"Periodically, Serevon summons a dark cloud over all of your allies that deals more damage to lower health allies."];
+        [serevonDesc setIconName:@"unknown_ability.png"];
+        [serevonDesc setAbilityName:@"Choking Cloud"];
+        [self addAbilityDescriptor:serevonDesc];
+        [serevonDesc release];
     }
     
     if (percentage == 25.0){
+        [self clearExtraDescriptors];
         //Galcyon, Lord of the Dark Council steps forward
         [[AudioController sharedInstance] playTitle:@"serevon_death"];
         [self.announcer announce:@"Galcyon, Overlord of Darkness pushes away Serevon's corpse and slithers into the fray."];
@@ -639,6 +702,21 @@
     PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:250000 damage:30 targets:2 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Plaguebringer Colossus"];
     [boss setInfo:@"From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped.  The village people have foreseen their impending doom and sent young and brave hopefuls to join The Light Ascendant in exchange for protection.  You must lead this group to victory against the wretched beast."];
+    
+    AbilityDescriptor *sickenDesc = [[AbilityDescriptor alloc] init];
+    [sickenDesc setAbilityDescription:@"The Colossus will sicken targets causing them to take damage until they are healed to full health."];
+    [sickenDesc setIconName:@"unknown_ability.png"];
+    [sickenDesc setAbilityName:@"Strange Sickness"];
+    [boss addAbilityDescriptor:sickenDesc];
+    [sickenDesc release];
+    
+    AbilityDescriptor *pusExploDesc = [[AbilityDescriptor alloc] init];
+    [pusExploDesc setAbilityDescription:@"When your allies deal enough damage to the Plaguebringer Colossus to break off a section of its body the section explodes vile toxin dealing high damage to your raid."];
+    [pusExploDesc setIconName:@"unknown_ability.png"];
+    [pusExploDesc setAbilityName:@"Limb Bomb"];
+    [boss addAbilityDescriptor:pusExploDesc];
+    [pusExploDesc release];
+    
     return [boss autorelease];
 }
 
@@ -725,6 +803,14 @@
     [boss addAbility:thirdFocusedAttack];
     [boss setThirdTargetAttack:thirdFocusedAttack];
     [thirdFocusedAttack release];
+    
+    AbilityDescriptor *vileExploDesc = [[AbilityDescriptor alloc] init];
+    [vileExploDesc setAbilityDescription:@"When a Spore Ravager dies, it explodes dealing high damage to random nearby targets."];
+    [vileExploDesc setIconName:@"unknown_ability.png"];
+    [vileExploDesc setAbilityName:@"Vile Explosion"];
+    [boss addAbilityDescriptor:vileExploDesc];
+    [vileExploDesc release];
+    
     return [boss autorelease];
 }
 
@@ -949,6 +1035,14 @@
     
     [boss setTitle:@"Twin Champions of Baraghast"];
     [boss setInfo:@"You and your soldiers have taken the fight straight to the warcamps of Baraghast--Leader of the Dark Horde.  You have been met outside the gates by only two heavily armored demon warriors.  These Champions of Baraghast will stop at nothing to keep you from finding Baraghast."];
+    
+    AbilityDescriptor *axecutionDesc = [[AbilityDescriptor alloc] init];
+    [axecutionDesc setAbilityDescription:@"The Twin Champions will periodically choose a target for execution.  This target will be instantly slain if not above 50% health when the effect expires."];
+    [axecutionDesc setIconName:@"unknown_ability.png"];
+    [axecutionDesc setAbilityName:@"Execution"];
+    [boss addAbilityDescriptor:axecutionDesc];
+    [axecutionDesc release];
+    
     return [boss autorelease];
 }
 
@@ -995,7 +1089,7 @@
     }
     [self.announcer announce:@"An Ally Has been chosen for Execution..."];
     [target setHealth:target.maximumHealth * .4];
-    ExecutionEffect *effect = [[ExecutionEffect alloc] initWithDuration:3.5 andEffectType:EffectTypeNegative];
+    ExecutionEffect *effect = [[ExecutionEffect alloc] initWithDuration:3.75 andEffectType:EffectTypeNegative];
     [effect setOwner:self];
     [effect setValue:-200];
     [effect setSpriteName:@"execution.png"];
@@ -1027,7 +1121,7 @@
         [gushingWoundEffect setSpriteName:@"bleeding.png"];
         [gushingWoundEffect setAilmentType:AilmentTrauma];
         [gushingWoundEffect setIncreasePerTick:.5];
-        [gushingWoundEffect setValuePerTick:-25];
+        [gushingWoundEffect setValuePerTick:-23];
         [gushingWoundEffect setNumOfTicks:3];
         [gushingWoundEffect setOwner:self];
         [gushingWoundEffect setTitle:@"gushingwound"];
@@ -1158,7 +1252,7 @@
     [seer setTitle:@"Crazed Seer Tyonath"];
     [seer setInfo:@"Seer Tyonath was tormented and tortured after his capture by the Dark Horde.  The Darkness has driven him mad.  He guards the secrets to Baraghast's origin in the vaults beneath the Dark Horde's largest encampment - Serevilost."];
     
-    Fireball *fireballAbility = [[Fireball alloc] init];
+    ProjectileAttack *fireballAbility = [[ProjectileAttack alloc] init];
     [fireballAbility setSpriteName:@"purple_fireball.png"];
     [fireballAbility setAbilityValue:-12];
     [fireballAbility setCooldown:4];
@@ -1188,6 +1282,12 @@
     [seer addAbility:horrifyingLaugh];
     [horrifyingLaugh release];
     
+    AbilityDescriptor *gsdesc = [[AbilityDescriptor alloc] init];
+    [gsdesc setAbilityDescription:@"Tyonath casts more shadow bolts the longer the fight goes on."];
+    [gsdesc setIconName:@"unknown_ability.png"];
+    [gsdesc setAbilityName:@"Increasing Insanity"];
+    [gainShadowbolts setDescriptor:gsdesc];
+    [gsdesc release];
     
     return [seer autorelease];
     
@@ -1203,7 +1303,7 @@
     Grip *gripAbility = [[Grip alloc] init];
     [gripAbility setTitle:@"grip-ability"];
     [gripAbility setCooldown:22];
-    [gripAbility setAbilityValue:-17];
+    [gripAbility setAbilityValue:-14];
     [boss addAbility:gripAbility];
     [gripAbility release];
     
@@ -1211,7 +1311,7 @@
     [impaleAbility setTitle:@"gatekeeper-impale"];
     [impaleAbility setCooldown:16];
     [boss addAbility:impaleAbility];
-    [impaleAbility setAbilityValue:92];
+    [impaleAbility setAbilityValue:82];
     [impaleAbility release];
     
     
@@ -1235,14 +1335,14 @@
     }
     
     if (percentage == 50.0) {
-        [self.announcer announce:@"The Gatekeeper summons two BloodDrinker Demons to his side."];
+        [self.announcer announce:@"The Gatekeeper summons two Blood-Drinker Demons to his side."];
         //Blood drinkers
-        BloodDrinker *ability = [[BloodDrinker alloc] initWithDamage:12 andCooldown:1.25];
+        BloodDrinker *ability = [[BloodDrinker alloc] initWithDamage:10 andCooldown:1.25];
         [ability setTitle:@"gatekeeper-blooddrinker"];
         [self addAbility:ability];
         [ability release];
         
-        BloodDrinker *ability2 = [[BloodDrinker alloc] initWithDamage:12 andCooldown:1.25];
+        BloodDrinker *ability2 = [[BloodDrinker alloc] initWithDamage:10 andCooldown:1.25];
         [ability2 setTitle:@"gatekeeper-blooddrinker"];
         [self addAbility:ability2];
         [ability2 release];
@@ -1273,21 +1373,232 @@
 @end
 
 @implementation SkeletalDragon
+- (void)dealloc {
+    [_boneThrowAbility release];
+    [_sweepingFlame release];
+    [_tankDamage release];
+    [_tailLash release];
+    [super dealloc];
+}
 + (id)defaultBoss{
     SkeletalDragon *boss = [[SkeletalDragon alloc] initWithHealth:300000 damage:0 targets:0 frequency:100 andChoosesMT:NO];
     [boss setInfo:@"After moving beyond the gates of Delsarn, you encounter a horrifying Skeletal Dragon.  It assaults your party and bars the way."];
     [boss setTitle:@"Skeletal Dragon"];
     
+    boss.boneThrowAbility = [[[BoneThrow alloc] init] autorelease];
+    [boss.boneThrowAbility  setCooldown:5.0];
+    [boss addAbility:boss.boneThrowAbility];
     
+    boss.sweepingFlame = [[[TargetTypeFlameBreath alloc] init] autorelease];
+    [boss.sweepingFlame setCooldown:9.0];
+    [boss.sweepingFlame setAbilityValue:60];
+    [(TargetTypeFlameBreath*)boss.sweepingFlame setNumTargets:5];
+    [boss addAbility:boss.sweepingFlame];
+    
+    boss.tankDamage = [[[FocusedAttack alloc] init] autorelease];
+    [boss.tankDamage setAbilityValue:70];
+    [boss.tankDamage setCooldown:2.5];
+    [boss.tankDamage setFailureChance:.7];
+    
+    boss.tailLash = [[[RaidDamage alloc] init] autorelease];
+    [boss.tailLash setAbilityValue:32];
+    [boss.tailLash setCooldown:22.0];
+    [boss.tailLash setFailureChance:.25];
     
     return [boss autorelease];
 }
+
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+    if (percentage == 99.0){
+        [self.announcer announce:@"The Skeletal Dragon hovers angrily above your allies."];
+    }
+    
+    if (percentage == 66.0){
+        [self.announcer displayScreenShakeForDuration:.33];
+        [self.announcer announce:@"The Skeletal Dragon lands and begins to thrash your allies"];
+        self.boneThrowAbility.isDisabled = YES;
+        [self addAbility:self.tankDamage];
+        [self addAbility:self.tailLash];
+        [self.sweepingFlame setCooldown:18.0];
+    }
+    
+    if (percentage == 33.0){
+        [self.announcer announce:@"The Skeletal Dragon soars off into the air."];
+        [self.sweepingFlame setCooldown:14.5];
+        [self.tankDamage setIsDisabled:YES];
+        [self.tailLash setIsDisabled:YES];
+        [self.boneThrowAbility setIsDisabled:NO];
+        [self.boneThrowAbility setCooldown:5.0];
+        
+    }
+
+    if (percentage == 5.0){
+        [self.announcer displayScreenShakeForDuration:.66];
+        [self.announcer announce:@"The Skeletal Dragon crashes down onto your allies from the sky."];
+        NSArray *livingMembers = [raid getAliveMembers];
+        NSInteger damageValue = 750 / livingMembers.count;
+        for (RaidMember *member in livingMembers){
+            FallenDownEffect *fde = [FallenDownEffect defaultEffect];
+            [fde setOwner:self];
+            [member addEffect:fde];
+            
+            DelayedHealthEffect *fallenDamage = [[DelayedHealthEffect alloc] initWithDuration:.1 andEffectType:EffectTypeNegativeInvisible];
+            [fallenDamage setOwner:self];
+            [fallenDamage setTitle:@"falling-dragon"];
+            [fallenDamage setValue:-damageValue];
+            [member addEffect:fallenDamage];
+            [fallenDamage release];
+        }
+    }
+}
+
+- (void)ownerDidExecuteAbility:(Ability *)ability {
+    if (ability == self.tailLash) {
+        [self.announcer displayScreenShakeForDuration:.25];
+    }
+}
 @end
 
-@implementation ColossusOfBone 
+@implementation ColossusOfBone
+- (void)dealloc {
+    [_boneQuake release];
+    [_crushingPunch release];
+    [super dealloc];
+}
++ (id)defaultBoss {
+    ColossusOfBone *cob = [[ColossusOfBone alloc] initWithHealth:200000 damage:0 targets:0 frequency:0 andChoosesMT:NO];
+    [cob setTitle:@"Colossus of Bone"];
+    [cob setInfo:@"Traveling even deeper into Delsarn, you and your allies are stopped by a towering creature of mythical size."];
+    
+    FocusedAttack *tankAttack = [[FocusedAttack alloc] initWithDamage:62 andCooldown:2.45];
+    [tankAttack setFailureChance:.4];
+    [cob addAbility:tankAttack];
+    [tankAttack release];
+    
+    cob.crushingPunch = [[Attack alloc] initWithDamage:0 andCooldown:10.0];
+    DelayedHealthEffect *crushingPunchEffect = [[DelayedHealthEffect alloc] initWithDuration:3.0 andEffectType:EffectTypeNegative];
+    [crushingPunchEffect setTitle:@"crushing-punch"];
+    [crushingPunchEffect setOwner:cob];
+    [crushingPunchEffect setValue:-90];
+    [crushingPunchEffect setSpriteName:@"crush.png"];
+    [(Attack*)cob.crushingPunch setAppliedEffect:crushingPunchEffect];
+    [crushingPunchEffect release];
+    [cob.crushingPunch setFailureChance:.2];
+    [cob addAbility:cob.crushingPunch];
+    [cob.crushingPunch release];
+    
+    cob.boneQuake = [[BoneQuake alloc] init];
+    [cob.boneQuake setAbilityValue:12];
+    [cob.boneQuake setCooldown:30.0];
+    [cob addAbility:cob.boneQuake];
+    [cob.boneQuake release];
+    
+    BoneThrow *boneThrow = [[BoneThrow alloc] init];
+    [boneThrow setAbilityValue:24];
+    [boneThrow setCooldown:14.0];
+    [cob addAbility:boneThrow];
+    [boneThrow release];
+    
+    AbilityDescriptor *crushingPunchDescriptor = [[AbilityDescriptor alloc] init];
+    [crushingPunchDescriptor setAbilityDescription:@"Periodically, this enemy unleashes a vicious strike on a random ally dealing high damage."];
+    [crushingPunchDescriptor setAbilityName:@"Crushing Punch"];
+    [crushingPunchDescriptor setIconName:@"crushing_punch_ability.png"];
+    [cob.crushingPunch setDescriptor:crushingPunchDescriptor];
+    [crushingPunchDescriptor release];
+    
+    
+    return [cob autorelease];
+    
+}
+
+- (void)combatActions:(NSArray *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta {
+    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+    if (self.crushingPunch.timeApplied + 3.0 >= self.crushingPunch.cooldown){
+        self.hasShownCrushingPunchThisCooldown = YES;
+    }
+}
+
+- (void)ownerDidExecuteAbility:(Ability *)ability {
+    if (ability == self.boneQuake){
+        [self.announcer displayScreenShakeForDuration:3.0];
+        float boneQuakeCD = arc4random() % 15 + 15;
+        [self.boneQuake setCooldown:boneQuakeCD];
+    }
+}
+
 @end
 
-@implementation OverseerOfDelsarn 
+@implementation OverseerOfDelsarn
+
+- (void)dealloc {
+    [_projectilesAbility release];
+    [super dealloc];
+}
+
++ (id)defaultBoss {
+    OverseerOfDelsarn *boss = [[OverseerOfDelsarn alloc] initWithHealth:340000 damage:0 targets:0 frequency:0 andChoosesMT:NO];
+    [boss setTitle:@"Overseer of Delsarn"];
+    [boss setInfo:@"After defeating his most powerful beasts, the Overseer of this treacherous realm confronts you himself.  He bars your way into the inner sanctum."];
+    
+    boss.projectilesAbility = [[[OverseerProjectiles alloc] init] autorelease];
+    [boss.projectilesAbility setAbilityValue:56];
+    [boss.projectilesAbility setCooldown:1.5];
+    [boss addAbility:boss.projectilesAbility];
+    
+    boss.demonAbilities = [NSMutableArray arrayWithCapacity:3];
+    
+    BloodMinion *bm = [[BloodMinion alloc] init];
+    [bm setTitle:@"blood-minion"];
+    [bm setCooldown:10.0];
+    [bm setAbilityValue:10];
+    [boss.demonAbilities addObject:bm];
+    [bm release];
+    
+    FireMinion *fm = [[FireMinion alloc] init];
+    [fm setTitle:@"fire-minion"];
+    [fm setCooldown:15.0];
+    [fm setAbilityValue:35];
+    [boss.demonAbilities addObject:fm];
+    [fm release];
+    
+    ShadowMinion *sm = [[ShadowMinion alloc] init];
+    [sm setTitle:@"shadow-minion"];
+    [sm setCooldown:12.0];
+    [sm setAbilityValue:20];
+    [boss.demonAbilities addObject:sm];
+    [sm release];
+    
+    return [boss autorelease];
+}
+
+- (void)addRandomDemonAbility {
+    NSInteger indexToAdd = arc4random() % self.demonAbilities.count;
+    
+    [self addAbility:[self.demonAbilities objectAtIndex:indexToAdd]];
+    [self.demonAbilities removeObjectAtIndex:indexToAdd];
+}
+
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+    if (percentage == 80.0){
+        self.projectilesAbility.isDisabled = YES;
+        [self.announcer announce:@"The Overseer casts down his staff and begins channeling a demonic ritual."];
+        [self addRandomDemonAbility];
+    }
+    
+    if (percentage == 60.0){
+        [self addRandomDemonAbility];
+    }
+    
+    if (percentage == 40.0){
+        [self addRandomDemonAbility];
+    }
+    
+    if (percentage == 20.0){
+        [self.announcer announce:@"The Overseer laughs maniacally and raises his staff again."];
+        self.projectilesAbility.cooldown = 3.5;
+        self.projectilesAbility.isDisabled = NO;
+    }
+}
 @end
 
 @implementation TheUnspeakable

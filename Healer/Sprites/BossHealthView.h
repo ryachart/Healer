@@ -9,14 +9,23 @@
 #import <UIKit/UIKit.h>
 #import "GameObjects.h"
 #import "cocos2d.h"
+#import "BossAbilityDescriptionsView.h"
 
-@interface BossHealthView : CCLayer
+@protocol BossHealthViewDelegate <NSObject>
+
+- (void)bossHealthViewShouldDisplayAbility:(AbilityDescriptor*)ability;
+
+@end
+
+@interface BossHealthView : CCLayer <AbilityDescriptionViewDelegate>
+@property (nonatomic, assign) id <BossHealthViewDelegate> delegate;
 @property (nonatomic, assign, setter=setBossData:) Boss* bossData;
 @property (nonatomic, retain) CCLabelTTF *bossNameLabel;
 @property (nonatomic, retain) CCLabelTTF *healthLabel;
+@property (nonatomic, assign) BossAbilityDescriptionsView* abilityDescriptionsView;
 
--(void)setBossData:(Boss*)theBoss;
+- (void)setBossData:(Boss*)theBoss;
 - (id)initWithFrame:(CGRect)frame ;
--(void)updateHealth;
+- (void)updateHealth;
 
 @end

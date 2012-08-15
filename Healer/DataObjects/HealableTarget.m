@@ -67,6 +67,19 @@
     }
 }
 
+- (NSInteger)visibleNegativeEffectsCount {
+    if (self.isDead){
+        return 0;
+    }
+    NSInteger count = 0;
+    for (Effect *eff in self.activeEffects){
+        if (eff.effectType == EffectTypeNegative){
+            count++;
+        }
+    }
+    return count;
+}
+
 -(void)addEffect:(Effect*)theEffect
 {
 	if (activeEffects != nil){

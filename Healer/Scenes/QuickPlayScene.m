@@ -15,7 +15,7 @@
 #import "BackgroundSprite.h"
 #import "Divinity.h"
 
-#define NUM_ENCOUNTERS 13
+#define NUM_ENCOUNTERS 17
 
 @interface QuickPlayScene ()
 @property (assign) CCMenu *menu;
@@ -57,9 +57,9 @@
             [self.menu addChild:levelButton];
             [levelButton release];
         }
-        [self.menu setPosition:ccp([CCDirector sharedDirector].winSize.width /2, [CCDirector sharedDirector].winSize.height / 2)];
+        [self.menu setPosition:ccp([CCDirector sharedDirector].winSize.width /2, [CCDirector sharedDirector].winSize.height * .63)];
         [self.menu setColor:ccc3(255, 255, 255)];
-        [self.menu alignItemsInRows:[NSNumber numberWithInt:NUM_ENCOUNTERS]/*,[NSNumber numberWithInt:10]*/, nil];
+        [self.menu alignItemsInRows:[NSNumber numberWithInt:NUM_ENCOUNTERS/2],[NSNumber numberWithInt:(int)round(NUM_ENCOUNTERS/2.0)], nil];
         [self addChild:self.menu];
         
         

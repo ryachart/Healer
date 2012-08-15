@@ -14,6 +14,9 @@
 #import "GamePlayFTUELayer.h"
 #import "GamePlayPauseLayer.h"
 #import <GameKit/GameKit.h>
+#import "BossHealthView.h"
+#import "AbilityDescriptionModalLayer.h"
+
 
 @class PlayerSpellButton;
 @class RaidView;
@@ -23,7 +26,7 @@
 @class PlayerMoveButton;
 @class PlayerCastBar;
 /* This is the screen we see while involved in a raid */
-@interface GamePlayScene : CCScene <EventLogger, Announcer, GamePlayFTUELayerDelegate, PauseLayerDelegate, GKMatchDelegate> {
+@interface GamePlayScene : CCScene <EventLogger, Announcer, GamePlayFTUELayerDelegate, PauseLayerDelegate, GKMatchDelegate, BossHealthViewDelegate, AbilityDescriptorModalDelegate> {
 	NSMutableArray *selectedRaidMembers;
 }
 //Interface Elements

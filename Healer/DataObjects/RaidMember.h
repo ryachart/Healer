@@ -42,17 +42,17 @@ typedef enum {
 @property (readwrite) float dodgeChance;
 @property (readonly) Positioning positioning;
 
--(float)dps;
--(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position;
--(BOOL)raidMemberShouldDodgeAttack:(float)modifer;
+- (float)dps;
+- (id)initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position;
+- (BOOL)raidMemberShouldDodgeAttack:(float)modifer;
 
 //This function is overriden by each subtype of RaidMember.
 //It allows a RaidMember to be asked to take any combatActions while the games goes on.
 //It also allows a RaidMember to deal damage.
--(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid players:(NSArray*)players gameTime:(float)timeDelta;
+- (void)combatActions:(Boss*)theBoss raid:(Raid*)theRaid players:(NSArray*)players gameTime:(float)timeDelta;
 
--(NSString*)asNetworkMessage;
--(void)updateWithNetworkMessage:(NSString*)message;
+- (NSString*)asNetworkMessage;
+- (void)updateWithNetworkMessage:(NSString*)message;
 @end
 
 //AVERAGE HEALTH: 124

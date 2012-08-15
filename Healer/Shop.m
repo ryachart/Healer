@@ -143,13 +143,15 @@ static NSArray *shopItems = nil;
     [items addObject:[lightEternal autorelease]];
     ShopItem *fadingLight = [[ShopItem alloc] initWithSpell:[FadingLight defaultSpell]];
     [items addObject:[fadingLight autorelease]];
+    ShopItem *sunburst = [[ShopItem alloc] initWithSpell:[Sunburst defaultSpell]];
+    [items addObject:[sunburst autorelease]];
 
     return items;
     
 }
 + (NSArray*)archivesShopItems {
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
-    ShopItem *touchOfLight = [[ShopItem alloc] initWithSpell:[TouchOfLight defaultSpell]];
+    ShopItem *touchOfLight = [[ShopItem alloc] initWithSpell:[TouchOfHope defaultSpell]];
     ShopItem *orbsOfLight = [[ShopItem alloc] initWithSpell:[OrbsOfLight defaultSpell]];
     ShopItem *swirlingLight = [[ShopItem alloc] initWithSpell:[SwirlingLight defaultSpell]];
     ShopItem *soaringSpirit = [[ShopItem alloc] initWithSpell:[SoaringSpirit defaultSpell]];

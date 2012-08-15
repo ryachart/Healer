@@ -19,10 +19,7 @@ typedef enum {
 @class CCRoundedRect;
 @class RaidMemberHealthViewDelegate;
 
-@interface RaidMemberHealthView : CCLayer {
-	HealableTarget* memberData;
-	RaidMemberHealthViewDelegate *interactionDelegate;
-}
+@interface RaidMemberHealthView : CCLayer
 @property (nonatomic, assign, setter=setMemberData:) HealableTarget* memberData;
 @property (nonatomic, retain) CCLabelTTF *healthLabel;
 @property (nonatomic, assign) RaidMemberHealthViewDelegate *interactionDelegate;

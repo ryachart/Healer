@@ -606,10 +606,10 @@
 }
 @end
 
-@implementation TouchOfLight
+@implementation TouchOfHope
 
 + (id)defaultSpell {
-    TouchOfLight *tol = [[TouchOfLight alloc] initWithTitle:@"Touch of Light" healAmnt:50 energyCost:50 castTime:0.0 andCooldown:4.0];
+    TouchOfHope *tol = [[TouchOfHope alloc] initWithTitle:@"Touch of Hope" healAmnt:50 energyCost:50 castTime:0.0 andCooldown:4.0];
     [tol setDescription:@"Instantly Heals your Target for a Moderate Amount and places an effect on the target that heals for a small amount over 4 seconds.  Each time the periodic effect heals it restores 12 energy."];
     return [tol autorelease];
 }
@@ -617,9 +617,9 @@
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime {
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
     
-    TouchOfLightEffect *tolEffect = [[TouchOfLightEffect alloc] initWithDuration:4.0 andEffectType:EffectTypePositive];
-    [tolEffect setTitle:@"tol-effect"];
-    [tolEffect setSpriteName:@"touch_of_light.png"];
+    TouchOfHopeEffect *tolEffect = [[TouchOfHopeEffect alloc] initWithDuration:4.0 andEffectType:EffectTypePositive];
+    [tolEffect setTitle:@"toh-effect"];
+    [tolEffect setSpriteName:@"touch_of_hope.png"];
     [tolEffect setValuePerTick:2];
     [tolEffect setNumOfTicks:4];
     [tolEffect setOwner:self.owner];
@@ -631,7 +631,7 @@
 
 @implementation SoaringSpirit
 + (id)defaultSpell {
-    SoaringSpirit *ss = [[SoaringSpirit alloc] initWithTitle:@"Soaring Spirit" healAmnt:0 energyCost:50 castTime:0 andCooldown:35.0];
+    SoaringSpirit *ss = [[SoaringSpirit alloc] initWithTitle:@"Soaring Spirit" healAmnt:0 energyCost:30 castTime:0 andCooldown:35.0];
     [ss setDescription:@"Releases your inner light increasing your healing done and reduces cast times by 20% for 7.5 seconds."];
     return [ss autorelease];
 }
@@ -671,6 +671,33 @@
 }
 
 @end
+
+@implementation Sunburst
++ (id)defaultSpell {
+    Sunburst *sb = [[Sunburst alloc] initWithTitle:@"Sunburst" healAmnt:0 energyCost:140 castTime:0.0 andCooldown:8.0];
+    [sb setDescription:@"Heals up to 7 injured allies for a small amount over 5 seconds."];
+    return [sb autorelease];
+}
+
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime {
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+    
+    NSArray *sunburstTargets = [theRaid lowestHealthTargets:7 withRequiredTarget:thePlayer.spellTarget];
+    
+    for (RaidMember *target in sunburstTargets){
+        RepeatedHealthEffect *sunburstEffect = [[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
+        [sunburstEffect setTitle:@"sunburst-hot"];
+        [sunburstEffect setSpriteName:@"sunburst.png"];
+        [sunburstEffect setNumOfTicks:5];
+        [sunburstEffect setValuePerTick:7];
+        [sunburstEffect setOwner:self.owner];
+        [target addEffect:sunburstEffect];
+        [sunburstEffect release];
+    }
+    
+}
+@end
+
 #pragma mark -
 #pragma mark Test Spells
 @implementation HastyBrew

@@ -190,7 +190,9 @@
                 [spellBeingCast spellEndedCasting];
             }
 			[spellBeingCast combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:timeDelta];
-		
+            for (Effect *eff in self.activeEffects){
+                [eff targetDidCastSpell:spellBeingCast];
+            }
 			spellTarget = nil;
 			spellBeingCast = nil;
 			isCasting = NO;

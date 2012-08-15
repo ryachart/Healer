@@ -22,6 +22,7 @@
 - (NSArray*)getAliveMembers;
 - (NSInteger)deadCount;
 
+- (RaidMember*)lowestHealthMember;
 - (RaidMember*)randomLivingMember;
 - (RaidMember*)randomLivingMemberWithPositioning:(Positioning)pos;
 

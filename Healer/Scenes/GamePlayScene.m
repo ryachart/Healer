@@ -9,7 +9,6 @@
 #import "GamePlayScene.h"
 #import "RaidView.h"
 #import "PlayerSpellButton.h"
-#import "BossHealthView.h"
 #import "PlayerMoveButton.h"
 #import "PostBattleScene.h"
 #import "PersistantDataManager.h"
@@ -109,6 +108,8 @@
         [self addChild:self.raidView];
         
         self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(100, 560, 884, 80)] autorelease];
+        [self.bossHealthView setDelegate:self];
+        
         CCLayerColor *playerStatusBackground = [CCLayerColor layerWithColor:ccc4(100, 100, 100, 200)];
         [playerStatusBackground setContentSize:CGSizeMake(210, 60)];
         [playerStatusBackground setPosition:CGPointMake(795, 480)];
@@ -429,6 +430,32 @@
 			}
 		}
 	}
+}
+
+- (void)bossHealthViewShouldDisplayAbility:(AbilityDescriptor *)ability {
+    if (self.paused){
+        return;
+    }
+    
+    if (self.isServer || self.isClient) {
+    } else {
+        [self setPaused:YES];
+    }
+    
+    AbilityDescriptionModalLayer *modalLayer = [[AbilityDescriptionModalLayer alloc] initWithAbilityDescriptor:ability];
+    [modalLayer setDelegate:self];
+    [self addChild:modalLayer];
+    [modalLayer release];
+}
+
+- (void)abilityDescriptorModaldidComplete:(id)modal {
+    AbilityDescriptionModalLayer *layer = (AbilityDescriptionModalLayer*)modal;
+    [layer removeFromParentAndCleanup:YES];
+    if (self.isServer || self.isClient){
+        
+    }else {
+        [self setPaused:NO];
+    }
 }
 
 #pragma mark - Announcer Behaviors

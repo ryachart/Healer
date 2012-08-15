@@ -117,13 +117,16 @@
 @interface WardOfAncients : Spell
 @end
 
-@interface TouchOfLight : Spell
+@interface TouchOfHope : Spell
 @end
 
 @interface SoaringSpirit : Spell
 @end
 
 @interface FadingLight : Spell
+@end
+
+@interface Sunburst : Spell
 @end
 
 ////RITUALIST SPELLS/////

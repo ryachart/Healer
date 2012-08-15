@@ -14,6 +14,7 @@
 @class HealableTarget;
 @class Agent;
 @class Ability;
+@class Spell;
 
 typedef enum {
 	EffectTypeNeutral,
@@ -59,11 +60,12 @@ typedef enum {
 
 
 @property BOOL isExpired;
--(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type;
+- (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type;
 
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta;
--(void)expire;
--(void)effectWillBeDispelled:(Raid*)raid player:(Player*)player;
+- (void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta;
+- (void)expire;
+- (void)effectWillBeDispelled:(Raid*)raid player:(Player*)player;
+- (void)targetDidCastSpell:(Spell*)spell;
 
 //Multiplayer
 -(NSString*)asNetworkMessage;
@@ -103,6 +105,9 @@ typedef enum {
 @property (readwrite) NSInteger amountToShield;
 @end
 
+@interface HealingDoneAdjustmentEffect : Effect <HealthAdjustmentModifier>
+@property (readwrite) float percentageHealingReceived;
+@end
 
 @interface ReactiveHealEffect : Effect <HealthAdjustmentModifier>
 @property (readwrite) float triggerCooldown;
@@ -115,7 +120,7 @@ typedef enum {
 @property (nonatomic, retain) Effect *appliedEffect;
 @end
 
-@interface TouchOfLightEffect : RepeatedHealthEffect
+@interface TouchOfHopeEffect : RepeatedHealthEffect
 @end
 
 #pragma mark - Shipping Boss Effects
@@ -186,8 +191,15 @@ typedef enum {
 @interface GripEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
 @end
 
+@interface FallenDownEffect : Effect
+/* Reduces all damage dealt until the targets health passes the getUpThreshold */
+@property (nonatomic, readwrite) float getUpThreshold; //Defaults to .6
++ (id)defaultEffect;
+@end
 
-
+@interface EnergyAdjustmentPerCastEffect : Effect
+@property (nonatomic, readwrite) NSInteger energyChangePerCast;
+@end
 
 #pragma mark - DEPRECATED EFFECTS
 @interface BigFireball : Effect {

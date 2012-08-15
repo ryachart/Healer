@@ -31,15 +31,14 @@
 
 @property (nonatomic, readwrite) NSInteger lastHealth;
 @property (nonatomic, assign) CCSprite *shieldBubble;
+
+@property (nonatomic, assign) CCLabelTTF *numEffectsLabel;
+
+@property (nonatomic, assign) BOOL newNegativeSpriteIsAnimating;
+@property (nonatomic, readwrite) NSInteger lastNegativeEffectsCount;
 @end
 
 @implementation RaidMemberHealthView
-
-@synthesize memberData, healthLabel, interactionDelegate, isTouched;
-@synthesize lastHealth, isFocusedLabel, priorityNegativeEffectSprite, priorityPositiveEffectSprite, shieldBubble;
-@synthesize classIconSprite;
-@synthesize pEffectDurationBack, pEffectClippingNode;
-@synthesize nEffectDurationBack, nEffectClippingNode;
 
 @synthesize raidFrameTexture, healthBarClippingNode,  healthBarMask, selectionState, selectionSprite;
 
@@ -78,7 +77,7 @@
         [self.isFocusedLabel setColor:ccBLACK];
         
 		self.healthLabel =  [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0f];   
-        [self.healthLabel setPosition:CGPointMake(frame.size.width * .7, frame.size.height * .5)];
+        [self.healthLabel setPosition:CGPointMake(frame.size.width * .71, frame.size.height * .5)];
         [self.healthLabel setContentSize:CGSizeMake(frame.size.width * .5, frame.size.height * .25)];
         [self.healthLabel setColor:ccc3(0, 0, 0)];
         
@@ -101,7 +100,10 @@
         [self.nEffectClippingNode setPosition:CGPointMake(8, 44)];
         [self.nEffectClippingNode addChild:self.nEffectDurationBack];
         [self addChild:self.nEffectClippingNode z:5];
-                
+        
+        self.numEffectsLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(40, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
+        [self.numEffectsLabel setPosition:CGPointMake(28, 40)];
+        [self addChild:self.numEffectsLabel z:10];
         
         self.shieldBubble = [CCSprite spriteWithSpriteFrameName:@"shield_bubble.png"];
         [self.shieldBubble setVisible:NO];
@@ -110,9 +112,9 @@
         [self addChild:self.healthLabel z:10];
         [self addChild:self.isFocusedLabel z:11];
         [self addChild:self.shieldBubble z:100]; //Above all else!
-		interactionDelegate = nil;
+		_interactionDelegate = nil;
 		
-		isTouched = NO;
+		_isTouched = NO;
     }
     return self;
 }
@@ -152,9 +154,9 @@
 
 -(void)setMemberData:(RaidMember*)rdMember
 {
-    [memberData release];
-	memberData = [rdMember retain];
-	self.lastHealth = memberData.health;
+    [_memberData release];
+	_memberData = [rdMember retain];
+	self.lastHealth = _memberData.health;
     
     NSString* classIconSpriteFrameName = [NSString stringWithFormat:@"class_icon_%@.png", [rdMember title].lowercaseString];
     if (!self.classIconSprite){
@@ -196,14 +198,17 @@
     }], nil]];
 }
 
+- (void)animateNewNegativeSprite {
+    [self.priorityNegativeEffectSprite runAction:[CCSequence actions:[CCScaleTo actionWithDuration:.4 scale:1.6], [CCScaleTo actionWithDuration:.4 scale:1.0], nil]];
+}
+
 #define BLINK_ACTION_TAG 32432
 -(void)updateHealth
 {
-    if (memberData && memberData.health > self.lastHealth){
+    if (self.memberData && self.memberData.health > self.lastHealth){
         //We were healed.  Lets fire some SCT!
-        int heal = memberData.health - lastHealth;
+        int heal = self.memberData.health - self.lastHealth;
         [self displaySCT:[NSString stringWithFormat:@"+%i", heal]];
-        
     }
     
     switch (self.selectionState) {
@@ -222,10 +227,10 @@
             break;
     }
     
-    if (memberData && memberData.health < self.lastHealth){
-        int damage = lastHealth - memberData.health;
+    if (self.memberData && self.memberData.health < self.lastHealth){
+        int damage = self.lastHealth - self.memberData.health;
         
-        if ((float)damage / memberData.maximumHealth >= .33){
+        if ((float)damage / self.memberData.maximumHealth >= .33){
             NSString* sctString = nil;
             NSInteger roll = arc4random() % 5;
             switch (roll) {
@@ -250,9 +255,9 @@
             [self displaySCT:sctString];
         }
         
-        if ((float)memberData.health / memberData.maximumHealth <= .25){
-            if (memberData.health != 0){
-                NSInteger roll = arc4random() % 3;
+        if ((float)self.memberData.health / self.memberData.maximumHealth <= .25){
+            if (self.memberData.health != 0){
+                NSInteger roll = arc4random() % 4;
                 NSString *sctString = nil;
                 switch (roll) {
                     case 0:
@@ -267,6 +272,9 @@
                     case 3:
                         sctString = @"Save me!";
                         break;
+                    case 4:
+                        sctString = @"Heal me!";
+                        break;
                     default:
                         break;
                 }
@@ -275,17 +283,17 @@
         }
     }
     
-    if (memberData.isFocused){
+    if (self.memberData.isFocused){
         [self.isFocusedLabel setString:@"FOCUSED!"];
     }else{
         [self.isFocusedLabel setString:@""];
     }
-    self.lastHealth = memberData.health;
+    self.lastHealth = self.memberData.health;
 	NSString *healthText;
-	if (memberData.health >= 1){
-		healthText = [NSString stringWithFormat:@"%3.1f\%", (((float)memberData.health) / memberData.maximumHealth)*100];
-        self.healthBarMask.position = CGPointMake(0, -(self.healthBarMask.contentSize.height) * (1 - memberData.healthPercentage));
-        ccColor3B colorForPerc = [self colorForPercentage:(((float)memberData.health) / memberData.maximumHealth)];
+	if (self.memberData.health >= 1){
+		healthText = [NSString stringWithFormat:@"%3.1f%%", (((float)self.memberData.health) / self.memberData.maximumHealth)*100];
+        self.healthBarMask.position = CGPointMake(0, -(self.healthBarMask.contentSize.height) * (1 - self.memberData.healthPercentage));
+        ccColor3B colorForPerc = [self colorForPercentage:(((float)self.memberData.health) / self.memberData.maximumHealth)];
         [self.healthBarMask setColor:colorForPerc];
 	}
 	else {
@@ -316,20 +324,13 @@
     if (positiveEffect && positiveEffect.spriteName && !self.memberData.isDead){
         if (!self.priorityPositiveEffectSprite){
             self.priorityPositiveEffectSprite = [CCSprite spriteWithSpriteFrameName:positiveEffect.spriteName];
-            [self.priorityPositiveEffectSprite setPosition:CGPointMake(50, 40)];
+            [self.priorityPositiveEffectSprite setPosition:CGPointMake(26, 26)];
             [self addChild:self.priorityPositiveEffectSprite z:5];
         }else{
-            [self.priorityPositiveEffectSprite stopAllActions];
-            [self.priorityPositiveEffectSprite setOpacity:255];
             [self.priorityPositiveEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:positiveEffect.spriteName]];
         }
         
         [self.pEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.pEffectDurationBack.contentSize.width, self.pEffectDurationBack.contentSize.height * (1- (positiveEffect.timeApplied/positiveEffect.duration)))];
-        if (positiveEffect.timeApplied/positiveEffect.duration > .8 && ![self.priorityPositiveEffectSprite getActionByTag:BLINK_ACTION_TAG]){
-            CCAction *blinkAction = [CCRepeatForever actionWithAction:[CCSequence actions:[CCFadeTo actionWithDuration:.5 opacity:120], [CCFadeTo actionWithDuration:.5 opacity:255], nil]];
-            blinkAction.tag = BLINK_ACTION_TAG;
-            [self.priorityPositiveEffectSprite runAction:blinkAction];
-        }
         
         [self.priorityPositiveEffectSprite setVisible:YES];
     }else{
@@ -340,27 +341,30 @@
     if (negativeEffect && negativeEffect.spriteName && !self.memberData.isDead){
         if (!self.priorityNegativeEffectSprite){
             self.priorityNegativeEffectSprite = [CCSprite spriteWithSpriteFrameName:negativeEffect.spriteName];
-            [self.priorityNegativeEffectSprite setPosition:CGPointMake(50, 40)];
+            [self.priorityNegativeEffectSprite setPosition:CGPointMake(26, 58)];
             [self addChild:self.priorityNegativeEffectSprite z:5];
         }else{
-            [self.priorityNegativeEffectSprite stopAllActions];
-            [self.priorityNegativeEffectSprite setOpacity:255];
             [self.priorityNegativeEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:negativeEffect.spriteName]];
         }
         [self.nEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.nEffectDurationBack.contentSize.width, self.nEffectDurationBack.contentSize.height * (1- (negativeEffect.timeApplied/negativeEffect.duration)))];
-        if (negativeEffect.timeApplied/negativeEffect.duration > .8 && ![self.priorityNegativeEffectSprite getActionByTag:BLINK_ACTION_TAG]){
-            CCAction *blinkAction = [CCRepeatForever actionWithAction:[CCSequence actions:[CCFadeTo actionWithDuration:.5 opacity:120], [CCFadeTo actionWithDuration:.5 opacity:255], nil]];
-            blinkAction.tag = BLINK_ACTION_TAG;
-            [self.priorityNegativeEffectSprite runAction:blinkAction];
-        }
         [self.priorityNegativeEffectSprite setVisible:YES];
-    }else{
+    } else{
         [self.nEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.nEffectDurationBack.contentSize.width, 0)];
         [self.priorityNegativeEffectSprite setVisible:NO];
     }
+    NSInteger negativeEffectCount = self.memberData.visibleNegativeEffectsCount;
+    if (negativeEffectCount > 1){
+        self.numEffectsLabel.string = [NSString stringWithFormat:@"%i", negativeEffectCount];
+    }else {
+        self.numEffectsLabel.string = @"";
+    }
+    if (negativeEffectCount > self.lastNegativeEffectsCount) {
+        [self animateNewNegativeSprite];
+    }
+    self.lastNegativeEffectsCount = negativeEffectCount;
 
-	if (![healthText isEqualToString:[healthLabel string]]){
-		[healthLabel setString:healthText];
+	if (![healthText isEqualToString:[self.healthLabel string]]){
+		[self.healthLabel setString:healthText];
 	}
 }
 
@@ -374,17 +378,17 @@
     layerRect.origin = CGPointZero;
     CGPoint convertedToNodeSpacePoint = [self convertToNodeSpace:touchLocation];
     
-    if (interactionDelegate != nil && CGRectContainsPoint(layerRect, convertedToNodeSpacePoint)){
+    if (self.interactionDelegate != nil && CGRectContainsPoint(layerRect, convertedToNodeSpacePoint)){
             [[self interactionDelegate] thisMemberSelected:self];
-            isTouched = YES;
+            _isTouched = YES;
     }
 }
 
 -(void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-	if (interactionDelegate != nil){
-        BOOL wasTouched = isTouched;
-		isTouched = NO;
+	if (self.interactionDelegate != nil){
+        BOOL wasTouched = _isTouched;
+		_isTouched = NO;
         if (wasTouched){
             [[self interactionDelegate] thisMemberUnselected:self];
         }
@@ -392,8 +396,8 @@
 }
 
 - (void)dealloc {
-    [memberData release];
-    [healthLabel release];
+    [_memberData release];
+    [_healthLabel release];
     [super dealloc];
 }
 

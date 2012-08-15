@@ -22,7 +22,7 @@
 @synthesize info;
 @synthesize positioning;
 
--(id) initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position
+-(id)initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position
 {
     if (self = [super init]){
         maximumHealth = hlth;
@@ -143,9 +143,6 @@
 
 
 @end
-
-
-#pragma mark - Merc Campaign Allies
 
 @implementation  Guardian
 +(Guardian*)defaultGuardian{

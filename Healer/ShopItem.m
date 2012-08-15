@@ -65,7 +65,7 @@
     if ([spell isEqualToString:@"Orbs of Light"]){
         return 750;
     }
-    if ([spell isEqualToString:@"Touch of Light"]){
+    if ([spell isEqualToString:@"Touch of Hope"]){
         return 300;
     }
     if ([spell isEqualToString:@"Soaring Spirit"]){
@@ -74,7 +74,9 @@
     if ([spell isEqualToString:@"Fading Light"]) {
         return 200;
     }
-
+    if ([spell isEqualToString:@"Sunburst"]){
+        return 300;
+    }
 
     return 10000;
 }

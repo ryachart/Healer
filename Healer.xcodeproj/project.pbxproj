@@ -166,6 +166,9 @@
 		BF865F29159F9C1F007F5DBF /* DivinityConfigScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F28159F9C1F007F5DBF /* DivinityConfigScene.m */; };
 		BF865F2C15A031FB007F5DBF /* BasicButton.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F2B15A031FB007F5DBF /* BasicButton.m */; };
 		BF8A50F415236D6300BEC882 /* GamePlayFTUELayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */; };
+		BF98B18215D3572700017EA4 /* BossAbilityDescriptionsView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18115D3572700017EA4 /* BossAbilityDescriptionsView.m */; };
+		BF98B18615D3577A00017EA4 /* BossAbilityDescriptorIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18515D3577A00017EA4 /* BossAbilityDescriptorIcon.m */; };
+		BF98B18A15D37EAE00017EA4 /* AbilityDescriptionModalLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18915D37EAE00017EA4 /* AbilityDescriptionModalLayer.m */; };
 		BFA5463B15AA097800F9B167 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5463A15AA097800F9B167 /* Parse.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		BFA5464315AA0C3600F9B167 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464215AA0C3600F9B167 /* Security.framework */; };
 		BFA5464515AA0C9D00F9B167 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */; };
@@ -615,6 +618,12 @@
 		BF865F2B15A031FB007F5DBF /* BasicButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BasicButton.m; sourceTree = "<group>"; };
 		BF8A50F215236D6300BEC882 /* GamePlayFTUELayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlayFTUELayer.h; sourceTree = "<group>"; };
 		BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlayFTUELayer.m; sourceTree = "<group>"; };
+		BF98B18015D3572700017EA4 /* BossAbilityDescriptionsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BossAbilityDescriptionsView.h; sourceTree = "<group>"; };
+		BF98B18115D3572700017EA4 /* BossAbilityDescriptionsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BossAbilityDescriptionsView.m; sourceTree = "<group>"; };
+		BF98B18415D3577A00017EA4 /* BossAbilityDescriptorIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BossAbilityDescriptorIcon.h; sourceTree = "<group>"; };
+		BF98B18515D3577A00017EA4 /* BossAbilityDescriptorIcon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BossAbilityDescriptorIcon.m; sourceTree = "<group>"; };
+		BF98B18815D37EAE00017EA4 /* AbilityDescriptionModalLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbilityDescriptionModalLayer.h; sourceTree = "<group>"; };
+		BF98B18915D37EAE00017EA4 /* AbilityDescriptionModalLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbilityDescriptionModalLayer.m; sourceTree = "<group>"; };
 		BFA5463A15AA097800F9B167 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		BFA5464215AA0C3600F9B167 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -1422,6 +1431,12 @@
 				BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */,
 				BF21071A1527C271001B93D7 /* GamePlayPauseLayer.h */,
 				BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */,
+				BF98B18015D3572700017EA4 /* BossAbilityDescriptionsView.h */,
+				BF98B18115D3572700017EA4 /* BossAbilityDescriptionsView.m */,
+				BF98B18415D3577A00017EA4 /* BossAbilityDescriptorIcon.h */,
+				BF98B18515D3577A00017EA4 /* BossAbilityDescriptorIcon.m */,
+				BF98B18815D37EAE00017EA4 /* AbilityDescriptionModalLayer.h */,
+				BF98B18915D37EAE00017EA4 /* AbilityDescriptionModalLayer.m */,
 			);
 			name = GamePlay;
 			sourceTree = "<group>";
@@ -1799,6 +1814,9 @@
 				BF865F2C15A031FB007F5DBF /* BasicButton.m in Sources */,
 				BF730C4015ABC1BD00E09B81 /* MultiplayerQueueScene.m in Sources */,
 				BF26BFC615CA0B5D00B7132D /* AbilityDescriptor.m in Sources */,
+				BF98B18215D3572700017EA4 /* BossAbilityDescriptionsView.m in Sources */,
+				BF98B18615D3577A00017EA4 /* BossAbilityDescriptorIcon.m in Sources */,
+				BF98B18A15D37EAE00017EA4 /* AbilityDescriptionModalLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1960,6 +1978,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUGGING_SYMBOLS = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1987,6 +2006,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -2006,6 +2026,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;

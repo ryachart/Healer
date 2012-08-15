@@ -12,7 +12,7 @@
 #import "Agent.h"
 #import "Player.h"
 #import "Ability.h"
-
+#import "Spell.h"
 
 #define FUZZ(value, range) (((arc4random() % ((int)range * 2) + (100 - (int)range)))/100.0 * (int)value)
 
@@ -56,6 +56,10 @@
     copied.title = self.title;
     copied.owner = self.owner;
     return copied;
+}
+
+- (void)targetDidCastSpell:(Spell*)spell {
+    
 }
 
 -(void)solveOwnershipResolutionForBoss:(Boss*)boss andRaid:(Raid*)raid andPlayer:(Player*)player{
@@ -658,7 +662,7 @@
 }
 @end
 
-@implementation TouchOfLightEffect
+@implementation TouchOfHopeEffect
 
 - (void)tick {
     if (self.target.healthPercentage < 1.0){
@@ -666,6 +670,53 @@
         [owningPlayer setEnergy:owningPlayer.energy + 12];
     }
     [super tick];
+}
+@end
+
+@implementation FallenDownEffect
+
++ (id)defaultEffect {
+    FallenDownEffect *fde = [[FallenDownEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegative];
+    [fde setTitle:@"fallen-down"];
+    [fde setSpriteName:@"fallen-down.png"];
+    [fde setGetUpThreshold:.8];
+    [fde setAilmentType:AilmentTrauma];
+    return [fde autorelease];
+}
+
+- (float)damageDoneMultiplierAdjustment {
+    return -1.0;
+}
+
+- (double)duration {
+    return -1.0;
+}
+
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta {
+    if (self.target.healthPercentage > self.getUpThreshold){
+        self.isExpired = YES;
+    }
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+}
+@end
+
+@implementation HealingDoneAdjustmentEffect
+
+- (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type {
+    if (self = [super initWithDuration:dur andEffectType:type]){
+        self.percentageHealingReceived = 1.0;
+    }
+    return self;
+}
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
+    if (*currentHealth < *newHealth){
+		NSInteger healthDelta = *currentHealth - *newHealth;
+		NSInteger newHealthDelta = healthDelta * self.percentageHealingReceived;
+		*newHealth = *currentHealth - newHealthDelta;
+	}
+}
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth {
+    
 }
 @end
 
@@ -816,5 +867,19 @@
 }
 - (float)damageDoneMultiplierAdjustment {
     return -1.0;
+}
+@end
+
+@implementation EnergyAdjustmentPerCastEffect
+- (id)copy {
+    EnergyAdjustmentPerCastEffect *copy = [super copy];
+    [copy setEnergyChangePerCast:self.energyChangePerCast];
+    return copy;
+}
+- (void)targetDidCastSpell:(Spell *)spell {
+    if ([self.target isMemberOfClass:[Player class]]){
+        Player *targettedPlayer = (Player*)self.target;
+        [targettedPlayer setEnergy:targettedPlayer.energy - self.energyChangePerCast];
+    }
 }
 @end

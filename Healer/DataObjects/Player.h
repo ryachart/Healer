@@ -18,7 +18,8 @@
 enum CastingDisabledReason {
 	CastingDisabledReasonMoving = 0,
 	CastingDisabledReasonChanneling = 1,
-	CastingDisabledReasonTotal = 2
+    CastingDisabledReasonStunned = 2,
+	CastingDisabledReasonTotal = 3
 };
 
 typedef int CastingDisabledReason;

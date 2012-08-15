@@ -11,7 +11,7 @@
 #import <Foundation/Foundation.h>
 #import "RaidMember.h"
 
-@class Raid, Player, Boss, Agent, HealableTarget, AbilityDescriptor;
+@class Raid, Player, Boss, Agent, HealableTarget, AbilityDescriptor, Effect;
 @interface Ability : NSObject
 
 @property (nonatomic, readwrite) float failureChance;
@@ -22,15 +22,20 @@
 @property (nonatomic, readwrite) NSInteger abilityValue; //Damage or DoT value or something
 @property (nonatomic, readwrite) BOOL isDisabled;
 @property (nonatomic, retain) AbilityDescriptor *descriptor;
+@property (nonatomic, retain) NSString *attackParticleEffectName; //Defaults to blood_spurt.plist
+
 - (void)combatActions:(Raid*)theRaid boss:(Boss*)theBoss players:(NSArray*)players gameTime:(float)timeDelta;
 - (void)triggerAbilityForRaid:(Raid*)theRaid andPlayers:(NSArray*)players;
 - (BOOL)checkFailed;
+
+- (void)willDamageTarget:(RaidMember*)target;
 @end
 
 
 @interface Attack : Ability
+@property (nonatomic, retain) Effect *appliedEffect;
 - (RaidMember *)targetFromRaid:(Raid*)raid;
--(id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd;
+- (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd;
 @end
 
 @interface FocusedAttack : Attack
@@ -38,8 +43,25 @@
 @property (nonatomic, retain) RaidMember *focusTarget;
 @end
 
-@interface Fireball : Ability
+@interface BoneThrow : Ability
+@end
+
+@interface ProjectileAttack : Ability
 @property (nonatomic, retain) NSString* spriteName;
+@end
+
+typedef enum {
+    OverseerProjectileFire,
+    OverseerProjectileShadow,
+    OverseerProjectileBlood,
+    OverseerProjectileTypeAll
+} OverseerProjectileType;
+
+@interface OverseerProjectiles : Ability {
+     NSInteger usableProjectiles[OverseerProjectileTypeAll];
+}
+- (void)setProjectileType:(OverseerProjectileType)type isUsable:(BOOL)isUsable;
+- (void)setAllProjectileUsability:(BOOL)isUsable;
 @end
 
 @interface StackingDamage : Ability
@@ -92,4 +114,19 @@
 @interface TargetTypeAttack : Ability
 @property (nonatomic, readwrite) Positioning targetPositioningType;
 @property (nonatomic, readwrite) NSInteger numTargets;
+@end
+
+@interface TargetTypeFlameBreath : TargetTypeAttack
+@end
+
+@interface BoneQuake : RaidDamage
+@end
+
+@interface BloodMinion : Ability
+@end
+
+@interface FireMinion : Ability
+@end
+
+@interface ShadowMinion : Ability
 @end

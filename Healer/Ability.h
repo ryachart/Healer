@@ -130,3 +130,15 @@ typedef enum {
 
 @interface ShadowMinion : Ability
 @end
+
+@interface RaidApplyEffect : Ability
+@property (nonatomic, retain) Effect *appliedEffect;
+@end
+
+@interface OozeRaid : RaidApplyEffect
+@property (nonatomic, readwrite) NSInteger originalCooldown;
+@end
+
+@interface OozeTwoTargets : Ability
+
+@end

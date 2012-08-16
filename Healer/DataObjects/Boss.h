@@ -136,6 +136,7 @@
 @end
 
 @interface TheUnspeakable : Boss
+@property (nonatomic, retain) Ability *oozeAll;
 @end
 
 @interface BaraghastReborn : Boss

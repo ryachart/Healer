@@ -51,9 +51,10 @@ typedef enum {
 @property (readwrite) float healingDoneMultiplierAdjustment;
 @property (readwrite) float damageDoneMultiplierAdjustment;
 @property (nonatomic, readwrite) float castTimeAdjustment;
+@property (readwrite) BOOL isIndependent; //Max Stacks doesnt apply and other effects are never the same as this effect
 
--(void)reset;
-
+- (void)reset;
+- (BOOL)isKindOfEffect:(Effect*)effect;
 //Weird fucking hacky solution for figuring out the owner in network play
 @property (nonatomic, retain) NSString* ownerNetworkID;
 @property (nonatomic, readwrite) BOOL needsOwnershipResolution;
@@ -199,6 +200,10 @@ typedef enum {
 
 @interface EnergyAdjustmentPerCastEffect : Effect
 @property (nonatomic, readwrite) NSInteger energyChangePerCast;
+@end
+
+@interface EngulfingSlimeEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
++ (id)defaultEffect;
 @end
 
 #pragma mark - DEPRECATED EFFECTS

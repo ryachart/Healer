@@ -15,7 +15,7 @@
 #import "BackgroundSprite.h"
 #import "Divinity.h"
 
-#define NUM_ENCOUNTERS 17
+#define NUM_ENCOUNTERS 18
 
 @interface QuickPlayScene ()
 @property (assign) CCMenu *menu;

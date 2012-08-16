@@ -36,6 +36,7 @@
         isExpired = NO;
         effectType = type;
         self.maxStacks = 1;
+        self.isIndependent = NO;
     }
 	return self;
 }
@@ -55,6 +56,7 @@
     copied.spriteName = self.spriteName;
     copied.title = self.title;
     copied.owner = self.owner;
+    copied.isIndependent = self.isIndependent;
     return copied;
 }
 
@@ -98,8 +100,8 @@
     return NSStringFromClass([self class]);
 }
 
--(BOOL)isEqual:(Effect*)object{
-    if ([self.title isEqualToString:object.title]){
+- (BOOL)isKindOfEffect:(Effect*)effect {
+    if ([self.title isEqualToString:effect.title]){
         return YES;
     }
     return NO;
@@ -110,11 +112,12 @@
 }
 
 -(void)expire{
-
+    //This gets called when an effect is removed, not to cause an effect to expire
 }
-//EFF|TARGET|TITLE|DURATION|TYPE|SPRITENAME|OWNER
+
+//EFF|TARGET|TITLE|DURATION|TYPE|SPRITENAME|OWNER|HDM|DDM|Ind
 -(NSString*)asNetworkMessage{
-    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@|%f|%f", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner, self.healingDoneMultiplierAdjustment, self.damageDoneMultiplierAdjustment];
+    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@|%f|%f|%i", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner, self.healingDoneMultiplierAdjustment, self.damageDoneMultiplierAdjustment, self.isIndependent];
     
     return message;
 }
@@ -124,8 +127,10 @@
         self.title = [messageComponents objectAtIndex:1];
         self.timeApplied = [[messageComponents objectAtIndex:3] doubleValue];
         self.spriteName = [messageComponents objectAtIndex:5];
-        self.healingDoneMultiplierAdjustment = [[messageComponents objectAtIndex:6] floatValue];
-        self.damageDoneMultiplierAdjustment = [[messageComponents objectAtIndex:7] floatValue];
+        self.ownerNetworkID = [messageComponents objectAtIndex:6];
+        self.healingDoneMultiplierAdjustment = [[messageComponents objectAtIndex:7] floatValue];
+        self.damageDoneMultiplierAdjustment = [[messageComponents objectAtIndex:8] floatValue];
+        self.isIndependent = [[messageComponents objectAtIndex:9] boolValue];
     }
     return self;
 }
@@ -290,6 +295,7 @@
         if (self.triggerCooldown >= self.effectCooldown){
             self.triggerCooldown = 0.0;
             DelayedHealthEffect *orbPop = [[DelayedHealthEffect alloc] initWithDuration:0.5 andEffectType:EffectTypePositiveInvisible];
+            [orbPop setIsIndependent:YES];
             [orbPop setOwner:self.owner];
             [orbPop setValue:self.amountPerReaction * self.owner.healingDoneMultiplier];
             
@@ -325,6 +331,7 @@
             [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:0 andEventType:CombatEventTypeDodge]];
         }else{
             if (self.appliedEffect){
+                [self.appliedEffect setOwner:self.owner];
                 [self.target addEffect:self.appliedEffect];
                 self.appliedEffect = nil;
             }
@@ -354,7 +361,7 @@
 -(void)tick{
     int similarEffectCount = 1;
     for (Effect *effect in self.target.activeEffects){
-        if ([effect isEqual:self]){
+        if ([effect isKindOfEffect:self]){
             similarEffectCount++;
         }
     }
@@ -717,6 +724,49 @@
 }
 - (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth {
     
+}
+@end
+
+@implementation EngulfingSlimeEffect
+
++ (id)defaultEffect {
+    EngulfingSlimeEffect *ese = [[EngulfingSlimeEffect alloc] initWithDuration:45.0 andEffectType:EffectTypeNegative];
+    [ese setTitle:@"e-slime-eff"];
+    [ese setValuePerTick:-1];
+    [ese setNumOfTicks:50];
+    [ese setSpriteName:@"engulfing_slime.png"];
+    [ese setMaxStacks:5];
+    [ese setAilmentType:AilmentPoison];
+    
+    return [ese autorelease];
+}
+
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
+
+}
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth {
+    if (currentHealth < newHealth){
+		self.isExpired = YES;
+	}
+}
+- (void)effectWillBeDispelled:(Raid *)raid player:(Player *)player {
+    for (Effect *effect in self.target.activeEffects){
+        if ([effect isKindOfEffect:self] && effect != self){
+            effect.isExpired = YES;
+        }
+    }
+}
+- (void)tick {
+    [super tick];
+    NSInteger similarEffectsCount = 0;
+    for (Effect *effect in self.target.activeEffects){
+        if ([effect isKindOfEffect:self]){
+            similarEffectsCount++;
+        }
+    }
+    if (similarEffectsCount >= 5){
+        self.target.health = 0;
+    }
 }
 @end
 

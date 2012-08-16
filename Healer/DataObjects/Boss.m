@@ -350,6 +350,7 @@
     [self.announcer displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     [fireball setOwner:self];
+    [fireball setIsIndependent:YES];
     [fireball setFailureChance:.15];
     [fireball setValue:-(arc4random() % 20 + 25)];
     [target addEffect:fireball];
@@ -452,7 +453,7 @@
     [bottleVisual setSpriteColor:ccc3(0, 255, 0)];
     [self.announcer displayThrowEffect:bottleVisual];
     [bottleVisual release];
-    
+    [bottleEffect setIsIndependent:YES];
     [bottleEffect setOwner:self];
     [bottleEffect setValue:-45];
     [target addEffect:bottleEffect];
@@ -562,7 +563,7 @@
     [fireballVisual setCollisionParticleName:@"poison_cloud.plist"];
     [self.announcer displayProjectileEffect:fireballVisual];
     [fireballVisual release];
-    
+    [fireball setIsIndependent:YES];
     [fireball setOwner:self];
     [fireball setValue:self.isMultiplayer ? -(arc4random() % 20 + 30) : -(arc4random() % 10 + 30)];
     [target addEffect:fireball];
@@ -744,6 +745,7 @@
     self.numBubblesPopped++;
     //Boss does 10% less damage for each bubble popped
     Effect *reducedDamageEffect = [[Effect alloc] initWithDuration:300 andEffectType:EffectTypePositiveInvisible];
+    [reducedDamageEffect setIsIndependent:YES];
     [reducedDamageEffect setTarget:self];
     [reducedDamageEffect setOwner:self];
     [reducedDamageEffect setDamageDoneMultiplierAdjustment:-0.1];
@@ -850,6 +852,7 @@
     if (percentage == 30.0){
         [self.announcer announce:@"The last remaining Spore Ravager glows with rage."];
         Effect *enragedEffect = [[Effect alloc] initWithDuration:300 andEffectType:EffectTypePositiveInvisible];
+        [enragedEffect setIsIndependent:YES];
         [enragedEffect setTarget:self];
         [enragedEffect setOwner:self];
         [enragedEffect setDamageDoneMultiplierAdjustment:1.25];
@@ -889,7 +892,7 @@
         [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
         [self.announcer displayThrowEffect:bottleVisual];
         [bottleVisual release];
-        
+        [bottleEffect setIsIndependent:YES];
         [bottleEffect setOwner:self];
         [target addEffect:bottleEffect];
         [bottleEffect release];
@@ -902,7 +905,7 @@
         [bottleVisual setSpriteColor:ccc3(0, 128, 128)];
         [self.announcer displayThrowEffect:bottleVisual];
         [bottleVisual release];
-        
+        [bottleEffect setIsIndependent:YES];
         [bottleEffect setOwner:self];
         [(ImpLightningBottle*)bottleEffect setValue:-45];
         [target addEffect:bottleEffect];
@@ -1116,6 +1119,7 @@
         DelayedHealthEffect *axeThrownEffect = [[DelayedHealthEffect alloc] initWithDuration:1.5 andEffectType:EffectTypeNegativeInvisible];
         [axeThrownEffect setOwner:self];
         [axeThrownEffect setValue:-25];
+        [axeThrownEffect setIsIndependent:YES];
         
         IntensifyingRepeatedHealthEffect *gushingWoundEffect = [[IntensifyingRepeatedHealthEffect alloc] initWithDuration:9.0 andEffectType:EffectTypeNegative];
         [gushingWoundEffect setSpriteName:@"bleeding.png"];
@@ -1363,6 +1367,7 @@
         NSInteger dead = [raid deadCount];
         for (int i = 0; i < dead; i++){
             Effect *enrageEffect = [[Effect alloc] initWithDuration:600 andEffectType:EffectTypePositiveInvisible];
+            [enrageEffect setIsIndependent:YES];
             [enrageEffect setOwner:self];
             [enrageEffect setTitle:@"drink-in-death"];
             [enrageEffect setDamageDoneMultiplierAdjustment:.2];
@@ -1602,6 +1607,41 @@
 @end
 
 @implementation TheUnspeakable
+- (void)dealloc {
+    [_oozeAll release];
+    [super dealloc];
+}
+
++ (id)defaultBoss {
+    TheUnspeakable *boss = [[TheUnspeakable alloc] initWithHealth:400000 damage:0 targets:0 frequency:0 andChoosesMT:NO];
+    [boss setTitle:@"The Unspeakable"];
+    [boss setInfo:@"A disgusting mass of boness and rotten corpses sits in a crypt beneath Delsarn."];
+    
+    boss.oozeAll = [[[OozeRaid alloc] init] autorelease];
+    [boss.oozeAll setTimeApplied:19.0];
+    [boss.oozeAll setCooldown:24.0];
+    [(OozeRaid*)boss.oozeAll setOriginalCooldown:24.0];
+    [boss.oozeAll setOwner:boss];
+    [(OozeRaid*)boss.oozeAll setAppliedEffect:[EngulfingSlimeEffect defaultEffect]];
+    [boss.oozeAll setTitle:@"apply-ooze-all"];
+
+    [boss addAbility:boss.oozeAll];
+    
+    OozeTwoTargets *oozeTwo = [[OozeTwoTargets alloc] init];
+    [oozeTwo setCooldown:10.0];
+    [oozeTwo setOwner:boss];
+    [oozeTwo setTitle:@"ooze-two"];
+    [boss addAbility:oozeTwo];
+    [oozeTwo release];
+    
+    return [boss autorelease];
+}
+
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+    if ((int)percentage % 10 == 0){
+        [(OozeRaid*)self.oozeAll setOriginalCooldown:[(OozeRaid*)self.oozeAll originalCooldown] - 1.5];
+    }
+}
 @end
 
 @implementation BaraghastReborn

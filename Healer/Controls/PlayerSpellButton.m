@@ -10,6 +10,8 @@
 
 @interface PlayerSpellButton ()
 @property (nonatomic, assign) CCLayerColor *cooldownCountLayer;
+@property (nonatomic, assign) CCSprite *spellIconSprite;
+@property (nonatomic, assign) CCSprite *pressedSprite;
 @end
 
 @implementation PlayerSpellButton
@@ -20,17 +22,25 @@
     if (self = [super init]) {
         self.position = frame.origin;
         self.contentSize = frame.size;
-        [self setOpacity:255];
         self.isTouchEnabled = YES;
-        [self setColor:ccc3(0, 0, 200)];
         // Initialization code
+        
+        self.spellIconSprite = [CCSprite spriteWithSpriteFrameName:@"unknown-icon.png"];
+        [self.spellIconSprite setAnchorPoint:CGPointZero];
+        [self addChild:self.spellIconSprite];
+        
+        self.pressedSprite = [CCSprite spriteWithSpriteFrameName:@"spell-down-mask.png"];
+        [self.pressedSprite setAnchorPoint:CGPointZero];
+        [self.pressedSprite setVisible:NO];
+        [self addChild:self.pressedSprite];
         
         self.cooldownCountLayer = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 175)];
         [self.cooldownCountLayer setContentSize:frame.size];
         [self.cooldownCountLayer setVisible:NO];
         
-        self.spellTitle = [[[CCLabelTTF alloc] initWithString:[spellData title] fontName:@"Arial" fontSize:14.0f] autorelease];
-        [self.spellTitle setPosition:CGPointMake(50, 25)];
+        self.spellTitle = [[[CCLabelTTF alloc] initWithString:[spellData title] fontName:@"Arial" fontSize:18.0f] autorelease];
+        [self.spellTitle setPosition:CGPointMake(50, 15)];
+        [self.spellTitle setColor:ccBLACK];
         [self addChild:spellTitle];
         
         [self addChild:self.cooldownCountLayer z:10];
@@ -46,14 +56,18 @@
 		[self setVisible:NO];
 	else{
 		[spellTitle setString:[spellData title]];
+        CCSpriteFrame *spriteFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[spellData spriteFrameName]];
+        if (spriteFrame){
+            [self.spellIconSprite setDisplayFrame:spriteFrame];
+        }
 	}
 }
 
 -(void)updateUI{
 	if ([spellData conformsToProtocol:@protocol(Chargable)]){
 		if ([(Chargable*)spellData currentChargeTime] >= [(Chargable*)spellData maxChargeTime]){
-			[self setColor:ccc3(0, 1, 0)];
-		}
+            //Do something here...
+        }
 	}
     if ([spellData cooldownRemaining] > 0){
         [self.cooldownCountLayer setVisible:YES];
@@ -75,18 +89,18 @@
     
     if (interactionDelegate != nil && CGRectContainsPoint(layerRect, convertedToNodeSpacePoint)){
         [interactionDelegate spellButtonSelected:self];
-        [self setColor:ccc3(255, 0, 255)];
+        [self.pressedSprite setVisible:YES];
     }
 	
 }
 
 -(void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
 	[interactionDelegate spellButtonUnselected:self];
-    [self setColor:ccc3(0, 0, 200)];
+    [self.pressedSprite setVisible:NO];
 }
+
 - (void)dealloc {
     [spellData release];
-
     [spellTitle release];
     [super dealloc];
 }

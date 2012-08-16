@@ -22,7 +22,7 @@
 @end
 
 @implementation Ability
-@synthesize failureChance, cooldown, title, owner, abilityValue;
+@synthesize failureChance, title, owner, abilityValue;
 @synthesize timeApplied, isDisabled;
 
 - (id)init {
@@ -271,6 +271,7 @@
     [[(Boss*)self.owner announcer] displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     [fireball setOwner:self.owner];
+    [fireball setIsIndependent:YES];
     [fireball setFailureChance:.15];
     [fireball setTitle:@"fireball-dhe"];
     [fireball setMaxStacks:10];
@@ -749,6 +750,7 @@
     float throwDuration = 2.0;
     RaidMember *target = [theRaid randomLivingMember];
     DelayedHealthEffect *boneThrowEffect = [[DelayedHealthEffect alloc] initWithDuration:throwDuration andEffectType:EffectTypeNegativeInvisible];
+    [boneThrowEffect setIsIndependent:YES];
     [boneThrowEffect setOwner:self.owner];
     [boneThrowEffect setTitle:@"bonethrow-projectile"];
     [boneThrowEffect setValue:-40];
@@ -849,7 +851,7 @@
     DelayedHealthEffect *boltEffect = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
     [boltEffect setOwner:self.owner];
     [boltEffect setFailureChance:.15];
-    [boltEffect setMaxStacks:10];
+    [boltEffect setIsIndependent:YES];
 
     NSInteger damage = (arc4random() % ABS(self.abilityValue) + ABS((self.abilityValue / 2)));
     Effect *appliedEffect = nil;
@@ -999,4 +1001,55 @@
     [shadowCurse release];
     
 }
+@end
+
+@implementation RaidApplyEffect
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    for (RaidMember *member in theRaid.getAliveMembers){
+        Effect *appliedEffect = [[self.appliedEffect copy] autorelease];
+        [appliedEffect setOwner:self.owner];
+        [member addEffect:appliedEffect];
+    }
+}
+@end
+
+@implementation OozeRaid
+- (id)init {
+    if (self = [super init]){
+        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
+        [desc setAbilityDescription:@"As your allies hack their way through the filth beast they become covered in a disgusting slime.  If this slime builds to 5 stacks on any ally that ally will be instantly slain."];
+        [desc setAbilityName:@"Engulfing Slime"];
+        [desc setIconName:@"engulfing_slime_ability.png"];
+        self.descriptor = [desc autorelease];
+    }
+    return self;
+}
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    [super triggerAbilityForRaid:theRaid andPlayers:players];
+    self.cooldown = self.originalCooldown * (theRaid.getAliveMembers.count / 20.0);
+}
+@end
+
+@implementation OozeTwoTargets
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {    
+    NSArray *targets = [theRaid lowestHealthTargets:2 withRequiredTarget:nil];
+    NSInteger numApplications = arc4random() % 3 + 2;
+
+    for (RaidMember *target in targets){
+        for (int i = 0; i < numApplications; i++){
+            NSTimeInterval delay = 0.25 + (i * 1.5);
+            DelayedHealthEffect *delayedSlime = [[DelayedHealthEffect alloc] initWithDuration:delay andEffectType:EffectTypeNegativeInvisible];
+            [delayedSlime setValue:-7];
+            [delayedSlime setIsIndependent:YES];
+            [delayedSlime setTitle:@"delayed-slime"];
+            [delayedSlime setOwner:self.owner];
+            [delayedSlime setAppliedEffect:[EngulfingSlimeEffect defaultEffect]];
+            [target addEffect:delayedSlime];
+            [delayedSlime release];
+        }
+    }
+    
+}
+
 @end

@@ -41,6 +41,8 @@
 @property (nonatomic, readwrite) float cooldownRemaining;
 @property (nonatomic, readwrite) float cooldown;
 @property (nonatomic, retain) Effect* appliedEffect;
+
+- (NSString*)spriteFrameName;
 - (NSString*)spellDescription;
 - (BOOL)isInstant;
 - (void)setTargets:(NSInteger)numOfTargets withPercentagesPerTarget:(NSArray*)percentages;

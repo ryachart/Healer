@@ -87,6 +87,8 @@
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
         NSString *battleAssetsPath = [[NSBundle mainBundle] pathForResource:@"battle-sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:battleAssetsPath];
+        NSString *spellAssetsPath = [[NSBundle mainBundle] pathForResource:@"spell-sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:spellAssetsPath];
         [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"battle-background-ipad"] autorelease]];
         paused = YES;
         self.raid = raidToUse;
@@ -395,7 +397,6 @@
 		if ([[spell spellData] conformsToProtocol:@protocol(Chargable)]){
 			if ([player spellBeingCast] == nil){
 				[(Chargable*)[spell spellData] beginCharging:[NSDate date]];
-				[spell setColor:ccc3(150, 150, 0 )];
 			}
 		}
 		else{
@@ -426,7 +427,6 @@
 			if ([(Chargable*)[spell spellData] chargeStart] != nil){
 				[(Chargable*)[spell spellData] endCharging:[NSDate date]];
 				[player beginCasting:[spell spellData] withTargets:targets];
-				[spell setColor:ccc3(255, 255, 255)];
 			}
 		}
 	}

@@ -12,7 +12,7 @@
 @implementation AbilityDescriptionModalLayer
 
 - (id)initWithAbilityDescriptor:(AbilityDescriptor *)descriptor {
-    if (self = [super initWithColor:ccc4(0, 0, 0, 150)]){
+    if (self = [super initWithColor:ccc4(0, 0, 0, 200)]){
         CCLabelTTF *nameLabel = [CCLabelTTF labelWithString:descriptor.abilityName dimensions:CGSizeMake(500, 100) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:48.0];
         [nameLabel setPosition:CGPointMake(512, 584)];
         [self addChild:nameLabel];

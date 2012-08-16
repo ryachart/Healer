@@ -12,7 +12,7 @@
 
 @class PlayerSpellButtonDelegate;
 @class Chargable;
-@interface PlayerSpellButton : CCLayerColor {
+@interface PlayerSpellButton : CCLayer {
     
 	PlayerSpellButtonDelegate *interactionDelegate;
 }

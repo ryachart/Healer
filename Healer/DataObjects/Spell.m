@@ -51,6 +51,11 @@
     
 }
 
+- (NSString*)spriteFrameName {
+    NSString* path = [[[[self.title lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"-"] stringByAppendingString:@"-icon"] stringByAppendingPathExtension:@"png"];
+    return path;
+}
+
 - (void)willHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount{
     //Override with a subclass
 }
@@ -268,7 +273,7 @@
     }
     
     if (self.hasWardingTouch){
-        DamageTakenDecreasedEffect *reduceDamage = [[DamageTakenDecreasedEffect alloc] initWithDuration:15 andEffectType:EffectTypeNegativeInvisible];
+        DamageTakenDecreasedEffect *reduceDamage = [[DamageTakenDecreasedEffect alloc] initWithDuration:15 andEffectType:EffectTypePositiveInvisible];
         [reduceDamage setTitle:@"heal-div-wardingtouch"];
         [reduceDamage setOwner:self.owner];
         [reduceDamage setPercentage:.05];
@@ -594,7 +599,7 @@
     NSArray *aliveMembers = [theRaid getAliveMembers];
     [theBoss.announcer displaySprite:@"shield_bubble.png" overRaidForDuration:6.0];
     for (RaidMember*member in aliveMembers){
-        DamageTakenDecreasedEffect *dtde = [[DamageTakenDecreasedEffect alloc] initWithDuration:6 andEffectType:EffectTypeNegativeInvisible];
+        DamageTakenDecreasedEffect *dtde = [[DamageTakenDecreasedEffect alloc] initWithDuration:6 andEffectType:EffectTypePositiveInvisible];
         [dtde setTitle:@"ward-of-ancients-effect"];
         [dtde setPercentage:.4];
         [dtde setOwner:self.owner];

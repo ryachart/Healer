@@ -1017,7 +1017,7 @@
 - (id)init {
     if (self = [super init]){
         AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"As your allies hack their way through the filth beast they become covered in a disgusting slime.  If this slime builds to 5 stacks on any ally that ally will be instantly slain."];
+        [desc setAbilityDescription:@"As your allies hack their way through the filth beast they become covered in a disgusting slime.  If this slime builds to 5 stacks on any ally that ally will be instantly slain.  Whenever an ally receives any healing the slime is removed."];
         [desc setAbilityName:@"Engulfing Slime"];
         [desc setIconName:@"engulfing_slime_ability.png"];
         self.descriptor = [desc autorelease];

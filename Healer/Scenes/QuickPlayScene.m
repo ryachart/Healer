@@ -68,11 +68,13 @@
         [backButton setColor:ccWHITE];
         [self addChild:backButton];
         
-        CCMenu *endlessButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"The Endless Void" fontName:@"Arial" fontSize:28.0] target:self selector:@selector(beginEndlessVoidEncounter:)], nil];
-        [endlessButton setRotation:-45.0];
-        [endlessButton setPosition:CGPointMake(-275, [CCDirector sharedDirector].winSize.height * .45)];
-        [endlessButton setColor:ccWHITE];
-        [self addChild:endlessButton];
+        if ([PlayerDataManager highestLevelCompleted] >= 8){
+            CCMenu *endlessButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"The Endless Void" fontName:@"Arial" fontSize:28.0] target:self selector:@selector(beginEndlessVoidEncounter:)], nil];
+            [endlessButton setRotation:-45.0];
+            [endlessButton setPosition:CGPointMake(-275, [CCDirector sharedDirector].winSize.height * .45)];
+            [endlessButton setColor:ccWHITE];
+            [self addChild:endlessButton];
+        }
     }
     return self;
 }
@@ -114,6 +116,7 @@
     if (encounter.boss && basicPlayer && encounter.raid){
         
         PreBattleScene *pbs = [[PreBattleScene alloc] initWithRaid:encounter.raid boss:encounter.boss andPlayer:basicPlayer];
+        [pbs setLevelNumber:encounter.levelNumber];
         if ([Divinity isDivinityUnlocked]){
             [basicPlayer setDivinityConfig:[Divinity localDivinityConfig]];
         }

@@ -529,6 +529,7 @@
     if (isFirstWin){
         switch (levelNumber) {
             case 1:
+                gold = 110;
             case 2:
             case 3:
             case 4:
@@ -631,6 +632,7 @@
     
     basicBoss.isMultiplayer = multiplayer;
     Encounter *encToReturn = [[Encounter alloc] initWithRaid:[basicRaid autorelease] andBoss:basicBoss andSpells:spells];
+    [encToReturn setLevelNumber:ENDLESS_VOID_ENCOUNTER_NUMBER];
     return [encToReturn autorelease];;
 }
 
@@ -651,6 +653,15 @@
         }
     }
     [player setActiveSpells:(NSArray*)activeSpells];
+}
+
++ (NSInteger)goldRewardForSurvivalEncounterWithDuration:(NSTimeInterval)duration {
+    if (duration < 120){
+        return 0;
+    }
+    
+    return MIN(200, MAX(0, (duration - 120) / 2));
+    
 }
 
 @end

@@ -87,8 +87,7 @@
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
         NSString *battleAssetsPath = [[NSBundle mainBundle] pathForResource:@"battle-sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:battleAssetsPath];
-        NSString *spellAssetsPath = [[NSBundle mainBundle] pathForResource:@"spell-sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:spellAssetsPath];
+
         [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"battle-background-ipad"] autorelease]];
         paused = YES;
         self.raid = raidToUse;

@@ -172,6 +172,10 @@
             reward = partialProgressReward;
         }
         
+        if (levelNum == ENDLESS_VOID_ENCOUNTER_NUMBER){
+            reward  = [Encounter goldRewardForSurvivalEncounterWithDuration:fightDuration];
+        }
+        
         if (reward > 0){
             [Shop playerEarnsGold:reward];
         }

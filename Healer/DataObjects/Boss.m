@@ -575,10 +575,18 @@
     [super combatActions:players theRaid:theRaid gameTime:timeDelta];
     if (self.phase == 1){
         //Roth
-        if (![[self.rothVictim activeEffects] containsObject:[[[RothPoison alloc] init] autorelease]] || self.rothVictim.isDead){
+        BOOL hasPoison = NO;
+        for (Effect* effect in self.rothVictim.activeEffects){
+            if ([effect.title isEqualToString:@"roth_poison"]){
+                hasPoison = YES;
+                break;
+            }
+        }
+        if (!hasPoison || self.rothVictim.isDead){
             self.rothVictim = [self chooseVictimInRaid:theRaid];
             RothPoison *poison = [[RothPoison alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative];
             [poison setOwner:self];
+            [poison setTitle:@"roth_poison"];
             [poison setSpriteName:@"poison.png"];
             [poison setAilmentType:AilmentPoison];
             [poison setNumOfTicks:15];
@@ -1621,7 +1629,6 @@
     [boss.oozeAll setTimeApplied:19.0];
     [boss.oozeAll setCooldown:24.0];
     [(OozeRaid*)boss.oozeAll setOriginalCooldown:24.0];
-    [boss.oozeAll setOwner:boss];
     [(OozeRaid*)boss.oozeAll setAppliedEffect:[EngulfingSlimeEffect defaultEffect]];
     [boss.oozeAll setTitle:@"apply-ooze-all"];
 
@@ -1629,7 +1636,6 @@
     
     OozeTwoTargets *oozeTwo = [[OozeTwoTargets alloc] init];
     [oozeTwo setCooldown:10.0];
-    [oozeTwo setOwner:boss];
     [oozeTwo setTitle:@"ooze-two"];
     [boss addAbility:oozeTwo];
     [oozeTwo release];
@@ -1657,16 +1663,30 @@
 @end
 
 @implementation TheEndlessVoid
+
+- (void)setHealth:(NSInteger)newHealth {
+    if (self.healthPercentage > .5){
+        [super setHealth:newHealth];
+    }
+}
+
 +(id)defaultBoss{
-    TheEndlessVoid *endlessVoid = [[TheEndlessVoid alloc] initWithHealth:99999999 damage:40 targets:4 frequency:1.3 andChoosesMT:YES];
+    TheEndlessVoid *endlessVoid = [[TheEndlessVoid alloc] initWithHealth:99999999 damage:40 targets:4 frequency:2.0 andChoosesMT:NO];
     [endlessVoid setTitle:@"The Endless Void"];
     [endlessVoid setInfo:@"An immortal foe that can not be vanquished.  Withstand as long as you can."];
     
     StackingDamage *damageStacker = [[StackingDamage alloc] init];
-    [damageStacker setAbilityValue:10];
+    [damageStacker setAbilityValue:1];
     [damageStacker setCooldown:30];
     [endlessVoid addAbility:damageStacker];
     [damageStacker release];
+    
+    RandomAbilityGenerator *rag = [[RandomAbilityGenerator alloc] init];
+    [rag setCooldown:60];
+    [rag setTimeApplied:55.0];
+    [rag setTitle:@"random-abilities"];
+    [endlessVoid addAbility:rag];
+    [rag release];
     
      return [endlessVoid autorelease];
 }

@@ -14,6 +14,7 @@
 @property (nonatomic, assign) id target;
 @property (nonatomic, assign) SEL selector;
 @property (nonatomic, assign) CCSprite *background;
+@property (nonatomic, assign) CCSprite *spellIcon;
 @property (nonatomic, assign) CCLabelTTF *costLabel;
 @property (nonatomic, assign) CCLabelTTF *titleLabel;
 -(void)nodeSelected;
@@ -39,10 +40,22 @@
         self.selector = selc;
         self.background = bg;
         
-        self.titleLabel = [CCLabelTTF labelWithString:itm.title fontName:@"Arial" fontSize:20.0];
+        self.titleLabel = [CCLabelTTF labelWithString:itm.title dimensions:CGSizeMake(100, 50) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:20.0];
         [self.titleLabel setColor:ccBLACK];
-        [self.titleLabel setPosition:CGPointMake(125, 75)];
+        [self.titleLabel setPosition:CGPointMake(125, 65)];
         [menuItem addChild:titleLabel];
+        
+        
+        
+        self.spellIcon = [CCSprite spriteWithSpriteFrameName:@"unknown-icon.png"];
+        
+        CCSpriteFrame *spellSpriteFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[itm.purchasedSpell spriteFrameName]];
+        if (spellSpriteFrame){
+            [self.spellIcon setDisplayFrame:spellSpriteFrame];
+        }
+        [self.spellIcon setPosition:CGPointMake(35, 65)];
+        [self.spellIcon setScale:.5];
+        [menuItem addChild:self.spellIcon];
         
         self.costLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cost %i", itm.goldCost] dimensions:CGSizeMake(140, 20) alignment:UITextAlignmentRight fontName:@"Arial" fontSize:20.0];
         [self.costLabel setPosition:ccp(50, 25)];

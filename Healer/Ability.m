@@ -456,13 +456,14 @@
         [desc setAbilityName:@"Deathwave"];
         [self setDescriptor:desc];
         [desc release];
+        self.abilityValue = 1000;
     }
     return self;
 }
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     [[(Boss*)self.owner announcer] displayScreenShakeForDuration:1.0];
     NSInteger livingMemberCount = theRaid.getAliveMembers.count;
-    NSInteger deathWaveDamage = (int)round(1000.0 / livingMemberCount);
+    NSInteger deathWaveDamage = (int)round((float)self.abilityValue / livingMemberCount);
     for (RaidMember *member in theRaid.getAliveMembers){
         [member setHealth:member.health - (deathWaveDamage * self.owner.damageDoneMultiplier)];
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(deathWaveDamage * self.owner.damageDoneMultiplier)] andEventType:CombatEventTypeDamage]]; 
@@ -503,6 +504,73 @@
     [quickFireball setFailureChance:.1];
     [allAbilities addObject:[quickFireball autorelease]];
     
+    BloodMinion *bm = [[BloodMinion alloc] init];
+    [bm setTitle:@"blood-minion"];
+    [bm setCooldown:10.0];
+    [bm setAbilityValue:10];
+    [allAbilities addObject:bm];
+    [bm release];
+    
+    FireMinion *fm = [[FireMinion alloc] init];
+    [fm setTitle:@"fire-minion"];
+    [fm setCooldown:15.0];
+    [fm setAbilityValue:35];
+    [allAbilities addObject:fm];
+    [fm release];
+    
+    ShadowMinion *sm = [[ShadowMinion alloc] init];
+    [sm setTitle:@"shadow-minion"];
+    [sm setCooldown:12.0];
+    [sm setAbilityValue:20];
+    [allAbilities addObject:sm];
+    [sm release];
+    
+    OverseerProjectiles* projectilesAbility = [[[OverseerProjectiles alloc] init] autorelease];
+    [projectilesAbility setAbilityValue:56];
+    [projectilesAbility setCooldown:4.5];
+    [allAbilities addObject:projectilesAbility];
+    
+    FocusedAttack *tankAttack = [[FocusedAttack alloc] initWithDamage:62 andCooldown:2.45];
+    [tankAttack setFailureChance:.4];
+    [allAbilities addObject:tankAttack];
+    [tankAttack release];
+    
+    TargetTypeFlameBreath *sweepingFlame = [[[TargetTypeFlameBreath alloc] init] autorelease];
+    [sweepingFlame setCooldown:9.0];
+    [sweepingFlame setAbilityValue:60];
+    [sweepingFlame setNumTargets:5];
+    [allAbilities addObject:sweepingFlame];
+    
+    Grip *gripAbility = [[Grip alloc] init];
+    [gripAbility setTitle:@"grip-ability"];
+    [gripAbility setCooldown:22];
+    [gripAbility setAbilityValue:-14];
+    [allAbilities addObject:gripAbility];
+    [gripAbility release];
+    
+    Impale *impaleAbility = [[Impale alloc] init];
+    [impaleAbility setTitle:@"gatekeeper-impale"];
+    [impaleAbility setCooldown:16];
+    [allAbilities addObject:impaleAbility];
+    [impaleAbility setAbilityValue:82];
+    [impaleAbility release];
+    
+    InvertedHealing *invHeal = [[InvertedHealing alloc] init];
+    [invHeal setNumTargets:3];
+    [invHeal setCooldown:6.0];
+    [allAbilities addObject:invHeal];
+    [invHeal release];
+    
+    SoulBurn *sb = [[SoulBurn alloc] init];
+    [sb setCooldown:16.0];
+    [allAbilities addObject:sb];
+    [sb release];
+    
+    OozeTwoTargets *oozeTwo = [[OozeTwoTargets alloc] init];
+    [oozeTwo setCooldown:10.0];
+    [oozeTwo setTitle:@"ooze-two"];
+    [allAbilities addObject:oozeTwo];
+    [oozeTwo release];
     //Trulzar Poison
     
     //Mortal Strike Cloud
@@ -519,6 +587,34 @@
     
     //EXPLODES IF YOU HEAL THEM
     return allAbilities;
+}
+
+- (id)init {
+    if (self = [super init]){
+        self.maxAbilities = 5;
+        self.managedAbilities = [NSMutableArray arrayWithCapacity:self.maxAbilities];
+    }
+    return self;
+}
+
+- (void)addRandomAbility {
+    Boss *bossOwner = (Boss*)self.owner;
+    NSArray *allAbilities = [RandomAbilityGenerator allAbilities];
+    Ability *randomAbility =  [allAbilities objectAtIndex:arc4random() % allAbilities.count];
+    [self.managedAbilities addObject:randomAbility];
+    [bossOwner addAbility:randomAbility];
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    Boss *bossOwner = (Boss*)self.owner;
+    if (self.managedAbilities.count == self.maxAbilities){
+        Ability *abilityToRemove = [self.managedAbilities objectAtIndex:(arc4random() % self.managedAbilities.count)];
+        [bossOwner removeAbility:abilityToRemove];
+        [self.managedAbilities removeObject:abilityToRemove];
+    }
+    
+    [self addRandomAbility];
+    
 }
 @end
 

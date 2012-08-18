@@ -85,7 +85,9 @@ typedef enum {
 @interface Deathwave : Ability 
 @end
 
-@interface RandomAbilityGenerator : Ability 
+@interface RandomAbilityGenerator : Ability
+@property (nonatomic, retain) NSMutableArray *managedAbilities;
+@property (nonatomic, readwrite) NSInteger maxAbilities; //Defaults to 5
 @end
 
 @interface InvertedHealing : Ability

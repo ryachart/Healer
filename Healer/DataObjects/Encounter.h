@@ -11,6 +11,8 @@
 @class Raid;
 @class Boss;
 @class Player;
+
+#define ENDLESS_VOID_ENCOUNTER_NUMBER 992342
 @interface Encounter : NSObject
 @property (nonatomic, retain) Raid *raid;
 @property (nonatomic, retain) Boss *boss;
@@ -26,4 +28,5 @@
 + (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer;
 + (NSInteger)goldForLevelNumber:(NSInteger)levelNumber isFirstWin:(BOOL)isFirstWin isMultiplayer:(BOOL)isMultiplayer;
 + (void)configurePlayer:(Player*)player forRecSpells:(NSArray*)spells;
++ (NSInteger)goldRewardForSurvivalEncounterWithDuration:(NSTimeInterval)duration;
 @end

@@ -47,6 +47,8 @@
         //Perform Scene Setup   
         NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
+        NSString *spellAssetsPath = [[NSBundle mainBundle] pathForResource:@"spell-sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:spellAssetsPath];
         [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"title-ipad"] autorelease]];
         
         self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];

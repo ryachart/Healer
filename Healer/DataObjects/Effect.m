@@ -37,6 +37,7 @@
         effectType = type;
         self.maxStacks = 1;
         self.isIndependent = NO;
+        self.spellCostAdjustment = 0.0;
     }
 	return self;
 }
@@ -586,8 +587,13 @@
 }
 - (void)tick{
     [super tick];
-    RaidMember *candidate = [[self.raid lowestHealthTargets:1 withRequiredTarget:nil] objectAtIndex:0];
-    if (candidate != self.target){
+    RaidMember *candidate = nil;
+    if (arc4random() % 2 == 0){
+        candidate = [[self.raid lowestHealthTargets:1 withRequiredTarget:nil] objectAtIndex:0];
+    }else {
+        candidate = [self.raid randomLivingMember];
+    }
+    if (candidate != self.target && candidate != nil){
         [self retain];
         [self.target removeEffect:self];
         [candidate addEffect:self];
@@ -769,6 +775,22 @@
     }
 }
 @end
+
+@implementation BlessedArmorEffect
+
+-(void)didChangeHealthFrom:(NSInteger )health toNewHealth:(NSInteger )newHealth
+{
+}
+-(void)willChangeHealthFrom:(NSInteger *)health toNewHealth:(NSInteger *)newHealth{
+	
+	if (*health > *newHealth){
+		NSInteger healthDelta = *health - *newHealth;
+		NSInteger newHealthDelta = healthDelta	* .5;
+		*newHealth = *health - newHealthDelta;
+	}
+}
+@end
+
 
 #pragma mark - DEPRECATED SPELLS
 #pragma mark -

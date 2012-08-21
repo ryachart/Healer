@@ -10,7 +10,7 @@
 #import "ShopItem.h"
 #import "PersistantDataManager.h"
 
-NSString* const PlayerGold = @"com.healer.no-touch98741562234.gold";
+NSString* const PlayerGold = @"com.healer.playerId";
 NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
 
 static NSArray *shopItems = nil;
@@ -120,12 +120,13 @@ static NSArray *shopItems = nil;
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
 
     ShopItem *greaterHeal = [[ShopItem alloc] initWithSpell:[GreaterHeal defaultSpell]];
-    ShopItem *regrow = [[ShopItem alloc] initWithSpell:[Regrow defaultSpell]];
-    ShopItem *healingBurst = [[ShopItem alloc] initWithSpell:[HealingBurst defaultSpell]];
-
     [items addObject:[greaterHeal autorelease]];
+
+    ShopItem *regrow = [[ShopItem alloc] initWithSpell:[Regrow defaultSpell]];
     [items addObject:[regrow autorelease]];
-    [items addObject:[healingBurst autorelease]];
+
+    ShopItem *forkedHeal = [[ShopItem alloc] initWithSpell:[ForkedHeal defaultSpell]];
+    [items addObject:[forkedHeal autorelease]];
 
 
     return items;
@@ -135,42 +136,58 @@ static NSArray *shopItems = nil;
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
     ShopItem *purify = [[ShopItem alloc] initWithSpell:[Purify defaultSpell]];
     [items addObject:[purify autorelease]];
-    ShopItem *forkedHeal = [[ShopItem alloc] initWithSpell:[ForkedHeal defaultSpell]];
-    [items addObject:[forkedHeal autorelease]];
-    ShopItem *barrier = [[ShopItem alloc] initWithSpell:[Barrier defaultSpell]];
-    [items addObject:[barrier autorelease]];
+
     ShopItem *lightEternal = [[ShopItem alloc] initWithSpell:[LightEternal defaultSpell]];
     [items addObject:[lightEternal autorelease]];
-    ShopItem *fadingLight = [[ShopItem alloc] initWithSpell:[FadingLight defaultSpell]];
-    [items addObject:[fadingLight autorelease]];
     ShopItem *sunburst = [[ShopItem alloc] initWithSpell:[Sunburst defaultSpell]];
     [items addObject:[sunburst autorelease]];
+    
+    ShopItem *healingBurst = [[ShopItem alloc] initWithSpell:[HealingBurst defaultSpell]];
+    [items addObject:[healingBurst autorelease]];
+
 
     return items;
     
 }
 + (NSArray*)archivesShopItems {
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
-    ShopItem *touchOfLight = [[ShopItem alloc] initWithSpell:[TouchOfHope defaultSpell]];
+    ShopItem *fadingLight = [[ShopItem alloc] initWithSpell:[FadingLight defaultSpell]];
+    [items addObject:[fadingLight autorelease]];
     ShopItem *orbsOfLight = [[ShopItem alloc] initWithSpell:[OrbsOfLight defaultSpell]];
-    ShopItem *swirlingLight = [[ShopItem alloc] initWithSpell:[SwirlingLight defaultSpell]];
-    ShopItem *soaringSpirit = [[ShopItem alloc] initWithSpell:[SoaringSpirit defaultSpell]];
-    [items addObject:[soaringSpirit autorelease]];
     [items addObject:[orbsOfLight autorelease]];
+    ShopItem *swirlingLight = [[ShopItem alloc] initWithSpell:[SwirlingLight defaultSpell]];
     [items addObject:[swirlingLight autorelease]];
+    
+    ShopItem *touchOfLight = [[ShopItem alloc] initWithSpell:[TouchOfHope defaultSpell]];
     [items addObject:[touchOfLight autorelease]];
+    ShopItem *barrier = [[ShopItem alloc] initWithSpell:[Barrier defaultSpell]];
+    [items addObject:[barrier autorelease]];
+    
+    ShopItem *blessedArmor = [[ShopItem alloc] initWithSpell:[BlessedArmor defaultSpell]];
+    [items addObject:[blessedArmor autorelease]];
+
     return items;
     
 }
 + (NSArray*)vaultShopItems {
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
+    
+    ShopItem *starsOfA = [[ShopItem alloc] initWithSpell:[StarsOfAravon defaultSpell]];
+    [items addObject:[starsOfA autorelease]];
+    
+    ShopItem *soaringSpirit = [[ShopItem alloc] initWithSpell:[SoaringSpirit defaultSpell]];
+    [items addObject:[soaringSpirit autorelease]];
+    
     ShopItem *respite = [[ShopItem alloc] initWithSpell:[Respite defaultSpell]];
-    ShopItem *wanderingSpirit = [[ShopItem alloc] initWithSpell:[WanderingSpirit defaultSpell]];
-    ShopItem *wardOfAncients = [[ShopItem alloc] initWithSpell:[WardOfAncients defaultSpell]];
-    
-    
     [items addObject:[respite autorelease]];
+    
+    ShopItem *attunement = [[ShopItem alloc] initWithSpell:[Attunement defaultSpell]];
+    [items addObject:[attunement autorelease]];
+
+    ShopItem *wanderingSpirit = [[ShopItem alloc] initWithSpell:[WanderingSpirit defaultSpell]];
     [items addObject:[wanderingSpirit autorelease]];
+
+    ShopItem *wardOfAncients = [[ShopItem alloc] initWithSpell:[WardOfAncients defaultSpell]];
     [items addObject:[wardOfAncients autorelease]];
     return items;
     
@@ -206,11 +223,16 @@ static NSArray *shopItems = nil;
 }
 
 + (void)purchaseNextDivinityTier {
+#if TARGET_IPHONE_SIMULATOR
+    
+#else
     if ([Shop localPlayerGold] >= [Shop costForNextDivinityTier]){
         [Shop playerLosesGold:[Shop costForNextDivinityTier]];
     }else {
         return;
     }
+#endif
+
     NSInteger currentTiers = [Shop numDivinityTiersPurchased];
     if (currentTiers == 5){
         return; //You have em all =D

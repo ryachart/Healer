@@ -104,10 +104,15 @@
 }
 
 - (void)buyNextTierSelected {
+#if TARGET_IPHONE_SIMULATOR
+    [Shop purchaseNextDivinityTier];
+    [self layoutContents];
+#else
     if ([Shop localPlayerGold] >= [Shop costForNextDivinityTier]) {
         [Shop purchaseNextDivinityTier];
         [self layoutContents];
     }
+#endif
 //    UIAlertView *sorry = [[UIAlertView alloc] initWithTitle:@"Divinity not in" message:@"Building your divinity is coming soon.  Sorry!" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
 //    [sorry show];
 //    [sorry release];

@@ -16,14 +16,14 @@
 @implementation Player
 
 @synthesize activeSpells, spellBeingCast, energy, maximumEnergy, spellTarget, additionalTargets, statusText;
-@synthesize position, logger, spellsOnCooldown=_spellsOnCooldown, announcer, playerID, isAudible;
+@synthesize position, logger, spellsOnCooldown=_spellsOnCooldown, announcer, playerID, isLocalPlayer;
 @synthesize divinityConfig;
 @synthesize castTimeAdjustment;
 
 -(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen
 {
     if (self = [super init]){
-        self.isAudible = YES;
+        self.isLocalPlayer = YES;
         health = maximumHealth = hlth;
         energy = enrgy;
         energyRegenPerSecond = energyRegen;
@@ -47,6 +47,14 @@
         
     }
 	return self;
+}
+
+- (float)spellCostAdjustment {
+    float adjustment = 1.0;
+    for (Effect *effect in self.activeEffects){
+        adjustment -= effect.spellCostAdjustment;
+    }
+    return MAX(.1, adjustment);
 }
 
 - (void)initializeForCombat {
@@ -186,7 +194,7 @@
 		}
 		else if ([self remainingCastTime] <= 0){
 			//SPELL END CAST
-            if (self.isAudible){
+            if (self.isLocalPlayer){
                 [spellBeingCast spellEndedCasting];
             }
 			[spellBeingCast combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:timeDelta];
@@ -226,7 +234,7 @@
 }
 
 - (void)interrupt{
-    if (self.isAudible){
+    if (self.isLocalPlayer){
         [spellBeingCast spellInterrupted];
     }
     spellTarget = nil;
@@ -259,7 +267,7 @@
 }
 -(void)disableCastingWithReason:(CastingDisabledReason)reason{
 	castingDisabledReasons[reason] = YES;
-    if (self.isAudible){
+    if (self.isLocalPlayer){
         [spellBeingCast spellInterrupted];
     }
 	spellTarget = nil;
@@ -284,14 +292,14 @@
 	}
 	NSInteger energyDiff = [self energy] - [theSpell energyCost];
 	if (energyDiff < 0) {
-        if (self.isAudible){
+        if (self.isLocalPlayer){
             [self.announcer errorAnnounce:@"Not enough Energy"];
             [[AudioController sharedInstance] playTitle:OUT_OF_MANA_TITLE];
         }
 		return;
 	}
 	//SPELL BEGIN CAST
-    if (self.isAudible){
+    if (self.isLocalPlayer){
         [theSpell spellBeganCasting];
     }
 	spellBeingCast = theSpell;

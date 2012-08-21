@@ -107,7 +107,7 @@
         for (NSString* playerID in self.waitingOnPlayers) {
             Player *otherPlayer = [self.otherPlayers objectForKey:playerID];
             [otherPlayer setPlayerID:playerID];
-            [otherPlayer setIsAudible:NO];
+            [otherPlayer setIsLocalPlayer:NO];
             [allPlayers addObject:otherPlayer];
         }
         [self.player setPlayerID:self.serverPlayerID];

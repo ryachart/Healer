@@ -71,13 +71,21 @@
     if ([spell isEqualToString:@"Soaring Spirit"]){
         return 300;
     }
+    if ([spell isEqualToString:@"Attunement"]){
+        return 300;
+    }
     if ([spell isEqualToString:@"Fading Light"]) {
         return 200;
     }
     if ([spell isEqualToString:@"Sunburst"]){
         return 300;
     }
-
+    if ([spell isEqualToString:@"Stars of Aravon"]){
+        return 300;
+    }
+    if ([spell isEqualToString:@"Blessed Armor"]){
+        return 300;
+    }
     return 10000;
 }
 

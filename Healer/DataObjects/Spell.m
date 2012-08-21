@@ -12,6 +12,7 @@
 #import "Agent.h"
 #import "Announcer.h"
 #import "Player.h"
+#import "ProjectileEffect.h"
 
 @interface Spell ()
 @property (nonatomic, retain) NSString *title;
@@ -49,6 +50,31 @@
     [appliedEffect release]; 
     [super dealloc];
     
+}
+
+- (NSInteger)energyCost {
+    NSInteger baseEnergyCost = energyCost;
+    if (!self.owner){
+        return baseEnergyCost;
+    }
+    return baseEnergyCost * self.owner.spellCostAdjustment;
+}
+
+- (NSString*)spellTypeDescription {
+    switch (self.spellType) {
+        case SpellTypeBasic:
+            return @"Basic";
+        case SpellTypePeriodic:
+            return @"Periodic";
+        case SpellTypeEmpowering:
+            return @"Empower";
+        case SpellTypeMulti:
+            return @"Multi";
+        case SpellTypeProtective:
+            return @"Protective";
+        default:
+            return @"Basic";
+    }
 }
 
 - (NSString*)spriteFrameName {
@@ -247,7 +273,12 @@
 
 #pragma mark - Simple Game Spells
 @implementation Heal
-@synthesize hasBlessedPower, hasWardingTouch, hasHealingHands;
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeBasic;
+    }
+    return self;
+}
 +(id)defaultSpell{
     Heal *heal = [[Heal alloc] initWithTitle:@"Heal" healAmnt:35 energyCost:22 castTime:1.75 andCooldown:0.0];
     [heal setDescription:@"Heals your target for a small amount."];
@@ -257,47 +288,15 @@
     return [heal autorelease];
 }
 
-- (void)checkDivinity {
-    self.hasBlessedPower = [self.owner hasDivinityEffectWithTitle:@"Blessed Power"];
-    self.hasHealingHands = [self.owner hasDivinityEffectWithTitle:@"Healing Hands"];
-    self.hasWardingTouch = [self.owner hasDivinityEffectWithTitle:@"Warding Touch"];
-}
-
-- (void)didHealTarget:(RaidMember *)target inRaid:(Raid *)raid withBoss:(Boss *)boss andPlayers:(NSArray *)players forAmount:(NSInteger)amount {
-    if (self.hasHealingHands) {
-        if (arc4random() % 100 < 10){
-            NSInteger critBonus = (int)round(amount * .5);
-            [target setHealth:target.health + critBonus]; //A Crit!
-            [self.owner playerDidHealFor:critBonus onTarget:target fromSpell:self];
-        }
-    }
-    
-    if (self.hasWardingTouch){
-        DamageTakenDecreasedEffect *reduceDamage = [[DamageTakenDecreasedEffect alloc] initWithDuration:15 andEffectType:EffectTypePositiveInvisible];
-        [reduceDamage setTitle:@"heal-div-wardingtouch"];
-        [reduceDamage setOwner:self.owner];
-        [reduceDamage setPercentage:.05];
-        [target addEffect:reduceDamage];
-        [reduceDamage release];
-    }
-    
-    if (self.hasBlessedPower) {
-        if (arc4random() % 100 < 10){
-            [[self.owner announcer] announce:@"Your mind is filled with power."];
-            Effect *castTimeReduction = [[Effect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
-            [castTimeReduction setTitle:@"blessed-power-haste"];
-            [castTimeReduction setOwner:self.owner];
-            [castTimeReduction setSpriteName:@"default_divinity.png"];
-            [castTimeReduction setCastTimeAdjustment:.25];
-            [(Player*)self.owner addEffect:castTimeReduction];
-            [castTimeReduction release];
-        }
-    }
-}
-
 @end
 
 @implementation GreaterHeal
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeBasic;
+    }
+    return self;
+}
 +(id)defaultSpell{
     GreaterHeal *heal = [[GreaterHeal alloc] initWithTitle:@"Greater Heal" healAmnt:100 energyCost:90 castTime:2.25 andCooldown:0.0];
     [heal setDescription:@"Heals your target for a large amount."];
@@ -309,6 +308,12 @@
 @end
 
 @implementation HealingBurst
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeBasic;
+    }
+    return self;
+}
 +(id)defaultSpell{
     HealingBurst *heal = [[HealingBurst alloc] initWithTitle:@"Healing Burst" healAmnt:50 energyCost:70 castTime:1.0 andCooldown:0.0];
     [heal setDescription:@"Heals your target for a moderate amount very quickly."];
@@ -320,19 +325,20 @@
 @end
 
 @implementation ForkedHeal
-@synthesize hasAfterLight;
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeMulti;
+    }
+    return self;
+}
 +(id)defaultSpell
 {
-	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:55 energyCost:100 castTime:1.75 andCooldown:0.0];//10h/e
+	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:55 energyCost:100 castTime:1.75 andCooldown:0.0];//10h/erk
     [forkedHeal setDescription:@"Heals up to two targets simultaneously."];
     [[forkedHeal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[forkedHeal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
 	[[forkedHeal spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
 	return [forkedHeal autorelease];
-}
-
-- (void)checkDivinity {
-    self.hasAfterLight = [self.owner hasDivinityEffectWithTitle:@"After Light"];
 }
 
 -(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
@@ -365,25 +371,14 @@
         self.cooldownRemaining = self.cooldown;
     }
 }
-
-- (void)didHealTarget:(RaidMember *)target inRaid:(Raid *)raid withBoss:(Boss *)boss andPlayers:(NSArray *)players forAmount:(NSInteger)amount {
-    if (self.hasAfterLight) {
-        RepeatedHealthEffect *afterLightEffect = [[RepeatedHealthEffect alloc] initWithDuration:8.0 andEffectType:EffectTypePositiveInvisible];
-        [afterLightEffect setNumOfTicks:8];
-        [afterLightEffect setValuePerTick:(int)round(.2*amount/8.0)];
-        [afterLightEffect setTitle:@"after-light-effect"];
-        [afterLightEffect setOwner:self.owner];
-        [target addEffect:afterLightEffect];
-        [afterLightEffect release];
-    }
-    
-}
 @end
 
 @implementation Regrow
-@synthesize hasSunlight;
-- (void)checkDivinity {
-    self.hasSunlight = [self.owner hasDivinityEffectWithTitle:@"Sunlight"];
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypePeriodic;
+    }
+    return self;
 }
 
 +(id)defaultSpell{
@@ -400,21 +395,15 @@
     [hotEffect release];
     return [regrow autorelease];
 }
-
-- (void)didHealTarget:(RaidMember *)target inRaid:(Raid *)raid withBoss:(Boss *)boss andPlayers:(NSArray *)players forAmount:(NSInteger)amount {
-    if (self.hasSunlight) {
-        DamageTakenDecreasedEffect *damageReduction = [[DamageTakenDecreasedEffect alloc] initWithDuration:self.appliedEffect.duration andEffectType:EffectTypePositiveInvisible];
-        [damageReduction setPercentage:.05];
-        [damageReduction setTitle:@"regrow-sunlight-dr"];
-        [damageReduction setOwner:self.owner];
-        [target addEffect:damageReduction];
-        [damageReduction release];
-    }
-    
-}
 @end
 
 @implementation  Barrier
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeProtective;
+    }
+    return self;
+}
 +(id)defaultSpell{
 	Barrier *bulwark = [[Barrier alloc] initWithTitle:@"Barrier" healAmnt:0 energyCost:100 castTime:0.0 andCooldown:5.0];
 	[bulwark setDescription:@"Sets a shield around a target that absorbs moderate damage."];
@@ -428,6 +417,12 @@
 
 
 @implementation Purify
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeProtective;
+    }
+    return self;
+}
 +(id)defaultSpell{
     Purify *purify = [[Purify alloc] initWithTitle:@"Purify" healAmnt:5 energyCost:40 castTime:0.0 andCooldown:5.0];
     [purify setDescription:@"Dispels negative poison and curse effects from allies."];
@@ -446,12 +441,17 @@
     [effectToRemove effectWillBeDispelled:theRaid player:thePlayer];
     [effectToRemove expire];
     [thePlayer.spellTarget removeEffect:effectToRemove];
-    
 }
 
 @end
 
 @implementation  OrbsOfLight
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeProtective;
+    }
+    return self;
+}
 +(id)defaultSpell{
     OrbsOfLight *orbs = [[OrbsOfLight alloc] initWithTitle:@"Orbs of Light" healAmnt:0 energyCost:120 castTime:1.5 andCooldown:4.0];
     [orbs setDescription:@"Heals a target for a moderate amount each time it takes damage. Lasts 10 seconds."];
@@ -473,6 +473,12 @@
 @end
 
 @implementation  SwirlingLight
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypePeriodic;
+    }
+    return self;
+}
 +(id)defaultSpell{
     SwirlingLight *swirl = [[SwirlingLight alloc] initWithTitle:@"Swirling Light" healAmnt:0 energyCost:40 castTime:0.0 andCooldown:2.0];
     [swirl setDescription:@"Heals a target over 10 seconds.  Each additional stack improves all the healing of all stacks. Maximum 4 Stacks."];
@@ -490,11 +496,11 @@
 @end
 
 @implementation  LightEternal
-@synthesize hasSurgingGlory;
-
-- (void)checkDivinity {
-    self.hasSurgingGlory = [(Player*)self.owner hasDivinityEffectWithTitle:@"Surging Glory"];
-    [super checkDivinity];
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeMulti;
+    }
+    return self;
 }
 
 + (id)defaultSpell {
@@ -504,30 +510,6 @@
 	[[le spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
 	[[le spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
     return [le autorelease];
-}
-
-- (NSInteger)energyCost {
-    NSInteger baseCost = [super energyCost];
-    if (self.hasSurgingGlory){
-        baseCost *= .8;
-    }
-    return baseCost;
-}
-
-- (NSInteger)healingAmount {
-    NSInteger baseAmount = [super healingAmount];
-    if (self.hasSurgingGlory){
-        baseAmount *= .8;
-    }
-    return baseAmount;
-}
-
-- (float)castTime {
-    float time = [super castTime];
-    if (self.hasSurgingGlory) {
-        time *= .9;
-    }
-    return time;
 }
 
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime {
@@ -550,7 +532,6 @@
     
     [thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
 
-
     if (self.cooldown > 0.0){
         [[thePlayer spellsOnCooldown] addObject:self];
         self.cooldownRemaining = self.cooldown;
@@ -561,6 +542,12 @@
 
 
 @implementation Respite
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeEmpowering;
+    }
+    return self;
+}
 + (id)defaultSpell{
     Respite *respite = [[Respite alloc] initWithTitle:@"Respite" healAmnt:0 energyCost:0 castTime:0.0 andCooldown:60.0];
     [respite setDescription:@"Restores 360 Mana to the caster."];
@@ -575,6 +562,12 @@
 @end
 
 @implementation WanderingSpirit
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypePeriodic;
+    }
+    return self;
+}
 + (id)defaultSpell {
     WanderingSpirit *ws = [[WanderingSpirit alloc] initWithTitle:@"Wandering Spirit" healAmnt:0 energyCost:200 castTime:0.0 andCooldown:15.0];
     WanderingSpiritEffect *wse = [[WanderingSpiritEffect alloc] initWithDuration:14.0 andEffectType:EffectTypePositive];
@@ -590,6 +583,12 @@
 @end
 
 @implementation WardOfAncients
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeProtective;
+    }
+    return self;
+}
 + (id)defaultSpell {
     WardOfAncients *woa = [[WardOfAncients alloc] initWithTitle:@"Ward of Ancients" healAmnt:0 energyCost:100 castTime:2.0 andCooldown:45.0];
     [woa setDescription:@"Covers your entire party in a protective barrier that reduces incoming damage by 40% for 6 seconds."];
@@ -612,7 +611,12 @@
 @end
 
 @implementation TouchOfHope
-
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeBasic;
+    }
+    return self;
+}
 + (id)defaultSpell {
     TouchOfHope *tol = [[TouchOfHope alloc] initWithTitle:@"Touch of Hope" healAmnt:50 energyCost:50 castTime:0.0 andCooldown:4.0];
     [tol setDescription:@"Instantly Heals your Target for a Moderate Amount and places an effect on the target that heals for a small amount over 4 seconds.  Each time the periodic effect heals it restores 12 energy."];
@@ -635,6 +639,12 @@
 @end
 
 @implementation SoaringSpirit
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeEmpowering;
+    }
+    return self;
+}
 + (id)defaultSpell {
     SoaringSpirit *ss = [[SoaringSpirit alloc] initWithTitle:@"Soaring Spirit" healAmnt:0 energyCost:30 castTime:0 andCooldown:35.0];
     [ss setDescription:@"Releases your inner light increasing your healing done and reduces cast times by 20% for 7.5 seconds."];
@@ -655,6 +665,12 @@
 @end
 
 @implementation FadingLight
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypePeriodic;
+    }
+    return self;
+}
 + (id)defaultSpell {
     FadingLight *fl = [[FadingLight alloc] initWithTitle:@"Fading Light" healAmnt:0 energyCost:90 castTime:0.0 andCooldown:2.0];
     [fl setDescription:@"Heals for a large amount over 10 seconds.  The healing done starts high but decreases each tick."];
@@ -678,8 +694,14 @@
 @end
 
 @implementation Sunburst
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeMulti;
+    }
+    return self;
+}
 + (id)defaultSpell {
-    Sunburst *sb = [[Sunburst alloc] initWithTitle:@"Sunburst" healAmnt:0 energyCost:140 castTime:0.0 andCooldown:8.0];
+    Sunburst *sb = [[Sunburst alloc] initWithTitle:@"Sunburst" healAmnt:0 energyCost:160 castTime:0.0 andCooldown:8.0];
     [sb setDescription:@"Heals up to 7 injured allies for a small amount over 5 seconds."];
     return [sb autorelease];
 }
@@ -694,12 +716,95 @@
         [sunburstEffect setTitle:@"sunburst-hot"];
         [sunburstEffect setSpriteName:@"sunburst.png"];
         [sunburstEffect setNumOfTicks:5];
-        [sunburstEffect setValuePerTick:7];
+        [sunburstEffect setValuePerTick:4];
         [sunburstEffect setOwner:self.owner];
         [target addEffect:sunburstEffect];
         [sunburstEffect release];
     }
     
+}
+@end
+
+@implementation StarsOfAravon
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeMulti;
+    }
+    return self;
+}
+
++ (id)defaultSpell {
+    StarsOfAravon *spell = [[StarsOfAravon alloc] initWithTitle:@"Stars of Aravon" healAmnt:0 energyCost:49 castTime:1.75 andCooldown:0.0];
+    [spell setDescription:@"Summon 4 Stars of Aravon from the heavens.  The Stars travel for 2.5 seconds before striking their target and healing them for a small amount.."];
+    return [spell autorelease];
+}
+
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime {
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+    
+    NSArray *starTargets = [theRaid lowestHealthTargets:4 withRequiredTarget:nil];
+    
+    NSTimeInterval healDelay = 1.75;
+    for (RaidMember *starTarget in starTargets){
+        ProjectileEffect *starProjectile = [[ProjectileEffect alloc] initWithSpriteName:@"star.png" target:starTarget andCollisionTime:healDelay];
+        [starProjectile setCollisionParticleName:@"star_explosion.plist"];
+        [theBoss.announcer displayProjectileEffect:starProjectile];
+        DelayedHealthEffect *starDelayedHealthEff = [[DelayedHealthEffect alloc] initWithDuration:healDelay andEffectType:EffectTypePositiveInvisible];
+        [starDelayedHealthEff setIsIndependent:YES];
+        [starDelayedHealthEff setOwner:self.owner];
+        [starDelayedHealthEff setValue:19];
+        [starDelayedHealthEff setTitle:@"star-of-aravon-eff"];
+        [starTarget addEffect:starDelayedHealthEff];
+        [starProjectile release];
+        [starDelayedHealthEff release];
+    }
+}
+
+@end
+
+@implementation BlessedArmor
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeProtective;
+    }
+    return self;
+}
++ (id)defaultSpell {
+    BlessedArmor *defaultSpell = [[BlessedArmor alloc] initWithTitle:@"Blessed Armor" healAmnt:0 energyCost:70 castTime:0.0 andCooldown:9.0];
+    
+    [defaultSpell setDescription:@"Reduces damage done to a target by 50%% for 5 seconds.  When the effect expires it heals the target for a moderate amount."];
+    BlessedArmorEffect *bae = [[BlessedArmorEffect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
+    [bae setSpriteName:@"blessed_armor.png"];
+    [bae setTitle:@"blessed-armor-eff"];
+    [bae setValue:50];
+    [defaultSpell setAppliedEffect:bae];
+    [bae release];
+    return [defaultSpell autorelease];
+}
+@end
+
+@implementation Attunement
+- (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
+    if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
+        self.spellType = SpellTypeEmpowering;
+    }
+    return self;
+}
++ (id)defaultSpell {
+    Attunement *defaultSpell = [[Attunement alloc] initWithTitle:@"Attunement" healAmnt:0 energyCost:70 castTime:0.0 andCooldown:45.0];
+    
+    [defaultSpell setDescription:@"For 12 Seconds, all spells you cast cost 75%% less."];
+    return [defaultSpell autorelease];
+}
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+    
+    Effect *costReductionEffect = [[Effect alloc] initWithDuration:12.0 andEffectType:EffectTypePositive];
+    [costReductionEffect setTitle:@"attunement-effect"];
+    [costReductionEffect setSpellCostAdjustment:.75];    
+    [thePlayer addEffect:costReductionEffect];
+    [costReductionEffect release];
+
 }
 @end
 

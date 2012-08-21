@@ -38,6 +38,7 @@
                 BossAbilityDescriptorIcon *newIcon = [[BossAbilityDescriptorIcon alloc] initWithAbility:[self.boss.abilityDescriptors objectAtIndex:i] target:self selector:@selector(bossAbilitySelected:)];
                 [self.descriptorIcons addObject:newIcon];
                 [self addChild:newIcon];
+                [newIcon release];
             }
             [[self.descriptorIcons objectAtIndex:i] setAnchorPoint:CGPointZero];
             [[self.descriptorIcons objectAtIndex:i] setPosition:CGPointMake(80 * i, 0)];
@@ -63,7 +64,6 @@
 }
 
 - (void)update {
-    //The number of boss abilities has changed, redraw
     [self configureIcons];
 }
 

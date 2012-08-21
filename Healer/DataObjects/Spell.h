@@ -16,6 +16,14 @@
 @class Agent;
 @class RaidMember;
 
+typedef enum {
+    SpellTypeBasic,
+    SpellTypePeriodic,
+    SpellTypeMulti,
+    SpellTypeProtective,
+    SpellTypeEmpowering
+} SpellType;
+
 @interface Spell : NSObject {
 	float castTime;
 	NSInteger targets;
@@ -31,7 +39,7 @@
 @property (nonatomic, readonly, retain) NSString* spellID;
 @property (nonatomic, assign) Player *owner;
 @property (nonatomic, readwrite) NSInteger healingAmount;
-@property NSInteger energyCost;
+@property (nonatomic, readonly) NSInteger energyCost;
 @property (nonatomic, readwrite) float castTime;
 @property (nonatomic, setter=setTargets:) NSInteger targets;
 @property (nonatomic, copy) NSArray *percentagesPerTarget;
@@ -41,6 +49,9 @@
 @property (nonatomic, readwrite) float cooldownRemaining;
 @property (nonatomic, readwrite) float cooldown;
 @property (nonatomic, retain) Effect* appliedEffect;
+
+@property (nonatomic, readonly) NSString* spellTypeDescription;
+@property (nonatomic, readwrite) SpellType spellType;
 
 - (NSString*)spriteFrameName;
 - (NSString*)spellDescription;
@@ -75,20 +86,15 @@
 
 //SIMPLE GAME SPELLS
 @interface Heal : Spell //Basic Efficient Low throughput Heal
-@property (nonatomic, readwrite) BOOL hasHealingHands;
-@property (nonatomic, readwrite) BOOL hasBlessedPower;
-@property (nonatomic, readwrite) BOOL hasWardingTouch;
 @end
 
 @interface GreaterHeal : Spell //Simple High cost high efficiency Heal
 @end
 
 @interface ForkedHeal : Spell //Two target heal with good efficiency
-@property (nonatomic, readwrite) BOOL hasAfterLight;
 @end
 
 @interface Regrow : Spell //Instant cast 12 second HoT
-@property (nonatomic, readwrite) BOOL hasSunlight;
 @end
 
 @interface Barrier : Spell //Fast cast expensive Absorb
@@ -107,7 +113,6 @@
 @end
 
 @interface LightEternal : Spell //Prayer of Smart Healing
-@property (nonatomic, readwrite) BOOL hasSurgingGlory;
 @end
 
 @interface WanderingSpirit : Spell //Prayer of Auto-Mending
@@ -131,6 +136,14 @@
 @interface Sunburst : Spell
 @end
 
+@interface StarsOfAravon : Spell
+@end
+
+@interface BlessedArmor : Spell
+@end
+
+@interface Attunement : Spell
+@end
 ////RITUALIST SPELLS/////
 @interface HastyBrew : Spell <Chargable>{
 	NSDate *chargeStart;

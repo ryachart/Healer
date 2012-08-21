@@ -50,7 +50,7 @@
 
 - (void)clearExtraDescriptors {
     [_abilityDescriptors release];
-    _abilityDescriptors = [NSMutableArray arrayWithCapacity:5];
+    _abilityDescriptors = [[NSMutableArray arrayWithCapacity:5] retain];
 }
 
 - (void)ownerDidExecuteAbility:(Ability*)ability {

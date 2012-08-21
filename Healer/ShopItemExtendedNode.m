@@ -18,6 +18,7 @@
 @property (nonatomic, assign) CCLabelTTF *itemDescription;
 @property (nonatomic, assign) CCLabelTTF *itemCastTime;
 @property (nonatomic, assign) CCLabelTTF *itemCooldown;
+@property (nonatomic, assign) CCLabelTTF *itemSpellType;
 
 @end
 
@@ -56,6 +57,10 @@
         self.itemDescription = [CCLabelTTF labelWithString:self.item.purchasedSpell.spellDescription dimensions:CGSizeMake(300, 300) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:18.0];
         self.itemDescription.color = ccBLACK;
         
+        self.itemSpellType = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Type: %@", self.item.purchasedSpell.spellTypeDescription] dimensions:CGSizeMake(200, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
+        self.itemSpellType.color = ccBLACK;
+        
+        
         NSInteger halfWidth = background.contentSize.width * 3 / 2;
         NSInteger halfHeight = background.contentSize.height * 3 / 2;
         NSInteger leftEdge = -halfWidth + 130;
@@ -69,6 +74,7 @@
         self.itemCastTime.position = CGPointMake(leftEdge, topEdge - 72);
         self.itemCooldown.position = CGPointMake(leftEdge + 50, topEdge - 112);
         self.itemDescription.position = CGPointMake(rightEdge - 80, topEdge - 210);
+        self.itemSpellType.position = CGPointMake(leftEdge, topEdge - 148);
         
         [self addChild:self.itemName];
         [self addChild:self.itemCost];
@@ -76,6 +82,7 @@
         [self addChild:self.itemCooldown];
         [self addChild:self.itemCastTime];
         [self addChild:self.itemDescription];
+        [self addChild:self.itemSpellType];
         
         
         CCMenuItemLabel *purchaseLabel = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Buy!" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(purchase)];

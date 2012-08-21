@@ -73,6 +73,7 @@ typedef int CastingDisabledReason;
 @property NSInteger position;
 @property NSInteger maximumEnergy;
 @property (nonatomic, readwrite) float castTimeAdjustment;
+@property (nonatomic, readwrite) float spellCostAdjustment;
 
 - (id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen;
 
@@ -106,6 +107,6 @@ typedef int CastingDisabledReason;
 - (BOOL)hasDivinityEffectWithTitle:(NSString*)title;
 //Multiplayer
 @property (nonatomic, retain) NSString* playerID;
-@property (nonatomic, readwrite) BOOL isAudible; //Turn off other sounds;
+@property (nonatomic, readwrite) BOOL isLocalPlayer; //Turn off other sounds;
 @property (nonatomic, readonly) NSString* spellsAsNetworkMessage;
 @end

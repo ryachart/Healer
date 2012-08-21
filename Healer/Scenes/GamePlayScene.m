@@ -208,7 +208,9 @@
     paused = newPaused;
     
     if (self.isClient || self.isServer){
-        return; //Cant pause multiplayerg
+        if (paused == YES){
+            return; //Cant pause multiplayerg
+        }
     }
     
     if (self.paused){

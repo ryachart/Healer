@@ -28,26 +28,26 @@ static NSDictionary *divinityInfo = nil;
         case 0:
             [choices addObject:@"Healing Hands"];
             [choices addObject:@"Blessed Power"];
-            [choices addObject:@"Warding Touch"];
+            [choices addObject:@"Insight"];
             break;
         case 1:
             [choices addObject:@"Surging Glory"];
-            [choices addObject:@"Sunlight"];
+            [choices addObject:@"Shining Aegis"];
             [choices addObject:@"After Light"];
             break;
         case 2:
-            [choices addObject:@"Shining Aegis"];
+            [choices addObject:@"Repel The Darkness"];
             [choices addObject:@"Ancient Knowledge"];
             [choices addObject:@"Purity of Soul"];
             break;
         case 3:
             [choices addObject:@"Searing Power"];
-            [choices addObject:@"Repel The Darkness"];
+            [choices addObject:@"Sunlight"];
             [choices addObject:@"Torrent of Faith"];
             break;
         case 4:
             [choices addObject:@"Godstouch"];
-            [choices addObject:@"The Chosen"];
+            [choices addObject:@"Redemption"];
             [choices addObject:@"Avatar"];
             break;
         default:
@@ -102,7 +102,7 @@ static NSDictionary *divinityInfo = nil;
     for (int i = 0; i < 5; i++){
         NSString *tierChoice = [configuration objectForKey:[NSString stringWithFormat:@"tier-%i", i]];
         if (tierChoice){
-            DivinityEffect *divEff = [[DivinityEffect alloc] initWithDivinityKey:tierChoice];
+            DivinityEffect *divEff = [[DivinityEffect alloc] initWithDivinityKey:[Divinity choiceTitleToKey:tierChoice]];
             [effects addObject:[divEff autorelease]];
         }
     }

@@ -694,6 +694,10 @@
 		38024DAE13C2564D003D36F2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */,
+				BFA5464615AA0CED00F9B167 /* CFNetwork.framework */,
+				BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */,
+				BFA5464215AA0C3600F9B167 /* Security.framework */,
 				BFA5463A15AA097800F9B167 /* Parse.framework */,
 				BF69866E154CE45A0016F25E /* TestFlightSDK1.0 */,
 				386DD204145E07100086763E /* FontLabel */,
@@ -735,10 +739,6 @@
 		38024DC013C2564D003D36F2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */,
-				BFA5464615AA0CED00F9B167 /* CFNetwork.framework */,
-				BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */,
-				BFA5464215AA0C3600F9B167 /* Security.framework */,
 				BF865F22159F8655007F5DBF /* healer.png */,
 				BF865F20159F8651007F5DBF /* healer@2x.png */,
 				BF865F1E159F8555007F5DBF /* Default-Landscape~ipad.png */,

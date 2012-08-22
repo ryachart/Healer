@@ -75,6 +75,10 @@ typedef int CastingDisabledReason;
 @property (nonatomic, readwrite) float castTimeAdjustment;
 @property (nonatomic, readwrite) float spellCostAdjustment;
 
+- (float)castTimeAdjustmentForSpell:(Spell*)spell;
+- (float)spellCostAdjustmentForSpell:(Spell*)spell;
+- (float)healingDoneMultiplierForSpell:(Spell*)spell;
+
 - (id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen;
 
 - (void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid gameTime:(float)timeDelta;

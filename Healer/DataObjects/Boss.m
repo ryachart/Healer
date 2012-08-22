@@ -1488,7 +1488,7 @@
     [cob addAbility:tankAttack];
     [tankAttack release];
     
-    cob.crushingPunch = [[Attack alloc] initWithDamage:0 andCooldown:10.0];
+    cob.crushingPunch = [[[Attack alloc] initWithDamage:0 andCooldown:10.0] autorelease];
     DelayedHealthEffect *crushingPunchEffect = [[DelayedHealthEffect alloc] initWithDuration:3.0 andEffectType:EffectTypeNegative];
     [crushingPunchEffect setTitle:@"crushing-punch"];
     [crushingPunchEffect setOwner:cob];
@@ -1498,13 +1498,11 @@
     [crushingPunchEffect release];
     [cob.crushingPunch setFailureChance:.2];
     [cob addAbility:cob.crushingPunch];
-    [cob.crushingPunch release];
     
-    cob.boneQuake = [[BoneQuake alloc] init];
+    cob.boneQuake = [[[BoneQuake alloc] init] autorelease];
     [cob.boneQuake setAbilityValue:12];
     [cob.boneQuake setCooldown:30.0];
     [cob addAbility:cob.boneQuake];
-    [cob.boneQuake release];
     
     BoneThrow *boneThrow = [[BoneThrow alloc] init];
     [boneThrow setAbilityValue:24];

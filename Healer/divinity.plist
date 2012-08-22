@@ -6,30 +6,30 @@
 	<string>Basic Spells heal for 10% more.</string>
 	<key>blessed-power</key>
 	<string>Multi Spells have 10% reduced cast time.</string>
-	<key>warding-touch</key>
+	<key>insight</key>
 	<string>Periodic Spells cost 10% less.</string>
 	<key>surging-glory</key>
-	<string>Multi spells cause their targets to deal 20% additional damage for 5 seconds.</string>
-	<key>sunlight</key>
+	<string>Multi spells cause their targets to deal 25% additional damage for 5 seconds.</string>
+	<key>shining-aegis</key>
 	<string>Protective spells have a 15% chance to cause their target to become immune to all damage for 3 seconds.</string>
 	<key>after-light</key>
 	<string>Basic Spells leave behind an effect reducing damage taken of targets by 10.0% for 6 seconds.</string>
-	<key>shining-aegis</key>
-	<string>Periodic spells cause their target to deal 25% more damage while they are active on the target.</string>
+	<key>repel-the-darkness</key>
+	<string>Periodic spells cause their target to deal 25% more damage.</string>
 	<key>ancient-knowledge</key>
-	<string>Empower spells grant you a blessing increasing all healing done by 10% for 5 seconds.</string>
+	<string>Empower spells grant you a blessing increasing all healing done by 10% for 10 seconds.</string>
 	<key>purity-of-soul</key>
 	<string>Multi-spells have a 10% chance to affect an extra two targets.</string>
 	<key>searing-power</key>
 	<string>Protective Spells cause their targets to deal 20% additional damage while active.</string>
-	<key>repel-the-darkness</key>
-	<string>Periodic spells have a 5% chance to apply their affect to an additional random ally.</string>
+	<key>sunlight</key>
+	<string>Periodic spells have a 10% chance to apply their affect to an additional random ally.</string>
 	<key>torrent-of-faith</key>
-	<string>Empower spells have a 5% chance to have their effects doubled</string>
+	<string>Empower spells have a 10% chance to have their effects doubled.</string>
 	<key>godstouch</key>
 	<string>Healing done is increased by 10% and spell costs are reduced by 10%.</string>
-	<key>the-chosen</key>
-	<string>If an ally would die, instead it is healed to 30% of its maximum health.  This effect can only occur once every 60 seconds.</string>
+	<key>redemption</key>
+	<string>If an ally would die instead you will instantly heal that ally for a small amount.  This can not occur more than once every 30 seconds.</string>
 	<key>avatar</key>
 	<string>All healing done has a 1% chance to summon an Avatar that cast spells and heals allies by your side for 15 seconds.</string>
 </dict>

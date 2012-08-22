@@ -149,6 +149,11 @@
     if (self=[super initWithDuration:-1 andEffectType:EffectTypeDivinity]){
         self.divinityKey = divKey;
         self.title = divKey;
+        
+        if ([divKey isEqualToString:@"godstouch"]){
+            self.healingDoneMultiplierAdjustment = .1;
+            self.spellCostAdjustment = .1;
+        }
     }
     return self;
 }

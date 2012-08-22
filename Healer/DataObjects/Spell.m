@@ -57,7 +57,7 @@
     if (!self.owner){
         return baseEnergyCost;
     }
-    return baseEnergyCost * self.owner.spellCostAdjustment;
+    return baseEnergyCost * [self.owner spellCostAdjustmentForSpell:self];
 }
 
 - (NSString*)spellTypeDescription {
@@ -101,7 +101,7 @@
     if (!self.owner){
         return castTime;
     }
-    float finalCastTime = castTime * self.owner.castTimeAdjustment;
+    float finalCastTime = castTime * [self.owner castTimeAdjustmentForSpell:self];
     return finalCastTime;
 }
 
@@ -144,7 +144,7 @@
     int fuzz = arc4random() % (fuzzRange + 1);
     
     finalAmount += fuzz * (arc4random() % 2 == 0 ? -1 : 1);
-    return finalAmount * self.owner.healingDoneMultiplier;
+    return finalAmount * [self.owner healingDoneMultiplierForSpell:self];
 }
 
 -(BOOL)isInstant
@@ -201,6 +201,13 @@
         }
 		[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
         [self applyEffectToTarget:thePlayer.spellTarget];
+        if (self.spellType == SpellTypePeriodic){
+            if ([self.owner hasDivinityEffectWithTitle:@"sunlight"]){
+                if (arc4random() % 100 < 10){
+                    [self applyEffectToTarget:[theRaid randomLivingMember]];
+                }
+            }
+        }
 	}
 	else if ([self targets] > 1){
 		int limit = [self targets];
@@ -342,7 +349,15 @@
 }
 
 -(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
-    NSArray *myTargets = [theRaid lowestHealthTargets:2 withRequiredTarget:thePlayer.spellTarget];
+    NSInteger totalTargets = 2;
+    
+    if ([self.owner hasDivinityEffectWithTitle:@"purity-of-soul"]){
+        if (arc4random() % 100 < 10){
+            totalTargets = 4;
+        }
+    }
+    
+    NSArray *myTargets = [theRaid lowestHealthTargets:totalTargets withRequiredTarget:thePlayer.spellTarget];
     
     int i = 0; 
     for (RaidMember *healableTarget in myTargets){
@@ -513,7 +528,14 @@
 }
 
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime {
-    NSArray *myTargets = [theRaid lowestHealthTargets:5  withRequiredTarget:thePlayer.spellTarget];
+    NSInteger totalTargets = 5;
+    
+    if ([self.owner hasDivinityEffectWithTitle:@"purity-of-soul"]){
+        if (arc4random() % 100 < 10){
+            totalTargets = 7;
+        }
+    }
+    NSArray *myTargets = [theRaid lowestHealthTargets:totalTargets  withRequiredTarget:thePlayer.spellTarget];
     
     for (RaidMember *healableTarget in myTargets){
         int currentTargetHealth = healableTarget.health;
@@ -555,7 +577,13 @@
 }
 
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
-    [thePlayer setEnergy:thePlayer.energy + 360];
+    NSInteger energyReturned = 360;
+    if ([self.owner hasDivinityEffectWithTitle:@"torrent-of-faith"]){
+        if (arc4random() % 100 < 10){
+            energyReturned = 720;
+        }
+    }
+    [thePlayer setEnergy:thePlayer.energy + energyReturned];
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
 
 }
@@ -653,12 +681,17 @@
 
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime {
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
-    
+    float modifier = 0.0;
+    if ([self.owner hasDivinityEffectWithTitle:@"torrent-of-faith"]){
+        if (arc4random() % 100 < 10){
+            modifier = .2;
+        }
+    }
     [self.owner.announcer announce:@"You are filled with spiritual power."];
     Effect *soaringSpiritEffect = [[Effect alloc] initWithDuration:7.5 andEffectType:EffectTypePositive];
     [soaringSpiritEffect setOwner:self.owner];
-    [soaringSpiritEffect setHealingDoneMultiplierAdjustment:.2];
-    [soaringSpiritEffect setCastTimeAdjustment:.2];
+    [soaringSpiritEffect setHealingDoneMultiplierAdjustment:.2 + modifier];
+    [soaringSpiritEffect setCastTimeAdjustment:.2 + modifier];
     [self.owner addEffect:soaringSpiritEffect];
     [soaringSpiritEffect release];
 }
@@ -674,21 +707,16 @@
 + (id)defaultSpell {
     FadingLight *fl = [[FadingLight alloc] initWithTitle:@"Fading Light" healAmnt:0 energyCost:90 castTime:0.0 andCooldown:2.0];
     [fl setDescription:@"Heals for a large amount over 10 seconds.  The healing done starts high but decreases each tick."];
-    return [fl autorelease];
-}
-
-- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime {
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
     
     IntensifyingRepeatedHealthEffect *fadingLightEffect = [[IntensifyingRepeatedHealthEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositive];
-    [fadingLightEffect setOwner:self.owner];
     [fadingLightEffect setTitle:@"fading-light-effect"];
     [fadingLightEffect setSpriteName:@"fading_light.png"];
     [fadingLightEffect setNumOfTicks:5];
     [fadingLightEffect setIncreasePerTick:-0.5];
     [fadingLightEffect setValuePerTick:40];
-    [thePlayer.spellTarget addEffect:fadingLightEffect];
+    [fl setAppliedEffect:fadingLightEffect];
     [fadingLightEffect release];
+    return [fl autorelease];
 }
 
 @end
@@ -701,15 +729,21 @@
     return self;
 }
 + (id)defaultSpell {
-    Sunburst *sb = [[Sunburst alloc] initWithTitle:@"Sunburst" healAmnt:0 energyCost:160 castTime:0.0 andCooldown:8.0];
+    Sunburst *sb = [[Sunburst alloc] initWithTitle:@"Sunburst" healAmnt:0 energyCost:200 castTime:0.0 andCooldown:10.0];
     [sb setDescription:@"Heals up to 7 injured allies for a small amount over 5 seconds."];
     return [sb autorelease];
 }
 
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime {
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+    NSInteger totalTargets = 7;
     
-    NSArray *sunburstTargets = [theRaid lowestHealthTargets:7 withRequiredTarget:thePlayer.spellTarget];
+    if ([self.owner hasDivinityEffectWithTitle:@"purity-of-soul"]){
+        if (arc4random() % 100 < 10){
+            totalTargets = 9;
+        }
+    }
+    NSArray *sunburstTargets = [theRaid lowestHealthTargets:totalTargets withRequiredTarget:thePlayer.spellTarget];
     
     for (RaidMember *target in sunburstTargets){
         RepeatedHealthEffect *sunburstEffect = [[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
@@ -741,8 +775,14 @@
 
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime {
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+    NSInteger totalTargets = 4;
     
-    NSArray *starTargets = [theRaid lowestHealthTargets:4 withRequiredTarget:nil];
+    if ([self.owner hasDivinityEffectWithTitle:@"purity-of-soul"]){
+        if (arc4random() % 100 < 10){
+            totalTargets = 6;
+        }
+    }
+    NSArray *starTargets = [theRaid lowestHealthTargets:totalTargets withRequiredTarget:nil];
     
     NSTimeInterval healDelay = 1.75;
     for (RaidMember *starTarget in starTargets){
@@ -791,17 +831,22 @@
     return self;
 }
 + (id)defaultSpell {
-    Attunement *defaultSpell = [[Attunement alloc] initWithTitle:@"Attunement" healAmnt:0 energyCost:70 castTime:0.0 andCooldown:45.0];
+    Attunement *defaultSpell = [[Attunement alloc] initWithTitle:@"Attunement" healAmnt:0 energyCost:20 castTime:0.0 andCooldown:40.0];
     
-    [defaultSpell setDescription:@"For 12 Seconds, all spells you cast cost 75%% less."];
+    [defaultSpell setDescription:@"For 12 Seconds, all spells you cast cost 50%% less."];
     return [defaultSpell autorelease];
 }
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
-    
+    float adjustmentAdjustment = 0.0;
+    if ([self.owner hasDivinityEffectWithTitle:@"torrent-of-faith"]){
+        if (arc4random() % 100 < 10){
+            adjustmentAdjustment = .5;
+        }
+    }
     Effect *costReductionEffect = [[Effect alloc] initWithDuration:12.0 andEffectType:EffectTypePositive];
     [costReductionEffect setTitle:@"attunement-effect"];
-    [costReductionEffect setSpellCostAdjustment:.75];    
+    [costReductionEffect setSpellCostAdjustment:.5 + adjustmentAdjustment];
     [thePlayer addEffect:costReductionEffect];
     [costReductionEffect release];
 

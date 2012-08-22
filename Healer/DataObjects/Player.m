@@ -13,6 +13,11 @@
 #import "Divinity.h"
 #import "CombatEvent.h"
 
+@interface Player ()
+@property (nonatomic, readwrite) NSTimeInterval redemptionTimeApplied;
+@property (nonatomic, readwrite) BOOL isRedemptionApplied;
+@end
+
 @implementation Player
 
 @synthesize activeSpells, spellBeingCast, energy, maximumEnergy, spellTarget, additionalTargets, statusText;
@@ -47,6 +52,22 @@
         
     }
 	return self;
+}
+
+- (BOOL)canRedemptionTrigger {
+    if (!self.isLocalPlayer){
+        return NO;
+    }
+    if ([self hasDivinityEffectWithTitle:@"redemption"]){
+        if (self.redemptionTimeApplied == 0.0){
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (void)redemptionDidTriggerOnTarget:(HealableTarget *)target {
+    self.redemptionTimeApplied = 0.001;
 }
 
 - (float)castTimeAdjustmentForSpell:(Spell*)spell{
@@ -211,6 +232,29 @@
 
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid gameTime:(float)timeDelta
 {
+    if (!self.isRedemptionApplied){
+        if ([self hasDivinityEffectWithTitle:@"redemption"]){
+            NSArray *raid = [theRaid getAliveMembers];
+            for (RaidMember *member in raid){
+                RedemptionEffect *redemp = [[RedemptionEffect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible];
+                [redemp setRedemptionDelegate:self];
+                [redemp setOwner:self];
+                [redemp setTitle:@"redemption-eff"];
+                [member addEffect:redemp];
+                [redemp release];
+            }
+        }
+        self.isRedemptionApplied = YES;
+    }
+    
+    if (self.redemptionTimeApplied > 0.0){
+        if (self.redemptionTimeApplied < 30.0){
+            self.redemptionTimeApplied += timeDelta;
+        } else {
+            self.redemptionTimeApplied = 0.0;
+        }
+    }
+    
 	if (isCasting){
         castStart+= timeDelta;
 		if ([spellTarget isDead]){

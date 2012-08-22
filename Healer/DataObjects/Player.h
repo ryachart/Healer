@@ -34,7 +34,9 @@ typedef int CastingDisabledReason;
 @class RaidMember;
 @class Effect;
 
-@interface Player : HealableTarget {
+@protocol RedemptionDelegate;
+
+@interface Player : HealableTarget <RedemptionDelegate> {
 	//In Game Data
 	NSArray *activeSpells;
 	NSInteger energy;

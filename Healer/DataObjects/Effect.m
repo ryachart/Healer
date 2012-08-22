@@ -796,6 +796,21 @@
 }
 @end
 
+@implementation RedemptionEffect
+
+-(void)didChangeHealthFrom:(NSInteger )health toNewHealth:(NSInteger )newHealth
+{
+}
+-(void)willChangeHealthFrom:(NSInteger *)health toNewHealth:(NSInteger *)newHealth{
+	
+	if (*newHealth <= 0){
+        if ([self.redemptionDelegate canRedemptionTrigger]){
+            *newHealth = 30;
+            [self.redemptionDelegate redemptionDidTriggerOnTarget:self.target];
+        }
+    }
+}
+@end
 
 #pragma mark - DEPRECATED SPELLS
 #pragma mark -

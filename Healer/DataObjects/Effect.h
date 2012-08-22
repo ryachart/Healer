@@ -210,6 +210,15 @@ typedef enum {
 @interface BlessedArmorEffect : DelayedHealthEffect <HealthAdjustmentModifier>
 @end
 
+@protocol RedemptionDelegate <NSObject>
+- (void)redemptionDidTriggerOnTarget:(HealableTarget*)target;
+- (BOOL)canRedemptionTrigger;
+@end
+
+@interface RedemptionEffect : Effect <HealthAdjustmentModifier>
+@property (nonatomic, assign) id <RedemptionDelegate> redemptionDelegate;
+@end
+
 #pragma mark - DEPRECATED EFFECTS
 @interface BigFireball : Effect {
 	NSInteger lastPosition;

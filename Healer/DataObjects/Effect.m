@@ -812,6 +812,42 @@
 }
 @end
 
+@implementation AvatarEffect
+- (void)healRaidWithPulse:(Raid*)theRaid{
+    NSArray* raid = [theRaid getAliveMembers];
+    for (RaidMember* member in raid){
+        [member setHealth:member.health + 2];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:@2 andEventType:CombatEventTypeHeal]];
+    }
+}
+
+- (void)healNeededTargetInRaid:(Raid*)theRaid{
+    NSArray *possibleTargets = [theRaid lowestHealthTargets:3 withRequiredTarget:nil];
+    
+    RaidMember *target = [possibleTargets objectAtIndex:arc4random() % possibleTargets.count];
+    [target setHealth:target.health + (target.maximumHealth * .25)];
+    [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:(target.maximumHealth * .25)] andEventType:CombatEventTypeHeal]];
+}
+
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta{
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+    
+    self.raidWidePulseCooldown += timeDelta;
+    self.healingSpellCooldown += timeDelta;
+    
+    if (self.raidWidePulseCooldown >= 1.5){
+        [self healRaidWithPulse:theRaid];
+        self.raidWidePulseCooldown = 0;
+    }
+    
+    if (self.healingSpellCooldown >= 2.5){
+        [self healNeededTargetInRaid:theRaid];
+        self.healingSpellCooldown = 0;
+    }
+    
+}
+@end
+
 #pragma mark - DEPRECATED SPELLS
 #pragma mark -
 #pragma mark Shaman Spells

@@ -70,6 +70,18 @@
     self.redemptionTimeApplied = 0.001;
 }
 
+- (void)triggerAvatar{
+    if (arc4random() % 100 <= 3){
+        [self.announcer announce:@"An Avatar comes to your aid!"];
+        AvatarEffect *avatar = [[AvatarEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive];
+        [avatar setOwner:self];
+        [avatar setTitle:@"avatar-effect"];
+        [self addEffect:avatar];
+        [avatar release];
+    }
+    
+}
+
 - (float)castTimeAdjustmentForSpell:(Spell*)spell{
     float adjustment = [self castTimeAdjustment];
     if (spell.spellType == SpellTypeMulti && [self hasDivinityEffectWithTitle:@"blessed-power"]){
@@ -438,9 +450,23 @@
 	return health <= 0;
 }
 
+
+
 - (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell {
     if (amount > 0){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:amount] andEventType:CombatEventTypeHeal]];
+    }
+    
+    if ([self hasDivinityEffectWithTitle:@"avatar"]){
+        if (amount >= MINIMUM_AVATAR_TRIGGER_AMOUNT){
+            [self triggerAvatar];
+        }else{
+            self.avatarCounter += amount;
+            if (self.avatarCounter >= MINIMUM_AVATAR_TRIGGER_AMOUNT){
+                self.avatarCounter = 0;
+                [self triggerAvatar];
+            }
+        }
     }
     
     if (spell.spellType == SpellTypeMulti && [self hasDivinityEffectWithTitle:@"surging-glory"]){
@@ -516,6 +542,18 @@
 - (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect {
     if (amount > 0){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:amount] andEventType:CombatEventTypeHeal]]; 
+    }
+    
+    if ([self hasDivinityEffectWithTitle:@"avatar"]){
+        if (amount >= MINIMUM_AVATAR_TRIGGER_AMOUNT){
+            
+        }else{
+            self.avatarCounter += amount;
+            if (self.avatarCounter >= MINIMUM_AVATAR_TRIGGER_AMOUNT){
+                self.avatarCounter = 0;
+                [self triggerAvatar];
+            }
+        }
     }
 
 }

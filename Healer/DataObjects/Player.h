@@ -34,6 +34,8 @@ typedef int CastingDisabledReason;
 @class RaidMember;
 @class Effect;
 
+
+#define MINIMUM_AVATAR_TRIGGER_AMOUNT 25
 @protocol RedemptionDelegate;
 
 @interface Player : HealableTarget <RedemptionDelegate> {
@@ -76,6 +78,7 @@ typedef int CastingDisabledReason;
 @property NSInteger maximumEnergy;
 @property (nonatomic, readwrite) float castTimeAdjustment;
 @property (nonatomic, readwrite) float spellCostAdjustment;
+@property (nonatomic, readwrite) NSInteger avatarCounter;
 
 - (float)castTimeAdjustmentForSpell:(Spell*)spell;
 - (float)spellCostAdjustmentForSpell:(Spell*)spell;

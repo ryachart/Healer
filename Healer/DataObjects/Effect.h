@@ -219,6 +219,11 @@ typedef enum {
 @property (nonatomic, assign) id <RedemptionDelegate> redemptionDelegate;
 @end
 
+@interface AvatarEffect : Effect
+@property (nonatomic, readwrite) NSTimeInterval raidWidePulseCooldown;
+@property (nonatomic, readwrite) NSTimeInterval healingSpellCooldown;
+@end
+
 #pragma mark - DEPRECATED EFFECTS
 @interface BigFireball : Effect {
 	NSInteger lastPosition;

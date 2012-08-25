@@ -133,7 +133,6 @@
 		387E7B59145E1701006D9266 /* Boss.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B58145E1701006D9266 /* Boss.m */; };
 		387E7B63145E177B006D9266 /* PlayerMoveButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B5F145E177B006D9266 /* PlayerMoveButton.m */; };
 		387E7B64145E177B006D9266 /* PlayerSpellButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B61145E177B006D9266 /* PlayerSpellButton.m */; };
-		38F04EEA13C2593500BCADCB /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38F04EE913C2593500BCADCB /* GameDefaults.plist */; };
 		38F1B45C15CA30D8008B2D99 /* backgrounds in Resources */ = {isa = PBXBuildFile; fileRef = 38F1B45B15CA30D8008B2D99 /* backgrounds */; };
 		BF0557A015268D0A006B4781 /* ProjectileEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF05579F15268D0A006B4781 /* ProjectileEffect.m */; };
 		BF0557B51526BC02006B4781 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = BF0557B41526BC02006B4781 /* assets */; };
@@ -562,7 +561,6 @@
 		387E7B5F145E177B006D9266 /* PlayerMoveButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayerMoveButton.m; path = Controls/PlayerMoveButton.m; sourceTree = "<group>"; };
 		387E7B60145E177B006D9266 /* PlayerSpellButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayerSpellButton.h; path = Controls/PlayerSpellButton.h; sourceTree = "<group>"; };
 		387E7B61145E177B006D9266 /* PlayerSpellButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayerSpellButton.m; path = Controls/PlayerSpellButton.m; sourceTree = "<group>"; };
-		38F04EE913C2593500BCADCB /* GameDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameDefaults.plist; sourceTree = "<group>"; };
 		38F1B45B15CA30D8008B2D99 /* backgrounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = backgrounds; sourceTree = SOURCE_ROOT; };
 		BF05579E15268D0A006B4781 /* ProjectileEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProjectileEffect.h; sourceTree = "<group>"; };
 		BF05579F15268D0A006B4781 /* ProjectileEffect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectileEffect.m; sourceTree = "<group>"; };
@@ -731,7 +729,6 @@
 				387E7AE9145E0F8F006D9266 /* Audio */,
 				38024F0713C2564E003D36F2 /* Supporting Files */,
 				38024DC013C2564D003D36F2 /* Resources */,
-				38F04EE913C2593500BCADCB /* GameDefaults.plist */,
 			);
 			path = Healer;
 			sourceTree = "<group>";
@@ -1647,7 +1644,6 @@
 			files = (
 				38024DC413C2564D003D36F2 /* fps_images.png in Resources */,
 				38024DD313C2564D003D36F2 /* iTunesArtwork in Resources */,
-				38F04EEA13C2593500BCADCB /* GameDefaults.plist in Resources */,
 				BFB99F1B15257F6D007EE559 /* Sounds in Resources */,
 				BF0557B51526BC02006B4781 /* assets in Resources */,
 				BF21071F15291E5F001B93D7 /* emitters in Resources */,

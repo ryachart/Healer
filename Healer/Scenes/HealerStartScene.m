@@ -18,6 +18,7 @@
 #import "AudioController.h"
 #import "MultiplayerQueueScene.h"
 
+BOOL firstLaunch = YES;
 
 @interface HealerStartScene ()
 @property (assign) CCMenu* menu;
@@ -49,7 +50,7 @@
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
         NSString *spellAssetsPath = [[NSBundle mainBundle] pathForResource:@"spell-sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:spellAssetsPath];
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"title-ipad"] autorelease]];
+        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"homescreen-bg-ipad"] autorelease]];
         
         self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
         
@@ -70,7 +71,7 @@
         [self.menu alignItemsVerticallyWithPadding:20.0];
         CGSize winSize = [CCDirector sharedDirector].winSize;
         
-        [self.menu setPosition:ccp(winSize.width * .9, winSize.height * .5)];
+        [self.menu setPosition:ccp(winSize.width * .81, winSize.height * .45)];
         [self.menu setColor:ccc3(255, 255, 255)];
         [self addChild:self.menu];
         
@@ -82,6 +83,10 @@
         [goldBG setPosition:CGPointMake(900, 50)];
         [self addChild:goldBG];
         [goldBG addChild:goldLabel];
+        
+        CCSprite *logoSprite = [CCSprite spriteWithSpriteFrameName:@"home_logo.png"];
+        [logoSprite setAnchorPoint:CGPointMake(0, 0)];
+        [self addChild:logoSprite z:5];
         
     }
     return self;
@@ -125,6 +130,13 @@
     if (![[AudioController sharedInstance] isTitlePlaying:@"title"]) {
         [[AudioController sharedInstance] stopAll];
         [[AudioController sharedInstance] playTitle:@"title" looping:10];
+    }
+    
+    if (firstLaunch){
+        BackgroundSprite *bg = [BackgroundSprite launchImageBackground];
+        [self addChild:bg z:1001];
+        firstLaunch = NO;
+        [bg runAction:[CCFadeOut actionWithDuration:1.0]];
     }
 }
 

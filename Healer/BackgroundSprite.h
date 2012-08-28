@@ -10,5 +10,7 @@
 @interface BackgroundSprite : CCSprite
 
 -(id)initWithAssetName:(NSString*)assetName;
+-(id)initWithJPEGAssetName:(NSString*)assetName;
 
++ (BackgroundSprite*)launchImageBackground;
 @end

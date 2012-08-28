@@ -11,9 +11,9 @@
 	<key>CFBundleIconFiles</key>
 	<array>
 		<string></string>
-		<string>Default-Landscape@2x~ipad.png</string>
-		<string>Default-Portrait@2x~ipad.png</string>
-		<string>Default-Landscape~ipad.png</string>
+		<string>backgrounds/Default-Landscape@2x~ipad.png</string>
+		<string>backgrounds/Default-Portrait@2x~ipad.png</string>
+		<string>backgrounds/Default-Landscape~ipad.png</string>
 		<string>healer@2x.png</string>
 		<string>healer.png</string>
 	</array>
@@ -24,9 +24,9 @@
 			<key>CFBundleIconFiles</key>
 			<array>
 				<string></string>
-				<string>Default-Landscape@2x~ipad.png</string>
-				<string>Default-Portrait@2x~ipad.png</string>
-				<string>Default-Landscape~ipad.png</string>
+				<string>backgrounds/Default-Landscape@2x~ipad.png</string>
+				<string>backgrounds/Default-Portrait@2x~ipad.png</string>
+				<string>backgrounds/Default-Landscape~ipad.png</string>
 				<string>healer@2x.png</string>
 				<string>healer.png</string>
 			</array>
@@ -48,15 +48,6 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1.1</string>
-	<key>Icon files</key>
-	<array>
-		<string>Icon.png</string>
-		<string>Icon@2x.png</string>
-		<string>Icon-72.png</string>
-		<string>Icon-Small-50.png</string>
-		<string>Icon-Small.png</string>
-		<string>Icon-Small@2x.png</string>
-	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIPrerenderedIcon</key>

@@ -157,8 +157,6 @@
 		BF7B721B152CA9AC001999D3 /* CCRoundedRect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7B721A152CA9AC001999D3 /* CCRoundedRect.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
 		BF8249D71526D7C2000B554B /* RaidMemberPreBattleCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */; };
-		BF865F1A159F8542007F5DBF /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF865F19159F8542007F5DBF /* Default-Landscape@2x~ipad.png */; };
-		BF865F1F159F8555007F5DBF /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF865F1E159F8555007F5DBF /* Default-Landscape~ipad.png */; };
 		BF865F21159F8652007F5DBF /* healer@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF865F20159F8651007F5DBF /* healer@2x.png */; };
 		BF865F23159F8655007F5DBF /* healer.png in Resources */ = {isa = PBXBuildFile; fileRef = BF865F22159F8655007F5DBF /* healer.png */; };
 		BF865F26159F9878007F5DBF /* Divinity.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F25159F9878007F5DBF /* Divinity.m */; };
@@ -173,6 +171,7 @@
 		BFA5464515AA0C9D00F9B167 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */; };
 		BFA5464715AA0CED00F9B167 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464615AA0CED00F9B167 /* CFNetwork.framework */; };
 		BFA5464915AA0D3100F9B167 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */; };
+		BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */; };
 		BFB46407154A25DD00503E30 /* StoreScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46406154A25DD00503E30 /* StoreScene.m */; };
 		BFB4640C154A262800503E30 /* ShopItemNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB4640B154A262800503E30 /* ShopItemNode.m */; };
 		BFB46411154A268900503E30 /* Shop.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46410154A268900503E30 /* Shop.m */; };
@@ -184,16 +183,6 @@
 		BFF4198C15A27CF700BC0453 /* divinity.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFF4198B15A27CF700BC0453 /* divinity.plist */; };
 		BFFB58E6152D69C7005B760E /* MultiplayerSetupScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		BF0557C61526BDA5006B4781 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 38024DA213C2564D003D36F2 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BF0557C11526BD39006B4781;
-			remoteInfo = MakeAssets;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		38024DAB13C2564D003D36F2 /* Healer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Healer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -604,8 +593,6 @@
 		BF80764C1522DACC001EB2B3 /* Announcer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Announcer.h; sourceTree = "<group>"; };
 		BF8249D51526D7C2000B554B /* RaidMemberPreBattleCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RaidMemberPreBattleCard.h; sourceTree = "<group>"; };
 		BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RaidMemberPreBattleCard.m; sourceTree = "<group>"; };
-		BF865F19159F8542007F5DBF /* Default-Landscape@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape@2x~ipad.png"; path = "../Default-Landscape@2x~ipad.png"; sourceTree = "<group>"; };
-		BF865F1E159F8555007F5DBF /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape~ipad.png"; path = "../Default-Landscape~ipad.png"; sourceTree = "<group>"; };
 		BF865F20159F8651007F5DBF /* healer@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "healer@2x.png"; path = "../healer@2x.png"; sourceTree = "<group>"; };
 		BF865F22159F8655007F5DBF /* healer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = healer.png; path = ../healer.png; sourceTree = "<group>"; };
 		BF865F24159F9878007F5DBF /* Divinity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Divinity.h; path = Healer/Divinity.h; sourceTree = "<group>"; };
@@ -627,6 +614,7 @@
 		BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		BFA5464615AA0CED00F9B167 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape~ipad.png"; sourceTree = "<group>"; };
 		BFB46405154A25DD00503E30 /* StoreScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreScene.h; sourceTree = "<group>"; };
 		BFB46406154A25DD00503E30 /* StoreScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreScene.m; sourceTree = "<group>"; };
 		BFB4640A154A262800503E30 /* ShopItemNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopItemNode.h; sourceTree = "<group>"; };
@@ -675,6 +663,7 @@
 		38024DA013C2564D003D36F2 = {
 			isa = PBXGroup;
 			children = (
+				BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */,
 				38024DBF13C2564D003D36F2 /* Healer */,
 				38024DAE13C2564D003D36F2 /* Frameworks */,
 				38024DAC13C2564D003D36F2 /* Products */,
@@ -738,8 +727,6 @@
 			children = (
 				BF865F22159F8655007F5DBF /* healer.png */,
 				BF865F20159F8651007F5DBF /* healer@2x.png */,
-				BF865F1E159F8555007F5DBF /* Default-Landscape~ipad.png */,
-				BF865F19159F8542007F5DBF /* Default-Landscape@2x~ipad.png */,
 				BF21071E15291E5F001B93D7 /* emitters */,
 				BF0557B41526BC02006B4781 /* assets */,
 				38F1B45B15CA30D8008B2D99 /* backgrounds */,
@@ -1603,7 +1590,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				BF0557C71526BDA5006B4781 /* PBXTargetDependency */,
 			);
 			name = Healer;
 			productName = Healer;
@@ -1650,11 +1636,10 @@
 				38F1B45C15CA30D8008B2D99 /* backgrounds in Resources */,
 				BF698674154CE45A0016F25E /* README.txt in Resources */,
 				BF698675154CE45A0016F25E /* release_notes.txt in Resources */,
-				BF865F1A159F8542007F5DBF /* Default-Landscape@2x~ipad.png in Resources */,
-				BF865F1F159F8555007F5DBF /* Default-Landscape~ipad.png in Resources */,
 				BF865F21159F8652007F5DBF /* healer@2x.png in Resources */,
 				BF865F23159F8655007F5DBF /* healer.png in Resources */,
 				BFF4198C15A27CF700BC0453 /* divinity.plist in Resources */,
+				BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1817,14 +1802,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		BF0557C71526BDA5006B4781 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BF0557C11526BD39006B4781 /* MakeAssets */;
-			targetProxy = BF0557C61526BDA5006B4781 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		38024F1513C2564E003D36F2 /* Debug */ = {

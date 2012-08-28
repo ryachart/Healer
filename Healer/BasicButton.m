@@ -11,23 +11,32 @@
 @implementation BasicButton
 
 + (BasicButton*)basicButtonWithTarget:(id)target andSelector:(SEL)selector andTitle:(NSString*)title {
-    CCSprite *basicButton = [CCSprite spriteWithSpriteFrameName:@"rect_button.png"];
-    CCSprite *basicButtonSelected = [CCSprite spriteWithSpriteFrameName:@"rect_button.png"];
-    CCSprite *basicButtonDisabled = [CCSprite spriteWithSpriteFrameName:@"rect_button.png"];
+    CCSprite *basicButton = [CCSprite spriteWithSpriteFrameName:@"button_home.png"];
+    CCSprite *basicButtonSelected = [CCSprite spriteWithSpriteFrameName:@"button_home.png"];
+    CCSprite *selectedMask = [CCSprite spriteWithSpriteFrameName:@"button_home_pressed.png"];
+    [selectedMask setAnchorPoint:CGPointZero];
+    CCSprite *basicButtonDisabled = [CCSprite spriteWithSpriteFrameName:@"button_home.png"];
     [basicButtonDisabled setOpacity:150];
     [basicButtonSelected setOpacity:200];
     
-    CGPoint labelPosition = CGPointMake(basicButton.contentSize.width /2 , basicButton.contentSize.height / 4);
+    title = [title uppercaseString];
     
-    CCLabelTTF *titleLabel = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
+    CGPoint labelPosition = CGPointMake(basicButton.contentSize.width /2 , 4 + basicButton.contentSize.height / 4);
+    NSString *fontName = @"Futura";
+    CGFloat fontSize = 30.0;
+    CCLabelTTF *titleLabel = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize alignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
+    [titleLabel setColor:ccc3(240, 181, 123)];
     [titleLabel setPosition:labelPosition];
-    CCLabelTTF *titleLabelSelected = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
+    CCLabelTTF *titleLabelSelected = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize alignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
+    [titleLabelSelected setColor:ccc3(240, 181, 123)];
     [titleLabelSelected setPosition:labelPosition];
-    CCLabelTTF *titleLabelDisabled = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
+    CCLabelTTF *titleLabelDisabled = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize alignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
+    [titleLabelDisabled setColor:ccc3(240, 181, 123)];
     [titleLabelDisabled setPosition:labelPosition];
     
     [basicButton addChild:titleLabel];
     [basicButtonSelected addChild:titleLabelSelected];
+    [basicButtonSelected addChild:selectedMask z:5];
     [basicButtonDisabled addChild:titleLabelDisabled];
     
     return [BasicButton itemFromNormalSprite:basicButton selectedSprite:basicButtonSelected disabledSprite:basicButtonDisabled target:target selector:selector];

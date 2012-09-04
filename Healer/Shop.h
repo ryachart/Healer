@@ -8,6 +8,7 @@
 #import "ShopItem.h"
 
 extern NSString* const PlayerGold;
+extern NSString* const PlayerGoldDidChangeNotification;
 
 typedef enum {
     ShopCategoryEssentials,
@@ -29,6 +30,8 @@ typedef enum {
 + (NSArray*)allOwnedSpells;
 
 //Divinity
++ (void)resetDivinity; //Debug
++ (NSInteger)costForDivinityTier:(NSInteger)tier;
 + (NSInteger)costForNextDivinityTier;
 + (NSInteger)numDivinityTiersPurchased;
 + (void)purchaseNextDivinityTier;

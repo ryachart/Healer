@@ -13,6 +13,7 @@
 #import "Player.h"
 #import "Ability.h"
 #import "Spell.h"
+#import "RaidMember.h"
 
 #define FUZZ(value, range) (((arc4random() % ((int)range * 2) + (100 - (int)range)))/100.0 * (int)value)
 
@@ -846,6 +847,60 @@
     }
     
 }
+@end
+
+@implementation GuardianBarrierEffect
+- (void)willChangeHealthFrom:(NSInteger*)currentHealth toNewHealth:(NSInteger*)newHealth
+{
+	if (*newHealth >= *currentHealth)
+	{
+		return;
+	}
+	
+	NSInteger healthDelta = *currentHealth - *newHealth;
+	
+	if (healthDelta >= self.owningGuardian.overhealingShield){
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.owningGuardian.overhealingShield] andEventType:CombatEventTypeHeal]];
+		*newHealth += self.owningGuardian.overhealingShield;
+		self.owningGuardian.overhealingShield = 0;
+	}
+	else if (healthDelta < self.owningGuardian.overhealingShield){
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:healthDelta] andEventType:CombatEventTypeHeal]];
+		*newHealth += healthDelta;
+		self.owningGuardian.overhealingShield -= healthDelta;
+	}
+}
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth {
+    
+}
+@end
+
+@implementation GraspOfTheDamnedEffect
+
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta {
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+    if (self.needsDetonation){
+        NSArray *aliveMembers = [theRaid getAliveMembers];
+        NSInteger damageDealt = 35 * (self.owner.damageDoneMultiplier);
+        for (RaidMember *member in aliveMembers){
+            [member setHealth:member.health - damageDealt];
+            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:damageDealt] andEventType:CombatEventTypeDamage]];
+        }
+        self.needsDetonation = NO;
+        self.isExpired = YES;
+        [[(Boss*)self.owner announcer] displayParticleSystemWithName:@"fire_explosion.plist" onTarget:(RaidMember*)self.target];
+        [[(Boss*)self.owner announcer] displayScreenShakeForDuration:1.0];
+    }
+}
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
+    
+}
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth {
+    if (newHealth > currentHealth){
+        self.needsDetonation = YES;
+    }
+}
+
 @end
 
 #pragma mark - DEPRECATED SPELLS

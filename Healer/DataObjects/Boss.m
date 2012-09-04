@@ -1211,7 +1211,6 @@
         BaraghastRoar *roar = [[BaraghastRoar alloc] init];
         [roar setTitle:@"baraghast-roar"];
         [roar setCooldown:18.0];
-        [roar setOwner:self];
         [self addAbility:roar];
         [roar release];
     }
@@ -1221,7 +1220,6 @@
         BaraghastBreakOff *breakOff = [[BaraghastBreakOff alloc] init];
         [breakOff setTitle:@"break-off"];
         [breakOff setCooldown:25];
-        [breakOff setOwner:self];
         [breakOff setOwnerAutoAttack:self.autoAttack];
         
         [self addAbility:breakOff];
@@ -1649,6 +1647,58 @@
 @end
 
 @implementation BaraghastReborn
+- (void)dealloc{
+    [_deathwave release];
+    [super dealloc];
+}
++ (id)defaultBoss {
+    BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:450000 damage:12 targets:1 frequency:1.25 andChoosesMT:YES];
+    [boss setTitle:@"Baraghast Reborn"];
+    [boss setInfo:@"Before you stands the destroyed but risen warchief Baraghast.  His horrible visage once again sows fear in the hearts of all of your allies.  This time he is not only guarding a terrible secret, but his hateful gaze reveals his true purpose -- Revenge."];
+    
+    BaraghastRoar *roar = [[[BaraghastRoar alloc] init] autorelease];
+    [roar setCooldown:18.0];
+    [roar setTitle:@"baraghast-roar"];
+    [boss addAbility:roar];
+    
+    boss.deathwave = [[[Deathwave alloc] init] autorelease];
+    [boss.deathwave  setCooldown:kAbilityRequiresTrigger];
+    [boss.deathwave  setTitle:@"deathwave"];
+    [boss addAbility:boss.deathwave ];
+    
+    GraspOfTheDamnedEffect *graspEffect = [[[GraspOfTheDamnedEffect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
+    [graspEffect setNumOfTicks:6];
+    [graspEffect setValuePerTick:-10];
+    [graspEffect setSpriteName:@"blood_curse.png"];
+    [graspEffect setTitle:@"grasp-of-the-damned-eff"];
+    [graspEffect setAilmentType:AilmentCurse];
+    Attack *graspOfTheDamned = [[[Attack alloc] initWithDamage:0 andCooldown:15.0] autorelease];
+    AbilityDescriptor *graspOfTheDamnedDesc = [[[AbilityDescriptor alloc] init] autorelease];
+    [graspOfTheDamnedDesc setAbilityName:@"Grasp of the Damned"];
+    [graspOfTheDamnedDesc setAbilityDescription:@"Periodically a curse is applied to an ally that deals damage over time and will explode if the ally receives any healing"];
+    [graspOfTheDamned setDescriptor:graspOfTheDamnedDesc];
+    [graspOfTheDamned setTitle:@"grasp-of-the-damned"];
+    [graspOfTheDamned setAppliedEffect:graspEffect];
+    [boss addAbility:graspOfTheDamned];
+    
+    return [boss autorelease];
+}
+
+- (void)ownerDidExecuteAbility:(Ability *)ability {
+    if (ability == self.deathwave){
+        [self.announcer displayScreenShakeForDuration:1.5];
+        for (Ability *ability in self.abilities){
+            [ability setTimeApplied:0.0];
+        }
+    }
+}
+
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    if (percentage == 99.0 || percentage == 80.0 || percentage == 60.0 || percentage == 40.0 || percentage == 20.0){
+        [self.deathwave triggerAbilityForRaid:raid andPlayers:[NSArray arrayWithObject:player]];
+    }
+    
+}
 @end
 
 @implementation AvatarOfTorment1

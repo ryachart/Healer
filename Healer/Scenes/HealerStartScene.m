@@ -17,6 +17,7 @@
 #import "BasicButton.h"
 #import "AudioController.h"
 #import "MultiplayerQueueScene.h"
+#import "GoldCounterSprite.h"
 
 BOOL firstLaunch = YES;
 
@@ -43,6 +44,7 @@ BOOL firstLaunch = YES;
     if (self = [super init]){
 #if DEBUG
         [Divinity unlockDivinity];
+        [Shop resetDivinity];
 #endif
         [[AudioController sharedInstance] addNewPlayerWithTitle:@"title" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/title" ofType:@"m4a"]]];
         //Perform Scene Setup   
@@ -75,14 +77,9 @@ BOOL firstLaunch = YES;
         [self.menu setColor:ccc3(255, 255, 255)];
         [self addChild:self.menu];
         
-        int playerGold = [Shop localPlayerGold];
-        CCSprite *goldBG = [CCSprite spriteWithSpriteFrameName:@"gold_bg.png"];
-        CCLabelTTF *goldLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold: %i", playerGold] fontName:@"Arial" fontSize:32.0];
-        [goldLabel setColor:ccBLACK];
-        [goldLabel setPosition:CGPointMake(goldBG.contentSize.width /2 , goldBG.contentSize.height /2 )];
-        [goldBG setPosition:CGPointMake(900, 50)];
-        [self addChild:goldBG];
-        [goldBG addChild:goldLabel];
+        GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
+        [goldCounter setPosition:CGPointMake(900, 50)];
+        [self addChild:goldCounter];
         
         CCSprite *logoSprite = [CCSprite spriteWithSpriteFrameName:@"home_logo.png"];
         [logoSprite setAnchorPoint:CGPointMake(0, 0)];
@@ -159,7 +156,7 @@ BOOL firstLaunch = YES;
 }
 
 -(void)divinitySelected{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
 }
 
 - (void)hardModeToggled:(id)sender {

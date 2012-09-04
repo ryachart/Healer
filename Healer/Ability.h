@@ -11,6 +11,8 @@
 #import <Foundation/Foundation.h>
 #import "RaidMember.h"
 
+#define kAbilityRequiresTrigger 9999
+
 @class Raid, Player, Boss, Agent, HealableTarget, AbilityDescriptor, Effect;
 @interface Ability : NSObject
 
@@ -142,5 +144,4 @@ typedef enum {
 @end
 
 @interface OozeTwoTargets : Ability
-
 @end

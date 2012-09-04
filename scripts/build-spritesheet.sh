@@ -5,6 +5,8 @@ sprites_dir=${PROJECT_DIR}/sprites
 battle_sprites_dir=${PROJECT_DIR}/battle-sprites
 shop_sprites_dir=${PROJECT_DIR}/shop-sprites
 spell_sprites_dir=${PROJECT_DIR}/spell-sprites
+effect_sprites_dir=${PROJECT_DIR}/effect-sprites
+divinity_spires_dir=${PROJECT_DIR}/divinity-sprites
 
 asset=`basename $sprites_dir`
 mkdir -p $ASSETS_DIR
@@ -27,4 +29,14 @@ spell_plist=$ASSETS_DIR/spell-sprites-ipad-hd.plist
 spell_sheet=$ASSETS_DIR/spell-sprites-ipad-hd.pvr.ccz
 /usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $spell_plist --format cocos2d --sheet $spell_sheet --auto-sd $spell_sprites_dir/*.png
 /usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $spell_plist --format cocos2d --sheet $spell_sheet $spell_sprites_dir/*.png
+
+effect_plist=$ASSETS_DIR/effect-sprites-ipad-hd.plist
+effect_sheet=$ASSETS_DIR/effect-sprites-ipad-hd.pvr.ccz
+/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $effect_plist --format cocos2d --sheet $effect_sheet --auto-sd $effect_sprites_dir/*.png
+/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $effect_plist --format cocos2d --sheet $effect_sheet $effect_sprites_dir/*.png
+
+divinity_plist=$ASSETS_DIR/divinity-sprites-ipad-hd.plist
+divinity_sheet=$ASSETS_DIR/divinity-sprites-ipad-hd.pvr.ccz
+/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $divinity_plist --format cocos2d --sheet $divinity_sheet --auto-sd $divinity_spires_dir/*.png
+/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $divinity_plist --format cocos2d --sheet $divinity_sheet $divinity_spires_dir/*.png
 

@@ -140,6 +140,7 @@
 @end
 
 @interface BaraghastReborn : Boss
+@property (nonatomic, retain) Ability *deathwave;
 @end
 
 @interface AvatarOfTorment1 : Boss

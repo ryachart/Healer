@@ -29,6 +29,7 @@
 @property (nonatomic, readonly) float healthPercentage;
 @property (nonatomic, readonly) NSInteger visibleNegativeEffectsCount;
 
+- (void)didReceiveHealing:(NSInteger)amount andOverhealing:(NSInteger)amount;
 - (void)setHealth:(NSInteger)newHealth;
 - (BOOL)isDead;
 - (void)addEffect:(Effect*)theEffect;

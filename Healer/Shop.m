@@ -9,9 +9,11 @@
 #import "Spell.h"
 #import "ShopItem.h"
 #import "PersistantDataManager.h"
+#import "Divinity.h"
 
 NSString* const PlayerGold = @"com.healer.playerId";
 NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
+NSString* const PlayerGoldDidChangeNotification = @"com.healer.goldDidChangeNotif";
 
 static NSArray *shopItems = nil;
 
@@ -52,6 +54,7 @@ static NSArray *shopItems = nil;
         currentGold = 2000; //MAX GOLD
     }
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold];
+    [[NSNotificationCenter defaultCenter] postNotificationName:PlayerGoldDidChangeNotification object:nil userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold]];
 }
 
 +(void)playerLosesGold:(NSInteger)gold{
@@ -63,6 +66,7 @@ static NSArray *shopItems = nil;
         currentGold = 0; //MAX GOLD
     }
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold];
+    [[NSNotificationCenter defaultCenter] postNotificationName:PlayerGoldDidChangeNotification object:nil userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold]];
 }
 
 +(NSArray*)purchasedItems{
@@ -193,10 +197,14 @@ static NSArray *shopItems = nil;
     
 }
 
-+ (NSInteger)costForNextDivinityTier {
-    NSInteger numPurchased = [Shop numDivinityTiersPurchased];
++ (void)resetDivinity {
+    [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:DivinityTiersUnlocked];
+    [Divinity resetConfig];
+}
+
++ (NSInteger)costForDivinityTier:(NSInteger)tier {
     NSInteger val = -1;
-    switch (numPurchased) {
+    switch (tier) {
         case 0:
             val = 200;
             break;
@@ -212,10 +220,12 @@ static NSArray *shopItems = nil;
         case 4:
             val = 20000;
             break;
-        default:
-            break;
     }
     return val;
+}
+
++ (NSInteger)costForNextDivinityTier {
+    return [Shop costForDivinityTier:[Shop numDivinityTiersPurchased]+1];
 }
 
 + (NSInteger)numDivinityTiersPurchased {

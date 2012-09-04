@@ -8,10 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+
+#define NUM_DIV_TIERS 5
+
 @interface Divinity : NSObject
 
 + (NSArray*)divinityChoicesForTier:(NSInteger)tier;
 + (NSString*)descriptionForChoice:(NSString*)choice;
++ (NSString*)spriteFrameNameForChoice:(NSString*)choice;
 
 + (BOOL)isDivinityUnlocked;
 + (void)unlockDivinity;
@@ -21,6 +25,7 @@
 
 + (NSArray*)effectsForConfiguration:(NSDictionary*)configuration;
 
++ (void)resetConfig;
 + (NSDictionary*)localDivinityConfig;
 
 @end

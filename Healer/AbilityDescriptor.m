@@ -10,4 +10,11 @@
 
 @implementation AbilityDescriptor
 
+- (NSString*)iconName{
+    if (!_iconName){
+        return @"unknown_ability.png";
+    }
+    return _iconName;
+}
+
 @end

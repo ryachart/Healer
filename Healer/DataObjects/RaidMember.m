@@ -33,6 +33,7 @@
         self.title = @"NOTITLE";
         self.info = @"NOINFO";
         self.dodgeChance = 0.0;
+        self.criticalChance = .05;
         positioning = position;
     }
 	return self;
@@ -56,6 +57,10 @@
 		[target setHealth:[target health] - (self.damageDealt * self.damageDoneMultiplier)];
 		
 	}
+}
+
+- (void)didPerformCriticalStrikeForAmount:(NSInteger)amount{
+    
 }
 
 -(void)updateEffects:(Boss*)theBoss raid:(Raid*)theRaid player:(Player*)thePlayer time:(float)timeDelta{
@@ -92,6 +97,11 @@
     int fuzz = arc4random() % (fuzzRange + 1);
     
     finalAmount += fuzz * (arc4random() % 2 == 0 ? -1 : 1);
+    
+    if (arc4random() % 100 < (100 * self.criticalChance)){
+        finalAmount *= 1.5;
+        [self didPerformCriticalStrikeForAmount:finalAmount];
+    }
     return finalAmount;
 }
 
@@ -148,28 +158,50 @@
 +(Guardian*)defaultGuardian{
     return [[[Guardian alloc] init] autorelease];
 }
+- (void)didReceiveHealing:(NSInteger)amount andOverhealing:(NSInteger)overAmount{
+    [super didReceiveHealing:amount andOverhealing:overAmount];
+    self.overhealingShield += overAmount;
+}
+- (void)setOverhealingShield:(NSInteger)overhealingShield{
+    _overhealingShield = overhealingShield;
+    NSInteger maxOverheal = 25;
+    if (_overhealingShield > maxOverheal){
+        _overhealingShield = maxOverheal;
+    }
+}
+
 -(id)init{
     if (self = [super initWithHealth:175 damageDealt:50 andDmgFrequency:1.0 andPositioning:Melee]){
         self.title = @"Guardian";
-        self.dodgeChance = .09;
-        self.info = @"The Guardian has high health but low damage.";
+        self.dodgeChance = .15;
+        self.info = @"The Guardian can draw attention from enemies and become focused.  Healing a Guardian beyond full health creates a shield that absorbs damage.";
+        
+        GuardianBarrierEffect *gbe = [[GuardianBarrierEffect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible];
+        [gbe setOwningGuardian:self];
+        [gbe setTitle:@"guardian-barrier-eff"];
+        [self addEffect:gbe];
+        [gbe release];
     }
     return self;
 }
 @end
 
 
-@implementation Soldier
-+(Soldier*)defaultSoldier{
-    return [[[Soldier alloc] init] autorelease];
+@implementation Berserker
++(Berserker*)defaultBerserker{
+    return [[[Berserker alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:120 damageDealt:62 andDmgFrequency:.80 andPositioning:Melee]){
-        self.title = @"Soldier";
-        self.info = @"The Soldier has moderate health and moderate damage.";
+    if (self = [super initWithHealth:120 damageDealt:62 andDmgFrequency:.75 andPositioning:Melee]){
+        self.title = @"Berserker";
+        self.info = @"The Berserker has moderate health and damage. When dealing a critical strike, this ally heals itself.";
         self.dodgeChance = .07;
+        self.criticalChance = .1;
     }
     return self;
+}
+- (void)didPerformCriticalStrikeForAmount:(NSInteger)amount{
+    self.health += 5;
 }
 @end
 
@@ -192,9 +224,9 @@
     return [[[Champion alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:115 damageDealt:88 andDmgFrequency:1.1 andPositioning:Melee]){
+    if (self = [super initWithHealth:125 damageDealt:88 andDmgFrequency:1.1 andPositioning:Melee]){
         self.title = @"Champion";
-        self.info = @"The Champion has more health and deals more damage when healed to full";
+        self.info = @"The Champion has more health and deals more damage when healed to full.";
         self.dodgeChance = .07;
     }
     return self;
@@ -216,7 +248,7 @@
     if (self = [super initWithHealth:125 damageDealt:30 andDmgFrequency:1.2 andPositioning:Ranged]){
         self.title = @"Wizard";
         self.dodgeChance = .07;
-        self.info = @"The Wizard has moderate health and low damage but improves your energy regeneration";
+        self.info = @"The Wizard has moderate health and low damage but periodically grants you energy.";
         lastEnergyGrant = 0.0;
     }
     return self;
@@ -243,16 +275,23 @@
     return [[[Warlock alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:107 damageDealt:126 andDmgFrequency:.7 andPositioning:Ranged]){
+    if (self = [super initWithHealth:110 damageDealt:60 andDmgFrequency:.7 andPositioning:Ranged]){
         self.title = @"Warlock";
-        self.info = @"The Warlock has moderate health and deals more damage at low health.";
+        self.info = @"The Warlock has moderate health and heals itself for a small amount when at low health.";
         self.dodgeChance = .07;
     }
     return self;
 }
-
--(int)damageDealt{
-    int baseDamage = [super damageDealt];
-    return baseDamage - self.health;
+- (void)combatActions:(Boss *)theBoss raid:(Raid *)theRaid players:(NSArray *)players gameTime:(float)timeDelta{
+    [super combatActions:theBoss raid:theRaid players:players gameTime:timeDelta];
+    
+    if (self.healthPercentage < .5){
+        self.healCooldown += timeDelta;
+        if (self.healCooldown >= 1.5){
+            self.health += 2;
+            self.healCooldown = 0.0;
+        }
+    }
+    
 }
 @end

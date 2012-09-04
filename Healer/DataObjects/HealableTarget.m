@@ -46,6 +46,8 @@
 
 -(void)setHealth:(NSInteger)newHealth
 {
+    NSInteger overHealing = 0;
+    NSInteger totalHealing = 0;
     if (self.hasDied){
         return;
     }
@@ -57,14 +59,24 @@
 	for (HealthAdjustmentModifier* ham in healthAdjustmentModifiers){
 		[ham didChangeHealthFrom:prevHealth toNewHealth:newHealth];
 	}
+    
 	if (health < 0) health = 0;
 	if (health > maximumHealth) {
+        overHealing = health - maximumHealth;
 		health = maximumHealth;
 	}
+    if (prevHealth < health){
+        totalHealing = health - prevHealth;
+    }
+    [self didReceiveHealing:totalHealing andOverhealing:overHealing];
     if (health == 0){
         self.hasDied = YES;
         [self.logger logEvent:[CombatEvent eventWithSource:self target:self value:nil andEventType:CombatEventTypeMemberDied]];
     }
+}
+
+- (void)didReceiveHealing:(NSInteger)amount andOverhealing:(NSInteger)overAmount{
+    
 }
 
 - (NSInteger)visibleNegativeEffectsCount {

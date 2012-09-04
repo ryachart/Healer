@@ -57,7 +57,7 @@
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], nil];
         
         for (int i = 0; i < 2; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+            [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         
     }
@@ -67,11 +67,11 @@
         basicBoss = [CorruptedTroll defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
         
-        for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
         for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
@@ -84,13 +84,13 @@
         spells = [NSArray arrayWithObjects:[Heal defaultSpell],[GreaterHeal defaultSpell], nil];
         
         for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 2; i++){
             [basicRaid addRaidMember:[Archer defaultArcher]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Guardian  defaultGuardian]];
@@ -103,16 +103,16 @@
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
         
         for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 1; i++){
-            [basicRaid addRaidMember:[Champion defaultChampion]];
-        }
-        for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Archer defaultArcher]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+        }
+        for (int i = 0; i < 1; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
@@ -124,14 +124,14 @@
         basicBoss = [BefouledTreat defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell],[ForkedHeal defaultSpell], nil];
         
-        for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
         for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Archer defaultArcher]];
         }
         for (int i = 0; i < 2; i++){
             [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 4; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
@@ -143,14 +143,14 @@
         basicBoss = [PlaguebringerColossus defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [ForkedHeal defaultSpell], [Regrow defaultSpell], nil];
         
-        for (int i = 0; i < 6; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
         for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 5; i++){
             [basicRaid addRaidMember:[Archer defaultArcher]];
+        }
+        for (int i = 0; i < 6; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
@@ -162,17 +162,17 @@
         basicBoss = [SporeRavagers defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [LightEternal defaultSpell], [Regrow defaultSpell], nil];
         
-        for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Champion defaultChampion]];
-        }
         for (int i = 0; i < 4; i++){
             [basicRaid addRaidMember:[Archer defaultArcher]];
         }
         for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+        }
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
@@ -183,18 +183,18 @@
         basicRaid = [[Raid alloc] init];
         basicBoss = [Trulzar defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Purify defaultSpell], [Regrow defaultSpell], nil];
-        
-        for (int i = 0; i < 7; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Champion defaultChampion]];
-        }
+    
         for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 4; i++){
             [basicRaid addRaidMember:[Archer defaultArcher]];
+        }
+        for (int i = 0; i < 7; i++){
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+        }
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
@@ -206,17 +206,17 @@
         basicBoss = [DarkCouncil defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [Purify defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
-        for (int i = 0; i < 6; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 6; i++){
-            [basicRaid addRaidMember:[Champion defaultChampion]];
-        }
         for (int i = 0; i < 4; i++){
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Warlock defaultWarlock]];
+        }
+        for (int i = 0; i < 6; i++){
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+        }
+        for (int i = 0; i < 6; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
@@ -229,17 +229,17 @@
         basicBoss = [TwinChampions defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal  defaultSpell], [GreaterHeal defaultSpell] , [Barrier defaultSpell], [HealingBurst defaultSpell], nil];
         
-        for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Champion defaultChampion]];
-        }
         for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 5; i++){
             [basicRaid addRaidMember:[Warlock defaultWarlock]];
+        }
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+        }
+        for (int i = 0; i < 5; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 2; i++){
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
@@ -251,17 +251,17 @@
         basicBoss = [Baraghast defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
-        for (int i = 0; i < 6; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
-        }
-        for (int i = 0; i < 6; i++){
-            [basicRaid addRaidMember:[Champion defaultChampion]];
-        }
         for (int i = 0; i < 4; i++){
             [basicRaid addRaidMember:[Wizard defaultWizard]];
         }
         for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Warlock defaultWarlock]];
+        }
+        for (int i = 0; i < 6; i++){
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
+        }
+        for (int i = 0; i < 6; i++){
+            [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 1; i++){
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
@@ -274,20 +274,20 @@
         basicBoss = [CrazedSeer defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
+        for (int i = 0; i < 4; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
+        }
         for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
         }
         for (int i = 0; i < 5; i++){
             [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
-        }
-        for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Wizard defaultWizard]];
-        }
-        for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -297,20 +297,20 @@
         basicBoss = [GatekeeperDelsarn defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
+        for (int i = 0; i < 4; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
+        }
         for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
         }
         for (int i = 0; i < 5; i++){
             [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
-        }
-        for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Wizard defaultWizard]];
-        }
-        for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -330,7 +330,7 @@
             [basicRaid addRaidMember:[Archer defaultArcher]];
         }
         for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
         }
         for (int i = 0; i < 4; i++){
             [basicRaid addRaidMember:[Champion defaultChampion]];
@@ -356,7 +356,7 @@
             [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
         }
         for (int i = 0; i < 4; i++){
             [basicRaid addRaidMember:[Champion defaultChampion]];
@@ -382,7 +382,7 @@
             [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
         }
         for (int i = 0; i < 4; i++){
             [basicRaid addRaidMember:[Champion defaultChampion]];
@@ -408,7 +408,7 @@
             [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
         }
         for (int i = 0; i < 4; i++){
             [basicRaid addRaidMember:[Champion defaultChampion]];
@@ -424,20 +424,20 @@
         basicBoss = [BaraghastReborn defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
+        for (int i = 0; i < 4; i++){
+            [basicRaid addRaidMember:[Wizard defaultWizard]];
+        }
+        for (int i = 0; i < 3; i++){
+            [basicRaid addRaidMember:[Warlock defaultWarlock]];
+        }
         for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
         }
         for (int i = 0; i < 5; i++){
             [basicRaid addRaidMember:[Champion defaultChampion]];
         }
         for (int i = 0; i < 3; i++){
             [basicRaid addRaidMember:[Guardian defaultGuardian]];
-        }
-        for (int i = 0; i < 4; i++){
-            [basicRaid addRaidMember:[Wizard defaultWizard]];
-        }
-        for (int i = 0; i < 3; i++){
-            [basicRaid addRaidMember:[Warlock defaultWarlock]];
         }
         
     }
@@ -448,7 +448,7 @@
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
         }
         for (int i = 0; i < 5; i++){
             [basicRaid addRaidMember:[Champion defaultChampion]];
@@ -471,7 +471,7 @@
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
         }
         for (int i = 0; i < 5; i++){
             [basicRaid addRaidMember:[Champion defaultChampion]];
@@ -494,7 +494,7 @@
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         for (int i = 0; i < 5; i++){
-            [basicRaid addRaidMember:[Soldier defaultSoldier]];
+            [basicRaid addRaidMember:[Berserker defaultBerserker]];
         }
         for (int i = 0; i < 5; i++){
             [basicRaid addRaidMember:[Champion defaultChampion]];
@@ -615,7 +615,7 @@
     spells = [NSArray arrayWithObjects:[Heal  defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
     
     for (int i = 0; i < 5; i++){
-        [basicRaid addRaidMember:[Soldier defaultSoldier]];
+        [basicRaid addRaidMember:[Berserker defaultBerserker]];
     }
     for (int i = 0; i < 5; i++){
         [basicRaid addRaidMember:[Champion defaultChampion]];

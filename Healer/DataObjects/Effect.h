@@ -224,6 +224,15 @@ typedef enum {
 @property (nonatomic, readwrite) NSTimeInterval healingSpellCooldown;
 @end
 
+@class Guardian;
+@interface GuardianBarrierEffect : Effect <HealthAdjustmentModifier>
+@property (nonatomic, assign) Guardian *owningGuardian;
+@end
+
+@interface GraspOfTheDamnedEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
+@property (nonatomic, readwrite) BOOL needsDetonation;
+@end
+
 #pragma mark - DEPRECATED EFFECTS
 @interface BigFireball : Effect {
 	NSInteger lastPosition;

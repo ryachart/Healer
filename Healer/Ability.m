@@ -65,7 +65,7 @@
 
 - (void)combatActions:(Raid*)theRaid boss:(Boss*)theBoss players:(NSArray*)players gameTime:(float)timeDelta{
     self.timeApplied += timeDelta;
-    if (self.cooldown != 9999 && self.timeApplied >= self.cooldown){
+    if (self.cooldown != kAbilityRequiresTrigger && self.timeApplied >= self.cooldown){
         if (!self.isDisabled){
             [self triggerAbilityForRaid:theRaid andPlayers:players];
             [(Boss*)self.owner ownerDidExecuteAbility:self];
@@ -145,6 +145,7 @@
     [self damageTarget:target];
     if (self.appliedEffect){
         Effect *applyThis = [self.appliedEffect copy];
+        [applyThis setOwner:self.owner];
         [target addEffect:applyThis];
         [applyThis release];
     }
@@ -456,15 +457,18 @@
         [desc setAbilityName:@"Deathwave"];
         [self setDescriptor:desc];
         [desc release];
-        self.abilityValue = 1000;
+        self.abilityValue = 1200;
     }
     return self;
 }
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     [[(Boss*)self.owner announcer] displayScreenShakeForDuration:1.0];
+    [[(Boss*)self.owner announcer] displayPartcileSystemOnRaidWithName:@"death_ring.plist" forDuration:2.0];
+
     NSInteger livingMemberCount = theRaid.getAliveMembers.count;
-    NSInteger deathWaveDamage = (int)round((float)self.abilityValue / livingMemberCount);
     for (RaidMember *member in theRaid.getAliveMembers){
+        NSInteger deathWaveDamage = (int)round((float)self.abilityValue / livingMemberCount);
+        deathWaveDamage *= (arc4random() % 50 + 50) / 100.0;
         [member setHealth:member.health - (deathWaveDamage * self.owner.damageDoneMultiplier)];
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(deathWaveDamage * self.owner.damageDoneMultiplier)] andEventType:CombatEventTypeDamage]]; 
     }

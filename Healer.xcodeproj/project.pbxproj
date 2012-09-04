@@ -172,6 +172,8 @@
 		BFA5464715AA0CED00F9B167 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464615AA0CED00F9B167 /* CFNetwork.framework */; };
 		BFA5464915AA0D3100F9B167 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */; };
 		BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */; };
+		BFAFA3F415F43C650052FCA5 /* GoldCounterSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */; };
+		BFAFA3F915F54BBD0052FCA5 /* DivinityTierCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F815F54BBD0052FCA5 /* DivinityTierCard.m */; };
 		BFB46407154A25DD00503E30 /* StoreScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46406154A25DD00503E30 /* StoreScene.m */; };
 		BFB4640C154A262800503E30 /* ShopItemNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB4640B154A262800503E30 /* ShopItemNode.m */; };
 		BFB46411154A268900503E30 /* Shop.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46410154A268900503E30 /* Shop.m */; };
@@ -615,6 +617,10 @@
 		BFA5464615AA0CED00F9B167 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape~ipad.png"; sourceTree = "<group>"; };
+		BFAFA3F215F43C650052FCA5 /* GoldCounterSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoldCounterSprite.h; sourceTree = "<group>"; };
+		BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoldCounterSprite.m; sourceTree = "<group>"; };
+		BFAFA3F715F54BBD0052FCA5 /* DivinityTierCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DivinityTierCard.h; sourceTree = "<group>"; };
+		BFAFA3F815F54BBD0052FCA5 /* DivinityTierCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DivinityTierCard.m; sourceTree = "<group>"; };
 		BFB46405154A25DD00503E30 /* StoreScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreScene.h; sourceTree = "<group>"; };
 		BFB46406154A25DD00503E30 /* StoreScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreScene.m; sourceTree = "<group>"; };
 		BFB4640A154A262800503E30 /* ShopItemNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopItemNode.h; sourceTree = "<group>"; };
@@ -1458,6 +1464,7 @@
 		38F0504413C2618900BCADCB /* View Objects */ = {
 			isa = PBXGroup;
 			children = (
+				BFAFA3F615F54B8A0052FCA5 /* Divinity Views */,
 				BF448C53154BA49E009401A6 /* UI Layers */,
 				BFB46409154A260D00503E30 /* Store Views */,
 				BF210746152AAACC001B93D7 /* UI */,
@@ -1537,6 +1544,15 @@
 			path = TestFlightSDK1.0;
 			sourceTree = "<group>";
 		};
+		BFAFA3F615F54B8A0052FCA5 /* Divinity Views */ = {
+			isa = PBXGroup;
+			children = (
+				BFAFA3F715F54BBD0052FCA5 /* DivinityTierCard.h */,
+				BFAFA3F815F54BBD0052FCA5 /* DivinityTierCard.m */,
+			);
+			name = "Divinity Views";
+			sourceTree = "<group>";
+		};
 		BFB46409154A260D00503E30 /* Store Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -1544,6 +1560,8 @@
 				BFB4640B154A262800503E30 /* ShopItemNode.m */,
 				BF0DCF62156C6DEE005E74C7 /* ShopItemExtendedNode.h */,
 				BF0DCF63156C6DEE005E74C7 /* ShopItemExtendedNode.m */,
+				BFAFA3F215F43C650052FCA5 /* GoldCounterSprite.h */,
+				BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */,
 			);
 			name = "Store Views";
 			sourceTree = "<group>";
@@ -1798,6 +1816,8 @@
 				BF98B18215D3572700017EA4 /* BossAbilityDescriptionsView.m in Sources */,
 				BF98B18615D3577A00017EA4 /* BossAbilityDescriptorIcon.m in Sources */,
 				BF98B18A15D37EAE00017EA4 /* AbilityDescriptionModalLayer.m in Sources */,
+				BFAFA3F415F43C650052FCA5 /* GoldCounterSprite.m in Sources */,
+				BFAFA3F915F54BBD0052FCA5 /* DivinityTierCard.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

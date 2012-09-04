@@ -60,6 +60,11 @@ static NSDictionary *divinityInfo = nil;
     return [[title lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"-"];
 }
 
++ (NSString*)spriteFrameNameForChoice:(NSString*)choice
+{
+    return [[[Divinity choiceTitleToKey:choice] stringByAppendingString:@"-icon"] stringByAppendingPathExtension:@"png"];
+}
+
 + (void)loadDivinityInfo {
     NSString *pathToDict = [[NSBundle mainBundle] pathForResource:@"divinity" ofType:@"plist"];
     divinityInfo = [[NSDictionary dictionaryWithContentsOfFile:pathToDict] retain];
@@ -117,6 +122,10 @@ static NSDictionary *divinityInfo = nil;
 
 + (NSDictionary*)localDivinityConfig {
     return [[NSUserDefaults standardUserDefaults] dictionaryForKey:DivinityConfig];
+}
+
++ (void)resetConfig {
+    [[NSUserDefaults standardUserDefaults] setValue:[NSDictionary dictionary] forKey:DivinityConfig];
 }
 
 @end

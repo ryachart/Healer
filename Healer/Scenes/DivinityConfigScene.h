@@ -7,7 +7,15 @@
 //
 
 #import "cocos2d.h"
+#import "Divinity.h"
+#import "DivinityTierCard.h"
 
-@interface DivinityConfigScene : CCScene
+@class DivinityTierCard;
+@interface DivinityConfigScene : CCScene <DivinityTierCardDelegate> {
+    DivinityTierCard *tierTableCards[NUM_DIV_TIERS];
+    CCSprite *chargedPipes[NUM_DIV_TIERS];
+    CCSprite *iconSprites[NUM_DIV_TIERS][3];
+    CCMenu *buttonSprites[NUM_DIV_TIERS][3];
+}
 
 @end

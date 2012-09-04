@@ -40,12 +40,13 @@ typedef enum {
 @property (nonatomic,  readwrite) NSInteger damageDealt; //All RaidMembers deal some damage
 @property (readwrite) float lastAttack;
 @property (readwrite) float dodgeChance;
+@property (readwrite) float criticalChance;
 @property (readonly) Positioning positioning;
 
 - (float)dps;
 - (id)initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position;
 - (BOOL)raidMemberShouldDodgeAttack:(float)modifer;
-
+- (void)didPerformCriticalStrikeForAmount:(NSInteger)amount;
 //This function is overriden by each subtype of RaidMember.
 //It allows a RaidMember to be asked to take any combatActions while the games goes on.
 //It also allows a RaidMember to deal damage.
@@ -56,11 +57,12 @@ typedef enum {
 @end
 
 //AVERAGE HEALTH: 124
-@interface Guardian : RaidMember 
+@interface Guardian : RaidMember
+@property (nonatomic, readwrite) NSInteger overhealingShield;
 +(Guardian*)defaultGuardian;
 @end
-@interface Soldier : RaidMember 
-+(Soldier*)defaultSoldier;
+@interface Berserker : RaidMember 
++(Berserker*)defaultBerserker;
 @end
 @interface Archer : RaidMember 
 +(Archer*)defaultArcher;
@@ -74,5 +76,6 @@ typedef enum {
 +(Champion *)defaultChampion;
 @end
 @interface Warlock : RaidMember
+@property (nonatomic, readwrite) NSTimeInterval healCooldown;
 +(Warlock*)defaultWarlock;
 @end

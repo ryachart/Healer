@@ -1037,7 +1037,6 @@
 		NSInteger healthDelta = *health - *newHealth;
 	
 		NSInteger newHealthDelta = healthDelta	* .25;
-		NSLog(@"Lowering damage taken by %i", *health- newHealthDelta);
 		*newHealth = *health - newHealthDelta;
 	}
 }

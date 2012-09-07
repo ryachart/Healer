@@ -79,13 +79,13 @@
     
 }
 
-- (NSInteger)visibleNegativeEffectsCount {
+- (NSInteger)effectCountOfType:(EffectType)type {
     if (self.isDead){
         return 0;
     }
     NSInteger count = 0;
     for (Effect *eff in self.activeEffects){
-        if (eff.effectType == EffectTypeNegative){
+        if (eff.effectType == type){
             count++;
         }
     }
@@ -131,7 +131,7 @@
         if ([self.healthAdjustmentModifiers containsObject:theEffect]){
             [self.healthAdjustmentModifiers removeObject:theEffect];
         }
-    [self.activeEffects removeObject:theEffect];
+        [self.activeEffects removeObject:theEffect];
     }
 }
 

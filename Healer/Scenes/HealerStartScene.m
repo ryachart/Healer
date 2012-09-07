@@ -97,21 +97,26 @@ BOOL firstLaunch = YES;
         
         return;
     }
-    
+    __block BOOL multiplayerGamePlayRequested = YES;
     GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
     if (![localPlayer isAuthenticated]){
         [localPlayer authenticateWithCompletionHandler:^(NSError *error){
                 if (!error) {
-                    MultiplayerQueueScene *queueScene = [[MultiplayerQueueScene alloc] init];
-                    [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:queueScene]];
-                    [queueScene release];
-                    self.authenticationAttempted = YES;
+                    if (multiplayerGamePlayRequested){
+                        MultiplayerQueueScene *queueScene = [[MultiplayerQueueScene alloc] init];
+                        [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:queueScene]];
+                        [queueScene release];
+                        self.authenticationAttempted = YES;
+                    }
                 }else
                 {
                     self.authenticationAttempted = NO;
                     NSLog(@"%@", error);
+                    UIAlertView *errorAuthenticating = [[[UIAlertView alloc] initWithTitle:@"Error" message:error.localizedDescription delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
+                    [errorAuthenticating show];
                 }
-            }];
+            multiplayerGamePlayRequested = NO;
+        }];
     } else{
         MultiplayerQueueScene *queueScene = [[MultiplayerQueueScene alloc] init];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:queueScene]];

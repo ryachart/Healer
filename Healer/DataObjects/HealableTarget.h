@@ -9,10 +9,10 @@
 #import <Foundation/Foundation.h>
 #import "CombatEvent.h"
 #import "Agent.h"
-
+#import "Effect.h"
 #define MAXIMUM_STATUS_EFFECTS 25
-@class Effect;
 @class HealthAdjustmentModifier;
+
 @interface HealableTarget : Agent {
 	NSInteger health; //All HealableTargets must have health
 	NSInteger maximumHealth;
@@ -27,8 +27,8 @@
 @property (readonly) NSMutableArray *activeEffects;
 @property (nonatomic, readwrite) BOOL isFocused;
 @property (nonatomic, readonly) float healthPercentage;
-@property (nonatomic, readonly) NSInteger visibleNegativeEffectsCount;
 
+- (NSInteger)effectCountOfType:(EffectType)type;
 - (void)didReceiveHealing:(NSInteger)amount andOverhealing:(NSInteger)amount;
 - (void)setHealth:(NSInteger)newHealth;
 - (BOOL)isDead;

@@ -646,8 +646,8 @@
     return self;
 }
 + (id)defaultSpell {
-    TouchOfHope *tol = [[TouchOfHope alloc] initWithTitle:@"Touch of Hope" healAmnt:50 energyCost:50 castTime:0.0 andCooldown:4.0];
-    [tol setDescription:@"Instantly Heals your Target for a Moderate Amount and places an effect on the target that heals for a small amount over 4 seconds.  Each time the periodic effect heals it restores 12 energy."];
+    TouchOfHope *tol = [[TouchOfHope alloc] initWithTitle:@"Touch of Hope" healAmnt:30 energyCost:50 castTime:0.0 andCooldown:4.0];
+    [tol setDescription:@"Instantly Heals your Target for a small amount and places an effect on the target that heals for a small amount over 4 seconds.  Each time the periodic effect heals it restores 12 energy."];
     return [tol autorelease];
 }
 
@@ -657,7 +657,7 @@
     TouchOfHopeEffect *tolEffect = [[TouchOfHopeEffect alloc] initWithDuration:4.0 andEffectType:EffectTypePositive];
     [tolEffect setTitle:@"toh-effect"];
     [tolEffect setSpriteName:@"touch_of_hope.png"];
-    [tolEffect setValuePerTick:2];
+    [tolEffect setValuePerTick:7];
     [tolEffect setNumOfTicks:4];
     [tolEffect setOwner:self.owner];
     [[self.owner spellTarget] addEffect:tolEffect];

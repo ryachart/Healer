@@ -59,6 +59,7 @@
     copied.title = self.title;
     copied.owner = self.owner;
     copied.isIndependent = self.isIndependent;
+    copied.ailmentType = self.ailmentType;
     return copied;
 }
 
@@ -879,7 +880,7 @@
 
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta {
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
-    if (self.needsDetonation){
+    if (self.needsDetonation && !self.isExpired){
         NSArray *aliveMembers = [theRaid getAliveMembers];
         NSInteger damageDealt = 35 * (self.owner.damageDoneMultiplier);
         for (RaidMember *member in aliveMembers){

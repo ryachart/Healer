@@ -757,7 +757,7 @@
 }
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
-    DelayedHealthEffect *finishHimEffect = [[DelayedHealthEffect alloc] initWithDuration:5 andEffectType:EffectTypeNegative];
+    DelayedHealthEffect *finishHimEffect = [[DelayedHealthEffect alloc] initWithDuration:3.5 andEffectType:EffectTypeNegative];
     [finishHimEffect setSpriteName:@"bleeding.png"];
     
     RaidMember *target = [theRaid randomLivingMember];
@@ -900,7 +900,7 @@
     for (RaidMember *member in members) {
         RepeatedHealthEffect *bonequakeDot = [[RepeatedHealthEffect alloc] initWithDuration:3.0 andEffectType:EffectTypeNegative];
         [bonequakeDot setNumOfTicks:3];
-        [bonequakeDot setValuePerTick:-3];
+        [bonequakeDot setValuePerTick:-(arc4random() % 5 + 1)];
         [bonequakeDot setTitle:@"bonequake-dot"];
         [bonequakeDot setSpriteName:@"bleeding.png"];
         [bonequakeDot setOwner:self.owner];
@@ -966,7 +966,7 @@
             [appliedEffect setTitle:@"shadowbolt-dot"];
             [appliedEffect setSpriteName:@"shadow_curse.png"];
             [(RepeatedHealthEffect*)appliedEffect setNumOfTicks:6];
-            [(RepeatedHealthEffect*)appliedEffect setValuePerTick:-damage * .2];
+            [(RepeatedHealthEffect*)appliedEffect setValuePerTick:-damage * .15];
             [appliedEffect setOwner:self.owner];
             [appliedEffect setAilmentType:AilmentCurse];
             damage *= .45;

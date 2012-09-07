@@ -1573,7 +1573,7 @@
     ShadowMinion *sm = [[ShadowMinion alloc] init];
     [sm setTitle:@"shadow-minion"];
     [sm setCooldown:12.0];
-    [sm setAbilityValue:20];
+    [sm setAbilityValue:17];
     [boss.demonAbilities addObject:sm];
     [sm release];
     

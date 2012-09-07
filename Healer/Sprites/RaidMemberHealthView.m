@@ -32,15 +32,14 @@
 @property (nonatomic, readwrite) NSInteger lastHealth;
 @property (nonatomic, assign) CCSprite *shieldBubble;
 
-@property (nonatomic, assign) CCLabelTTF *numEffectsLabel;
+@property (nonatomic, assign) CCLabelTTF *negativeEffectCountLabel;
+@property (nonatomic, assign) CCLabelTTF *positiveEffectCountLabel;
 
 @property (nonatomic, assign) BOOL newNegativeSpriteIsAnimating;
 @property (nonatomic, readwrite) NSInteger lastNegativeEffectsCount;
 @end
 
 @implementation RaidMemberHealthView
-
-@synthesize raidFrameTexture, healthBarClippingNode,  healthBarMask, selectionState, selectionSprite;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super init])) {
@@ -101,9 +100,13 @@
         [self.nEffectClippingNode addChild:self.nEffectDurationBack];
         [self addChild:self.nEffectClippingNode z:5];
         
-        self.numEffectsLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(40, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
-        [self.numEffectsLabel setPosition:CGPointMake(28, 40)];
-        [self addChild:self.numEffectsLabel z:10];
+        self.negativeEffectCountLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(40, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
+        [self.negativeEffectCountLabel setPosition:CGPointMake(28, 40)];
+        [self addChild:self.negativeEffectCountLabel z:10];
+        
+        self.positiveEffectCountLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(40, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
+        [self.positiveEffectCountLabel setPosition:CGPointMake(30, 5)];
+        [self addChild:self.positiveEffectCountLabel z:10];
         
         self.shieldBubble = [CCSprite spriteWithSpriteFrameName:@"shield_bubble.png"];
         [self.shieldBubble setVisible:NO];
@@ -352,11 +355,20 @@
         [self.nEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.nEffectDurationBack.contentSize.width, 0)];
         [self.priorityNegativeEffectSprite setVisible:NO];
     }
-    NSInteger negativeEffectCount = self.memberData.visibleNegativeEffectsCount;
-    if (negativeEffectCount > 1){
-        self.numEffectsLabel.string = [NSString stringWithFormat:@"%i", negativeEffectCount];
+    
+    NSInteger positiveEffectCount = [self.memberData effectCountOfType:EffectTypePositive];
+    if (positiveEffectCount > 1){
+        self.positiveEffectCountLabel.string = [NSString stringWithFormat:@"%i", positiveEffectCount];
     }else {
-        self.numEffectsLabel.string = @"";
+        self.positiveEffectCountLabel.string = @"";
+    }
+    
+    
+    NSInteger negativeEffectCount = [self.memberData effectCountOfType:EffectTypeNegative];
+    if (negativeEffectCount > 1){
+        self.negativeEffectCountLabel.string = [NSString stringWithFormat:@"%i", negativeEffectCount];
+    }else {
+        self.negativeEffectCountLabel.string = @"";
     }
     if (negativeEffectCount > self.lastNegativeEffectsCount) {
         [self animateNewNegativeSprite];

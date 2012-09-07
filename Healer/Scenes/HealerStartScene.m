@@ -45,6 +45,8 @@ BOOL firstLaunch = YES;
 #if DEBUG
         [Divinity unlockDivinity];
         [Shop resetDivinity];
+        [Shop playerLosesGold:[Shop localPlayerGold]];
+        [Shop playerEarnsGold:20000];
 #endif
         [[AudioController sharedInstance] addNewPlayerWithTitle:@"title" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/title" ofType:@"m4a"]]];
         //Perform Scene Setup   

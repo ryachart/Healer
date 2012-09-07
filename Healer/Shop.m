@@ -50,8 +50,8 @@ static NSArray *shopItems = nil;
         return;
     NSInteger currentGold = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerGold] intValue];
     currentGold+= gold;
-    if (currentGold > 2000){
-        currentGold = 2000; //MAX GOLD
+    if (currentGold > 5000){
+        currentGold = 5000; //MAX GOLD
     }
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold];
     [[NSNotificationCenter defaultCenter] postNotificationName:PlayerGoldDidChangeNotification object:nil userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold]];
@@ -212,20 +212,20 @@ static NSArray *shopItems = nil;
             val = 1000;
             break;
         case 2:
-            val = 5000;
+            val = 1500;
             break;
         case 3:
-            val = 10000;
+            val = 2500;
             break;
         case 4:
-            val = 20000;
+            val = 4000;
             break;
     }
     return val;
 }
 
 + (NSInteger)costForNextDivinityTier {
-    return [Shop costForDivinityTier:[Shop numDivinityTiersPurchased]+1];
+    return [Shop costForDivinityTier:[Shop numDivinityTiersPurchased]];
 }
 
 + (NSInteger)numDivinityTiersPurchased {
@@ -233,15 +233,11 @@ static NSArray *shopItems = nil;
 }
 
 + (void)purchaseNextDivinityTier {
-#if TARGET_IPHONE_SIMULATOR
-    
-#else
     if ([Shop localPlayerGold] >= [Shop costForNextDivinityTier]){
         [Shop playerLosesGold:[Shop costForNextDivinityTier]];
     }else {
         return;
     }
-#endif
 
     NSInteger currentTiers = [Shop numDivinityTiersPurchased];
     if (currentTiers == 5){

@@ -73,18 +73,12 @@
 
 - (void)unlockPurchasedForDivinityTier:(NSInteger)tier
 {
-#if TARGET_IPHONE_SIMULATOR
-    [Shop purchaseNextDivinityTier];
-    [self layoutTierTable];
-    [self layoutChargedPipeOverlays];
-    [self layoutDivinityItems];
-#else
     if ([Shop localPlayerGold] >= [Shop costForNextDivinityTier]) {
         [Shop purchaseNextDivinityTier];
         [self layoutTierTable];
         [self layoutChargedPipeOverlays];
+        [self layoutDivinityItems];
     }
-#endif
 }
 
 - (void)layoutChargedPipeOverlays {

@@ -39,6 +39,14 @@
 	return self;
 }
 
+- (void)healSelfForAmount:(NSInteger)amount {
+    if (amount > 0){
+        if (!self.hasDied && !self.isDead){
+            health = MIN(maximumHealth , health + amount);
+        }
+    }
+}
+
 -(NSString*)networkID{
     return [NSString stringWithFormat:@"R-%@", self.battleID];
 }
@@ -201,7 +209,7 @@
     return self;
 }
 - (void)didPerformCriticalStrikeForAmount:(NSInteger)amount{
-    self.health += 5;
+    [self healSelfForAmount:5];
 }
 @end
 
@@ -288,7 +296,7 @@
     if (self.healthPercentage < .5){
         self.healCooldown += timeDelta;
         if (self.healCooldown >= 1.5){
-            self.health += 2;
+            [self healSelfForAmount:2];
             self.healCooldown = 0.0;
         }
     }

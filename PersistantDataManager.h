@@ -26,6 +26,10 @@ extern NSString* const PlayerRemoteObjectIdKey;
 + (NSInteger)highestLevelCompleted;
 + (NSInteger)highestLevelAttempted;
 
+//Spells
++ (void)setUsedSpells:(NSArray*)spells;
++ (NSArray*)lastUsedSpells;
+
 //Parse!
 + (void)saveRemotePlayer;
 

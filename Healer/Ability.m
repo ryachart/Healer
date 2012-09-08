@@ -1117,7 +1117,7 @@
 - (id)init {
     if (self = [super init]){
         AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"As your allies hack their way through the filth beast they become covered in a disgusting slime.  If this slime builds to 5 stacks on any ally that ally will be instantly slain.  Whenever an ally receives any healing the slime is removed."];
+        [desc setAbilityDescription:@"As your allies hack their way through the filth beast they become covered in a disgusting slime.  If this slime builds to 5 stacks on any ally that ally will be instantly slain.  Whenever an ally receives healing from you the slime is removed."];
         [desc setAbilityName:@"Engulfing Slime"];
         [desc setIconName:@"engulfing_slime_ability.png"];
         self.descriptor = [desc autorelease];
@@ -1151,5 +1151,29 @@
     }
     
 }
+@end
 
+@implementation GraspOfTheDamned
+- (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd {
+    if (self = [super initWithDamage:dmg andCooldown:cd]){
+        AbilityDescriptor *graspOfTheDamnedDesc = [[[AbilityDescriptor alloc] init] autorelease];
+        [graspOfTheDamnedDesc setAbilityName:@"Grasp of the Damned"];
+        [graspOfTheDamnedDesc setAbilityDescription:@"Periodically a curse is applied to an ally that deals damage over time and will explode if the ally receives any healing"];
+        [self setDescriptor:graspOfTheDamnedDesc];
+        [self setTitle:@"grasp-of-the-damned"];
+    }
+    return self;
+}
+
+- (RaidMember*)targetFromRaid:(Raid *)raid
+{
+    RaidMember *target = nil;
+    for (int i = 0; i < 20; i++){
+        target = [raid randomLivingMember];
+        if (!target.isFocused && [target effectCountOfType:EffectTypePositive] == 0){
+            break;
+        }
+    }
+    return target;
+}
 @end

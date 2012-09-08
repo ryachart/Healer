@@ -155,10 +155,12 @@
     [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInL transitionWithDuration:1.0 scene:[[[QuickPlayScene alloc] init] autorelease]]];
 }
 -(void)doneButton{
-    GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss andPlayer:self.player];
-    [gps setLevelNumber:self.levelNumber];
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
-    [gps release];
+    if (!self.changingSpells){
+        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss andPlayer:self.player];
+        [gps setLevelNumber:self.levelNumber];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
+        [gps release];
+    }
 }
 
 -(void)changeSpells{

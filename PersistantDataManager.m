@@ -19,6 +19,7 @@ NSString* const PLayerHighestLevelCompletedHM = @"com.healer.playerHighestLevelC
 NSString* const PlayerLevelRatingKeyPrefix = @"com.healer.playerLevelRatingForLevel";
 NSString* const PlayerRemoteObjectIdKey = @"com.healer.playerRemoteObjectID3";
 NSString* const PlayerDifficultySettingKey = @"com.healer.hardMode";
+NSString* const PlayerLastUsedSpellsKey = @"com.healer.lastUsedSpells";
 
 @implementation PlayerDataManager 
 
@@ -64,6 +65,7 @@ NSString* const PlayerDifficultySettingKey = @"com.healer.hardMode";
     [obj setObject:[NSNumber numberWithInt:[Shop localPlayerGold]] forKey:@"Gold"];
     [obj setObject:[NSNumber numberWithInt:numVisits+1] forKey:@"saves"];
     [obj setObject:[UIDevice currentDevice].name forKey:@"deviceName"];
+    [obj setObject:[PlayerDataManager lastUsedSpellTitles] forKey:@"lastUsedSpells"];
     
     NSInteger highestLevelCompleted = [PlayerDataManager highestLevelCompleted];
     if (highestLevelCompleted > 20){
@@ -112,6 +114,38 @@ NSString* const PlayerDifficultySettingKey = @"com.healer.hardMode";
         }
         [[UIApplication sharedApplication] endBackgroundTask:backgroundExceptionIdentifer];
     });
+}
+
+#pragma mark - Last Used Spells
+
++ (void)setUsedSpells:(NSArray*)spells{
+    NSMutableArray *spellClassNames = [NSMutableArray arrayWithCapacity:spells.count];
+    for (Spell *spell in spells){
+        [spellClassNames addObject:NSStringFromClass(spell.class)];
+    }
+    
+    [[NSUserDefaults standardUserDefaults] setObject:spellClassNames forKey:PlayerLastUsedSpellsKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
++ (NSArray*)lastUsedSpellTitles{
+    return [[NSUserDefaults standardUserDefaults] arrayForKey:PlayerLastUsedSpellsKey];
+}
+
++ (NSArray*)lastUsedSpells {
+    NSArray *spellTitles = [PlayerDataManager lastUsedSpellTitles];;
+    NSMutableArray *spells = [NSMutableArray arrayWithCapacity:spellTitles.count];
+    for (NSString *spellClassName in spellTitles){
+        Class spellClass = NSClassFromString(spellClassName);
+        Spell *spellFromClass = [spellClass defaultSpell];
+        if (spellFromClass){
+            [spells addObject:spellFromClass];
+        }else {
+            NSLog(@"ERR: No spell by that name: %@", spellClassName);
+            return nil;
+        }
+    }
+    return spells;
 }
 
 #pragma mark - Debug

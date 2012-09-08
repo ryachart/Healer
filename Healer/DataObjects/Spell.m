@@ -729,7 +729,7 @@
     return self;
 }
 + (id)defaultSpell {
-    Sunburst *sb = [[Sunburst alloc] initWithTitle:@"Sunburst" healAmnt:0 energyCost:200 castTime:0.0 andCooldown:10.0];
+    Sunburst *sb = [[Sunburst alloc] initWithTitle:@"Sunburst" healAmnt:0 energyCost:320 castTime:0.0 andCooldown:10.0];
     [sb setDescription:@"Heals up to 7 injured allies for a small amount over 5 seconds."];
     return [sb autorelease];
 }
@@ -750,7 +750,7 @@
         [sunburstEffect setTitle:@"sunburst-hot"];
         [sunburstEffect setSpriteName:@"sunburst.png"];
         [sunburstEffect setNumOfTicks:5];
-        [sunburstEffect setValuePerTick:4];
+        [sunburstEffect setValuePerTick:6];
         [sunburstEffect setOwner:self.owner];
         [target addEffect:sunburstEffect];
         [sunburstEffect release];
@@ -768,7 +768,7 @@
 }
 
 + (id)defaultSpell {
-    StarsOfAravon *spell = [[StarsOfAravon alloc] initWithTitle:@"Stars of Aravon" healAmnt:0 energyCost:49 castTime:1.75 andCooldown:0.0];
+    StarsOfAravon *spell = [[StarsOfAravon alloc] initWithTitle:@"Stars of Aravon" healAmnt:0 energyCost:66 castTime:1.75 andCooldown:0.0];
     [spell setDescription:@"Summon 4 Stars of Aravon from the heavens.  The Stars travel for 2.5 seconds before striking their target and healing them for a small amount.."];
     return [spell autorelease];
 }

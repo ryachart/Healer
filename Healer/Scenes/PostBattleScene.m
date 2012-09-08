@@ -170,6 +170,10 @@
                 partialProgressReward =  MIN(partialProgressReward, encounterRewardForSuccess * .5);
             }
             reward = partialProgressReward;
+            
+            if (isFirstWin){
+                partialProgressReward *= .25;
+            }
         }
         
         if (levelNum == ENDLESS_VOID_ENCOUNTER_NUMBER){

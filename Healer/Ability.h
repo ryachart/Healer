@@ -145,3 +145,6 @@ typedef enum {
 
 @interface OozeTwoTargets : Ability
 @end
+
+@interface GraspOfTheDamned : Attack
+@end

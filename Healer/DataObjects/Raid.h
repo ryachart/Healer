@@ -13,9 +13,7 @@
 /* A collection of RaidMembers */
 
 
-@interface Raid : NSObject {
-	NSMutableArray *raidMembers;
-}
+@interface Raid : NSObject
 @property (readonly) NSMutableArray *raidMembers;
 
 - (void)addRaidMember:(RaidMember*)member;

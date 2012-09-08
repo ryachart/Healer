@@ -8,6 +8,7 @@
 #import "AddRemoveSpellLayer.h"
 #import "Spell.h"
 #import "Shop.h"
+#import "PersistantDataManager.h"
 
 @implementation SpellMenuItemLabel
 @synthesize spell;
@@ -73,6 +74,7 @@
 
 -(void)dismiss{
     if (self.delegate){
+        [PlayerDataManager setUsedSpells:self.usedSpells];
         [self.delegate spellSwitchDidCompleteWithActiveSpells:self.usedSpells];
     }
     [self runAction:[CCSequence actions:[CCMoveTo actionWithDuration:.5 position:CGPointMake(-1024, 0)], [CCCallBlockN actionWithBlock:^(CCNode *node){

@@ -60,6 +60,11 @@
     copied.owner = self.owner;
     copied.isIndependent = self.isIndependent;
     copied.ailmentType = self.ailmentType;
+    copied.damageDoneMultiplierAdjustment = self.damageDoneMultiplierAdjustment;
+    copied.healingDoneMultiplierAdjustment = self.healingDoneMultiplierAdjustment;
+    copied.castTimeAdjustment = self.castTimeAdjustment;
+    copied.spellCostAdjustment = self.spellCostAdjustment;
+    copied.failureChance = self.failureChance;
     return copied;
 }
 
@@ -777,8 +782,14 @@
             similarEffectsCount++;
         }
     }
-    if (similarEffectsCount >= 5){
+    if (similarEffectsCount >= 5 && !self.target.isDead){
         self.target.health = 0;
+        [[(Boss*)self.owner announcer] announce:@"This Unspeakable grows stronger by consuming your ally."];
+        Effect *damageBoost = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositive] autorelease];
+        [damageBoost setDamageDoneMultiplierAdjustment:.075];
+        [damageBoost setMaxStacks:20];
+        [damageBoost setTitle:@"unspeak-consume"];
+        [(Boss*)self.owner addEffect:damageBoost];
     }
 }
 @end

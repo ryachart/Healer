@@ -1036,7 +1036,7 @@
 +(id)defaultBoss{
     NSInteger damage = 15;
     float frequency = 1.30;
-    TwinChampions *boss = [[TwinChampions alloc] initWithHealth:430000 damage:damage targets:1 frequency:frequency andChoosesMT:YES];
+    TwinChampions *boss = [[TwinChampions alloc] initWithHealth:410000 damage:damage targets:1 frequency:frequency andChoosesMT:YES];
     [boss setFirstFocusedAttack:[[boss abilities] objectAtIndex:0]];
     
     FocusedAttack *secondFA = [[FocusedAttack alloc] initWithDamage:damage * 4 andCooldown:frequency * 5];
@@ -1193,7 +1193,7 @@
 }
 
 +(id)defaultBoss{
-    Baraghast *boss = [[Baraghast alloc] initWithHealth:450000 damage:12 targets:1 frequency:1.25 andChoosesMT:YES];
+    Baraghast *boss = [[Baraghast alloc] initWithHealth:425000 damage:12 targets:1 frequency:1.25 andChoosesMT:YES];
     [boss setAutoAttack:[[boss abilities] objectAtIndex:0]];
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
     [boss setInfo:@"With his champions defeated, Baraghast himself confronts you and your allies."];
@@ -1347,12 +1347,12 @@
     if (percentage == 50.0) {
         [self.announcer announce:@"The Gatekeeper summons two Blood-Drinker Demons to his side."];
         //Blood drinkers
-        BloodDrinker *ability = [[BloodDrinker alloc] initWithDamage:10 andCooldown:1.25];
+        BloodDrinker *ability = [[BloodDrinker alloc] initWithDamage:11 andCooldown:1.25];
         [ability setTitle:@"gatekeeper-blooddrinker"];
         [self addAbility:ability];
         [ability release];
         
-        BloodDrinker *ability2 = [[BloodDrinker alloc] initWithDamage:10 andCooldown:1.25];
+        BloodDrinker *ability2 = [[BloodDrinker alloc] initWithDamage:11 andCooldown:1.25];
         [ability2 setTitle:@"gatekeeper-blooddrinker"];
         [self addAbility:ability2];
         [ability2 release];
@@ -1619,7 +1619,7 @@
 + (id)defaultBoss {
     TheUnspeakable *boss = [[TheUnspeakable alloc] initWithHealth:400000 damage:0 targets:0 frequency:0 andChoosesMT:NO];
     [boss setTitle:@"The Unspeakable"];
-    [boss setInfo:@"A disgusting mass of boness and rotten corpses sits in a crypt beneath Delsarn."];
+    [boss setInfo:@"A disgusting mass of bones and rotten corpses waits in a crypt beneath Delsarn.  It seems to be ... alive."];
     
     boss.oozeAll = [[[OozeRaid alloc] init] autorelease];
     [boss.oozeAll setTimeApplied:19.0];
@@ -1657,7 +1657,7 @@
     [boss setInfo:@"Before you stands the destroyed but risen warchief Baraghast.  His horrible visage once again sows fear in the hearts of all of your allies.  This time he is not only guarding a terrible secret, but his hateful gaze reveals his true purpose -- Revenge."];
     
     BaraghastRoar *roar = [[[BaraghastRoar alloc] init] autorelease];
-    [roar setCooldown:18.0];
+    [roar setCooldown:24.0];
     [roar setTitle:@"baraghast-roar"];
     [boss addAbility:roar];
     
@@ -1672,15 +1672,9 @@
     [graspEffect setSpriteName:@"blood_curse.png"];
     [graspEffect setTitle:@"grasp-of-the-damned-eff"];
     [graspEffect setAilmentType:AilmentCurse];
-    Attack *graspOfTheDamned = [[[Attack alloc] initWithDamage:0 andCooldown:15.0] autorelease];
-    AbilityDescriptor *graspOfTheDamnedDesc = [[[AbilityDescriptor alloc] init] autorelease];
-    [graspOfTheDamnedDesc setAbilityName:@"Grasp of the Damned"];
-    [graspOfTheDamnedDesc setAbilityDescription:@"Periodically a curse is applied to an ally that deals damage over time and will explode if the ally receives any healing"];
-    [graspOfTheDamned setDescriptor:graspOfTheDamnedDesc];
-    [graspOfTheDamned setTitle:@"grasp-of-the-damned"];
-    [graspOfTheDamned setAppliedEffect:graspEffect];
+    GraspOfTheDamned *graspOfTheDamned = [[[GraspOfTheDamned alloc] initWithDamage:0 andCooldown:15.0] autorelease];
     [boss addAbility:graspOfTheDamned];
-    
+    [graspOfTheDamned setAppliedEffect:graspEffect];
     return [boss autorelease];
 }
 

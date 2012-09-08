@@ -28,7 +28,7 @@
         NSInteger playerGold = [Shop localPlayerGold];
         
         self.goldAmountLabel = [GoldCounterSprite goldCostLabelWithCost:playerGold andFontSize:32.0];
-        [self.goldAmountLabel setPosition:CGPointMake(50, 20)];
+        [self.goldAmountLabel setPosition:CGPointMake(60, 20)];
         [backgroundSprite addChild:self.goldAmountLabel];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goldDidChange:) name:PlayerGoldDidChangeNotification object:nil];

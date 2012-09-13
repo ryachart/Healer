@@ -163,44 +163,47 @@ static NSArray *shopItems = nil;
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
     ShopItem *purify = [[ShopItem alloc] initWithSpell:[Purify defaultSpell]];
     [items addObject:[purify autorelease]];
-
-    ShopItem *lightEternal = [[ShopItem alloc] initWithSpell:[LightEternal defaultSpell]];
-    [items addObject:[lightEternal autorelease]];
-    ShopItem *sunburst = [[ShopItem alloc] initWithSpell:[Sunburst defaultSpell]];
-    [items addObject:[sunburst autorelease]];
+    
+    ShopItem *starsOfA = [[ShopItem alloc] initWithSpell:[StarsOfAravon defaultSpell]];
+    [items addObject:[starsOfA autorelease]];
     
     ShopItem *healingBurst = [[ShopItem alloc] initWithSpell:[HealingBurst defaultSpell]];
     [items addObject:[healingBurst autorelease]];
-
+    
+    ShopItem *blessedArmor = [[ShopItem alloc] initWithSpell:[BlessedArmor defaultSpell]];
+    [items addObject:[blessedArmor autorelease]];
+    
+    ShopItem *touchOfLight = [[ShopItem alloc] initWithSpell:[TouchOfHope defaultSpell]];
+    [items addObject:[touchOfLight autorelease]];
 
     return items;
     
 }
 + (NSArray*)archivesShopItems {
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
+    ShopItem *lightEternal = [[ShopItem alloc] initWithSpell:[LightEternal defaultSpell]];
+    [items addObject:[lightEternal autorelease]];
+    
+    ShopItem *sunburst = [[ShopItem alloc] initWithSpell:[Sunburst defaultSpell]];
+    [items addObject:[sunburst autorelease]];
+    
     ShopItem *fadingLight = [[ShopItem alloc] initWithSpell:[FadingLight defaultSpell]];
     [items addObject:[fadingLight autorelease]];
+    
     ShopItem *orbsOfLight = [[ShopItem alloc] initWithSpell:[OrbsOfLight defaultSpell]];
     [items addObject:[orbsOfLight autorelease]];
+    
     ShopItem *swirlingLight = [[ShopItem alloc] initWithSpell:[SwirlingLight defaultSpell]];
     [items addObject:[swirlingLight autorelease]];
     
-    ShopItem *touchOfLight = [[ShopItem alloc] initWithSpell:[TouchOfHope defaultSpell]];
-    [items addObject:[touchOfLight autorelease]];
     ShopItem *barrier = [[ShopItem alloc] initWithSpell:[Barrier defaultSpell]];
     [items addObject:[barrier autorelease]];
-    
-    ShopItem *blessedArmor = [[ShopItem alloc] initWithSpell:[BlessedArmor defaultSpell]];
-    [items addObject:[blessedArmor autorelease]];
 
     return items;
     
 }
 + (NSArray*)vaultShopItems {
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
-    
-    ShopItem *starsOfA = [[ShopItem alloc] initWithSpell:[StarsOfAravon defaultSpell]];
-    [items addObject:[starsOfA autorelease]];
     
     ShopItem *soaringSpirit = [[ShopItem alloc] initWithSpell:[SoaringSpirit defaultSpell]];
     [items addObject:[soaringSpirit autorelease]];

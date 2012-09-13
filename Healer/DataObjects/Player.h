@@ -79,6 +79,7 @@ typedef int CastingDisabledReason;
 @property (nonatomic, readwrite) float castTimeAdjustment;
 @property (nonatomic, readwrite) float spellCostAdjustment;
 @property (nonatomic, readwrite) NSInteger avatarCounter;
+@property (nonatomic, readwrite) BOOL isConfused;
 
 - (float)castTimeAdjustmentForSpell:(Spell*)spell;
 - (float)spellCostAdjustmentForSpell:(Spell*)spell;
@@ -109,13 +110,13 @@ typedef int CastingDisabledReason;
 - (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell;
 - (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect;
 
-- (NSString*)initialStateMessage; //For notifying servers what our player state looks like
-- (NSString*)asNetworkMessage;
-- (void)updateWithNetworkMessage:(NSString*)message;
-
 - (BOOL)hasDivinityEffectWithTitle:(NSString*)title;
 //Multiplayer
 @property (nonatomic, retain) NSString* playerID;
-@property (nonatomic, readwrite) BOOL isLocalPlayer; //Turn off other sounds;
+@property (nonatomic, readwrite) BOOL isLocalPlayer; //Turn off other sounds, this is sort of a buggy thing...;
 @property (nonatomic, readonly) NSString* spellsAsNetworkMessage;
+
+- (NSString*)initialStateMessage; //For notifying servers what our player state looks like
+- (NSString*)asNetworkMessage;
+- (void)updateWithNetworkMessage:(NSString*)message;
 @end

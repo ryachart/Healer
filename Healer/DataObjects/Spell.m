@@ -571,16 +571,16 @@
     return self;
 }
 + (id)defaultSpell{
-    Respite *respite = [[Respite alloc] initWithTitle:@"Respite" healAmnt:0 energyCost:0 castTime:0.0 andCooldown:60.0];
-    [respite setDescription:@"Restores 360 Mana to the caster."];
+    Respite *respite = [[Respite alloc] initWithTitle:@"Respite" healAmnt:0 energyCost:0 castTime:0.0 andCooldown:30.0];
+    [respite setDescription:@"Restores 105 Mana to the caster."];
     return [respite autorelease];
 }
 
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
-    NSInteger energyReturned = 360;
+    NSInteger energyReturned = 105;
     if ([self.owner hasDivinityEffectWithTitle:@"torrent-of-faith"]){
         if (arc4random() % 100 < 10){
-            energyReturned = 720;
+            energyReturned *= 2;
         }
     }
     [thePlayer setEnergy:thePlayer.energy + energyReturned];

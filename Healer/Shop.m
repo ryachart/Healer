@@ -105,19 +105,42 @@ static NSArray *shopItems = nil;
     return shopItems;
 }
 
++ (NSInteger)purchasesForCategory:(ShopCategory)category {
+    switch (category) {
+        case ShopCategoryEssentials:
+            return 0;
+        case ShopCategoryTopShelf:
+            return 3;
+        case ShopCategoryArchives:
+            return 5;
+        case ShopCategoryVault:
+            return 7;
+    }
+    return 0;
+}
+
 + (ShopCategory)highestCategoryUnlocked {
-    NSInteger highestLevelCompleted = [PlayerDataManager highestLevelCompleted];
+    NSInteger totalPurchases = [Shop allOwnedSpells].count;
     ShopCategory category = ShopCategoryEssentials;
-    if (highestLevelCompleted > 3){
+    if (totalPurchases >= [Shop purchasesForCategory:ShopCategoryTopShelf]){
         category = ShopCategoryTopShelf;
     }
-    if (highestLevelCompleted > 6){
+    if (totalPurchases >= [Shop purchasesForCategory:ShopCategoryArchives]){
         category = ShopCategoryArchives;
     }
-    if (highestLevelCompleted > 9){
+    if (totalPurchases > [Shop purchasesForCategory:ShopCategoryVault]){
         category = ShopCategoryVault;
     }
     return category;
+}
+
++ (NSInteger)numPurchasesUntilNextCategory {
+    NSInteger totalPurchases = [Shop allOwnedSpells].count;
+    ShopCategory highestCategory = [Shop highestCategoryUnlocked];
+    if (highestCategory == ShopCategoryVault){
+        return 0;
+    }
+    return [Shop purchasesForCategory:highestCategory] - totalPurchases;
 }
 
 + (NSArray*)essentialsShopItems {

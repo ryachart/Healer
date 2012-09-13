@@ -24,10 +24,10 @@
 -(BOOL)addRaidMemberHealthView:(RaidMemberHealthView*)healthView;
 
 -(CGPoint)frameCenterForMember:(RaidMember*)raidMember;
-
+-(CGPoint)randomMissedProjectileDestination;
 -(void)spawnRects;
 -(CGRect)vendNextUsableRect;
 
--(void)updateRaidHealth;
+-(void)updateRaidHealthWithPlayer:(Player*)player andTimeDelta:(ccTime)delta;
 
 @end

@@ -31,6 +31,8 @@ typedef enum {
 -(id)initWithFrame:(CGRect)frame;
 
 -(void)displaySCT:(NSString*)sct;
+
+- (void)triggerConfusion;
 @end
 
 @protocol RaidMemberHealthViewDelegate

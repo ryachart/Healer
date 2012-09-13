@@ -66,6 +66,21 @@
     return NO;
 }
 
+- (BOOL)isConfused {
+    BOOL confusion = _isConfused;
+    
+    if (confusion){
+        return confusion;
+    }
+    
+    for (Effect *effect in self.activeEffects){
+        if (effect.causesConfusion){
+            return YES;
+        }
+    }
+    return NO;
+}
+
 - (void)redemptionDidTriggerOnTarget:(HealableTarget *)target {
     self.redemptionTimeApplied = 0.001;
 }
@@ -200,7 +215,7 @@
 }
 
 - (NSString*)asNetworkMessage{
-    NSString *message = [NSString stringWithFormat:@"PLYR|%@|%i|%i|", self.playerID, self.health, self.energy];
+    NSString *message = [NSString stringWithFormat:@"PLYR|%@|%i|%i|%1.3f|%i", self.playerID, self.health, self.energy, self.castTimeAdjustment, self.isConfused];
     return message;
 }
 - (void)updateWithNetworkMessage:(NSString*)message{
@@ -208,6 +223,8 @@
     if ([self.playerID isEqualToString:[components objectAtIndex:1]]){
         self.health = [[components objectAtIndex:2] intValue];
         self.energy = [[components objectAtIndex:3] intValue];
+        self.castTimeAdjustment = [[components objectAtIndex:4] floatValue];
+        self.isConfused = [[components objectAtIndex:5] boolValue];
     }else{
         NSLog(@"IM BEING UPDATED WITH A DIFFERENT PLAYER OBJECT.");
     }

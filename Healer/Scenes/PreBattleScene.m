@@ -44,7 +44,7 @@
 }
 -(id)initWithRaid:(Raid*)raid boss:(Boss*)boss andPlayer:(Player*)player{
     if (self = [super init]){
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease]];
+        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background-ipad"] autorelease]];
         self.raid = raid;
         self.player = player;
         self.boss = boss;

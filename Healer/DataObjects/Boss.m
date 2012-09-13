@@ -1617,7 +1617,7 @@
 }
 
 + (id)defaultBoss {
-    TheUnspeakable *boss = [[TheUnspeakable alloc] initWithHealth:400000 damage:0 targets:0 frequency:0 andChoosesMT:NO];
+    TheUnspeakable *boss = [[TheUnspeakable alloc] initWithHealth:400000 damage:55 targets:1 frequency:10.0 andChoosesMT:NO];
     [boss setTitle:@"The Unspeakable"];
     [boss setInfo:@"A disgusting mass of bones and rotten corpses waits in a crypt beneath Delsarn.  It seems to be ... alive."];
     
@@ -1696,12 +1696,98 @@
 @end
 
 @implementation AvatarOfTorment1
++ (id)defaultBoss {
+    AvatarOfTorment1 *boss = [[AvatarOfTorment1 alloc] initWithHealth:380000 damage:0 targets:0 frequency:0.0 andChoosesMT:NO];
+    [boss setTitle:@"The Avatar of Torment"];
+    [boss setInfo:@"From the fallen black heart of Baraghast's shattered soul rose a portal into another plane of existence.  Your allies cautiously moved through the portal and found themselves in a terrifying realm surrounded by shackled and burning souls.  Before you stands a massive creature of spawned of pure hatred and built for torment.  The final battle for your realm's purity begins now."];
+    
+    
+    SoulPrison *spAbility = [[SoulPrison alloc] init];
+    [spAbility setTitle:@"soul-prison"];
+    [spAbility setCooldown:30.0];
+    [spAbility setTimeApplied:16.0];
+    [spAbility setAbilityValue:7];
+    [boss addAbility:spAbility];
+    [spAbility release];
+    
+    DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
+    [dcAbility setTitle:@"dis-cloud"];
+    [dcAbility setCooldown:23.0];
+    [dcAbility setAbilityValue:3];
+    [dcAbility setTimeApplied:20.0];
+    [boss addAbility:dcAbility];
+    [dcAbility release];
+    
+    ProjectileAttack *projectileAttack = [[ProjectileAttack alloc] init];
+    [projectileAttack setSpriteName:@"blood_ball.png"];
+    [projectileAttack setAbilityValue:-50];
+    [projectileAttack setCooldown:2.5];
+    [projectileAttack setFailureChance:.7];
+    [boss addAbility:projectileAttack];
+    [projectileAttack release];
+    
+    
+    return [boss autorelease];
+}
 @end
 
 @implementation AvatarOfTorment2
+
++ (id)defaultBoss {
+    AvatarOfTorment2 *boss = [[AvatarOfTorment2 alloc] initWithHealth:175000 damage:0 targets:0 frequency:0.0 andChoosesMT:NO];
+    [boss setTitle:@"The Avatar of Torment"];
+    [boss setInfo:@"The Avatar of Torment will not be defeated so easily."];
+    
+    DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
+    [dcAbility setTitle:@"dis-cloud"];
+    [dcAbility setCooldown:23.0];
+    [dcAbility setAbilityValue:3];
+    [dcAbility setTimeApplied:20.0];
+    [boss addAbility:dcAbility];
+    [dcAbility release];
+    
+    ProjectileAttack *projectileAttack = [[ProjectileAttack alloc] init];
+    [projectileAttack setSpriteName:@"blood_ball.png"];
+    [projectileAttack setAbilityValue:-50];
+    [projectileAttack setCooldown:.75];
+    [projectileAttack setFailureChance:.85];
+    [boss addAbility:projectileAttack];
+    [projectileAttack release];
+    
+    ProjectileAttack *projectileAttack2 = [[ProjectileAttack alloc] init];
+    [projectileAttack2 setSpriteName:@"blood_ball.png"];
+    [projectileAttack2 setAbilityValue:-50];
+    [projectileAttack2 setCooldown:.83];
+    [projectileAttack2 setFailureChance:.85];
+    [boss addAbility:projectileAttack2];
+    [projectileAttack2 release];
+    
+    ProjectileAttack *projectileAttack3 = [[ProjectileAttack alloc] init];
+    [projectileAttack3 setSpriteName:@"blood_ball.png"];
+    [projectileAttack3 setAbilityValue:-35];
+    [projectileAttack3 setCooldown:2.5];
+    [projectileAttack3 setFailureChance:.2];
+    [boss addAbility:projectileAttack3];
+    [projectileAttack3 release];
+    
+    Confusion *confusionAbility = [[[Confusion alloc] init] autorelease];
+    [confusionAbility setCooldown:14.0];
+    [confusionAbility setAbilityValue:8.0];
+    [confusionAbility setTitle:@"confusion"];
+    [boss addAbility:confusionAbility];
+    [confusionAbility setTimeApplied:10.0];
+    return [boss autorelease];
+}
 @end
 
 @implementation SoulOfTorment
++ (id)defaultBoss {
+    SoulOfTorment *boss = [[SoulOfTorment alloc] initWithHealth:500000 damage:0 targets:0 frequency:0.0 andChoosesMT:NO];
+    [boss setTitle:@"The Soul of Torment"];
+    [boss setInfo:@"Its body shattered and broken--the last gasp of this terrible creature conspires to unleash its most unspeakable power.  This is the last stand of your realm against the evil that terrorizes it."];
+    
+    return [boss autorelease];
+}
 @end
 
 @implementation TheEndlessVoid

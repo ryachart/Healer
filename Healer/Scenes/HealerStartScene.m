@@ -148,12 +148,12 @@ BOOL firstLaunch = YES;
 -(void)quickPlaySelected
 {
 	QuickPlayScene *qpS = [QuickPlayScene new];
-	[[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:qpS]];
+	[[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:.5 scene:qpS]];
 	[qpS release];
 }
 
 -(void)storeSelected{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:[[[StoreScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInB transitionWithDuration:.5 scene:[[[StoreScene alloc] init] autorelease]]];
 }
 
 -(void)settingsSelected
@@ -163,7 +163,7 @@ BOOL firstLaunch = YES;
 }
 
 -(void)divinitySelected{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInB transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
 }
 
 - (void)hardModeToggled:(id)sender {

@@ -115,7 +115,7 @@
 }
 
 
-- (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eLog levelNumber:(NSInteger)levelNum andIsMultiplayer:(BOOL)isMult andFallenMembers:(NSInteger)numDead{
+- (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eLog levelNumber:(NSInteger)levelNum andIsMultiplayer:(BOOL)isMult deadCount:(NSInteger)numDead andDuration:(NSTimeInterval)duration{
     self = [super init];
     if (self){
         self.levelNumber = levelNum;
@@ -127,7 +127,7 @@
         NSInteger rating = 0;
         int i = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
         BOOL isFirstWin = self.levelNumber > i;
-        NSTimeInterval fightDuration = [[[eventLog lastObject] timeStamp] timeIntervalSinceDate:[[eventLog objectAtIndex:0] timeStamp]];
+        NSTimeInterval fightDuration = duration;
         
         NSString *thisPlayerId = nil;
         if (self.isMultiplayer) {
@@ -172,7 +172,7 @@
             reward = partialProgressReward;
             
             if (isFirstWin){
-                partialProgressReward *= .25;
+                reward *= .25;
             }
         }
         
@@ -187,8 +187,7 @@
         [PlayerDataManager saveRemotePlayer];
         
         //UI
-        BackgroundSprite *background = [[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease];
-        [self addChild:background];
+        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background-ipad"] autorelease]];
         if (victory){
             CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"VICTORY!" fontName:@"Arial" fontSize:72];
             [victoryLabel setPosition:CGPointMake(512, 384)];

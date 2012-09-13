@@ -37,6 +37,8 @@
 
 @property (nonatomic, assign) BOOL newNegativeSpriteIsAnimating;
 @property (nonatomic, readwrite) NSInteger lastNegativeEffectsCount;
+
+@property (nonatomic, readwrite) BOOL confusionTriggered;
 @end
 
 @implementation RaidMemberHealthView
@@ -383,6 +385,8 @@
 
 -(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
+    if (self.confusionTriggered) return; //You can't select me while you're confused
+    
     UITouch *touch = [touches anyObject];
     CGPoint touchLocation = [[CCDirector sharedDirector] convertToGL:[touch locationInView:[touch view]]];
     
@@ -398,6 +402,8 @@
 
 -(void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
+    if (self.confusionTriggered) return; //You can't do any selection while confused;
+    
 	if (self.interactionDelegate != nil){
         BOOL wasTouched = _isTouched;
 		_isTouched = NO;
@@ -405,6 +411,21 @@
             [[self interactionDelegate] thisMemberUnselected:self];
         }
 	}
+}
+
+- (void)triggerConfusion {
+    if (!self.confusionTriggered && self.selectionState != RaidViewSelectionStateSelected && !self.memberData.isDead){
+        self.confusionTriggered = YES;
+        
+        float transitionDuration = 1.25;
+        float confusionDuration = 6.0;
+        float angle = (arc4random() % 2) ? 150.0 : -150.0;
+        
+        [self runAction:[CCSequence actions:[CCSpawn actionOne:[CCScaleTo actionWithDuration:transitionDuration scale:0.0] two:[CCRotateTo actionWithDuration:transitionDuration angle:angle]], [CCDelayTime actionWithDuration:confusionDuration], [CCSpawn actionOne:[CCScaleTo actionWithDuration:transitionDuration scale:1.0] two:[CCRotateTo actionWithDuration:transitionDuration angle:0.0]], [CCCallBlockN actionWithBlock:^(CCNode *node){
+            RaidMemberHealthView *thisNode = (RaidMemberHealthView*)node;
+            thisNode.confusionTriggered = NO;
+        }], nil]];
+    }
 }
 
 - (void)dealloc {

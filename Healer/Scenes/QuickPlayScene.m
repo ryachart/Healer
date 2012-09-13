@@ -15,7 +15,7 @@
 #import "BackgroundSprite.h"
 #import "Divinity.h"
 
-#define NUM_ENCOUNTERS 19
+#define NUM_ENCOUNTERS 21
 
 @interface QuickPlayScene ()
 @property (assign) CCMenu *menu;
@@ -33,7 +33,7 @@
 #if TARGET_IPHONE_SIMULATOR
         [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:100] forKey:PlayerHighestLevelCompleted];
 #endif
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease]];
+        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background-ipad"] autorelease]];
         self.menu = [CCMenu menuWithItems:nil];
         for (int i = 0; i < NUM_ENCOUNTERS; i++){
             NSString *levelLabelText = nil;
@@ -59,7 +59,7 @@
         }
         [self.menu setPosition:ccp([CCDirector sharedDirector].winSize.width /2, [CCDirector sharedDirector].winSize.height * .63)];
         [self.menu setColor:ccc3(255, 255, 255)];
-        [self.menu alignItemsInRows:[NSNumber numberWithInt:NUM_ENCOUNTERS/2],[NSNumber numberWithInt:(int)round(NUM_ENCOUNTERS/2.0)], nil];
+        [self.menu alignItemsInRows:[NSNumber numberWithInt:10],[NSNumber numberWithInt:11], nil];
         [self addChild:self.menu];
         
         
@@ -130,7 +130,7 @@
 
 -(void)back
 {
-    [[CCDirector sharedDirector] replaceScene:[[[HealerStartScene alloc] init] autorelease]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInL transitionWithDuration:1.0 scene:[[[HealerStartScene alloc] init] autorelease]]];
 }
 
 

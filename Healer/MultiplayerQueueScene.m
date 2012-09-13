@@ -11,6 +11,7 @@
 #import "AppDelegate.h"
 #import "HealerStartScene.h"
 #import "Encounter.h"
+#import "BackgroundSprite.h"
 
 
 @interface MultiplayerQueueScene  ()
@@ -44,6 +45,7 @@
 
 - (id)init {
     if (self = [super init]){
+        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background-ipad"] autorelease]];
         CCMenuItemLabel *queueRandom = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Queue Random" dimensions:CGSizeMake(300, 50) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:36.0] target:self selector:@selector(queueRandom)];
         
         CCMenu *queueMenu = [CCMenu menuWithItems:queueRandom, nil];

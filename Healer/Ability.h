@@ -21,7 +21,7 @@
 @property (nonatomic, readwrite) NSTimeInterval cooldown; //9999 denotes an ability that must be triggered
 @property (nonatomic, retain ) NSString *title;
 @property (nonatomic, assign) Agent *owner;
-@property (nonatomic, readwrite) NSInteger abilityValue; //Damage or DoT value or something
+@property (nonatomic, readwrite) NSInteger abilityValue; //Damage or DoT value or Number of Targets - Depends on the ability
 @property (nonatomic, readwrite) BOOL isDisabled;
 @property (nonatomic, retain) AbilityDescriptor *descriptor;
 @property (nonatomic, retain) NSString *attackParticleEffectName; //Defaults to blood_spurt.plist
@@ -147,4 +147,16 @@ typedef enum {
 @end
 
 @interface GraspOfTheDamned : Attack
+@end
+
+@interface SoulPrison : Ability
+//Abiltiy Value is Number of Targets
+@end
+
+@interface DisruptionCloud : Ability
+//Ability Value is valuePerTick of the cloud
+@end
+
+@interface Confusion : Ability
+//Ability Value is confusion duration
 @end

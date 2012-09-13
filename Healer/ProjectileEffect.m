@@ -31,20 +31,21 @@
         self.target = trgt;
         self.collisionTime = colTime;
         self.spriteColor = ccWHITE;
+        self.isFailed = NO;
     }
     return self;
 }
 
-//PRTEFF|TARGET|SPRITE|COLPARTNAME|R|G|B|TIME|TYPE
+//PRTEFF|TARGET|SPRITE|COLPARTNAME|R|G|B|TIME|TYPE|isFailed
 -(NSString*)asNetworkMessage{
-    return [NSString stringWithFormat:@"PRJEFF|%@|%@|%@|%i|%i|%i|%f|%i", target.battleID, spriteName, self.collisionParticleName, spriteColor.r, spriteColor.g, spriteColor.b, collisionTime + delay, type];
+    return [NSString stringWithFormat:@"PRJEFF|%@|%@|%@|%i|%i|%i|%f|%i|%i", target.battleID, spriteName, self.collisionParticleName, spriteColor.r, spriteColor.g, spriteColor.b, collisionTime + delay, type, self.isFailed];
 }
 
 -(id)initWithNetworkMessage:(NSString*)message andRaid:(Raid*)raid{
     if (self=[super init]){
         NSArray *components = [message componentsSeparatedByString:@"|"];
         
-        if (components.count < 9){
+        if (components.count < 10){
             NSLog(@"MALFORMED PROJECTILE MESSAGE");
         }
         self.target = [raid memberForBattleID:[components objectAtIndex:1]];
@@ -53,6 +54,7 @@
         self.spriteColor = ccc3([[components objectAtIndex:4] intValue], [[components objectAtIndex:5] intValue], [[components objectAtIndex:6] intValue]);
         self.collisionTime = [[components objectAtIndex:7] floatValue];
         self.type = [[components objectAtIndex:8] intValue];
+        self.isFailed = [[components objectAtIndex:9] boolValue];
     }
     return self;
 }

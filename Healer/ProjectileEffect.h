@@ -23,6 +23,7 @@ typedef enum {
 @property (nonatomic, readonly) NSTimeInterval collisionTime;
 @property (nonatomic, readwrite) ccColor3B spriteColor;
 @property (nonatomic, readwrite) NSTimeInterval delay;
+@property (nonatomic, readwrite) BOOL isFailed;
 
 -(id)initWithSpriteName:(NSString*)spriteName target:(RaidMember*)target andCollisionTime:(NSTimeInterval)colTime;
 -(id)initWithNetworkMessage:(NSString*)message andRaid:(Raid*)raid;

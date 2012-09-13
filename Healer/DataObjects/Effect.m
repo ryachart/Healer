@@ -65,6 +65,7 @@
     copied.castTimeAdjustment = self.castTimeAdjustment;
     copied.spellCostAdjustment = self.spellCostAdjustment;
     copied.failureChance = self.failureChance;
+    copied.causesConfusion = self.causesConfusion;
     return copied;
 }
 
@@ -911,6 +912,27 @@
     if (newHealth > currentHealth){
         self.needsDetonation = YES;
     }
+}
+
+@end
+
+@implementation SoulPrisonEffect
+- (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type {
+    if (self = [super initWithDuration:dur andEffectType:type]){
+        self.percentage = 1.0;
+        self.title = @"soul-prison-eff";
+        self.spriteName = @"soul_prison.png";
+    }
+    return self;
+}
+
+- (void)expire {
+    DelayedHealthEffect *finisher = [[[DelayedHealthEffect alloc] initWithDuration:.25 andEffectType:EffectTypeNegativeInvisible] autorelease];
+    [finisher setValue:-6];
+    [finisher setTitle:@"soulpris-finish"];
+    [finisher setOwner:self.owner];
+    [self.target addEffect:finisher];
+    
 }
 
 @end

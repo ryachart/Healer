@@ -12,12 +12,12 @@
 #import "ShopItem.h"
 #import "BackgroundSprite.h"
 #import "BasicButton.h"
+#import "GoldCounterSprite.h"
 
 
 @interface StoreScene ()
 @property (nonatomic, assign) ShopItemExtendedNode *extendedNode;
 @property (nonatomic, assign) CCLayerColor *darkenLayer;
-@property (nonatomic, assign) CCLabelTTF *goldLabel;
 @property (nonatomic, assign) ShopItemNode *possibleChangedNode;
 @property (nonatomic, retain) NSMutableArray *itemNodes;
 @property (nonatomic, assign) BasicButton *essentialsButton;
@@ -30,7 +30,7 @@
 @end
 
 @implementation StoreScene
-@synthesize goldLabel, extendedNode, darkenLayer, possibleChangedNode;
+@synthesize extendedNode, darkenLayer, possibleChangedNode;
 - (void)dealloc {
     [_itemNodes release];
     [super dealloc];
@@ -38,7 +38,7 @@
 
 -(id)init{
     if (self = [super init]){  
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"wood-bg-ipad"] autorelease]];
+        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background-ipad"] autorelease]];
         NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"shop-sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
         
@@ -48,12 +48,10 @@
         [storeBackMenu alignItemsVertically];
         [storeBackMenu setPosition:CGPointMake(50, 700)];
         [self addChild:storeBackMenu];
-        
-        int playerGold = [Shop localPlayerGold];
-        self.goldLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold: %i", playerGold] fontName:@"Arial" fontSize:32.0];
-        
-        [self.goldLabel setPosition:CGPointMake(900, 50)];
-        [self addChild:self.goldLabel];
+                
+        GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
+        [goldCounter setPosition:CGPointMake(900, 50)];
+        [self addChild:goldCounter];
         
         self.essentialsButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(configureEssentials) andTitle:@"Essentials"];
         
@@ -74,7 +72,7 @@
         
         CCMenu *pageConfigMenu = [CCMenu menuWithItems:self.essentialsButton, self.topShelfButton, self.archivesButton, self.vaultButton, nil];
         [pageConfigMenu alignItemsVertically];
-        [pageConfigMenu setPosition:CGPointMake(920, 250)];
+        [pageConfigMenu setPosition:CGPointMake(900, 250)];
         [self addChild:pageConfigMenu];
         
         [self configureShopForCategory:ShopCategoryEssentials];
@@ -171,11 +169,10 @@
     [self.possibleChangedNode checkPlayerHasItem];
     self.extendedNode = nil;
     self.possibleChangedNode = nil;
-    self.goldLabel.string = [NSString stringWithFormat:@"Gold: %i", [Shop localPlayerGold]];
 }
 
 -(void)back{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInT transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
 }
 
 @end

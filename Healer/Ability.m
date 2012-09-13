@@ -263,23 +263,29 @@
 }
 
 - (void) triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    
+    BOOL didFail = self.checkFailed;
     RaidMember *target = [theRaid randomLivingMember];
     NSTimeInterval colTime = 1.75;
-    DelayedHealthEffect *fireball = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
     
     ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:self.spriteName target:target andCollisionTime:colTime];
     [fireballVisual setCollisionParticleName:@"fire_explosion.plist"];
+    [fireballVisual setIsFailed:didFail];
     [[(Boss*)self.owner announcer] displayProjectileEffect:fireballVisual];
     [fireballVisual release];
-    [fireball setOwner:self.owner];
-    [fireball setIsIndependent:YES];
-    [fireball setFailureChance:.15];
-    [fireball setTitle:@"fireball-dhe"];
-    [fireball setMaxStacks:10];
-    NSInteger damage = (arc4random() % ABS(self.abilityValue) + ABS((self.abilityValue / 2)));
-    [fireball setValue:-damage];
-    [target addEffect:fireball];
-    [fireball release];
+    
+    if (!didFail){
+        DelayedHealthEffect *fireball = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
+        [fireball setOwner:self.owner];
+        [fireball setIsIndependent:YES];
+        [fireball setFailureChance:.15];
+        [fireball setTitle:@"fireball-dhe"];
+        [fireball setMaxStacks:10];
+        NSInteger damage = (arc4random() % ABS(self.abilityValue) + ABS((self.abilityValue / 2)));
+        [fireball setValue:-damage];
+        [target addEffect:fireball];
+        [fireball release];
+    }
 }
 
 @end
@@ -1105,6 +1111,9 @@
 
 @implementation RaidApplyEffect
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    if ([self checkFailed]){
+        return;
+    }
     for (RaidMember *member in theRaid.getAliveMembers){
         Effect *appliedEffect = [[self.appliedEffect copy] autorelease];
         [appliedEffect setOwner:self.owner];
@@ -1175,5 +1184,110 @@
         }
     }
     return target;
+}
+@end
+
+@implementation SoulPrison
+
+- (id)init{
+    if (self = [super init]){
+        AbilityDescriptor *descriptor = [[[AbilityDescriptor alloc] init] autorelease];
+        [descriptor setIconName:@"soul_prison_ability.png"];
+        [descriptor setAbilityName:@"Soul Prison"];
+        [descriptor setAbilityDescription:@"Emprisons an ally's soul in unimaginable torment reducing them to just shy of death but preventing all damage done to them.  When the effect expires the soul prison attempts to finish its prisoner with a small amount of damage."];
+        [self setDescriptor:descriptor];
+    }
+    return self;
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    NSInteger numTargets = self.abilityValue + (arc4random() % 4 - 2);
+    NSTimeInterval duration = numTargets * 2;
+
+    for (int i = 0; i < numTargets; i++){
+        
+        SoulPrisonEffect *spe = [[[SoulPrisonEffect alloc] initWithDuration:duration andEffectType:EffectTypeNegative] autorelease];
+        RaidMember *target = [theRaid randomLivingMember];
+        
+        NSMutableArray *effectsToRemove = [NSMutableArray arrayWithCapacity:3];
+        for (Effect *effect in target.activeEffects){
+            if (effect.effectType == EffectTypePositive){
+                [effectsToRemove addObject:effect];
+            }
+        }
+        for (Effect* effect in effectsToRemove){
+            [effect effectWillBeDispelled:theRaid player:[players objectAtIndex:0]];
+            [effect expire];
+            [target removeEffect:effect];
+        }
+        
+        Boss *bossOwner = (Boss*)self.owner;
+        NSInteger targetHealth = target.health;
+        [target setHealth:1];
+        [bossOwner.logger logEvent:[CombatEvent eventWithSource:bossOwner target:target value:[NSNumber numberWithInt:targetHealth-1] andEventType:CombatEventTypeDamage]];
+        
+        [spe setOwner:self.owner];
+        [target addEffect:spe];
+    }
+}
+
+@end
+
+@implementation DisruptionCloud
+
+- (id)init{
+    if (self = [super init]){
+        AbilityDescriptor *descriptor = [[[AbilityDescriptor alloc] init] autorelease];
+        [descriptor setAbilityName:@"Disruption Cloud"];
+        [descriptor setAbilityDescription:@"A veil of noxious gas fills the realm causing spells to take 40% longer to cast and allies to take moderate damage."];
+        [self setDescriptor:descriptor];
+    }
+    return self;
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    NSTimeInterval duration = 10.0;
+    Boss *bossOwner = (Boss*)self.owner;
+    [bossOwner.announcer displayPartcileSystemOnRaidWithName:@"red_mist.plist" forDuration:duration];
+    for (Player *player in players){
+        Effect *disruptionCastTimeEffect = [[[Effect alloc] initWithDuration:duration andEffectType:EffectTypeNegative] autorelease];
+        [disruptionCastTimeEffect setTitle:@"disruption-cast-time"];
+        [disruptionCastTimeEffect setOwner:self.owner];
+        [disruptionCastTimeEffect setCastTimeAdjustment:-.4];
+        [player addEffect:disruptionCastTimeEffect];
+    }
+    
+    NSArray *livingMembers = [theRaid getAliveMembers];
+    for (RaidMember *member in livingMembers){
+        RepeatedHealthEffect *disruptionEffect = [[[RepeatedHealthEffect alloc] initWithDuration:duration andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [disruptionEffect setTitle:@"disruption-dmg"];
+        [disruptionEffect setValuePerTick:-self.abilityValue];
+        [disruptionEffect setOwner:self.owner];
+        [disruptionEffect setNumOfTicks:duration / 1];
+        [member addEffect:disruptionEffect];
+    }
+    
+}
+
+@end
+
+@implementation Confusion
+- (id)init {
+    if (self = [super init]){
+        AbilityDescriptor *descriptor = [[[AbilityDescriptor alloc] init] autorelease];
+        [descriptor setAbilityName:@"Confusion"];
+        [descriptor setAbilityDescription:@"You will suffer periodic confusion causing some allies to become lost to your senses from a short period of time."];
+        [self setDescriptor:descriptor];
+    }
+    return self;
+}
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    for (Player *player in players){
+        Effect *confusionEffect = [[[Effect alloc] initWithDuration:self.abilityValue andEffectType:EffectTypeNegative] autorelease];
+        [confusionEffect setTitle:@"confusion-eff"];
+        [confusionEffect setCausesConfusion:YES];
+        [confusionEffect setOwner:self.owner];
+        [player addEffect:confusionEffect];        
+    }
 }
 @end

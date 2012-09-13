@@ -297,7 +297,7 @@
 
 -(void)battleEndWithSuccess:(BOOL)success{
     NSInteger numDead = self.raid.raidMembers.count - self.raid.getAliveMembers.count;
-    PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:success eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:self.isClient || self.isServer andFallenMembers:numDead];
+    PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:success eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:self.isClient || self.isServer deadCount:numDead andDuration:self.boss.duration];
     [self setPaused:YES];
     if (self.isServer){
         [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"BATTLEEND|%i|", success] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
@@ -468,9 +468,8 @@
 }
 
 -(float)rotationFromPoint:(CGPoint)a toPoint:(CGPoint)b{
-    CGPoint aToBVector = CGPointMake(b.x - a.x , b.y - a.y);
-    CGPoint unitVector = ccpNormalize(aToBVector);
-    return atan2(unitVector.y, unitVector.x);
+    CGPoint aToBVector = CGPointMake(b.x - a.x, a.y - b.y);
+    return CC_RADIANS_TO_DEGREES(atan2(aToBVector.y, aToBVector.x));
 }
 
 -(void)displayScreenShakeForDuration:(float)duration{
@@ -550,15 +549,19 @@
     
     CGPoint originLocation = CGPointMake(650, 600);
     CGPoint destination = [self.raidView frameCenterForMember:effect.target];
+    
+    if (effect.isFailed){
+        destination = [self.raidView randomMissedProjectileDestination];
+    }
     CCParticleSystem  *collisionEffect = nil;
-    if (effect.collisionParticleName){
+    if (effect.collisionParticleName && !effect.isFailed){
         collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:effect.collisionParticleName];
     }
     if (projectileSprite){
         [projectileSprite setAnchorPoint:CGPointMake(.5, .5)];
         [projectileSprite setVisible:NO];
         [projectileSprite setPosition:originLocation];
-        [projectileSprite setRotation:CC_RADIANS_TO_DEGREES([self rotationFromPoint:originLocation toPoint:destination]) + 180.0];
+        [projectileSprite setRotation:[self rotationFromPoint:originLocation toPoint:destination] - 90.0];
         [projectileSprite setColor:effect.spriteColor];
         [self addChild:projectileSprite];
         [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}], [CCMoveTo actionWithDuration:effect.collisionTime position:destination],[CCSpawn actions:[CCCallBlockN actionWithBlock:^(CCNode *node){
@@ -702,7 +705,7 @@
     }
     
 	//Update UI
-	[raidView updateRaidHealth];
+	[raidView updateRaidHealthWithPlayer:self.player andTimeDelta:deltaT];
 	[bossHealthView updateHealth];
 	[playerCastBar updateTimeRemaining:[player remainingCastTime] ofMaxTime:[[player spellBeingCast] castTime] forSpell:[player spellBeingCast]];
 	[playerEnergyView updateWithEnergy:[player energy] andMaxEnergy:[player maximumEnergy]];

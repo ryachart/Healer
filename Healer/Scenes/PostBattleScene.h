@@ -14,6 +14,6 @@
 @property (nonatomic, retain) NSString* serverPlayerId;
 @property (nonatomic, retain) GKVoiceChat *matchVoiceChat;
 
-- (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog levelNumber:(NSInteger)levelNumber andIsMultiplayer:(BOOL)isMultiplayer andFallenMembers:(NSInteger)numDead;
+- (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog levelNumber:(NSInteger)levelNumber andIsMultiplayer:(BOOL)isMultiplayer deadCount:(NSInteger)numDead andDuration:(NSTimeInterval)duration;
 
 @end

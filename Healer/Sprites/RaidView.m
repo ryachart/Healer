@@ -11,6 +11,7 @@
 
 @interface RaidView ()
 @property (nonatomic, assign) CCSprite *backgroundSprite;
+@property (nonatomic, readwrite) NSTimeInterval confusionCooldown;
 @end
 
 @implementation RaidView
@@ -38,6 +39,21 @@
 	return NO;
 }
 
+
+-(CGPoint)randomMissedProjectileDestination {
+    CGPoint returnPoint = CGPointZero;
+    NSInteger otherPos = arc4random() % 500;
+    
+    NSInteger offscreen = -40;
+    
+    if (arc4random() % 2 == 0){
+        returnPoint = CGPointMake(otherPos, offscreen);
+    }else{
+        returnPoint = CGPointMake(offscreen, otherPos);
+    }
+    return returnPoint;
+}
+
 -(CGPoint)frameCenterForMember:(RaidMember*)raidMember{
     for (RaidMemberHealthView *rmhv in self.raidViews){
         if (rmhv.memberData == raidMember){
@@ -48,8 +64,16 @@
     return CGPointZero;
 }
 
--(void)updateRaidHealth
+-(void)updateRaidHealthWithPlayer:(Player*)player andTimeDelta:(ccTime)delta
 {
+    if (player.isConfused){
+        self.confusionCooldown += delta;
+        if (self.confusionCooldown >= 1.5){
+            RaidMemberHealthView *randomRMHV = [self.raidViews objectAtIndex:arc4random() % self.raidViews.count];
+            [randomRMHV triggerConfusion];
+            self.confusionCooldown = 0.0;
+        }
+    }
 	for (RaidMemberHealthView *rmhv in self.raidViews){
 		[rmhv updateHealth];
 	}

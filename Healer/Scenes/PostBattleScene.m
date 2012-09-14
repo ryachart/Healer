@@ -6,7 +6,7 @@
 //
 
 #import "PostBattleScene.h"
-#import "QuickPlayScene.h"
+#import "LevelSelectScene.h"
 #import "MultiplayerSetupScene.h"
 #import "CombatEvent.h"
 #import "Boss.h"
@@ -21,6 +21,7 @@
 #import "DivinityConfigScene.h"
 #import "AudioController.h"
 #import "HealerStartScene.h"
+#import "BasicButton.h"
 
 @interface PostBattleScene ()
 @property (nonatomic, retain) NSArray *eventLog;
@@ -32,7 +33,7 @@
 @property (nonatomic, assign) CCLabelTTF *healingDoneLabel;
 @property (nonatomic, assign) CCLabelTTF *overhealingDoneLabel;
 @property (nonatomic, assign) CCLabelTTF *damageTakenLabel;
-@property (nonatomic, assign) CCMenuItemLabel *queueAgainMenuItem;
+@property (nonatomic, assign) CCMenuItem *queueAgainMenuItem;
 
 - (BOOL)writeApplicationData:(NSData *)data toFile:(NSString *)fileName;
 - (NSString*)timeStringForTimeInterval:(NSTimeInterval)interval;
@@ -193,14 +194,6 @@
             [victoryLabel setPosition:CGPointMake(512, 384)];
             [self addChild:victoryLabel];
             
-            if (!self.isMultiplayer){
-                CCMenuItemLabel *visitShopButton = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Visit Shop" fontName:@"Arial" fontSize:44.0] target:self selector:@selector(goToStore)];                
-                [visitShopButton.label setColor:ccWHITE];
-                CCMenu *visitStoreMenu = [CCMenu menuWithItems:visitShopButton, nil];
-                [visitStoreMenu setPosition:CGPointMake(770, 90)];
-                [self addChild:visitStoreMenu];
-            }
-            
             CCLabelTTF *scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Score: %i/10", rating] dimensions:CGSizeMake(350, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:36.0];
             [scoreLabel setPosition:CGPointMake(200, 300)];
             [self addChild:scoreLabel];
@@ -226,15 +219,18 @@
         }
     
         NSString* doneLabelString = self.isMultiplayer ? @"Leave Group" : @"Continue";
-        CCMenuItemLabel *done = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:doneLabelString fontName:@"Arial" fontSize:32] target:self selector:@selector(done)];
-        
+        CCMenuItem *done = [BasicButton basicButtonWithTarget:self andSelector:@selector(done) andTitle:doneLabelString];
         CCMenu *menu = [CCMenu menuWithItems:done, nil];
         menu.position = CGPointMake(512, 200);
         [self addChild:menu];
         
         if (self.isMultiplayer){
-            self.queueAgainMenuItem = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Battle Again" dimensions:CGSizeMake(200, 50) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32] target:self selector:@selector(queueAgain)];
+            self.queueAgainMenuItem = [BasicButton basicButtonWithTarget:self andSelector:@selector(queueAgain) andTitle:@"Battle Again"];
             [menu addChild:self.queueAgainMenuItem];
+            [menu alignItemsVertically];
+        }else {
+            CCMenuItem *visitShopButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(goToStore) andTitle:@"Shop"];
+            [menu addChild:visitShopButton];
             [menu alignItemsVertically];
         }
         
@@ -382,8 +378,8 @@
         }
         [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
     }else{
-        QuickPlayScene *qps = [[QuickPlayScene alloc] init];
-        [[CCDirector sharedDirector] replaceScene:qps];
+        LevelSelectScene *qps = [[LevelSelectScene alloc] init];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:qps]];
         [qps release];
     }
 }
@@ -407,11 +403,11 @@
 }
                                                                     
 - (void)goToDivinity {
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
 }
 
 - (void)goToStore {
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInR transitionWithDuration:.5 scene:[[StoreScene new] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:[[StoreScene new] autorelease]]];
 }
 
 #pragma mark - GKMatchDelegate

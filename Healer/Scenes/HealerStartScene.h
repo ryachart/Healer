@@ -7,7 +7,7 @@
 //
 
 #import "cocos2d.h"
-#import "QuickPlayScene.h"
+#import "LevelSelectScene.h"
 #import <UIKit/UIKit.h>
 #import <GameKit/GameKit.h>
 

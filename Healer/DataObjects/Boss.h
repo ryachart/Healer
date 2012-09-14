@@ -26,6 +26,7 @@
     BOOL healthThresholdCrossed[101];
 }
 @property (nonatomic, readwrite) BOOL isMultiplayer;
+@property (nonatomic, readwrite) BOOL isHardMode;
 @property (nonatomic, retain) NSString * info;
 @property (nonatomic, assign) id <Announcer> announcer;
 @property (nonatomic, readwrite) float criticalChance;

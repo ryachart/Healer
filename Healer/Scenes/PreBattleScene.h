@@ -8,14 +8,14 @@
 #import "cocos2d.h"
 #import "AddRemoveSpellLayer.h"
 
-@class Raid, Boss, Player;
+@class Raid, Boss, Player, BasicButton;
 
 @interface PreBattleScene : CCScene <SpellSwitchDelegate>
 @property (readwrite) NSInteger levelNumber;
 @property (nonatomic, retain) Player *player;
 @property (nonatomic, retain) Boss *boss;
 @property (nonatomic, retain) Raid *raid;
-@property (nonatomic, assign) CCLabelTTF *continueLabel;
+@property (nonatomic, assign) BasicButton *continueButton;
 
 - (id)initWithRaid:(Raid*)raid boss:(Boss*)boss andPlayer:(Player*)player;
 - (void)doneButton;

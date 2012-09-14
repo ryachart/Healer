@@ -42,7 +42,7 @@ BOOL firstLaunch = YES;
 @synthesize authenticationAttempted;
 -(id)init{
     if (self = [super init]){
-#if DEBUG
+#if TARGET_IPHONE_SIMULATOR
         [Divinity unlockDivinity];
         [Shop resetDivinity];
         [Shop playerLosesGold:[Shop localPlayerGold]];
@@ -147,13 +147,13 @@ BOOL firstLaunch = YES;
 
 -(void)quickPlaySelected
 {
-	QuickPlayScene *qpS = [QuickPlayScene new];
+	LevelSelectScene *qpS = [LevelSelectScene new];
 	[[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:.5 scene:qpS]];
 	[qpS release];
 }
 
 -(void)storeSelected{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInB transitionWithDuration:.5 scene:[[[StoreScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:.5 scene:[[[StoreScene alloc] init] autorelease]]];
 }
 
 -(void)settingsSelected
@@ -163,7 +163,7 @@ BOOL firstLaunch = YES;
 }
 
 -(void)divinitySelected{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInB transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
 }
 
 - (void)hardModeToggled:(id)sender {

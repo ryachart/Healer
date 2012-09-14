@@ -38,10 +38,8 @@
         [tierTable setAnchorPoint:CGPointMake(0, 0)];
         [self addChild:tierTable z:TIER_TABLE_Z];
         
-        BasicButton *backButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(back) andTitle:@"Back"];
-        CCMenu *backMenu = [CCMenu menuWithItems:backButton, nil];
-        [backMenu setScale:.75];
-        [backMenu setPosition:CGPointMake(0, 620)];
+        CCMenu *backMenu = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
+        [backMenu setPosition:CGPointMake(80, 700)];
         [self addChild:backMenu];
         
         CCLabelTTF *divinityLabel = [CCLabelTTF labelWithString:@"DIVINITY" fontName:@"TeluguSangamMN-Bold" fontSize:64.0];
@@ -160,7 +158,7 @@
 }
 
 - (void)back {
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInT transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInL transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
 }
 
 @end

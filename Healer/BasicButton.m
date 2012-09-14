@@ -16,7 +16,7 @@
     CCSprite *selectedMask = [CCSprite spriteWithSpriteFrameName:@"button_home_pressed.png"];
     [selectedMask setAnchorPoint:CGPointZero];
     CCSprite *basicButtonDisabled = [CCSprite spriteWithSpriteFrameName:@"button_home.png"];
-    [basicButtonDisabled setOpacity:150];
+    [basicButtonDisabled setOpacity:50];
     [basicButtonSelected setOpacity:200];
     
     title = [title uppercaseString];
@@ -53,6 +53,10 @@
     CCMenuItemSprite *menuItem = [CCMenuItemSprite itemFromNormalSprite:basicButton selectedSprite:basicButtonSelected disabledSprite:basicButtonDisabled target:target selector:selector];
     
     return [CCMenu menuWithItems:menuItem, nil];
+}
+
++ (CCMenu *)defaultBackButtonWithTarget:(id)target andSelector:(SEL)selector {
+    return [BasicButton spriteButtonWithSpriteFrameName:@"button_back.png" target:target andSelector:selector];
 }
 
 - (void)setTitle:(NSString *)title {

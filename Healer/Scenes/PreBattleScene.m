@@ -12,9 +12,11 @@
 #import "Spell.h"
 #import "GamePlayScene.h"
 #import "RaidMemberPreBattleCard.h"
-#import "QuickPlayScene.h"
+#import "LevelSelectScene.h"
 #import "SpellInfoNode.h"
 #import "BackgroundSprite.h"
+#import "BasicButton.h"
+
 
 #define SPELL_ITEM_TAG 43234
 
@@ -33,7 +35,6 @@
 @implementation PreBattleScene
 @synthesize raid = _raid, boss = _boss, player = _player, maxPlayers, levelNumber, spellInfoNodes;
 @synthesize changingSpells;
-@synthesize continueLabel;
 
 - (void)dealloc {
     [spellInfoNodes release];
@@ -52,9 +53,9 @@
         
         self.maxPlayers = raid.raidMembers.count; //Assume the number of players in the raid passed in is our max
         
-        self.continueLabel = [CCLabelTTF labelWithString:@"Battle!" fontName:@"Arial" fontSize:32];
-        CCMenu *doneButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:self.continueLabel target:self selector:@selector(doneButton)], nil];
-        [doneButton setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .8, [CCDirector sharedDirector].winSize.height * .05 )];
+        self.continueButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneButton) andTitle:@"Battle!"];
+        CCMenu *doneButton = [CCMenu menuWithItems:self.continueButton, nil];
+        [doneButton setPosition:CGPointMake(900, 50)];
         
         [self addChild:doneButton];
         
@@ -64,21 +65,14 @@
         [changeButton setPosition:CGPointMake(900, 650)];
         [self addChild:changeButton z:2];
         
-        CCLayerColor *spellsGroupingBackground = [CCLayerColor layerWithColor:ccc4(255, 255, 255, 255)];
-        [spellsGroupingBackground setPosition:ccp([CCDirector sharedDirector].winSize.width * .7, [CCDirector sharedDirector].winSize.height * .25)];
-        [spellsGroupingBackground setContentSize:CGSizeMake(298,500)];
-        [self addChild:spellsGroupingBackground];
-        
-        
         CCLabelTTF *activeSpellsLabel = [CCLabelTTF labelWithString:@"Spells:" fontName:@"Arial" fontSize:32];
-        [activeSpellsLabel  setColor:ccBLACK];
         [activeSpellsLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .75, [CCDirector sharedDirector].winSize.height * .85)];
         [self addChild:activeSpellsLabel];
         
         [self configureSpells];
 
         CCLabelTTF *alliesLabel = [CCLabelTTF labelWithString:@"Your Allies:" fontName:@"Arial" fontSize:32];
-        [alliesLabel setPosition:ccp(120, 680)];
+        [alliesLabel setPosition:ccp(120, 664)];
         [self addChild:alliesLabel];
         
         NSMutableDictionary *raidMemberTypes = [NSMutableDictionary dictionaryWithCapacity:5];
@@ -109,10 +103,8 @@
             i++;
         }
         
-        CCLabelTTF *back = [CCLabelTTF labelWithString:@"Back" fontName:@"Arial" fontSize:32.0];
-        CCMenu *backButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:back target:self selector:@selector(back)], nil];
-        [backButton setPosition:CGPointMake(50, [CCDirector sharedDirector].winSize.height * .95)];
-        [backButton setColor:ccWHITE];
+        CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
+        [backButton setPosition:CGPointMake(80, [CCDirector sharedDirector].winSize.height * .95)];
         [self addChild:backButton];
         
         if (boss.info){
@@ -152,13 +144,16 @@
 }
 
 -(void)back{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInL transitionWithDuration:1.0 scene:[[[QuickPlayScene alloc] init] autorelease]]];
+    if (!self.changingSpells){
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInL transitionWithDuration:1.0 scene:[[[LevelSelectScene alloc] init] autorelease]]];
+    }
 }
+
 -(void)doneButton{
     if (!self.changingSpells){
         GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss andPlayer:self.player];
         [gps setLevelNumber:self.levelNumber];
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:1.0 scene:gps]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.5 scene:gps]];
         [gps release];
     }
 }

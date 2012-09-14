@@ -42,11 +42,8 @@
         NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"shop-sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
         
-        CCMenuItemLabel *back = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Back" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(back)];
-        
-        CCMenu *storeBackMenu = [CCMenu menuWithItems:back, nil];
-        [storeBackMenu alignItemsVertically];
-        [storeBackMenu setPosition:CGPointMake(50, 700)];
+        CCMenu *storeBackMenu = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
+        [storeBackMenu setPosition:CGPointMake(80, 700)];
         [self addChild:storeBackMenu];
                 
         GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
@@ -172,7 +169,7 @@
 }
 
 -(void)back{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInT transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInL transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
 }
 
 @end

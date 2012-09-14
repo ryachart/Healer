@@ -29,7 +29,7 @@
         [self.spellIcon addChild:spellNamePH];
         [self addChild:self.spellIcon];
 
-        CCLayerColor *spellDetailsBackground = [CCLayerColor layerWithColor:ccc4(0, 255, 0, 255)];
+        CCLayerColor *spellDetailsBackground = [CCLayerColor layerWithColor:ccc4(120, 120, 120, 255)];
         [spellDetailsBackground setContentSize:CGSizeMake(200, 100)];
         [spellDetailsBackground setPosition:CGPointMake(100,0)];
         

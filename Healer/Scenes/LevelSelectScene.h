@@ -1,5 +1,5 @@
 //
-//  QuickPlayScene.h
+//  LevelSelectScene.h
 //  Healer
 //
 //  Created by Ryan Hart on 4/28/10.
@@ -10,5 +10,5 @@
 #import "GameObjects.h"
 #import "GamePlayScene.h"
 
-@interface QuickPlayScene : CCScene 
+@interface LevelSelectScene : CCScene 
 @end

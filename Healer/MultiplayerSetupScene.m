@@ -16,6 +16,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "BackgroundSprite.h"
 #import "MultiplayerQueueScene.h"
+#import "BasicButton.h"
 
 @interface MultiplayerSetupScene ()
 @property (nonatomic, retain) Raid *raid;
@@ -135,9 +136,9 @@
         }
         
         if (self.isServer){
-            self.continueLabel.string = @"Waiting...";
+            [self.continueButton setTitle:@"Waiting..."];
         }else {
-            self.continueLabel.string = @"Commit";
+            [self.continueButton setTitle:@"Commit"];
         }
     }
 }
@@ -216,7 +217,7 @@
             
             
             if ([self canBegin]){
-                self.continueLabel.string = @"Battle!";
+                [self.continueButton setTitle:@"Battle!"];
             }
             
         }

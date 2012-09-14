@@ -65,7 +65,9 @@ NSString* const PlayerLastUsedSpellsKey = @"com.healer.lastUsedSpells";
     [obj setObject:[NSNumber numberWithInt:[Shop localPlayerGold]] forKey:@"Gold"];
     [obj setObject:[NSNumber numberWithInt:numVisits+1] forKey:@"saves"];
     [obj setObject:[UIDevice currentDevice].name forKey:@"deviceName"];
-    [obj setObject:[PlayerDataManager lastUsedSpellTitles] forKey:@"lastUsedSpells"];
+    if ([PlayerDataManager lastUsedSpellTitles]){
+        [obj setObject:[PlayerDataManager lastUsedSpellTitles] forKey:@"lastUsedSpells"];
+    }
     
     NSInteger highestLevelCompleted = [PlayerDataManager highestLevelCompleted];
     if (highestLevelCompleted > 20){

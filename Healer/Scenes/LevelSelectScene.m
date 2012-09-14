@@ -1,12 +1,12 @@
 //
-//  QuickPlayScene.m
+//  LevelSelectScene.m
 //  Healer
 //
 //  Created by Ryan Hart on 4/28/10.
 //  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
 
-#import "QuickPlayScene.h"
+#import "LevelSelectScene.h"
 #import "PersistantDataManager.h"
 #import "PreBattleScene.h"
 #import "HealerStartScene.h"
@@ -14,10 +14,11 @@
 #import "Shop.h"
 #import "BackgroundSprite.h"
 #import "Divinity.h"
+#import "BasicButton.h"
 
 #define NUM_ENCOUNTERS 21
 
-@interface QuickPlayScene ()
+@interface LevelSelectScene ()
 @property (assign) CCMenu *menu;
 
 - (void)beginGameWithSelectedLevel:(id)sender;
@@ -26,7 +27,7 @@
 
 @end
 
-@implementation QuickPlayScene
+@implementation LevelSelectScene
 @synthesize menu;
 -(id)init{
     if (self = [super init]){
@@ -57,21 +58,19 @@
             [self.menu addChild:levelButton];
             [levelButton release];
         }
-        [self.menu setPosition:ccp([CCDirector sharedDirector].winSize.width /2, [CCDirector sharedDirector].winSize.height * .63)];
+        [self.menu setPosition:ccp([CCDirector sharedDirector].winSize.width /2, [CCDirector sharedDirector].winSize.height * .55)];
         [self.menu setColor:ccc3(255, 255, 255)];
         [self.menu alignItemsInRows:[NSNumber numberWithInt:10],[NSNumber numberWithInt:11], nil];
         [self addChild:self.menu];
         
         
-        CCMenu *backButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Back" fontName:@"Arial" fontSize:24.0] target:self selector:@selector(back)], nil];
-        [backButton setPosition:CGPointMake(30, [CCDirector sharedDirector].winSize.height * .9)];
-        [backButton setColor:ccWHITE];
+        CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
+        [backButton setPosition:CGPointMake(80, 720)];
         [self addChild:backButton];
         
         if ([PlayerDataManager highestLevelCompleted] >= 8){
             CCMenu *endlessButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"The Endless Void" fontName:@"Arial" fontSize:28.0] target:self selector:@selector(beginEndlessVoidEncounter:)], nil];
-            [endlessButton setRotation:-45.0];
-            [endlessButton setPosition:CGPointMake(-275, [CCDirector sharedDirector].winSize.height * .45)];
+            [endlessButton setPosition:CGPointMake(512, 40)];
             [endlessButton setColor:ccWHITE];
             [self addChild:endlessButton];
         }
@@ -130,7 +129,7 @@
 
 -(void)back
 {
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInL transitionWithDuration:1.0 scene:[[[HealerStartScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInL transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
 }
 
 

@@ -12,7 +12,9 @@
 @class Slot;
 
 @interface DraggableSpellIcon : CCSprite
-@property (nonatomic, retain) Slot *defaultSlot;
-@property (nonatomic, retain) Slot *currentSlot;
+@property (nonatomic, retain) Spell *spell;
+
 - (id)initWithSpell:(Spell*)spell;
+- (CCSprite*)draggableSprite;
+
 @end

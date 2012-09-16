@@ -6,6 +6,7 @@
 //
 
 #import "cocos2d.h"
+#import "Slot.h"
 @class Spell;
 
 @protocol SpellSwitchDelegate <NSObject>
@@ -14,11 +15,7 @@
 
 @end
 
-@interface SpellMenuItemLabel : CCMenuItemLabel
-@property (nonatomic, retain) Spell *spell;
-@end
-
-@interface AddRemoveSpellLayer : CCLayerColor
+@interface AddRemoveSpellLayer : CCLayerColor <SlotDelegate>
 @property (nonatomic, assign) id<SpellSwitchDelegate> delegate;
 -(id)initWithCurrentSpells:(NSArray*)spells;
 

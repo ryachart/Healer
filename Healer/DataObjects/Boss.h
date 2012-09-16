@@ -65,7 +65,7 @@
 @end
 
 @interface Drake : Boss
-@property (readwrite) NSTimeInterval lastFireballTime;
+@property (nonatomic, readwrite, assign) Ability *fireballAbility;
 @end
 
 @interface Trulzar : Boss

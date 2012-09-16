@@ -325,9 +325,8 @@
 @end
 
 @implementation Drake 
-@synthesize lastFireballTime;
 +(id)defaultBoss{
-    Drake *drake = [[Drake alloc] initWithHealth:52000 damage:16 targets:1 frequency:1.2 andChoosesMT:NO];
+    Drake *drake = [[Drake alloc] initWithHealth:52000 damage:0 targets:0 frequency:0 andChoosesMT:NO];
     [drake setTitle:@"Tainted Drake"];
     [drake setInfo:@"A Tainted Drake is hidden in the Paragon Cliffs. You and your allies must stop the beast from doing any more damage to the Kingdom.  The king will provide you with a great reward for defeating the beast."];
     
@@ -338,35 +337,14 @@
     [drake addAbilityDescriptor:fireball];
     [fireball release];
     
+    drake.fireballAbility = [[[ProjectileAttack alloc] init] autorelease];
+    [drake.fireballAbility setTitle:@"fireball-ab"];
+    [(ProjectileAttack*)drake.fireballAbility setSpriteName:@"fireball.png"];
+    [drake.fireballAbility setAbilityValue:40];
+    [drake.fireballAbility setFailureChance:.05];
+    [drake.fireballAbility setCooldown:2.5];
+    [drake addAbility:drake.fireballAbility];
     return [drake autorelease];
-}
-
--(void)shootFireballAtTarget:(RaidMember*)target withDelay:(float)delay{
-    float colTime = (1.5 + delay);
-    DelayedHealthEffect *fireball = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
-    
-    ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:@"fireball.png" target:target andCollisionTime:colTime];
-    [fireballVisual setCollisionParticleName:@"fire_explosion.plist"];
-    [self.announcer displayProjectileEffect:fireballVisual];
-    [fireballVisual release];
-    [fireball setOwner:self];
-    [fireball setIsIndependent:YES];
-    [fireball setFailureChance:.15];
-    [fireball setValue:-(arc4random() % 20 + 25)];
-    [target addEffect:fireball];
-    [fireball release];
-}
-
-- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
-{
-    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
-    
-    self.lastFireballTime += timeDelta;
-    float tickTime = self.isMultiplayer ? 3.5 : 4.0;
-    if (self.lastFireballTime > tickTime){
-        [self shootFireballAtTarget:[theRaid randomLivingMember] withDelay:0.0];
-        self.lastFireballTime = 0;
-    }
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
@@ -374,7 +352,11 @@
         int i = 0;
         for (RaidMember *member in raid.raidMembers){
             if (!member.isDead){
-                [self shootFireballAtTarget:member withDelay:i * .75];
+                //Woh WTF Making a new raid?  We want the ability to trigger for each member and not possible do two at the same member
+                Raid *singlePlayerRaid = [[Raid alloc] init];
+                [singlePlayerRaid addRaidMember:member];
+                [self.fireballAbility triggerAbilityForRaid:singlePlayerRaid andPlayers:[NSArray arrayWithObject:player]];
+                [singlePlayerRaid release];
             }
             i++;
         }

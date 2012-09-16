@@ -9,24 +9,16 @@
 #import "Spell.h"
 #import "Shop.h"
 #import "PersistantDataManager.h"
-
-@implementation SpellMenuItemLabel
-@synthesize spell;
-- (void)dealloc{
-    [spell release];
-    [super dealloc];
-}
-@end
+#import "DraggableSpellIcon.h"
 
 @interface AddRemoveSpellLayer ()
 @property (nonatomic, retain) NSMutableArray *unusedSpells;
 @property (nonatomic, retain) NSMutableArray *usedSpells;
 @property (nonatomic, retain) CCMenu *unusedSpellsMenu;
 @property (nonatomic, retain) CCMenu *usedSpellsMenu;
-
--(void)configureMenus;
--(void)addSpell:(id)sender;
--(void)removeSpell:(id)sender;
+@property (nonatomic, retain) DraggableSpellIcon *draggingSprite;
+@property (nonatomic, retain) NSMutableArray *spellSlots;
+@property (nonatomic, retain) NSMutableDictionary *ownedSpellSlots;
 @end
 
 @implementation AddRemoveSpellLayer
@@ -38,6 +30,9 @@
     [usedSpells release];
     [unusedSpellsMenu release];
     [usedSpellsMenu release];
+    [_draggingSprite release];
+    [_spellSlots release];
+    [_ownedSpellSlots release];
     [super dealloc];
 }
 
@@ -49,104 +44,158 @@
         self.usedSpells = [NSMutableArray arrayWithArray:spells];
         
         CCMenu *dismissButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Dismiss" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(dismiss)], nil];
-        [dismissButton setPosition:CGPointMake(900, 700)];
+        [dismissButton setPosition:CGPointMake(920, 740)];
         [self addChild: dismissButton];
+                
+        CCLabelTTF *inactiveSpellsLabel = [CCLabelTTF labelWithString:@"Library" fontName:@"Arial" fontSize:40.0];
+        [inactiveSpellsLabel setPosition:CGPointMake(350, 690)];
         
-        [self configureMenus];
-        
-        CCLabelTTF *inactiveSpellsLabel = [CCLabelTTF labelWithString:@"Inactive Spells:" fontName:@"Arial" fontSize:40.0];
-        [inactiveSpellsLabel setPosition:CGPointMake(300, 700)];
-        
-        
-        CCLabelTTF *activeSpellsLabel = [CCLabelTTF labelWithString:@"Active Spells:" fontName:@"Arial" fontSize:40.0];
-        [activeSpellsLabel setPosition:CGPointMake(640, 700)];
+        CCLabelTTF *activeSpellsLabel = [CCLabelTTF labelWithString:@"Memorized" fontName:@"Arial" fontSize:40.0];
+        [activeSpellsLabel setPosition:CGPointMake(850, 690)];
         
         [self addChild:inactiveSpellsLabel];
         [self addChild:activeSpellsLabel];
         
         CCLayerColor *dividerLine = [CCLayerColor layerWithColor:ccc4(255, 255, 255, 255)];
         [dividerLine setContentSize:CGSizeMake(2, 768)];
-        [dividerLine setPosition:CGPointMake(490, 0)];
+        [dividerLine setPosition:CGPointMake(710, 0)];
         [self addChild: dividerLine];
+        
+        self.ownedSpellSlots = [NSMutableDictionary dictionaryWithCapacity:20];
+        int j = 0;
+        for (Spell *spell in [Shop allOwnedSpells]){
+            DraggableSpellIcon *inhabitant = nil;
+            if (![self.usedSpells containsObject:spell]){
+                inhabitant = [[[DraggableSpellIcon alloc] initWithSpell:spell] autorelease];
+            }
+            Slot *spellSlot = [[[Slot alloc] initWithInhabitantOrNil:inhabitant] autorelease];
+            CCSpriteFrame *spellIcon = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:spell.spriteFrameName];
+            if (!spellIcon){
+                spellIcon = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"unknown-icon.png"];
+            }
+            
+            [spellSlot setDefaultInhabitant:[CCSprite spriteWithSpriteFrame:spellIcon]];
+            [spellSlot setTitle:spell.title];
+            [spellSlot setDelegate:self];
+            [spellSlot setPosition:CGPointMake(130 + (110 * (j % 5)), 610 - (140 * (j / 5)))];
+            [self addChild:spellSlot];
+            
+            [self.ownedSpellSlots setObject:spellSlot forKey:spell.title];
+            j++;
+        }
+        
+        self.spellSlots = [NSMutableArray arrayWithCapacity:4];
+        for (int i = 0; i < 4; i++){
+            DraggableSpellIcon *inhabitant = nil;
+            NSString *accessoryTitle = @"Empty";
+            if (self.usedSpells.count > i){
+                Spell *spell = [self.usedSpells objectAtIndex:i];
+                inhabitant = [[[DraggableSpellIcon alloc] initWithSpell:spell] autorelease];
+                accessoryTitle = spell.title;
+            }
+            Slot *spellSlot = [[[Slot alloc] initWithInhabitantOrNil:inhabitant] autorelease];
+            [spellSlot setDelegate:self];
+            [spellSlot setPosition:CGPointMake(800, 550 - (105 * i))];
+            [spellSlot setAccessoryTitle:accessoryTitle];
+            [self addChild:spellSlot];
+            [self.spellSlots addObject:spellSlot];
+        }
+
     }
     return self;
 }
 
+- (void)onEnter {
+    [super onEnter];
+    [[CCTouchDispatcher sharedDispatcher] addTargetedDelegate:self priority:-129 swallowsTouches:YES];
+}
+
+- (BOOL)ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event{    
+    for (CCNode *child in self.children){
+        if ([child isKindOfClass:[Slot class]]){
+            Slot *slotChild = (Slot*)child;
+            CGPoint touchLocation = [[CCDirector sharedDirector] convertToGL:[touch locationInView:[touch view]]];
+            CGRect layerRect =  [slotChild boundingBox];
+            CGPoint convertedToNodeSpacePoint = [self convertToNodeSpace:touchLocation];
+            if (CGRectContainsPoint(layerRect, convertedToNodeSpacePoint)){
+                if (slotChild.inhabitant){
+                    self.draggingSprite = (DraggableSpellIcon*)[slotChild inhabitantRemovedForDragging];
+                    [self.draggingSprite setAnchorPoint:CGPointMake(.5, .5)];
+                    [self addChild:self.draggingSprite];
+                    [self.draggingSprite setPosition:slotChild.position];
+                    if ([self.spellSlots containsObject:slotChild]){
+                        slotChild.accessoryTitle = @"Empty";
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    if (self.draggingSprite){
+        return YES;
+    }
+    return NO;
+}
+
+- (void)ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event {
+    if (self.draggingSprite){
+        CGPoint touchLocation = [[CCDirector sharedDirector] convertToGL:[touch locationInView:[touch view]]];
+        [self.draggingSprite setPosition:touchLocation];
+    }
+}
+
+- (void)ccTouchCancelled:(UITouch *)touch withEvent:(UIEvent *)event {
+    //Cancelled is the same as ended for us...
+    [self ccTouchEnded:touch withEvent:event];
+}
+
+- (void)ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event {
+    BOOL droppedIntoSlot = NO;
+    for (Slot *slotChild in self.spellSlots){
+            if ([slotChild canDropIntoSlotFromRect:self.draggingSprite.boundingBox]){
+                [self.draggingSprite removeFromParentAndCleanup:YES];
+                [slotChild dropInhabitant:self.draggingSprite];
+                slotChild.accessoryTitle = self.draggingSprite.spell.title;
+                self.draggingSprite = nil;
+                droppedIntoSlot = YES;
+                break;
+            }
+    }
+    if (!droppedIntoSlot){
+        Slot *defaultSlot = [self.ownedSpellSlots objectForKey:self.draggingSprite.spell.title];
+        [self.draggingSprite removeFromParentAndCleanup:YES];
+        [defaultSlot dropInhabitant:self.draggingSprite];
+        self.draggingSprite = nil;
+    }
+    
+    if (self.draggingSprite){
+        [self.draggingSprite removeFromParentAndCleanup:YES];
+        self.draggingSprite = nil;
+    }
+}
+
 -(void)dismiss{
     if (self.delegate){
-        [PlayerDataManager setUsedSpells:self.usedSpells];
-        [self.delegate spellSwitchDidCompleteWithActiveSpells:self.usedSpells];
+        NSMutableArray *newUsedSpells = [NSMutableArray arrayWithCapacity:4];
+        for (Slot *slot in self.spellSlots){
+            if (slot.inhabitant){
+                DraggableSpellIcon *inhabitant = (DraggableSpellIcon*)slot.inhabitant;
+                [newUsedSpells addObject:inhabitant.spell];
+            }
+        }
+        [PlayerDataManager setUsedSpells:newUsedSpells];
+        [self.delegate spellSwitchDidCompleteWithActiveSpells:newUsedSpells];
     }
     [self runAction:[CCSequence actions:[CCMoveTo actionWithDuration:.5 position:CGPointMake(-1024, 0)], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node removeFromParentAndCleanup:YES];
         }], nil]];
 }
 
--(void)addSpell:(id)sender{
-    SpellMenuItemLabel *label = (SpellMenuItemLabel*)sender;
-    [label retain];
-    Spell *spellToAdd = [label spell];
-    
-    if (self.usedSpells.count < 4){
-        [self.unusedSpells removeObject:spellToAdd];
-        [self.usedSpells addObject:spellToAdd];
-        [self configureMenus];
-    }else{
-        
-    }
-    [label autorelease];
-}
+#pragma mark - Slot Delegate
 
--(void)removeSpell:(id)sender{
-    SpellMenuItemLabel *label = (SpellMenuItemLabel*)sender;
-    [label retain];
-    Spell *spellToRemove = [label spell];
+- (void)slotDidEmpty:(Slot *)slot {
     
-    if (self.usedSpells.count > 1){
-        [self.usedSpells  removeObject:spellToRemove];
-        [self.unusedSpells addObject:spellToRemove];
-        [self configureMenus];
-    }else{
-        
-    }
-    [label autorelease];
-}
-
--(void)configureMenus{
-    if (!self.unusedSpellsMenu){
-        self.unusedSpellsMenu = [CCMenu menuWithItems: nil];
-        [self.unusedSpellsMenu setPosition:CGPointMake(300, 400)];
-        [self addChild:self.unusedSpellsMenu];
-    }
-    
-    if (!self.usedSpellsMenu){
-        self.usedSpellsMenu = [CCMenu menuWithItems: nil];
-        [self.usedSpellsMenu setPosition:CGPointMake(600, 400)];
-        [self addChild:self.usedSpellsMenu];
-    }
-    
-    [self.unusedSpellsMenu  removeAllChildrenWithCleanup:YES];
-    [self.usedSpellsMenu removeAllChildrenWithCleanup:YES];
-    
-    for (Spell *spell in self.unusedSpells){
-        SpellMenuItemLabel *itemLabel = [[SpellMenuItemLabel alloc] initWithTarget:self selector:@selector(addSpell:)];
-        [itemLabel setLabel:[CCLabelTTF labelWithString:spell.title fontName:@"Arial" fontSize:32.0]];
-        [itemLabel setSpell:spell];
-        [self.unusedSpellsMenu addChild:itemLabel];
-        [itemLabel release];
-    }
-    
-    [self.unusedSpellsMenu alignItemsVertically];
-    
-    for (Spell *spell in self.usedSpells){
-        SpellMenuItemLabel *itemLabel = [[SpellMenuItemLabel alloc] initWithTarget:self selector:@selector(removeSpell:)];
-        [itemLabel setLabel:[CCLabelTTF labelWithString:spell.title fontName:@"Arial" fontSize:32.0]];
-        [itemLabel setSpell:spell];
-        [self.usedSpellsMenu addChild:itemLabel];
-        [itemLabel release];
-    }
-    
-    [self.usedSpellsMenu alignItemsVertically];
 }
 
 @end

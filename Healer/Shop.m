@@ -81,10 +81,14 @@ static NSArray *shopItems = nil;
 
 +(NSArray*)allOwnedSpells{
     NSMutableArray *allSpells = [NSMutableArray arrayWithCapacity:20];
-    for (ShopItem *item in [Shop purchasedItems]){
-        [allSpells addObject:[[[item purchasedSpell] class] defaultSpell]];
-    }
+    NSArray *allShopItems = [Shop allShopItems];
+    NSArray *purchasedItems = [Shop purchasedItems];
     [allSpells addObject:[Heal defaultSpell]];
+    for (ShopItem *item in allShopItems){
+        if ([purchasedItems containsObject:item]){
+            [allSpells addObject:[[[item purchasedSpell] class] defaultSpell]];
+        }
+    }
     return allSpells;
 }
 

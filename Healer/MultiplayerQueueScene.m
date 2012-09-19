@@ -52,7 +52,7 @@
         [self addChild:queueMenu];
         
         CCMenu *backButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Back" fontName:@"Arial" fontSize:24.0] target:self selector:@selector(back)], nil];
-        [backButton setPosition:CGPointMake(30, [CCDirector sharedDirector].winSize.height * .9)];
+        [backButton setPosition:CGPointMake(40, [CCDirector sharedDirector].winSize.height * .905)];
         [backButton setColor:ccWHITE];
         [self addChild:backButton];
     }

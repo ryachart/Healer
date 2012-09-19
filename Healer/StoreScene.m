@@ -43,7 +43,7 @@
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
         
         CCMenu *storeBackMenu = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
-        [storeBackMenu setPosition:CGPointMake(80, 700)];
+        [storeBackMenu setPosition:CGPointMake(90, 705)];
         [self addChild:storeBackMenu];
                 
         GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];

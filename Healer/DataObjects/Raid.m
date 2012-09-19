@@ -73,7 +73,7 @@
     int safety = 0;
     do {
         selectedMember = [self randomLivingMember];
-        if (selectedMember.positioning != pos){
+        if (pos != Any && selectedMember.positioning != pos){
             selectedMember = nil;
         }
         safety++;
@@ -97,6 +97,23 @@
         }
     }while (!selectedMember);
     return selectedMember;
+}
+
+- (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos{
+    NSMutableArray *targets = [NSMutableArray arrayWithCapacity:numTargets];
+    
+    int safety = 0;
+    while (targets.count < numTargets){
+        RaidMember *candidate = [self randomLivingMemberWithPositioning:pos];
+        if (![targets containsObject:candidate]){
+            [targets addObject:candidate];
+        }
+        if (safety >= 25){
+            break;
+        }
+        safety++;
+    }
+    return targets;
 }
 
 -(RaidMember*)memberForBattleID:(NSString *)battleID{

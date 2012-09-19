@@ -258,13 +258,15 @@
         [self addChild:durationLabel];
         
 #if DEBUG
-        NSMutableArray *events = [NSMutableArray arrayWithCapacity:eventLog.count];
-        for (CombatEvent *event in eventLog){
-            [events addObject:[event logLine]];
+        if (eventLog.count > 0){
+            NSMutableArray *events = [NSMutableArray arrayWithCapacity:eventLog.count];
+            for (CombatEvent *event in eventLog){
+                [events addObject:[event logLine]];
+            }
+            //Save the Combat Log to disk...
+            
+            [self writeApplicationData:(NSData*)events toFile:[NSString stringWithFormat:@"%@-%@", [[eventLog   objectAtIndex:0] timeStamp], [[eventLog lastObject] timeStamp]]];
         }
-        //Save the Combat Log to disk...
-        
-        [self writeApplicationData:(NSData*)events toFile:[NSString stringWithFormat:@"%@-%@", [[eventLog   objectAtIndex:0] timeStamp], [[eventLog lastObject] timeStamp]]];
 #endif
     }
     return self;

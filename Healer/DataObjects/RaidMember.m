@@ -218,7 +218,7 @@
     return [[[Archer alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:100 damageDealt:65 andDmgFrequency:.6 andPositioning:Ranged]){
+    if (self = [super initWithHealth:100 damageDealt:60 andDmgFrequency:.6 andPositioning:Ranged]){
         self.title = @"Archer";
         self.info = @"The Archer has low health but deals high damage.";
         self.dodgeChance = .05;
@@ -242,8 +242,8 @@
 
 -(int)damageDealt{
     int baseDamage = [super damageDealt];
-    
-    return baseDamage - (self.maximumHealth - self.health);
+    int fullHealthBonus = self.health == self.maximumHealth ? 10 : 0;
+    return baseDamage - (self.maximumHealth - self.health) + fullHealthBonus;
 }
 @end
 

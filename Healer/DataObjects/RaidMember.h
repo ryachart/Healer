@@ -24,8 +24,9 @@
 @class Player;
 
 typedef enum {
+    Any = 0,
     Ranged,
-    Melee,
+    Melee
 } Positioning;
 
 @interface RaidMember : HealableTarget {

@@ -94,8 +94,6 @@ static NSArray *shopItems = nil;
 
 
 +(NSArray*)allShopItems{
-    
-    
     if (!shopItems){
         NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
         
@@ -114,11 +112,11 @@ static NSArray *shopItems = nil;
         case ShopCategoryEssentials:
             return 0;
         case ShopCategoryTopShelf:
-            return 3;
+            return 4;
         case ShopCategoryArchives:
-            return 5;
+            return 6;
         case ShopCategoryVault:
-            return 7;
+            return 8;
     }
     return 0;
 }

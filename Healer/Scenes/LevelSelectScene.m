@@ -65,7 +65,7 @@
         
         
         CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
-        [backButton setPosition:CGPointMake(80, 720)];
+        [backButton setPosition:CGPointMake(90, 725)];
         [self addChild:backButton];
         
         if ([PlayerDataManager highestLevelCompleted] >= 8){

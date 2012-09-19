@@ -27,11 +27,6 @@ BOOL firstLaunch = YES;
 @property (assign) CCMenuItem* quickPlayButton;
 @property (assign) CCMenuItem* storeButton;
 @property (nonatomic, readwrite) BOOL authenticationAttempted;
-
--(void)multiplayerSelected;
--(void)quickPlaySelected;
--(void)settingsSelected;
--(void)storeSelected;
 @end
 
 @implementation HealerStartScene
@@ -42,12 +37,6 @@ BOOL firstLaunch = YES;
 @synthesize authenticationAttempted;
 -(id)init{
     if (self = [super init]){
-#if TARGET_IPHONE_SIMULATOR
-        [Divinity unlockDivinity];
-        [Shop resetDivinity];
-        [Shop playerLosesGold:[Shop localPlayerGold]];
-        [Shop playerEarnsGold:20000];
-#endif
         [[AudioController sharedInstance] addNewPlayerWithTitle:@"title" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/title" ofType:@"m4a"]]];
         //Perform Scene Setup   
         NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
@@ -66,11 +55,8 @@ BOOL firstLaunch = YES;
         if (![Divinity isDivinityUnlocked]){
             [divinityButton setIsEnabled:NO];
         }
-        
-//        NSString *difficultyTitle = [PlayerDataManager hardMode] ? @"Normal Mode" : @"Hard Mode";
-//        CCMenuItem *hardModeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(hardModeToggled:) andTitle:difficultyTitle];
-//        [hardModeButton setIsEnabled:NO];
-        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, self.multiplayerButton, divinityButton/*, hardModeButton*/, nil];
+    
+        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, self.multiplayerButton, divinityButton, nil];
         
         [self.menu alignItemsVerticallyWithPadding:20.0];
         CGSize winSize = [CCDirector sharedDirector].winSize;

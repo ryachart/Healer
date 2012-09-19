@@ -14,8 +14,5 @@
 
 /* This is the start screen. */
 @interface HealerStartScene : CCScene 
-
-
-
 @end
 

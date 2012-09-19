@@ -85,7 +85,7 @@
 @end
 
 @class FocusedAttack;
-@interface SporeRavagers : Boss
+@interface FungalRavagers : Boss
 @property (readwrite) BOOL isEnraged;
 @property (nonatomic, assign) FocusedAttack *secondTargetAttack;
 @property (nonatomic, assign) FocusedAttack *thirdTargetAttack;
@@ -96,7 +96,7 @@
 @property (readwrite) NSTimeInterval lastPotionThrow;
 @end
 
-@interface BefouledTreat : Boss
+@interface BefouledTreant : Boss
 @property (readwrite) NSTimeInterval lastRootquake;
 @end
 

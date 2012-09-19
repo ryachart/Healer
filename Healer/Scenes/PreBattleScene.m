@@ -104,7 +104,7 @@
         }
         
         CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
-        [backButton setPosition:CGPointMake(80, [CCDirector sharedDirector].winSize.height * .95)];
+        [backButton setPosition:CGPointMake(90, [CCDirector sharedDirector].winSize.height * .95)];
         [self addChild:backButton];
         
         if (boss.info){

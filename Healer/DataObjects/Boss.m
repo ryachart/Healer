@@ -690,7 +690,7 @@
 @synthesize lastSickeningTime, numBubblesPopped;
 +(id)defaultBoss{
     //427500
-    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:250000 damage:30 targets:2 frequency:2.5 andChoosesMT:YES];
+    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:250000 damage:25 targets:1 frequency:2.5 andChoosesMT:YES];
     [boss setTitle:@"Plaguebringer Colossus"];
     [boss setInfo:@"From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped.  The village people have foreseen their impending doom and sent young and brave hopefuls to join The Light Ascendant in exchange for protection.  You must lead this group to victory against the wretched beast."];
     
@@ -779,11 +779,11 @@
 
 @end
 
-@implementation SporeRavagers
+@implementation FungalRavagers
 @synthesize isEnraged, secondTargetAttack, thirdTargetAttack;
 +(id)defaultBoss{
-    SporeRavagers *boss = [[SporeRavagers alloc] initWithHealth:405000 damage:14 targets:1 frequency:2.5 andChoosesMT:YES];
-    [boss setTitle:@"Spore Ravagers"];
+    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:300000 damage:14 targets:1 frequency:2.5 andChoosesMT:YES];
+    [boss setTitle:@"Fungal Ravagers"];
     [boss setInfo:@"Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate. Conversely, no villagers have left the town, either..."];
     [boss setCriticalChance:.5];
     
@@ -797,7 +797,7 @@
     [thirdFocusedAttack release];
     
     AbilityDescriptor *vileExploDesc = [[AbilityDescriptor alloc] init];
-    [vileExploDesc setAbilityDescription:@"When a Spore Ravager dies, it explodes dealing high damage to random nearby targets."];
+    [vileExploDesc setAbilityDescription:@"When a Fungal Ravager dies, it explodes dealing high damage to random nearby targets."];
     [vileExploDesc setIconName:@"unknown_ability.png"];
     [vileExploDesc setAbilityName:@"Vile Explosion"];
     [boss addAbilityDescriptor:vileExploDesc];
@@ -807,11 +807,16 @@
 }
 
 -(void)ravagerDiedFocusing:(RaidMember*)focus andRaid:(Raid*)raid{
-    [self.announcer announce:@"A Spore Ravager falls to the ground and explodes!"];
+    [self.announcer announce:@"A Fungal Ravager falls to the ground and explodes!"];
     [focus setIsFocused:NO];
-    for (int i = 0; i < 5; i++){
-        RaidMember *member = [raid randomLivingMember];
-        [member setHealth:member.health - 50 * self.damageDoneMultiplier];
+    
+    NSInteger numTargets = arc4random() % 3 + 3;
+    
+    NSArray *members = [raid randomTargets:numTargets withPositioning:Any];
+    for (RaidMember *member in members){
+        NSInteger damage = arc4random() % 45 + 30;
+        [member setHealth:member.health - damage * self.damageDoneMultiplier];
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
     }
 }
 
@@ -821,10 +826,10 @@
         [self.announcer announce:@"A putrid green mist fills the area..."];
         [self.announcer displayPartcileSystemOnRaidWithName:@"green_mist.plist" forDuration:-1.0];
         for (RaidMember *member in raid.raidMembers){
-            RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:300 andEffectType:EffectTypeNegativeInvisible];
+            RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegativeInvisible];
             [rhe setOwner:self];
-            [rhe setTitle:@"spore-ravager-mist"];
-            [rhe setValuePerTick:self.isMultiplayer ? -4 : -2];
+            [rhe setTitle:@"fungal-ravager-mist"];
+            [rhe setValuePerTick:self.isMultiplayer ? -4 : -(arc4random() % 2 + 3)];
             [rhe setNumOfTicks:60];
             [member addEffect:rhe];
             [rhe release];
@@ -840,7 +845,7 @@
     }
     
     if (percentage == 30.0){
-        [self.announcer announce:@"The last remaining Spore Ravager glows with rage."];
+        [self.announcer announce:@"The last remaining Ravager glows with rage."];
         Effect *enragedEffect = [[Effect alloc] initWithDuration:300 andEffectType:EffectTypePositiveInvisible];
         [enragedEffect setIsIndependent:YES];
         [enragedEffect setTarget:self];
@@ -952,10 +957,10 @@
 }
 @end
 
-@implementation BefouledTreat
+@implementation BefouledTreant
 @synthesize lastRootquake;
 +(id)defaultBoss{
-    BefouledTreat *boss = [[BefouledTreat alloc] initWithHealth:100000 damage:35 targets:1 frequency:3.0 andChoosesMT:YES];
+    BefouledTreant *boss = [[BefouledTreant alloc] initWithHealth:100000 damage:35 targets:1 frequency:3.0 andChoosesMT:YES];
     [boss setTitle:@"Befouled Treant"];
     [boss setInfo:@"The Akarus, an ancient tree that has sheltered travelers across the Gungoro Plains, has become tainted with the foul energy of The Dark Winds.  It is lashing its way through villagers and farmers.  This once great tree must be ended for good."];
     return [boss autorelease];
@@ -1175,17 +1180,11 @@
 }
 
 +(id)defaultBoss{
-    Baraghast *boss = [[Baraghast alloc] initWithHealth:425000 damage:12 targets:1 frequency:1.25 andChoosesMT:YES];
+    Baraghast *boss = [[Baraghast alloc] initWithHealth:415000 damage:12 targets:1 frequency:1.25 andChoosesMT:YES];
     [boss setAutoAttack:[[boss abilities] objectAtIndex:0]];
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
     [boss setInfo:@"With his champions defeated, Baraghast himself confronts you and your allies."];
     return [boss autorelease];
-}
-
-- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
-{
-    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
-
 }
 
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
@@ -1222,7 +1221,7 @@
         [self.announcer announce:@"A Dark Energy Surges Beneath Baraghast..."];
         Deathwave *dwAbility = [[Deathwave alloc] init];
         [dwAbility setTitle:@"deathwave"];
-        [dwAbility setCooldown:32.0];
+        [dwAbility setCooldown:42.0];
         [self addAbility:dwAbility];
         [dwAbility release];
     }
@@ -1384,18 +1383,18 @@
     
     boss.sweepingFlame = [[[TargetTypeFlameBreath alloc] init] autorelease];
     [boss.sweepingFlame setCooldown:9.0];
-    [boss.sweepingFlame setAbilityValue:60];
+    [boss.sweepingFlame setAbilityValue:55];
     [(TargetTypeFlameBreath*)boss.sweepingFlame setNumTargets:5];
     [boss addAbility:boss.sweepingFlame];
     
     boss.tankDamage = [[[FocusedAttack alloc] init] autorelease];
     [boss.tankDamage setAbilityValue:70];
     [boss.tankDamage setCooldown:2.5];
-    [boss.tankDamage setFailureChance:.7];
+    [boss.tankDamage setFailureChance:.73];
     
     boss.tailLash = [[[RaidDamage alloc] init] autorelease];
     [boss.tailLash setAbilityValue:32];
-    [boss.tailLash setCooldown:22.0];
+    [boss.tailLash setCooldown:24.0];
     [boss.tailLash setFailureChance:.25];
     
     return [boss autorelease];

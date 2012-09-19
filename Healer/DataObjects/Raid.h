@@ -23,8 +23,9 @@
 - (RaidMember*)lowestHealthMember;
 - (RaidMember*)randomLivingMember;
 - (RaidMember*)randomLivingMemberWithPositioning:(Positioning)pos;
+- (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos;
+- (NSArray*)lowestHealthTargets:(NSInteger)numTargets withRequiredTarget:(RaidMember*)reqTarget;
 
 //Multiplayer
 - (RaidMember*)memberForBattleID:(NSString*)battleID;
-- (NSArray*)lowestHealthTargets:(NSInteger)numTargets withRequiredTarget:(RaidMember*)reqTarget;
 @end

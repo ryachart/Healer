@@ -161,4 +161,15 @@
     [healthAdjustmentModifiers release]; healthAdjustmentModifiers = nil;
     [super dealloc];
 }
+
+- (BOOL)hasEffectWithTitle:(NSString*)title {
+    BOOL hasEffect = NO;
+    
+    for (Effect *eff in self.activeEffects){
+        if ([eff.title isEqualToString:title]){
+            hasEffect = YES; break;
+        }
+    }
+    return hasEffect;
+}
 @end

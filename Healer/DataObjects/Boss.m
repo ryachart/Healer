@@ -14,7 +14,6 @@
 #import "Ability.h"
 #import "AbilityDescriptor.h"
 
-
 @interface Boss ()
 @property (nonatomic, retain) NSMutableArray *queuedAbilitiesToAdd;
 @property (nonatomic, readwrite) BOOL shouldQueueAbilityAdds;
@@ -95,7 +94,7 @@
     }
 }
 
--(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
+-(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses difficulty:(DifficultyMode)mode{
     if (self = [super init]){
         health = hlth;
         maximumHealth = hlth;
@@ -103,6 +102,7 @@
         self.criticalChance = 0.0;
         self.abilities = [NSMutableArray arrayWithCapacity:5];
         self.abilityDescriptors = [NSMutableArray arrayWithCapacity:5];
+        self.difficulty = mode;
         for (int i = 0; i < 101; i++){
             healthThresholdCrossed[i] = NO;
         }
@@ -200,7 +200,7 @@
 	return health <= 0;
 }
 
-+(id)defaultBoss
++(id)defaultBossForMode:(DifficultyMode)mode
 {
 	return nil;
 }
@@ -216,8 +216,8 @@
 #pragma mark - Shipping Bosses (Merc Campaign)
 
 @implementation Ghoul
-+(id)defaultBoss{
-    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:6750 damage:20 targets:1 frequency:2.0 andChoosesMT:NO];
++(id)defaultBossForMode:(DifficultyMode)mode{
+    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:6750 damage:20 targets:1 frequency:2.0 choosesMT:NO difficulty:mode];
     [ghoul setTitle:@"The Night Ghoul"];
     [ghoul setInfo:@"A ghoul has found its way onto a nearby farmer's land.  It has already killed the farmer's wife.  You will accompany a small band of mercenaries to dispatch the ghoul."];
     return [ghoul autorelease];
@@ -240,8 +240,8 @@
 
 @implementation CorruptedTroll
 @synthesize lastRockTime, enraging;
-+(id)defaultBoss{
-    CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:45000 damage:22 targets:1 frequency:1.4 andChoosesMT:YES];
++(id)defaultBossForMode:(DifficultyMode)mode{
+    CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:45000 damage:22 targets:1 frequency:1.4 choosesMT:YES difficulty:mode];
     
     [corTroll setTitle:@"Corrupted Troll"];
     [corTroll setInfo:@"A Troll of Raklor has been identified among the demons brewing in the south.  It has been corrupted and twisted into a foul and terrible creature.  You will journey with a small band of soldiers to the south to dispatch this troll."];
@@ -325,8 +325,8 @@
 @end
 
 @implementation Drake 
-+(id)defaultBoss{
-    Drake *drake = [[Drake alloc] initWithHealth:52000 damage:0 targets:0 frequency:0 andChoosesMT:NO];
++(id)defaultBossForMode:(DifficultyMode)mode {
+    Drake *drake = [[Drake alloc] initWithHealth:52000 damage:0 targets:0 frequency:0 choosesMT:NO difficulty:mode];
     [drake setTitle:@"Tainted Drake"];
     [drake setInfo:@"A Tainted Drake is hidden in the Paragon Cliffs. You and your allies must stop the beast from doing any more damage to the Kingdom.  The king will provide you with a great reward for defeating the beast."];
     
@@ -366,8 +366,8 @@
 
 @implementation Trulzar
 @synthesize lastPoisonTime, lastPotionTime;
-+(id)defaultBoss{
-    Trulzar *boss = [[Trulzar alloc] initWithHealth:320000 damage:50 targets:2 frequency:3.0 andChoosesMT:NO];
++(id)defaultBossForMode:(DifficultyMode)mode {
+    Trulzar *boss = [[Trulzar alloc] initWithHealth:320000 damage:50 targets:2 frequency:3.0 choosesMT:NO difficulty:mode];
     [boss setTitle:@"Trulzar the Maleficar"];
     [boss setInfo:@"Before the dark winds came, Trulzar was an aide to the King of Theranore and a teacher at the Academy of Alchemists.  Since the Dark winds, Trulzar has drawn into seclusion.  No one had heard from him for years until a brash student who had heard of his exploits paid him a visit.  The student was not heard from for days until a walking corpse that was later identified as the student was slaughtered at the gates by guardsmen.  Trulzar has been identified as a Maleficar by the Theranorian Sages."];
     
@@ -380,10 +380,8 @@
     return [boss autorelease];
 }
 
-
-
--(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses{
-    if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq andChoosesMT:chooses]){
+-(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses difficulty:(DifficultyMode)mode{
+    if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq choosesMT:chooses difficulty:mode]){
         [[AudioController sharedInstance] addNewPlayerWithTitle:@"trulzar_laugh" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/trulzar_laugh" ofType:@"m4a"]]];
         [[AudioController sharedInstance] addNewPlayerWithTitle:@"trulzar_death" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/trulzar_death" ofType:@"m4a"]]];
     }
@@ -480,8 +478,8 @@
 
 @implementation DarkCouncil
 @synthesize lastPoisonballTime, rothVictim, lastDarkCloud;
-+(id)defaultBoss{
-    DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:340000 damage:0 targets:1 frequency:.75 andChoosesMT:NO];
++(id)defaultBossForMode:(DifficultyMode)mode {
+    DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:340000 damage:0 targets:1 frequency:.75 choosesMT:NO difficulty:mode];
     [boss setTitle:@"Council of Dark Summoners"];
     [boss setInfo:@"A note scribbled in blood was found in Trulzar's quarters.  It mentions a Council responsible for The Dark Winds plaguing Theranore.  Go to the crypt beneath The Hollow and discover what this Council is up to."];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"roth_entrance" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/roth_entrance" ofType:@"m4a"]]];
@@ -688,9 +686,9 @@
 
 @implementation PlaguebringerColossus
 @synthesize lastSickeningTime, numBubblesPopped;
-+(id)defaultBoss{
++(id)defaultBossForMode:(DifficultyMode)mode {
     //427500
-    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:250000 damage:25 targets:1 frequency:2.5 andChoosesMT:YES];
+    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:250000 damage:25 targets:1 frequency:2.5 choosesMT:YES difficulty:mode];
     [boss setTitle:@"Plaguebringer Colossus"];
     [boss setInfo:@"From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped.  The village people have foreseen their impending doom and sent young and brave hopefuls to join The Light Ascendant in exchange for protection.  You must lead this group to victory against the wretched beast."];
     
@@ -781,8 +779,8 @@
 
 @implementation FungalRavagers
 @synthesize isEnraged, secondTargetAttack, thirdTargetAttack;
-+(id)defaultBoss{
-    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:300000 damage:14 targets:1 frequency:2.5 andChoosesMT:YES];
++(id)defaultBossForMode:(DifficultyMode)mode {
+    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:300000 damage:14 targets:1 frequency:2.5 choosesMT:YES difficulty:mode];
     [boss setTitle:@"Fungal Ravagers"];
     [boss setInfo:@"Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate. Conversely, no villagers have left the town, either..."];
     [boss setCriticalChance:.5];
@@ -860,8 +858,8 @@
 
 @implementation MischievousImps
 @synthesize lastPotionThrow;
-+(id)defaultBoss{
-    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:50000 damage:27 targets:1 frequency:2.25 andChoosesMT:YES];
++(id)defaultBossForMode:(DifficultyMode)mode {
+    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:50000 damage:27 targets:1 frequency:2.25 choosesMT:YES difficulty:mode];
     [boss setTitle:@"Mischievious Imps"];
     [boss setInfo:@" A local alchemist has posted a small reward for removing a pesky imp infestation from her store.  Sensing something a little more sinister a small party has been dispatched from the Light Ascendant just in case there is more than meets the eye."];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw1" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw1" ofType:@"m4a"]]];
@@ -959,8 +957,8 @@
 
 @implementation BefouledTreant
 @synthesize lastRootquake;
-+(id)defaultBoss{
-    BefouledTreant *boss = [[BefouledTreant alloc] initWithHealth:100000 damage:35 targets:1 frequency:3.0 andChoosesMT:YES];
++(id)defaultBossForMode:(DifficultyMode)mode {
+    BefouledTreant *boss = [[BefouledTreant alloc] initWithHealth:100000 damage:35 targets:1 frequency:3.0 choosesMT:YES difficulty:mode];
     [boss setTitle:@"Befouled Treant"];
     [boss setInfo:@"The Akarus, an ancient tree that has sheltered travelers across the Gungoro Plains, has become tainted with the foul energy of The Dark Winds.  It is lashing its way through villagers and farmers.  This once great tree must be ended for good."];
     return [boss autorelease];
@@ -1020,10 +1018,10 @@
 @implementation TwinChampions
 @synthesize firstFocusedAttack, secondFocusedAttack;
 @synthesize lastAxecution, lastGushingWound;
-+(id)defaultBoss{
++(id)defaultBossForMode:(DifficultyMode)mode {
     NSInteger damage = 15;
     float frequency = 1.30;
-    TwinChampions *boss = [[TwinChampions alloc] initWithHealth:410000 damage:damage targets:1 frequency:frequency andChoosesMT:YES];
+    TwinChampions *boss = [[TwinChampions alloc] initWithHealth:410000 damage:damage targets:1 frequency:frequency choosesMT:YES difficulty:mode];
     [boss setFirstFocusedAttack:[[boss abilities] objectAtIndex:0]];
     
     FocusedAttack *secondFA = [[FocusedAttack alloc] initWithDamage:damage * 4 andCooldown:frequency * 5];
@@ -1059,10 +1057,12 @@
         RaidMember *member = [theRaid.raidMembers objectAtIndex:index];
         RaidMember *member2 = [theRaid.raidMembers objectAtIndex:i];
         
+        NSInteger axeSweepDamage = arc4random() % 20 + 20;
+        
         DelayedHealthEffect *axeSweepEffect = [[DelayedHealthEffect alloc] initWithDuration:i * .5 andEffectType:EffectTypeNegativeInvisible];
         [axeSweepEffect setOwner:self];
         [axeSweepEffect setTitle:@"axesweep"];
-        [axeSweepEffect setValue:-20 * (1 + ((float)deadCount/(float)theRaid.raidMembers.count))];
+        [axeSweepEffect setValue:-axeSweepDamage * (1 + ((float)deadCount/(float)theRaid.raidMembers.count))];
         [axeSweepEffect setFailureChance:.1];     
         DelayedHealthEffect *axeSweep2 = [axeSweepEffect copy];
         [member addEffect:axeSweepEffect];
@@ -1179,8 +1179,8 @@
     [super dealloc];
 }
 
-+(id)defaultBoss{
-    Baraghast *boss = [[Baraghast alloc] initWithHealth:415000 damage:12 targets:1 frequency:1.25 andChoosesMT:YES];
++(id)defaultBossForMode:(DifficultyMode)mode {
+    Baraghast *boss = [[Baraghast alloc] initWithHealth:415000 damage:12 targets:1 frequency:1.25 choosesMT:YES difficulty:mode];
     [boss setAutoAttack:[[boss abilities] objectAtIndex:0]];
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
     [boss setInfo:@"With his champions defeated, Baraghast himself confronts you and your allies."];
@@ -1238,8 +1238,8 @@
 @end
 
 @implementation CrazedSeer
-+ (id)defaultBoss {
-    CrazedSeer *seer = [[CrazedSeer alloc] initWithHealth:390000 damage:0 targets:0 frequency:0 andChoosesMT:NO];
++ (id)defaultBossForMode:(DifficultyMode)mode {
+    CrazedSeer *seer = [[CrazedSeer alloc] initWithHealth:366600 damage:0 targets:0 frequency:0 choosesMT:NO difficulty:mode];
     [seer setTitle:@"Crazed Seer Tyonath"];
     [seer setInfo:@"Seer Tyonath was tormented and tortured after his capture by the Dark Horde.  The Darkness has driven him mad.  He guards the secrets to Baraghast's origin in the vaults beneath the Dark Horde's largest encampment - Serevilost."];
     
@@ -1286,8 +1286,8 @@
 @end
 
 @implementation GatekeeperDelsarn
-+ (id)defaultBoss{
-    GatekeeperDelsarn *boss = [[GatekeeperDelsarn alloc] initWithHealth:300000 damage:40 targets:1 frequency:2.1 andChoosesMT:YES];
++ (id)defaultBossForMode:(DifficultyMode)mode {
+    GatekeeperDelsarn *boss = [[GatekeeperDelsarn alloc] initWithHealth:300000 damage:40 targets:1 frequency:2.1 choosesMT:YES difficulty:mode];
     [boss setInfo:@"Delsarn is the name the Theronian Seers have given to the land that exists beyond the rift discovered within the tome that Seer Tyonath left behind.  The Gatekeeper is a foul beast that stands between your party and passage into Delsarn."];
     [boss setTitle:@"Gatekeeper of Delsarn"];
     
@@ -1372,8 +1372,8 @@
     [_tailLash release];
     [super dealloc];
 }
-+ (id)defaultBoss{
-    SkeletalDragon *boss = [[SkeletalDragon alloc] initWithHealth:300000 damage:0 targets:0 frequency:100 andChoosesMT:NO];
++ (id)defaultBossForMode:(DifficultyMode)mode {
+    SkeletalDragon *boss = [[SkeletalDragon alloc] initWithHealth:300000 damage:0 targets:0 frequency:100 choosesMT:NO difficulty:mode];
     [boss setInfo:@"After moving beyond the gates of Delsarn, you encounter a horrifying Skeletal Dragon.  It assaults your party and bars the way."];
     [boss setTitle:@"Skeletal Dragon"];
     
@@ -1457,8 +1457,8 @@
     [_crushingPunch release];
     [super dealloc];
 }
-+ (id)defaultBoss {
-    ColossusOfBone *cob = [[ColossusOfBone alloc] initWithHealth:200000 damage:0 targets:0 frequency:0 andChoosesMT:NO];
++ (id)defaultBossForMode:(DifficultyMode)mode {
+    ColossusOfBone *cob = [[ColossusOfBone alloc] initWithHealth:200000 damage:0 targets:0 frequency:0 choosesMT:NO difficulty:mode];
     [cob setTitle:@"Colossus of Bone"];
     [cob setInfo:@"Traveling even deeper into Delsarn, you and your allies are stopped by a towering creature of mythical size."];
     
@@ -1525,8 +1525,8 @@
     [super dealloc];
 }
 
-+ (id)defaultBoss {
-    OverseerOfDelsarn *boss = [[OverseerOfDelsarn alloc] initWithHealth:340000 damage:0 targets:0 frequency:0 andChoosesMT:NO];
++ (id)defaultBossForMode:(DifficultyMode)mode {
+    OverseerOfDelsarn *boss = [[OverseerOfDelsarn alloc] initWithHealth:340000 damage:0 targets:0 frequency:0 choosesMT:NO difficulty:mode];
     [boss setTitle:@"Overseer of Delsarn"];
     [boss setInfo:@"After defeating his most powerful beasts, the Overseer of this treacherous realm confronts you himself.  He bars your way into the inner sanctum."];
     
@@ -1597,8 +1597,8 @@
     [super dealloc];
 }
 
-+ (id)defaultBoss {
-    TheUnspeakable *boss = [[TheUnspeakable alloc] initWithHealth:400000 damage:55 targets:1 frequency:10.0 andChoosesMT:NO];
++ (id)defaultBossForMode:(DifficultyMode)mode {
+    TheUnspeakable *boss = [[TheUnspeakable alloc] initWithHealth:400000 damage:55 targets:1 frequency:10.0 choosesMT:NO difficulty:mode];
     [boss setTitle:@"The Unspeakable"];
     [boss setInfo:@"A disgusting mass of bones and rotten corpses waits in a crypt beneath Delsarn.  It seems to be ... alive."];
     
@@ -1632,8 +1632,8 @@
     [_deathwave release];
     [super dealloc];
 }
-+ (id)defaultBoss {
-    BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:450000 damage:12 targets:1 frequency:1.25 andChoosesMT:YES];
++ (id)defaultBossForMode:(DifficultyMode)mode {
+    BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:450000 damage:12 targets:1 frequency:1.25 choosesMT:YES difficulty:mode];
     [boss setTitle:@"Baraghast Reborn"];
     [boss setInfo:@"Before you stands the destroyed but risen warchief Baraghast.  His horrible visage once again sows fear in the hearts of all of your allies.  This time he is not only guarding a terrible secret, but his hateful gaze reveals his true purpose -- Revenge."];
     
@@ -1677,8 +1677,8 @@
 @end
 
 @implementation AvatarOfTorment1
-+ (id)defaultBoss {
-    AvatarOfTorment1 *boss = [[AvatarOfTorment1 alloc] initWithHealth:380000 damage:0 targets:0 frequency:0.0 andChoosesMT:NO];
++ (id)defaultBossForMode:(DifficultyMode)mode {
+    AvatarOfTorment1 *boss = [[AvatarOfTorment1 alloc] initWithHealth:380000 damage:0 targets:0 frequency:0.0 choosesMT:NO difficulty:mode];
     [boss setTitle:@"The Avatar of Torment"];
     [boss setInfo:@"From the fallen black heart of Baraghast's shattered soul rose a portal into another plane of existence.  Your allies cautiously moved through the portal and found themselves in a terrifying realm surrounded by shackled and burning souls.  Before you stands a massive creature of spawned of pure hatred and built for torment.  The final battle for your realm's purity begins now."];
     
@@ -1714,8 +1714,8 @@
 
 @implementation AvatarOfTorment2
 
-+ (id)defaultBoss {
-    AvatarOfTorment2 *boss = [[AvatarOfTorment2 alloc] initWithHealth:175000 damage:0 targets:0 frequency:0.0 andChoosesMT:NO];
++ (id)defaultBossForMode:(DifficultyMode)mode {
+    AvatarOfTorment2 *boss = [[AvatarOfTorment2 alloc] initWithHealth:175000 damage:0 targets:0 frequency:0.0 choosesMT:NO difficulty:mode];
     [boss setTitle:@"The Avatar of Torment"];
     [boss setInfo:@"The Avatar of Torment will not be defeated so easily."];
     
@@ -1762,8 +1762,8 @@
 @end
 
 @implementation SoulOfTorment
-+ (id)defaultBoss {
-    SoulOfTorment *boss = [[SoulOfTorment alloc] initWithHealth:500000 damage:0 targets:0 frequency:0.0 andChoosesMT:NO];
++ (id)defaultBossForMode:(DifficultyMode)mode {
+    SoulOfTorment *boss = [[SoulOfTorment alloc] initWithHealth:1 damage:0 targets:0 frequency:0.0 choosesMT:NO difficulty:mode];
     [boss setTitle:@"The Soul of Torment"];
     [boss setInfo:@"Its body shattered and broken--the last gasp of this terrible creature conspires to unleash its most unspeakable power.  This is the last stand of your realm against the evil that terrorizes it."];
     
@@ -1779,8 +1779,8 @@
     }
 }
 
-+(id)defaultBoss{
-    TheEndlessVoid *endlessVoid = [[TheEndlessVoid alloc] initWithHealth:99999999 damage:40 targets:4 frequency:2.0 andChoosesMT:NO];
++(id)defaultBossForMode:(DifficultyMode)mode {
+    TheEndlessVoid *endlessVoid = [[TheEndlessVoid alloc] initWithHealth:99999999 damage:40 targets:4 frequency:2.0 choosesMT:NO difficulty:mode];
     [endlessVoid setTitle:@"The Endless Void"];
     [endlessVoid setInfo:@"An immortal foe that can not be vanquished.  Withstand as long as you can."];
     

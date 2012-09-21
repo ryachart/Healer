@@ -59,7 +59,7 @@
             
             [self.selectedChoiceTitle setPosition:CGPointMake(160, 75)];
             [self.selectedChoiceDescription setColor:ccc3(240,181, 123)];
-            [self.selectedChoiceDescription setPosition:CGPointMake(165, 25)];
+            [self.selectedChoiceDescription setPosition:CGPointMake(168, 25)];
             
             [self addChild:self.selectedChoiceIcon];
             [self addChild:self.selectedChoiceTitle];

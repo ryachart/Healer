@@ -110,7 +110,7 @@
         NSArray *choices = [Divinity divinityChoicesForTier:i];
         for (int j = 0; j < choices.count; j++){
             NSString *choice = [choices objectAtIndex:j];
-            CGPoint choicePosition = CGPointMake(90 + (j * 200), 768 - 154 - (i * 111));
+            CGPoint choicePosition = CGPointMake(90 + (j * 200), 768 - 152 - (i * 111));
             CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[Divinity spriteFrameNameForChoice:choice]];
             if (!frame){
                 frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"default_divinity.png"];

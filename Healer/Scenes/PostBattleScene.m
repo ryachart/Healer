@@ -126,7 +126,7 @@
         NSInteger reward = 0;
         NSInteger oldRating = 0;
         NSInteger rating = 0;
-        int i = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
+        int i = [PlayerDataManager highestLevelCompletedForMode:CURRENT_MODE];
         BOOL isFirstWin = self.levelNumber > i;
         NSTimeInterval fightDuration = duration;
         
@@ -148,18 +148,19 @@
         //Data Operations
         if (victory){
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",levelNum]];
-            if (isFirstWin){
-                [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:self.levelNumber] forKey:PlayerHighestLevelCompleted];
+            if (!self.isMultiplayer){
+                [PlayerDataManager completeLevelInCurrentMode:self.levelNumber];
             }
             reward = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:isFirstWin isMultiplayer:self.isMultiplayer];
             
-            oldRating = [PlayerDataManager levelRatingForLevel:self.levelNumber];
+            oldRating = [PlayerDataManager levelRatingForLevel:self.levelNumber withMode:CURRENT_MODE];
             rating = [self calculateRatingForNumDead:numDead];
             if (rating > oldRating && !self.isMultiplayer){
-                [PlayerDataManager setLevelRating:rating forLevel:self.levelNumber];
+                [PlayerDataManager setLevelRating:rating forLevel:self.levelNumber withMode:CURRENT_MODE];
             }
         }else {
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelFailed:%i",levelNum]];
+            [PlayerDataManager failLevelInCurrentMode:levelNum];
             //Partial Progress Reward
             //10 % of the Reward per minute of encounter up to a maximum of 50% encounter reward
             

@@ -10,6 +10,7 @@
 #import "CombatEvent.h"
 #import "Announcer.h"
 #import "HealableTarget.h"
+#import "PersistantDataManager.h"
 
 @class Player;
 @class Raid;
@@ -26,7 +27,7 @@
     BOOL healthThresholdCrossed[101];
 }
 @property (nonatomic, readwrite) BOOL isMultiplayer;
-@property (nonatomic, readwrite) BOOL isHardMode;
+@property (nonatomic, readwrite) DifficultyMode difficulty;
 @property (nonatomic, retain) NSString * info;
 @property (nonatomic, assign) id <Announcer> announcer;
 @property (nonatomic, readwrite) float criticalChance;
@@ -37,17 +38,18 @@
 @property (nonatomic, retain) NSMutableArray *abilities;
 @property (nonatomic, retain) NSArray *abilityDescriptors;
 
-- (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq andChoosesMT:(BOOL)chooses;
++ (id)defaultBossForMode:(DifficultyMode)mode;
+- (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses difficulty:(DifficultyMode)mode;
+
 - (void)combatActions:(NSArray*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta;
-- (void)setHealth:(NSInteger)newHealth;
-- (BOOL)isDead;
+
 - (float)healthPercentage; //In Hundreds form
-+ (id)defaultBoss;
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid*)raid andPlayer:(Player*)player;
 - (void)addAbility:(Ability*)ability;
 - (void)removeAbility:(Ability*)ability;
 - (void)addAbilityDescriptor:(AbilityDescriptor*)descriptor;
 - (void)clearExtraDescriptors;
+
 - (void)setAttackDamage:(NSInteger)damage; //Configures all Attacks' abilityValues
 - (void)setAttackSpeed:(float)frequency; //Configures all Attack's cooldown values
 

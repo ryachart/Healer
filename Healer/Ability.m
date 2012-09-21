@@ -74,6 +74,32 @@
     }
     
 }
+
+- (RaidMember*)targetWithoutEffectWithTitle:(NSString*)title inRaid:(Raid*)theRaid{
+    return [self targetWithoutEffectsTitled:[NSArray arrayWithObject:title] inRaid:theRaid];
+}
+
+- (RaidMember*)targetWithoutEffectsTitled:(NSArray*)effects inRaid:(Raid*)theRaid {
+    RaidMember *target = [theRaid randomLivingMember];
+    int safety = 0;
+    BOOL isInvalidTarget = NO;
+    do {
+        isInvalidTarget = NO;
+        target = [theRaid randomLivingMember];
+        if (safety >= 25){
+            break;
+        }
+        safety++;
+        for (NSString *effTitle in effects){
+            if ([target hasEffectWithTitle:effTitle]){
+                isInvalidTarget = YES;
+                break;
+            }
+        }
+    } while (isInvalidTarget);
+    return target;
+}
+
 - (void)triggerAbilityForRaid:(Raid*)theRaid andPlayers:(NSArray*)players{
 
 }
@@ -730,11 +756,10 @@
 }
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
-    RaidMember *target = [theRaid randomLivingMember];
-    int i = 0;
-    while (target.isFocused && i < 20) {
-        i++; //If the only thing left is the tank, dont infinite loop
-        target = [theRaid randomLivingMember];
+    RaidMember *target = [self targetWithoutEffectWithTitle:@"impale-finisher" inRaid:theRaid];
+    if (target.isFocused){
+        return;
+        //The effect fails if the target is focused
     }
     
     GripEffect *gripEff = [[GripEffect alloc] initWithDuration:10 andEffectType:EffectTypeNegative];
@@ -763,10 +788,14 @@
 }
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    RaidMember *target = [self targetWithoutEffectWithTitle:@"gatekeeper-grip" inRaid:theRaid];
+    
+    if (target.isFocused){
+        //The ability fails if it chooses a focused target
+        return;
+    }
     DelayedHealthEffect *finishHimEffect = [[DelayedHealthEffect alloc] initWithDuration:3.5 andEffectType:EffectTypeNegative];
     [finishHimEffect setSpriteName:@"bleeding.png"];
-    
-    RaidMember *target = [theRaid randomLivingMember];
     
     NSInteger damage = self.abilityValue * self.owner.damageDoneMultiplier;
     [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target  value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];

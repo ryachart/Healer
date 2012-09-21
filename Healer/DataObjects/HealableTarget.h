@@ -35,4 +35,5 @@
 - (void)addEffect:(Effect*)theEffect;
 - (void)removeEffect:(Effect*)theEffect;
 - (void)addHealthAdjustmentModifier:(HealthAdjustmentModifier*)hamod;
+- (BOOL)hasEffectWithTitle:(NSString*)title;
 @end

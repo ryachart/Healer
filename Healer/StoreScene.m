@@ -122,7 +122,7 @@
     self.itemNodes = [NSMutableArray arrayWithCapacity:10];
     int i = 0;
     for (ShopItem *item in itemsToDisplay){
-        int xOrigin = 300;
+        int xOrigin = 250;
         int yOrigin = 200;
         int width = 200;
         int height = 100;

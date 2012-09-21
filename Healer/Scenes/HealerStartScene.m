@@ -145,17 +145,10 @@ BOOL firstLaunch = YES;
 -(void)settingsSelected
 {
 	//No behavior defined yet.
-    
 }
 
 -(void)divinitySelected{
     [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
-}
-
-- (void)hardModeToggled:(id)sender {
-    [PlayerDataManager setHardMode:![PlayerDataManager hardMode]];
-    NSString *difficultyTitle = [PlayerDataManager hardMode] ? @"Normal Mode" : @"Hard Mode";
-    [(BasicButton*)sender setTitle:difficultyTitle];
 }
 
 - (void)dealloc {

@@ -108,16 +108,14 @@
     float multiplyModifier = self.owner.damageDoneMultiplier;
     int additiveModifier = 0;
     
-    if ([[self bossOwner] isMultiplayer]){
-        multiplyModifier += 1.2;
-    }
-    
     float criticalChance = [self bossOwner].criticalChance;
     if (criticalChance != 0.0 && arc4random() % 100 < (criticalChance * 100)){
         multiplyModifier += 1.5;
     }
     
-    return (int)round((float)self.abilityValue * multiplyModifier) + additiveModifier;
+    NSInteger finalDamageValue = (int)round((float)self.abilityValue * multiplyModifier) + additiveModifier;
+    
+    return FUZZ(finalDamageValue, 20.0);
 }
 
 -(void)damageTarget:(RaidMember*)target{
@@ -842,18 +840,7 @@
 @implementation TargetTypeAttack
 
 - (NSArray *)targetsFromRaid:(Raid*)theRaid {
-    NSMutableArray *targets = [NSMutableArray arrayWithCapacity:self.numTargets];
-    int retry = 0;;
-    for (int i = 0; i < self.numTargets; i++){
-        RaidMember *candidate = [theRaid randomLivingMemberWithPositioning:self.targetPositioningType];
-        if (![targets containsObject:candidate]){
-            [targets addObject:candidate];
-        }else if (retry < 10){
-            i--;
-            retry++;
-        }
-    }
-    return (NSArray*)targets;
+    return [theRaid randomTargets:self.numTargets withPositioning:self.targetPositioningType];
 }
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {

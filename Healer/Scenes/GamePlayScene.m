@@ -21,6 +21,7 @@
 #import "PlayerEnergyView.h"
 #import "PlayerCastBar.h"
 #import "BackgroundSprite.h"
+#import "NormalModeCompleteScene.h"
 
 #define NETWORK_THROTTLE 5
 
@@ -297,6 +298,15 @@
 
 -(void)battleEndWithSuccess:(BOOL)success{
     NSInteger numDead = self.raid.raidMembers.count - self.raid.getAliveMembers.count;
+    
+    if (success && !(self.isServer || self.isClient) && [NormalModeCompleteScene needsNormalModeCompleteSceneForLevelNumber:self.levelNumber]){
+        //If we just beat the final boss for the first time, show the normal mode complete Scene
+        NormalModeCompleteScene *nmcs = [[NormalModeCompleteScene alloc] initWithVictory:success eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:NO deadCount:numDead andDuration:self.boss.duration];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:nmcs]];
+        [nmcs release];
+        [self setPaused:YES];
+        return;
+    }
     PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:success eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:self.isClient || self.isServer deadCount:numDead andDuration:self.boss.duration];
     [self setPaused:YES];
     if (self.isServer){

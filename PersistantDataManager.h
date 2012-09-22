@@ -26,6 +26,8 @@ typedef enum {
 + (DifficultyMode)currentMode;
 + (void)setDifficultyMode:(DifficultyMode)diffMode;
 
++ (BOOL)hasShownNormalModeCompleteScene;
++ (void)normalModeCompleteSceneShown;
 + (BOOL)hardModeUnlocked;
 
 + (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level withMode:(DifficultyMode)diffMode;

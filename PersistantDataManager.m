@@ -22,6 +22,7 @@ NSString* const PlayerLevelRatingKeyPrefix = @"com.healer.playerLevelRatingForLe
 NSString* const PlayerRemoteObjectIdKey = @"com.healer.playerRemoteObjectID3";
 NSString* const PlayerDifficultySettingKey = @"com.healer.hardMode";
 NSString* const PlayerLastUsedSpellsKey = @"com.healer.lastUsedSpells";
+NSString* const PlayerNormalModeCompleteShown = @"com.healer.nmcs";
 
 @implementation PlayerDataManager 
 
@@ -230,6 +231,15 @@ NSString* const PlayerLastUsedSpellsKey = @"com.healer.lastUsedSpells";
         }
     }
     return spells;
+}
+
+#pragma mark - Normal Mode Completion
++ (BOOL)hasShownNormalModeCompleteScene {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:PlayerNormalModeCompleteShown];
+}
++ (void)normalModeCompleteSceneShown{
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:PlayerNormalModeCompleteShown];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 #pragma mark - Debug

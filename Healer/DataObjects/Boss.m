@@ -112,10 +112,14 @@
             if (chooses && i == 0){
                 FocusedAttack *focusedAttack = [[FocusedAttack alloc] initWithDamage:dmg/trgets andCooldown:freq];
                 [self addAbility:focusedAttack];
+                self.autoAttack = focusedAttack;
                 [focusedAttack release];
             }else{
                 Attack *attack = [[Attack alloc] initWithDamage:dmg/trgets andCooldown:freq];
                 [self addAbility:attack];
+                if (i == 0){
+                    self.autoAttack = attack;
+                }
                 [attack release];
             }
         }
@@ -241,7 +245,20 @@
 @implementation CorruptedTroll
 @synthesize lastRockTime, enraging;
 +(id)defaultBossForMode:(DifficultyMode)mode{
-    CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:45000 damage:22 targets:1 frequency:1.4 choosesMT:YES difficulty:mode];
+    NSInteger health = 45000;
+    NSInteger damage = 22;
+    NSTimeInterval freq = 1.4;
+    
+    if (mode == DifficultyModeHard){
+        damage = 55;
+        freq = 1.4;
+    }
+    
+    CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:health damage:damage targets:1 frequency:freq choosesMT:YES difficulty:mode];
+    
+    if (mode == DifficultyModeHard){
+        corTroll.autoAttack.failureChance = .4;
+    }
     
     [corTroll setTitle:@"Corrupted Troll"];
     [corTroll setInfo:@"A Troll of Raklor has been identified among the demons brewing in the south.  It has been corrupted and twisted into a foul and terrible creature.  You will journey with a small band of soldiers to the south to dispatch this troll."];
@@ -268,9 +285,14 @@
     [self.announcer displayPartcileSystemOverRaidWithName:@"falling_rocks.plist"];
     for (RaidMember *member in theRaid.raidMembers){
         if (!member.isDead){
+            NSInteger maxTankDamage = 25;
             NSInteger damageDealt = (arc4random() % 20 + 20);
+            if (self.difficulty == DifficultyModeHard){
+                damageDealt *= 1.1;
+                maxTankDamage = 50;
+            }
             if (member.isFocused){
-                damageDealt = MAX(damageDealt, 25); //The Tank is armored
+                damageDealt = MAX(damageDealt, maxTankDamage); //The Tank has max damage
             }
             [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:damageDealt] andEventType:CombatEventTypeDamage]];
             [member setHealth:member.health - damageDealt * self.damageDoneMultiplier];
@@ -281,11 +303,16 @@
 -(void)startEnraging{
     [self.announcer announce:@"The Cave Troll Swings his club furiously at the focused target!"];
     self.enraging += 1.0;
+    float adjustment = .35;
+    if (self.difficulty == DifficultyModeHard){
+        self.autoAttack.cooldown = 1.1;
+        adjustment = .25;
+    }
     Effect *enragingEffect = [[Effect alloc] initWithDuration:9 andEffectType:EffectTypePositiveInvisible];
     [enragingEffect setTarget:self];
     [enragingEffect setOwner:self];
     [enragingEffect setTitle:@"troll-temp-enrage"];
-    [enragingEffect setDamageDoneMultiplierAdjustment:.35];
+    [enragingEffect setDamageDoneMultiplierAdjustment:adjustment];
     [self addEffect:enragingEffect];
     [enragingEffect release];
 }
@@ -293,11 +320,12 @@
 -(void)stopEnraging{
     [self.announcer announce:@"The Cave Troll is Exhausted!"];
     self.enraging = 0.0;
+    self.autoAttack.cooldown = 1.35;
     self.lastRockTime = 5.0;
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (percentage == 75.0 || percentage == 50.0 || percentage == 20.0){
+    if (percentage == 80.0 || percentage == 60.0 || percentage == 40.0 || percentage == 20.0){
         [self startEnraging];
     }
 }
@@ -306,7 +334,11 @@
 {
     [super combatActions:players theRaid:theRaid gameTime:timeDelta];
     lastRockTime += timeDelta;
-    float tickTime = self.isMultiplayer ? 15.0 : 25.0;
+    float tickTime = 25.0;
+    
+    if (self.difficulty == DifficultyModeHard){
+        tickTime = 12.0;
+    }
     
     if (lastRockTime > tickTime){
         if (!self.enraging){
@@ -1458,11 +1490,11 @@
     [super dealloc];
 }
 + (id)defaultBossForMode:(DifficultyMode)mode {
-    ColossusOfBone *cob = [[ColossusOfBone alloc] initWithHealth:200000 damage:0 targets:0 frequency:0 choosesMT:NO difficulty:mode];
+    ColossusOfBone *cob = [[ColossusOfBone alloc] initWithHealth:240000 damage:0 targets:0 frequency:0 choosesMT:NO difficulty:mode];
     [cob setTitle:@"Colossus of Bone"];
-    [cob setInfo:@"Traveling even deeper into Delsarn, you and your allies are stopped by a towering creature of mythical size."];
+    [cob setInfo:@"While traveling even deeper into Delsarn you and your allies are waylayed by a towering creature of unimaginable strength."];
     
-    FocusedAttack *tankAttack = [[FocusedAttack alloc] initWithDamage:62 andCooldown:2.45];
+    FocusedAttack *tankAttack = [[FocusedAttack alloc] initWithDamage:62 andCooldown:2.15];
     [tankAttack setFailureChance:.4];
     [cob addAbility:tankAttack];
     [tankAttack release];
@@ -1490,7 +1522,7 @@
     [boneThrow release];
     
     AbilityDescriptor *crushingPunchDescriptor = [[AbilityDescriptor alloc] init];
-    [crushingPunchDescriptor setAbilityDescription:@"Periodically, this enemy unleashes a vicious strike on a random ally dealing high damage."];
+    [crushingPunchDescriptor setAbilityDescription:@"Periodically, this enemy unleashes a thundering strike on a random ally dealing high damage."];
     [crushingPunchDescriptor setAbilityName:@"Crushing Punch"];
     [crushingPunchDescriptor setIconName:@"crushing_punch_ability.png"];
     [cob.crushingPunch setDescriptor:crushingPunchDescriptor];
@@ -1583,9 +1615,10 @@
         [self addRandomDemonAbility];
     }
     
-    if (percentage == 20.0){
+    if (percentage == 15.0){
         [self.announcer announce:@"The Overseer laughs maniacally and raises his staff again."];
-        self.projectilesAbility.cooldown = 3.5;
+        self.projectilesAbility.abilityValue = 48.0;
+        self.projectilesAbility.cooldown = 3.75;
         self.projectilesAbility.isDisabled = NO;
     }
 }

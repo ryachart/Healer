@@ -14,4 +14,7 @@
 
 #endif
 
+#define FUZZ(value, range) (((arc4random() % ((int)range * 2) + (100 - (int)range)))/100.0 * (int)value)
+
+
 

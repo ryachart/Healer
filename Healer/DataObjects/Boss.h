@@ -37,6 +37,7 @@
 @property (nonatomic, readwrite) NSTimeInterval duration;
 @property (nonatomic, retain) NSMutableArray *abilities;
 @property (nonatomic, retain) NSArray *abilityDescriptors;
+@property (nonatomic, assign) Ability *autoAttack;
 
 + (id)defaultBossForMode:(DifficultyMode)mode;
 - (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses difficulty:(DifficultyMode)mode;

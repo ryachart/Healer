@@ -174,6 +174,7 @@
 		BFA5464515AA0C9D00F9B167 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */; };
 		BFA5464715AA0CED00F9B167 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464615AA0CED00F9B167 /* CFNetwork.framework */; };
 		BFA5464915AA0D3100F9B167 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */; };
+		BFA60E44160CD331005FFE1B /* NormalModeCompleteScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA60E43160CD331005FFE1B /* NormalModeCompleteScene.m */; };
 		BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */; };
 		BFAFA3F415F43C650052FCA5 /* GoldCounterSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */; };
 		BFAFA3F915F54BBD0052FCA5 /* DivinityTierCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F815F54BBD0052FCA5 /* DivinityTierCard.m */; };
@@ -624,6 +625,8 @@
 		BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		BFA5464615AA0CED00F9B167 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		BFA60E42160CD331005FFE1B /* NormalModeCompleteScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NormalModeCompleteScene.h; sourceTree = "<group>"; };
+		BFA60E43160CD331005FFE1B /* NormalModeCompleteScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NormalModeCompleteScene.m; sourceTree = "<group>"; };
 		BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape~ipad.png"; path = "../Default-Landscape~ipad.png"; sourceTree = "<group>"; };
 		BFAFA3F215F43C650052FCA5 /* GoldCounterSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoldCounterSprite.h; sourceTree = "<group>"; };
 		BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoldCounterSprite.m; sourceTree = "<group>"; };
@@ -1332,6 +1335,8 @@
 				BF865F28159F9C1F007F5DBF /* DivinityConfigScene.m */,
 				BF730C3E15ABC1BD00E09B81 /* MultiplayerQueueScene.h */,
 				BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */,
+				BFA60E42160CD331005FFE1B /* NormalModeCompleteScene.h */,
+				BFA60E43160CD331005FFE1B /* NormalModeCompleteScene.m */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -1842,6 +1847,7 @@
 				BFAFA3F915F54BBD0052FCA5 /* DivinityTierCard.m in Sources */,
 				BF261C351602C74F003307DF /* DraggableSpellIcon.m in Sources */,
 				BF261C381602C7A4003307DF /* Slot.m in Sources */,
+				BFA60E44160CD331005FFE1B /* NormalModeCompleteScene.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

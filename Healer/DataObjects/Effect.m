@@ -15,7 +15,6 @@
 #import "Spell.h"
 #import "RaidMember.h"
 
-#define FUZZ(value, range) (((arc4random() % ((int)range * 2) + (100 - (int)range)))/100.0 * (int)value)
 
 
 @implementation Effect

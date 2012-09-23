@@ -13,11 +13,11 @@
 
 - (id)initWithAbilityDescriptor:(AbilityDescriptor *)descriptor {
     if (self = [super initWithColor:ccc4(0, 0, 0, 200)]){
-        CCLabelTTF *nameLabel = [CCLabelTTF labelWithString:descriptor.abilityName dimensions:CGSizeMake(500, 100) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:48.0];
+        CCLabelTTF *nameLabel = [CCLabelTTF labelWithString:descriptor.abilityName dimensions:CGSizeMake(500, 100) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:48.0];
         [nameLabel setPosition:CGPointMake(512, 584)];
         [self addChild:nameLabel];
         
-        CCLabelTTF *descLabel = [CCLabelTTF labelWithString:descriptor.abilityDescription dimensions:CGSizeMake(400, 300) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:24.0];
+        CCLabelTTF *descLabel = [CCLabelTTF labelWithString:descriptor.abilityDescription dimensions:CGSizeMake(400, 300) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:24.0];
         [descLabel setPosition:CGPointMake(512, 384)];
         [self addChild:descLabel];
         
@@ -25,7 +25,7 @@
         [descImage setPosition:CGPointMake(250, 484)];
         [self addChild:descImage];
         
-        CCLabelTTF *dismissLabel = [CCLabelTTF labelWithString:@"Dismiss" dimensions:CGSizeMake(300, 300) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:36.0];
+        CCLabelTTF *dismissLabel = [CCLabelTTF labelWithString:@"Dismiss" dimensions:CGSizeMake(300, 300) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:36.0];
         CCMenuItemLabel *dismissItem = [CCMenuItemLabel itemWithLabel:dismissLabel target:self selector:@selector(shouldDismiss)];
         
         CCMenu *dismissMenu = [CCMenu menuWithItems:dismissItem, nil];

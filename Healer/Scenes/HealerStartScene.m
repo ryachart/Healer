@@ -19,8 +19,6 @@
 #import "MultiplayerQueueScene.h"
 #import "GoldCounterSprite.h"
 
-BOOL firstLaunch = YES;
-
 @interface HealerStartScene ()
 @property (assign) CCMenu* menu;
 @property (assign) CCMenuItem* multiplayerButton;
@@ -92,7 +90,7 @@ BOOL firstLaunch = YES;
                 if (!error) {
                     if (multiplayerGamePlayRequested){
                         MultiplayerQueueScene *queueScene = [[MultiplayerQueueScene alloc] init];
-                        [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:queueScene]];
+                        [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInR transitionWithDuration:.5 scene:queueScene]];
                         [queueScene release];
                         self.authenticationAttempted = YES;
                     }
@@ -107,7 +105,7 @@ BOOL firstLaunch = YES;
         }];
     } else{
         MultiplayerQueueScene *queueScene = [[MultiplayerQueueScene alloc] init];
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionRadialCCW transitionWithDuration:.5 scene:queueScene]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInR   transitionWithDuration:.5 scene:queueScene]];
         [queueScene release];
     }
 
@@ -120,13 +118,6 @@ BOOL firstLaunch = YES;
     if (![[AudioController sharedInstance] isTitlePlaying:@"title"]) {
         [[AudioController sharedInstance] stopAll];
         [[AudioController sharedInstance] playTitle:@"title" looping:10];
-    }
-    
-    if (firstLaunch){
-        BackgroundSprite *bg = [BackgroundSprite launchImageBackground];
-        [self addChild:bg z:1001];
-        firstLaunch = NO;
-        [bg runAction:[CCFadeOut actionWithDuration:1.0]];
     }
 }
 

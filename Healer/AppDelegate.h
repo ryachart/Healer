@@ -6,15 +6,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "cocos2d.h"
 #import "HealerStartScene.h"
+#import "cocos2d.h"
 
-@class RootViewController;
-
-@interface AppDelegate : NSObject <UIApplicationDelegate> {
-	UIWindow			*window;
-}
-
+@interface AppDelegate : NSObject <UIApplicationDelegate, CCDirectorDelegate>
 @property (nonatomic, retain) UIWindow *window;
-@property (nonatomic, retain) RootViewController *viewController;
+@property (nonatomic, retain) UINavigationController *navController;
 @end

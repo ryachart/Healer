@@ -7,7 +7,6 @@
 //
 
 #import "cocos2d.h"
-
 @protocol DivinityTierCardDelegate <NSObject>
 
 - (void)unlockPurchasedForDivinityTier:(NSInteger)tier;

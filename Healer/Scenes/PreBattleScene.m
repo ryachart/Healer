@@ -109,10 +109,10 @@
         
         if (boss.info){
             CCLabelTTF *yourEnemyLAbel = [CCLabelTTF labelWithString:@"Your Enemy:" fontName:@"Arial" fontSize:32.0];
-            CCLabelTTF *bossNameLabel = [CCLabelTTF labelWithString:self.boss.title dimensions:CGSizeMake(300, 200) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
+            CCLabelTTF *bossNameLabel = [CCLabelTTF labelWithString:self.boss.title dimensions:CGSizeMake(300, 200) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
             [yourEnemyLAbel setPosition:CGPointMake(520, 600)];
             [bossNameLabel setPosition:CGPointMake(520, 480)];
-            CCLabelTTF *bossLabel = [CCLabelTTF labelWithString:self.boss.info dimensions:CGSizeMake(300, 500) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
+            CCLabelTTF *bossLabel = [CCLabelTTF labelWithString:self.boss.info dimensions:CGSizeMake(300, 500) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
             
             [bossLabel setPosition:CGPointMake(525, 250)];
             [self addChild:bossLabel];

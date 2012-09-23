@@ -282,7 +282,7 @@
 -(void)doCaveInOnRaid:(Raid*)theRaid{
     [self.announcer displayScreenShakeForDuration:2.5];
     [self.announcer announce:@"The Corrupted Troll Smashes the cave ceiling"];
-    [self.announcer displayPartcileSystemOverRaidWithName:@"falling_rocks.plist"];
+    [self.announcer displayParticleSystemOverRaidWithName:@"falling_rocks.plist"];
     for (RaidMember *member in theRaid.raidMembers){
         if (!member.isDead){
             NSInteger maxTankDamage = 25;
@@ -564,7 +564,7 @@
         [member addEffect:dcEffect];
         [dcEffect release];
     }
-    [self.announcer displayPartcileSystemOnRaidWithName:@"purple_mist.plist" forDuration:-1.0];
+    [self.announcer displayParticleSystemOnRaidWithName:@"purple_mist.plist" forDuration:-1.0];
 }
 
 -(void)shootProjectileAtTarget:(RaidMember*)target withDelay:(float)delay{
@@ -854,7 +854,7 @@
     
     if (percentage == 96.0){
         [self.announcer announce:@"A putrid green mist fills the area..."];
-        [self.announcer displayPartcileSystemOnRaidWithName:@"green_mist.plist" forDuration:-1.0];
+        [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:-1.0];
         for (RaidMember *member in raid.raidMembers){
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegativeInvisible];
             [rhe setOwner:self];
@@ -1205,7 +1205,7 @@
 @end
 
 @implementation Baraghast
-@synthesize autoAttack, remainingAbilities;
+@synthesize remainingAbilities;
 - (void)dealloc {
     [remainingAbilities release];
     [super dealloc];
@@ -1213,7 +1213,6 @@
 
 +(id)defaultBossForMode:(DifficultyMode)mode {
     Baraghast *boss = [[Baraghast alloc] initWithHealth:415000 damage:12 targets:1 frequency:1.25 choosesMT:YES difficulty:mode];
-    [boss setAutoAttack:[[boss abilities] objectAtIndex:0]];
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
     [boss setInfo:@"With his champions defeated, Baraghast himself confronts you and your allies."];
     return [boss autorelease];
@@ -1233,7 +1232,7 @@
         BaraghastBreakOff *breakOff = [[BaraghastBreakOff alloc] init];
         [breakOff setTitle:@"break-off"];
         [breakOff setCooldown:25];
-        [breakOff setOwnerAutoAttack:self.autoAttack];
+        [breakOff setOwnerAutoAttack:(FocusedAttack*)self.autoAttack];
         
         [self addAbility:breakOff];
         [breakOff release];
@@ -1244,7 +1243,7 @@
         Crush *crushAbility = [[Crush alloc] init];
         [crushAbility setTitle:@"crush"];
         [crushAbility setCooldown:20];
-        [crushAbility setTarget:self.autoAttack.focusTarget];
+        [crushAbility setTarget:[(FocusedAttack*)self.autoAttack focusTarget]];
         [self addAbility:crushAbility];
         [crushAbility release];
     }
@@ -1344,7 +1343,7 @@
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
     if (percentage == 75.0){
         //Pestilence
-        [self.announcer displayPartcileSystemOnRaidWithName:@"green_mist.plist" forDuration:20];
+        [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:20];
         NSArray *livingMembers = [raid getAliveMembers];
         for (RaidMember *member in livingMembers){
             RepeatedHealthEffect *pestilenceDot = [[RepeatedHealthEffect alloc] initWithDuration:20 andEffectType:EffectTypeNegativeInvisible];

@@ -44,7 +44,7 @@
 
 + (CCLabelTTF*)goldCostLabelWithCost:(NSInteger)cost andFontSize:(CGFloat)fontSize{
     NSString *labelText = [NSString stringWithFormat:@"%i", cost];
-    CCLabelTTF *goldLabel = [CCLabelTTF labelWithString:labelText dimensions:[[CCSprite spriteWithSpriteFrameName:@"gold_bg.png"] contentSize] alignment:UITextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:fontSize];
+    CCLabelTTF *goldLabel = [CCLabelTTF labelWithString:labelText dimensions:[[CCSprite spriteWithSpriteFrameName:@"gold_bg.png"] contentSize] hAlignment:UITextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:fontSize];
     [goldLabel setColor:ccc3(241, 181, 123)];
     return goldLabel;
 }

@@ -120,7 +120,7 @@
             [choiceSprite setPosition:choicePosition];
             [self addChild:choiceSprite];
             
-            CCLabelTTF *choiceTitleLabel = [CCLabelTTF labelWithString:choice.uppercaseString dimensions:CGSizeMake(2.0 * choiceSprite.contentSize.width, 30) alignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+            CCLabelTTF *choiceTitleLabel = [CCLabelTTF labelWithString:choice.uppercaseString dimensions:CGSizeMake(2.0 * choiceSprite.contentSize.width, 30) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
             [choiceTitleLabel setPosition:CGPointMake(choiceSprite.contentSize.width / 2, -20)];
             [choiceSprite addChild:choiceTitleLabel];
             
@@ -133,7 +133,7 @@
                 [selectedButtonOverlay setOpacity:255];
             }
             if ([Shop numDivinityTiersPurchased] > i){
-                CCMenuItemSprite *menuItem = [CCMenuItemSprite itemFromNormalSprite:selectedButtonOverlay selectedSprite:selectedButtonOverlaySelected target:self selector:@selector(selectedChoice:)];
+                CCMenuItemSprite *menuItem = [CCMenuItemSprite itemWithNormalSprite:selectedButtonOverlay selectedSprite:selectedButtonOverlaySelected target:self selector:@selector(selectedChoice:)];
                 [menuItem setTag:i];
                 [menuItem setUserData:choice];
                 [menuItem setNormalImage:selectedButtonOverlay];

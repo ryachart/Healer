@@ -22,7 +22,7 @@
 		percentTimeRemaining = 0.0;
         
         
-        self.timeRemaining = [CCLabelTTF labelWithString:@"Not Casting" dimensions:self.contentSize alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
+        self.timeRemaining = [CCLabelTTF labelWithString:@"Not Casting" dimensions:self.contentSize hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
         [self.timeRemaining setColor:ccRED];
         [self.timeRemaining setPosition:CGPointMake(200, 15)];
         [self addChild:self.timeRemaining z:100];

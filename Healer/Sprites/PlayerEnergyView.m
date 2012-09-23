@@ -7,7 +7,6 @@
 //
 
 #import "PlayerEnergyView.h"
-#import "Scale9Sprite.h"
 
 
 @implementation PlayerEnergyView
@@ -25,16 +24,13 @@
         self.contentSize = frame.size;
         self.isTouchEnabled = YES;
         isTouched = NO;
-        //[self setDefaultBackgroundColor:ccWHITE];
         
-        self.energyLabel = [CCLabelTTF labelWithString:@"Energy: 1000/1000" fontName:@"Arial" fontSize:14];
-        [self.energyLabel setColor:ccWHITE];
-        [self.energyLabel setColor:ccBLACK];
+        self.energyLabel = [CCLabelTTF labelWithString:@"Energy: 1000/1000" fontName:@"Arial" fontSize:18.0];
+        [self.energyLabel setColor:ccc3(25, 25, 25)];
         self.energyLabel.position = CGPointMake(frame.size.width * .5, frame.size.height * .5);
-        [self.energyLabel setContentSize:CGSizeMake(frame.size.width * .4, frame.size.height *.5)];
         [self addChild:self.energyLabel z:100];
         
-        self.energyBar = [CCLayerGradient layerWithColor:ccc4(0, 0, 255, 255) fadingTo:ccc4(0, 0, 50, 50)];
+        self.energyBar = [CCLayerGradient layerWithColor:ccc4(0, 0, 255, 255) fadingTo:ccc4(0, 0, 150, 200) alongVector:CGPointMake(-1, 0)];
         [self.energyBar setPosition:CGPointMake(0, 0)];
         self.energyBar.contentSize = CGSizeMake(0, frame.size.height);
         [self addChild:self.energyBar];
@@ -52,17 +48,12 @@
 	[self setColor:ccc3(255, 255, 255)];
 }
 
-
 -(void)updateWithEnergy:(NSInteger)current andMaxEnergy:(NSInteger)max
 {
 	[energyLabel setString:[NSString stringWithFormat:@"Energy: %i/%i", current, max]];
     percentEnergy = ((float)current)/max;
     self.energyBar.contentSize = CGSizeMake(self.contentSize.width * percentEnergy, self.contentSize.height);
 		
-}
-- (void)dealloc {
-    [channelDelegate release];
-    [super dealloc];
 }
 
 

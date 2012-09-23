@@ -39,7 +39,7 @@
     CCSprite *selectedSprite = [CCSprite spriteWithSpriteFrameName:self.ability.iconName];
     [selectedSprite setColor:ccc3(122, 122, 122)];
     
-    self.iconSpriteMenuItem = [CCMenuItemSprite itemFromNormalSprite:normalSprite selectedSprite:selectedSprite target:self.target selector:self.selector];
+    self.iconSpriteMenuItem = [CCMenuItemSprite itemWithNormalSprite:normalSprite selectedSprite:selectedSprite target:self.target selector:self.selector];
     [self.iconSpriteMenuItem setUserData:self.ability];
     
     self.menu = [CCMenu menuWithItems:self.iconSpriteMenuItem, nil];

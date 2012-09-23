@@ -121,12 +121,12 @@
         
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(100,40, 400, 50)] autorelease];
         self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(800, 485, 200, 50)] autorelease];
-        self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
+        self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
         [self.announcementLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .65)];
         [self.announcementLabel setColor:ccYELLOW];
         [self.announcementLabel setVisible:NO];
         
-        self.errAnnouncementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
+        self.errAnnouncementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
         [self.errAnnouncementLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .4)];
         [self.errAnnouncementLabel setColor:ccRED];
         [self.errAnnouncementLabel setVisible:NO];
@@ -487,7 +487,7 @@
         [node setPosition:CGPointMake(0, 0)];
     }], nil] ];
 }
--(void)displayPartcileSystemOnRaidWithName:(NSString*)name forDuration:(float)duration{
+-(void)displayParticleSystemOnRaidWithName:(NSString*)name forDuration:(float)duration{
     if (self.isServer){
         NSString* networkMessage = [NSString stringWithFormat:@"STMON|%@", name];
         [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
@@ -501,7 +501,7 @@
     [collisionEffect setAutoRemoveOnFinish:YES];
     [self addChild:collisionEffect z:100];
 }
--(void)displayPartcileSystemOverRaidWithName:(NSString*)name{
+-(void)displayParticleSystemOverRaidWithName:(NSString*)name{
     if (self.isServer){
         NSString* networkMessage = [NSString stringWithFormat:@"STMOVER|%@", name];
         [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
@@ -847,11 +847,11 @@
         }
         
         if ([message hasPrefix:@"STMOVER|"]){
-            [self displayPartcileSystemOverRaidWithName:[message substringFromIndex:8]];
+            [self displayParticleSystemOverRaidWithName:[message substringFromIndex:8]];
         }
         
         if ([message hasPrefix:@"STMON|"]){
-            [self displayPartcileSystemOnRaidWithName:[message substringFromIndex:6] forDuration:-1.0];
+            [self displayParticleSystemOnRaidWithName:[message substringFromIndex:6] forDuration:-1.0];
         }
         
         if ([message hasPrefix:@"STMTGT|"]){

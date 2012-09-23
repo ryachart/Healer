@@ -7,7 +7,6 @@
 //
 
 #import "RaidMemberHealthView.h"
-#import "CCRoundedRect.h"
 #import "ClippingNode.h"
 
 #define HEALTH_BAR_BORDER 6
@@ -102,11 +101,11 @@
         [self.nEffectClippingNode addChild:self.nEffectDurationBack];
         [self addChild:self.nEffectClippingNode z:5];
         
-        self.negativeEffectCountLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(40, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
+        self.negativeEffectCountLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(40, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
         [self.negativeEffectCountLabel setPosition:CGPointMake(28, 40)];
         [self addChild:self.negativeEffectCountLabel z:10];
         
-        self.positiveEffectCountLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(40, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
+        self.positiveEffectCountLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(40, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
         [self.positiveEffectCountLabel setPosition:CGPointMake(30, 5)];
         [self addChild:self.positiveEffectCountLabel z:10];
         

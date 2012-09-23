@@ -111,7 +111,6 @@
 @end
 
 @interface Baraghast : Boss
-@property (nonatomic, assign) FocusedAttack *autoAttack;
 @property (nonatomic, retain) NSMutableArray *remainingAbilities;
 @end
 

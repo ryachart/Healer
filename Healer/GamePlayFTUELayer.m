@@ -12,7 +12,7 @@
 -(id)init{
     if (self = [super initWithColor:ccc4(0, 0, 0, 100)]){
         
-        self.informationLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
+        self.informationLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
         [self.informationLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .65)];
         [self.informationLabel setColor:ccYELLOW];
         

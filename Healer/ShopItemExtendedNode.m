@@ -40,24 +40,24 @@
         [self addChild:background z:0];
         [background setScale:3.0];
         
-        self.itemName = [CCLabelTTF labelWithString:self.item.title dimensions:CGSizeMake(300, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:32.0];
+        self.itemName = [CCLabelTTF labelWithString:self.item.title dimensions:CGSizeMake(300, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:32.0];
         self.itemName.color = ccBLACK;
         
-        self.itemCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold: %i",self.item.goldCost] dimensions:CGSizeMake(200, 40) alignment:UITextAlignmentRight fontName:@"Arial" fontSize:32.0];
+        self.itemCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold: %i",self.item.goldCost] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentRight fontName:@"Arial" fontSize:32.0];
         self.itemCost.color = ccBLACK;
         
-        self.itemCooldown = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cooldown: %1.2f",self.item.purchasedSpell.cooldown] dimensions:CGSizeMake(300, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:28.0];
+        self.itemCooldown = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cooldown: %1.2f",self.item.purchasedSpell.cooldown] dimensions:CGSizeMake(300, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:28.0];
         self.itemCooldown.color = ccBLACK;
         
-        self.itemEnergyCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cost: %i Energy",self.item.purchasedSpell.energyCost] dimensions:CGSizeMake(200, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:28.0];
+        self.itemEnergyCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cost: %i Energy",self.item.purchasedSpell.energyCost] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:28.0];
         self.itemEnergyCost.color = ccBLACK;
         
-        self.itemCastTime = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cast Time: %1.2f",self.item.purchasedSpell.castTime] dimensions:CGSizeMake(200, 40) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:28.0];
+        self.itemCastTime = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cast Time: %1.2f",self.item.purchasedSpell.castTime] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:28.0];
         self.itemCastTime.color = ccBLACK;
-        self.itemDescription = [CCLabelTTF labelWithString:self.item.purchasedSpell.spellDescription dimensions:CGSizeMake(300, 300) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:18.0];
+        self.itemDescription = [CCLabelTTF labelWithString:self.item.purchasedSpell.spellDescription dimensions:CGSizeMake(300, 300) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:18.0];
         self.itemDescription.color = ccBLACK;
         
-        self.itemSpellType = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Type: %@", self.item.purchasedSpell.spellTypeDescription] dimensions:CGSizeMake(200, 50) alignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
+        self.itemSpellType = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Type: %@", self.item.purchasedSpell.spellTypeDescription] dimensions:CGSizeMake(200, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
         self.itemSpellType.color = ccBLACK;
         
         

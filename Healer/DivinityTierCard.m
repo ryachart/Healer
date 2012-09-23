@@ -51,8 +51,8 @@
             }
             NSInteger fontSize = 14.0;
             self.selectedChoiceIcon = [CCSprite spriteWithSpriteFrameName:iconFrameName];
-            self.selectedChoiceTitle = [CCLabelTTF labelWithString:titleString dimensions:CGSizeMake(170, 30) alignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:fontSize];
-            self.selectedChoiceDescription = [CCLabelTTF labelWithString:titleDescription dimensions:CGSizeMake(170, 96) alignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:12.0];
+            self.selectedChoiceTitle = [CCLabelTTF labelWithString:titleString dimensions:CGSizeMake(170, 30) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:fontSize];
+            self.selectedChoiceDescription = [CCLabelTTF labelWithString:titleDescription dimensions:CGSizeMake(170, 96) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:12.0];
             
             [self.selectedChoiceIcon setScale:.5];
             [self.selectedChoiceIcon setPosition:CGPointMake(45, 50)];

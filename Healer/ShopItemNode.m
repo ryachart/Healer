@@ -32,15 +32,15 @@
     CCSprite *bg = [CCSprite spriteWithSpriteFrameName:@"shopitem-bg.png"];
     CCSprite *selectedBackground = [CCSprite spriteWithSpriteFrameName:@"shopitem-bg.png"];
     [selectedBackground setOpacity:122];
-    CCMenuItem *menuItem = [CCMenuItemSprite itemFromNormalSprite:bg selectedSprite:selectedBackground target:self selector:@selector(nodeSelected)];
-    self = [super initWithItem:menuItem];
+    CCMenuItem *menuItem = [CCMenuItemSprite itemWithNormalSprite:bg selectedSprite:selectedBackground target:self selector:@selector(nodeSelected)];
+    self = [super initWithArray:[NSArray arrayWithObject:menuItem]];
     if (self){
         self.item = itm;
         self.target = tar;
         self.selector = selc;
         self.background = bg;
         
-        self.titleLabel = [CCLabelTTF labelWithString:itm.title dimensions:CGSizeMake(100, 50) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:20.0];
+        self.titleLabel = [CCLabelTTF labelWithString:itm.title dimensions:CGSizeMake(100, 50) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:20.0];
         [self.titleLabel setColor:ccBLACK];
         [self.titleLabel setPosition:CGPointMake(125, 65)];
         [menuItem addChild:titleLabel];
@@ -57,7 +57,7 @@
         [self.spellIcon setScale:.5];
         [menuItem addChild:self.spellIcon];
         
-        self.costLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cost %i", itm.goldCost] dimensions:CGSizeMake(140, 20) alignment:UITextAlignmentRight fontName:@"Arial" fontSize:20.0];
+        self.costLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cost %i", itm.goldCost] dimensions:CGSizeMake(140, 20) hAlignment:UITextAlignmentRight fontName:@"Arial" fontSize:20.0];
         [self.costLabel setPosition:ccp(50, 25)];
         [self.costLabel setColor:ccc3(0, 100, 0)];
         

@@ -24,13 +24,13 @@
     CGPoint labelPosition = CGPointMake(basicButton.contentSize.width /2 , 4 + basicButton.contentSize.height / 4);
     NSString *fontName = @"Futura";
     CGFloat fontSize = 30.0;
-    CCLabelTTF *titleLabel = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize alignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
+    CCLabelTTF *titleLabel = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize hAlignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
     [titleLabel setColor:ccc3(240, 181, 123)];
     [titleLabel setPosition:labelPosition];
-    CCLabelTTF *titleLabelSelected = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize alignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
+    CCLabelTTF *titleLabelSelected = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize hAlignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
     [titleLabelSelected setColor:ccc3(240, 181, 123)];
     [titleLabelSelected setPosition:labelPosition];
-    CCLabelTTF *titleLabelDisabled = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize alignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
+    CCLabelTTF *titleLabelDisabled = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize hAlignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
     [titleLabelDisabled setColor:ccc3(240, 181, 123)];
     [titleLabelDisabled setPosition:labelPosition];
     
@@ -39,7 +39,7 @@
     [basicButtonSelected addChild:selectedMask z:5];
     [basicButtonDisabled addChild:titleLabelDisabled];
     
-    return [BasicButton itemFromNormalSprite:basicButton selectedSprite:basicButtonSelected disabledSprite:basicButtonDisabled target:target selector:selector];
+    return [BasicButton itemWithNormalSprite:basicButton selectedSprite:basicButtonSelected disabledSprite:basicButtonDisabled target:target selector:selector];
     
 }
 
@@ -50,7 +50,7 @@
     [basicButtonDisabled setColor:ccBLACK];
     [basicButtonSelected setOpacity:200];
     
-    CCMenuItemSprite *menuItem = [CCMenuItemSprite itemFromNormalSprite:basicButton selectedSprite:basicButtonSelected disabledSprite:basicButtonDisabled target:target selector:selector];
+    CCMenuItemSprite *menuItem = [CCMenuItemSprite itemWithNormalSprite:basicButton selectedSprite:basicButtonSelected disabledSprite:basicButtonDisabled target:target selector:selector];
     
     return [CCMenu menuWithItems:menuItem, nil];
 }

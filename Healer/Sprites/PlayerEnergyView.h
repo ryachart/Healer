@@ -6,7 +6,7 @@
 //  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
 
-#import "cocos2d.h"
+#import <cocos2d.h>
 #import "GameObjects.h"
 
 @class Scale9Sprite;
@@ -15,17 +15,15 @@
 @interface PlayerEnergyView : CCLayerColor {
 	double percentEnergy;
 	double percentChanneled;
-	
-	ChannelingDelegate *channelDelegate;
-	BOOL isTouched;
+    BOOL isTouched;
 }
-@property (retain) ChannelingDelegate *channelDelegate;
+@property (assign) ChannelingDelegate *channelDelegate;
 @property (nonatomic, assign) Scale9Sprite *energyStyleFrame;
 @property (nonatomic, assign) CCSprite *energyBar;
 @property (nonatomic, assign) CCLabelTTF *energyLabel;
 @property (readwrite) double percentChanneled;
 - (id)initWithFrame:(CGRect)frame;
--(void)updateWithEnergy:(NSInteger)current andMaxEnergy:(NSInteger)max;
+- (void)updateWithEnergy:(NSInteger)current andMaxEnergy:(NSInteger)max;
 @end
 
 @protocol ChannelingDelegate

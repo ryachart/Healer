@@ -75,12 +75,12 @@
     
 }
 
-- (RaidMember*)targetWithoutEffectWithTitle:(NSString*)title inRaid:(Raid*)theRaid{
-    return [self targetWithoutEffectsTitled:[NSArray arrayWithObject:title] inRaid:theRaid];
+- (RaidMember*)targetWithoutEffectWithTitle:(NSString*)ttle inRaid:(Raid*)theRaid{
+    return [self targetWithoutEffectsTitled:[NSArray arrayWithObject:ttle] inRaid:theRaid];
 }
 
 - (RaidMember*)targetWithoutEffectsTitled:(NSArray*)effects inRaid:(Raid*)theRaid {
-    RaidMember *target = [theRaid randomLivingMember];
+    RaidMember *target = nil;
     int safety = 0;
     BOOL isInvalidTarget = NO;
     do {
@@ -493,7 +493,7 @@
 }
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     [[(Boss*)self.owner announcer] displayScreenShakeForDuration:1.0];
-    [[(Boss*)self.owner announcer] displayPartcileSystemOnRaidWithName:@"death_ring.plist" forDuration:2.0];
+    [[(Boss*)self.owner announcer] displayParticleSystemOnRaidWithName:@"death_ring.plist" forDuration:2.0];
 
     NSInteger livingMemberCount = theRaid.getAliveMembers.count;
     for (RaidMember *member in theRaid.getAliveMembers){
@@ -1264,7 +1264,7 @@
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     NSTimeInterval duration = 10.0;
     Boss *bossOwner = (Boss*)self.owner;
-    [bossOwner.announcer displayPartcileSystemOnRaidWithName:@"red_mist.plist" forDuration:duration];
+    [bossOwner.announcer displayParticleSystemOnRaidWithName:@"red_mist.plist" forDuration:duration];
     for (Player *player in players){
         Effect *disruptionCastTimeEffect = [[[Effect alloc] initWithDuration:duration andEffectType:EffectTypeNegative] autorelease];
         [disruptionCastTimeEffect setTitle:@"disruption-cast-time"];

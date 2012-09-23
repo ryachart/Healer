@@ -42,7 +42,8 @@ CGRect resizableRegion;
 		//CGSize imageSize = scale9Image.texture.contentSize;
         
 		//Set up centre sprite
-		centre = [[CCSprite alloc] initWithBatchNode:scale9Image rect:centreRegion];
+		centre = [[CCSprite alloc] initWithTexture:scale9Image.texture rect:centreRegion];
+        [centre setBatchNode:scale9Image];
 		[scale9Image addChild:centre z:0 tag:pCentre];
         
         
@@ -53,93 +54,93 @@ CGRect resizableRegion;
         
 		//top
 		top = [[CCSprite alloc]
-               initWithBatchNode:scale9Image
+               initWithTexture:scale9Image.texture
                rect:CGRectMake(centreRegion.origin.x,
                                t,
                                centreRegion.size.width,
                                centreRegion.origin.y-t)
                ];
-        
+        [top setBatchNode:scale9Image];
 		[scale9Image addChild:top z:1 tag:pTop];
         
         
         
 		//bottom
 		bottom = [[CCSprite alloc]
-                  initWithBatchNode:scale9Image
+                  initWithTexture:scale9Image.texture
                   rect:CGRectMake(centreRegion.origin.x,
                                   centreRegion.origin.y + centreRegion.size.height,
                                   centreRegion.size.width,
                                   h - (centreRegion.origin.y - t + centreRegion.size.height))
                   ];
-        
+        [bottom setBatchNode:scale9Image];
     	[scale9Image addChild:bottom z:1 tag:pBottom];
         
 		//left
 		left = [[CCSprite alloc]
-                initWithBatchNode:scale9Image
+                initWithTexture:scale9Image.texture
                 rect:CGRectMake(l,
                                 centreRegion.origin.y,
                                 centreRegion.origin.x - l,
                                 centreRegion.size.height)
                 ];
-        
+        [left setBatchNode:scale9Image];
 		[scale9Image addChild:left z:1 tag:pLeft];
         
 		//right
 		right = [[CCSprite alloc]
-                 initWithBatchNode:scale9Image
+                 initWithTexture:scale9Image.texture
                  rect:CGRectMake(centreRegion.origin.x + centreRegion.size.width,
                                  centreRegion.origin.y,
                                  w - (centreRegion.origin.x - l + centreRegion.size.width),
                                  centreRegion.size.height)
                  ];
-        
+        [right setBatchNode:scale9Image];
 		[scale9Image addChild:right z:1 tag:pRight];
         
 		//top left
 		topLeft = [[CCSprite alloc]
-                   initWithBatchNode:scale9Image
+                   initWithTexture:scale9Image.texture
                    rect:CGRectMake(l,
                                    t,
                                    centreRegion.origin.x - l,
                                    centreRegion.origin.y - t)
                    ];
-        
+        [topLeft setBatchNode:scale9Image];
 		[scale9Image addChild:topLeft z:2 tag:pTopLeft];
         
         
 		//top right
 		topRight = [[CCSprite alloc]
-                    initWithBatchNode:scale9Image
+                    initWithTexture:scale9Image.texture
                     rect:CGRectMake(centreRegion.origin.x + centreRegion.size.width,
                                     t,
                                     w - (centreRegion.origin.x - l + centreRegion.size.width),
                                     centreRegion.origin.y - t)
                     ];
-        
+        [topRight setBatchNode:scale9Image];
 		[scale9Image addChild:topRight z:2 tag:pTopRight];
         
 		//bottom left
 		bottomLeft = [[CCSprite alloc]
-                      initWithBatchNode:scale9Image
+                      initWithTexture:scale9Image.texture
                       rect:CGRectMake(l,
                                       centreRegion.origin.y + centreRegion.size.height,
                                       centreRegion.origin.x - l,
                                       h - (centreRegion.origin.y - t + centreRegion.size.height))
                       ];
-        
+        [bottomLeft setBatchNode:scale9Image];
 		[scale9Image addChild:bottomLeft z:2 tag:pBottomLeft];
         
 		//bottom right
 		bottomRight = [[CCSprite alloc]
-                       initWithBatchNode:scale9Image
+                       initWithTexture:scale9Image.texture
                        rect:CGRectMake(centreRegion.origin.x + centreRegion.size.width,
                                        centreRegion.origin.y + centreRegion.size.height,
                                        w - (centreRegion.origin.x - l + centreRegion.size.width),
                                        h - (centreRegion.origin.y - t + centreRegion.size.height))
                        ];
-        
+        [bottomRight setBatchNode:scale9Image];
 		[scale9Image addChild:bottomRight z:2 tag:pBottomRight];
         
         

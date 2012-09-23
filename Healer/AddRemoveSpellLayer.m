@@ -107,7 +107,7 @@
 
 - (void)onEnter {
     [super onEnter];
-    [[CCTouchDispatcher sharedDispatcher] addTargetedDelegate:self priority:-129 swallowsTouches:YES];
+    [[CCDirector sharedDirector].touchDispatcher addTargetedDelegate:self priority:-129 swallowsTouches:YES];
 }
 
 - (BOOL)ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event{    

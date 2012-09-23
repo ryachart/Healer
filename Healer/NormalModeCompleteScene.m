@@ -42,12 +42,12 @@
     if (self = [super init]){
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background-ipad"] autorelease]];
 
-        CCLabelTTF *normalModeCompleteLabel = [CCLabelTTF labelWithString:@"Normal Cleared!" dimensions:CGSizeMake(600, 200) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:64.0];
+        CCLabelTTF *normalModeCompleteLabel = [CCLabelTTF labelWithString:@"Normal Cleared!" dimensions:CGSizeMake(600, 200) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:64.0];
         [normalModeCompleteLabel setPosition:CGPointMake(512, 600)];
         [self addChild:normalModeCompleteLabel];
         
         NSString* storyDesc = @"Good job beating the game, Tester! Soul of Torment will be available in the final release!  More challenges await you in Hard Mode.";
-        CCLabelTTF *storyDescLabel = [CCLabelTTF labelWithString:storyDesc dimensions:CGSizeMake(400, 400) alignment:UITextAlignmentCenter fontName:@"Arial" fontSize:20.0];
+        CCLabelTTF *storyDescLabel = [CCLabelTTF labelWithString:storyDesc dimensions:CGSizeMake(400, 400) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:20.0];
         [storyDescLabel setPosition:CGPointMake(512, 250)];
         [self addChild:storyDescLabel];
         

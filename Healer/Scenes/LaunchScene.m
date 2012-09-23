@@ -28,6 +28,6 @@
 
 - (void)goToStart
 {
-    [[CCDirector sharedDirector] replaceScene:[[HealerStartScene new] autorelease]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFadeUp transitionWithDuration:.5 scene:[[HealerStartScene new] autorelease]]];
 }
 @end

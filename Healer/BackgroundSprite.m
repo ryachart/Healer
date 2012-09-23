@@ -10,16 +10,14 @@
 @implementation BackgroundSprite
 
 - (id)initWithAssetName:(NSString*)assetName{
-    NSString *assetsPath = [[NSBundle mainBundle] pathForResource:assetName ofType:@"pvr.ccz"  inDirectory:@"backgrounds"];
-    if (self = [super initWithFile:assetsPath]){
+    if (self = [super initWithFile:[@"backgrounds" stringByAppendingPathComponent:[assetName stringByAppendingPathExtension:@"pvr.ccz"]]]){
         self.anchorPoint = ccp(0.0,0.0);
     }
     return self;
 }
 
 -(id)initWithJPEGAssetName:(NSString *)assetName {
-    NSString *assetsPath = [[NSBundle mainBundle] pathForResource:assetName ofType:@"jpg"  inDirectory:@"backgrounds"];
-    if (self = [super initWithFile:assetsPath]){
+    if (self = [super initWithFile:[@"backgrounds" stringByAppendingPathComponent:[assetName stringByAppendingPathExtension:@"jpg"]]]){
         self.anchorPoint = ccp(0.0,0.0);
     }
     return self;

@@ -25,9 +25,8 @@
 
 - (id)init {
     if (self = [super init]){
-        NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"divinity-sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
-        BackgroundSprite *bgSprite = [[[BackgroundSprite alloc] initWithJPEGAssetName:@"divinity-bg-ipad"] autorelease];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/divinity-sprites.plist"];
+        BackgroundSprite *bgSprite = [[[BackgroundSprite alloc] initWithJPEGAssetName:@"divinity-bg"] autorelease];
         [self addChild:bgSprite z:-100];
         
         GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];

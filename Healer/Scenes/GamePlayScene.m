@@ -84,14 +84,10 @@
 {
     if (self = [super init]){
         [[AudioController sharedInstance] addNewPlayerWithTitle:@"battle" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/battle" ofType:@"mp3"]]];
-        NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
-        NSString *battleAssetsPath = [[NSBundle mainBundle] pathForResource:@"battle-sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:battleAssetsPath];
-        NSString *effectAssetsPath = [[NSBundle mainBundle] pathForResource:@"effect-sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:effectAssetsPath];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/battle-sprites.plist"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/effect-sprites.plist"];
 
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"battle-background-ipad"] autorelease]];
+        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"battle-background"] autorelease]];
         paused = YES;
         self.raid = raidToUse;
         self.boss = bossToUse;
@@ -765,6 +761,13 @@
 }
 
 - (void)dealloc {
+    AudioController *ac = [AudioController sharedInstance];
+	for (Spell* aSpell in [player activeSpells]){
+		[[aSpell spellAudioData] releaseSpellAudio];
+	}
+	[ac removeAudioPlayerWithTitle:CHANNELING_SPELL_TITLE];
+	[ac removeAudioPlayerWithTitle:OUT_OF_MANA_TITLE];
+    
     [spellView1 release];
     [spellView2 release];
     [spellView3 release];
@@ -785,12 +788,6 @@
     [boss release];
     [player release];
     
-	AudioController *ac = [AudioController sharedInstance];
-	for (Spell* aSpell in [player activeSpells]){
-		[[aSpell spellAudioData] releaseSpellAudio];
-	}
-	[ac removeAudioPlayerWithTitle:CHANNELING_SPELL_TITLE];
-	[ac removeAudioPlayerWithTitle:OUT_OF_MANA_TITLE];
     [super dealloc];
 }
 

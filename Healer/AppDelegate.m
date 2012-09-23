@@ -18,7 +18,7 @@
 
 @implementation AppDelegate
 
-- (void) applicationDidFinishLaunching:(UIApplication*)application
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 	// Init the window	
     _window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -32,6 +32,7 @@
     
     
 	CCDirector *director = [CCDirector sharedDirector];
+    [director setProjection:kCCDirectorProjection2D];
     director.wantsFullScreenLayout = YES;
 	[director setDelegate:self];
 	//
@@ -58,9 +59,13 @@
 	
 	[director setAnimationInterval:1.0/60];
 	
-    if( ! [director enableRetinaDisplay:YES] )
-		CCLOG(@"Retina Display Not supported");
-    
+    CCFileUtils *sharedFileUtils = [CCFileUtils sharedFileUtils];
+	[sharedFileUtils setEnableFallbackSuffixes:NO];				// Default: NO. No fallback suffixes are going to be used
+	[sharedFileUtils setiPhoneRetinaDisplaySuffix:@"-hd"];		// Default on iPhone RetinaDisplay is "-hd"
+	[sharedFileUtils setiPadSuffix:@"-ipad"];					// Default on iPad is "ipad"
+	[sharedFileUtils setiPadRetinaDisplaySuffix:@"-ipad-hd"];	// Default on iPad RetinaDisplay is "-ipadhd"
+    [director enableRetinaDisplay:YES];
+
     // Run the intro Scene
 	[[CCDirector sharedDirector] pushScene: [[LaunchScene new] autorelease]];
     [PlayerDataManager saveRemotePlayer];
@@ -71,6 +76,7 @@
 	// make the View Controller a child of the main window
 	[self.window setRootViewController:self.navController];
 	[self.window makeKeyAndVisible];
+    return YES;
 }
 
 

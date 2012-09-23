@@ -38,9 +38,8 @@
 
 -(id)init{
     if (self = [super init]){  
-        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background-ipad"] autorelease]];
-        NSString *assetsPath = [[NSBundle mainBundle] pathForResource:@"shop-sprites-ipad" ofType:@"plist"  inDirectory:@"assets"];       
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:assetsPath];
+        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/shop-sprites.plist"];
         
         CCMenu *storeBackMenu = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
         [storeBackMenu setPosition:CGPointMake(90, 705)];

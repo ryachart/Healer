@@ -1849,7 +1849,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Alexei Gousev (557BVTLW6Y)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1869,7 +1869,7 @@
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
-				PROVISIONING_PROFILE = "9BF2D08E-A52F-4FE5-8CF5-3CF510B9D84B";
+				PROVISIONING_PROFILE = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = armv7;
@@ -1881,7 +1881,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Alexei Gousev (557BVTLW6Y)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1900,7 +1900,7 @@
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
-				PROVISIONING_PROFILE = "9BF2D08E-A52F-4FE5-8CF5-3CF510B9D84B";
+				PROVISIONING_PROFILE = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
@@ -1929,7 +1929,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Alexei Gousev (557BVTLW6Y)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1948,7 +1948,7 @@
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
-				PROVISIONING_PROFILE = "9BF2D08E-A52F-4FE5-8CF5-3CF510B9D84B";
+				PROVISIONING_PROFILE = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;

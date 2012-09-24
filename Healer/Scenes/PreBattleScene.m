@@ -151,10 +151,9 @@
 
 -(void)doneButton{
     if (!self.changingSpells){
-        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss andPlayer:self.player];
+        GamePlayScene *gps = [[[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss andPlayer:self.player] autorelease];
         [gps setLevelNumber:self.levelNumber];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.5 scene:gps]];
-        [gps release];
     }
 }
 

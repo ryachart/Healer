@@ -178,7 +178,7 @@
         for (RaidMember *member in raidMembers)
         {
             [member setLogger:self];
-            RaidMemberHealthView *rmhv = [[RaidMemberHealthView alloc] initWithFrame:[raidView vendNextUsableRect]];
+            RaidMemberHealthView *rmhv = [[[RaidMemberHealthView alloc] initWithFrame:[raidView vendNextUsableRect]] autorelease];
             [rmhv setMemberData:member];
             [rmhv setInteractionDelegate:(RaidMemberHealthViewDelegate*)self];
             [raidView addRaidMemberHealthView:rmhv];
@@ -787,6 +787,7 @@
     [raid release];
     [boss release];
     [player release];
+    [pauseMenuLayer release];
     
     [super dealloc];
 }

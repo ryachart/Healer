@@ -95,7 +95,7 @@
 			for (int x = 0; x < numCols; x++){
 				float cellX = borderWidthSize + cellWidth*x;
 				float cellY = borderHeightSize + cellHeight*y;
-				GameRect *rect = [GameRect alloc];
+				GameRect *rect = [[[GameRect alloc] init] autorelease];
 				[rect setFrame:CGRectMake(cellX, cellY, cellWidth, cellHeight)];
 				[rectsToUse addObject:rect];
 			}

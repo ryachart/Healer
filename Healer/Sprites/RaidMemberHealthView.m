@@ -158,8 +158,7 @@
 
 -(void)setMemberData:(RaidMember*)rdMember
 {
-    [_memberData release];
-	_memberData = [rdMember retain];
+	_memberData = rdMember;
 	self.lastHealth = _memberData.health;
     
     NSString* classIconSpriteFrameName = [NSString stringWithFormat:@"class_icon_%@.png", [rdMember title].lowercaseString];
@@ -428,7 +427,6 @@
 }
 
 - (void)dealloc {
-    [_memberData release];
     [_healthLabel release];
     [super dealloc];
 }

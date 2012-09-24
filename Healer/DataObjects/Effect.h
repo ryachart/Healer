@@ -44,7 +44,7 @@ typedef enum {
 @property NSTimeInterval duration;
 @property (readwrite) NSInteger maxStacks;
 @property (readwrite) float timeApplied;
-@property (nonatomic, retain) HealableTarget *target;
+@property (nonatomic, assign) HealableTarget *target;
 @property (readonly) EffectType effectType;
 @property (readwrite) float failureChance;
 @property (readonly) BOOL shouldFail;

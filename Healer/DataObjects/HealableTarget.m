@@ -11,7 +11,7 @@
 #import "Effect.h"
 
 @implementation HealableTarget
-@synthesize health, maximumHealth, activeEffects, isFocused;
+@synthesize health, maximumHealth, activeEffects=activeEffects, isFocused;
 @synthesize battleID, hasDied, healthAdjustmentModifiers;
 
 -(id)init{

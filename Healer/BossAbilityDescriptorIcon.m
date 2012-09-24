@@ -10,7 +10,7 @@
 #import "AbilityDescriptor.h"
 
 @interface BossAbilityDescriptorIcon ()
-@property (nonatomic, assign) CCMenuItemSprite *iconSpriteMenuItem;;
+@property (nonatomic, assign) CCMenuItemSprite *iconSpriteMenuItem;
 @property (nonatomic, assign) CCMenu *menu;
 @property (nonatomic, assign) id target;
 @property (nonatomic, assign) SEL selector;

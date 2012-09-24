@@ -143,21 +143,18 @@
     }
     
     Encounter *encounter = [Encounter encounterForLevel:level isMultiplayer:NO];
-    Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+    Player *basicPlayer = [[[Player alloc] initWithHealth:100 energy:1000 energyRegen:10] autorelease];
     [Encounter configurePlayer:basicPlayer forRecSpells:encounter.recommendedSpells];
     
     if (encounter.boss && basicPlayer && encounter.raid){
         
-        PreBattleScene *pbs = [[PreBattleScene alloc] initWithRaid:encounter.raid boss:encounter.boss andPlayer:basicPlayer];
+        PreBattleScene *pbs = [[[PreBattleScene alloc] initWithRaid:encounter.raid boss:encounter.boss andPlayer:basicPlayer] autorelease];
         [pbs setLevelNumber:level];
         if ([Divinity isDivinityUnlocked]){
             [basicPlayer setDivinityConfig:[Divinity localDivinityConfig]];
         }
         [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:1.0 scene:pbs]];
-        [pbs release];
-
     }
-    [basicPlayer release];
 }
 
 - (void)beginEndlessVoidEncounter:(id)sender{

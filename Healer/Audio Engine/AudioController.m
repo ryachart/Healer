@@ -42,7 +42,7 @@ static AudioController* sharedController = nil;
 -(id)init{
 	if ((self = [super init])){
 	
-		[self setAudioPlayers:[NSMutableDictionary dictionaryWithCapacity:30]];
+		self.audioPlayers = [NSMutableDictionary dictionaryWithCapacity:30];
 		dupPlayers = 0;
 		[[AVAudioSession sharedInstance] setActive:YES error:nil];
 		[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
@@ -59,7 +59,7 @@ static AudioController* sharedController = nil;
 {
 	NSError *err = nil;
 	//NSData *data = [NSData dataWithContentsOfFile:[url path]];
-	AVAudioPlayer *newAudioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&err];
+	AVAudioPlayer *newAudioPlayer = [[[AVAudioPlayer alloc] initWithContentsOfURL:url error:&err] autorelease];
 	
 	if (err){
 		NSLog(@"Error: %@", [err description]);
@@ -71,7 +71,6 @@ static AudioController* sharedController = nil;
 		[audioPlayers setObject:newAudioPlayer forKey:title];
 		//[newAudioPlayer prepareToPlay];
 		[newAudioPlayer setDelegate:self];
-		[newAudioPlayer release];
 	}
 }
 

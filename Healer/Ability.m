@@ -1126,6 +1126,10 @@
 @end
 
 @implementation RaidApplyEffect
+- (void)dealloc {
+    [_appliedEffect release];
+    [super dealloc];
+}
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     if ([self checkFailed]){
         return;

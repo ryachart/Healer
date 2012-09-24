@@ -25,7 +25,6 @@
 -(void)dealloc{
     [spriteName release];
     [title release];
-    [target release];
     [ownerNetworkID release];
     [super dealloc];
 }

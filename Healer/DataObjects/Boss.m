@@ -131,8 +131,8 @@
 
 -(void)updateEffects:(Boss*)theBoss raid:(Raid*)theRaid player:(Player*)thePlayer time:(float)timeDelta{
     NSMutableArray *effectsToRemove = [NSMutableArray arrayWithCapacity:5];
-	for (int i = 0; i < [activeEffects count]; i++){
-		Effect *effect = [activeEffects objectAtIndex:i];
+	for (int i = 0; i < [self.activeEffects count]; i++){
+		Effect *effect = [self.activeEffects objectAtIndex:i];
 		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
 		if ([effect isExpired]){
 			[effect expire];
@@ -142,7 +142,7 @@
     
     for (Effect *effect in effectsToRemove){
         [self.healthAdjustmentModifiers removeObject:effect];
-        [activeEffects removeObject:effect];
+        [self.activeEffects removeObject:effect];
     }
 }
 
@@ -1553,6 +1553,7 @@
 
 - (void)dealloc {
     [_projectilesAbility release];
+    [_demonAbilities release];
     [super dealloc];
 }
 

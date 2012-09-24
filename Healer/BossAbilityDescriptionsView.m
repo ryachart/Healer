@@ -18,6 +18,11 @@
 
 @implementation BossAbilityDescriptionsView
 
+- (void)dealloc{
+    [_descriptorIcons release];
+    [super dealloc];
+}
+
 - (id)initWithBoss:(Boss*)newBoss {
     if (self = [super init]){
         self.boss = newBoss;

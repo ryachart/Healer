@@ -16,7 +16,6 @@ typedef enum {
     RaidViewSelectionStateAltSelected
 } RaidViewSelectionState;
 
-@class CCRoundedRect;
 @class RaidMemberHealthViewDelegate;
 
 @interface RaidMemberHealthView : CCLayer

@@ -17,7 +17,7 @@
 @property (nonatomic, retain) CCLayerColor *healthBar;
 @property (nonatomic, assign, setter=setMemberData:) HealableTarget* memberData;
 @property (nonatomic, retain) CCLabelTTF *healthLabel;
-@property (nonatomic, retain) PlayerHealthViewDelegate *interactionDelegate;
+@property (nonatomic, assign) PlayerHealthViewDelegate *interactionDelegate;
 @property ccColor3B defaultBackgroundColor;
 @property BOOL isTouched;
 -(id)initWithFrame:(CGRect)frame;

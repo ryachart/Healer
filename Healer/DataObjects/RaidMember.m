@@ -22,6 +22,16 @@
 @synthesize info;
 @synthesize positioning;
 
+-(void)dealloc{
+    [title release];
+    [info release];
+    [super dealloc];
+}
+
+- (oneway void)release{
+    [super release];
+}
+
 -(id)initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position
 {
     if (self = [super init]){
@@ -86,12 +96,6 @@
         [self.healthAdjustmentModifiers removeObject:effect];
         [self.activeEffects removeObject:effect];
     }
-}
-
--(void)dealloc{
-    [title release];
-    [info release];
-    [super dealloc];
 }
 
 -(float)dps{

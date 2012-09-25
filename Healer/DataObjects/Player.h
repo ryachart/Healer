@@ -48,7 +48,6 @@ typedef int CastingDisabledReason;
 	//Spell Casting Data
 	BOOL targetIsSelf;
 	BOOL isCasting;
-	Spell *spellBeingCast;
 	RaidMember *spellTarget;
 	float castStart;
 	NSArray *additionalTargets;
@@ -67,12 +66,12 @@ typedef int CastingDisabledReason;
 }
 @property (nonatomic, retain) NSArray *activeSpells;
 @property (nonatomic, assign) id<Announcer> announcer;
-@property (nonatomic, readonly)  NSMutableSet *spellsOnCooldown;
+@property (nonatomic, retain, readonly) NSMutableSet *spellsOnCooldown;
 @property (nonatomic, retain) NSDictionary *divinityConfig;
 @property (retain) Spell *spellBeingCast;
 @property (nonatomic, setter=setEnergy:) NSInteger energy;
 @property (retain) NSArray* additionalTargets;
-@property (retain) RaidMember* spellTarget;
+@property (assign) RaidMember* spellTarget;
 @property (nonatomic, retain) NSString *statusText;
 @property NSInteger position;
 @property NSInteger maximumEnergy;

@@ -353,11 +353,10 @@
     NSInteger encounterNumber = [Encounter randomMultiplayerEncounter].levelNumber;
     [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"LEVELNUM|%i", encounterNumber] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
     
-    MultiplayerSetupScene *mpss = [[MultiplayerSetupScene alloc] initWithPreconfiguredMatch:self.match andServerID:self.serverPlayerId andLevelNumber:encounterNumber];
+    MultiplayerSetupScene *mpss = [[[MultiplayerSetupScene alloc] initWithPreconfiguredMatch:self.match andServerID:self.serverPlayerId andLevelNumber:encounterNumber] autorelease];
     self.match.delegate = mpss;
     [mpss setMatchVoiceChat:self.matchVoiceChat];
     [[CCDirector sharedDirector] replaceScene:mpss];
-    [mpss release];
 }
 
 - (void)queueAgain {
@@ -381,9 +380,8 @@
         }
         [[CCDirector sharedDirector] replaceScene:[CCTransitionJumpZoom transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
     }else{
-        LevelSelectScene *qps = [[LevelSelectScene alloc] init];
+        LevelSelectScene *qps = [[[LevelSelectScene alloc] init] autorelease];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:qps]];
-        [qps release];
     }
 }
 

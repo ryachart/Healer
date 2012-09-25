@@ -18,8 +18,6 @@
 #define kGameAutorotationCCDirector 1
 #define kGameAutorotationUIViewController 2
 
-#define COCOS2D_DEBUG = 0
-
 //
 // Define here the type of autorotation that you want for your game
 //

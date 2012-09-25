@@ -45,9 +45,10 @@
 }
 
 + (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer{
-    Raid *basicRaid = nil;
+    Raid *basicRaid = [[[Raid alloc] init] autorelease];
     Boss *basicBoss = nil;
-    NSMutableArray *spells = [NSMutableArray arrayWithCapacity:4];
+    NSMutableArray *spells = nil;
+    
     NSInteger numArcher = 0;
     NSInteger numGuardian = 0;
     NSInteger numChampion = 0;
@@ -56,16 +57,12 @@
     NSInteger numBerserker = 0;
     
     if (level == 1){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [Ghoul defaultBossForMode:CURRENT_MODE];
-        
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], nil];
-        
         numChampion = 2;
     }
     
     if (level == 2){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [CorruptedTroll defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
         
@@ -75,7 +72,6 @@
     }
     
     if (level == 3){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [Drake defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell],[GreaterHeal defaultSpell], nil];
         numWizard = 1;
@@ -85,7 +81,6 @@
     }
     
     if (level == 4){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [MischievousImps defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
         numWizard = 1;
@@ -96,7 +91,6 @@
     }
     
     if (level == 5){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [BefouledTreant defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell],[ForkedHeal defaultSpell], nil];
         
@@ -108,7 +102,6 @@
     }
     
     if (level == 6){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [PlaguebringerColossus defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [ForkedHeal defaultSpell], [Regrow defaultSpell], nil];
         
@@ -120,7 +113,6 @@
     }
     
     if (level == 7){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [FungalRavagers defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [LightEternal defaultSpell], [Regrow defaultSpell], nil];
         
@@ -133,7 +125,6 @@
     }
     
     if (level == 8){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [Trulzar defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Purify defaultSpell], [Regrow defaultSpell], nil];
     
@@ -146,7 +137,6 @@
     }
     
     if (level == 9){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [DarkCouncil defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [Purify defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         numWizard = 2;
@@ -158,7 +148,6 @@
     }
     
     if (level == 10){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [TwinChampions defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal  defaultSpell], [GreaterHeal defaultSpell] , [Barrier defaultSpell], [HealingBurst defaultSpell], nil];
         
@@ -170,7 +159,6 @@
     }
     
     if (level == 11){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [Baraghast defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
@@ -183,7 +171,6 @@
     }
     
     if (level == 12){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [CrazedSeer defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
@@ -196,7 +183,6 @@
     }
     
     if (level == 13){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [GatekeeperDelsarn defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
@@ -210,7 +196,6 @@
     }
     
     if (level == 14){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [SkeletalDragon defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
@@ -223,7 +208,6 @@
     }
     
     if (level == 15){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [ColossusOfBone defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
@@ -236,7 +220,6 @@
     }
     
     if (level == 16){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [OverseerOfDelsarn defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
@@ -249,7 +232,6 @@
     }
     
     if (level == 17){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [TheUnspeakable defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
@@ -262,7 +244,6 @@
     }
     
     if (level == 18){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [BaraghastReborn defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         numWizard = 4;
@@ -274,7 +255,6 @@
     }
     
     if (level == 19){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [AvatarOfTorment1 defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
@@ -287,7 +267,6 @@
     }
     
     if (level == 20){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [AvatarOfTorment2 defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
@@ -300,7 +279,6 @@
     }
     
     if (level == 21){
-        basicRaid = [[Raid alloc] init];
         basicBoss = [SoulOfTorment defaultBossForMode:CURRENT_MODE];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
@@ -312,34 +290,34 @@
         numGuardian = 1;
     }
     
-    if (!basicBoss || !basicRaid){
-        [basicRaid release];
+    if (!basicBoss){
+        //If passed in an invalid level number and werent able to generate a boss...
         return nil;
-    }else {
-        for (int i = 0; i < numWizard; i++){
-            [basicRaid addRaidMember:[Wizard defaultWizard]];
-        }
-        for (int i = 0; i < numArcher; i++){
-            [basicRaid addRaidMember:[Archer defaultArcher]];
-        }
-        for (int i = 0; i < numWarlock; i++){
-            [basicRaid addRaidMember:[Warlock defaultWarlock]];
-        }
-        for (int i = 0; i < numBerserker; i++){
-            [basicRaid addRaidMember:[Berserker defaultBerserker]];
-        }
-        for (int i = 0; i < numChampion; i++){
-            [basicRaid addRaidMember:[Champion defaultChampion]];
-        }
-        for (int i = 0; i < numGuardian; i++){
-            [basicRaid addRaidMember:[Guardian defaultGuardian]];
-        }
+    }
+    
+    for (int i = 0; i < numWizard; i++){
+        [basicRaid addRaidMember:[Wizard defaultWizard]];
+    }
+    for (int i = 0; i < numArcher; i++){
+        [basicRaid addRaidMember:[Archer defaultArcher]];
+    }
+    for (int i = 0; i < numWarlock; i++){
+        [basicRaid addRaidMember:[Warlock defaultWarlock]];
+    }
+    for (int i = 0; i < numBerserker; i++){
+        [basicRaid addRaidMember:[Berserker defaultBerserker]];
+    }
+    for (int i = 0; i < numChampion; i++){
+        [basicRaid addRaidMember:[Champion defaultChampion]];
+    }
+    for (int i = 0; i < numGuardian; i++){
+        [basicRaid addRaidMember:[Guardian defaultGuardian]];
     }
     
     basicBoss.isMultiplayer = multiplayer;
-    Encounter *encToReturn = [[Encounter alloc] initWithRaid:[basicRaid autorelease] andBoss:basicBoss andSpells:spells];
+    Encounter *encToReturn = [[Encounter alloc] initWithRaid:basicRaid andBoss:basicBoss andSpells:spells];
     [encToReturn setLevelNumber:level];
-    return [encToReturn autorelease];;
+    return [encToReturn autorelease];
     
 }
 
@@ -432,12 +410,9 @@
 }
 
 + (Encounter*)survivalEncounterIsMultiplayer:(BOOL)multiplayer{
-    Raid *basicRaid = nil;
-    Boss *basicBoss = nil;
-    NSArray *spells = nil;
-    basicRaid = [[Raid alloc] init];
-    basicBoss = [TheEndlessVoid defaultBossForMode:CURRENT_MODE];
-    spells = [NSArray arrayWithObjects:[Heal  defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
+    Raid *basicRaid = [[[Raid alloc] init] autorelease];
+    Boss *basicBoss = [TheEndlessVoid defaultBossForMode:CURRENT_MODE];
+    NSArray *spells = [NSArray arrayWithObjects:[Heal  defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];; 
     
     for (int i = 0; i < 4; i++){
         [basicRaid addRaidMember:[Wizard defaultWizard]];
@@ -459,9 +434,9 @@
     }
     
     basicBoss.isMultiplayer = multiplayer;
-    Encounter *encToReturn = [[Encounter alloc] initWithRaid:[basicRaid autorelease] andBoss:basicBoss andSpells:spells];
+    Encounter *encToReturn = [[Encounter alloc] initWithRaid:basicRaid andBoss:basicBoss andSpells:spells];
     [encToReturn setLevelNumber:ENDLESS_VOID_ENCOUNTER_NUMBER];
-    return [encToReturn autorelease];;
+    return [encToReturn autorelease];
 }
 
 + (void)configurePlayer:(Player*)player forRecSpells:(NSArray*)spells {

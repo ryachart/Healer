@@ -59,6 +59,38 @@
 @synthesize pauseMenuLayer;
 @synthesize match, isClient, isServer, players, networkThrottle, matchVoiceChat, serverPlayerID;
 
+- (void)dealloc {
+    AudioController *ac = [AudioController sharedInstance];
+	for (Spell* aSpell in [player activeSpells]){
+		[[aSpell spellAudioData] releaseSpellAudio];
+	}
+	[ac removeAudioPlayerWithTitle:CHANNELING_SPELL_TITLE];
+	[ac removeAudioPlayerWithTitle:OUT_OF_MANA_TITLE];
+    
+    [spellView1 release];
+    [spellView2 release];
+    [spellView3 release];
+    [spellView4 release];
+    [raidView release];
+    [bossHealthView release];
+    [playerEnergyView release];
+    [playerMoveButton release];
+    [playerCastBar release];
+    [alertStatus release];
+    [eventLog release];
+    [serverPlayerID release];
+    [match release];
+    [matchVoiceChat release];
+    [players release];
+    [selectedRaidMembers release];
+    [raid release];
+    [boss release];
+    [player release];
+    [pauseMenuLayer release];
+    
+    [super dealloc];
+}
+
 -(id)initWithEncounter:(Encounter*)enc andPlayers:(NSArray*)plyers{
     if (self = [self initWithRaid:enc.raid boss:enc.boss andPlayers:plyers]){
 
@@ -247,6 +279,7 @@
 }
 
 -(void)onEnterTransitionDidFinish{
+    [super onEnterTransitionDidFinish];
 #if DEBUG
     if (self.levelNumber == 1){
         [self gameEvent:0.0]; //Bump the UI
@@ -297,13 +330,12 @@
     
     if (success && !(self.isServer || self.isClient) && [NormalModeCompleteScene needsNormalModeCompleteSceneForLevelNumber:self.levelNumber]){
         //If we just beat the final boss for the first time, show the normal mode complete Scene
-        NormalModeCompleteScene *nmcs = [[NormalModeCompleteScene alloc] initWithVictory:success eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:NO deadCount:numDead andDuration:self.boss.duration];
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:nmcs]];
-        [nmcs release];
+        NormalModeCompleteScene *nmcs = [[[NormalModeCompleteScene alloc] initWithVictory:success eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:NO deadCount:numDead andDuration:self.boss.duration] autorelease];
         [self setPaused:YES];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:nmcs]];
         return;
     }
-    PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:success eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:self.isClient || self.isServer deadCount:numDead andDuration:self.boss.duration];
+    PostBattleScene *pbs = [[[PostBattleScene alloc] initWithVictory:success eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:self.isClient || self.isServer deadCount:numDead andDuration:self.boss.duration] autorelease];
     [self setPaused:YES];
     if (self.isServer){
         [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"BATTLEEND|%i|", success] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
@@ -314,7 +346,6 @@
         [pbs setMatchVoiceChat:self.matchVoiceChat];
     }
     [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:pbs]];
-    [pbs release];
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -645,7 +676,7 @@
         
         for (RaidMemberHealthView *rmhv in self.raidView.raidViews){
             if (rmhv.memberData == dodgedTarget){
-                [rmhv displaySCT:@"Dodge!"];
+                [rmhv displaySCT:@"Dodge"];
                 break;
             }
         }
@@ -754,46 +785,6 @@
 -(void)endChanneling{
 	[player stopChanneling];
 }
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Overriden to allow any orientation.
-    return YES;
-}
-
-- (void)dealloc {
-    AudioController *ac = [AudioController sharedInstance];
-	for (Spell* aSpell in [player activeSpells]){
-		[[aSpell spellAudioData] releaseSpellAudio];
-	}
-	[ac removeAudioPlayerWithTitle:CHANNELING_SPELL_TITLE];
-	[ac removeAudioPlayerWithTitle:OUT_OF_MANA_TITLE];
-    
-    [spellView1 release];
-    [spellView2 release];
-    [spellView3 release];
-    [spellView4 release];
-    [raidView release];
-    [bossHealthView release];
-    [playerEnergyView release];
-    [playerMoveButton release];
-    [playerCastBar release];
-    [alertStatus release];
-    [eventLog release];
-    [serverPlayerID release];
-    [match release];
-    [matchVoiceChat release];
-    [players release];
-    [selectedRaidMembers release];
-    [raid release];
-    [boss release];
-    [player release];
-    [pauseMenuLayer release];
-    
-    [super dealloc];
-}
-
-
-
 
 #pragma mark GKMatchDelegate
 

@@ -45,9 +45,9 @@
     [spellAudioData release]; spellAudioData = nil;
     [title release]; title = nil;
     [percentagesPerTarget release];percentagesPerTarget = nil;
-    [spellID release];
-    [description release];
-    [appliedEffect release]; 
+    [spellID release]; spellID = nil;
+    [description release]; description = nil;
+    [appliedEffect release]; appliedEffect = nil;
     [super dealloc];
     
 }

@@ -42,6 +42,11 @@
 
 @implementation RaidMemberHealthView
 
+- (void)dealloc {
+    [_healthLabel release];
+    [super dealloc];
+}
+
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super init])) {
         // Initialization code
@@ -425,11 +430,5 @@
         }], nil]];
     }
 }
-
-- (void)dealloc {
-    [_healthLabel release];
-    [super dealloc];
-}
-
 
 @end

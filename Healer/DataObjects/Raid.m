@@ -56,7 +56,7 @@
 
 -(NSArray*)getAliveMembers
 {
-	NSMutableArray *aliveMembers = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];
+	NSMutableArray *aliveMembers = [[[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED] autorelease];
 	
 	for (HealableTarget *member in raidMembers)
 	{
@@ -65,7 +65,7 @@
 		}
 	}
 	
-	return [aliveMembers autorelease];
+	return aliveMembers;
 }
 
 - (RaidMember*)randomLivingMemberWithPositioning:(Positioning)pos {

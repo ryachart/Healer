@@ -17,7 +17,7 @@
 	double percentChanneled;
     BOOL isTouched;
 }
-@property (assign) ChannelingDelegate *channelDelegate;
+@property (nonatomic, assign) ChannelingDelegate *channelDelegate;
 @property (nonatomic, assign) Scale9Sprite *energyStyleFrame;
 @property (nonatomic, assign) CCSprite *energyBar;
 @property (nonatomic, assign) CCLabelTTF *energyLabel;

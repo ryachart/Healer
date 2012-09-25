@@ -20,10 +20,21 @@
 
 @implementation Player
 
-@synthesize activeSpells, spellBeingCast, energy, maximumEnergy, spellTarget, additionalTargets, statusText;
+@synthesize activeSpells, energy, maximumEnergy, spellTarget, additionalTargets, statusText;
 @synthesize position, logger, spellsOnCooldown=_spellsOnCooldown, announcer, playerID, isLocalPlayer;
 @synthesize divinityConfig;
 @synthesize castTimeAdjustment;
+
+-(void)dealloc{
+    [activeSpells release]; activeSpells = nil;
+    [_spellBeingCast release]; _spellBeingCast = nil;
+    [statusText release]; statusText = nil;
+    [playerID release]; playerID = nil;
+    [_spellsOnCooldown release]; _spellsOnCooldown = nil;
+    [additionalTargets release]; additionalTargets = nil;
+    [divinityConfig release]; divinityConfig = nil;
+    [super dealloc];
+}
 
 -(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen
 {
@@ -35,7 +46,7 @@
         maximumEnergy = enrgy;
         targetIsSelf = NO;
         spellTarget = nil;
-        spellBeingCast = nil;
+        self.spellBeingCast = nil;
         isCasting = NO;
         lastEnergyRegen = 0.0f;
         self.statusText = @"";
@@ -230,17 +241,6 @@
     }
 }
 
--(void)dealloc{
-    [activeSpells release];
-    [spellBeingCast release];
-    [statusText release];
-    [playerID release];
-    [_spellsOnCooldown release]; _spellsOnCooldown = nil;
-    [additionalTargets release]; additionalTargets = nil;
-    [divinityConfig release];
-    [super dealloc];
-}
-
 -(void)updateEffects:(Boss*)theBoss raid:(Raid*)theRaid player:(Player*)thePlayer time:(float)timeDelta{
     NSMutableArray *effectsToRemove = [NSMutableArray arrayWithCapacity:5];
 	for (int i = 0; i < self.activeEffects.count; i++){
@@ -292,14 +292,14 @@
 		else if ([self remainingCastTime] <= 0){
 			//SPELL END CAST
             if (self.isLocalPlayer){
-                [spellBeingCast spellEndedCasting];
+                [self.spellBeingCast spellEndedCasting];
             }
-			[spellBeingCast combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:timeDelta];
+			[self.spellBeingCast combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:timeDelta];
             for (Effect *eff in self.activeEffects){
-                [eff targetDidCastSpell:spellBeingCast];
+                [eff targetDidCastSpell:self.spellBeingCast];
             }
 			spellTarget = nil;
-			spellBeingCast = nil;
+			self.spellBeingCast = nil;
 			isCasting = NO;
 			castStart = 0.0f;
 			[additionalTargets release]; additionalTargets = nil;
@@ -332,10 +332,10 @@
 
 - (void)interrupt{
     if (self.isLocalPlayer){
-        [spellBeingCast spellInterrupted];
+        [self.spellBeingCast spellInterrupted];
     }
     spellTarget = nil;
-    spellBeingCast = nil;
+    self.spellBeingCast = nil;
     isCasting = NO;
     castStart = 0.0f;
 }
@@ -343,7 +343,7 @@
 -(NSTimeInterval) remainingCastTime
 {
 	if (castStart != 0.0 && isCasting){
-		return [spellBeingCast castTime] - castStart;
+		return [self.spellBeingCast castTime] - castStart;
 	}
 	else {
 		return 0.0;
@@ -365,10 +365,10 @@
 -(void)disableCastingWithReason:(CastingDisabledReason)reason{
 	castingDisabledReasons[reason] = YES;
     if (self.isLocalPlayer){
-        [spellBeingCast spellInterrupted];
+        [self.spellBeingCast spellInterrupted];
     }
 	spellTarget = nil;
-	spellBeingCast = nil;
+	self.spellBeingCast = nil;
 	isCasting = NO;
 	castStart = 0.0;
 	additionalTargets = nil;
@@ -383,7 +383,7 @@
 	
 	RaidMember* primaryTarget = [targets objectAtIndex:0];
 	
-	if (spellBeingCast == theSpell && spellTarget == primaryTarget ) {
+	if (self.spellBeingCast == theSpell && spellTarget == primaryTarget ) {
 		//NSLog(@"Attempting a recast on the same target.  Cancelling..");
 		return;
 	}
@@ -399,7 +399,7 @@
     if (self.isLocalPlayer){
         [theSpell spellBeganCasting];
     }
-	spellBeingCast = theSpell;
+	self.spellBeingCast = theSpell;
 	spellTarget = primaryTarget;
 	castStart = 0.0001;
 	isCasting = YES;

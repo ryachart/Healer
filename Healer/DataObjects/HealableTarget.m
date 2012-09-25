@@ -14,6 +14,13 @@
 @synthesize health, maximumHealth, activeEffects=activeEffects, isFocused;
 @synthesize battleID, hasDied, healthAdjustmentModifiers;
 
+-(void)dealloc{
+    [battleID release]; battleID = nil;
+    [activeEffects release]; activeEffects = nil;
+    [healthAdjustmentModifiers release]; healthAdjustmentModifiers = nil;
+    [super dealloc];
+}
+
 -(id)init{
     if (self = [super init]){
         activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
@@ -153,13 +160,6 @@
 }
 -(NSString*)targetName{
     return [[self class] description];
-}
-
--(void)dealloc{
-    [battleID release];
-    [activeEffects release]; activeEffects = nil;
-    [healthAdjustmentModifiers release]; healthAdjustmentModifiers = nil;
-    [super dealloc];
 }
 
 - (BOOL)hasEffectWithTitle:(NSString*)title {

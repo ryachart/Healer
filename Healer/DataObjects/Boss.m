@@ -245,7 +245,7 @@
 @implementation CorruptedTroll
 @synthesize lastRockTime, enraging;
 +(id)defaultBossForMode:(DifficultyMode)mode{
-    NSInteger health = 45000;
+    NSInteger health = 10000;
     NSInteger damage = 22;
     NSTimeInterval freq = 1.4;
     

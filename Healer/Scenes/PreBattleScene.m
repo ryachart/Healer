@@ -33,7 +33,7 @@
 @end
 
 @implementation PreBattleScene
-@synthesize raid = _raid, boss = _boss, player = _player, maxPlayers, levelNumber, spellInfoNodes;
+@synthesize maxPlayers, levelNumber, spellInfoNodes;
 @synthesize changingSpells;
 
 - (void)dealloc {

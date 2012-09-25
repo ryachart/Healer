@@ -15,8 +15,8 @@
 
 @synthesize raidMembers, raidMemberBattleIDDictionary;
 -(void)dealloc{
-    [raidMembers release];
-    [raidMemberBattleIDDictionary release];
+    [raidMembers release]; raidMembers = nil;
+    [raidMemberBattleIDDictionary release]; raidMemberBattleIDDictionary = nil;
     [super dealloc];
 }
 

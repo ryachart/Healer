@@ -28,16 +28,11 @@
     [super dealloc];
 }
 
-- (oneway void)release{
-    [super release];
-}
-
 -(id)initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position
 {
     if (self = [super init]){
         maximumHealth = hlth;
         health = hlth;
-        
         damageDealt = damage;
         damageFrequency = dmgFreq;
         self.title = @"NOTITLE";

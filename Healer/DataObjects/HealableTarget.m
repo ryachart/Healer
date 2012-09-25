@@ -23,6 +23,7 @@
 
 -(id)init{
     if (self = [super init]){
+        self.battleID = nil;
         activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
     }
     return self;

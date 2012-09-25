@@ -10,6 +10,4 @@
 
 @implementation GameRect
 
-@synthesize frame;
-
 @end

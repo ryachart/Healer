@@ -110,10 +110,9 @@
         
         for (int i = 0; i < trgets; i++){
             if (chooses && i == 0){
-                FocusedAttack *focusedAttack = [[FocusedAttack alloc] initWithDamage:dmg/trgets andCooldown:freq];
+                FocusedAttack *focusedAttack = [[[FocusedAttack alloc] initWithDamage:dmg/trgets andCooldown:freq] autorelease];
                 [self addAbility:focusedAttack];
                 self.autoAttack = focusedAttack;
-                [focusedAttack release];
             }else{
                 Attack *attack = [[Attack alloc] initWithDamage:dmg/trgets andCooldown:freq];
                 [self addAbility:attack];

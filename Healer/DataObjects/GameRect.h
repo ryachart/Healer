@@ -9,9 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-@interface GameRect : NSObject{
-	CGRect frame;
-}
+@interface GameRect : NSObject
 @property (readwrite) CGRect frame;
 
 @end

@@ -252,20 +252,19 @@
     if (self.focusTarget.isDead){
         self.focusTarget = target;
         if (!self.enrageApplied){
-            Effect *enrageEffect = [[Effect alloc] initWithDuration:600 andEffectType:EffectTypePositiveInvisible];
+            Effect *enrageEffect = [[[Effect alloc] initWithDuration:600 andEffectType:EffectTypePositiveInvisible] autorelease];
             [enrageEffect setOwner:self.owner];
             [enrageEffect setTitle:@"Enraged"];
             [enrageEffect setTarget:[self bossOwner]];
             [enrageEffect setDamageDoneMultiplierAdjustment:2.0];
-            [[self bossOwner] addEffect:[enrageEffect autorelease]];
+            [[self bossOwner] addEffect:enrageEffect];
             [[self bossOwner].announcer announce:[NSString stringWithFormat:@"%@ glows with power after defeating its focused target.", [self bossOwner].title]];
             
-            AbilityDescriptor *glowingPower = [[AbilityDescriptor alloc] init];
+            AbilityDescriptor *glowingPower = [[[AbilityDescriptor alloc] init] autorelease];
             [glowingPower setAbilityDescription:@"After defeating a Focused target, this enemy becomes unstoppable and will deal vastly increased damage."];
             [glowingPower setAbilityName:@"Glowing with Power"];
             [glowingPower setIconName:@"unknown_ability.png"];
             [[self bossOwner] addAbilityDescriptor:glowingPower];
-            [glowingPower release];
             self.enrageApplied = YES;
         }
     }

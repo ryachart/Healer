@@ -216,7 +216,7 @@
             [raidView addRaidMemberHealthView:rmhv];
         }
         [bossHealthView setBossData:boss];
-        [playerEnergyView setChannelDelegate:(ChannelingDelegate*)self];
+//        [playerEnergyView setChannelDelegate:(ChannelingDelegate*)self];
         
         
         //The timer has to be scheduled after all the init is done!
@@ -590,7 +590,7 @@
     if (effect.isFailed){
         destination = [self.raidView randomMissedProjectileDestination];
     }
-    CCParticleSystem  *collisionEffect = nil;
+    CCParticleSystemQuad  *collisionEffect = nil;
     if (effect.collisionParticleName && !effect.isFailed){
         collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:effect.collisionParticleName];
     }

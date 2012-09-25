@@ -21,7 +21,6 @@
     [collisionParticleName release];
     [target release];
     [spriteName release];
-    [target release];
     [super dealloc];
 }
 

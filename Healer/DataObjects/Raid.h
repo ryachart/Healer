@@ -14,7 +14,7 @@
 
 
 @interface Raid : NSObject
-@property (retain, readonly) NSMutableArray *raidMembers;
+@property (nonatomic, retain, readonly) NSMutableArray *raidMembers;
 
 - (void)addRaidMember:(RaidMember*)member;
 - (NSArray*)getAliveMembers;

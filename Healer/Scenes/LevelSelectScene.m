@@ -159,7 +159,7 @@
 
 - (void)beginEndlessVoidEncounter:(id)sender{
     Encounter *encounter = [Encounter survivalEncounterIsMultiplayer:NO];
-    Player *basicPlayer = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
+    Player *basicPlayer = [[[Player alloc] initWithHealth:100 energy:1000 energyRegen:10] autorelease];
     [Encounter configurePlayer:basicPlayer forRecSpells:encounter.recommendedSpells];
     
     if (encounter.boss && basicPlayer && encounter.raid){
@@ -173,8 +173,6 @@
         [pbs release];
         
     }
-    [basicPlayer release];
-
 }
 
 -(void)back

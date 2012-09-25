@@ -99,11 +99,10 @@
 - (void)triggerAvatar{
     if (arc4random() % 100 <= 3){
         [self.announcer announce:@"An Avatar comes to your aid!"];
-        AvatarEffect *avatar = [[AvatarEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive];
+        AvatarEffect *avatar = [[[AvatarEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive] autorelease];
         [avatar setOwner:self];
         [avatar setTitle:@"avatar-effect"];
         [self addEffect:avatar];
-        [avatar release];
     }
     
 }

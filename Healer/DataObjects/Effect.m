@@ -15,12 +15,9 @@
 #import "Spell.h"
 #import "RaidMember.h"
 
-
-
 @implementation Effect
 @synthesize duration, isExpired, target, effectType, timeApplied=_timeApplied, maxStacks, spriteName, title, ailmentType, owner, healingDoneMultiplierAdjustment, damageDoneMultiplierAdjustment, castTimeAdjustment;
 @synthesize needsOwnershipResolution, ownerNetworkID, failureChance; //HACKY
-
 
 -(void)dealloc{
     [spriteName release];
@@ -871,12 +868,10 @@
 	NSInteger healthDelta = *currentHealth - *newHealth;
 	
 	if (healthDelta >= self.owningGuardian.overhealingShield){
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.owningGuardian.overhealingShield] andEventType:CombatEventTypeHeal]];
 		*newHealth += self.owningGuardian.overhealingShield;
 		self.owningGuardian.overhealingShield = 0;
 	}
 	else if (healthDelta < self.owningGuardian.overhealingShield){
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:healthDelta] andEventType:CombatEventTypeHeal]];
 		*newHealth += healthDelta;
 		self.owningGuardian.overhealingShield -= healthDelta;
 	}

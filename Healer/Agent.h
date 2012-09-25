@@ -13,6 +13,5 @@
 @property (nonatomic, assign) id<EventLogger> logger;
 @property (nonatomic, readonly) float healingDoneMultiplier; //Default 1.0. For all healing done
 @property (nonatomic, readonly) float damageDoneMultiplier; //Default 1.0 For all damage done
-
 - (void)initializeForCombat;
 @end

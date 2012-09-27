@@ -10,6 +10,7 @@
 
 #import <Foundation/Foundation.h>
 #import "RaidMember.h"
+#import "ProjectileEffect.h"
 
 #define kAbilityRequiresTrigger 9999
 
@@ -49,7 +50,11 @@
 @end
 
 @interface ProjectileAttack : Ability
+@property (nonatomic, retain) Effect *appliedEffect;
 @property (nonatomic, retain) NSString* spriteName;
+@property (nonatomic, retain) NSString* explosionParticleName;
+@property (nonatomic, readwrite) ProjectileEffectType effectType;
+
 @end
 
 typedef enum {
@@ -159,4 +164,8 @@ typedef enum {
 
 @interface Confusion : Ability
 //Ability Value is confusion duration
+@end
+
+@interface DisorientingBoulder : ProjectileAttack
+
 @end

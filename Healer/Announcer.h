@@ -18,7 +18,7 @@
 - (void)displayScreenShakeForDuration:(float)duration;
 - (void)displaySprite:(NSString*)spriteName overRaidForDuration:(float)duration;
 - (void)displayProjectileEffect:(ProjectileEffect*)effect;
-- (void)displayThrowEffect:(ProjectileEffect*)effect;
+- (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target withOffset:(CGPoint)offset;
 - (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target;
 - (void)displayParticleSystemOverRaidWithName:(NSString*)name;
 - (void)displayParticleSystemOnRaidWithName:(NSString*)name forDuration:(float)duration;

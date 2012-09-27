@@ -15,7 +15,6 @@
 #import "Effect.h"
 #import "Spell.h"
 #import "CombatEvent.h"
-#import "ProjectileEffect.h"
 #import "AbilityDescriptor.h"
 
 @interface Ability ()
@@ -252,12 +251,7 @@
     if (self.focusTarget.isDead){
         self.focusTarget = target;
         if (!self.enrageApplied){
-            Effect *enrageEffect = [[[Effect alloc] initWithDuration:600 andEffectType:EffectTypePositiveInvisible] autorelease];
-            [enrageEffect setOwner:self.owner];
-            [enrageEffect setTitle:@"Enraged"];
-            [enrageEffect setTarget:[self bossOwner]];
-            [enrageEffect setDamageDoneMultiplierAdjustment:2.0];
-            [[self bossOwner] addEffect:enrageEffect];
+            self.abilityValue *= 3;
             [[self bossOwner].announcer announce:[NSString stringWithFormat:@"%@ glows with power after defeating its focused target.", [self bossOwner].title]];
             
             AbilityDescriptor *glowingPower = [[[AbilityDescriptor alloc] init] autorelease];
@@ -271,17 +265,29 @@
 }
 @end
 
-@implementation ProjectileAttack 
-@synthesize spriteName;
+@implementation ProjectileAttack
+
+- (id)init
+{
+    if (self = [super init]){
+        self.explosionParticleName = @"fire_explosion.plist";
+    }
+    return self;
+}
 
 - (void)dealloc {
-    [spriteName release];
+    [_spriteName release];
+    [_explosionParticleName release];
+    [_appliedEffect release];
     [super dealloc];
 }
 
 - (id)copy {
     ProjectileAttack *fbCopy = [super copy];
     [fbCopy setSpriteName:self.spriteName];
+    [fbCopy setExplosionParticleName:self.explosionParticleName];
+    [fbCopy setAppliedEffect:self.appliedEffect];
+    [fbCopy setEffectType:self.effectType];
     return fbCopy;
 }
 
@@ -292,23 +298,25 @@
     NSTimeInterval colTime = 1.75;
     
     ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:self.spriteName target:target andCollisionTime:colTime];
-    [fireballVisual setCollisionParticleName:@"fire_explosion.plist"];
+    [fireballVisual setCollisionParticleName:self.explosionParticleName];
     [fireballVisual setIsFailed:didFail];
+    fireballVisual.type = self.effectType;
     [[(Boss*)self.owner announcer] displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     
-    if (!didFail){
-        DelayedHealthEffect *fireball = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
-        [fireball setOwner:self.owner];
-        [fireball setIsIndependent:YES];
-        [fireball setFailureChance:.15];
-        [fireball setTitle:@"fireball-dhe"];
-        [fireball setMaxStacks:10];
-        NSInteger damage = (arc4random() % ABS(self.abilityValue) + ABS((self.abilityValue / 2)));
-        [fireball setValue:-damage];
-        [target addEffect:fireball];
-        [fireball release];
+    DelayedHealthEffect *fireball = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
+    if (didFail){
+        [fireball setFailureChance:100];
     }
+    [fireball setOwner:self.owner];
+    [fireball setIsIndependent:YES];
+    [fireball setAppliedEffect:self.appliedEffect];
+    [fireball setTitle:[NSString stringWithFormat:@"projectile-dhe%i", arc4random() % 200]];
+    [fireball setMaxStacks:10];
+    NSInteger damage = (arc4random() % ABS(self.abilityValue) + ABS((self.abilityValue / 2)));
+    [fireball setValue:-damage];
+    [target addEffect:fireball];
+    [fireball release];
 }
 
 @end
@@ -883,7 +891,8 @@
     [boneThrowEffect release];
     
     ProjectileEffect *boneVisual = [[ProjectileEffect alloc] initWithSpriteName:@"bone_throw.png" target:target andCollisionTime:throwDuration];
-    [[(Boss*)self.owner announcer] displayThrowEffect:boneVisual];
+    [boneVisual setType:ProjectileEffectTypeThrow];
+    [[(Boss*)self.owner announcer] displayProjectileEffect:boneVisual];
     [boneVisual release];
 }
 @end
@@ -1308,5 +1317,34 @@
         [confusionEffect setOwner:self.owner];
         [player addEffect:confusionEffect];        
     }
+}
+@end
+
+@implementation DisorientingBoulder
+- (id)init {
+    if (self = [super init]){
+        self.effectType = ProjectileEffectTypeThrow;
+        self.spriteName = @"rock.png";
+        self.explosionParticleName = nil;
+        DamageTakenIncreasedEffect *disorient = [[[DamageTakenIncreasedEffect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
+        [disorient setTitle:@"disorient-effect"];
+        [disorient setPercentage:.25];
+        [disorient setSpriteName:@"fallen-down.png"];
+        self.appliedEffect = disorient;
+        
+        AbilityDescriptor *abilityDescriptor = [[[AbilityDescriptor alloc] init] autorelease];
+        [abilityDescriptor setAbilityName:@"Disorienting Boulder"];
+        [abilityDescriptor setAbilityDescription:@"Throws a Boulder dealing moderate damage and causing the target to take 25% increased damage for a 8.0 seconds."];
+        self.descriptor = abilityDescriptor;
+        
+        self.cooldown = 15.0;
+        self.abilityValue = 30;
+    }
+    return self;
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players{
+    [super triggerAbilityForRaid:theRaid andPlayers:players];
+    self.cooldown = arc4random() % 8 + 8;
 }
 @end

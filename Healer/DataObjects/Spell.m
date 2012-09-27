@@ -295,6 +295,13 @@
     return heal;
 }
 
+- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount{
+    //Override with a subclass
+    if (self.owner.isLocalPlayer){
+        [self.owner.announcer displayParticleSystemWithName:@"restore_basic" onTarget:target withOffset:CGPointMake(4, -40)];
+    }
+}
+
 @end
 
 @implementation GreaterHeal
@@ -311,6 +318,13 @@
 	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
 	[[heal spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
     return [heal autorelease];
+}
+
+- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount{
+    //Override with a subclass
+    if (self.owner.isLocalPlayer){
+        [self.owner.announcer displayParticleSystemWithName:@"restore_greater" onTarget:target withOffset:CGPointMake(4, -40)];
+    }
 }
 @end
 
@@ -340,7 +354,7 @@
 }
 +(id)defaultSpell
 {
-	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:55 energyCost:100 castTime:1.75 andCooldown:0.0];//10h/erk
+	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:55 energyCost:100 castTime:1.85 andCooldown:0.0];//10h/erk
     [forkedHeal setDescription:@"Heals up to two targets simultaneously."];
     [[forkedHeal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[forkedHeal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -384,6 +398,13 @@
     if (self.cooldown > 0.0){
         [[thePlayer spellsOnCooldown] addObject:self];
         self.cooldownRemaining = self.cooldown;
+    }
+}
+- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount{
+    //Override with a subclass
+    if (self.owner.isLocalPlayer){
+        [self.owner.announcer displayParticleSystemWithName:@"restore_crossLR" onTarget:target withOffset:CGPointMake(30, -40)];
+        [self.owner.announcer displayParticleSystemWithName:@"restore_crossRL" onTarget:target withOffset:CGPointMake(-30, -40)];
     }
 }
 @end
@@ -495,7 +516,7 @@
     return self;
 }
 +(id)defaultSpell{
-    SwirlingLight *swirl = [[SwirlingLight alloc] initWithTitle:@"Swirling Light" healAmnt:0 energyCost:40 castTime:0.0 andCooldown:2.0];
+    SwirlingLight *swirl = [[SwirlingLight alloc] initWithTitle:@"Swirling Light" healAmnt:0 energyCost:40 castTime:0.0 andCooldown:1.0];
     [swirl setDescription:@"Heals a target over 10 seconds.  Each additional stack improves all the healing of all stacks. Maximum 4 Stacks."];
 	[[swirl spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
     SwirlingLightEffect *sle = [[SwirlingLightEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];

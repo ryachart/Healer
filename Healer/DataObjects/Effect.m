@@ -339,11 +339,6 @@
         if (self.shouldFail){
             [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:0 andEventType:CombatEventTypeDodge]];
         }else{
-            if (self.appliedEffect){
-                [self.appliedEffect setOwner:self.owner];
-                [self.target addEffect:self.appliedEffect];
-                self.appliedEffect = nil;
-            }
             CombatEventType eventType = self.value > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
             float modifier = self.value > 0 ? self.owner.healingDoneMultiplier : self.owner.damageDoneMultiplier;
             NSInteger amount = self.value * modifier;
@@ -358,6 +353,11 @@
                 }
             }else {
                 [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]];
+            }
+            if (self.appliedEffect){
+                [self.appliedEffect setOwner:self.owner];
+                [self.target addEffect:self.appliedEffect];
+                self.appliedEffect = nil;
             }
         }
     }

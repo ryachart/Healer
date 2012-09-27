@@ -14,22 +14,19 @@
 @interface AddRemoveSpellLayer ()
 @property (nonatomic, retain) NSMutableArray *unusedSpells;
 @property (nonatomic, retain) NSMutableArray *usedSpells;
-@property (nonatomic, retain) CCMenu *unusedSpellsMenu;
-@property (nonatomic, retain) CCMenu *usedSpellsMenu;
 @property (nonatomic, retain) DraggableSpellIcon *draggingSprite;
 @property (nonatomic, retain) NSMutableArray *spellSlots;
 @property (nonatomic, retain) NSMutableDictionary *ownedSpellSlots;
+@property (nonatomic, assign) CCMenu *dismissButton;
 @end
 
 @implementation AddRemoveSpellLayer
-@synthesize unusedSpells, usedSpells, unusedSpellsMenu, usedSpellsMenu;
+@synthesize unusedSpells, usedSpells;
 @synthesize delegate;
 
 - (void)dealloc {
     [unusedSpells release];
     [usedSpells release];
-    [unusedSpellsMenu release];
-    [usedSpellsMenu release];
     [_draggingSprite release];
     [_spellSlots release];
     [_ownedSpellSlots release];
@@ -43,9 +40,9 @@
         
         self.usedSpells = [NSMutableArray arrayWithArray:spells];
         
-        CCMenu *dismissButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Dismiss" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(dismiss)], nil];
-        [dismissButton setPosition:CGPointMake(920, 740)];
-        [self addChild: dismissButton];
+        self.dismissButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Dismiss" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(dismiss)], nil];
+        [self.dismissButton setPosition:CGPointMake(920, 740)];
+        [self addChild: self.dismissButton];
                 
         CCLabelTTF *inactiveSpellsLabel = [CCLabelTTF labelWithString:@"Library" fontName:@"Arial" fontSize:40.0];
         [inactiveSpellsLabel setPosition:CGPointMake(350, 690)];
@@ -107,10 +104,16 @@
 
 - (void)onEnter {
     [super onEnter];
-    [[CCDirector sharedDirector].touchDispatcher addTargetedDelegate:self priority:-129 swallowsTouches:YES];
+    [[CCDirector sharedDirector].touchDispatcher addTargetedDelegate:self priority:kCCMenuHandlerPriority - 100 swallowsTouches:YES];
+    [self.dismissButton setHandlerPriority:kCCMenuHandlerPriority - 101];
 }
 
-- (BOOL)ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event{    
+- (void)onExit {
+    [super onExit];
+    [[CCDirector sharedDirector].touchDispatcher removeDelegate:self];
+}
+
+- (BOOL)ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event{
     for (CCNode *child in self.children){
         if ([child isKindOfClass:[Slot class]]){
             Slot *slotChild = (Slot*)child;
@@ -131,11 +134,7 @@
         }
     }
     
-    
-    if (self.draggingSprite){
-        return YES;
-    }
-    return NO;
+    return YES;
 }
 
 - (void)ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event {

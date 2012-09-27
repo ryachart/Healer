@@ -539,14 +539,19 @@
     [collisionEffect setAutoRemoveOnFinish:YES];
     [self addChild:collisionEffect z:100];
 }
--(void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target{
+
+- (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target {
+    [self displayParticleSystemWithName:name onTarget:target withOffset:CGPointZero];
+}
+
+- (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target withOffset:(CGPoint)offset{
     if (self.isServer){
         NSString* networkMessage = [NSString stringWithFormat:@"STMTGT|%@|%@", name, target.battleID];
         [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
     }
     CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
     CGPoint destination = [self.raidView frameCenterForMember:target];
-    [collisionEffect setPosition:destination];
+    [collisionEffect setPosition:ccpAdd(destination, offset)];
     [collisionEffect setAutoRemoveOnFinish:YES];
     [self addChild:collisionEffect z:100];
 
@@ -577,6 +582,17 @@
 }
 
 -(void)displayProjectileEffect:(ProjectileEffect*)effect{
+    switch (effect.type) {
+        case ProjectileEffectTypeThrow:
+            [self displayThrowEffect:effect];
+            break;
+        default:
+            [self displayNormalProjectileEffect:effect];
+            break;
+    }
+}
+
+- (void)displayNormalProjectileEffect:(ProjectileEffect *)effect {
     if (self.isServer){
         effect.type = ProjectileEffectTypeNormal;
         [self.match sendDataToAllPlayers:[effect.asNetworkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
@@ -614,7 +630,7 @@
 
 }
 
--(void)displayThrowEffect:(ProjectileEffect *)effect{
+- (void)displayThrowEffect:(ProjectileEffect *)effect{
     if (self.isServer){
         effect.type = ProjectileEffectTypeThrow;
         [self.match sendDataToAllPlayers:[effect.asNetworkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
@@ -872,16 +888,8 @@
 }
 
 -(void)handleProjectileEffectMessage:(NSString*)message{
-    ProjectileEffect *effect = [[ProjectileEffect alloc] initWithNetworkMessage:message andRaid:self.raid];
-    
-    if (effect.type == ProjectileEffectTypeNormal){
-        [self displayProjectileEffect:effect];
-    }
-    
-    if (effect.type == ProjectileEffectTypeThrow){
-        [self displayThrowEffect:effect];
-    }
-    [effect release];
+    ProjectileEffect *effect = [[[ProjectileEffect alloc] initWithNetworkMessage:message andRaid:self.raid] autorelease];
+    [self displayProjectileEffect:effect];
 }
 
 

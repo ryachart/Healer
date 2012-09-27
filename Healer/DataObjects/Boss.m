@@ -249,7 +249,7 @@
     NSTimeInterval freq = 1.4;
     
     if (mode == DifficultyModeHard){
-        damage = 55;
+        damage = 58;
         freq = 1.4;
     }
     
@@ -257,6 +257,8 @@
     
     if (mode == DifficultyModeHard){
         corTroll.autoAttack.failureChance = .4;
+        DisorientingBoulder *boulderAbility = [[DisorientingBoulder new] autorelease];
+        [corTroll addAbility:boulderAbility];
     }
     
     [corTroll setTitle:@"Corrupted Troll"];
@@ -288,7 +290,7 @@
             NSInteger damageDealt = (arc4random() % 20 + 20);
             if (self.difficulty == DifficultyModeHard){
                 damageDealt *= 1.1;
-                maxTankDamage = 50;
+                maxTankDamage = 40;
             }
             if (member.isFocused){
                 damageDealt = MAX(damageDealt, maxTankDamage); //The Tank has max damage
@@ -319,7 +321,7 @@
 -(void)stopEnraging{
     [self.announcer announce:@"The Cave Troll is Exhausted!"];
     self.enraging = 0.0;
-    self.autoAttack.cooldown = 1.35;
+    self.autoAttack.cooldown = 1.4;
     self.lastRockTime = 5.0;
 }
 
@@ -336,7 +338,7 @@
     float tickTime = 25.0;
     
     if (self.difficulty == DifficultyModeHard){
-        tickTime = 12.0;
+        tickTime = 16.0;
     }
     
     if (lastRockTime > tickTime){
@@ -398,7 +400,8 @@
 @implementation Trulzar
 @synthesize lastPoisonTime, lastPotionTime;
 +(id)defaultBossForMode:(DifficultyMode)mode {
-    Trulzar *boss = [[Trulzar alloc] initWithHealth:320000 damage:50 targets:2 frequency:3.0 choosesMT:NO difficulty:mode];
+    Trulzar *boss = [[Trulzar alloc] initWithHealth:320000 damage:66 targets:2 frequency:3.0 choosesMT:NO difficulty:mode];
+    boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Trulzar the Maleficar"];
     [boss setInfo:@"Before the dark winds came, Trulzar was an aide to the King of Theranore and a teacher at the Academy of Alchemists.  Since the Dark winds, Trulzar has drawn into seclusion.  No one had heard from him for years until a brash student who had heard of his exploits paid him a visit.  The student was not heard from for days until a walking corpse that was later identified as the student was slaughtered at the gates by guardsmen.  Trulzar has been identified as a Maleficar by the Theranorian Sages."];
     
@@ -461,8 +464,9 @@
     DelayedHealthEffect *bottleEffect = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
     
     ProjectileEffect *bottleVisual = [[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime];
+    [bottleVisual setType:ProjectileEffectTypeThrow];
     [bottleVisual setSpriteColor:ccc3(0, 255, 0)];
-    [self.announcer displayThrowEffect:bottleVisual];
+    [self.announcer displayProjectileEffect:bottleVisual];
     [bottleVisual release];
     [bottleEffect setIsIndependent:YES];
     [bottleEffect setOwner:self];
@@ -676,7 +680,8 @@
         [self.announcer announce:@"Grimgon fades to nothing.  Serevon, Anguish Mage cackles with glee."];
         //Serevon, Anguish Mage steps forward
         self.phase = 3;
-        [self setAttackDamage:20];
+        [self setAttackDamage:27];
+        self.autoAttack.failureChance = .25;
     }
     if (percentage == 49.0){
         [[AudioController sharedInstance] playTitle:@"serevon_entrance"];
@@ -719,7 +724,8 @@
 @synthesize lastSickeningTime, numBubblesPopped;
 +(id)defaultBossForMode:(DifficultyMode)mode {
     //427500
-    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:250000 damage:25 targets:1 frequency:2.5 choosesMT:YES difficulty:mode];
+    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:250000 damage:33 targets:1 frequency:2.5 choosesMT:YES difficulty:mode];
+    boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Plaguebringer Colossus"];
     [boss setInfo:@"From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped.  The village people have foreseen their impending doom and sent young and brave hopefuls to join The Light Ascendant in exchange for protection.  You must lead this group to victory against the wretched beast."];
     
@@ -811,16 +817,19 @@
 @implementation FungalRavagers
 @synthesize isEnraged, secondTargetAttack, thirdTargetAttack;
 +(id)defaultBossForMode:(DifficultyMode)mode {
-    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:300000 damage:14 targets:1 frequency:2.5 choosesMT:YES difficulty:mode];
+    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:300000 damage:19 targets:1 frequency:2.5 choosesMT:YES difficulty:mode];
+    boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Fungal Ravagers"];
     [boss setInfo:@"Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate. Conversely, no villagers have left the town, either..."];
     [boss setCriticalChance:.5];
     
-    FocusedAttack *secondFocusedAttack = [[FocusedAttack alloc] initWithDamage:14 andCooldown:2.6];
+    FocusedAttack *secondFocusedAttack = [[FocusedAttack alloc] initWithDamage:18 andCooldown:2.6];
+    secondFocusedAttack.failureChance = .25;
     [boss addAbility:secondFocusedAttack];
     [boss setSecondTargetAttack:secondFocusedAttack];
     [secondFocusedAttack release];
-    FocusedAttack *thirdFocusedAttack = [[FocusedAttack alloc] initWithDamage:14 andCooldown:2.7];
+    FocusedAttack *thirdFocusedAttack = [[FocusedAttack alloc] initWithDamage:18 andCooldown:2.7];
+    thirdFocusedAttack.failureChance = .25;
     [boss addAbility:thirdFocusedAttack];
     [boss setThirdTargetAttack:thirdFocusedAttack];
     [thirdFocusedAttack release];
@@ -890,7 +899,8 @@
 @implementation MischievousImps
 @synthesize lastPotionThrow;
 +(id)defaultBossForMode:(DifficultyMode)mode {
-    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:50000 damage:27 targets:1 frequency:2.25 choosesMT:YES difficulty:mode];
+    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:50000 damage:34 targets:1 frequency:2.25 choosesMT:YES difficulty:mode];
+    boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Mischievious Imps"];
     [boss setInfo:@" A local alchemist has posted a small reward for removing a pesky imp infestation from her store.  Sensing something a little more sinister a small party has been dispatched from the Light Ascendant just in case there is more than meets the eye."];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw1" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw1" ofType:@"m4a"]]];
@@ -914,7 +924,8 @@
         
         ProjectileEffect *bottleVisual = [[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime];
         [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
-        [self.announcer displayThrowEffect:bottleVisual];
+        [bottleVisual setType:ProjectileEffectTypeThrow];
+        [self.announcer displayProjectileEffect:bottleVisual];
         [bottleVisual release];
         [bottleEffect setIsIndependent:YES];
         [bottleEffect setOwner:self];
@@ -927,7 +938,8 @@
         
         ProjectileEffect *bottleVisual = [[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime];
         [bottleVisual setSpriteColor:ccc3(0, 128, 128)];
-        [self.announcer displayThrowEffect:bottleVisual];
+        [bottleVisual setType:ProjectileEffectTypeThrow];
+        [self.announcer displayProjectileEffect:bottleVisual];
         [bottleVisual release];
         [bottleEffect setIsIndependent:YES];
         [bottleEffect setOwner:self];
@@ -989,7 +1001,8 @@
 @implementation BefouledTreant
 @synthesize lastRootquake;
 +(id)defaultBossForMode:(DifficultyMode)mode {
-    BefouledTreant *boss = [[BefouledTreant alloc] initWithHealth:100000 damage:35 targets:1 frequency:3.0 choosesMT:YES difficulty:mode];
+    BefouledTreant *boss = [[BefouledTreant alloc] initWithHealth:100000 damage:44 targets:1 frequency:3.0 choosesMT:YES difficulty:mode];
+    boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Befouled Treant"];
     [boss setInfo:@"The Akarus, an ancient tree that has sheltered travelers across the Gungoro Plains, has become tainted with the foul energy of The Dark Winds.  It is lashing its way through villagers and farmers.  This once great tree must be ended for good."];
     return [boss autorelease];
@@ -1050,12 +1063,14 @@
 @synthesize firstFocusedAttack, secondFocusedAttack;
 @synthesize lastAxecution, lastGushingWound;
 +(id)defaultBossForMode:(DifficultyMode)mode {
-    NSInteger damage = 15;
+    NSInteger damage = 19;
     float frequency = 1.30;
     TwinChampions *boss = [[TwinChampions alloc] initWithHealth:410000 damage:damage targets:1 frequency:frequency choosesMT:YES difficulty:mode];
     [boss setFirstFocusedAttack:[[boss abilities] objectAtIndex:0]];
+    boss.autoAttack.failureChance = .25;
     
     FocusedAttack *secondFA = [[FocusedAttack alloc] initWithDamage:damage * 4 andCooldown:frequency * 5];
+    secondFA.failureChance = .25;
     [boss setSecondFocusedAttack:secondFA];
     [boss addAbility:secondFA];
     [secondFA release];
@@ -1161,7 +1176,8 @@
         [target addEffect:axeThrownEffect];
         
         ProjectileEffect *axeVisual = [[ProjectileEffect alloc] initWithSpriteName:@"axe.png" target:target andCollisionTime:1.5];
-        [self.announcer displayThrowEffect:axeVisual];
+        [axeVisual setType:ProjectileEffectTypeThrow];
+        [self.announcer displayProjectileEffect:axeVisual];
         [axeVisual release];
         [gushingWoundEffect release];
         [axeThrownEffect release];
@@ -1211,7 +1227,8 @@
 }
 
 +(id)defaultBossForMode:(DifficultyMode)mode {
-    Baraghast *boss = [[Baraghast alloc] initWithHealth:415000 damage:12 targets:1 frequency:1.25 choosesMT:YES difficulty:mode];
+    Baraghast *boss = [[Baraghast alloc] initWithHealth:415000 damage:15 targets:1 frequency:1.25 choosesMT:YES difficulty:mode];
+    boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
     [boss setInfo:@"With his champions defeated, Baraghast himself confronts you and your allies."];
     return [boss autorelease];
@@ -1317,7 +1334,8 @@
 
 @implementation GatekeeperDelsarn
 + (id)defaultBossForMode:(DifficultyMode)mode {
-    GatekeeperDelsarn *boss = [[GatekeeperDelsarn alloc] initWithHealth:300000 damage:40 targets:1 frequency:2.1 choosesMT:YES difficulty:mode];
+    GatekeeperDelsarn *boss = [[GatekeeperDelsarn alloc] initWithHealth:300000 damage:50 targets:1 frequency:2.1 choosesMT:YES difficulty:mode];
+    boss.autoAttack.failureChance = .25;
     [boss setInfo:@"Delsarn is the name the Theronian Seers have given to the land that exists beyond the rift discovered within the tome that Seer Tyonath left behind.  The Gatekeeper is a foul beast that stands between your party and passage into Delsarn."];
     [boss setTitle:@"Gatekeeper of Delsarn"];
     
@@ -1630,7 +1648,8 @@
 }
 
 + (id)defaultBossForMode:(DifficultyMode)mode {
-    TheUnspeakable *boss = [[TheUnspeakable alloc] initWithHealth:400000 damage:55 targets:1 frequency:10.0 choosesMT:NO difficulty:mode];
+    TheUnspeakable *boss = [[TheUnspeakable alloc] initWithHealth:400000 damage:69 targets:1 frequency:10.0 choosesMT:NO difficulty:mode];
+    boss.autoAttack.failureChance = .25;
     [boss setTitle:@"The Unspeakable"];
     [boss setInfo:@"A disgusting mass of bones and rotten corpses waits in a crypt beneath Delsarn.  It seems to be ... alive."];
     
@@ -1665,7 +1684,8 @@
     [super dealloc];
 }
 + (id)defaultBossForMode:(DifficultyMode)mode {
-    BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:450000 damage:12 targets:1 frequency:1.25 choosesMT:YES difficulty:mode];
+    BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:450000 damage:15 targets:1 frequency:1.25 choosesMT:YES difficulty:mode];
+    boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Baraghast Reborn"];
     [boss setInfo:@"Before you stands the destroyed but risen warchief Baraghast.  His horrible visage once again sows fear in the hearts of all of your allies.  This time he is not only guarding a terrible secret, but his hateful gaze reveals his true purpose -- Revenge."];
     
@@ -1815,6 +1835,7 @@
     TheEndlessVoid *endlessVoid = [[TheEndlessVoid alloc] initWithHealth:99999999 damage:40 targets:4 frequency:2.0 choosesMT:NO difficulty:mode];
     [endlessVoid setTitle:@"The Endless Void"];
     [endlessVoid setInfo:@"An immortal foe that can not be vanquished.  Withstand as long as you can."];
+    endlessVoid.autoAttack.failureChance = .25;
     
     StackingDamage *damageStacker = [[StackingDamage alloc] init];
     [damageStacker setAbilityValue:1];

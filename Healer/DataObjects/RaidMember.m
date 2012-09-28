@@ -31,7 +31,7 @@
 -(id)initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position
 {
     if (self = [super init]){
-        maximumHealth = hlth;
+        self.maximumHealth = hlth;
         health = hlth;
         damageDealt = damage;
         damageFrequency = dmgFreq;
@@ -47,7 +47,7 @@
 - (void)healSelfForAmount:(NSInteger)amount {
     if (amount > 0){
         if (!self.hasDied && !self.isDead){
-            health = MIN(maximumHealth , health + amount);
+            health = MIN(self.maximumHealth , health + amount);
         }
     }
 }

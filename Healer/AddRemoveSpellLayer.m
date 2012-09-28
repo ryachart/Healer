@@ -10,6 +10,7 @@
 #import "Shop.h"
 #import "PersistantDataManager.h"
 #import "DraggableSpellIcon.h"
+#import "BasicButton.h"
 
 @interface AddRemoveSpellLayer ()
 @property (nonatomic, retain) NSMutableArray *unusedSpells;
@@ -34,14 +35,14 @@
 }
 
 -(id)initWithCurrentSpells:(NSArray *)spells{
-    if (self = [super initWithColor:ccc4(0, 0, 0, 222)]){
+    if (self = [super initWithColor:ccc4(20, 20, 20, 255)]){
         self.unusedSpells = [NSMutableArray arrayWithArray:[Shop allOwnedSpells]];
         [self.unusedSpells removeObjectsInArray:spells];
         
         self.usedSpells = [NSMutableArray arrayWithArray:spells];
         
-        self.dismissButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Dismiss" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(dismiss)], nil];
-        [self.dismissButton setPosition:CGPointMake(920, 740)];
+        self.dismissButton = [CCMenu menuWithItems:[BasicButton basicButtonWithTarget:self andSelector:@selector(dismiss) andTitle:@"Done"], nil];
+        [self.dismissButton setPosition:CGPointMake(870, 50)];
         [self addChild: self.dismissButton];
                 
         CCLabelTTF *inactiveSpellsLabel = [CCLabelTTF labelWithString:@"Library" fontName:@"Arial" fontSize:40.0];
@@ -186,7 +187,8 @@
         [PlayerDataManager setUsedSpells:newUsedSpells];
         [self.delegate spellSwitchDidCompleteWithActiveSpells:newUsedSpells];
     }
-    [self runAction:[CCSequence actions:[CCMoveTo actionWithDuration:.5 position:CGPointMake(-1024, 0)], [CCCallBlockN actionWithBlock:^(CCNode *node){
+
+    [self runAction:[CCSequence actions:[CCSpawn actionOne:[CCFadeOut actionWithDuration:.5] two:[CCScaleTo actionWithDuration:.5 scale:.8]], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node removeFromParentAndCleanup:YES];
         }], nil]];
 }

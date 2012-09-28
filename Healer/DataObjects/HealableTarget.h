@@ -15,13 +15,12 @@
 
 @interface HealableTarget : Agent {
 	NSInteger health; //All HealableTargets must have health
-	NSInteger maximumHealth;
 }
+@property (nonatomic, readwrite) NSInteger maximumHealth;
 @property (nonatomic, retain) NSMutableArray *healthAdjustmentModifiers;
 @property (nonatomic, retain) NSString* battleID;
 @property (nonatomic, readwrite) BOOL hasDied;
 @property (nonatomic, setter=setHealth:) NSInteger health;
-@property NSInteger maximumHealth;
 @property (nonatomic, retain) NSMutableArray *activeEffects;
 @property (nonatomic, readwrite) BOOL isFocused;
 @property (nonatomic, readonly) float healthPercentage;

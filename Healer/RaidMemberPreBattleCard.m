@@ -23,7 +23,7 @@
         self.contentSize = frame.size;
         self.position = frame.origin;
         
-        CCLayerColor *countBackground = [CCLayerColor layerWithColor:ccc4(255, 0, 0, 255)];
+        CCLayerColor *countBackground = [CCLayerColor layerWithColor:ccc4(130, 130, 130, 255)];
         [countBackground setPosition:ccp(0, 0)];
         [countBackground setContentSize:CGSizeMake(100, 100)];
         [self addChild:countBackground];

@@ -40,7 +40,8 @@
 {
     if (self = [super init]){
         self.isLocalPlayer = YES;
-        health = maximumHealth = hlth;
+        self.maximumHealth = hlth;
+        health = hlth;
         energy = enrgy;
         energyRegenPerSecond = energyRegen;
         maximumEnergy = enrgy;
@@ -487,25 +488,14 @@
     
     if (spell.spellType == SpellTypeMulti && [self hasDivinityEffectWithTitle:@"surging-glory"]){
         //20% more damage to that target
-        Effect *surgingGloryEffect = [[Effect alloc] initWithDuration:5 andEffectType:EffectTypePositiveInvisible];
-        [surgingGloryEffect setDamageDoneMultiplierAdjustment:.25];
+        HealingDoneAdjustmentEffect *surgingGloryEffect = [[HealingDoneAdjustmentEffect alloc] initWithDuration:5 andEffectType:EffectTypePositiveInvisible];
+        [surgingGloryEffect setPercentageHealingReceived:.20];
         [surgingGloryEffect setOwner:self];
-        [surgingGloryEffect setTitle:@"surging-glory-dmg-eff"];
+        [surgingGloryEffect setTitle:@"surging-glory-heal-eff"];
         [target addEffect:surgingGloryEffect];
         [surgingGloryEffect release];
     }
-    if (spell.spellType == SpellTypeProtective && [self hasDivinityEffectWithTitle:@"shining-aegis"]){
-        //15% chance of immunity for 3 seconds
-        if (arc4random() % 100 < 15){
-            DamageTakenDecreasedEffect *immunityEffect = [[DamageTakenDecreasedEffect alloc] initWithDuration:3 andEffectType:EffectTypePositive];
-            [immunityEffect setSpriteName:@"immunity.png"];
-            [immunityEffect setOwner:self];
-            [immunityEffect setTitle:@"shining-aegis-immune-eff"];
-            [immunityEffect setPercentage:1];
-            [target addEffect:immunityEffect];
-            [immunityEffect release];
-        }
-    }
+    
     if (spell.spellType == SpellTypeBasic && [self hasDivinityEffectWithTitle:@"after-light"]){
         //10% DR effect for 6 seconds
         if (arc4random() % 100 < 15){
@@ -529,25 +519,17 @@
     }
     
     if (spell.spellType == SpellTypePeriodic && [self hasDivinityEffectWithTitle:@"repel-the-darkness"]){
-        NSTimeInterval duration = 5.0;
-        if (spell.appliedEffect){
-            duration = spell.appliedEffect.duration;
-        }
-        Effect *repelTheDarknessEffect = [[Effect alloc] initWithDuration:duration andEffectType:EffectTypePositiveInvisible];
-        [repelTheDarknessEffect setDamageDoneMultiplierAdjustment:.25];
-        [repelTheDarknessEffect setOwner:self];
-        [repelTheDarknessEffect setTitle:@"rep-the-d-eff"];
-        [target addEffect:repelTheDarknessEffect];
-        [repelTheDarknessEffect release];
+        [target setHealth:target.health + (10 * self.healingDoneMultiplier)];
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:@10 andEventType:CombatEventTypeHeal] ];
     }
-    
+
     if (spell.spellType == SpellTypeProtective && [self hasDivinityEffectWithTitle:@"searing-power"]){
         NSTimeInterval duration = 5.0;
         if (spell.appliedEffect){
             duration = spell.appliedEffect.duration;
         }
         Effect *searingPowerEffect = [[Effect alloc] initWithDuration:duration andEffectType:EffectTypePositiveInvisible];
-        [searingPowerEffect setDamageDoneMultiplierAdjustment:.25];
+        [searingPowerEffect setMaximumHealthMultiplierAdjustment:.25];
         [searingPowerEffect setOwner:self];
         [searingPowerEffect setTitle:@"searing-power-eff"];
         [target addEffect:searingPowerEffect];

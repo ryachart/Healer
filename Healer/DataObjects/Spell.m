@@ -459,6 +459,15 @@
     }
     return self;
 }
+
+- (float)cooldown {
+    float cd = [super cooldown];
+    if (self.owner && [self.owner hasDivinityEffectWithTitle:@"shining-aegis"]){
+        return cd * .85;
+    }
+    return cd;
+}
+
 +(id)defaultSpell{
     Purify *purify = [[Purify alloc] initWithTitle:@"Purify" healAmnt:5 energyCost:40 castTime:0.0 andCooldown:5.0];
     [purify setDescription:@"Dispels negative poison and curse effects from allies."];
@@ -488,6 +497,15 @@
     }
     return self;
 }
+
+- (float)cooldown {
+    float cd = [super cooldown];
+    if (self.owner && [self.owner hasDivinityEffectWithTitle:@"shining-aegis"]){
+        return cd * .85;
+    }
+    return cd;
+}
+
 +(id)defaultSpell{
     OrbsOfLight *orbs = [[OrbsOfLight alloc] initWithTitle:@"Orbs of Light" healAmnt:0 energyCost:120 castTime:1.5 andCooldown:4.0];
     [orbs setDescription:@"Heals a target for a moderate amount each time it takes damage. Lasts 10 seconds."];
@@ -643,6 +661,15 @@
     [woa setDescription:@"Covers your entire party in a protective barrier that reduces incoming damage by 40% for 6 seconds."];
     return [woa autorelease];
 }
+
+- (float)cooldown {
+    float cd = [super cooldown];
+    if (self.owner && [self.owner hasDivinityEffectWithTitle:@"shining-aegis"]){
+        return cd * .85;
+    }
+    return cd;
+}
+
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
     NSArray *aliveMembers = [theRaid getAliveMembers];
     [theBoss.announcer displaySprite:@"shield_bubble.png" overRaidForDuration:6.0];
@@ -829,6 +856,13 @@
         self.spellType = SpellTypeProtective;
     }
     return self;
+}
+- (float)cooldown {
+    float cd = [super cooldown];
+    if (self.owner && [self.owner hasDivinityEffectWithTitle:@"shining-aegis"]){
+        return cd * .85;
+    }
+    return cd;
 }
 + (id)defaultSpell {
     BlessedArmor *defaultSpell = [[BlessedArmor alloc] initWithTitle:@"Blessed Armor" healAmnt:0 energyCost:70 castTime:0.0 andCooldown:9.0];

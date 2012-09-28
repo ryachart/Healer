@@ -97,7 +97,7 @@
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses difficulty:(DifficultyMode)mode{
     if (self = [super init]){
         health = hlth;
-        maximumHealth = hlth;
+        self.maximumHealth = hlth;
         title = @"";
         self.criticalChance = 0.0;
         self.abilities = [NSMutableArray arrayWithCapacity:5];

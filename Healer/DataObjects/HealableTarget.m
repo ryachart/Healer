@@ -11,7 +11,7 @@
 #import "Effect.h"
 
 @implementation HealableTarget
-@synthesize health, maximumHealth, activeEffects=activeEffects, isFocused;
+@synthesize health, activeEffects=activeEffects, isFocused;
 @synthesize battleID, hasDied, healthAdjustmentModifiers;
 
 -(void)dealloc{
@@ -27,6 +27,15 @@
         activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
     }
     return self;
+}
+
+- (NSInteger)maximumHealth {
+    float multiplier = 1.0;;
+    
+    for (Effect *eff in self.activeEffects){
+        multiplier += [eff maximumHealthMultiplierAdjustment];
+    }
+    return _maximumHealth * multiplier;
 }
 
 -(float)healingDoneMultiplier{
@@ -69,9 +78,9 @@
 	}
     
 	if (health < 0) health = 0;
-	if (health > maximumHealth) {
-        overHealing = health - maximumHealth;
-		health = maximumHealth;
+	if (health > self.maximumHealth) {
+        overHealing = health - self.maximumHealth;
+		health = self.maximumHealth;
 	}
     if (prevHealth < health){
         totalHealing = health - prevHealth;

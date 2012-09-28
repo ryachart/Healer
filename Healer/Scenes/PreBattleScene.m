@@ -160,10 +160,11 @@
     if (!self.changingSpells){
         self.changingSpells = YES;
         AddRemoveSpellLayer *arsl = [[AddRemoveSpellLayer alloc] initWithCurrentSpells:self.player.activeSpells];
-        [arsl setPosition:CGPointMake(-1024, 0)];
         [arsl setDelegate:self];
+        [arsl setOpacity:0];
+        [arsl setScale:.8];
         [self addChild:arsl z:100];
-        [arsl runAction:[CCMoveTo actionWithDuration:.5 position:CGPointMake(0, 0)]];
+        [arsl runAction:[CCSpawn actionOne:[CCFadeIn actionWithDuration:.5] two:[CCScaleTo actionWithDuration:.5 scale:1.0]]];
     }
 }
 

@@ -53,6 +53,7 @@ typedef enum {
 @property (nonatomic, readwrite) float castTimeAdjustment;
 @property (nonatomic, readwrite) float spellCostAdjustment;
 @property (nonatomic, readwrite) BOOL causesConfusion;
+@property (nonatomic, readwrite) float maximumHealthMultiplierAdjustment;
 @property (readwrite) BOOL isIndependent; //Max Stacks doesnt apply and other effects are never the same as this effect
 
 - (void)reset;

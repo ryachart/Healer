@@ -21,6 +21,7 @@
     if (self = [super init]){
         self.backgroundSprite = [CCSprite spriteWithSpriteFrameName:@"raid_view_back.png"];
         [self.backgroundSprite setAnchorPoint:CGPointZero];
+        [self.backgroundSprite setVisible:NO];
         [self addChild:self.backgroundSprite];
         
         self.raidViews = [NSMutableArray arrayWithCapacity:20];

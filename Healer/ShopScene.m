@@ -5,7 +5,7 @@
 //  Created by Ryan Hart on 4/26/12.
 //
 
-#import "StoreScene.h"
+#import "ShopScene.h"
 #import "HealerStartScene.h"
 #import "Shop.h"
 #import "ShopItemNode.h"
@@ -15,7 +15,7 @@
 #import "GoldCounterSprite.h"
 
 
-@interface StoreScene ()
+@interface ShopScene ()
 @property (nonatomic, assign) ShopItemExtendedNode *extendedNode;
 @property (nonatomic, assign) CCLayerColor *darkenLayer;
 @property (nonatomic, assign) ShopItemNode *possibleChangedNode;
@@ -29,7 +29,7 @@
 - (void)configureShopForCategory:(ShopCategory)category;
 @end
 
-@implementation StoreScene
+@implementation ShopScene
 @synthesize extendedNode, darkenLayer, possibleChangedNode;
 - (void)dealloc {
     [_itemNodes release];
@@ -38,7 +38,7 @@
 
 -(id)init{
     if (self = [super init]){  
-        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
+        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"shop-bg"] autorelease]];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/shop-sprites.plist"];
         
         CCMenu *storeBackMenu = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];

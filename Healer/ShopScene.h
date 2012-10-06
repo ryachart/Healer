@@ -9,6 +9,6 @@
 #import "ShopItemExtendedNode.h"
 
 
-@interface StoreScene : CCScene <ShopItemExtendedNodeDelegate>
+@interface ShopScene : CCScene <ShopItemExtendedNodeDelegate>
 
 @end

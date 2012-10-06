@@ -10,7 +10,7 @@
 #import "AppDelegate.h"
 #import "PersistantDataManager.h"
 #import "Shop.h"
-#import "StoreScene.h"
+#import "ShopScene.h"
 #import "BackgroundSprite.h"
 #import "Divinity.h"
 #import "DivinityConfigScene.h"
@@ -45,7 +45,7 @@
         
         self.quickPlayButton= [BasicButton basicButtonWithTarget:self andSelector:@selector(quickPlaySelected) andTitle:@"Play"];
         
-        self.storeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(storeSelected) andTitle:@"Spell Shop"];
+        self.storeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(storeSelected) andTitle:@"Academy"];
         
         CCMenuItem *divinityButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(divinitySelected) andTitle:@"Divinity"];
         if (![Divinity isDivinityUnlocked]){
@@ -128,7 +128,7 @@
 }
 
 -(void)storeSelected{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:.5 scene:[[[StoreScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:.5 scene:[[[ShopScene alloc] init] autorelease]]];
 }
 
 -(void)settingsSelected

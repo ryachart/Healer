@@ -85,10 +85,11 @@
 		BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */; };
 		BFAFA3F415F43C650052FCA5 /* GoldCounterSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */; };
 		BFAFA3F915F54BBD0052FCA5 /* DivinityTierCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F815F54BBD0052FCA5 /* DivinityTierCard.m */; };
-		BFB46407154A25DD00503E30 /* StoreScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46406154A25DD00503E30 /* StoreScene.m */; };
+		BFB46407154A25DD00503E30 /* ShopScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46406154A25DD00503E30 /* ShopScene.m */; };
 		BFB4640C154A262800503E30 /* ShopItemNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB4640B154A262800503E30 /* ShopItemNode.m */; };
 		BFB46411154A268900503E30 /* Shop.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46410154A268900503E30 /* Shop.m */; };
 		BFB46414154A26A100503E30 /* ShopItem.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46413154A26A100503E30 /* ShopItem.m */; };
+		BFB6A74D161540E10071EAB9 /* ModalDialogLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB6A74C161540E10071EAB9 /* ModalDialogLayer.m */; };
 		BFB99F1B15257F6D007EE559 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = BFB99F1A15257F6D007EE559 /* Sounds */; };
 		BFC1022F153F90BA00884677 /* Agent.m in Sources */ = {isa = PBXBuildFile; fileRef = BFC1022E153F90BA00884677 /* Agent.m */; };
 		BFD804F51530D17400570A0A /* Encounter.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD804F41530D17400570A0A /* Encounter.m */; };
@@ -668,14 +669,16 @@
 		BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoldCounterSprite.m; sourceTree = "<group>"; };
 		BFAFA3F715F54BBD0052FCA5 /* DivinityTierCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DivinityTierCard.h; sourceTree = "<group>"; };
 		BFAFA3F815F54BBD0052FCA5 /* DivinityTierCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DivinityTierCard.m; sourceTree = "<group>"; };
-		BFB46405154A25DD00503E30 /* StoreScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreScene.h; sourceTree = "<group>"; };
-		BFB46406154A25DD00503E30 /* StoreScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreScene.m; sourceTree = "<group>"; };
+		BFB46405154A25DD00503E30 /* ShopScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopScene.h; sourceTree = "<group>"; };
+		BFB46406154A25DD00503E30 /* ShopScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopScene.m; sourceTree = "<group>"; };
 		BFB4640A154A262800503E30 /* ShopItemNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopItemNode.h; sourceTree = "<group>"; };
 		BFB4640B154A262800503E30 /* ShopItemNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopItemNode.m; sourceTree = "<group>"; };
 		BFB4640F154A268900503E30 /* Shop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shop.h; sourceTree = "<group>"; };
 		BFB46410154A268900503E30 /* Shop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Shop.m; sourceTree = "<group>"; };
 		BFB46412154A26A100503E30 /* ShopItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopItem.h; sourceTree = "<group>"; };
 		BFB46413154A26A100503E30 /* ShopItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopItem.m; sourceTree = "<group>"; };
+		BFB6A74B161540E10071EAB9 /* ModalDialogLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModalDialogLayer.h; sourceTree = "<group>"; };
+		BFB6A74C161540E10071EAB9 /* ModalDialogLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModalDialogLayer.m; sourceTree = "<group>"; };
 		BFB99F1A15257F6D007EE559 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = SOURCE_ROOT; };
 		BFC1022D153F90BA00884677 /* Agent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Agent.h; sourceTree = "<group>"; };
 		BFC1022E153F90BA00884677 /* Agent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Agent.m; sourceTree = "<group>"; };
@@ -901,8 +904,8 @@
 				387E7B3F145E1382006D9266 /* GamePlayScene.m */,
 				BF6CC5CE15022496000F1AFF /* PostBattleScene.h */,
 				BF6CC5CF15022496000F1AFF /* PostBattleScene.m */,
-				BFB46405154A25DD00503E30 /* StoreScene.h */,
-				BFB46406154A25DD00503E30 /* StoreScene.m */,
+				BFB46405154A25DD00503E30 /* ShopScene.h */,
+				BFB46406154A25DD00503E30 /* ShopScene.m */,
 				BFFB58E4152D69C7005B760E /* MultiplayerSetupScene.h */,
 				BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */,
 				BF865F27159F9C1E007F5DBF /* DivinityConfigScene.h */,
@@ -1129,6 +1132,8 @@
 				BF448C59154BB04A009401A6 /* SpellInfoNode.m */,
 				BF865F2A15A031FB007F5DBF /* BasicButton.h */,
 				BF865F2B15A031FB007F5DBF /* BasicButton.m */,
+				BFB6A74B161540E10071EAB9 /* ModalDialogLayer.h */,
+				BFB6A74C161540E10071EAB9 /* ModalDialogLayer.m */,
 			);
 			name = "UI Layers";
 			sourceTree = "<group>";
@@ -1780,7 +1785,7 @@
 				BFD804F51530D17400570A0A /* Encounter.m in Sources */,
 				BF68CBA61537364B0096B6CF /* ClippingNode.m in Sources */,
 				BFC1022F153F90BA00884677 /* Agent.m in Sources */,
-				BFB46407154A25DD00503E30 /* StoreScene.m in Sources */,
+				BFB46407154A25DD00503E30 /* ShopScene.m in Sources */,
 				BFB4640C154A262800503E30 /* ShopItemNode.m in Sources */,
 				BFB46411154A268900503E30 /* Shop.m in Sources */,
 				BFB46414154A26A100503E30 /* ShopItem.m in Sources */,
@@ -1803,6 +1808,7 @@
 				BF261C381602C7A4003307DF /* Slot.m in Sources */,
 				BFA60E44160CD331005FFE1B /* NormalModeCompleteScene.m in Sources */,
 				BFD8EF4C160F9F1C00BAF83A /* LaunchScene.m in Sources */,
+				BFB6A74D161540E10071EAB9 /* ModalDialogLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -12,6 +12,7 @@
 #import "Shop.h"
 #import "GoldCounterSprite.h"
 #import "BackgroundSprite.h"
+#import "ModalDialogLayer.h"
 
 #define TIER_TABLE_Z 100
 #define CHARGED_BAR_Z 50
@@ -75,6 +76,9 @@
         [self layoutTierTable];
         [self layoutChargedPipeOverlays];
         [self layoutDivinityItems];
+    }else {
+        ModalDialogLayer *alert = [[[ModalDialogLayer alloc] initWithText:@"Not enough Gold to unlock that Tier."] autorelease];
+        [alert show];
     }
 }
 

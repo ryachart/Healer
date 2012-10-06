@@ -14,7 +14,7 @@
 #import "PersistantDataManager.h"
 #import <UIKit/UIKit.h>
 #import "Shop.h"
-#import "StoreScene.h"
+#import "ShopScene.h"
 #import "BackgroundSprite.h"
 #import "TestFlight.h"
 #import "Divinity.h"
@@ -408,7 +408,7 @@
 }
 
 - (void)goToStore {
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:[[StoreScene new] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:[[ShopScene new] autorelease]]];
 }
 
 #pragma mark - GKMatchDelegate

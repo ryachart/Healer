@@ -7,6 +7,8 @@ shop_sprites_dir=${PROJECT_DIR}/shop-sprites
 spell_sprites_dir=${PROJECT_DIR}/spell-sprites
 effect_sprites_dir=${PROJECT_DIR}/effect-sprites
 divinity_spires_dir=${PROJECT_DIR}/divinity-sprites
+shop_flavor_1_dir=${PROJECT_DIR}/shop-flavor-1
+shop_flavor_2_dir=${PROJECT_DIR}/shop-flavor-2
 
 asset=`basename $sprites_dir`
 mkdir -p $ASSETS_DIR
@@ -39,4 +41,14 @@ divinity_plist=$ASSETS_DIR/divinity-sprites-ipad-hd.plist
 divinity_sheet=$ASSETS_DIR/divinity-sprites-ipad-hd.pvr.ccz
 /usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $divinity_plist --format cocos2d --sheet $divinity_sheet --auto-sd $divinity_spires_dir/*.png
 /usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $divinity_plist --format cocos2d --sheet $divinity_sheet $divinity_spires_dir/*.png
+
+shop_flavor_1_plist=$ASSETS_DIR/shop-flavor-1-ipad-hd.plist
+shop_flavor_1_sheet=$ASSETS_DIR/shop-flavor-1-ipad-hd.pvr.ccz
+/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $shop_flavor_1_plist --format cocos2d --sheet $shop_flavor_1_sheet --auto-sd $shop_flavor_1_dir/*.png
+/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $shop_flavor_1_plist --format cocos2d --sheet $shop_flavor_1_sheet $shop_flavor_1_dir/*.png
+
+shop_flavor_2_plist=$ASSETS_DIR/shop-flavor-2-ipad-hd.plist
+shop_flavor_2_sheet=$ASSETS_DIR/shop-flavor-2-ipad-hd.pvr.ccz
+/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $shop_flavor_2_plist --format cocos2d --sheet $shop_flavor_2_sheet --auto-sd $shop_flavor_2_dir/*.png
+/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $shop_flavor_2_plist --format cocos2d --sheet $shop_flavor_2_sheet $shop_flavor_2_dir/*.png
 

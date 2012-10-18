@@ -59,7 +59,7 @@
         
         [self.menu setPosition:ccp(winSize.width * .81, winSize.height * .45)];
         [self.menu setColor:ccc3(255, 255, 255)];
-        [self addChild:self.menu];
+        [self addChild:self.menu z:2];
         
         GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
         [goldCounter setPosition:CGPointMake(900, 50)];
@@ -67,7 +67,8 @@
         
         CCSprite *logoSprite = [CCSprite spriteWithSpriteFrameName:@"home_logo.png"];
         [logoSprite setAnchorPoint:CGPointMake(0, 0)];
-        [self addChild:logoSprite z:5];
+        [logoSprite setPosition:CGPointMake(590, 250)];
+        [self addChild:logoSprite z:1];
         
     }
     return self;

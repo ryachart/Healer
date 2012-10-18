@@ -10,4 +10,5 @@
 
 @interface GoldCounterSprite : CCSprite
 + (CCLabelTTF*)goldCostLabelWithCost:(NSInteger)cost andFontSize:(CGFloat)fontSize;
++ (CCNode *)goldCostNodeForCost:(NSInteger)cost;
 @end

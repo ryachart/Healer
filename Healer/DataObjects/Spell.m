@@ -695,7 +695,7 @@
 }
 + (id)defaultSpell {
     TouchOfHope *tol = [[TouchOfHope alloc] initWithTitle:@"Touch of Hope" healAmnt:30 energyCost:50 castTime:0.0 andCooldown:4.0];
-    [tol setDescription:@"Instantly Heals your Target for a small amount and places an effect on the target that heals for a small amount over 4 seconds.  Each time the periodic effect heals it restores 12 energy."];
+    [tol setDescription:@"Heals your target for a small amount and more over 4 seconds.  Each time the periodic effect heals it restores 12 energy."];
     return [tol autorelease];
 }
 
@@ -817,7 +817,7 @@
 
 + (id)defaultSpell {
     StarsOfAravon *spell = [[StarsOfAravon alloc] initWithTitle:@"Stars of Aravon" healAmnt:0 energyCost:66 castTime:1.75 andCooldown:0.0];
-    [spell setDescription:@"Summon 4 Stars of Aravon from the heavens.  The Stars travel for 2.5 seconds before striking their target and healing them for a small amount.."];
+    [spell setDescription:@"Summon 4 Stars of Aravon from the heavens.  The Stars travel for 2.5 seconds before healing their target for a small amount."];
     return [spell autorelease];
 }
 
@@ -867,7 +867,7 @@
 + (id)defaultSpell {
     BlessedArmor *defaultSpell = [[BlessedArmor alloc] initWithTitle:@"Blessed Armor" healAmnt:0 energyCost:70 castTime:0.0 andCooldown:9.0];
     
-    [defaultSpell setDescription:@"Reduces damage done to a target by 50%% for 5 seconds.  When the effect expires it heals the target for a moderate amount."];
+    [defaultSpell setDescription:@"Reduces damage done to a target by 50% for 5 seconds.  When the effect ends it heals for a moderate amount."];
     BlessedArmorEffect *bae = [[BlessedArmorEffect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
     [bae setSpriteName:@"blessed_armor.png"];
     [bae setTitle:@"blessed-armor-eff"];
@@ -888,7 +888,7 @@
 + (id)defaultSpell {
     Attunement *defaultSpell = [[Attunement alloc] initWithTitle:@"Attunement" healAmnt:0 energyCost:20 castTime:0.0 andCooldown:40.0];
     
-    [defaultSpell setDescription:@"For 12 Seconds, all spells you cast cost 50%% less."];
+    [defaultSpell setDescription:@"For 12 Seconds, all spells you cast cost 50% less."];
     return [defaultSpell autorelease];
 }
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{

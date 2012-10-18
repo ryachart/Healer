@@ -9,7 +9,7 @@
 
 @class ShopItem;
 
-@interface ShopItemNode : CCMenu
+@interface ShopItemNode : CCSprite
 @property (nonatomic, retain) ShopItem *item;
 -(id)initWithShopItem:(ShopItem*)item target:(id)target selector:(SEL)selector;
 -(void)checkPlayerHasItem;

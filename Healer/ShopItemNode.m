@@ -9,43 +9,59 @@
 #import "ShopItem.h"
 #import "Shop.h"
 #import "ShopItemExtendedNode.h"
+#import "GoldCounterSprite.h"
+#import "BasicButton.h"
 
 @interface ShopItemNode ()
 @property (nonatomic, assign) id target;
 @property (nonatomic, assign) SEL selector;
 @property (nonatomic, assign) CCSprite *background;
 @property (nonatomic, assign) CCSprite *spellIcon;
-@property (nonatomic, assign) CCLabelTTF *costLabel;
 @property (nonatomic, assign) CCLabelTTF *titleLabel;
+@property (nonatomic, assign) CCNode *goldCostNode;
+@property (nonatomic, assign) CCMenu *buyButton;
+@property (nonatomic, assign) CCLabelTTF *itemEnergyCost;
+@property (nonatomic, assign) CCLabelTTF *itemDescription;
+@property (nonatomic, assign) CCLabelTTF *itemCastTime;
+@property (nonatomic, assign) CCLabelTTF *itemCooldown;
+@property (nonatomic, assign) CCLabelTTF *itemSpellType;
 -(void)nodeSelected;
 @end
 
 @implementation ShopItemNode
 @synthesize item, target, selector;
-@synthesize background, costLabel, titleLabel;
+@synthesize background, titleLabel;
+
 - (void)dealloc {
     [item release];
     [super dealloc];
 }
 
 -(id)initWithShopItem:(ShopItem*)itm target:(id)tar selector:(SEL)selc{
-    CCSprite *bg = [CCSprite spriteWithSpriteFrameName:@"shopitem-bg.png"];
-    CCSprite *selectedBackground = [CCSprite spriteWithSpriteFrameName:@"shopitem-bg.png"];
-    [selectedBackground setOpacity:122];
-    CCMenuItem *menuItem = [CCMenuItemSprite itemWithNormalSprite:bg selectedSprite:selectedBackground target:self selector:@selector(nodeSelected)];
-    self = [super initWithArray:[NSArray arrayWithObject:menuItem]];
+    CCSprite *bg = [CCSprite spriteWithSpriteFrameName:@"spell-node-bg.png"];
+    self = [super init];
     if (self){
         self.item = itm;
         self.target = tar;
         self.selector = selc;
         self.background = bg;
         
-        self.titleLabel = [CCLabelTTF labelWithString:itm.title dimensions:CGSizeMake(100, 50) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:20.0];
-        [self.titleLabel setColor:ccBLACK];
-        [self.titleLabel setPosition:CGPointMake(125, 65)];
-        [menuItem addChild:titleLabel];
         
+        [self addChild:background];
         
+        CGFloat itemNameFontSize = 28.0;
+        CGFloat titleVerticalAdjustment = 0;
+        
+        if (self.item.title.length >= 16) {
+            titleVerticalAdjustment = -6;
+            itemNameFontSize = 22.0;
+        }
+        
+        self.titleLabel = [CCLabelTTF labelWithString:itm.title dimensions:CGSizeMake(200, 50) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:itemNameFontSize];
+        [self.titleLabel setColor:ccWHITE];
+        [self.titleLabel setPosition:CGPointMake(190, 115 + titleVerticalAdjustment)];
+        [self.titleLabel setHorizontalAlignment:UITextAlignmentLeft];
+        [self.background addChild:titleLabel];
         
         self.spellIcon = [CCSprite spriteWithSpriteFrameName:@"unknown-icon.png"];
         
@@ -53,15 +69,53 @@
         if (spellSpriteFrame){
             [self.spellIcon setDisplayFrame:spellSpriteFrame];
         }
-        [self.spellIcon setPosition:CGPointMake(35, 65)];
-        [self.spellIcon setScale:.5];
-        [menuItem addChild:self.spellIcon];
+        [self.spellIcon setPosition:CGPointMake(45, 100)];
+        [self.spellIcon setScale:.75];
+        [self.background addChild:self.spellIcon];
         
-        self.costLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cost %i", itm.goldCost] dimensions:CGSizeMake(140, 20) hAlignment:UITextAlignmentRight fontName:@"Arial" fontSize:20.0];
-        [self.costLabel setPosition:ccp(50, 25)];
-        [self.costLabel setColor:ccc3(0, 100, 0)];
+        self.goldCostNode = [GoldCounterSprite goldCostNodeForCost:itm.goldCost];
+        [self.goldCostNode setPosition:CGPointMake(390, 73)];
+        [self.background addChild:self.goldCostNode];
         
-        [menuItem addChild:costLabel];
+        self.buyButton = [CCMenu menuWithItems:[BasicButton basicButtonWithTarget:self andSelector:@selector(nodeSelected) andTitle:@"Learn"], nil];
+        [self.buyButton setAnchorPoint:CGPointZero];
+        [self.buyButton setScale:.5];
+        [self.buyButton setPosition:CGPointMake(330, 123)];
+        [self.background addChild:self.buyButton];
+        
+        
+        self.itemCooldown = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cooldown: %1.2f%@",self.item.purchasedSpell.cooldown, @"s"] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+        
+        self.itemEnergyCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i Energy",self.item.purchasedSpell.energyCost] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+        
+        NSString *castTimeString = self.item.purchasedSpell.castTime == 0.0 ? @"Instant Cast" : [NSString stringWithFormat:@"Cast Time: %1.2f%@", self.item.purchasedSpell.castTime, @"s"];
+        
+        self.itemCastTime = [CCLabelTTF labelWithString:castTimeString dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+        self.itemDescription = [CCLabelTTF labelWithString:self.item.purchasedSpell.spellDescription dimensions:CGSizeMake(380, 80) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:15.0];
+        
+        self.itemSpellType = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%@", self.item.purchasedSpell.spellTypeDescription] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+        
+//        CCLayerColor *dividerLine = [CCLayerColor layerWithColor:ccc4(255, 255, 255, 225)];
+//        [dividerLine setContentSize:CGSizeMake(1, 30)];
+//        [dividerLine setPosition:CGPointMake(174, 58)];
+//        [self.background addChild:dividerLine];
+        
+        self.itemEnergyCost.position = CGPointMake(185, 70);
+        self.itemCastTime.position = CGPointMake(185, 85);
+        self.itemCooldown.position = CGPointMake(285, 70);
+        self.itemDescription.position = CGPointMake(200, 23);
+        self.itemSpellType.position = CGPointMake(285, 85);
+        
+        if (self.item.purchasedSpell.cooldown == 0.0) {
+            [self.itemCooldown setVisible:NO];
+        }
+        
+        [self.background addChild:self.itemEnergyCost];
+        [self.background addChild:self.itemCooldown];
+        [self.background addChild:self.itemCastTime];
+        [self.background addChild:self.itemDescription];
+        [self.background addChild:self.itemSpellType];
+        
         
         [self checkPlayerHasItem];
     }
@@ -70,11 +124,13 @@
 
 -(void)checkPlayerHasItem{
     if ([Shop playerHasShopItem:self.item]){
-        [costLabel setString:@"Known"];
+        [self.goldCostNode setVisible:NO];
+        [self.buyButton setVisible:NO];
     }
 }
 
 -(void)nodeSelected{
     [self.target performSelector:self.selector withObject:self];
+    [self checkPlayerHasItem];
 }
 @end

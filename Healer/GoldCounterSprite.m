@@ -48,4 +48,18 @@
     [goldLabel setColor:ccc3(241, 181, 123)];
     return goldLabel;
 }
+
++ (CCNode *)goldCostNodeForCost:(NSInteger)cost
+{
+    CCNode *node = [CCNode node];
+    CCLabelTTF *goldLabel = [GoldCounterSprite goldCostLabelWithCost:cost andFontSize:32.0];
+    [goldLabel setHorizontalAlignment:UITextAlignmentLeft];
+    [node addChild:goldLabel];
+    
+    CCSprite *goldSprite = [CCSprite spriteWithSpriteFrameName:@"gold_coin.png"];
+    [goldSprite setScale:.25];
+    [goldSprite setPosition:CGPointMake(-95, 14)];
+    [node addChild:goldSprite];
+    return node;
+}
 @end

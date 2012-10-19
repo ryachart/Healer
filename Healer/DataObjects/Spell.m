@@ -878,6 +878,11 @@
     
     NSTimeInterval healDelay = 1.75;
     for (RaidMember *starTarget in starTargets){
+        if (starTarget != self.owner.spellTarget) {
+            [self willHealTarget:starTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:0];
+            [self didHealTarget:starTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:0];
+            [self.owner playerDidHealFor:0 onTarget:starTarget fromSpell:self];
+        }
         ProjectileEffect *starProjectile = [[ProjectileEffect alloc] initWithSpriteName:@"star.png" target:starTarget andCollisionTime:healDelay];
         [starProjectile setCollisionParticleName:@"star_explosion.plist"];
         [theBoss.announcer displayProjectileEffect:starProjectile];

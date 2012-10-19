@@ -140,9 +140,6 @@ typedef enum {
 @interface ExpiresAtFullHealthRHE: RepeatedHealthEffect
 @end
 
-@interface ImpLightningBottle : DelayedHealthEffect
-@end
-
 @interface RothPoison : RepeatedHealthEffect
 @property (nonatomic, readwrite) NSInteger dispelDamageValue;
 @property (nonatomic, readwrite) NSInteger baseValue;

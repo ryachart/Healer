@@ -930,6 +930,10 @@
 +(id)defaultBossForMode:(DifficultyMode)mode {
     MischievousImps *boss = [[MischievousImps alloc] initWithHealth:50000 damage:34 targets:1 frequency:2.25 choosesMT:YES difficulty:mode];
     boss.autoAttack.failureChance = .25;
+    if (mode == DifficultyModeHard) {
+        boss.autoAttack.abilityValue = 45;
+    }
+    
     [boss setTitle:@"Mischievious Imps"];
     [boss setInfo:@" A local alchemist has posted a small reward for removing a pesky imp infestation from her store.  Sensing something a little more sinister a small party has been dispatched from the Light Ascendant just in case there is more than meets the eye."];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw1" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw1" ofType:@"m4a"]]];
@@ -944,37 +948,82 @@
 }
 
 -(void)throwPotionToTarget:(RaidMember *)target withDelay:(float)delay{
-    int potion = arc4random() % 2;
+    NSInteger possiblePotions = 2;
+    if (self.difficulty == DifficultyModeHard) {
+        possiblePotions = 3;
+    }
+    
+    int potion = arc4random() % possiblePotions;
     float colTime = (1.5 + delay);
 
     if (potion == 0){
         //Liquid Fire
-        ImpLightningBottle* bottleEffect = [[ImpLightningBottle alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
+        NSInteger impactDamage = -15;
+        NSInteger dotDamage = -20;
         
-        ProjectileEffect *bottleVisual = [[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime];
+        if (self.difficulty == DifficultyModeHard) {
+            impactDamage = -50;
+            dotDamage = -25;
+        }
+        DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [bottleEffect setValue:impactDamage * self.damageDoneMultiplier];
+        
+        RepeatedHealthEffect *burnDoT = [[[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative] autorelease];
+        [burnDoT setOwner:self];
+        [burnDoT setTitle:@"imp-burn-dot"];
+        [burnDoT setSpriteName:@"burning.png"];
+        [burnDoT setValuePerTick:dotDamage];
+        [burnDoT setNumOfTicks:4];
+        [bottleEffect setAppliedEffect:burnDoT];
+        [target addEffect:bottleEffect];
+        
+        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
         [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
         [bottleVisual setType:ProjectileEffectTypeThrow];
         [self.announcer displayProjectileEffect:bottleVisual];
-        [bottleVisual release];
         [bottleEffect setIsIndependent:YES];
         [bottleEffect setOwner:self];
         [target addEffect:bottleEffect];
-        [bottleEffect release];
         
-    }else if (potion == 1){
+    }else if (potion == 1) {
         //Lightning In a Bottle
-        DelayedHealthEffect *bottleEffect = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
+        DelayedHealthEffect *bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
         
-        ProjectileEffect *bottleVisual = [[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime];
+        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
         [bottleVisual setSpriteColor:ccc3(0, 128, 128)];
         [bottleVisual setType:ProjectileEffectTypeThrow];
         [self.announcer displayProjectileEffect:bottleVisual];
-        [bottleVisual release];
         [bottleEffect setIsIndependent:YES];
         [bottleEffect setOwner:self];
-        [(ImpLightningBottle*)bottleEffect setValue:-45];
+        NSInteger damage = FUZZ(-55, 10);
+        if (self.difficulty == DifficultyModeHard) {
+            damage *= 1.25;
+        }
+        [bottleEffect setValue:damage];
         [target addEffect:bottleEffect];
-        [bottleEffect release];
+    } else if (potion == 2) {
+        //Angry Spirit
+        NSInteger impactDamage = -15;
+        NSInteger dotDamage = -20;
+        
+        DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [bottleEffect setValue:impactDamage * self.damageDoneMultiplier];
+        
+        WanderingSpiritEffect *wse = [[[WanderingSpiritEffect alloc] initWithDuration:14.0 andEffectType:EffectTypeNegative] autorelease];
+        [wse setAilmentType:AilmentCurse];
+        [wse setTitle:@"angry-spirit-effect"];
+        [wse setSpriteName:@"angry_spirit.png"];
+        [wse setValuePerTick:dotDamage];
+        [wse setNumOfTicks:8.0];
+        [bottleEffect setAppliedEffect:wse];
+        
+        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
+        [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
+        [bottleVisual setType:ProjectileEffectTypeThrow];
+        [self.announcer displayProjectileEffect:bottleVisual];
+        [bottleEffect setIsIndependent:YES];
+        [bottleEffect setOwner:self];
+        [target addEffect:bottleEffect];
     }
     
 }
@@ -982,7 +1031,7 @@
 - (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
 {
     [super combatActions:players theRaid:theRaid gameTime:timeDelta];
-    if (self.healthPercentage > 30.0){
+    if (self.healthPercentage > 21.0){
         self.lastPotionThrow+=timeDelta;
         float tickTime = self.isMultiplayer ? 6.0 : 12.0;
         if (self.lastPotionThrow > tickTime){
@@ -1000,7 +1049,7 @@
         [self.announcer announce:@"An imp grabs a bundle of vials off of a nearby desk."];
     }
     
-    if (self.isMultiplayer && percentage == 75.0){
+    if ((self.isMultiplayer || self.difficulty == DifficultyModeHard) && percentage == 75.0){
         for (RaidMember *member in raid.raidMembers){
             if (!member.isDead){
                 [self throwPotionToTarget:member withDelay:0.0];
@@ -1022,7 +1071,7 @@
     
     if (percentage == 20.0){
         [self.announcer announce:@"All of the imps angrily pounce on their focused target!"];
-        [self setAttackSpeed:1.2];
+        [self.autoAttack setCooldown:1.45];
     }
 }
 @end

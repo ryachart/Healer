@@ -473,21 +473,6 @@
 }
 @end
 
-@implementation ImpLightningBottle 
--(void)expire{
-    [self.target setHealth:self.target.health - (15 * self.owner.damageDoneMultiplier)];
-    RepeatedHealthEffect *burnDoT = [[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative];
-    [burnDoT setOwner:self.owner];
-    [burnDoT setTitle:@"imp-burn-dot"];
-    [burnDoT setSpriteName:@"burning.png"];
-    [burnDoT setValuePerTick:-20];
-    [burnDoT setNumOfTicks:4];
-    [self.target addEffect:burnDoT];
-    [burnDoT release];
-    [super expire];
-}
-@end
-
 @implementation BulwarkEffect
 +(id)defaultEffect{
 	BulwarkEffect *be = [[BulwarkEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive];

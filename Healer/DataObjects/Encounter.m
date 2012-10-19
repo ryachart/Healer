@@ -359,7 +359,7 @@
                 gold = 500;
                 break;
             case 21:
-                return 0;
+                return 1;
                 break;
         }
     }else{
@@ -397,7 +397,7 @@
                 gold = 125;
                 break;
             case 21:
-                return 0;
+                return 1;
                 break;
                 break;
         }

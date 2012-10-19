@@ -98,7 +98,7 @@ static NSArray *shopItems = nil;
         NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
         
         [items addObjectsFromArray:[Shop essentialsShopItems]];
-        [items addObjectsFromArray:[Shop topShelfShopItems]];
+        [items addObjectsFromArray:[Shop advancedShopItems]];
         [items addObjectsFromArray:[Shop archivesShopItems]];
         [items addObjectsFromArray:[Shop vaultShopItems]];
         
@@ -111,7 +111,7 @@ static NSArray *shopItems = nil;
     switch (category) {
         case ShopCategoryEssentials:
             return 0;
-        case ShopCategoryTopShelf:
+        case ShopCategoryAdvanced:
             return 4;
         case ShopCategoryArchives:
             return 6;
@@ -124,8 +124,8 @@ static NSArray *shopItems = nil;
 + (ShopCategory)highestCategoryUnlocked {
     NSInteger totalPurchases = [Shop allOwnedSpells].count;
     ShopCategory category = ShopCategoryEssentials;
-    if (totalPurchases >= [Shop purchasesForCategory:ShopCategoryTopShelf]){
-        category = ShopCategoryTopShelf;
+    if (totalPurchases >= [Shop purchasesForCategory:ShopCategoryAdvanced]){
+        category = ShopCategoryAdvanced;
     }
     if (totalPurchases >= [Shop purchasesForCategory:ShopCategoryArchives]){
         category = ShopCategoryArchives;
@@ -161,7 +161,7 @@ static NSArray *shopItems = nil;
     return items;
 }
 
-+ (NSArray*)topShelfShopItems {
++ (NSArray*)advancedShopItems {
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
     ShopItem *purify = [[ShopItem alloc] initWithSpell:[Purify defaultSpell]];
     [items addObject:[purify autorelease]];

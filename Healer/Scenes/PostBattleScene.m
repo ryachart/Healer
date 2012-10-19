@@ -230,7 +230,7 @@
             [menu addChild:self.queueAgainMenuItem];
             [menu alignItemsVertically];
         }else {
-            CCMenuItem *visitShopButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(goToStore) andTitle:@"Shop"];
+            CCMenuItem *visitShopButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(goToStore) andTitle:@"Academy"];
             [menu addChild:visitShopButton];
             [menu alignItemsVertically];
         }

@@ -78,7 +78,7 @@
         self.essentialsButton.tag = ShopCategoryEssentials;
         
         self.advancedButton = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithSpriteFrameName:@"shop-tab-advanced.png"] selectedSprite:[CCSprite spriteWithSpriteFrameName:@"shop-tab-advanced.png"] target:self selector:@selector(configureShopCategory:)];
-        self.advancedButton.tag = ShopCategoryTopShelf;
+        self.advancedButton.tag = ShopCategoryAdvanced;
         
         self.archivesButton = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithSpriteFrameName:@"shop-tab-archives.png"] selectedSprite:[CCSprite spriteWithSpriteFrameName:@"shop-tab-archives.png"] target:self selector:@selector(configureShopCategory:)];
         self.archivesButton.tag = ShopCategoryArchives;
@@ -109,7 +109,7 @@
         case ShopCategoryEssentials:
             [self.advancedButton setOpacity:125];
             [self.advancedButton setIsEnabled:NO];
-        case ShopCategoryTopShelf:
+        case ShopCategoryAdvanced:
             [self.archivesButton setOpacity:125];
             [self.archivesButton setIsEnabled:NO];
         case ShopCategoryArchives:
@@ -133,9 +133,9 @@
             flavorSpriteFrameName = @"shop-essentials-flavor.png";
             itemsToDisplay = [Shop essentialsShopItems];
             break;
-        case ShopCategoryTopShelf:
+        case ShopCategoryAdvanced:
             flavorSpriteFrameName = @"shop-advanced-flavor.png";
-            itemsToDisplay = [Shop topShelfShopItems];
+            itemsToDisplay = [Shop advancedShopItems];
             break;
         case ShopCategoryArchives:
             flavorSpriteFrameName = @"shop-archives-flavor.png";

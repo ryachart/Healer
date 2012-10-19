@@ -431,6 +431,13 @@
     [hotEffect release];
     return [regrow autorelease];
 }
+
+- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount{
+    //Override with a subclass
+    if (self.owner.isLocalPlayer){
+        [self.owner.announcer displayParticleSystemWithName:@"regrow" onTarget:target withOffset:CGPointMake(0,0)];
+    }
+}
 @end
 
 @implementation  Barrier
@@ -488,6 +495,12 @@
     [thePlayer.spellTarget removeEffect:effectToRemove];
 }
 
+- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount{
+    //Override with a subclass
+    if (self.owner.isLocalPlayer){
+        [self.owner.announcer displayParticleSystemWithName:@"purify" onTarget:target withOffset:CGPointMake(0, 0)];
+    }
+}
 @end
 
 @implementation  OrbsOfLight
@@ -657,8 +670,8 @@
     return self;
 }
 + (id)defaultSpell {
-    WardOfAncients *woa = [[WardOfAncients alloc] initWithTitle:@"Ward of Ancients" healAmnt:0 energyCost:100 castTime:2.0 andCooldown:45.0];
-    [woa setDescription:@"Covers your entire party in a protective barrier that reduces incoming damage by 40% for 6 seconds."];
+    WardOfAncients *woa = [[WardOfAncients alloc] initWithTitle:@"Ward of Ancients" healAmnt:0 energyCost:100 castTime:1.5 andCooldown:35.0];
+    [woa setDescription:@"Covers all allies in a protective barrier that reduces incoming damage by 40% for 6 seconds."];
     return [woa autorelease];
 }
 
@@ -711,6 +724,12 @@
     [[self.owner spellTarget] addEffect:tolEffect];
     [tolEffect release];
     
+}
+- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount{
+    //Override with a subclass
+    if (self.owner.isLocalPlayer){
+        [self.owner.announcer displayParticleSystemWithName:@"touch_of_hope" onTarget:target withOffset:CGPointMake(10, 0)];
+    }
 }
 @end
 

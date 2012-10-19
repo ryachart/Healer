@@ -363,6 +363,17 @@
     [drake setTitle:@"Tainted Drake"];
     [drake setInfo:@"A Tainted Drake is hidden in the Paragon Cliffs. You and your allies must stop the beast from doing any more damage to the Kingdom.  The king will provide you with a great reward for defeating the beast."];
     
+    
+    NSInteger fireballDamage = 40;
+    float fireballFailureChance = .05;
+    float fireballCooldown = 2.5;
+    
+    if (mode == DifficultyModeHard) {
+        fireballDamage = 55;
+        fireballFailureChance = .15;
+        fireballCooldown     = 2.25;
+    }
+    
     AbilityDescriptor *fireball = [[AbilityDescriptor alloc] init];
     [fireball setAbilityDescription:@"The Drake hurls deadly Fireballs at your allies."];
     [fireball setIconName:@"unknown_ability.png"];
@@ -373,15 +384,33 @@
     drake.fireballAbility = [[[ProjectileAttack alloc] init] autorelease];
     [drake.fireballAbility setTitle:@"fireball-ab"];
     [(ProjectileAttack*)drake.fireballAbility setSpriteName:@"fireball.png"];
-    [drake.fireballAbility setAbilityValue:40];
-    [drake.fireballAbility setFailureChance:.05];
-    [drake.fireballAbility setCooldown:2.5];
+    [drake.fireballAbility setAbilityValue:fireballDamage];
+    [drake.fireballAbility setFailureChance:fireballFailureChance];
+    [drake.fireballAbility setCooldown:fireballCooldown];
     [drake addAbility:drake.fireballAbility];
+    
+    if (mode == DifficultyModeHard) {
+        RepeatedHealthEffect *burningEffect = [[[RepeatedHealthEffect alloc] initWithDuration:12.0 andEffectType:EffectTypeNegative] autorelease];
+        [burningEffect setSpriteName:@"burning.png"];
+        [burningEffect setNumOfTicks:12];
+        [burningEffect setValuePerTick:-4];
+        [burningEffect setAilmentType:AilmentTrauma];
+        [burningEffect setTitle:@"burning-eff"];
+        
+        ProjectileAttack *ignitionFireball = [[ProjectileAttack new] autorelease];
+        [ignitionFireball setTitle:@"ign-fireball-ab"];
+        [ignitionFireball setSpriteName:@"fireball.png"];
+        [ignitionFireball setAbilityValue:10];
+        [ignitionFireball setFailureChance:.05];
+        [ignitionFireball setCooldown:12.0];
+        [ignitionFireball setAppliedEffect:burningEffect];
+        [drake addAbility:ignitionFireball];
+    }
     return [drake autorelease];
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (self.isMultiplayer ? (percentage == 75.0 || percentage == 50.0 || percentage == 25.0) : (percentage == 50.0) ){
+    if (self.isMultiplayer || self.difficulty == DifficultyModeHard ? (percentage == 75.0 || percentage == 50.0 || percentage == 25.0) : (percentage == 50.0) ){
         int i = 0;
         for (RaidMember *member in raid.raidMembers){
             if (!member.isDead){

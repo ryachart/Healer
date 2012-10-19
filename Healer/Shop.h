@@ -12,7 +12,7 @@ extern NSString* const PlayerGoldDidChangeNotification;
 
 typedef enum {
     ShopCategoryEssentials,
-    ShopCategoryTopShelf,
+    ShopCategoryAdvanced,
     ShopCategoryArchives,
     ShopCategoryVault
 } ShopCategory;
@@ -40,7 +40,7 @@ typedef enum {
 + (ShopCategory)highestCategoryUnlocked;
 + (NSInteger)numPurchasesUntilNextCategory;
 + (NSArray*)essentialsShopItems;
-+ (NSArray*)topShelfShopItems;
++ (NSArray*)advancedShopItems;
 + (NSArray*)archivesShopItems;
 + (NSArray*)vaultShopItems;
 @end

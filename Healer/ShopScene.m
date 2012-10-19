@@ -169,12 +169,14 @@
     }
     
     [self.itemsTable setContentSize:CGSizeMake(self.itemsTable.viewSize.width, MAX(self.itemsTable.viewSize.height + 10, 10 + cellHeight * itemsToDisplay.count))];
-//    [self.itemsTable setContentOffset:CGPointMake(0, -self.itemsTable.viewSize.height * 1.2)];
+    [self.itemsTable scrollToTopAnimated:NO];
 
 }
 
 -(void)onEnterTransitionDidFinish {
     [super onEnterTransitionDidFinish];
+    
+    [self.itemsTable scrollToTopAnimated:NO];
 }
 
 -(void)back{

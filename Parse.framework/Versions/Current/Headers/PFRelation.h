@@ -18,13 +18,9 @@
     PFObject *parent;
     NSString *key;
     NSString *targetClass;
-    NSMutableSet *relationsToAdd;
-    NSMutableSet *relationsToRemove;
 }
 
 @property (nonatomic, retain) NSString *targetClass;
-@property (nonatomic, retain, readonly) NSString *key;
-
 
 
 #pragma mark Accessing objects

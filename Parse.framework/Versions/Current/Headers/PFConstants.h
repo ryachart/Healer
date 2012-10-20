@@ -6,7 +6,7 @@
 @class PFUser;
 
 // Version
-#define PARSE_VERSION @"1.0.56"
+#define PARSE_VERSION @"1.1.12"
 
 extern NSInteger const PARSE_API_VERSION;
 
@@ -76,6 +76,24 @@ extern NSInteger const kPFErrorDuplicateValue;
 extern NSInteger const kPFErrorInvalidRoleName;
 /*! @abstract 140: Exceeded an application quota.  Upgrade to resolve. */
 extern NSInteger const kPFErrorExceededQuota;
+/*! @abstract 141: Cloud Code script had an error. */
+extern NSInteger const kPFScriptError;
+/*! @abstract 142: Cloud Code validation failed. */
+extern NSInteger const kPFValidationError;
+/*! @abstract 143: Product purchase receipt is missing */
+extern NSInteger const kPFErrorReceiptMissing;
+/*! @abstract 144: Product purchase receipt is invalid */
+extern NSInteger const kPFErrorInvalidPurchaseReceipt;
+/*! @abstract 145: Payment is disabled on this device */
+extern NSInteger const kPFErrorPaymentDisabled;
+/*! @abstract 146: The product identifier is invalid */
+extern NSInteger const kPFErrorInvalidProductIdentifier;
+/*! @abstract 147: The product is not found in the App Store */
+extern NSInteger const kPFErrorProductNotFoundInAppStore;
+/*! @abstract 148: The Apple server response is not valid */
+extern NSInteger const kPFErrorInvalidServerResponse;
+/*! @abstract 149: Product fails to download due to file system error */
+extern NSInteger const kPFErrorProductDownloadFileSystemFailure;
 /*! @abstract 150: Fail to convert data to image. */
 extern NSInteger const kPFErrorInvalidImageData;
 /*! @abstract 151: Unsaved file. */
@@ -120,5 +138,6 @@ typedef void (^PFSetResultBlock)(NSSet *channels, NSError *error);
 typedef void (^PFUserResultBlock)(PFUser *user, NSError *error);
 typedef void (^PFDataResultBlock)(NSData *data, NSError *error);
 typedef void (^PFDataStreamResultBlock)(NSInputStream *stream, NSError *error);
+typedef void (^PFStringResultBlock)(NSString *string, NSError *error);
 typedef void (^PFIdResultBlock)(id object, NSError *error);
 typedef void (^PFProgressBlock)(int percentDone);

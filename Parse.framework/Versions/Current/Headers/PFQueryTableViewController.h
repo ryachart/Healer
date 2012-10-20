@@ -7,20 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Parse.h"
-#import "PF_EGORefreshTableHeaderView.h"
+#import "PFQuery.h"
 #import "PFTableViewCell.h"
+#import "PF_EGORefreshTableHeaderView.h"
 
-@interface PFQueryTableViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, PF_EGORefreshTableHeaderDelegate>
+@interface PFQueryTableViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate, PF_EGORefreshTableHeaderDelegate>
 
 /*! @name Creating a PFQueryTableViewController */
-
-/*! 
- Initializes a query table view controller with the given style.
- @param style The UITableViewStyle for the table
- @result The initialized PFQueryTableViewController
- */
-- (id)initWithStyle:(UITableViewStyle)otherStyle;
 
 /*! 
  The designated initializer.
@@ -39,9 +32,6 @@
 - (id)initWithClassName:(NSString *)aClassName;
 
 /*! @name Configuring Behavior */
-
-/// The table view managed by the controller object
-@property (nonatomic, retain) UITableView *tableView;
 
 /// The class of the PFObject this table will use as a datasource
 @property (nonatomic, retain) NSString *className;
@@ -70,15 +60,6 @@
 /// Whether the table is actively loading new data from the server
 @property (nonatomic, assign) BOOL isLoading;
 
-/**
- A Boolean value indicating if the controller clears the selection when the table appears.
- 
- The default value of this property is YES. When YES, the table view controller clears the table's
- current selection when it receives a viewWillAppear: message. Setting this property to `NO`
- preserves the selection.
- */
-@property (nonatomic) BOOL clearsSelectionOnViewWillAppear;
-
 /*! @name Responding to Events */
 
 /*! 
@@ -106,7 +87,7 @@
  @param     indexPath   The indexPath
  @result    The object at the specified index
 */
-- (PFObject *)objectAtIndex:(NSIndexPath *)indexPath;
+- (PFObject *)objectAtIndexPath:(NSIndexPath *)indexPath;
 
 /*! @name Querying */
 

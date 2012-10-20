@@ -9,31 +9,45 @@
  A Parse Framework Object that is a local representation of data persisted to the Parse cloud. This is the
  main class that is used to interact with objects in your app.
 */
-@class PFCommand;
+@class PFOperation;
 @class PFRelation;
+
 @interface PFObject : NSObject {
     BOOL dirty;
     BOOL hasBeenFetched;
-    
-    PFCommand *currentCommand;
-    
+
+    PFOperation *currentOperation;
+
     NSString *objectId;
     NSString *className;
-    
+
     NSMutableDictionary *dataAvailability;
-        
-    NSMutableDictionary *data;    
-    NSMutableDictionary *operations;
-    
+
+    // The data as it was known the last time it was fetched from the server.
+    // If the object has never been fetched, some keys on the server may not
+    // be present in this dictionary, while others may be known because of the
+    // result of a save.
+    NSMutableDictionary *serverData;
+
+    // An array of NSDictionary of NSString -> PFFieldOperation.
+    // Each dictionary has a subset of the object's keys as keys, and the
+    // changes to the value for that key as its value.
+    // There is always at least one dictionary of pending operations.
+    // Every time a save is started, a new dictionary is added to the end.
+    // Whenever a save completes, the new data is put into fetchedData, and
+    //     a dictionary is removed from the start.
+    NSMutableArray *operationSetQueue;
+
+    // Our best estimate as to what the current data is, based on
+    // the last fetch from the server, and the set of pending operations.
+    NSMutableDictionary *estimatedData;
+
     // A dictionary that maps id (objects) => PFJSONCache 
     NSMutableDictionary *hashedObjectsCache;
-    
-    // A set of dirty keys (strings)
-    NSMutableSet        *dirtyKeys;
-    
+
     NSDate *updatedAt;
     NSDate *createdAt;
-    
+
     // Whether there is a save in progress.
     BOOL isSaving;
 }
@@ -61,6 +75,14 @@
                                     objectId:(NSString *)objectId;
 
 /*!
+ Creates a new PFObject with a class name, initialized with data constructed from the specified set of objects and keys.
+ @param className The object's class.
+ @param dictionary An NSDictionary of keys and objects to set on the new PFObject.
+ @result A PFObject with the given class name and set with the given data.
+ */
++ (PFObject *)objectWithClassName:(NSString *)className dictionary:(NSDictionary *)dictionary;
+
+/*!
  Initializes a new PFObject with a class name.
  @param newClassName A class name can be any alphanumeric string that begins with a letter. It represents an object in your app, like a User or a Document.
  @result Returns the object that is instantiated with the given class name.
@@ -80,12 +102,12 @@
 /*!
  When the object was last updated.
  */
-@property (readonly) NSDate *updatedAt;
+@property (nonatomic, retain, readonly) NSDate *updatedAt;
 
 /*!
  When the object was created.
  */
-@property (readonly) NSDate *createdAt;
+@property (nonatomic, retain, readonly) NSDate *createdAt;
 
 /*!
  The class name of the object.

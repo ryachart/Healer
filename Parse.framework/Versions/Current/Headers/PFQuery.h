@@ -9,9 +9,9 @@
 /*!
   A class that defines a query that is used to query for PFObjects.
  */
-@class PFCommand;
+@class PFOperation;
 @interface PFQuery : NSObject {
-    PFCommand *currentCommand;
+    PFOperation *currentOperation;
     
     NSString *className;
     NSMutableDictionary *where;

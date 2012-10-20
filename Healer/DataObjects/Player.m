@@ -469,7 +469,7 @@
 
 
 
-- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell {
+- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell withOverhealing:(NSInteger)overhealing{
     if (amount > 0){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:amount] andEventType:CombatEventTypeHeal]];
     }
@@ -535,11 +535,18 @@
         [target addEffect:searingPowerEffect];
         [searingPowerEffect release];
     }
+    
+    if (overhealing > 0){
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:overhealing] andEventType:CombatEventTypeOverheal]];
+    }
 }
 
-- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect {
+- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect withOverhealing:(NSInteger)overhealing{
     if (amount > 0){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:amount] andEventType:CombatEventTypeHeal]]; 
+    }
+    if (overhealing > 0){
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:overhealing] andEventType:CombatEventTypeOverheal]];
     }
     
     if ([self hasDivinityEffectWithTitle:@"avatar"]){

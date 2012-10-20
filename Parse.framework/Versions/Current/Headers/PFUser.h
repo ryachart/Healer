@@ -21,8 +21,6 @@ A Parse Framework User Object that is a local representation of a user persisted
     NSString *password;
     NSString *sessionToken;
     BOOL isNew;
-@private
-    BOOL isCurrentUser;
 }
 
 /** @name Accessing the Current User */
@@ -228,82 +226,11 @@ A Parse Framework User Object that is a local representation of a user persisted
                                            block:(PFBooleanResultBlock)block;
 
 /** @name Querying for Users */
+
+/*!
+ Creates a query for PFUser objects.
+ */
 + (PFQuery *)query;
 
-/** @name Deprecated */
-
-/*!
- Deprecated. Please see [PFFacebookUtils facebook].
- */
-+ (PF_Facebook *)facebook __attribute__ ((deprecated));
-
-/*!
- Deprecated. Please see [PFFacebookUtils facebookWithDelegate:].
- */
-+ (PF_Facebook *)facebookWithDelegate:(id<PF_FBSessionDelegate>)delegate __attribute__ ((deprecated));
-
-/*!
- Deprecated. Please see [PFFacebookUtils logInWithPermissions:block:].
- */
-+ (void)logInWithFacebook:(NSArray *)permissions block:(PFUserResultBlock)block __attribute__ ((deprecated));
-
-/*!
- Deprecated. Please see [PFFacebookUtils logInWithPermissions:target:selector:].
- */
-+ (void)logInWithFacebook:(NSArray *)permissions target:(id)target selector:(SEL)selector __attribute__ ((deprecated));
-
-/*!
- Deprecated.  Please see [PFFacebookUtils isLinkedWithUser:]
- */
-- (BOOL)hasFacebook __attribute__ ((deprecated));
-
-/*!
- Deprecated. Please see PF_Facebook.accessToken
- */
-- (NSString *)facebookAccessToken __attribute__ ((deprecated));
-
-/*!
- Deprecated. Please see PF_Facebook.expirationDate
- */
-- (NSDate *)facebookExpirationDate __attribute__ ((deprecated));
-
-/*!
- Deprecated. Please use PF_Facebook to make a graph call to "me"
- */
-- (NSString *)facebookId __attribute__ ((deprecated));
-
-/*!
- Deprecated. Please see [PFFacebookUtils linkUser:permissions:block:].
- */
-- (void)linkToFacebook:(NSArray *)permissions
-                 block:(PFBooleanResultBlock)block __attribute__ ((deprecated));
-
-/*!
- Deprecated. Please see [PFFacebookUtils linkUser:permissions:target:selector:].
- */
-- (void)linkToFacebook:(NSArray *)permissions
-                target:(id)target
-              selector:(SEL)selector __attribute__ ((deprecated));
-
-/*!
- Deprecated. Please see [PFFacebookUtils unlinkUser:].
- */
-- (BOOL)unlinkFromFacebook __attribute__ ((deprecated));
-
-/*!
- Deprecated. Please see [PFFacebookUtils unlinkUser:error:].
- */
-- (BOOL)unlinkFromFacebookWithError:(NSError **)error __attribute__ ((deprecated));
-
-/*!
- Deprecated. Please see [PFFacebookUtils unlinkUserInBackground:block:].
- */
-- (void)unlinkFromFacebookWithBlock:(PFBooleanResultBlock)block __attribute__ ((deprecated));
-
-/*!
- Deprecated. Please see [PFFacebookUtils unlinkUserInBackground:target:selector:].
- */
-- (void)unlinkFromFacebookInBackgroundWithTarget:(id)target
-                                        selector:(SEL)selector __attribute__ ((deprecated));
 
 @end

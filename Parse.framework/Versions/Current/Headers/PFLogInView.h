@@ -67,6 +67,12 @@ typedef enum {
 /// The dismiss button. It is nil if the element is not enabled.
 @property (nonatomic, readonly, retain) UIButton *dismissButton;
 
+/// The facebook/twitter login label. It is only shown if the external login is enabled.
+@property (nonatomic, readonly, retain) UILabel *externalLogInLabel;
+
+/// The sign up label. It is only shown if sign up button is enabled.
+@property (nonatomic, readonly, retain) UILabel *signUpLabel;
+
 @end
 
 

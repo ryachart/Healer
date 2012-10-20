@@ -217,11 +217,9 @@
             [self.target setHealth:[self.target health] + amount * modifier];
             NSInteger finalAmount = self.target.health - preHealth;
             if ([self.owner isKindOfClass:[Player class]]){
-                [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self];
                 NSInteger overheal = amount - finalAmount;
-                if (overheal > 0){
-                    [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:overheal] andEventType:CombatEventTypeOverheal]];
-                }
+                [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self withOverhealing:overheal];
+
             }else {
                 //This is boss damage in the form of dots
                 [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:amount] andEventType:eventType]];
@@ -346,11 +344,8 @@
             [self.target setHealth:self.target.health + amount];
             NSInteger finalAmount = self.target.health - preHealth;
             if ([self.owner isKindOfClass:[Player class]]){
-                [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self];
                 NSInteger overheal = amount - finalAmount;
-                if (overheal > 0){
-                    [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:overheal] andEventType:CombatEventTypeOverheal]];
-                }
+                [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self withOverhealing:overheal];
             }else {
                 [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]];
             }
@@ -377,11 +372,8 @@
     NSInteger preHealth = self.target.health;
     [self.target setHealth:self.target.health + (int)round((self.owner.healingDoneMultiplier * self.valuePerTick * (similarEffectCount * .25)))];
     NSInteger finalAmount = self.target.health - preHealth;
-    [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self];
     NSInteger overheal = self.valuePerTick - finalAmount;
-    if (overheal > 0){
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:overheal] andEventType:CombatEventTypeOverheal]];
-    }
+    [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self withOverhealing:overheal];
 }
 @end
 

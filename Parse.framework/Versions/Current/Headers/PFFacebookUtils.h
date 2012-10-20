@@ -16,23 +16,23 @@
 /** @name Interacting With Facebook */
 
 /*!
- Gets the instance of the Facebook object (from the Facebook SDK) that Parse uses. 
- @result The Facebook instance.
+ Gets the Facebook session for the current user.
  */
-+ (PF_Facebook *)facebook;
-
-/*!
- Gets the instance of the Facebook object (from the Facebook SDK) that Parse uses. 
- @param delegate Specify your own delegate for the Facebook object.
- @result The Facebook instance
- */
-+ (PF_Facebook *)facebookWithDelegate:(NSObject<PF_FBSessionDelegate> *)delegate;
++ (PF_FBSession *)session;
 
 /*!
  Initializes the Facebook singleton. You must invoke this in order to use the Facebook functionality in Parse.
  @param appId The Facebook application id that you are using with your Parse application.
  */
 + (void)initializeWithApplicationId:(NSString *)appId;
+
+/*!
+ Initializes the Facebook singleton. You must invoke this in order to use the Facebook functionality in Parse.
+ @param appId The Facebook application id that you are using with your Parse application.
+ @param urlSchemeSuffix The URL suffix for this application - used when multiple applications with the same
+                        Facebook application ID may be on the same device.
+ */
++ (void)initializeWithApplicationId:(NSString *)appId urlSchemeSuffix:(NSString *)urlSchemeSuffix;
 
 /*!
  Whether the user has their account linked to Facebook.
@@ -201,52 +201,35 @@
  */
 + (void)unlinkUserInBackground:(PFUser *)user target:(id)target selector:(SEL)selector;
 
-/** @name Extending Facebook Access Tokens */
+/** @name Obtaining new permissions */
 
 /*!
- Whether the user has a Facebook access token that needs to be extended.
- @param user User that is linked to Facebook and should be checked for access token extension.
- @result True if the access token needs to be extended.
+ Requests new Facebook publish permissions for the given user.  This may prompt the user to
+ reauthorize the application. The user will be saved as part of this operation.
+ @param user User to request new permissions for.  The user must be linked to Facebook.
+ @param permissions The new publishing permissions to request.
+ @param audience The default audience for publishing permissions to request.
+ @param block The block to execute. The block should have the following argument signature: (BOOL succeeded, NSError *error)
  */
-+ (BOOL)shouldExtendAccessTokenForUser:(PFUser *)user;
++ (void)reauthorizeUser:(PFUser *)user
+ withPublishPermissions:(NSArray *)permissions
+               audience:(PF_FBSessionDefaultAudience)audience
+                  block:(PFBooleanResultBlock)block;
 
 /*!
- Extends the access token for a user using Facebook, and saves the refreshed access token back to the PFUser.
- The selector for the callback should look like: (NSNumber *)result error:(NSError *)error
- @param user User whose access token should be extended
+ Requests new Facebook publish permissions for the given user.  This may prompt the user to
+ reauthorize the application. The user will be saved as part of this operation.
+ @param user User to request new permissions for.  The user must be linked to Facebook.
+ @param permissions The new publishing permissions to request.
+ @param audience The default audience for publishing permissions to request.
  @param target Target object for the selector
  @param selector The selector that will be called when the asynchronous request is complete.
  */
-+ (void)extendAccessTokenForUser:(PFUser *)user target:(id)target selector:(SEL)selector;
-
-/*!
- Extends the access token for a user using Facebook, and saves the refreshed access token back to the PFUser.
- @param user User whose access token should be extended
- @param block The block to execute. The block should have the following argument signature:
- (BOOL success, NSError *error) 
- */
-+ (void)extendAccessTokenForUser:(PFUser *)user block:(PFBooleanResultBlock)block;
-
-/*!
- If necessary, extends the access token for a user using Facebook, and saves the refreshed 
- access token back to the PFUser.  We recommend invoking this from applicationDidBecomeActive: in your AppDelegate.
- The selector for the callback should look like: (NSNumber *)result error:(NSError *)error
- @param user User whose access token should be extended
- @param target Target object for the selector
- @param selector The selector that will be called when the asynchronous request is complete.
- @result True if the access token needed to be extended.
- */
-+ (BOOL)extendAccessTokenIfNeededForUser:(PFUser *)user target:(id)target selector:(SEL)selector;
-
-/*!
- If necessary, extends the access token for a user using Facebook, and saves the refreshed 
- access token back to the PFUser.  We recommend invoking this from applicationDidBecomeActive: in your AppDelegate.
- @param user User whose access token should be extended
- @param block The block to execute. The block should have the following argument signature:
- (BOOL success, NSError *error) 
- @result True if the access token needed to be extended.
- */
-+ (BOOL)extendAccessTokenIfNeededForUser:(PFUser *)user block:(PFBooleanResultBlock)block;
++ (void)reauthorizeUser:(PFUser *)user
+ withPublishPermissions:(NSArray *)permissions
+               audience:(PF_FBSessionDefaultAudience)audience
+                 target:(id)target
+               selector:(SEL)selector;
 
 /** @name Delegating URL Actions */
 
@@ -257,5 +240,67 @@
  @result True if Facebook will handle this URL.
  */
 + (BOOL)handleOpenURL:(NSURL *)url;
+
+/** @name Interacting With Facebook (Deprecated) */
+
+/*!
+ Gets the instance of the Facebook object (from the Facebook SDK) that Parse uses.
+ @result The Facebook instance.
+ */
++ (PF_Facebook *)facebook __attribute__ ((deprecated));
+
+/*!
+ Gets the instance of the Facebook object (from the Facebook SDK) that Parse uses.
+ @param delegate Specify your own delegate for the Facebook object.
+ @result The Facebook instance
+ */
++ (PF_Facebook *)facebookWithDelegate:(NSObject<PF_FBSessionDelegate> *)delegate __attribute__ ((deprecated));
+
+/** @name Extending Facebook Access Tokens (Deprecated) */
+
+/*!
+ Whether the user has a Facebook access token that needs to be extended.
+ @param user User that is linked to Facebook and should be checked for access token extension.
+ @result True if the access token needs to be extended.
+ */
++ (BOOL)shouldExtendAccessTokenForUser:(PFUser *)user __attribute__ ((deprecated));
+
+/*!
+ Extends the access token for a user using Facebook, and saves the refreshed access token back to the PFUser.
+ The selector for the callback should look like: (NSNumber *)result error:(NSError *)error
+ @param user User whose access token should be extended
+ @param target Target object for the selector
+ @param selector The selector that will be called when the asynchronous request is complete.
+ */
++ (void)extendAccessTokenForUser:(PFUser *)user target:(id)target selector:(SEL)selector __attribute__ ((deprecated));
+
+/*!
+ Extends the access token for a user using Facebook, and saves the refreshed access token back to the PFUser.
+ @param user User whose access token should be extended
+ @param block The block to execute. The block should have the following argument signature:
+ (BOOL success, NSError *error) 
+ */
++ (void)extendAccessTokenForUser:(PFUser *)user block:(PFBooleanResultBlock)block __attribute__ ((deprecated));
+
+/*!
+ If necessary, extends the access token for a user using Facebook, and saves the refreshed 
+ access token back to the PFUser.  We recommend invoking this from applicationDidBecomeActive: in your AppDelegate.
+ The selector for the callback should look like: (NSNumber *)result error:(NSError *)error
+ @param user User whose access token should be extended
+ @param target Target object for the selector
+ @param selector The selector that will be called when the asynchronous request is complete.
+ @result True if the access token needed to be extended.
+ */
++ (BOOL)extendAccessTokenIfNeededForUser:(PFUser *)user target:(id)target selector:(SEL)selector __attribute__ ((deprecated));
+
+/*!
+ If necessary, extends the access token for a user using Facebook, and saves the refreshed 
+ access token back to the PFUser.  We recommend invoking this from applicationDidBecomeActive: in your AppDelegate.
+ @param user User whose access token should be extended
+ @param block The block to execute. The block should have the following argument signature:
+ (BOOL success, NSError *error) 
+ @result True if the access token needed to be extended.
+ */
++ (BOOL)extendAccessTokenIfNeededForUser:(PFUser *)user block:(PFBooleanResultBlock)block __attribute__ ((deprecated));
 
 @end

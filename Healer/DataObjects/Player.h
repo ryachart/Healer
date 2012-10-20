@@ -106,8 +106,8 @@ typedef int CastingDisabledReason;
 - (BOOL)isDead;
 - (void)setEnergy:(NSInteger)newEnergy;
 
-- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell;
-- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect;
+- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell withOverhealing:(NSInteger)overhealing;
+- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect withOverhealing:(NSInteger)overhealing;
 
 - (BOOL)hasDivinityEffectWithTitle:(NSString*)title;
 //Multiplayer

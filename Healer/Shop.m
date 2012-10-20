@@ -261,16 +261,14 @@ static NSArray *shopItems = nil;
 }
 
 + (void)purchaseNextDivinityTier {
-    if ([Shop localPlayerGold] >= [Shop costForNextDivinityTier]){
-        [Shop playerLosesGold:[Shop costForNextDivinityTier]];
-    }else {
-        return;
-    }
-
     NSInteger currentTiers = [Shop numDivinityTiersPurchased];
     if (currentTiers == 5){
         return; //You have em all =D
     }
+    if ([Shop localPlayerGold] >= [Shop costForNextDivinityTier]){
+        [Shop playerLosesGold:[Shop costForNextDivinityTier]];
+    }
+
     currentTiers++;
     [[NSUserDefaults standardUserDefaults] setInteger:currentTiers forKey:DivinityTiersUnlocked];
     

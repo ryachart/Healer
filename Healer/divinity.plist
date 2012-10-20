@@ -3,29 +3,29 @@
 <plist version="1.0">
 <dict>
 	<key>healing-hands</key>
-	<string>Basic Spells heal for 10% more.</string>
+	<string>Basic spells heal for an additional 15% over 6 seconds.</string>
 	<key>blessed-power</key>
-	<string>Multi Spells have 10% reduced cast time.</string>
+	<string>Reduces Cast Times by 7.5%.</string>
 	<key>insight</key>
-	<string>Periodic Spells cost 10% less.</string>
+	<string>Reduces Energy Costs by 7.5%.</string>
 	<key>surging-glory</key>
-	<string>Multi spells cause their targets to receive 20% additional healing from spells for 5 seconds.</string>
+	<string>Increases Energy Regeneration by 10%.</string>
 	<key>shining-aegis</key>
-	<string>Protective spells have their cooldowns reduced by 15%.</string>
+	<string>Periodic and Multi heals reduce their targets damage taken by 7.5% for 7 seconds.</string>
 	<key>after-light</key>
-	<string>Basic Spells leave behind an effect reducing damage taken of targets by 10.0% for 6 seconds.</string>
+	<string>Non-periodic healing shields the target for 10% of the healing done.</string>
 	<key>repel-the-darkness</key>
-	<string>Periodic Spells cause a small amount of healing each time they are applied.</string>
+	<string>Healing done and cast times are reduced by 5%.</string>
 	<key>ancient-knowledge</key>
-	<string>Empower spells grant you a blessing increasing all healing done by 10% for 10 seconds.</string>
+	<string>25% of Overhealing is distributed to injured allies.</string>
 	<key>purity-of-soul</key>
-	<string>Multi-spells have a 10% chance to affect an extra two targets.</string>
+	<string>Spells have a 5% chance to refund their energy cost.</string>
 	<key>searing-power</key>
-	<string>Protective Spells increase the maximum health of their target by 20% for 15 seconds.</string>
+	<string>Increases healing by 9% on Wizards, Warlocks, and Archers</string>
 	<key>sunlight</key>
-	<string>Periodic spells have a 10% chance to apply their affect to an additional random ally.</string>
+	<string>Increases healing by 20% on Guardians.</string>
 	<key>torrent-of-faith</key>
-	<string>Empower spells have a 10% chance to have their effects doubled.</string>
+	<string>Increases healing by 9% on Berserkers, Champions and Guardians.</string>
 	<key>godstouch</key>
 	<string>Healing done is increased by 10% and spell costs are reduced by 10%.</string>
 	<key>redemption</key>

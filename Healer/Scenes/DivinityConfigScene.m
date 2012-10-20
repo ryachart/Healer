@@ -71,7 +71,11 @@
 
 - (void)unlockPurchasedForDivinityTier:(NSInteger)tier
 {
-    if ([Shop localPlayerGold] >= [Shop costForNextDivinityTier]) {
+    BOOL forceTierPurchase = NO;
+#if TARGET_IPHONE_SIMULATOR
+    forceTierPurchase = YES;
+#endif
+    if ([Shop localPlayerGold] >= [Shop costForNextDivinityTier] || forceTierPurchase) {
         [Shop purchaseNextDivinityTier];
         [self layoutTierTable];
         [self layoutChargedPipeOverlays];

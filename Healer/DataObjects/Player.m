@@ -66,6 +66,24 @@
 	return self;
 }
 
+- (void)setEnergy:(NSInteger)newEnergy
+{
+    if (newEnergy > energy) {
+        float adjustment = 1.0;
+        
+        for (Effect *eff in self.activeEffects) {
+            adjustment += [eff energyRegenAdjustment];
+        }
+        
+        
+        newEnergy *= adjustment;
+    }
+    
+    energy = newEnergy;
+    if (energy < 0) energy = 0;
+	if (energy > maximumEnergy) energy = maximumEnergy;
+}
+
 - (BOOL)canRedemptionTrigger {
     if (!self.isLocalPlayer){
         return NO;
@@ -110,25 +128,19 @@
 
 - (float)castTimeAdjustmentForSpell:(Spell*)spell{
     float adjustment = [self castTimeAdjustment];
-    if (spell.spellType == SpellTypeMulti && [self hasDivinityEffectWithTitle:@"blessed-power"]){
-        adjustment -= .1;
-    }
     return adjustment;
 }
 
 - (float)spellCostAdjustmentForSpell:(Spell*)spell{
     float adjustment = [self spellCostAdjustment];
-    if (spell.spellType == SpellTypePeriodic && [self hasDivinityEffectWithTitle:@"insight"]){
-        adjustment -= .1;
+    if ([self hasDivinityEffectWithTitle:@"insight"]){
+        adjustment -= .075;
     }
     return adjustment;
 }
 
 - (float)healingDoneMultiplierForSpell:(Spell*)spell{
     float adjustment = [self healingDoneMultiplier];
-    if (spell.spellType == SpellTypeBasic && [self hasDivinityEffectWithTitle:@"healing-hands"]){
-        adjustment += .1;
-    }
     return adjustment;
 }
 
@@ -284,6 +296,20 @@
         }
     }
     
+    if (self.overhealingToDistribute > 15) {
+        //For the divinity choice that distributes overhealing
+        NSArray *targets = [theRaid lowestHealthTargets:5 withRequiredTarget:nil];
+        NSInteger perTarget = MAX(2,self.overhealingToDistribute / 5);
+        for (RaidMember *member in targets) {
+            NSInteger memberCurrentHealth = member.health;
+            [member setHealth:member.health + perTarget];
+            NSInteger finalHealing =  member.health - memberCurrentHealth;
+            self.overhealingToDistribute -= finalHealing;
+            [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:finalHealing] andEventType:CombatEventTypeHeal]];
+        }
+        self.overhealingToDistribute = 0;
+    }
+    
 	if (isCasting){
         castStart+= timeDelta;
 		if ([spellTarget isDead]){
@@ -409,13 +435,6 @@
 	
 }
 
--(void)setEnergy:(NSInteger)newEnergy
-{
-	energy = newEnergy;
-	if (energy < 0) energy = 0;
-	if (energy > maximumEnergy) energy = maximumEnergy;
-}
-
 -(int)channelingBonus{
 	
 	if ([self channelingTime] >= maxChannelTime){
@@ -474,6 +493,17 @@
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:amount] andEventType:CombatEventTypeHeal]];
     }
     
+    if ( [self hasDivinityEffectWithTitle:@"healing-hands"]){
+        if (spell.spellType == SpellTypeBasic) {
+            RepeatedHealthEffect *hhEffect = [[[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypePositiveInvisible] autorelease];
+            [hhEffect setValuePerTick:(int)round((amount + overhealing) * .15 / 6.0)];
+            [hhEffect setNumOfTicks:6.0];
+            [hhEffect setTitle:@"hh-div-eff"];
+            [hhEffect setOwner:self];
+            [target addEffect:hhEffect];
+        }
+    }
+    
     if ([self hasDivinityEffectWithTitle:@"avatar"]){
         if (amount >= MINIMUM_AVATAR_TRIGGER_AMOUNT){
             [self triggerAvatar];
@@ -486,54 +516,63 @@
         }
     }
     
-    if (spell.spellType == SpellTypeMulti && [self hasDivinityEffectWithTitle:@"surging-glory"]){
-        //20% more damage to that target
-        HealingDoneAdjustmentEffect *surgingGloryEffect = [[HealingDoneAdjustmentEffect alloc] initWithDuration:5 andEffectType:EffectTypePositiveInvisible];
-        [surgingGloryEffect setPercentageHealingReceived:.20];
-        [surgingGloryEffect setOwner:self];
-        [surgingGloryEffect setTitle:@"surging-glory-heal-eff"];
-        [target addEffect:surgingGloryEffect];
-        [surgingGloryEffect release];
+    if ([self hasDivinityEffectWithTitle:@"after-light"] && (
+        spell.spellType == SpellTypeBasic ||
+        [spell.title isEqualToString:@"Light Eternal"] ||
+        [spell.title isEqualToString:@"Forked Heal"])) {
+        ShieldEffect *shield = [[[ShieldEffect alloc] initWithDuration:15.0 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [shield setTitle:@"afterlight-div-eff"];
+        [shield setOwner:self];
+        [shield setAmountToShield:(int)round((amount + overhealing) * .10)];
+        [target addEffect:shield];
     }
     
-    if (spell.spellType == SpellTypeBasic && [self hasDivinityEffectWithTitle:@"after-light"]){
-        //10% DR effect for 6 seconds
-        if (arc4random() % 100 < 15){
-            DamageTakenDecreasedEffect *immunityEffect = [[DamageTakenDecreasedEffect alloc] initWithDuration:3 andEffectType:EffectTypePositiveInvisible];
-            [immunityEffect setOwner:self];
-            [immunityEffect setTitle:@"after-light-eff"];
-            [immunityEffect setPercentage:.1];
-            [target addEffect:immunityEffect];
-            [immunityEffect release];
+    if ((spell.spellType == SpellTypeBasic || spell.spellType == SpellTypePeriodic) && [self hasDivinityEffectWithTitle:@"shining-aegis"]){
+        DamageTakenDecreasedEffect *immunityEffect = [[[DamageTakenDecreasedEffect alloc] initWithDuration:7 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [immunityEffect setOwner:self];
+        [immunityEffect setTitle:@"shining-aegis-dev-eff"];
+        [immunityEffect setPercentage:.075];
+        [target addEffect:immunityEffect];
+    }
+    
+    if ([self hasDivinityEffectWithTitle:@"purity-of-soul"]){
+        if ((arc4random() % 100) < 5) {
+            self.energy += spell.energyCost;
         }
     }
     
-    if (spell.spellType == SpellTypeEmpowering && [self hasDivinityEffectWithTitle:@"ancient-knowledge"]){
-        //10% healing to self for 10 seconds
-        Effect *healingBoost = [[Effect alloc] initWithDuration:10.0 andEffectType:EffectTypePositiveInvisible];
-        [healingBoost setOwner:self];
-        [healingBoost setTitle:@"anc-know-eff"];
-        [healingBoost setHealingDoneMultiplierAdjustment:.1];
-        [self addEffect:healingBoost];
-        [healingBoost release];
-    }
-    
-    if (spell.spellType == SpellTypePeriodic && [self hasDivinityEffectWithTitle:@"repel-the-darkness"]){
-        [target setHealth:target.health + (10 * self.healingDoneMultiplier)];
-        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:@10 andEventType:CombatEventTypeHeal] ];
+    if ([self hasDivinityEffectWithTitle:@"ancient-knowledge"]){
+        self.overhealingToDistribute += (int)round(overhealing * .25);
     }
 
-    if (spell.spellType == SpellTypeProtective && [self hasDivinityEffectWithTitle:@"searing-power"]){
-        NSTimeInterval duration = 5.0;
-        if (spell.appliedEffect){
-            duration = spell.appliedEffect.duration;
+    if ([self hasDivinityEffectWithTitle:@"searing-power"]){
+        if (target.positioning == Ranged) {
+            NSInteger bonusAmount = amount * .09;
+            NSInteger preHealth = target.health;
+            [target setHealth:target.health + bonusAmount];
+            NSInteger finalAmount = target.health - preHealth;
+            [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:finalAmount] andEventType:CombatEventTypeHeal]];
         }
-        Effect *searingPowerEffect = [[Effect alloc] initWithDuration:duration andEffectType:EffectTypePositiveInvisible];
-        [searingPowerEffect setMaximumHealthMultiplierAdjustment:.25];
-        [searingPowerEffect setOwner:self];
-        [searingPowerEffect setTitle:@"searing-power-eff"];
-        [target addEffect:searingPowerEffect];
-        [searingPowerEffect release];
+    }
+    
+    if ([self hasDivinityEffectWithTitle:@"torrent-of-faith"]){
+        if (target.positioning == Melee) {
+            NSInteger bonusAmount = amount * .09;
+            NSInteger preHealth = target.health;
+            [target setHealth:target.health + bonusAmount];
+            NSInteger finalAmount = target.health - preHealth;
+            [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:finalAmount] andEventType:CombatEventTypeHeal]];
+        }
+    }
+    
+    if ([self hasDivinityEffectWithTitle:@"sunlight"]){
+        if ([target isMemberOfClass:[Guardian class]]) {
+            NSInteger bonusAmount = amount * .2;
+            NSInteger preHealth = target.health;
+            [target setHealth:target.health + bonusAmount];
+            NSInteger finalAmount = target.health - preHealth;
+            [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:finalAmount] andEventType:CombatEventTypeHeal]];
+        }
     }
     
     if (overhealing > 0){
@@ -547,6 +586,18 @@
     }
     if (overhealing > 0){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:overhealing] andEventType:CombatEventTypeOverheal]];
+    }
+    
+    if ([self hasDivinityEffectWithTitle:@"after-light"] && [effect.title isEqualToString:@"star-of-aravon-eff"]) {
+        ShieldEffect *shield = [[[ShieldEffect alloc] initWithDuration:15.0 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [shield setTitle:@"afterlight-div-eff"];
+        [shield setOwner:self];
+        [shield setAmountToShield:(int)round((amount + overhealing) * .10)];
+        [target addEffect:shield];
+    }
+    
+    if ([self hasDivinityEffectWithTitle:@"ancient-knowledge"]){
+        self.overhealingToDistribute += (int)round(overhealing * .25);
     }
     
     if ([self hasDivinityEffectWithTitle:@"avatar"]){

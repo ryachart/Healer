@@ -18,6 +18,9 @@ static NSDictionary *divinityInfo = nil;
 @implementation Divinity
 
 + (BOOL)isDivinityUnlocked {
+#if TARGET_IPHONE_SIMULATOR
+    return YES;
+#endif
     return [[NSUserDefaults standardUserDefaults] boolForKey:IsDivinityUnlockedKey];
 }
 
@@ -109,6 +112,17 @@ static NSDictionary *divinityInfo = nil;
         if (tierChoice){
             DivinityEffect *divEff = [[DivinityEffect alloc] initWithDivinityKey:[Divinity choiceTitleToKey:tierChoice]];
             [effects addObject:[divEff autorelease]];
+            if ([tierChoice isEqualToString:@"surging-glory"]) {
+                [divEff setEnergyRegenAdjustment:.1];
+            }
+            if ([tierChoice isEqualToString:@"repel-the-darkness"]) {
+                [divEff setHealingDoneMultiplierAdjustment:.05];
+                [divEff setCastTimeAdjustment:-.05];
+            }
+            
+            if ([tierChoice isEqualToString:@"blessed-power"]){
+                [divEff setCastTimeAdjustment:-0.075];
+            }
         }
     }
     return effects;

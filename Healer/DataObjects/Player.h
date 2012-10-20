@@ -79,6 +79,7 @@ typedef int CastingDisabledReason;
 @property (nonatomic, readwrite) float spellCostAdjustment;
 @property (nonatomic, readwrite) NSInteger avatarCounter;
 @property (nonatomic, readwrite) BOOL isConfused;
+@property (nonatomic, readwrite) NSInteger overhealingToDistribute;
 
 - (float)castTimeAdjustmentForSpell:(Spell*)spell;
 - (float)spellCostAdjustmentForSpell:(Spell*)spell;

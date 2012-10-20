@@ -18,6 +18,8 @@
 
 #define NUM_ENCOUNTERS 21
 
+#define MAX_HARDMODES 3
+
 @interface LevelSelectScene ()
 @property (assign) CCMenu *menu;
 @property (assign) CCMenu *diffMenu;
@@ -92,8 +94,10 @@
     
     self.menu = [CCMenu menuWithItems:nil];
     for (int i = 0; i < NUM_ENCOUNTERS; i++){
-        if (CURRENT_MODE == DifficultyModeHard && i == 0){
-            continue;
+        if (CURRENT_MODE == DifficultyModeHard){
+            if (i == 0 || i > MAX_HARDMODES){
+                continue;
+            }
         }
         
         NSString *levelLabelText = nil;
@@ -111,8 +115,9 @@
         CCMenuItemLabel *levelButton = [[CCMenuItemLabel alloc] initWithLabel:[CCLabelTTF labelWithString:levelLabelText fontName:@"Arial" fontSize:32] target: self selector:@selector(beginGameWithSelectedLevel:)];
         [levelButton.label setColor:ccBLACK];
         levelButton.tag = i +1;
-        if (i  > ([[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue] )){
+        if (i  > ([PlayerDataManager highestLevelCompletedForMode:CURRENT_MODE] )){
             levelButton.opacity = 125;
+            [levelButton setIsEnabled:NO];
         }
         [self.menu addChild:levelButton];
         [levelButton release];
@@ -124,8 +129,8 @@
     NSInteger rightCol = 11;
     
     if (CURRENT_MODE == DifficultyModeHard){
-        leftCol = 10;
-        rightCol = 10;
+        leftCol = MIN(MAX_HARDMODES,10);
+        rightCol = MIN(MIN(MAX_HARDMODES - 10, 0),10);
     }
     [self.menu alignItemsInRows:[NSNumber numberWithInt:leftCol],[NSNumber numberWithInt:rightCol], nil];
     [self addChild:self.menu];

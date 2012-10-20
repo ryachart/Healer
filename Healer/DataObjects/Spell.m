@@ -343,6 +343,13 @@
 	[[heal spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCast" ofType:@"wav"]] andTitle:@"ROLFinish"];
     return [heal autorelease];
 }
+- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount{
+    //Override with a subclass
+    if (self.owner.isLocalPlayer){
+        [self.owner.announcer displayParticleSystemWithName:@"restore_basic" onTarget:target withOffset:CGPointMake(4, -40)];
+    }
+}
+
 @end
 
 @implementation ForkedHeal
@@ -611,6 +618,12 @@
         self.cooldownRemaining = self.cooldown;
     }
 }
+- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount{
+    //Override with a subclass
+    if (self.owner.isLocalPlayer){
+        [self.owner.announcer displayParticleSystemWithName:@"restore_greater" onTarget:target withOffset:CGPointMake(4, -40)];
+    }
+}
 
 @end
 
@@ -813,6 +826,12 @@
     NSArray *sunburstTargets = [theRaid lowestHealthTargets:totalTargets withRequiredTarget:thePlayer.spellTarget];
     
     for (RaidMember *target in sunburstTargets){
+        if (target != self.owner.spellTarget) {
+            [self willHealTarget:target inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:0];
+            [self didHealTarget:target inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:0];
+            [self.owner playerDidHealFor:0 onTarget:target fromSpell:self];
+        }
+        
         RepeatedHealthEffect *sunburstEffect = [[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
         [sunburstEffect setTitle:@"sunburst-hot"];
         [sunburstEffect setSpriteName:@"sunburst.png"];
@@ -823,6 +842,12 @@
         [sunburstEffect release];
     }
     
+}
+- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount{
+    //Override with a subclass
+    if (self.owner.isLocalPlayer){
+        [self.owner.announcer displayParticleSystemWithName:@"touch_of_hope" onTarget:target withOffset:CGPointMake(10, 0)];
+    }
 }
 @end
 
@@ -853,6 +878,11 @@
     
     NSTimeInterval healDelay = 1.75;
     for (RaidMember *starTarget in starTargets){
+        if (starTarget != self.owner.spellTarget) {
+            [self willHealTarget:starTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:0];
+            [self didHealTarget:starTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:0];
+            [self.owner playerDidHealFor:0 onTarget:starTarget fromSpell:self];
+        }
         ProjectileEffect *starProjectile = [[ProjectileEffect alloc] initWithSpriteName:@"star.png" target:starTarget andCollisionTime:healDelay];
         [starProjectile setCollisionParticleName:@"star_explosion.plist"];
         [theBoss.announcer displayProjectileEffect:starProjectile];

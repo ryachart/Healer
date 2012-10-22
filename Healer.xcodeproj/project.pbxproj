@@ -19,9 +19,9 @@
 		38024DD313C2564D003D36F2 /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 38024DD213C2564D003D36F2 /* iTunesArtwork */; };
 		38024F0A13C2564E003D36F2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 38024F0913C2564E003D36F2 /* main.m */; };
 		38024F0D13C2564E003D36F2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 38024F0C13C2564E003D36F2 /* AppDelegate.m */; };
-		385B41A8163276E500710700 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B41A7163276E500710700 /* Accounts.framework */; };
+		385B41A8163276E500710700 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B41A7163276E500710700 /* Accounts.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		385B41AA163276F900710700 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B41A9163276F800710700 /* libsqlite3.0.dylib */; };
-		385B41AC1632771F00710700 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B41AB1632771F00710700 /* AdSupport.framework */; };
+		385B41AC1632771F00710700 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B41AB1632771F00710700 /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		386747A91520073D0057A8C9 /* CombatEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 386747A81520073D0057A8C9 /* CombatEvent.m */; };
 		387E7AE8145E0F70006D9266 /* PersistantDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AE7145E0F70006D9266 /* PersistantDataManager.m */; };
 		387E7B00145E1263006D9266 /* Effect.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AED145E1263006D9266 /* Effect.m */; };
@@ -1871,7 +1871,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Alexei Gousev (557BVTLW6Y)";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1895,7 +1895,7 @@
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "7FD1F55F-BCAD-4303-9601-6E0F2E8DD6C9";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = armv7;
@@ -1907,7 +1907,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Alexei Gousev (557BVTLW6Y)";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1926,7 +1926,7 @@
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "7FD1F55F-BCAD-4303-9601-6E0F2E8DD6C9";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
@@ -1957,7 +1957,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Alexei Gousev (557BVTLW6Y)";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1976,7 +1976,7 @@
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "7FD1F55F-BCAD-4303-9601-6E0F2E8DD6C9";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;

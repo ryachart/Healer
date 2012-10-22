@@ -40,6 +40,9 @@
 
 - (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog levelNumber:(NSInteger)levelNumber andIsMultiplayer:(BOOL)isMultiplayer deadCount:(NSInteger)numDead andDuration:(NSTimeInterval)duration {
     if (self = [super init]){
+        self.levelNumber = levelNumber;
+        self.deadCount = self.deadCount;
+        self.duration = duration;
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
         self.eventLog = eventLog;
         

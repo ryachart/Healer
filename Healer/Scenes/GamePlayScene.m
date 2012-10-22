@@ -260,6 +260,7 @@
     
     if (!self.pauseMenuLayer){
         self.pauseMenuLayer = [[[GamePlayPauseLayer alloc] initWithDelegate:self] autorelease];
+        self.pauseMenuLayer.delegate = self;
     }
     [self addChild:self.pauseMenuLayer z:10000];
 
@@ -267,6 +268,7 @@
 
 -(void)pauseLayerDidFinish{
     [self.pauseMenuLayer removeFromParentAndCleanup:YES];
+    self.pauseMenuLayer = nil;
     [self setPaused:NO];
 }
 
@@ -275,6 +277,7 @@
         [self.matchVoiceChat stop];
     }
     [self.pauseMenuLayer removeFromParentAndCleanup:YES];
+    self.pauseMenuLayer = nil;  
     [self battleEndWithSuccess:NO];
 }
 

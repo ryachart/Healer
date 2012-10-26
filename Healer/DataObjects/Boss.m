@@ -967,6 +967,9 @@
         }
         DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
         [bottleEffect setValue:impactDamage * self.damageDoneMultiplier];
+        [bottleEffect setIsIndependent:YES];
+        [bottleEffect setOwner:self];
+        [target addEffect:bottleEffect];
         
         RepeatedHealthEffect *burnDoT = [[[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative] autorelease];
         [burnDoT setOwner:self];
@@ -975,15 +978,12 @@
         [burnDoT setValuePerTick:dotDamage];
         [burnDoT setNumOfTicks:4];
         [bottleEffect setAppliedEffect:burnDoT];
-        [target addEffect:bottleEffect];
         
         ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
         [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
         [bottleVisual setType:ProjectileEffectTypeThrow];
         [self.announcer displayProjectileEffect:bottleVisual];
-        [bottleEffect setIsIndependent:YES];
-        [bottleEffect setOwner:self];
-        [target addEffect:bottleEffect];
+
         
     }else if (potion == 1) {
         //Lightning In a Bottle
@@ -1008,6 +1008,9 @@
         
         DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
         [bottleEffect setValue:impactDamage * self.damageDoneMultiplier];
+        [bottleEffect setIsIndependent:YES];
+        [bottleEffect setOwner:self];
+        [target addEffect:bottleEffect];
         
         WanderingSpiritEffect *wse = [[[WanderingSpiritEffect alloc] initWithDuration:14.0 andEffectType:EffectTypeNegative] autorelease];
         [wse setAilmentType:AilmentCurse];
@@ -1021,9 +1024,6 @@
         [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
         [bottleVisual setType:ProjectileEffectTypeThrow];
         [self.announcer displayProjectileEffect:bottleVisual];
-        [bottleEffect setIsIndependent:YES];
-        [bottleEffect setOwner:self];
-        [target addEffect:bottleEffect];
     }
     
 }

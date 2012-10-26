@@ -30,6 +30,8 @@
 @property (nonatomic, assign) CCMenuItemSprite *archivesButton;
 @property (nonatomic, assign) CCMenuItemSprite *vaultButton;
 
+@property (nonatomic, retain) CCSprite *selectedCategorySprite;
+
 - (void)back;
 - (void)configureShopForCategory:(ShopCategory)category;
 @end
@@ -38,6 +40,7 @@
 @synthesize darkenLayer;
 
 - (void)dealloc {
+    [_selectedCategorySprite release];
     [super dealloc];
 }
 
@@ -74,6 +77,7 @@
         [self addChild:self.darkenLayer z:50];
         
         
+        
         self.essentialsButton = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithSpriteFrameName:@"shop-tab-essentials.png"] selectedSprite:[CCSprite spriteWithSpriteFrameName:@"shop-tab-essentials.png"] target:self selector:@selector(configureShopCategory:)];
         self.essentialsButton.tag = ShopCategoryEssentials;
         
@@ -85,6 +89,10 @@
         
         self.vaultButton = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithSpriteFrameName:@"shop-tab-vault.png"] selectedSprite:[CCSprite spriteWithSpriteFrameName:@"shop-tab-vault.png"] target:self selector:@selector(configureShopCategory:)];
         self.vaultButton.tag = ShopCategoryVault;
+        
+        self.selectedCategorySprite = [CCSprite spriteWithSpriteFrameName:@"shop-tab-selected.png"];
+        [self.selectedCategorySprite setAnchorPoint:CGPointZero];
+        [self.essentialsButton addChild:self.selectedCategorySprite];
         
         [self configureCategoryButtons];
         
@@ -128,22 +136,27 @@
 - (void)configureShopForCategory:(ShopCategory)category {
     NSArray *itemsToDisplay = nil;
     NSString *flavorSpriteFrameName = nil;
+    [self.selectedCategorySprite removeFromParentAndCleanup:NO];
     switch (category) {
         case ShopCategoryEssentials:
             flavorSpriteFrameName = @"shop-essentials-flavor.png";
             itemsToDisplay = [Shop essentialsShopItems];
+            [self.essentialsButton addChild:self.selectedCategorySprite];
             break;
         case ShopCategoryAdvanced:
             flavorSpriteFrameName = @"shop-advanced-flavor.png";
             itemsToDisplay = [Shop advancedShopItems];
+            [self.advancedButton addChild:self.selectedCategorySprite];
             break;
         case ShopCategoryArchives:
             flavorSpriteFrameName = @"shop-archives-flavor.png";
             itemsToDisplay = [Shop archivesShopItems];
+            [self.archivesButton addChild:self.selectedCategorySprite];
             break;
         case ShopCategoryVault:
             flavorSpriteFrameName = @"shop-vault-flavor.png";
             itemsToDisplay = [Shop vaultShopItems];
+            [self.vaultButton addChild:self.selectedCategorySprite];
             break;
         default:
             break;

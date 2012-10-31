@@ -32,7 +32,7 @@
 #endif
     if (CURRENT_MODE == DifficultyModeNormal){
         if (levelNumber == 21){
-            return ![PlayerDataManager hasShownNormalModeCompleteScene];
+            return ![PersistantDataManager hasShownNormalModeCompleteScene];
         }
     }
     return NO;
@@ -62,7 +62,7 @@
 }
 
 - (void)done {
-    [PlayerDataManager hasShownNormalModeCompleteScene];
+    [PersistantDataManager hasShownNormalModeCompleteScene];
     PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:YES eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:NO deadCount:self.deadCount andDuration:self.duration];
     [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:pbs]];
     [pbs release];

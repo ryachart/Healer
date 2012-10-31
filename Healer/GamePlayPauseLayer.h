@@ -5,7 +5,7 @@
 //  Created by Ryan Hart on 3/31/12.
 //
 
-#import "CCLayer.h"
+#import "cocos2d.h"
 
 @protocol PauseLayerDelegate <NSObject>
 

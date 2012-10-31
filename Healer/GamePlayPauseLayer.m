@@ -6,7 +6,6 @@
 //
 
 #import "GamePlayPauseLayer.h"
-#import "LevelSelectScene.h"
 
 @implementation GamePlayPauseLayer
 @synthesize delegate;

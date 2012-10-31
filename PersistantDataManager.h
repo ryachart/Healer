@@ -10,7 +10,7 @@
 #import <Parse/Parse.h>
 #define MAX_CHARACTERS 5
 
-#define CURRENT_MODE [PlayerDataManager currentMode]
+#define CURRENT_MODE [PersistantDataManager currentMode]
 
 extern NSString* const PlayerHighestLevelAttempted;
 extern NSString* const PlayerHighestLevelCompleted;
@@ -21,7 +21,7 @@ typedef enum {
     DifficultyModeHard
 } DifficultyMode;
 
-@interface PlayerDataManager
+@interface PersistantDataManager : NSObject
 
 + (DifficultyMode)currentMode;
 + (void)setDifficultyMode:(DifficultyMode)diffMode;

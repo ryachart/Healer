@@ -441,7 +441,7 @@
 
 + (void)configurePlayer:(Player*)player forRecSpells:(NSArray*)spells {
     NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
-    NSArray *lastUsedSpells = [PlayerDataManager lastUsedSpells];
+    NSArray *lastUsedSpells = [PersistantDataManager lastUsedSpells];
     if (lastUsedSpells && lastUsedSpells.count > 0){
         [activeSpells addObjectsFromArray:lastUsedSpells];
     }else {

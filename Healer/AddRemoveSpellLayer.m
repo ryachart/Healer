@@ -184,7 +184,7 @@
                 [newUsedSpells addObject:inhabitant.spell];
             }
         }
-        [PlayerDataManager setUsedSpells:newUsedSpells];
+        [PersistantDataManager setUsedSpells:newUsedSpells];
         [self.delegate spellSwitchDidCompleteWithActiveSpells:newUsedSpells];
     }
 

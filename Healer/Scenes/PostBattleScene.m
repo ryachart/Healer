@@ -6,7 +6,7 @@
 //
 
 #import "PostBattleScene.h"
-#import "LevelSelectScene.h"
+#import "LevelSelectMapScene.h"
 #import "MultiplayerSetupScene.h"
 #import "CombatEvent.h"
 #import "Boss.h"
@@ -126,7 +126,7 @@
         NSInteger reward = 0;
         NSInteger oldRating = 0;
         NSInteger rating = 0;
-        int i = [PlayerDataManager highestLevelCompletedForMode:CURRENT_MODE];
+        int i = [PersistantDataManager highestLevelCompletedForMode:CURRENT_MODE];
         BOOL isFirstWin = self.levelNumber > i;
         NSTimeInterval fightDuration = duration;
         
@@ -149,18 +149,18 @@
         if (victory){
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",levelNum]];
             if (!self.isMultiplayer){
-                [PlayerDataManager completeLevelInCurrentMode:self.levelNumber];
+                [PersistantDataManager completeLevelInCurrentMode:self.levelNumber];
             }
             reward = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:isFirstWin isMultiplayer:self.isMultiplayer];
             
-            oldRating = [PlayerDataManager levelRatingForLevel:self.levelNumber withMode:CURRENT_MODE];
+            oldRating = [PersistantDataManager levelRatingForLevel:self.levelNumber withMode:CURRENT_MODE];
             rating = [self calculateRatingForNumDead:numDead];
             if (rating > oldRating && !self.isMultiplayer){
-                [PlayerDataManager setLevelRating:rating forLevel:self.levelNumber withMode:CURRENT_MODE];
+                [PersistantDataManager setLevelRating:rating forLevel:self.levelNumber withMode:CURRENT_MODE];
             }
         }else {
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelFailed:%i",levelNum]];
-            [PlayerDataManager failLevelInCurrentMode:levelNum];
+            [PersistantDataManager failLevelInCurrentMode:levelNum];
             //Partial Progress Reward
             //10 % of the Reward per minute of encounter up to a maximum of 50% encounter reward
             
@@ -186,7 +186,7 @@
             [Shop playerEarnsGold:reward];
         }
         
-        [PlayerDataManager saveRemotePlayer];
+        [PersistantDataManager saveRemotePlayer];
         
         //UI
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
@@ -380,7 +380,7 @@
         }
         [[CCDirector sharedDirector] replaceScene:[CCTransitionJumpZoom transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
     }else{
-        LevelSelectScene *qps = [[[LevelSelectScene alloc] init] autorelease];
+        LevelSelectMapScene *qps = [[[LevelSelectMapScene alloc] init] autorelease];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:qps]];
     }
 }

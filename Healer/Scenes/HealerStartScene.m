@@ -18,6 +18,7 @@
 #import "AudioController.h"
 #import "MultiplayerQueueScene.h"
 #import "GoldCounterSprite.h"
+#import "LevelSelectMapScene.h"
 
 @interface HealerStartScene ()
 @property (assign) CCMenu* menu;
@@ -75,7 +76,7 @@
 }
 
 -(void)multiplayerSelected{
-    if (![PlayerDataManager isMultiplayerUnlocked]){
+    if (![PersistantDataManager isMultiplayerUnlocked]){
         UIAlertView *mplayerNotUnlocked = [[UIAlertView alloc] initWithTitle:@"Multiplayer not Unlocked!" message:@"Multiplayer is unlocked after slaying the Plaguebringer Colossus." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [mplayerNotUnlocked show];
         [mplayerNotUnlocked release];
@@ -123,9 +124,8 @@
 
 -(void)quickPlaySelected
 {
-	LevelSelectScene *qpS = [LevelSelectScene new];
+	LevelSelectMapScene *qpS = [[LevelSelectMapScene new] autorelease];
 	[[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:.5 scene:qpS]];
-	[qpS release];
 }
 
 -(void)storeSelected{

@@ -68,7 +68,7 @@
 
     // Run the intro Scene
 	[[CCDirector sharedDirector] pushScene: [[LaunchScene new] autorelease]];
-    [PlayerDataManager saveRemotePlayer];
+    [PersistantDataManager saveRemotePlayer];
     
     self.navController = [[[UINavigationController alloc] initWithRootViewController:director] autorelease];
     self.navController.navigationBarHidden = YES;
@@ -94,7 +94,7 @@
 
 -(void) applicationDidEnterBackground:(UIApplication*)application {
 	[[CCDirector sharedDirector] stopAnimation];
-    [PlayerDataManager saveRemotePlayer];
+    [PersistantDataManager saveRemotePlayer];
 }
 
 -(void) applicationWillEnterForeground:(UIApplication*)application {
@@ -110,7 +110,7 @@
 	
 	[director end];	
     
-    [PlayerDataManager saveRemotePlayer];
+    [PersistantDataManager saveRemotePlayer];
 }
 
 - (void)applicationSignificantTimeChange:(UIApplication *)application {

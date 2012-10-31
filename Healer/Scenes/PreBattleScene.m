@@ -12,7 +12,7 @@
 #import "Spell.h"
 #import "GamePlayScene.h"
 #import "RaidMemberPreBattleCard.h"
-#import "LevelSelectScene.h"
+#import "LevelSelectMapScene.h"
 #import "SpellInfoNode.h"
 #import "BackgroundSprite.h"
 #import "BasicButton.h"
@@ -144,7 +144,7 @@
 
 -(void)back{
     if (!self.changingSpells){
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInL transitionWithDuration:1.0 scene:[[[LevelSelectScene alloc] init] autorelease]]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInL transitionWithDuration:1.0 scene:[[[LevelSelectMapScene alloc] init] autorelease]]];
     }
 }
 

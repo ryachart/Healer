@@ -369,7 +369,7 @@
     float fireballCooldown = 2.5;
     
     if (mode == DifficultyModeHard) {
-        fireballDamage = 55;
+        fireballDamage = 45;
         fireballFailureChance = .15;
         fireballCooldown     = 2.25;
     }
@@ -392,8 +392,8 @@
     if (mode == DifficultyModeHard) {
         RepeatedHealthEffect *burningEffect = [[[RepeatedHealthEffect alloc] initWithDuration:12.0 andEffectType:EffectTypeNegative] autorelease];
         [burningEffect setSpriteName:@"burning.png"];
-        [burningEffect setNumOfTicks:12];
-        [burningEffect setValuePerTick:-4];
+        [burningEffect setNumOfTicks:8];
+        [burningEffect setValuePerTick:-18];
         [burningEffect setAilmentType:AilmentTrauma];
         [burningEffect setTitle:@"burning-eff"];
         

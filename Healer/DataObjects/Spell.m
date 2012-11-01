@@ -274,7 +274,7 @@
     return self;
 }
 +(id)defaultSpell{
-    Heal *heal = [[[Heal alloc] initWithTitle:@"Heal" healAmnt:35 energyCost:22 castTime:1.75 andCooldown:0.0] autorelease];
+    Heal *heal = [[[Heal alloc] initWithTitle:@"Heal" healAmnt:350 energyCost:22 castTime:1.75 andCooldown:0.0] autorelease];
     [heal setDescription:@"Heals your target for a small amount."];
     [[heal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -299,7 +299,7 @@
     return self;
 }
 +(id)defaultSpell{
-    GreaterHeal *heal = [[GreaterHeal alloc] initWithTitle:@"Greater Heal" healAmnt:100 energyCost:90 castTime:2.25 andCooldown:0.0];
+    GreaterHeal *heal = [[GreaterHeal alloc] initWithTitle:@"Greater Heal" healAmnt:1000 energyCost:90 castTime:2.25 andCooldown:0.0];
     [heal setDescription:@"Heals your target for a large amount."];
     [[heal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -323,7 +323,7 @@
     return self;
 }
 +(id)defaultSpell{
-    HealingBurst *heal = [[HealingBurst alloc] initWithTitle:@"Healing Burst" healAmnt:50 energyCost:70 castTime:1.0 andCooldown:0.0];
+    HealingBurst *heal = [[HealingBurst alloc] initWithTitle:@"Healing Burst" healAmnt:500 energyCost:70 castTime:1.0 andCooldown:0.0];
     [heal setDescription:@"Heals your target for a moderate amount very quickly."];
     [[heal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -348,7 +348,7 @@
 }
 +(id)defaultSpell
 {
-	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:55 energyCost:100 castTime:1.85 andCooldown:0.0];//10h/erk
+	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:550 energyCost:100 castTime:1.85 andCooldown:0.0];//10h/erk
     [forkedHeal setDescription:@"Heals up to two targets simultaneously."];
     [[forkedHeal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[forkedHeal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -411,7 +411,7 @@
     [hotEffect setSpriteName:@"regrow.png"];
     [hotEffect setTitle:@"regrow-effect"];
     [hotEffect setNumOfTicks:4];
-    [hotEffect setValuePerTick:30];
+    [hotEffect setValuePerTick:300];
     [regrow setAppliedEffect:hotEffect];
     [hotEffect release];
     return [regrow autorelease];
@@ -453,7 +453,7 @@
 }
 
 +(id)defaultSpell{
-    Purify *purify = [[Purify alloc] initWithTitle:@"Purify" healAmnt:5 energyCost:40 castTime:0.0 andCooldown:5.0];
+    Purify *purify = [[Purify alloc] initWithTitle:@"Purify" healAmnt:50 energyCost:40 castTime:0.0 andCooldown:5.0];
     [purify setDescription:@"Dispels negative poison and curse effects from allies."];
     [[purify spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
     return [purify autorelease];
@@ -499,7 +499,7 @@
     [rhe setEffectCooldown:2.0];
     [rhe setMaxStacks:1];
     [rhe setSpriteName:@"regrow.png"];
-    [rhe setAmountPerReaction:35];
+    [rhe setAmountPerReaction:350];
     [orbs setAppliedEffect:rhe];
     [rhe     release];
     
@@ -523,8 +523,8 @@
     [sle setMaxStacks:4];
     [sle setSpriteName:@"swirling_light.png"];
     [sle setTitle:@"swirling-light-effect"];
-    [sle setNumOfTicks:10];
-    [sle setValuePerTick:4];
+    [sle setNumOfTicks:20];
+    [sle setValuePerTick:20];
     [swirl setAppliedEffect:sle];
     [sle release];
     return [swirl autorelease];
@@ -540,7 +540,7 @@
 }
 
 + (id)defaultSpell {
-    LightEternal *le = [[LightEternal alloc] initWithTitle:@"Light Eternal" healAmnt:66 energyCost:220 castTime:2.25 andCooldown:0.0];
+    LightEternal *le = [[LightEternal alloc] initWithTitle:@"Light Eternal" healAmnt:660 energyCost:220 castTime:2.25 andCooldown:0.0];
     [le setDescription:@"Heals up to 5 allies with the least health among allies for a moderate amount."];
     [[le spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[le spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -615,7 +615,7 @@
     WanderingSpiritEffect *wse = [[WanderingSpiritEffect alloc] initWithDuration:14.0 andEffectType:EffectTypePositive];
     [wse setTitle:@"wandering-spirit-effect"];
     [wse setSpriteName:@"wandering_spirit.png"];
-    [wse setValuePerTick:24];
+    [wse setValuePerTick:240];
     [wse setNumOfTicks:8.0];
     [ws setAppliedEffect:wse];
     [wse release];
@@ -661,7 +661,7 @@
     return self;
 }
 + (id)defaultSpell {
-    TouchOfHope *tol = [[TouchOfHope alloc] initWithTitle:@"Touch of Hope" healAmnt:30 energyCost:50 castTime:0.0 andCooldown:4.0];
+    TouchOfHope *tol = [[TouchOfHope alloc] initWithTitle:@"Touch of Hope" healAmnt:300 energyCost:50 castTime:0.0 andCooldown:4.0];
     [tol setDescription:@"Heals your target for a small amount and more over 4 seconds.  Each time the periodic effect heals it restores 12 energy."];
     return [tol autorelease];
 }
@@ -672,7 +672,7 @@
     TouchOfHopeEffect *tolEffect = [[TouchOfHopeEffect alloc] initWithDuration:4.0 andEffectType:EffectTypePositive];
     [tolEffect setTitle:@"toh-effect"];
     [tolEffect setSpriteName:@"touch_of_hope.png"];
-    [tolEffect setValuePerTick:7];
+    [tolEffect setValuePerTick:70];
     [tolEffect setNumOfTicks:4];
     [tolEffect setOwner:self.owner];
     [[self.owner spellTarget] addEffect:tolEffect];
@@ -729,7 +729,7 @@
     [fadingLightEffect setSpriteName:@"fading_light.png"];
     [fadingLightEffect setNumOfTicks:5];
     [fadingLightEffect setIncreasePerTick:-0.5];
-    [fadingLightEffect setValuePerTick:40];
+    [fadingLightEffect setValuePerTick:400];
     [fl setAppliedEffect:fadingLightEffect];
     [fadingLightEffect release];
     return [fl autorelease];
@@ -767,7 +767,7 @@
         [sunburstEffect setTitle:@"sunburst-hot"];
         [sunburstEffect setSpriteName:@"sunburst.png"];
         [sunburstEffect setNumOfTicks:5];
-        [sunburstEffect setValuePerTick:6];
+        [sunburstEffect setValuePerTick:60];
         [sunburstEffect setOwner:self.owner];
         [target addEffect:sunburstEffect];
         [sunburstEffect release];
@@ -815,7 +815,7 @@
         DelayedHealthEffect *starDelayedHealthEff = [[DelayedHealthEffect alloc] initWithDuration:healDelay andEffectType:EffectTypePositiveInvisible];
         [starDelayedHealthEff setIsIndependent:YES];
         [starDelayedHealthEff setOwner:self.owner];
-        [starDelayedHealthEff setValue:19];
+        [starDelayedHealthEff setValue:190];
         [starDelayedHealthEff setTitle:@"star-of-aravon-eff"];
         [starTarget addEffect:starDelayedHealthEff];
         [starProjectile release];
@@ -839,7 +839,7 @@
     BlessedArmorEffect *bae = [[BlessedArmorEffect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
     [bae setSpriteName:@"blessed_armor.png"];
     [bae setTitle:@"blessed-armor-eff"];
-    [bae setValue:50];
+    [bae setValue:500];
     [defaultSpell setAppliedEffect:bae];
     [bae release];
     return [defaultSpell autorelease];

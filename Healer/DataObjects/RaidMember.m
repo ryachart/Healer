@@ -170,14 +170,14 @@
 }
 - (void)setOverhealingShield:(NSInteger)overhealingShield{
     _overhealingShield = overhealingShield;
-    NSInteger maxOverheal = 25;
+    NSInteger maxOverheal = 250;
     if (_overhealingShield > maxOverheal){
         _overhealingShield = maxOverheal;
     }
 }
 
 -(id)init{
-    if (self = [super initWithHealth:175 damageDealt:50 andDmgFrequency:1.0 andPositioning:Melee]){
+    if (self = [super initWithHealth:1750 damageDealt:50 andDmgFrequency:1.0 andPositioning:Melee]){
         self.title = @"Guardian";
         self.dodgeChance = .15;
         self.info = @"The Guardian can draw attention from enemies and become focused.  Healing a Guardian beyond full health creates a shield that absorbs damage.";
@@ -198,7 +198,7 @@
     return [[[Berserker alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:120 damageDealt:62 andDmgFrequency:.75 andPositioning:Melee]){
+    if (self = [super initWithHealth:1200 damageDealt:62 andDmgFrequency:.75 andPositioning:Melee]){
         self.title = @"Berserker";
         self.info = @"The Berserker has moderate health and damage. When dealing a critical strike, this ally heals itself.";
         self.dodgeChance = .07;
@@ -216,7 +216,7 @@
     return [[[Archer alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:100 damageDealt:60 andDmgFrequency:.6 andPositioning:Ranged]){
+    if (self = [super initWithHealth:1000 damageDealt:60 andDmgFrequency:.6 andPositioning:Ranged]){
         self.title = @"Archer";
         self.info = @"The Archer has low health but deals high damage.";
         self.dodgeChance = .05;
@@ -230,7 +230,7 @@
     return [[[Champion alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:125 damageDealt:88 andDmgFrequency:1.1 andPositioning:Melee]){
+    if (self = [super initWithHealth:1250 damageDealt:88 andDmgFrequency:1.1 andPositioning:Melee]){
         self.title = @"Champion";
         self.info = @"The Champion has more health and deals more damage when healed to full.";
         self.dodgeChance = .07;
@@ -241,7 +241,7 @@
 -(int)damageDealt{
     int baseDamage = [super damageDealt];
     int fullHealthBonus = self.health == self.maximumHealth ? 10 : 0;
-    return baseDamage - (self.maximumHealth - self.health) + fullHealthBonus;
+    return baseDamage + fullHealthBonus;
 }
 @end
 
@@ -251,7 +251,7 @@
 }
 
 -(id)init{
-    if (self = [super initWithHealth:125 damageDealt:30 andDmgFrequency:1.2 andPositioning:Ranged]){
+    if (self = [super initWithHealth:1250 damageDealt:30 andDmgFrequency:1.2 andPositioning:Ranged]){
         self.title = @"Wizard";
         self.dodgeChance = .07;
         self.info = @"The Wizard has moderate health and low damage but periodically grants you energy.";
@@ -281,7 +281,7 @@
     return [[[Warlock alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:110 damageDealt:60 andDmgFrequency:.7 andPositioning:Ranged]){
+    if (self = [super initWithHealth:1100 damageDealt:60 andDmgFrequency:.7 andPositioning:Ranged]){
         self.title = @"Warlock";
         self.info = @"The Warlock has moderate health and heals itself for a small amount when at low health.";
         self.dodgeChance = .07;

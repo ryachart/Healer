@@ -58,11 +58,10 @@
     
     for (int i = 1; i <= NUM_ENCOUNTERS; i++){
         if (CURRENT_MODE == DifficultyModeHard){
-            if (i == 1 || i > MAX_HARDMODES){
+            if (i == 1 || i > (MAX_HARDMODES + 1)){
                 continue;
             }
         }
-        
 
         //This level is valid for us to play
         LevelSelectSprite *levelSelectSprite = [[[LevelSelectSprite alloc] initWithLevel:i] autorelease];

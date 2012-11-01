@@ -353,7 +353,7 @@
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players{
     BreakOffEffect *breakoff = [[BreakOffEffect alloc] initWithDuration:5 andEffectType:EffectTypeNegativeInvisible];
     [breakoff setOwner:self.owner];
-    [breakoff setValuePerTick:-25];
+    [breakoff setValuePerTick:-250];
     [breakoff setNumOfTicks:5];
     [breakoff setReenableAbility:self.ownerAutoAttack];
     [self.ownerAutoAttack setIsDisabled:YES];
@@ -403,7 +403,7 @@
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:player value:[NSNumber numberWithFloat:2.0]  andEventType:CombatEventTypePlayerInterrupted]];
     }
     for (RaidMember *member in theRaid.raidMembers ){
-        [member setHealth:member.health - (15.0 * self.owner.damageDoneMultiplier)];
+        [member setHealth:member.health - (150.0 * self.owner.damageDoneMultiplier)];
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(15.0 * self.owner.damageDoneMultiplier)]  andEventType:CombatEventTypeDamage]];
         for (Effect *effect in member.activeEffects){
             if (effect.effectType == EffectTypePositive){
@@ -478,7 +478,7 @@
         [crushEffect setOwner:self.owner];
         [crushEffect setTitle:@"crush"];
         [crushEffect setSpriteName:@"crush.png"];
-        [crushEffect setValue:-110];
+        [crushEffect setValue:-1100];
         [target addEffect:crushEffect];
         [crushEffect release];
     }
@@ -494,7 +494,7 @@
         [desc setAbilityName:@"Deathwave"];
         [self setDescriptor:desc];
         [desc release];
-        self.abilityValue = 1200;
+        self.abilityValue = 12000;
     }
     return self;
 }
@@ -532,7 +532,7 @@
     ProjectileAttack *fbAbility = [[ProjectileAttack alloc] init];
     [fbAbility setTitle:@"random-fireball"];
     [fbAbility setSpriteName:@"fireball.png"];
-    [fbAbility setAbilityValue:50];
+    [fbAbility setAbilityValue:500];
     [fbAbility setCooldown:12.0];
     [fbAbility setFailureChance:.05];
     [allAbilities addObject:[fbAbility autorelease]];
@@ -540,7 +540,7 @@
     ProjectileAttack *quickFireball = [[ProjectileAttack alloc] init];
     [quickFireball setSpriteName:@"fireball.png"];
     [quickFireball setTitle:@"random-quickfirebal"];
-    [quickFireball setAbilityValue:10];
+    [quickFireball setAbilityValue:100];
     [quickFireball setCooldown:3.0];
     [quickFireball setFailureChance:.1];
     [allAbilities addObject:[quickFireball autorelease]];
@@ -548,44 +548,44 @@
     BloodMinion *bm = [[BloodMinion alloc] init];
     [bm setTitle:@"blood-minion"];
     [bm setCooldown:10.0];
-    [bm setAbilityValue:10];
+    [bm setAbilityValue:100];
     [allAbilities addObject:bm];
     [bm release];
     
     FireMinion *fm = [[FireMinion alloc] init];
     [fm setTitle:@"fire-minion"];
     [fm setCooldown:15.0];
-    [fm setAbilityValue:35];
+    [fm setAbilityValue:350];
     [allAbilities addObject:fm];
     [fm release];
     
     ShadowMinion *sm = [[ShadowMinion alloc] init];
     [sm setTitle:@"shadow-minion"];
     [sm setCooldown:12.0];
-    [sm setAbilityValue:20];
+    [sm setAbilityValue:200];
     [allAbilities addObject:sm];
     [sm release];
     
     OverseerProjectiles* projectilesAbility = [[[OverseerProjectiles alloc] init] autorelease];
-    [projectilesAbility setAbilityValue:56];
+    [projectilesAbility setAbilityValue:560];
     [projectilesAbility setCooldown:4.5];
     [allAbilities addObject:projectilesAbility];
     
-    FocusedAttack *tankAttack = [[FocusedAttack alloc] initWithDamage:62 andCooldown:2.45];
+    FocusedAttack *tankAttack = [[FocusedAttack alloc] initWithDamage:620 andCooldown:2.45];
     [tankAttack setFailureChance:.4];
     [allAbilities addObject:tankAttack];
     [tankAttack release];
     
     TargetTypeFlameBreath *sweepingFlame = [[[TargetTypeFlameBreath alloc] init] autorelease];
     [sweepingFlame setCooldown:9.0];
-    [sweepingFlame setAbilityValue:60];
+    [sweepingFlame setAbilityValue:600];
     [sweepingFlame setNumTargets:5];
     [allAbilities addObject:sweepingFlame];
     
     Grip *gripAbility = [[Grip alloc] init];
     [gripAbility setTitle:@"grip-ability"];
     [gripAbility setCooldown:22];
-    [gripAbility setAbilityValue:-14];
+    [gripAbility setAbilityValue:-140];
     [allAbilities addObject:gripAbility];
     [gripAbility release];
     
@@ -593,7 +593,7 @@
     [impaleAbility setTitle:@"gatekeeper-impale"];
     [impaleAbility setCooldown:16];
     [allAbilities addObject:impaleAbility];
-    [impaleAbility setAbilityValue:82];
+    [impaleAbility setAbilityValue:820];
     [impaleAbility release];
     
     InvertedHealing *invHeal = [[InvertedHealing alloc] init];
@@ -711,7 +711,7 @@
     SoulBurnEffect *sbe = [[SoulBurnEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative];
     [sbe setSpriteName:@"soul_burn.png"];
     [sbe setTitle:@"soul-burn"];
-    [sbe setValuePerTick:-20];
+    [sbe setValuePerTick:-200];
     [sbe setNumOfTicks:6];
     [sbe setOwner:self.owner];
     [sbe setEnergyToBurn:75];
@@ -882,7 +882,7 @@
     [boneThrowEffect setIsIndependent:YES];
     [boneThrowEffect setOwner:self.owner];
     [boneThrowEffect setTitle:@"bonethrow-projectile"];
-    [boneThrowEffect setValue:-40];
+    [boneThrowEffect setValue:-400];
     [boneThrowEffect setMaxStacks:10];
     FallenDownEffect *fde = [FallenDownEffect defaultEffect];
     [fde setOwner:self.owner];
@@ -930,7 +930,7 @@
     for (RaidMember *member in members) {
         RepeatedHealthEffect *bonequakeDot = [[RepeatedHealthEffect alloc] initWithDuration:3.0 andEffectType:EffectTypeNegative];
         [bonequakeDot setNumOfTicks:3];
-        [bonequakeDot setValuePerTick:-(arc4random() % 5 + 1)];
+        [bonequakeDot setValuePerTick:-(arc4random() % 50 + 10)];
         [bonequakeDot setTitle:@"bonequake-dot"];
         [bonequakeDot setSpriteName:@"bleeding.png"];
         [bonequakeDot setOwner:self.owner];
@@ -1082,7 +1082,7 @@
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     for (RaidMember *member in theRaid.getAliveMembers){
         RepeatedHealthEffect *burning = [[RepeatedHealthEffect alloc] initWithDuration:self.cooldown - .1 andEffectType:EffectTypeNegativeInvisible];
-        [burning setValuePerTick:-2];
+        [burning setValuePerTick:-20];
         [burning setNumOfTicks:8];
         [burning setOwner:self.owner];
         [burning setTitle:@"fire-minion-burn"];
@@ -1177,7 +1177,7 @@
         for (int i = 0; i < numApplications; i++){
             NSTimeInterval delay = 0.25 + (i * 1.5);
             DelayedHealthEffect *delayedSlime = [[DelayedHealthEffect alloc] initWithDuration:delay andEffectType:EffectTypeNegativeInvisible];
-            [delayedSlime setValue:-7];
+            [delayedSlime setValue:-70];
             [delayedSlime setIsIndependent:YES];
             [delayedSlime setTitle:@"delayed-slime"];
             [delayedSlime setOwner:self.owner];
@@ -1338,7 +1338,7 @@
         self.descriptor = abilityDescriptor;
         
         self.cooldown = 15.0;
-        self.abilityValue = 30;
+        self.abilityValue = 300;
     }
     return self;
 }

@@ -57,7 +57,7 @@ typedef enum {
 - (void)updateWithNetworkMessage:(NSString*)message;
 @end
 
-//AVERAGE HEALTH: 124
+//AVERAGE HEALTH: 1240
 @interface Guardian : RaidMember
 @property (nonatomic, readwrite) NSInteger overhealingShield;
 +(Guardian*)defaultGuardian;

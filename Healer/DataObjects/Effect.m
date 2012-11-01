@@ -469,7 +469,7 @@
 +(id)defaultEffect{
 	BulwarkEffect *be = [[BulwarkEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive];
     [be setTitle:@"bulwark-effect"];
-	[be setAmountToShield:60];
+	[be setAmountToShield:600];
     [be setSpriteName:@"healing_default.png"];
     [be setMaxStacks:1];
 	return [be autorelease];

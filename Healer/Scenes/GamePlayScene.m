@@ -11,7 +11,7 @@
 #import "PlayerSpellButton.h"
 #import "PlayerMoveButton.h"
 #import "PostBattleScene.h"
-#import "PersistantDataManager.h"
+#import "PlayerDataManager.h"
 #import "GamePlayPauseLayer.h"
 #import "CCShakeScreen.h"
 #import "ParticleSystemCache.h"

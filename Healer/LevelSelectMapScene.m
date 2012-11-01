@@ -14,7 +14,7 @@
 #import "PreBattleScene.h"
 #import "Player.h"
 #import "Divinity.h"
-#import "PersistantDataManager.h"
+#import "PlayerDataManager.h"
 
 @interface LevelSelectMapScene ()
 @property (nonatomic, assign) LevelSelectMapNode *mapScrollView;
@@ -99,14 +99,14 @@
 }
 
 - (void)toggleDifficulty {
-    if (![PersistantDataManager hardModeUnlocked]){
+    if (![PlayerDataManager hardModeUnlocked]){
         UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Hard Mode Locked" message:@"Complete the game on Normal mode to unlock hard mode" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil] autorelease];
         [alert show];
     }else {
         if (CURRENT_MODE == DifficultyModeNormal){
-            [PersistantDataManager setDifficultyMode:DifficultyModeHard];
+            [PlayerDataManager setDifficultyMode:DifficultyModeHard];
         }else {
-            [PersistantDataManager setDifficultyMode:DifficultyModeNormal];
+            [PlayerDataManager setDifficultyMode:DifficultyModeNormal];
         }
 
         [self.mapScrollView reload];

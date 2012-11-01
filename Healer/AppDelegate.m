@@ -11,7 +11,7 @@
 #import "GameConfig.h"
 #import "TestFlight.h"
 #import "Parse/Parse.h"
-#import "PersistantDataManager.h"
+#import "PlayerDataManager.h"
 #import "LaunchScene.h"
 
 #define TestFlightToken @"a0f29ba29227f7587269ec6e6fc30455_NzU1NTQyMDEyLTA0LTI4IDIyOjQ4OjA4Ljk4NzkzMQ"
@@ -68,7 +68,7 @@
 
     // Run the intro Scene
 	[[CCDirector sharedDirector] pushScene: [[LaunchScene new] autorelease]];
-    [PersistantDataManager saveRemotePlayer];
+    [PlayerDataManager saveRemotePlayer];
     
     self.navController = [[[UINavigationController alloc] initWithRootViewController:director] autorelease];
     self.navController.navigationBarHidden = YES;
@@ -94,7 +94,7 @@
 
 -(void) applicationDidEnterBackground:(UIApplication*)application {
 	[[CCDirector sharedDirector] stopAnimation];
-    [PersistantDataManager saveRemotePlayer];
+    [PlayerDataManager saveRemotePlayer];
 }
 
 -(void) applicationWillEnterForeground:(UIApplication*)application {
@@ -110,7 +110,7 @@
 	
 	[director end];	
     
-    [PersistantDataManager saveRemotePlayer];
+    [PlayerDataManager saveRemotePlayer];
 }
 
 - (void)applicationSignificantTimeChange:(UIApplication *)application {

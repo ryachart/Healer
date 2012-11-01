@@ -13,7 +13,7 @@
 #import "Boss.h"
 #import "Spell.h"
 #import "Shop.h"
-#import "PersistantDataManager.h"
+#import "PlayerDataManager.h"
 
 
 @interface Encounter ()
@@ -441,7 +441,7 @@
 
 + (void)configurePlayer:(Player*)player forRecSpells:(NSArray*)spells {
     NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
-    NSArray *lastUsedSpells = [PersistantDataManager lastUsedSpells];
+    NSArray *lastUsedSpells = [PlayerDataManager lastUsedSpells];
     if (lastUsedSpells && lastUsedSpells.count > 0){
         [activeSpells addObjectsFromArray:lastUsedSpells];
     }else {

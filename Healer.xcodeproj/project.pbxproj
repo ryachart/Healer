@@ -23,7 +23,7 @@
 		385B41AA163276F900710700 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B41A9163276F800710700 /* libsqlite3.0.dylib */; };
 		385B41AC1632771F00710700 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B41AB1632771F00710700 /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		386747A91520073D0057A8C9 /* CombatEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 386747A81520073D0057A8C9 /* CombatEvent.m */; };
-		387E7AE8145E0F70006D9266 /* PersistantDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AE7145E0F70006D9266 /* PersistantDataManager.m */; };
+		387E7AE8145E0F70006D9266 /* PlayerDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AE7145E0F70006D9266 /* PlayerDataManager.m */; };
 		387E7B00145E1263006D9266 /* Effect.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AED145E1263006D9266 /* Effect.m */; };
 		387E7B01145E1263006D9266 /* GameRect.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AF0145E1263006D9266 /* GameRect.m */; };
 		387E7B02145E1263006D9266 /* HealableTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AF2145E1263006D9266 /* HealableTarget.m */; };
@@ -559,8 +559,8 @@
 		386DD21D145E07100086763E /* CJSONSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CJSONSerializer.h; sourceTree = "<group>"; };
 		386DD21E145E07100086763E /* CJSONSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CJSONSerializer.m; sourceTree = "<group>"; };
 		386DD21F145E07100086763E /* JSONRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONRepresentation.h; sourceTree = "<group>"; };
-		387E7AE6145E0F70006D9266 /* PersistantDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistantDataManager.h; sourceTree = "<group>"; };
-		387E7AE7145E0F70006D9266 /* PersistantDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersistantDataManager.m; sourceTree = "<group>"; };
+		387E7AE6145E0F70006D9266 /* PlayerDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerDataManager.h; sourceTree = "<group>"; };
+		387E7AE7145E0F70006D9266 /* PlayerDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerDataManager.m; sourceTree = "<group>"; };
 		387E7AEC145E1263006D9266 /* Effect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effect.h; path = DataObjects/Effect.h; sourceTree = "<group>"; };
 		387E7AED145E1263006D9266 /* Effect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Effect.m; path = DataObjects/Effect.m; sourceTree = "<group>"; };
 		387E7AEE145E1263006D9266 /* GameObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameObjects.h; path = DataObjects/GameObjects.h; sourceTree = "<group>"; };
@@ -944,8 +944,8 @@
 		387E7AE4145E0D1B006D9266 /* Persistent Stores */ = {
 			isa = PBXGroup;
 			children = (
-				387E7AE6145E0F70006D9266 /* PersistantDataManager.h */,
-				387E7AE7145E0F70006D9266 /* PersistantDataManager.m */,
+				387E7AE6145E0F70006D9266 /* PlayerDataManager.h */,
+				387E7AE7145E0F70006D9266 /* PlayerDataManager.m */,
 				BF865F24159F9878007F5DBF /* Divinity.h */,
 				BF865F25159F9878007F5DBF /* Divinity.m */,
 			);
@@ -1785,7 +1785,7 @@
 				BF21071D1527E171001B93D7 /* HealerStartScene.m in Sources */,
 				38024F0A13C2564E003D36F2 /* main.m in Sources */,
 				38024F0D13C2564E003D36F2 /* AppDelegate.m in Sources */,
-				387E7AE8145E0F70006D9266 /* PersistantDataManager.m in Sources */,
+				387E7AE8145E0F70006D9266 /* PlayerDataManager.m in Sources */,
 				387E7B00145E1263006D9266 /* Effect.m in Sources */,
 				387E7B01145E1263006D9266 /* GameRect.m in Sources */,
 				387E7B02145E1263006D9266 /* HealableTarget.m in Sources */,

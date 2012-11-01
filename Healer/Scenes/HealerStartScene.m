@@ -8,7 +8,7 @@
 
 #import "HealerStartScene.h"
 #import "AppDelegate.h"
-#import "PersistantDataManager.h"
+#import "PlayerDataManager.h"
 #import "Shop.h"
 #import "ShopScene.h"
 #import "BackgroundSprite.h"
@@ -76,7 +76,7 @@
 }
 
 -(void)multiplayerSelected{
-    if (![PersistantDataManager isMultiplayerUnlocked]){
+    if (![PlayerDataManager isMultiplayerUnlocked]){
         UIAlertView *mplayerNotUnlocked = [[UIAlertView alloc] initWithTitle:@"Multiplayer not Unlocked!" message:@"Multiplayer is unlocked after slaying the Plaguebringer Colossus." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [mplayerNotUnlocked show];
         [mplayerNotUnlocked release];

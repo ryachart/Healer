@@ -8,7 +8,7 @@
 #import "Shop.h"
 #import "Spell.h"
 #import "ShopItem.h"
-#import "PersistantDataManager.h"
+#import "PlayerDataManager.h"
 #import "Divinity.h"
 
 NSString* const PlayerGold = @"com.healer.playerId";

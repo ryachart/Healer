@@ -8,7 +8,7 @@
 #import "AddRemoveSpellLayer.h"
 #import "Spell.h"
 #import "Shop.h"
-#import "PersistantDataManager.h"
+#import "PlayerDataManager.h"
 #import "DraggableSpellIcon.h"
 #import "BasicButton.h"
 
@@ -184,7 +184,7 @@
                 [newUsedSpells addObject:inhabitant.spell];
             }
         }
-        [PersistantDataManager setUsedSpells:newUsedSpells];
+        [PlayerDataManager setUsedSpells:newUsedSpells];
         [self.delegate spellSwitchDidCompleteWithActiveSpells:newUsedSpells];
     }
 

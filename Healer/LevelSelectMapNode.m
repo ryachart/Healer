@@ -9,7 +9,7 @@
 #import "LevelSelectMapNode.h"
 #import "BasicButton.h"
 #import "HealerStartScene.h"
-#import "PersistantDataManager.h"
+#import "PlayerDataManager.h"
 #import "EncounterCard.h"
 
 #define NUM_ENCOUNTERS 21
@@ -71,7 +71,7 @@
         [self addChild:levelSelectSprite];
         [self.levelSelectSprites addObject:levelSelectSprite];
         
-        if (i  > [PersistantDataManager highestLevelCompletedForMode:CURRENT_MODE] + 1){
+        if (i  > [PlayerDataManager highestLevelCompletedForMode:CURRENT_MODE] + 1){
             //Invalid levels
             [levelSelectSprite setIsAccessible:NO];
         } else {

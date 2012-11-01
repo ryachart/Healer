@@ -10,7 +10,7 @@
 #import "CombatEvent.h"
 #import "Announcer.h"
 #import "HealableTarget.h"
-#import "PersistantDataManager.h"
+#import "PlayerDataManager.h"
 
 @class Player;
 @class Raid;

@@ -11,7 +11,7 @@
 #import "CombatEvent.h"
 #import "Boss.h"
 #import "Encounter.h"
-#import "PersistantDataManager.h"
+#import "PlayerDataManager.h"
 #import <UIKit/UIKit.h>
 #import "Shop.h"
 #import "ShopScene.h"
@@ -126,7 +126,7 @@
         NSInteger reward = 0;
         NSInteger oldRating = 0;
         NSInteger rating = 0;
-        int i = [PersistantDataManager highestLevelCompletedForMode:CURRENT_MODE];
+        int i = [PlayerDataManager highestLevelCompletedForMode:CURRENT_MODE];
         BOOL isFirstWin = self.levelNumber > i;
         NSTimeInterval fightDuration = duration;
         
@@ -149,18 +149,18 @@
         if (victory){
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",levelNum]];
             if (!self.isMultiplayer){
-                [PersistantDataManager completeLevelInCurrentMode:self.levelNumber];
+                [PlayerDataManager completeLevelInCurrentMode:self.levelNumber];
             }
             reward = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:isFirstWin isMultiplayer:self.isMultiplayer];
             
-            oldRating = [PersistantDataManager levelRatingForLevel:self.levelNumber withMode:CURRENT_MODE];
+            oldRating = [PlayerDataManager levelRatingForLevel:self.levelNumber withMode:CURRENT_MODE];
             rating = [self calculateRatingForNumDead:numDead];
             if (rating > oldRating && !self.isMultiplayer){
-                [PersistantDataManager setLevelRating:rating forLevel:self.levelNumber withMode:CURRENT_MODE];
+                [PlayerDataManager setLevelRating:rating forLevel:self.levelNumber withMode:CURRENT_MODE];
             }
         }else {
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelFailed:%i",levelNum]];
-            [PersistantDataManager failLevelInCurrentMode:levelNum];
+            [PlayerDataManager failLevelInCurrentMode:levelNum];
             //Partial Progress Reward
             //10 % of the Reward per minute of encounter up to a maximum of 50% encounter reward
             
@@ -186,7 +186,7 @@
             [Shop playerEarnsGold:reward];
         }
         
-        [PersistantDataManager saveRemotePlayer];
+        [PlayerDataManager saveRemotePlayer];
         
         //UI
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];

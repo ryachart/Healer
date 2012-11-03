@@ -27,6 +27,12 @@
 @property (nonatomic, retain) AbilityDescriptor *descriptor;
 @property (nonatomic, retain) NSString *attackParticleEffectName; //Defaults to blood_spurt.plist
 
+//Activation Times
+@property (nonatomic, readwrite) BOOL isActivating;
+@property (nonatomic, readwrite) NSTimeInterval remainingActivationTime;
+@property (nonatomic, readwrite) float remainingActivationPercentage;
+@property (nonatomic, readwrite) NSTimeInterval activationTime; //How long the cast time to warn the user
+
 - (void)combatActions:(Raid*)theRaid boss:(Boss*)theBoss players:(NSArray*)players gameTime:(float)timeDelta;
 - (void)triggerAbilityForRaid:(Raid*)theRaid andPlayers:(NSArray*)players;
 - (BOOL)checkFailed;
@@ -167,5 +173,10 @@ typedef enum {
 @end
 
 @interface DisorientingBoulder : ProjectileAttack
+@end
 
+@interface Cleave : Ability
++ (Cleave *)normalCleave;
++ (Cleave *)hardCleave;
+//Hits a random number of melee opponents. Always affects at least 1 Guardian when it triggers
 @end

@@ -22,7 +22,7 @@
 {
 	// Init the window	
     _window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-
+    
     [TestFlight takeOff:TestFlightToken];
     [TestFlight setDeviceIdentifier:[UIDevice currentDevice].uniqueIdentifier];
     
@@ -35,6 +35,7 @@
     [director setProjection:kCCDirectorProjection2D];
     director.wantsFullScreenLayout = YES;
 	[director setDelegate:self];
+    
 	//
 	// Create the EAGLView manually
 	//  1. Create a RGB565 format. Alternative: RGBA8
@@ -124,6 +125,11 @@
 - (void)dealloc {
     [_window release];
 	[super dealloc];
+}
+
+
+- (void)showDebugViewController {
+    
 }
 
 @end

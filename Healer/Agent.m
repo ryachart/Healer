@@ -33,4 +33,13 @@
     return @"";
 }
 
+- (void)ownerDidExecuteAbility:(Ability*)ability
+{
+    
+}
+- (void)ownerDidBeginAbility:(Ability*)ability
+{
+    
+}
+
 @end

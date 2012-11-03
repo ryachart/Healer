@@ -51,7 +51,7 @@
         self.battleButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(battle) andTitle:@"Battle!"];
         CCMenu *battleMenu = [CCMenu menuWithItems:self.battleButton, nil];
         [battleMenu setPosition:CGPointMake(850, 100)];
-        [self addChild:battleMenu];
+        [self addChild:battleMenu z:5];
         
         [self reloadDifficultyMenu];
     }

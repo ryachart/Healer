@@ -171,4 +171,16 @@
     return finalTargets;
 }
 
+- (NSArray *)livingMembersWithPositioning:(Positioning)pos {
+    NSMutableArray *targets = [NSMutableArray arrayWithCapacity:20];
+    NSArray *candidates = [self getAliveMembers];
+    
+    for (RaidMember *member in candidates) {
+        if (member.positioning == pos) {
+            [targets addObject:member];
+        }
+    }
+    return targets;
+}
+
 @end

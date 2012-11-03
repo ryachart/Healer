@@ -207,7 +207,7 @@
     return self;
 }
 - (void)didPerformCriticalStrikeForAmount:(NSInteger)amount{
-    [self healSelfForAmount:5];
+    [self healSelfForAmount:50];
 }
 @end
 
@@ -294,7 +294,7 @@
     if (self.healthPercentage < .5){
         self.healCooldown += timeDelta;
         if (self.healCooldown >= 1.5){
-            [self healSelfForAmount:2];
+            [self healSelfForAmount:25];
             self.healCooldown = 0.0;
         }
     }

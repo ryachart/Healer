@@ -243,7 +243,7 @@
     NSTimeInterval freq = 1.4;
     
     if (mode == DifficultyModeHard){
-        damage = 580;
+        damage = 500;
         freq = 1.4;
     }
     
@@ -253,6 +253,9 @@
         corTroll.autoAttack.failureChance = .4;
         DisorientingBoulder *boulderAbility = [[DisorientingBoulder new] autorelease];
         [corTroll addAbility:boulderAbility];
+        [corTroll addAbility:[Cleave hardCleave]];
+    } else {
+        [corTroll addAbility:[Cleave normalCleave]];
     }
     
     [corTroll setTitle:@"Corrupted Troll"];
@@ -284,7 +287,7 @@
             NSInteger damageDealt = (arc4random() % 200 + 200);
             if (self.difficulty == DifficultyModeHard){
                 damageDealt *= 1.1;
-                maxTankDamage = 400;
+                maxTankDamage = 300;
             }
             if (member.isFocused){
                 damageDealt = MAX(damageDealt, maxTankDamage); //The Tank has max damage
@@ -301,7 +304,7 @@
     float adjustment = .35;
     if (self.difficulty == DifficultyModeHard){
         self.autoAttack.cooldown = 1.1;
-        adjustment = .25;
+        adjustment = .2;
     }
     Effect *enragingEffect = [[Effect alloc] initWithDuration:9 andEffectType:EffectTypePositiveInvisible];
     [enragingEffect setTarget:self];
@@ -320,7 +323,7 @@
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (percentage == 80.0 || percentage == 60.0 || percentage == 40.0 || percentage == 20.0){
+    if (percentage == 75.0 || percentage == 50.0 || percentage == 25.0 || percentage == 10.0){
         [self startEnraging];
     }
 }
@@ -748,7 +751,7 @@
 +(id)defaultBossForMode:(DifficultyMode)mode {
     //427500
     PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:250000 damage:330 targets:1 frequency:2.5 choosesMT:YES difficulty:mode];
-    boss.autoAttack.failureChance = .25;
+    boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Plaguebringer Colossus"];
     [boss setInfo:@"From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped.  The village people have foreseen their impending doom and sent young and brave hopefuls to join The Light Ascendant in exchange for protection.  You must lead this group to victory against the wretched beast."];
     
@@ -765,6 +768,12 @@
     [pusExploDesc setAbilityName:@"Limb Bomb"];
     [boss addAbilityDescriptor:pusExploDesc];
     [pusExploDesc release];
+    
+    if (mode == DifficultyModeHard) {
+        [boss addAbility:[Cleave hardCleave]];
+    } else {
+        [boss addAbility:[Cleave normalCleave]];
+    }
     
     return [boss autorelease];
 }
@@ -1082,6 +1091,13 @@
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Befouled Treant"];
     [boss setInfo:@"The Akarus, an ancient tree that has sheltered travelers across the Gungoro Plains, has become tainted with the foul energy of The Dark Winds.  It is lashing its way through villagers and farmers.  This once great tree must be ended for good."];
+    
+    if (mode == DifficultyModeHard) {
+        [boss addAbility:[Cleave hardCleave]];
+    } else {
+        [boss addAbility:[Cleave normalCleave]];
+    }
+    
     return [boss autorelease];
 }
 
@@ -1162,6 +1178,12 @@
     
     [boss setTitle:@"Twin Champions of Baraghast"];
     [boss setInfo:@"You and your soldiers have taken the fight straight to the warcamps of Baraghast--Leader of the Dark Horde.  You have been met outside the gates by only two heavily armored demon warriors.  These Champions of Baraghast will stop at nothing to keep you from finding Baraghast."];
+    
+    if (mode == DifficultyModeHard) {
+        [boss addAbility:[Cleave hardCleave]];
+    } else {
+        [boss addAbility:[Cleave normalCleave]];
+    }
     
     AbilityDescriptor *axecutionDesc = [[AbilityDescriptor alloc] init];
     [axecutionDesc setAbilityDescription:@"The Twin Champions will periodically choose a target for execution.  This target will be instantly slain if not above 50% health when the effect expires."];
@@ -1313,9 +1335,16 @@
 
 +(id)defaultBossForMode:(DifficultyMode)mode {
     Baraghast *boss = [[Baraghast alloc] initWithHealth:415000 damage:150 targets:1 frequency:1.25 choosesMT:YES difficulty:mode];
-    boss.autoAttack.failureChance = .25;
+    boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
     [boss setInfo:@"With his champions defeated, Baraghast himself confronts you and your allies."];
+    
+    if (mode == DifficultyModeHard) {
+        [boss addAbility:[Cleave hardCleave]];
+    } else {
+        [boss addAbility:[Cleave normalCleave]];
+    }
+    
     return [boss autorelease];
 }
 
@@ -1420,9 +1449,15 @@
 @implementation GatekeeperDelsarn
 + (id)defaultBossForMode:(DifficultyMode)mode {
     GatekeeperDelsarn *boss = [[GatekeeperDelsarn alloc] initWithHealth:300000 damage:500 targets:1 frequency:2.1 choosesMT:YES difficulty:mode];
-    boss.autoAttack.failureChance = .25;
+    boss.autoAttack.failureChance = .30;
     [boss setInfo:@"Delsarn is the name the Theronian Seers have given to the land that exists beyond the rift discovered within the tome that Seer Tyonath left behind.  The Gatekeeper is a foul beast that stands between your party and passage into Delsarn."];
     [boss setTitle:@"Gatekeeper of Delsarn"];
+    
+    if (mode == DifficultyModeHard) {
+        [boss addAbility:[Cleave hardCleave]];
+    } else {
+        [boss addAbility:[Cleave normalCleave]];
+    }
     
     Grip *gripAbility = [[Grip alloc] init];
     [gripAbility setTitle:@"grip-ability"];
@@ -1770,9 +1805,15 @@
 }
 + (id)defaultBossForMode:(DifficultyMode)mode {
     BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:450000 damage:150 targets:1 frequency:1.25 choosesMT:YES difficulty:mode];
-    boss.autoAttack.failureChance = .25;
+    boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast Reborn"];
     [boss setInfo:@"Before you stands the destroyed but risen warchief Baraghast.  His horrible visage once again sows fear in the hearts of all of your allies.  This time he is not only guarding a terrible secret, but his hateful gaze reveals his true purpose -- Revenge."];
+    
+    if (mode == DifficultyModeHard) {
+        [boss addAbility:[Cleave hardCleave]];
+    } else {
+        [boss addAbility:[Cleave normalCleave]];
+    }
     
     BaraghastRoar *roar = [[[BaraghastRoar alloc] init] autorelease];
     [roar setCooldown:24.0];

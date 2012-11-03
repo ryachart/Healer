@@ -27,6 +27,7 @@
 - (id)init {
     if (self = [super init]){
         self.attackParticleEffectName = @"blood_spurt.plist";
+        self.isActivating = NO;
     }
     return self;
 }
@@ -70,8 +71,29 @@
             [(Boss*)self.owner ownerDidExecuteAbility:self];
         }
         self.timeApplied = 0.0;
+        self.isActivating = NO;
+    }
+    if (self.activationTime > 0 && !self.isActivating && self.cooldown - self.timeApplied > self.activationTime) {
+        self.isActivating = YES;
+        [self.owner ownerDidBeginAbility:self];
     }
     
+}
+
+- (NSTimeInterval)remainingActivationTime
+{
+    if (self.isActivating) {
+        return  (self.cooldown - self.timeApplied);
+    }
+    return 0.0; //Not activating
+}
+
+- (float)remainingActivationPercentage
+{
+    if (self.isActivating) {
+        return self.remainingActivationTime / self.activationTime;
+    }
+    return 0.0; //Not activating
 }
 
 - (RaidMember*)targetWithoutEffectWithTitle:(NSString*)ttle inRaid:(Raid*)theRaid{
@@ -114,13 +136,14 @@
     
     NSInteger finalDamageValue = (int)round((float)self.abilityValue * multiplyModifier) + additiveModifier;
     
-    return FUZZ(finalDamageValue, 20.0);
+    return FUZZ(finalDamageValue, 30.0);
 }
 
--(void)damageTarget:(RaidMember*)target{
+- (void)damageTarget:(RaidMember *)target forDamage:(NSInteger)damage
+{
     if (![target raidMemberShouldDodgeAttack:0.0]){
         [self willDamageTarget:target];
-        int thisDamage = [self damageDealt];
+        int thisDamage = damage;
         
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:thisDamage] andEventType:CombatEventTypeDamage]];
         [target setHealth:[target health] - thisDamage];
@@ -131,6 +154,10 @@
     }else{
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:0 andEventType:CombatEventTypeDodge]];
     }
+}
+
+-(void)damageTarget:(RaidMember*)target{
+    [self damageTarget:target forDamage:[self damageDealt]];
 }
 
 - (void)willDamageTarget:(RaidMember*)target {
@@ -494,7 +521,7 @@
         [desc setAbilityName:@"Deathwave"];
         [self setDescriptor:desc];
         [desc release];
-        self.abilityValue = 12000;
+        self.abilityValue = 10000;
     }
     return self;
 }
@@ -612,6 +639,8 @@
     [oozeTwo setTitle:@"ooze-two"];
     [allAbilities addObject:oozeTwo];
     [oozeTwo release];
+    
+    [allAbilities addObject:[Cleave normalCleave]];
     //Trulzar Poison
     
     //Mortal Strike Cloud
@@ -1346,5 +1375,76 @@
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players{
     [super triggerAbilityForRaid:theRaid andPlayers:players];
     self.cooldown = arc4random() % 8 + 8;
+}
+@end
+
+@implementation Cleave
++ (Cleave *)normalCleave {
+    Cleave *cleave = [[[Cleave alloc] init] autorelease];
+    [cleave setTitle:@"cleave"];
+    [cleave setAbilityValue:600];
+    [cleave setCooldown:12.5];
+    [cleave setFailureChance:.4];
+    return cleave;
+}
++ (Cleave *)hardCleave {
+    Cleave *cleave = [[[Cleave alloc] init] autorelease];
+    [cleave setTitle:@"cleave"];
+    [cleave setAbilityValue:800];
+    [cleave setCooldown:11.5];
+    [cleave setFailureChance:.35];
+    return cleave;
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
+{
+    NSMutableArray *meleeTargets = [NSMutableArray arrayWithArray:[theRaid livingMembersWithPositioning:Melee]];
+    Guardian *guardianTarget = nil;
+    
+    NSInteger additionalTargets = 0;
+    NSInteger roll = arc4random() % 1000;
+    if (roll < 10) {
+        additionalTargets = meleeTargets.count;
+    } else if (roll < 25) {
+        additionalTargets = 5;
+    } else if (roll < 75) {
+        additionalTargets = 4;
+    } else if (roll < 150) {
+        additionalTargets = 3;
+    } else if (roll < 250) {
+        additionalTargets = 2;
+    } else if (roll < 400) {
+        additionalTargets = 1;
+    }
+    
+    // 25% 1 target, 50% No Targets, 10% 2 targets, 10% 3 targets, 10% 4 targets, 4% 5 targets, 1% all targets 
+    for (RaidMember *target in meleeTargets) {
+        if (!guardianTarget && [target isKindOfClass:[Guardian class]]) {
+            guardianTarget = (Guardian*)target;
+            break;
+        }
+    }
+    
+    NSInteger guardianDamage = self.abilityValue * .25 * self.owner.damageDoneMultiplier;
+    NSInteger normalDamage = self.abilityValue * self.owner.damageDoneMultiplier;
+    
+    [meleeTargets removeObject:guardianTarget];
+    
+    for (int i = 0; i < additionalTargets; i++) {
+        if (meleeTargets.count == 0) {
+            break;
+        }
+        RaidMember *target = [meleeTargets objectAtIndex:arc4random() % meleeTargets.count];
+        if ([target isKindOfClass:[Guardian class]]) {
+            [self damageTarget:target forDamage:guardianDamage];
+        } else {
+            [self damageTarget:target forDamage:normalDamage];
+        }
+        [meleeTargets removeObject:target];
+
+    }
+    
+    [self damageTarget:guardianTarget forDamage:guardianDamage];
+    
 }
 @end

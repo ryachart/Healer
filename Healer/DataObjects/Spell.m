@@ -274,7 +274,7 @@
     return self;
 }
 +(id)defaultSpell{
-    Heal *heal = [[[Heal alloc] initWithTitle:@"Heal" healAmnt:350 energyCost:22 castTime:1.75 andCooldown:0.0] autorelease];
+    Heal *heal = [[[Heal alloc] initWithTitle:@"Heal" healAmnt:250 energyCost:16 castTime:1.6 andCooldown:0.0] autorelease];
     [heal setDescription:@"Heals your target for a small amount."];
     [[heal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -299,7 +299,7 @@
     return self;
 }
 +(id)defaultSpell{
-    GreaterHeal *heal = [[GreaterHeal alloc] initWithTitle:@"Greater Heal" healAmnt:1000 energyCost:90 castTime:2.25 andCooldown:0.0];
+    GreaterHeal *heal = [[GreaterHeal alloc] initWithTitle:@"Greater Heal" healAmnt:750 energyCost:60 castTime:2.0 andCooldown:0.0];
     [heal setDescription:@"Heals your target for a large amount."];
     [[heal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[heal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];

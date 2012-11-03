@@ -59,6 +59,8 @@
 		BF26BFC615CA0B5D00B7132D /* AbilityDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = BF26BFC515CA0B5D00B7132D /* AbilityDescriptor.m */; };
 		BF448C57154BA4D1009401A6 /* AddRemoveSpellLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */; };
 		BF448C5A154BB04A009401A6 /* SpellInfoNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C59154BB04A009401A6 /* SpellInfoNode.m */; };
+		BF4CD1C91642D61600EB2336 /* DebugViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BF4CD1C71642D61500EB2336 /* DebugViewController.m */; };
+		BF4CD1CA1642D61600EB2336 /* DebugViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BF4CD1C81642D61600EB2336 /* DebugViewController.xib */; };
 		BF4E508D155C9C4400FC4EE0 /* Ability.m in Sources */ = {isa = PBXBuildFile; fileRef = BF4E508C155C9C4400FC4EE0 /* Ability.m */; };
 		BF68CBA61537364B0096B6CF /* ClippingNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF68CBA51537364B0096B6CF /* ClippingNode.m */; };
 		BF69866C154C7B5F0016F25E /* BackgroundSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF69866B154C7B5F0016F25E /* BackgroundSprite.m */; };
@@ -79,6 +81,7 @@
 		BF98B18215D3572700017EA4 /* BossAbilityDescriptionsView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18115D3572700017EA4 /* BossAbilityDescriptionsView.m */; };
 		BF98B18615D3577A00017EA4 /* BossAbilityDescriptorIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18515D3577A00017EA4 /* BossAbilityDescriptorIcon.m */; };
 		BF98B18A15D37EAE00017EA4 /* AbilityDescriptionModalLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18915D37EAE00017EA4 /* AbilityDescriptionModalLayer.m */; };
+		BF9DD8AA1644A6DC007DAE39 /* BossActivationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BF9DD8A91644A6DC007DAE39 /* BossActivationBar.m */; };
 		BFA5463B15AA097800F9B167 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5463A15AA097800F9B167 /* Parse.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		BFA5464315AA0C3600F9B167 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464215AA0C3600F9B167 /* Security.framework */; };
 		BFA5464515AA0C9D00F9B167 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */; };
@@ -630,6 +633,9 @@
 		BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddRemoveSpellLayer.m; sourceTree = "<group>"; };
 		BF448C58154BB04A009401A6 /* SpellInfoNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellInfoNode.h; sourceTree = "<group>"; };
 		BF448C59154BB04A009401A6 /* SpellInfoNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpellInfoNode.m; sourceTree = "<group>"; };
+		BF4CD1C61642D61500EB2336 /* DebugViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugViewController.h; sourceTree = "<group>"; };
+		BF4CD1C71642D61500EB2336 /* DebugViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugViewController.m; sourceTree = "<group>"; };
+		BF4CD1C81642D61600EB2336 /* DebugViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DebugViewController.xib; sourceTree = "<group>"; };
 		BF4E508B155C9C4400FC4EE0 /* Ability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ability.h; sourceTree = "<group>"; };
 		BF4E508C155C9C4400FC4EE0 /* Ability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Ability.m; sourceTree = "<group>"; };
 		BF68CBA41537364B0096B6CF /* ClippingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClippingNode.h; sourceTree = "<group>"; };
@@ -666,6 +672,8 @@
 		BF98B18515D3577A00017EA4 /* BossAbilityDescriptorIcon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BossAbilityDescriptorIcon.m; sourceTree = "<group>"; };
 		BF98B18815D37EAE00017EA4 /* AbilityDescriptionModalLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbilityDescriptionModalLayer.h; sourceTree = "<group>"; };
 		BF98B18915D37EAE00017EA4 /* AbilityDescriptionModalLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbilityDescriptionModalLayer.m; sourceTree = "<group>"; };
+		BF9DD8A81644A6DC007DAE39 /* BossActivationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BossActivationBar.h; sourceTree = "<group>"; };
+		BF9DD8A91644A6DC007DAE39 /* BossActivationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BossActivationBar.m; sourceTree = "<group>"; };
 		BFA5463A15AA097800F9B167 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		BFA5464215AA0C3600F9B167 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -907,6 +915,9 @@
 			children = (
 				38024F0B13C2564E003D36F2 /* AppDelegate.h */,
 				38024F0C13C2564E003D36F2 /* AppDelegate.m */,
+				BF4CD1C61642D61500EB2336 /* DebugViewController.h */,
+				BF4CD1C71642D61500EB2336 /* DebugViewController.m */,
+				BF4CD1C81642D61600EB2336 /* DebugViewController.xib */,
 			);
 			name = "App Init";
 			sourceTree = "<group>";
@@ -1041,6 +1052,8 @@
 				BF98B18515D3577A00017EA4 /* BossAbilityDescriptorIcon.m */,
 				BF98B18815D37EAE00017EA4 /* AbilityDescriptionModalLayer.h */,
 				BF98B18915D37EAE00017EA4 /* AbilityDescriptionModalLayer.m */,
+				BF9DD8A81644A6DC007DAE39 /* BossActivationBar.h */,
+				BF9DD8A91644A6DC007DAE39 /* BossActivationBar.m */,
 			);
 			name = GamePlay;
 			sourceTree = "<group>";
@@ -1772,6 +1785,7 @@
 				BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */,
 				BF87D85B1601ABFB00BEAD5B /* tips.plist in Resources */,
 				BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */,
+				BF4CD1CA1642D61600EB2336 /* DebugViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1847,6 +1861,8 @@
 				BFD106FB163A2956002318CE /* LevelSelectMapNode.m in Sources */,
 				BFD106FE163A29D5002318CE /* LevelSelectSprite.m in Sources */,
 				BF0022BE163EE94C00384882 /* EncounterCard.m in Sources */,
+				BF4CD1C91642D61600EB2336 /* DebugViewController.m in Sources */,
+				BF9DD8AA1644A6DC007DAE39 /* BossActivationBar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

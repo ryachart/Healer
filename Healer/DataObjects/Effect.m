@@ -411,7 +411,7 @@
         CouncilPoison *poisonDoT = [[CouncilPoison alloc] initWithDuration:6 andEffectType:EffectTypeNegative];
         [poisonDoT setTitle:@"council-ball-dot"];
         [poisonDoT setSpriteName:@"poison.png"];
-        [poisonDoT setValuePerTick:-4];
+        [poisonDoT setValuePerTick:-40];
         [poisonDoT setNumOfTicks:3];
         [poisonDoT setOwner:self.owner];
         [poisonDoT setAilmentType:AilmentPoison];
@@ -791,7 +791,7 @@
 	
 	if (*newHealth <= 0){
         if ([self.redemptionDelegate canRedemptionTrigger]){
-            *newHealth = 30;
+            *newHealth = 300;
             [self.redemptionDelegate redemptionDidTriggerOnTarget:self.target];
         }
     }
@@ -802,8 +802,8 @@
 - (void)healRaidWithPulse:(Raid*)theRaid{
     NSArray* raid = [theRaid getAliveMembers];
     for (RaidMember* member in raid){
-        [member setHealth:member.health + 2];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:@2 andEventType:CombatEventTypeHeal]];
+        [member setHealth:member.health + 20];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:@20 andEventType:CombatEventTypeHeal]];
     }
 }
 
@@ -864,7 +864,7 @@
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
     if (self.needsDetonation && !self.isExpired){
         NSArray *aliveMembers = [theRaid getAliveMembers];
-        NSInteger damageDealt = 35 * (self.owner.damageDoneMultiplier);
+        NSInteger damageDealt = 350 * (self.owner.damageDoneMultiplier);
         for (RaidMember *member in aliveMembers){
             [member setHealth:member.health - damageDealt];
             [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:damageDealt] andEventType:CombatEventTypeDamage]];
@@ -898,7 +898,7 @@
 
 - (void)expire {
     DelayedHealthEffect *finisher = [[[DelayedHealthEffect alloc] initWithDuration:.25 andEffectType:EffectTypeNegativeInvisible] autorelease];
-    [finisher setValue:-6];
+    [finisher setValue:-60];
     [finisher setTitle:@"soulpris-finish"];
     [finisher setOwner:self.owner];
     [self.target addEffect:finisher];

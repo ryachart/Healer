@@ -177,7 +177,7 @@
 }
 
 -(id)init{
-    if (self = [super initWithHealth:1750 damageDealt:50 andDmgFrequency:1.0 andPositioning:Melee]){
+    if (self = [super initWithHealth:1750 damageDealt:29 andDmgFrequency:1.25 andPositioning:Melee]){
         self.title = @"Guardian";
         self.dodgeChance = .15;
         self.info = @"The Guardian can draw attention from enemies and become focused.  Healing a Guardian beyond full health creates a shield that absorbs damage.";
@@ -198,9 +198,9 @@
     return [[[Berserker alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:1200 damageDealt:62 andDmgFrequency:.75 andPositioning:Melee]){
+    if (self = [super initWithHealth:1200 damageDealt:75 andDmgFrequency:.75 andPositioning:Melee]){
         self.title = @"Berserker";
-        self.info = @"The Berserker has moderate health and damage. When dealing a critical strike, this ally heals itself.";
+        self.info = @"The Berserker deals very high damage. When dealing a critical strike this ally heals itself.";
         self.dodgeChance = .07;
         self.criticalChance = .1;
     }
@@ -218,7 +218,7 @@
 -(id)init{
     if (self = [super initWithHealth:1000 damageDealt:60 andDmgFrequency:.6 andPositioning:Ranged]){
         self.title = @"Archer";
-        self.info = @"The Archer has low health but deals high damage.";
+        self.info = @"The Archer deals very high damage.";
         self.dodgeChance = .05;
     }
     return self;
@@ -230,12 +230,25 @@
     return [[[Champion alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:1250 damageDealt:88 andDmgFrequency:1.1 andPositioning:Melee]){
+    if (self = [super initWithHealth:1250 damageDealt:29 andDmgFrequency:1.1 andPositioning:Melee]){
         self.title = @"Champion";
-        self.info = @"The Champion has more health and deals more damage when healed to full.";
+        self.info = @"The Champion deals more damage when healed to full and reduces enemy damage by 5%.";
         self.dodgeChance = .07;
     }
     return self;
+}
+
+- (void)combatActions:(Boss *)theBoss raid:(Raid *)theRaid players:(NSArray *)players gameTime:(float)timeDelta{
+    [super combatActions:theBoss raid:theRaid players:players gameTime:timeDelta];
+    
+    if (self.isDead && !self.deathEffectApplied) {
+        Effect *damageImprovement = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [damageImprovement setOwner:self];
+        [damageImprovement setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.battleID]];
+        [damageImprovement setDamageDoneMultiplierAdjustment:.05];
+        [theBoss addEffect:damageImprovement];
+        self.deathEffectApplied = YES;
+    }
 }
 
 -(int)damageDealt{
@@ -281,9 +294,9 @@
     return [[[Warlock alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:1100 damageDealt:60 andDmgFrequency:.7 andPositioning:Ranged]){
+    if (self = [super initWithHealth:1100 damageDealt:50 andDmgFrequency:2.0 andPositioning:Ranged]){
         self.title = @"Warlock";
-        self.info = @"The Warlock has moderate health and heals itself for a small amount when at low health.";
+        self.info = @"The Warlock heals itself for a small amount when at low health and reduces enemy damage by 5%.";
         self.dodgeChance = .07;
     }
     return self;
@@ -291,6 +304,14 @@
 - (void)combatActions:(Boss *)theBoss raid:(Raid *)theRaid players:(NSArray *)players gameTime:(float)timeDelta{
     [super combatActions:theBoss raid:theRaid players:players gameTime:timeDelta];
     
+    if (self.isDead && !self.deathEffectApplied) {
+        Effect *damageImprovement = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [damageImprovement setOwner:self];
+        [damageImprovement setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.battleID]];
+        [damageImprovement setDamageDoneMultiplierAdjustment:.05];
+        [theBoss addEffect:damageImprovement];
+        self.deathEffectApplied = YES;
+    }
     if (self.healthPercentage < .5){
         self.healCooldown += timeDelta;
         if (self.healCooldown >= 1.5){

@@ -403,7 +403,7 @@
 }
 
 +(id)defaultSpell{
-    Regrow *regrow = [[Regrow alloc] initWithTitle:@"Regrow" healAmnt:0 energyCost:90 castTime:0.0 andCooldown:1.0];
+    Regrow *regrow = [[Regrow alloc] initWithTitle:@"Regrow" healAmnt:0 energyCost:50 castTime:0.0 andCooldown:1.0];
     [regrow setDescription:@"Heals for a large amount over 12 seconds."];
     [[regrow spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
     
@@ -411,7 +411,7 @@
     [hotEffect setSpriteName:@"regrow.png"];
     [hotEffect setTitle:@"regrow-effect"];
     [hotEffect setNumOfTicks:4];
-    [hotEffect setValuePerTick:300];
+    [hotEffect setValuePerTick:165];
     [regrow setAppliedEffect:hotEffect];
     [hotEffect release];
     return [regrow autorelease];

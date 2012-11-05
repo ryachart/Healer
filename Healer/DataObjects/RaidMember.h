@@ -73,10 +73,12 @@ typedef enum {
 }
 +(Wizard*)defaultWizard;
 @end
-@interface Champion : RaidMember 
+@interface Champion : RaidMember
+@property (nonatomic, readwrite) BOOL deathEffectApplied;
 +(Champion *)defaultChampion;
 @end
 @interface Warlock : RaidMember
 @property (nonatomic, readwrite) NSTimeInterval healCooldown;
+@property (nonatomic, readwrite) BOOL deathEffectApplied;
 +(Warlock*)defaultWarlock;
 @end

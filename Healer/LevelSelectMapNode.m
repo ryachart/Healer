@@ -31,7 +31,7 @@
     if (self = [super initWithViewSize:CGSizeMake(1024, 768)]) {
         self.bounces = NO;
         
-        CGSize mapSize = CGSizeMake(2400, 768);
+        CGSize mapSize = CGSizeMake(2800, 768);
         CCLayerColor *layerWithColor = [CCLayerColor layerWithColor:ccc4(200, 137, 83, 255)];
         [layerWithColor setContentSize:mapSize];
         [self addChild:layerWithColor z:-100];
@@ -116,8 +116,10 @@
     if (lastLevelSprite) {
         [lastLevelSprite setSelected:YES];
         [self.levelSelectDelegate levelSelectMapNodeDidSelectLevelNum:lastLevelSprite.levelNum];
-
     }
+    
+    CGPoint contentOffset = CGPointMake(MIN(0,-lastLevelSprite.position.x + self.viewSize.width * .5), 0);
+    [self setContentOffset:contentOffset animated:YES];
 }
 
 @end

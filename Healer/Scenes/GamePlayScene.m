@@ -92,14 +92,14 @@
 }
 
 -(id)initWithEncounter:(Encounter*)enc andPlayers:(NSArray*)plyers{
-    if (self = [self initWithRaid:enc.raid boss:enc.boss andPlayers:plyers]){
+    if (self = [self initWithRaid:enc.raid boss:enc.boss players:plyers levelNum:enc.levelNumber]){
 
     }
     return self;
 }
 
--(id)initWithRaid:(Raid *)raidToUse boss:(Boss *)bossToUse andPlayers:(NSArray *)plyrs{
-    if (self = [self initWithRaid:raidToUse boss:bossToUse andPlayer:(Player*)[plyrs objectAtIndex:0]]){
+-(id)initWithRaid:(Raid *)raidToUse boss:(Boss *)bossToUse players:(NSArray *)plyrs levelNum:(NSInteger)levelNum{
+    if (self = [self initWithRaid:raidToUse boss:bossToUse player:[plyrs objectAtIndex:0] levelNum:levelNum]){
         self.players = plyrs;
         
         for (int i = 1; i < self.players.count; i++){
@@ -112,15 +112,17 @@
     return self;
 }
 
--(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse
+-(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse player:(Player*)playerToUse levelNum:(NSInteger)levelNum
 {
     if (self = [super init]){
         [[AudioController sharedInstance] addNewPlayerWithTitle:@"battle" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/battle" ofType:@"mp3"]]];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/battle-sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/effect-sprites.plist"];
+        
+        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:[Encounter backgroundPathForEncounter:levelNum]] autorelease]];
 
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"battle-background"] autorelease]];
         paused = YES;
+        self.levelNumber = levelNum;
         self.raid = raidToUse;
         self.boss = bossToUse;
         [self.boss setLogger:self];

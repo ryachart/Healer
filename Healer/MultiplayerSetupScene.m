@@ -114,7 +114,7 @@
         [self.player setPlayerID:self.serverPlayerID];
         [self.boss setIsMultiplayer:YES];
         [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"BEGIN"] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
-        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss andPlayers:allPlayers];
+        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss players:allPlayers levelNum:self.levelNumber];
         [self.match setDelegate:gps];
         [gps setServerPlayerID:self.serverPlayerID];
         [gps setMatch:self.match];
@@ -154,7 +154,7 @@
 
 -(void)beginGame{
     [self.player setPlayerID:[GKLocalPlayer localPlayer].playerID];
-    GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss andPlayer:self.player];
+    GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss player:self.player levelNum:self.levelNumber];
     [self.match setDelegate:gps];
     [gps setMatch:self.match];
     [gps setMatchVoiceChat:self.matchVoiceChat];

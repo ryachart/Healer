@@ -42,8 +42,7 @@
 @property (nonatomic, retain) CCLabelTTF *alertStatus;
 @property (readwrite) NSInteger levelNumber;
 @property (nonatomic, retain)  NSMutableArray *eventLog;
--(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse andPlayer:(Player*)playerToUse;
-
+-(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse player:(Player*)playerToUse levelNum:(NSInteger)levelNum;
 
 //Multiplayer
 @property (nonatomic, readonly) BOOL isServer;
@@ -55,5 +54,5 @@
 
 -(void)setIsClient:(BOOL)isClient forServerPlayerId:(NSString*)serverPlayerID;
 
--(id)initWithRaid:(Raid *)raidToUse boss:(Boss *)bossToUse andPlayers:(NSArray*)players;
+-(id)initWithRaid:(Raid *)raidToUse boss:(Boss *)bossToUse players:(NSArray*)players levelNum:(NSInteger)levelNum;
 @end

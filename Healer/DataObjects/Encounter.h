@@ -29,4 +29,6 @@
 + (NSInteger)goldForLevelNumber:(NSInteger)levelNumber isFirstWin:(BOOL)isFirstWin isMultiplayer:(BOOL)isMultiplayer;
 + (void)configurePlayer:(Player*)player forRecSpells:(NSArray*)spells;
 + (NSInteger)goldRewardForSurvivalEncounterWithDuration:(NSTimeInterval)duration;
+
++ (NSString *)backgroundPathForEncounter:(NSInteger)encounter;
 @end

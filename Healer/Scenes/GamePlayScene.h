@@ -25,6 +25,8 @@
 @class PlayerEnergyView;
 @class PlayerMoveButton;
 @class PlayerCastBar;
+@class Encounter;
+
 /* This is the screen we see while involved in a raid */
 @interface GamePlayScene : CCScene <EventLogger, Announcer, GamePlayFTUELayerDelegate, PauseLayerDelegate, GKMatchDelegate, BossHealthViewDelegate, AbilityDescriptorModalDelegate> {
 	NSMutableArray *selectedRaidMembers;
@@ -40,10 +42,9 @@
 @property (nonatomic, retain) PlayerMoveButton *playerMoveButton;
 @property (nonatomic, retain) PlayerCastBar *playerCastBar;
 @property (nonatomic, retain) CCLabelTTF *alertStatus;
-@property (readwrite) NSInteger levelNumber;
 @property (nonatomic, retain)  NSMutableArray *eventLog;
--(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse player:(Player*)playerToUse levelNum:(NSInteger)levelNum;
-
+- (id)initWithEncounter:(Encounter*)enc player:(Player*)player;
+- (id)initWithEncounter:(Encounter*)enc andPlayers:(NSArray*)plyers;
 //Multiplayer
 @property (nonatomic, readonly) BOOL isServer;
 @property (nonatomic, readonly) BOOL isClient;
@@ -54,5 +55,4 @@
 
 -(void)setIsClient:(BOOL)isClient forServerPlayerId:(NSString*)serverPlayerID;
 
--(id)initWithRaid:(Raid *)raidToUse boss:(Boss *)bossToUse players:(NSArray*)players levelNum:(NSInteger)levelNum;
 @end

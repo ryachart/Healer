@@ -27,7 +27,7 @@
     BOOL healthThresholdCrossed[101];
 }
 @property (nonatomic, readwrite) BOOL isMultiplayer;
-@property (nonatomic, readwrite) DifficultyMode difficulty;
+@property (nonatomic, readwrite) NSInteger difficulty;
 @property (nonatomic, retain) NSString * info;
 @property (nonatomic, assign) id <Announcer> announcer;
 @property (nonatomic, readwrite) float criticalChance;
@@ -39,8 +39,8 @@
 @property (nonatomic, retain) NSArray *abilityDescriptors;
 @property (nonatomic, assign) Ability *autoAttack;
 
-+ (id)defaultBossForMode:(DifficultyMode)mode;
-- (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses difficulty:(DifficultyMode)mode;
++ (id)defaultBoss;
+- (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses;
 
 - (void)combatActions:(NSArray*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta;
 

@@ -14,15 +14,13 @@ static dispatch_queue_t parse_queue = nil;
 
 NSString* const PlayerHighestLevelAttempted = @"com.healer.playerHighestLevelAttempted";
 NSString* const PlayerHighestLevelCompleted = @"com.healer.playerHighestLevelCompleted";
-NSString* const PlayerHighestLevelAttemptedHM = @"com.healer.playerHighestLevelAttemptedHM";
-NSString* const PlayerHighestLevelCompletedHM = @"com.healer.playerHighestLevelCompletedHM";
 NSString* const PlayerLevelFailed = @"com.healer.playerLevelFailed";
-NSString* const PlayerLevelFailedHM = @"com.healer.playerLevelFailedHM";
 NSString* const PlayerLevelRatingKeyPrefix = @"com.healer.playerLevelRatingForLevel";
 NSString* const PlayerRemoteObjectIdKey = @"com.healer.playerRemoteObjectID3";
 NSString* const PlayerDifficultySettingKey = @"com.healer.hardMode";
 NSString* const PlayerLastUsedSpellsKey = @"com.healer.lastUsedSpells";
 NSString* const PlayerNormalModeCompleteShown = @"com.healer.nmcs";
+NSString* const PlayerLevelChallengeKey = @"com.healer.challengeKey";
 
 @implementation PlayerDataManager 
 
@@ -33,87 +31,70 @@ NSString* const PlayerNormalModeCompleteShown = @"com.healer.nmcs";
     return parse_queue;
 }
 
-+ (BOOL)hardModeUnlocked {
-    if ([PlayerDataManager highestLevelCompletedForMode:DifficultyModeNormal] >= 21){
-        return YES;
++ (NSMutableArray *)challengeKeys
+{
+    NSMutableArray *challengeKeys = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] arrayForKey:PlayerLevelChallengeKey]];
+    if (!challengeKeys) {
+        challengeKeys = [NSMutableArray array];
+        for (int i = 0; i < 25; i++){
+            [challengeKeys addObject:@2];
+        }
+        [[NSUserDefaults standardUserDefaults] setObject:challengeKeys forKey:PlayerLevelChallengeKey];
     }
-    return NO;
+    return challengeKeys;
 }
 
-+ (DifficultyMode)currentMode {
-    return [[NSUserDefaults standardUserDefaults] integerForKey:PlayerDifficultySettingKey];
++ (NSInteger)challengeForLevelNumber:(NSInteger)levelNum
+{
+    NSMutableArray *challengeKeys = [PlayerDataManager challengeKeys];
+    return [[challengeKeys objectAtIndex:levelNum] intValue];
 }
 
-+ (void)setDifficultyMode:(DifficultyMode)diffMode {
-    [[NSUserDefaults standardUserDefaults] setInteger:diffMode forKey:PlayerDifficultySettingKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
++ (void)challengeSelected:(NSInteger)challenge forLevelNumber:(NSInteger)levelNum
+{
+    NSMutableArray *challengeKeys = [PlayerDataManager challengeKeys];
+    [challengeKeys replaceObjectAtIndex:levelNum withObject:[NSNumber numberWithInt:challenge]];
+    [[NSUserDefaults standardUserDefaults] setObject:challengeKeys forKey:PlayerLevelChallengeKey];
 }
 
 + (BOOL)isMultiplayerUnlocked {
-    return [PlayerDataManager highestLevelCompletedForMode:DifficultyModeNormal] >= 6;
+    return NO;
+    return [PlayerDataManager highestLevelCompleted] >= 6;
 }
 
-+ (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level withMode:(DifficultyMode)diffMode {
-    if (diffMode == DifficultyModeHard){
-        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:rating] forKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"-%i-%d",diffMode, level]];
-    }else {
-        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:rating] forKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%d", level]];
-    }
++ (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level {
+    [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:rating] forKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%d", level]];
 }
 
-+ (NSInteger)levelRatingForLevel:(NSInteger)level withMode:(DifficultyMode)diffMode{
-    if (diffMode == DifficultyModeHard){
-        return [[NSUserDefaults standardUserDefaults] integerForKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"-%i-%d", diffMode, level]];
-    }
++ (NSInteger)levelRatingForLevel:(NSInteger)level {
     return [[NSUserDefaults standardUserDefaults] integerForKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%d", level]];
 }
 
-+ (NSInteger)highestLevelCompletedForMode:(DifficultyMode)diffMode {
-    if (diffMode == DifficultyModeHard) {
-        NSInteger hlc = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompletedHM] intValue];
-        return MAX(hlc, 1); //The first level is always skipped on hardmode
-    }
++ (NSInteger)highestLevelCompleted {
     return [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelCompleted] intValue];
 }
 
-+ (NSInteger)highestLevelAttemptedForMode:(DifficultyMode)diffMode {
-    if (diffMode == DifficultyModeHard){
-        return [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelAttemptedHM] intValue];
-    }
++ (NSInteger)highestLevelAttempted{
     return [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerHighestLevelAttempted] intValue];
 }
 
 + (void)failLevelInCurrentMode:(NSInteger)level {
-    if (CURRENT_MODE == DifficultyModeHard){
-        NSString *failedKey = [PlayerLevelFailedHM stringByAppendingFormat:@"-%i", level];
-        NSInteger failedTimes = [[NSUserDefaults standardUserDefaults] integerForKey:failedKey];
-        
-        [[NSUserDefaults standardUserDefaults] setInteger:failedTimes forKey:failedKey];
-    }else {
-        NSString *failedKey = [PlayerLevelFailed stringByAppendingFormat:@"-%i", level];
-        NSInteger failedTimes = [[NSUserDefaults standardUserDefaults] integerForKey:failedKey];
-        
-        [[NSUserDefaults standardUserDefaults] setInteger:failedTimes forKey:failedKey];
-    }
+    NSString *failedKey = [PlayerLevelFailed stringByAppendingFormat:@"-%i", level];
+    NSInteger failedTimes = [[NSUserDefaults standardUserDefaults] integerForKey:failedKey];
+    
+    [[NSUserDefaults standardUserDefaults] setInteger:failedTimes forKey:failedKey];
 }
 
-+ (void)completeLevelInCurrentMode:(NSInteger)level {
-    if (CURRENT_MODE == DifficultyModeHard){
-        BOOL isFirstWin = level > [PlayerDataManager highestLevelCompletedForMode:DifficultyModeHard];
-        if (isFirstWin){
-            [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:level] forKey:PlayerHighestLevelCompletedHM];
-        }
-    }else {
-        BOOL isFirstWin = level > [PlayerDataManager highestLevelCompletedForMode:DifficultyModeNormal];
-        if (isFirstWin){
-            [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:level] forKey:PlayerHighestLevelCompleted];
-        }
++ (void)completeLevel:(NSInteger)level {
+    BOOL isFirstWin = level > [PlayerDataManager highestLevelCompleted];
+    if (isFirstWin){
+        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithInt:level] forKey:PlayerHighestLevelCompleted];
     }
 }
 
 + (void)setPlayerObjectInformation:(PFObject*)obj {
     NSInteger numVisits = [[obj objectForKey:@"saves"] intValue];
-    [obj setObject:[NSNumber numberWithInt:[PlayerDataManager highestLevelCompletedForMode:DifficultyModeNormal]] forKey:@"HLCompleted"];
+    [obj setObject:[NSNumber numberWithInt:[PlayerDataManager highestLevelCompleted]] forKey:@"HLCompleted"];
     [obj setObject:[NSNumber numberWithInt:[Shop localPlayerGold]] forKey:@"Gold"];
     [obj setObject:[NSNumber numberWithInt:numVisits+1] forKey:@"saves"];
     [obj setObject:[UIDevice currentDevice].name forKey:@"deviceName"];
@@ -121,29 +102,19 @@ NSString* const PlayerNormalModeCompleteShown = @"com.healer.nmcs";
         [obj setObject:[PlayerDataManager lastUsedSpellTitles] forKey:@"lastUsedSpells"];
     }
     
-    NSInteger highestLevelCompleted = [PlayerDataManager highestLevelCompletedForMode:DifficultyModeNormal];
+    NSInteger highestLevelCompleted = [PlayerDataManager highestLevelCompleted];
     if (highestLevelCompleted > 20){
         highestLevelCompleted = 20; //Because of debugging stuff..
     }
     
     NSMutableArray *levelRatings = [NSMutableArray arrayWithCapacity:highestLevelCompleted];
     for (int i = 1; i <= highestLevelCompleted; i++){
-        NSInteger rating =  [PlayerDataManager levelRatingForLevel:i withMode:DifficultyModeNormal];
+        NSInteger rating =  [PlayerDataManager levelRatingForLevel:i];
         NSNumber *numberObj = [NSNumber numberWithInt:rating];
         [levelRatings addObject:numberObj];
     }
     
     [obj setObject:levelRatings forKey:@"levelRatings"];
-    
-    if ([PlayerDataManager hardModeUnlocked]){
-        NSMutableArray *hLevelRatings = [NSMutableArray arrayWithCapacity:highestLevelCompleted];
-        for (int i = 1; i <= highestLevelCompleted; i++){
-            NSInteger rating =  [PlayerDataManager levelRatingForLevel:i withMode:DifficultyModeHard];
-            NSNumber *numberObj = [NSNumber numberWithInt:rating];
-            [hLevelRatings addObject:numberObj];
-        }
-        [obj setObject:hLevelRatings forKey:@"hLevelRatings"];
-    }
     
     NSMutableArray *levelFails = [NSMutableArray arrayWithCapacity:highestLevelCompleted];
     for (int i = 1; i <= highestLevelCompleted; i++){
@@ -152,19 +123,7 @@ NSString* const PlayerNormalModeCompleteShown = @"com.healer.nmcs";
         NSNumber *numberObj = [NSNumber numberWithInt:failedTimes];
         [levelFails addObject:numberObj];
     }
-    
     [obj setObject:levelFails forKey:@"levelFails"];
-    
-    NSMutableArray *hlevelFails = [NSMutableArray arrayWithCapacity:highestLevelCompleted];
-    for (int i = 1; i <= highestLevelCompleted; i++){
-        NSString *failedKey = [PlayerLevelFailedHM stringByAppendingFormat:@"-%i", i];
-        NSInteger failedTimes = [[NSUserDefaults standardUserDefaults] integerForKey:failedKey];
-        NSNumber *numberObj = [NSNumber numberWithInt:failedTimes];
-        [hlevelFails addObject:numberObj];
-    }
-    
-    [obj setObject:hlevelFails forKey:@"hLevelFails"];
-    
     
     NSArray *allOwnedSpells = [Shop allOwnedSpells];
     NSMutableArray *ownedSpellTitles = [NSMutableArray arrayWithCapacity:10];
@@ -245,7 +204,7 @@ NSString* const PlayerNormalModeCompleteShown = @"com.healer.nmcs";
 #pragma mark - Debug
 + (void)clearLevelRatings {
     for (int i = 0; i < 30; i++){
-        [PlayerDataManager setLevelRating:0 forLevel:i withMode:DifficultyModeNormal];
+        [PlayerDataManager setLevelRating:0 forLevel:i];
     }
 }
 

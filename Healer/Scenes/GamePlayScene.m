@@ -28,9 +28,10 @@
 @interface GamePlayScene ()
 //Data Models
 @property (nonatomic, readwrite) BOOL paused;
-@property (nonatomic, retain) Raid *raid;
-@property (nonatomic, retain) Boss *boss;
-@property (nonatomic, retain) Player *player;
+@property (nonatomic, retain) Encounter *encounter;
+@property (nonatomic, readonly) Raid *raid;
+@property (nonatomic, readonly) Boss *boss;
+@property (nonatomic, readonly) Player *player;
 @property (nonatomic, assign) CCLabelTTF *announcementLabel;
 @property (nonatomic, assign) CCLabelTTF *errAnnouncementLabel;
 @property (nonatomic, retain) GamePlayPauseLayer *pauseMenuLayer;
@@ -44,14 +45,10 @@
 @end
 
 @implementation GamePlayScene
-@synthesize raid;
-@synthesize boss;
-@synthesize player;
 @synthesize raidView;
 @synthesize spellView1, spellView2, spellView3, spellView4;
 @synthesize bossHealthView, playerEnergyView, playerMoveButton, playerCastBar;
 @synthesize alertStatus;
-@synthesize levelNumber;
 @synthesize eventLog;
 @synthesize announcementLabel;
 @synthesize errAnnouncementLabel;
@@ -61,7 +58,7 @@
 
 - (void)dealloc {
     AudioController *ac = [AudioController sharedInstance];
-	for (Spell* aSpell in [player activeSpells]){
+	for (Spell* aSpell in [self.player activeSpells]){
 		[[aSpell spellAudioData] releaseSpellAudio];
 	}
 	[ac removeAudioPlayerWithTitle:CHANNELING_SPELL_TITLE];
@@ -83,51 +80,57 @@
     [matchVoiceChat release];
     [players release];
     [selectedRaidMembers release];
-    [raid release];
-    [boss release];
-    [player release];
+    [_encounter release];
     [pauseMenuLayer release];
     
     [super dealloc];
 }
 
--(id)initWithEncounter:(Encounter*)enc andPlayers:(NSArray*)plyers{
-    if (self = [self initWithRaid:enc.raid boss:enc.boss players:plyers levelNum:enc.levelNumber]){
-
-    }
-    return self;
+- (Player*)player{
+    return [self.players objectAtIndex:0];
 }
 
--(id)initWithRaid:(Raid *)raidToUse boss:(Boss *)bossToUse players:(NSArray *)plyrs levelNum:(NSInteger)levelNum{
-    if (self = [self initWithRaid:raidToUse boss:bossToUse player:[plyrs objectAtIndex:0] levelNum:levelNum]){
-        self.players = plyrs;
-        
-        for (int i = 1; i < self.players.count; i++){
-            Player *iPlayer = [self.players objectAtIndex:i];
-            [iPlayer setLogger:self];
-            [iPlayer setAnnouncer:self];
-            [iPlayer initializeForCombat];
-        }
-    }
-    return self;
+- (Raid*)raid
+{
+    return self.encounter.raid;
 }
 
--(id)initWithRaid:(Raid*)raidToUse boss:(Boss*)bossToUse player:(Player*)playerToUse levelNum:(NSInteger)levelNum
+- (Boss*)boss
+{
+    return self.encounter.boss;
+}
+
+- (id)initWithEncounter:(Encounter*)enc player:(Player*)plyre
+{
+    return [self initWithEncounter:enc andPlayers:[NSArray arrayWithObject:plyre]];
+}
+
+- (id)initWithEncounter:(Encounter*)enc andPlayers:(NSArray*)plyers
 {
     if (self = [super init]){
+        self.encounter = enc;
+        self.players = plyers;
+        
+        NSAssert(self.players.count > 0, @"A Battle with no players was initiated.");
+        
         [[AudioController sharedInstance] addNewPlayerWithTitle:@"battle" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/battle" ofType:@"mp3"]]];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/battle-sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/effect-sprites.plist"];
         
-        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:[Encounter backgroundPathForEncounter:levelNum]] autorelease]];
+        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:[Encounter backgroundPathForEncounter:self.encounter.levelNumber]] autorelease]];
 
+        if (self.players.count > 1) {
+            for (int i = 1; i < self.players.count; i++){
+                Player *iPlayer = [self.players objectAtIndex:i];
+                [iPlayer setLogger:self];
+                [iPlayer setAnnouncer:self];
+                [iPlayer initializeForCombat];
+            }
+        }
+        
         paused = YES;
-        self.levelNumber = levelNum;
-        self.raid = raidToUse;
-        self.boss = bossToUse;
         [self.boss setLogger:self];
         [self.boss setAnnouncer:self];
-        self.player = playerToUse;
         [self.player setLogger:self];
         [self.player setAnnouncer:self];
         [self.player initializeForCombat];
@@ -168,35 +171,35 @@
         [self addChild:self.errAnnouncementLabel z:99];
         //CACHE SOUNDS
         AudioController *ac = [AudioController sharedInstance];
-        for (Spell* aSpell in [player activeSpells]){
+        for (Spell* aSpell in [self.player activeSpells]){
             [[aSpell spellAudioData] cacheSpellAudio];
         }
         [ac addNewPlayerWithTitle:CHANNELING_SPELL_TITLE andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/Channeling" ofType:@"wav"]]];
         [ac addNewPlayerWithTitle:OUT_OF_MANA_TITLE andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/OutOfMana" ofType:@"wav"]]];
         
-        for (int i = 0; i < [[player activeSpells] count]; i++){
+        for (int i = 0; i < [[self.player activeSpells] count]; i++){
             switch (i) {
                 case 0:
                     self.spellView1 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 335, 100, 100)] autorelease];
-                    [self.spellView1  setSpellData:[[player activeSpells] objectAtIndex:i]];
+                    [self.spellView1  setSpellData:[[self.player activeSpells] objectAtIndex:i]];
                     [self.spellView1 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                     [self addChild:self.spellView1];
                     break;
                 case 1:
                     self.spellView2 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 230, 100, 100)] autorelease];
-                    [self.spellView2 setSpellData:[[player activeSpells] objectAtIndex:i]];
+                    [self.spellView2 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
                     [self.spellView2 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                     [self addChild:self.spellView2];
                     break;
                 case 2:
                     self.spellView3 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 125, 100, 100)] autorelease];
-                    [self.spellView3 setSpellData:[[player activeSpells] objectAtIndex:i]];
+                    [self.spellView3 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
                     [self.spellView3 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                     [self addChild:self.spellView3];
                     break;
                 case 3:
                     self.spellView4 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 20, 100, 100)] autorelease];
-                    [self.spellView4 setSpellData:[[player activeSpells] objectAtIndex:i]];
+                    [self.spellView4 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
                     [self.spellView4 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                     [self addChild:self.spellView4];
                     break;
@@ -207,7 +210,7 @@
         
         
         [raidView spawnRects];
-        NSMutableArray *raidMembers = [raid raidMembers];
+        NSMutableArray *raidMembers = [self.raid raidMembers];
         selectedRaidMembers = [[NSMutableArray alloc] initWithCapacity:5];
         for (RaidMember *member in raidMembers)
         {
@@ -217,7 +220,7 @@
             [rmhv setInteractionDelegate:(RaidMemberHealthViewDelegate*)self];
             [raidView addRaidMemberHealthView:rmhv];
         }
-        [bossHealthView setBossData:boss];
+        [bossHealthView setBossData:self.boss];
 //        [playerEnergyView setChannelDelegate:(ChannelingDelegate*)self];
         
         
@@ -286,12 +289,12 @@
 -(void)onEnterTransitionDidFinish{
     [super onEnterTransitionDidFinish];
 #if DEBUG
-    if (self.levelNumber == 1){
+    if (self.encounter.levelNumber == 1){
         [self gameEvent:0.0]; //Bump the UI
         [self battleBegin];
     }else
 #endif
-    if (self.levelNumber == 1){
+    if (self.encounter.levelNumber == 1){
         [self gameEvent:0.0]; //Bump the UI
         GamePlayFTUELayer *gpfl = [[[GamePlayFTUELayer alloc] init] autorelease];
         [gpfl setDelegate:self];
@@ -333,14 +336,14 @@
 -(void)battleEndWithSuccess:(BOOL)success{
     NSInteger numDead = self.raid.raidMembers.count - self.raid.getAliveMembers.count;
     
-    if (success && !(self.isServer || self.isClient) && [NormalModeCompleteScene needsNormalModeCompleteSceneForLevelNumber:self.levelNumber]){
+    if (success && !(self.isServer || self.isClient) && [NormalModeCompleteScene needsNormalModeCompleteSceneForLevelNumber:self.encounter.levelNumber]){
         //If we just beat the final boss for the first time, show the normal mode complete Scene
-        NormalModeCompleteScene *nmcs = [[[NormalModeCompleteScene alloc] initWithVictory:success eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:NO deadCount:numDead andDuration:self.boss.duration] autorelease];
+        NormalModeCompleteScene *nmcs = [[[NormalModeCompleteScene alloc] initWithVictory:success eventLog:self.eventLog encounter:self.encounter andIsMultiplayer:NO deadCount:numDead andDuration:self.boss.duration] autorelease];
         [self setPaused:YES];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:nmcs]];
         return;
     }
-    PostBattleScene *pbs = [[[PostBattleScene alloc] initWithVictory:success eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:self.isClient || self.isServer deadCount:numDead andDuration:self.boss.duration] autorelease];
+    PostBattleScene *pbs = [[[PostBattleScene alloc] initWithVictory:success eventLog:self.eventLog encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer deadCount:numDead andDuration:self.boss.duration] autorelease];
     [self setPaused:YES];
     if (self.isServer){
         [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"BATTLEEND|%i|", success] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
@@ -440,12 +443,12 @@
 		}
         
 		if ([[spell spellData] conformsToProtocol:@protocol(Chargable)]){
-			if ([player spellBeingCast] == nil){
+			if ([self.player spellBeingCast] == nil){
 				[(Chargable*)[spell spellData] beginCharging:[NSDate date]];
 			}
 		}
 		else{
-            [player beginCasting:[spell spellData] withTargets:targets];
+            [self.player beginCasting:[spell spellData] withTargets:targets];
             if (self.isClient){
                 NSMutableString *message = [NSMutableString string];
                 [message appendFormat:@"BGNSPELL|%@", [[spell spellData] spellID]];
@@ -471,7 +474,7 @@
 		if ([[spell spellData] conformsToProtocol:@protocol(Chargable)]){
 			if ([(Chargable*)[spell spellData] chargeStart] != nil){
 				[(Chargable*)[spell spellData] endCharging:[NSDate date]];
-				[player beginCasting:[spell spellData] withTargets:targets];
+				[self.player beginCasting:[spell spellData] withTargets:targets];
 			}
 		}
 	}
@@ -725,13 +728,13 @@
     if (self.isServer || (!self.isServer && !self.isClient)){
         //Only perform the simulation if we are not the server
         //Data Events
-        [boss combatActions:self.players theRaid:raid gameTime:deltaT];
+        [self.boss combatActions:self.players theRaid:self.raid gameTime:deltaT];
         if ([playerMoveButton isMoving]){
-            [player disableCastingWithReason:CastingDisabledReasonMoving];
-            [player setPosition:[player position]+1];
+            [self.player disableCastingWithReason:CastingDisabledReasonMoving];
+            [self.player setPosition:[self.player position]+1];
         }
         else {
-            [player enableCastingWithReason:CastingDisabledReasonMoving];
+            [self.player enableCastingWithReason:CastingDisabledReasonMoving];
         }
     }
     
@@ -748,12 +751,12 @@
         
     }
     //The player's simulation must continue...This might not work
-    [player combatActions:boss theRaid:raid gameTime:deltaT];
+    [self.player combatActions:self.boss theRaid:self.raid gameTime:deltaT];
     
     if (self.isServer){
         for (int i = 1; i < self.players.count; i++){
             Player *clientPlayer = [self.players objectAtIndex:i];
-            [clientPlayer combatActions:boss theRaid:raid gameTime:deltaT];
+            [clientPlayer combatActions:self.boss theRaid:self.raid gameTime:deltaT];
             if (isNetworkUpdate){
                 NSArray *playerToNotify = [NSArray arrayWithObject:clientPlayer.playerID];
                 [self.match sendData:[[clientPlayer asNetworkMessage] dataUsingEncoding:NSUTF8StringEncoding]  toPlayers:playerToNotify withDataMode:GKMatchSendDataReliable error:nil];
@@ -765,9 +768,9 @@
 	//Update UI
 	[raidView updateRaidHealthWithPlayer:self.player andTimeDelta:deltaT];
 	[bossHealthView updateHealth];
-	[playerCastBar updateTimeRemaining:[player remainingCastTime] ofMaxTime:[[player spellBeingCast] castTime] forSpell:[player spellBeingCast]];
-	[playerEnergyView updateWithEnergy:[player energy] andMaxEnergy:[player maximumEnergy]];
-	[alertStatus setString:[player statusText]];
+	[playerCastBar updateTimeRemaining:[self.player remainingCastTime] ofMaxTime:[[self.player spellBeingCast] castTime] forSpell:[self.player spellBeingCast]];
+	[playerEnergyView updateWithEnergy:[self.player energy] andMaxEnergy:[self.player maximumEnergy]];
+	[alertStatus setString:[self.player statusText]];
 	[self.spellView1 updateUI];
 	[self.spellView2 updateUI];
 	[self.spellView3 updateUI];
@@ -775,11 +778,11 @@
 	
     
 	//Determine if there will be another iteration of the gamestate
-    NSMutableArray *raidMembers = [raid raidMembers];
+    NSMutableArray *raidMembers = [self.raid raidMembers];
     NSInteger survivors = 0;
     for (RaidMember *member in raidMembers)
     {
-        [member combatActions:boss raid:raid players:self.players gameTime:deltaT];
+        [member combatActions:self.boss raid:self.raid players:self.players gameTime:deltaT];
         if (![member isDead]){
             survivors++;
         }
@@ -790,21 +793,21 @@
         {
             [self battleEndWithSuccess:NO];
         }
-        if ([player isDead]){
+        if ([self.player isDead]){
             [self battleEndWithSuccess:NO];
         }
-        if ([boss isDead]){
+        if ([self.boss isDead]){
             [self battleEndWithSuccess:YES];
         }
     }
 }
 
 -(void)beginChanneling{
-	[player startChanneling];
+	[self.player startChanneling];
 }
 
 -(void)endChanneling{
-	[player stopChanneling];
+	[self.player stopChanneling];
 }
 
 #pragma mark GKMatchDelegate
@@ -877,7 +880,7 @@
         if ([message hasPrefix:@"INTERP|"]){
             NSArray *components = [message componentsSeparatedByString:@"|"];
             if ([self.player spellBeingCast]){
-                [[player spellBeingCast] applyTemporaryCooldown:[[components objectAtIndex:1] floatValue]];
+                [[self.player spellBeingCast] applyTemporaryCooldown:[[components objectAtIndex:1] floatValue]];
             }
             [self.player interrupt];
         }

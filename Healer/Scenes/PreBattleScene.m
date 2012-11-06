@@ -16,6 +16,7 @@
 #import "SpellInfoNode.h"
 #import "BackgroundSprite.h"
 #import "BasicButton.h"
+#import "Encounter.h"
 
 
 #define SPELL_ITEM_TAG 43234
@@ -39,19 +40,17 @@
 - (void)dealloc {
     [spellInfoNodes release];
     [_player release];
-    [_boss release];
-    [_raid release];
+    [_encounter release];
     [super dealloc];
 }
--(id)initWithRaid:(Raid*)raid boss:(Boss*)boss andPlayer:(Player*)player{
+- (id)initWithEncounter:(Encounter*)enc andPlayer:(Player*)player {
     if (self = [super init]){
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
-        self.raid = raid;
+        self.encounter = enc;
         self.player = player;
-        self.boss = boss;
         self.spellInfoNodes = [NSMutableArray arrayWithCapacity:5];
         
-        self.maxPlayers = raid.raidMembers.count; //Assume the number of players in the raid passed in is our max
+        self.maxPlayers = self.encounter.raid.raidMembers.count; //Assume the number of players in the raid passed in is our max
         
         self.continueButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneButton) andTitle:@"Battle!"];
         CCMenu *doneButton = [CCMenu menuWithItems:self.continueButton, nil];
@@ -77,7 +76,7 @@
         
         NSMutableDictionary *raidMemberTypes = [NSMutableDictionary dictionaryWithCapacity:5];
         
-        for (RaidMember* member in self.raid.raidMembers){
+        for (RaidMember* member in self.encounter.raid.raidMembers){
             NSNumber *number = [raidMemberTypes objectForKey:member.title];
             if (!number){
                 number = [NSNumber numberWithInt:1];
@@ -91,7 +90,7 @@
         int i = 0;
         for (NSString *types in raidMemberTypes){
             RaidMember *member = nil;
-            for (RaidMember *thisMember in self.raid.raidMembers){
+            for (RaidMember *thisMember in self.encounter.raid.raidMembers){
                 if ([thisMember.title isEqualToString:types]){
                     member = thisMember; 
                     break;
@@ -106,12 +105,12 @@
         [backButton setPosition:CGPointMake(90, [CCDirector sharedDirector].winSize.height * .95)];
         [self addChild:backButton];
         
-        if (boss.info){
+        if (self.encounter.boss.info){
             CCLabelTTF *yourEnemyLAbel = [CCLabelTTF labelWithString:@"Your Enemy:" fontName:@"Arial" fontSize:32.0];
-            CCLabelTTF *bossNameLabel = [CCLabelTTF labelWithString:self.boss.title dimensions:CGSizeMake(300, 200) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
+            CCLabelTTF *bossNameLabel = [CCLabelTTF labelWithString:self.encounter.boss.title dimensions:CGSizeMake(300, 200) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
             [yourEnemyLAbel setPosition:CGPointMake(520, 600)];
             [bossNameLabel setPosition:CGPointMake(520, 480)];
-            CCLabelTTF *bossLabel = [CCLabelTTF labelWithString:self.boss.info dimensions:CGSizeMake(300, 500) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
+            CCLabelTTF *bossLabel = [CCLabelTTF labelWithString:self.encounter.boss.info dimensions:CGSizeMake(300, 500) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
             
             [bossLabel setPosition:CGPointMake(525, 250)];
             [self addChild:bossLabel];
@@ -150,7 +149,7 @@
 
 -(void)doneButton{
     if (!self.changingSpells){
-        GamePlayScene *gps = [[[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss player:self.player levelNum:self.levelNumber] autorelease];
+        GamePlayScene *gps = [[[GamePlayScene alloc] initWithEncounter:self.encounter player:self.player] autorelease];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.5 scene:gps]];
     }
 }

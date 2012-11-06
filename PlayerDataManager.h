@@ -10,33 +10,25 @@
 #import <Parse/Parse.h>
 #define MAX_CHARACTERS 5
 
-#define CURRENT_MODE [PlayerDataManager currentMode]
-
 extern NSString* const PlayerHighestLevelAttempted;
 extern NSString* const PlayerHighestLevelCompleted;
 extern NSString* const PlayerRemoteObjectIdKey;
 
-typedef enum {
-    DifficultyModeNormal = 0,
-    DifficultyModeHard
-} DifficultyMode;
-
 @interface PlayerDataManager : NSObject
 
-+ (DifficultyMode)currentMode;
-+ (void)setDifficultyMode:(DifficultyMode)diffMode;
++ (NSInteger)challengeForLevelNumber:(NSInteger)levelNum;
++ (void)challengeSelected:(NSInteger)challenge forLevelNumber:(NSInteger)levelNum;
 
 + (BOOL)hasShownNormalModeCompleteScene;
 + (void)normalModeCompleteSceneShown;
-+ (BOOL)hardModeUnlocked;
 
-+ (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level withMode:(DifficultyMode)diffMode;
-+ (NSInteger)levelRatingForLevel:(NSInteger)level withMode:(DifficultyMode)diffMode;
-+ (NSInteger)highestLevelCompletedForMode:(DifficultyMode)diffMode;
-+ (NSInteger)highestLevelAttemptedForMode:(DifficultyMode)diffMode;
++ (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level;
++ (NSInteger)levelRatingForLevel:(NSInteger)level;
++ (NSInteger)highestLevelCompleted;
++ (NSInteger)highestLevelAttempted;
 
 + (void)failLevelInCurrentMode:(NSInteger)level;
-+ (void)completeLevelInCurrentMode:(NSInteger)level;
++ (void)completeLevel:(NSInteger)level;
 
 + (BOOL)isMultiplayerUnlocked;
 

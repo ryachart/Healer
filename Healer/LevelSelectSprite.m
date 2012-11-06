@@ -29,7 +29,7 @@
         [menu setPosition:CGPointZero];
         [self addChild:menu z:100];
         
-        NSInteger rating = [PlayerDataManager levelRatingForLevel:levelNum withMode:CURRENT_MODE];
+        NSInteger rating = [PlayerDataManager levelRatingForLevel:levelNum];
         if (rating > 0) {
             self.scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:CGSizeMake(60, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:24.0];
             [self.scoreLabel setPosition:CGPointMake(self.contentSize.width / 2.0, - 40)];

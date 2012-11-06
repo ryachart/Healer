@@ -11,10 +11,11 @@
 #import "PostBattleScene.h"
 #import "BasicButton.h"
 #import "BackgroundSprite.h"
+#import "Encounter.h"
 
 @interface NormalModeCompleteScene ()
 @property (nonatomic, retain) NSArray *eventLog;
-@property (nonatomic, readwrite) NSInteger levelNumber;
+@property (nonatomic, retain) Encounter *encounter;
 @property (nonatomic, readwrite) NSInteger deadCount;
 @property (nonatomic, readwrite) NSTimeInterval duration;
 @end
@@ -22,6 +23,7 @@
 @implementation NormalModeCompleteScene
 - (void)dealloc {
     [_eventLog release];
+    [_encounter release];
     [super dealloc];
 }
 + (BOOL)needsNormalModeCompleteSceneForLevelNumber:(NSInteger)levelNumber {
@@ -30,17 +32,15 @@
         return YES;
     }
 #endif
-    if (CURRENT_MODE == DifficultyModeNormal){
-        if (levelNumber == 21){
-            return ![PlayerDataManager hasShownNormalModeCompleteScene];
-        }
+    if (levelNumber == 21){
+        return ![PlayerDataManager hasShownNormalModeCompleteScene];
     }
     return NO;
 }
 
-- (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog levelNumber:(NSInteger)levelNumber andIsMultiplayer:(BOOL)isMultiplayer deadCount:(NSInteger)numDead andDuration:(NSTimeInterval)duration {
+- (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog encounter:(Encounter*)encounter andIsMultiplayer:(BOOL)isMultiplayer deadCount:(NSInteger)numDead andDuration:(NSTimeInterval)duration {
     if (self = [super init]){
-        self.levelNumber = levelNumber;
+        self.encounter = encounter;
         self.deadCount = self.deadCount;
         self.duration = duration;
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
@@ -66,7 +66,7 @@
 
 - (void)done {
     [PlayerDataManager hasShownNormalModeCompleteScene];
-    PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:YES eventLog:self.eventLog levelNumber:self.levelNumber andIsMultiplayer:NO deadCount:self.deadCount andDuration:self.duration];
+    PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:YES eventLog:self.eventLog encounter:self.encounter andIsMultiplayer:NO deadCount:self.deadCount andDuration:self.duration];
     [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:pbs]];
     [pbs release];
 }

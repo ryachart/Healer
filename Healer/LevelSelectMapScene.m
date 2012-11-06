@@ -53,7 +53,6 @@
         [battleMenu setPosition:CGPointMake(850, 100)];
         [self addChild:battleMenu z:5];
         
-        [self reloadDifficultyMenu];
     }
     return self;
 }
@@ -70,7 +69,7 @@
     
     if (encounter.boss && basicPlayer && encounter.raid){
         
-        PreBattleScene *pbs = [[[PreBattleScene alloc] initWithRaid:encounter.raid boss:encounter.boss andPlayer:basicPlayer] autorelease];
+        PreBattleScene *pbs = [[[PreBattleScene alloc] initWithEncounter:encounter andPlayer:basicPlayer] autorelease];
         [pbs setLevelNumber:level];
         if ([Divinity isDivinityUnlocked]){
             [basicPlayer setDivinityConfig:[Divinity localDivinityConfig]];
@@ -79,40 +78,9 @@
     }
 }
 
-- (void)reloadDifficultyMenu
-{
-    if (self.diffMenu){
-        [self.diffMenu removeFromParentAndCleanup:YES];
-        self.diffMenu = nil;
-    }
-    
-    NSString *title = CURRENT_MODE == DifficultyModeNormal ? @"Normal" : @"Hard";
-    CCMenuItemSprite *diffButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(toggleDifficulty) andTitle:title];
-    self.diffMenu = [CCMenu menuWithItems:diffButton, nil];
-    [self.diffMenu setPosition:CGPointMake(120, 45)];
-    [self addChild:self.diffMenu];
-}
-
 -(void)back
 {
     [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInL transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
-}
-
-- (void)toggleDifficulty {
-    if (![PlayerDataManager hardModeUnlocked]){
-        UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Hard Mode Locked" message:@"Complete the game on Normal mode to unlock hard mode" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil] autorelease];
-        [alert show];
-    }else {
-        if (CURRENT_MODE == DifficultyModeNormal){
-            [PlayerDataManager setDifficultyMode:DifficultyModeHard];
-        }else {
-            [PlayerDataManager setDifficultyMode:DifficultyModeNormal];
-        }
-
-        [self.mapScrollView reload];
-        [self reloadDifficultyMenu];
-        [self.mapScrollView selectFurthestLevel];
-    }
 }
 
 - (void)levelSelectMapNodeDidSelectLevelNum:(NSInteger)levelNum

@@ -56,7 +56,7 @@
     Encounter *encounter = [Encounter encounterForLevel:levelNum isMultiplayer:YES];
     Player *player = [[Player alloc] initWithHealth:100 energy:1000 energyRegen:10];
     [Encounter configurePlayer:player forRecSpells:encounter.recommendedSpells];
-    if (self = [super initWithRaid:encounter.raid boss:encounter.boss andPlayer:player]){
+    if (self = [super initWithEncounter:encounter andPlayer:player]){
         self.match = preConMatch;
         self.serverPlayerID = serverID;
         self.isPreconfiguredMatch = YES;
@@ -114,7 +114,7 @@
         [self.player setPlayerID:self.serverPlayerID];
         [self.boss setIsMultiplayer:YES];
         [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"BEGIN"] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
-        GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss players:allPlayers levelNum:self.levelNumber];
+        GamePlayScene *gps = [[GamePlayScene alloc] initWithEncounter:self.encounter andPlayers:allPlayers];
         [self.match setDelegate:gps];
         [gps setServerPlayerID:self.serverPlayerID];
         [gps setMatch:self.match];
@@ -154,7 +154,7 @@
 
 -(void)beginGame{
     [self.player setPlayerID:[GKLocalPlayer localPlayer].playerID];
-    GamePlayScene *gps = [[GamePlayScene alloc] initWithRaid:self.raid boss:self.boss player:self.player levelNum:self.levelNumber];
+    GamePlayScene *gps = [[GamePlayScene alloc] initWithEncounter:self.encounter player:self.player];
     [self.match setDelegate:gps];
     [gps setMatch:self.match];
     [gps setMatchVoiceChat:self.matchVoiceChat];

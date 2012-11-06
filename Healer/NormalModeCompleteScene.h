@@ -8,10 +8,11 @@
 
 #import "CCScene.h"
 
+@class Encounter;
 @interface NormalModeCompleteScene : CCScene
 
 + (BOOL)needsNormalModeCompleteSceneForLevelNumber:(NSInteger)levelNumber;
 
-- (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog levelNumber:(NSInteger)levelNumber andIsMultiplayer:(BOOL)isMultiplayer deadCount:(NSInteger)numDead andDuration:(NSTimeInterval)duration;
+- (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog encounter:(Encounter*)encounter andIsMultiplayer:(BOOL)isMultiplayer deadCount:(NSInteger)numDead andDuration:(NSTimeInterval)duration;
 
 @end

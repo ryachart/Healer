@@ -22,10 +22,10 @@
 #import "AudioController.h"
 #import "HealerStartScene.h"
 #import "BasicButton.h"
+#import "Encounter.h"
 
 @interface PostBattleScene ()
 @property (nonatomic, retain) NSArray *eventLog;
-@property (nonatomic, readwrite) NSInteger levelNumber;
 @property (nonatomic, readwrite) BOOL isMultiplayer;
 @property (nonatomic, readwrite) BOOL isVictory;
 @property (nonatomic, readwrite) BOOL otherPlayerHasQueued;
@@ -34,6 +34,7 @@
 @property (nonatomic, assign) CCLabelTTF *overhealingDoneLabel;
 @property (nonatomic, assign) CCLabelTTF *damageTakenLabel;
 @property (nonatomic, assign) CCMenuItem *queueAgainMenuItem;
+@property (nonatomic, retain) Encounter *encounter;
 
 - (BOOL)writeApplicationData:(NSData *)data toFile:(NSString *)fileName;
 - (NSString*)timeStringForTimeInterval:(NSTimeInterval)interval;
@@ -45,7 +46,7 @@
 
 @implementation PostBattleScene
 @synthesize matchVoiceChat, match=_match, serverPlayerId;
-@synthesize levelNumber, isMultiplayer;
+@synthesize isMultiplayer;
 @synthesize isVictory;
 @synthesize eventLog;
 @synthesize healingDoneLabel;
@@ -54,11 +55,13 @@
 @synthesize queueAgainMenuItem;
 @synthesize otherPlayerHasQueued;
 @synthesize localPlayerHasQueued;
+
 - (void)dealloc {
     [_match release];
     [serverPlayerId release];
     [matchVoiceChat release];
     [eventLog release];
+    [_encounter release];
     [super dealloc];
 }
 
@@ -116,18 +119,18 @@
 }
 
 
-- (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eLog levelNumber:(NSInteger)levelNum andIsMultiplayer:(BOOL)isMult deadCount:(NSInteger)numDead andDuration:(NSTimeInterval)duration{
+- (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eLog encounter:(Encounter*)enc andIsMultiplayer:(BOOL)isMult deadCount:(NSInteger)numDead andDuration:(NSTimeInterval)duration{
     self = [super init];
     if (self){
-        self.levelNumber = levelNum;
+        self.encounter = enc;
         self.isMultiplayer = isMult;
         self.isVictory = victory;
         self.eventLog = eLog;
         NSInteger reward = 0;
         NSInteger oldRating = 0;
         NSInteger rating = 0;
-        int i = [PlayerDataManager highestLevelCompletedForMode:CURRENT_MODE];
-        BOOL isFirstWin = self.levelNumber > i;
+        int i = [PlayerDataManager highestLevelCompleted];
+        BOOL isFirstWin = self.encounter.levelNumber > i;
         NSTimeInterval fightDuration = duration;
         
         NSString *thisPlayerId = nil;
@@ -147,24 +150,24 @@
         
         //Data Operations
         if (victory){
-            [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",levelNum]];
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",self.encounter.levelNumber]];
             if (!self.isMultiplayer){
-                [PlayerDataManager completeLevelInCurrentMode:self.levelNumber];
+                [PlayerDataManager completeLevel:self.encounter.levelNumber];
             }
-            reward = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:isFirstWin isMultiplayer:self.isMultiplayer];
+            reward = [Encounter goldForLevelNumber:self.encounter.levelNumber isFirstWin:isFirstWin isMultiplayer:self.isMultiplayer];
             
-            oldRating = [PlayerDataManager levelRatingForLevel:self.levelNumber withMode:CURRENT_MODE];
+            oldRating = [PlayerDataManager levelRatingForLevel:self.encounter.levelNumber];
             rating = [self calculateRatingForNumDead:numDead];
             if (rating > oldRating && !self.isMultiplayer){
-                [PlayerDataManager setLevelRating:rating forLevel:self.levelNumber withMode:CURRENT_MODE];
+                [PlayerDataManager setLevelRating:rating forLevel:self.encounter.levelNumber];
             }
         }else {
-            [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelFailed:%i",levelNum]];
-            [PlayerDataManager failLevelInCurrentMode:levelNum];
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelFailed:%i",self.encounter.levelNumber]];
+            [PlayerDataManager failLevelInCurrentMode:self.encounter.levelNumber];
             //Partial Progress Reward
             //10 % of the Reward per minute of encounter up to a maximum of 50% encounter reward
             
-            NSInteger encounterRewardForSuccess = [Encounter goldForLevelNumber:self.levelNumber isFirstWin:isFirstWin isMultiplayer:self.isMultiplayer];
+            NSInteger encounterRewardForSuccess = [Encounter goldForLevelNumber:self.encounter.levelNumber isFirstWin:isFirstWin isMultiplayer:self.isMultiplayer];
             NSInteger partialProgressReward = 0;
             
             if (totalHealingDone >= (totalDamageTaken * .33)){
@@ -178,7 +181,7 @@
             }
         }
         
-        if (levelNum == ENDLESS_VOID_ENCOUNTER_NUMBER){
+        if (self.encounter.levelNumber == ENDLESS_VOID_ENCOUNTER_NUMBER){
             reward  = [Encounter goldRewardForSurvivalEncounterWithDuration:fightDuration];
         }
         
@@ -307,7 +310,7 @@
 
 - (void)onEnterTransitionDidFinish{
     [super onEnterTransitionDidFinish];
-    if (self.levelNumber >= 6 && ![Divinity isDivinityUnlocked] && !self.isMultiplayer && self.isVictory){
+    if (self.encounter.levelNumber >= 6 && ![Divinity isDivinityUnlocked] && !self.isMultiplayer && self.isVictory){
         [Divinity unlockDivinity];
         [self showDivinityUnlocked];
     }

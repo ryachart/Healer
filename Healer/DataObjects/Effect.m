@@ -195,7 +195,6 @@
             if (self.numHasTicked < self.numOfTicks){
                 [self tick];
             }
-            //[self tick];
 			//The one thing we always do here is expire the effect
 			self.timeApplied = 0.0;
 			isExpired = YES;

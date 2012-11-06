@@ -21,7 +21,7 @@
 @end
 
 @implementation Encounter
-@synthesize raid, boss, requiredSpells, recommendedSpells, levelNumber;
+@synthesize raid, boss, requiredSpells, recommendedSpells;
 
 - (void)dealloc{
     [raid release];
@@ -40,6 +40,25 @@
     }
     return self;
 }
+
+- (void)setLevelNumber:(NSInteger)levelNumber
+{
+    _levelNumber = levelNumber;
+    self.difficulty = [PlayerDataManager difficultyForLevelNumber:levelNumber];
+}
+
+- (void)setDifficulty:(NSInteger)difficulty
+{
+    _difficulty = MAX(1,MIN(5, difficulty));
+    [PlayerDataManager difficultySelected:self.difficulty forLevelNumber:self.levelNumber];
+}
+
+- (void)encounterWillBegin
+{
+    [self.boss configureBossForDifficultyLevel:self.difficulty];
+}
+
+#pragma mark - Class Methods
 
 + (Encounter*)randomMultiplayerEncounter{
     NSInteger roll = (arc4random() % 5 + 6);

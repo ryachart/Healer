@@ -115,7 +115,7 @@
             rating = 0;
             break;
     }
-    return rating;
+    return MIN(rating, self.encounter.difficulty *2);
 }
 
 

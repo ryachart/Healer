@@ -348,7 +348,7 @@
 }
 +(id)defaultSpell
 {
-	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:550 energyCost:100 castTime:1.85 andCooldown:0.0];//10h/erk
+	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:475 energyCost:100 castTime:1.85 andCooldown:0.0];//10h/erk
     [forkedHeal setDescription:@"Heals up to two targets simultaneously."];
     [[forkedHeal spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[forkedHeal spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];

@@ -17,6 +17,7 @@
 #import "BackgroundSprite.h"
 #import "BasicButton.h"
 #import "Encounter.h"
+#import "ChallengeRatingStepper.h"
 
 
 #define SPELL_ITEM_TAG 43234
@@ -25,6 +26,7 @@
 @property (nonatomic, readwrite) NSInteger maxPlayers;
 @property (nonatomic, readwrite) BOOL changingSpells;
 @property (nonatomic, retain) NSMutableArray *spellInfoNodes;
+@property (nonatomic, assign) ChallengeRatingStepper *challengeStepper;
 
 
 -(void)back;
@@ -117,6 +119,10 @@
             [self addChild:yourEnemyLAbel];
             [self addChild:bossNameLabel];
         }
+        
+        self.challengeStepper = [[[ChallengeRatingStepper alloc] initWithEncounter:self.encounter] autorelease];
+        [self.challengeStepper setPosition:CGPointMake(480, 20)];
+        [self addChild:self.challengeStepper];
         
     }
     return self;

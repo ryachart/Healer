@@ -111,6 +111,8 @@
         self.encounter = enc;
         self.players = plyers;
         
+        [self.encounter encounterWillBegin];
+        
         NSAssert(self.players.count > 0, @"A Battle with no players was initiated.");
         
         [[AudioController sharedInstance] addNewPlayerWithTitle:@"battle" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/battle" ofType:@"mp3"]]];

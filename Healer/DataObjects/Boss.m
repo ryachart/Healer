@@ -43,6 +43,33 @@
     return [_abilityDescriptors arrayByAddingObjectsFromArray:activeAbilitiesDescriptors];
 }
 
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    self.difficulty = difficulty;
+    
+    Effect *damageMod = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypeNeutral] autorelease];
+    [damageMod setOwner:self];
+    [damageMod setTitle:@"difficulty-damage"];
+    switch (difficulty) {
+        case 1: //Damage Reduced by 20%
+            [damageMod setDamageDoneMultiplierAdjustment:-.2];
+            break;
+        case 2: //Damage Reduced by 10%
+            [damageMod setDamageDoneMultiplierAdjustment:-.1];
+            break;
+        case 3: //Normal
+            [damageMod setDamageDoneMultiplierAdjustment:0.0];
+            break;
+        case 4: //Damage Increased by 10%
+            [damageMod setDamageDoneMultiplierAdjustment:.1];
+            break;
+        case 5: //Damage Increased by 20%
+            [damageMod setDamageDoneMultiplierAdjustment:.2];
+            break;
+    }
+    [self addEffect:damageMod];
+}
+
 - (void)addAbilityDescriptor:(AbilityDescriptor*)descriptor {
     [(NSMutableArray*)_abilityDescriptors addObject:descriptor];
 }
@@ -241,21 +268,7 @@
     NSInteger damage = 220;
     NSTimeInterval freq = 1.4;
     
-//    if (mode == DifficultyModeHard){
-//        damage = 500;
-//        freq = 1.4;
-//    }
-    
     CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:health damage:damage targets:1 frequency:freq choosesMT:YES ];
-    
-//    if (mode == DifficultyModeHard){
-//        corTroll.autoAttack.failureChance = .4;
-//        DisorientingBoulder *boulderAbility = [[DisorientingBoulder new] autorelease];
-//        [corTroll addAbility:boulderAbility];
-//        [corTroll addAbility:[Cleave hardCleave]];
-//    } else {
-    [corTroll addAbility:[Cleave normalCleave]];
-//    }
     
     [corTroll setTitle:@"Corrupted Troll"];
     [corTroll setInfo:@"A Troll of Raklor has been identified among the demons brewing in the south.  It has been corrupted and twisted into a foul and terrible creature.  You will journey with a small band of soldiers to the south to dispatch this troll."];
@@ -276,6 +289,19 @@
     
     return  [corTroll autorelease];
 }
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty {
+    [super configureBossForDifficultyLevel:difficulty];
+    
+    [self addAbility:[Cleave normalCleave]];
+
+    if (difficulty > 3) {
+        self.autoAttack.abilityValue = 400;
+        self.autoAttack.failureChance = .4;
+        [self addAbility:[[DisorientingBoulder new] autorelease]];
+    }
+}
+
 -(void)doCaveInOnRaid:(Raid*)theRaid{
     [self.announcer displayScreenShakeForDuration:2.5];
     [self.announcer announce:@"The Corrupted Troll Smashes the cave ceiling"];
@@ -284,10 +310,6 @@
         if (!member.isDead){
             NSInteger maxTankDamage = 250;
             NSInteger damageDealt = (arc4random() % 200 + 200);
-//            if (self.difficulty == DifficultyModeHard){
-//                damageDealt *= 1.1;
-//                maxTankDamage = 300;
-//            }
             if (member.isFocused){
                 damageDealt = MAX(damageDealt, maxTankDamage); //The Tank has max damage
             }
@@ -301,10 +323,6 @@
     [self.announcer announce:@"The Cave Troll Swings his club furiously at the focused target!"];
     self.enraging += 1.0;
     float adjustment = .35;
-//    if (self.difficulty == DifficultyModeHard){
-//        self.autoAttack.cooldown = 1.1;
-//        adjustment = .2;
-//    }
     Effect *enragingEffect = [[Effect alloc] initWithDuration:9 andEffectType:EffectTypePositiveInvisible];
     [enragingEffect setTarget:self];
     [enragingEffect setOwner:self];
@@ -1369,12 +1387,11 @@
     
     if (percentage == 60.0) {
         [self.announcer announce:@"Baraghast fills with rage."];
-        Crush *crushAbility = [[Crush alloc] init];
+        Crush *crushAbility = [[[Crush alloc] init] autorelease];
         [crushAbility setTitle:@"crush"];
         [crushAbility setCooldown:20];
         [crushAbility setTarget:[(FocusedAttack*)self.autoAttack focusTarget]];
         [self addAbility:crushAbility];
-        [crushAbility release];
     }
     
     if (percentage == 33.0) {

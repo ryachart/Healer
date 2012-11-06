@@ -20,7 +20,7 @@ NSString* const PlayerRemoteObjectIdKey = @"com.healer.playerRemoteObjectID3";
 NSString* const PlayerDifficultySettingKey = @"com.healer.hardMode";
 NSString* const PlayerLastUsedSpellsKey = @"com.healer.lastUsedSpells";
 NSString* const PlayerNormalModeCompleteShown = @"com.healer.nmcs";
-NSString* const PlayerLevelChallengeKey = @"com.healer.challengeKey";
+NSString* const PlayerLevelDifficultyLevelsKey = @"com.healer.diffLevels";
 
 @implementation PlayerDataManager 
 
@@ -31,30 +31,30 @@ NSString* const PlayerLevelChallengeKey = @"com.healer.challengeKey";
     return parse_queue;
 }
 
-+ (NSMutableArray *)challengeKeys
++ (NSMutableArray *)difficultyLevels
 {
-    NSMutableArray *challengeKeys = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] arrayForKey:PlayerLevelChallengeKey]];
-    if (!challengeKeys) {
-        challengeKeys = [NSMutableArray array];
+    NSMutableArray *difficultyLevels = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] arrayForKey:PlayerLevelDifficultyLevelsKey]];
+    if (difficultyLevels.count == 0) {
+        difficultyLevels = [NSMutableArray arrayWithCapacity:25];
         for (int i = 0; i < 25; i++){
-            [challengeKeys addObject:@2];
+            [difficultyLevels addObject:@2];
         }
-        [[NSUserDefaults standardUserDefaults] setObject:challengeKeys forKey:PlayerLevelChallengeKey];
+        [[NSUserDefaults standardUserDefaults] setObject:difficultyLevels forKey:PlayerLevelDifficultyLevelsKey];
     }
-    return challengeKeys;
+    return difficultyLevels;
 }
 
-+ (NSInteger)challengeForLevelNumber:(NSInteger)levelNum
++ (NSInteger)difficultyForLevelNumber:(NSInteger)levelNum
 {
-    NSMutableArray *challengeKeys = [PlayerDataManager challengeKeys];
-    return [[challengeKeys objectAtIndex:levelNum] intValue];
+    NSMutableArray *difficultyLevels = [PlayerDataManager difficultyLevels];
+    return [[difficultyLevels objectAtIndex:levelNum] intValue];
 }
 
-+ (void)challengeSelected:(NSInteger)challenge forLevelNumber:(NSInteger)levelNum
++ (void)difficultySelected:(NSInteger)challenge forLevelNumber:(NSInteger)levelNum
 {
-    NSMutableArray *challengeKeys = [PlayerDataManager challengeKeys];
-    [challengeKeys replaceObjectAtIndex:levelNum withObject:[NSNumber numberWithInt:challenge]];
-    [[NSUserDefaults standardUserDefaults] setObject:challengeKeys forKey:PlayerLevelChallengeKey];
+    NSMutableArray *difficultyLevels = [PlayerDataManager difficultyLevels];
+    [difficultyLevels replaceObjectAtIndex:levelNum withObject:[NSNumber numberWithInt:challenge]];
+    [[NSUserDefaults standardUserDefaults] setObject:difficultyLevels forKey:PlayerLevelDifficultyLevelsKey];
 }
 
 + (BOOL)isMultiplayerUnlocked {

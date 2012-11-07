@@ -14,10 +14,9 @@ static dispatch_queue_t parse_queue = nil;
 
 NSString* const PlayerHighestLevelAttempted = @"com.healer.playerHighestLevelAttempted";
 NSString* const PlayerHighestLevelCompleted = @"com.healer.playerHighestLevelCompleted";
-NSString* const PlayerLevelFailed = @"com.healer.playerLevelFailed";
-NSString* const PlayerLevelRatingKeyPrefix = @"com.healer.playerLevelRatingForLevel";
+NSString* const PlayerLevelFailed = @"com.healer.playerLevelFailed1";
+NSString* const PlayerLevelRatingKeyPrefix = @"com.healer.playerLevelRatingForLevel1";
 NSString* const PlayerRemoteObjectIdKey = @"com.healer.playerRemoteObjectID3";
-NSString* const PlayerDifficultySettingKey = @"com.healer.hardMode";
 NSString* const PlayerLastUsedSpellsKey = @"com.healer.lastUsedSpells";
 NSString* const PlayerNormalModeCompleteShown = @"com.healer.nmcs";
 NSString* const PlayerLevelDifficultyLevelsKey = @"com.healer.diffLevels";

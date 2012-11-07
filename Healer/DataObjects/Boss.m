@@ -52,7 +52,7 @@
     [damageMod setTitle:@"difficulty-damage"];
     switch (difficulty) {
         case 1: //Damage Reduced by 20%
-            [damageMod setDamageDoneMultiplierAdjustment:-.2];
+            [damageMod setDamageDoneMultiplierAdjustment:-.4];
             break;
         case 2: //Damage Reduced by 10%
             [damageMod setDamageDoneMultiplierAdjustment:-.1];

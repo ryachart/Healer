@@ -505,7 +505,7 @@
         [crushEffect setOwner:self.owner];
         [crushEffect setTitle:@"crush"];
         [crushEffect setSpriteName:@"crush.png"];
-        [crushEffect setValue:-1100];
+        [crushEffect setValue:-950];
         [target addEffect:crushEffect];
         [crushEffect release];
     }

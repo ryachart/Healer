@@ -31,7 +31,7 @@
         
         NSInteger rating = [PlayerDataManager levelRatingForLevel:levelNum];
         if (rating > 0) {
-            self.scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:CGSizeMake(60, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:24.0];
+            self.scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i/10", rating] dimensions:CGSizeMake(60, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:24.0];
             [self.scoreLabel setPosition:CGPointMake(self.contentSize.width / 2.0, - 40)];
             [self addChild:self.scoreLabel];
         }

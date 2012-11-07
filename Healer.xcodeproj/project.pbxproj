@@ -19,6 +19,7 @@
 		38024DD313C2564D003D36F2 /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 38024DD213C2564D003D36F2 /* iTunesArtwork */; };
 		38024F0A13C2564E003D36F2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 38024F0913C2564E003D36F2 /* main.m */; };
 		38024F0D13C2564E003D36F2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 38024F0C13C2564E003D36F2 /* AppDelegate.m */; };
+		382C46421648CDA400883CFA /* ChallengeRatingStepper.m in Sources */ = {isa = PBXBuildFile; fileRef = 382C46411648CDA400883CFA /* ChallengeRatingStepper.m */; };
 		385B41A8163276E500710700 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B41A7163276E500710700 /* Accounts.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		385B41AA163276F900710700 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B41A9163276F800710700 /* libsqlite3.0.dylib */; };
 		385B41AC1632771F00710700 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B41AB1632771F00710700 /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -533,6 +534,8 @@
 		38024F0B13C2564E003D36F2 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		38024F0C13C2564E003D36F2 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		38024F1413C2564E003D36F2 /* GameConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameConfig.h; sourceTree = "<group>"; };
+		382C46401648CDA400883CFA /* ChallengeRatingStepper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChallengeRatingStepper.h; sourceTree = "<group>"; };
+		382C46411648CDA400883CFA /* ChallengeRatingStepper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChallengeRatingStepper.m; sourceTree = "<group>"; };
 		385B41A7163276E500710700 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		385B41A9163276F800710700 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
 		385B41AB1632771F00710700 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
@@ -841,6 +844,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		382C463F1648CD9000883CFA /* PreBattle */ = {
+			isa = PBXGroup;
+			children = (
+				382C46401648CDA400883CFA /* ChallengeRatingStepper.h */,
+				382C46411648CDA400883CFA /* ChallengeRatingStepper.m */,
+			);
+			name = PreBattle;
+			sourceTree = "<group>";
+		};
 		386DD03A145DFF2D0086763E /* Model Objects */ = {
 			isa = PBXGroup;
 			children = (
@@ -1091,6 +1103,7 @@
 		38F0504413C2618900BCADCB /* View Objects */ = {
 			isa = PBXGroup;
 			children = (
+				382C463F1648CD9000883CFA /* PreBattle */,
 				BFD106F8163A2944002318CE /* Map Views */,
 				BFAFA3F615F54B8A0052FCA5 /* Divinity Views */,
 				BF448C53154BA49E009401A6 /* UI Layers */,
@@ -1863,6 +1876,7 @@
 				BF0022BE163EE94C00384882 /* EncounterCard.m in Sources */,
 				BF4CD1C91642D61600EB2336 /* DebugViewController.m in Sources */,
 				BF9DD8AA1644A6DC007DAE39 /* BossActivationBar.m in Sources */,
+				382C46421648CDA400883CFA /* ChallengeRatingStepper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

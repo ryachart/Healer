@@ -22,4 +22,5 @@
 - (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target;
 - (void)displayParticleSystemOverRaidWithName:(NSString*)name;
 - (void)displayParticleSystemOnRaidWithName:(NSString*)name forDuration:(float)duration;
+- (void)displayProjectileEffect:(ProjectileEffect*)effect fromOrigin:(CGPoint)origin;
 @end

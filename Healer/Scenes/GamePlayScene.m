@@ -590,17 +590,22 @@
 }
 
 -(void)displayProjectileEffect:(ProjectileEffect*)effect{
+    [self displayProjectileEffect:effect fromOrigin:CGPointMake(800, 650)];
+}
+
+- (void)displayProjectileEffect:(ProjectileEffect*)effect fromOrigin:(CGPoint)origin
+{
     switch (effect.type) {
         case ProjectileEffectTypeThrow:
             [self displayThrowEffect:effect];
             break;
         default:
-            [self displayNormalProjectileEffect:effect];
+            [self displayNormalProjectileEffect:effect fromOrigin:origin];
             break;
     }
 }
 
-- (void)displayNormalProjectileEffect:(ProjectileEffect *)effect {
+- (void)displayNormalProjectileEffect:(ProjectileEffect *)effect fromOrigin:(CGPoint)origin {
     if (self.isServer){
         effect.type = ProjectileEffectTypeNormal;
         [self.match sendDataToAllPlayers:[effect.asNetworkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
@@ -608,7 +613,7 @@
     
     CCSprite *projectileSprite = [CCSprite spriteWithSpriteFrameName:effect.spriteName];;
     
-    CGPoint originLocation = CGPointMake(650, 600);
+    CGPoint originLocation = origin;
     CGPoint destination = [self.raidView frameCenterForMember:effect.target];
     
     if (effect.isFailed){

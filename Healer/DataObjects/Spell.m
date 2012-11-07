@@ -811,7 +811,7 @@
         }
         ProjectileEffect *starProjectile = [[ProjectileEffect alloc] initWithSpriteName:@"star.png" target:starTarget andCollisionTime:healDelay];
         [starProjectile setCollisionParticleName:@"star_explosion.plist"];
-        [theBoss.announcer displayProjectileEffect:starProjectile];
+        [theBoss.announcer displayProjectileEffect:starProjectile fromOrigin:CGPointMake(400 - (arc4random() % 300 - 150), 800)];
         DelayedHealthEffect *starDelayedHealthEff = [[DelayedHealthEffect alloc] initWithDuration:healDelay andEffectType:EffectTypePositiveInvisible];
         [starDelayedHealthEff setIsIndependent:YES];
         [starDelayedHealthEff setOwner:self.owner];

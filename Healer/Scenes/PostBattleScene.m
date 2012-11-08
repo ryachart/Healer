@@ -129,8 +129,6 @@
         NSInteger reward = 0;
         NSInteger oldRating = 0;
         NSInteger rating = 0;
-        int i = [PlayerDataManager highestLevelCompleted];
-        BOOL isFirstWin = self.encounter.levelNumber > i;
         NSTimeInterval fightDuration = duration;
         
         NSString *thisPlayerId = nil;
@@ -170,7 +168,7 @@
             //Partial Progress Reward
             //10 % of the Reward per minute of encounter up to a maximum of 50% encounter reward
             
-            NSInteger encounterRewardForSuccess = [Encounter goldForLevelNumber:self.encounter.levelNumber isFirstWin:isFirstWin isMultiplayer:self.isMultiplayer];
+            NSInteger encounterRewardForSuccess = self.encounter.reward;
             NSInteger partialProgressReward = 0;
             
             if (totalHealingDone >= (totalDamageTaken * .33)){

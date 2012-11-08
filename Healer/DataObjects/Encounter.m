@@ -61,7 +61,7 @@
 - (NSInteger)reward
 {
     NSInteger baseGold = [Encounter goldForLevelNumber:self.levelNumber];
-    baseGold += self.difficulty * 25;
+    baseGold += (self.difficulty - 1) * 25;
     return baseGold;
 }
 

@@ -15,77 +15,69 @@
 @synthesize goldCost, shopSprite, shopDescription, key, spell, title;
 +(NSInteger)costForSpell:(NSString*)spell{
     
-    //Tier 1
-    //Heal 
-    
-    //Tier 2
     if ([spell isEqualToString:@"Greater Heal"]){
+        return 25;
+    }
+    if ([spell isEqualToString:@"Forked Heal"]){
         return 100;
     }
-    if ([spell isEqualToString:@"Purify"]){
-        return 10;
-    }
-
-    //Tier 3
-    if ([spell isEqualToString:@"Forked Heal"]){
-        return 200;
-    }
     if ([spell isEqualToString:@"Regrow"]){
-        return 200;
+        return 75;
     }
 
-    //Tier 4
-    if ([spell isEqualToString:@"Barrier"]){
-        return 300;
+    if ([spell isEqualToString:@"Stars of Aravon"]){
+        return 200;
     }
     if ([spell isEqualToString:@"Healing Burst"]){
-        return 300;
+        return 150;
     }
-    
-    //Tier 5
-    if ([spell isEqualToString:@"Light Eternal"]){
-        return 300;
+    if ([spell isEqualToString:@"Barrier"]){
+        return 250;
     }
-    if ([spell isEqualToString:@"Wandering Spirit"]){
-        return 300;
-    }
-    
-    //Specials
-    if ([spell isEqualToString:@"Respite"]){
-        return 500;
-    }
-    if ([spell isEqualToString:@"Ward of Ancients"]){
-        return 500;
-    }
-    
-    //WTF
-    if ([spell isEqualToString:@"Swirling Light"]){
-        return 750;
-    }
-    if ([spell isEqualToString:@"Orbs of Light"]){
-        return 750;
+    if ([spell isEqualToString:@"Purify"]){
+        return 25;
     }
     if ([spell isEqualToString:@"Touch of Hope"]){
-        return 300;
+        return 150;
     }
-    if ([spell isEqualToString:@"Soaring Spirit"]){
-        return 300;
+    
+    
+    if ([spell isEqualToString:@"Blessed Armor"]){
+        return 400;
     }
-    if ([spell isEqualToString:@"Attunement"]){
-        return 300;
+    if ([spell isEqualToString:@"Light Eternal"]){
+        return 500;
     }
     if ([spell isEqualToString:@"Fading Light"]) {
-        return 200;
+        return 300;
     }
     if ([spell isEqualToString:@"Sunburst"]){
-        return 300;
+        return 500;
     }
-    if ([spell isEqualToString:@"Stars of Aravon"]){
-        return 300;
+    if ([spell isEqualToString:@"Swirling Light"]){
+        return 400;
     }
-    if ([spell isEqualToString:@"Blessed Armor"]){
-        return 300;
+    if ([spell isEqualToString:@"Orbs of Light"]){
+        return 400;
     }
+    
+    
+    if ([spell isEqualToString:@"Respite"]){
+        return 750;
+    }
+    if ([spell isEqualToString:@"Ward of Ancients"]){
+        return 750;
+    }
+    if ([spell isEqualToString:@"Soaring Spirit"]){
+        return 750;
+    }
+    if ([spell isEqualToString:@"Attunement"]){
+        return 750;
+    }
+    if ([spell isEqualToString:@"Wandering Spirit"]){
+        return 750;
+    }
+
     return 10000;
 }
 

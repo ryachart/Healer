@@ -114,9 +114,9 @@ static NSArray *shopItems = nil;
         case ShopCategoryAdvanced:
             return 4;
         case ShopCategoryArchives:
-            return 6;
-        case ShopCategoryVault:
             return 8;
+        case ShopCategoryVault:
+            return 10;
     }
     return 0;
 }
@@ -166,28 +166,23 @@ static NSArray *shopItems = nil;
     ShopItem *purify = [[ShopItem alloc] initWithSpell:[Purify defaultSpell]];
     [items addObject:[purify autorelease]];
     
-    ShopItem *starsOfA = [[ShopItem alloc] initWithSpell:[StarsOfAravon defaultSpell]];
-    [items addObject:[starsOfA autorelease]];
+    ShopItem *touchOfLight = [[ShopItem alloc] initWithSpell:[TouchOfHope defaultSpell]];
+    [items addObject:[touchOfLight autorelease]];
     
     ShopItem *healingBurst = [[ShopItem alloc] initWithSpell:[HealingBurst defaultSpell]];
     [items addObject:[healingBurst autorelease]];
     
-    ShopItem *blessedArmor = [[ShopItem alloc] initWithSpell:[BlessedArmor defaultSpell]];
-    [items addObject:[blessedArmor autorelease]];
+    ShopItem *starsOfA = [[ShopItem alloc] initWithSpell:[StarsOfAravon defaultSpell]];
+    [items addObject:[starsOfA autorelease]];
     
-    ShopItem *touchOfLight = [[ShopItem alloc] initWithSpell:[TouchOfHope defaultSpell]];
-    [items addObject:[touchOfLight autorelease]];
+    ShopItem *barrier = [[ShopItem alloc] initWithSpell:[Barrier defaultSpell]];
+    [items addObject:[barrier autorelease]];
 
     return items;
     
 }
 + (NSArray*)archivesShopItems {
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
-    ShopItem *lightEternal = [[ShopItem alloc] initWithSpell:[LightEternal defaultSpell]];
-    [items addObject:[lightEternal autorelease]];
-    
-    ShopItem *sunburst = [[ShopItem alloc] initWithSpell:[Sunburst defaultSpell]];
-    [items addObject:[sunburst autorelease]];
     
     ShopItem *fadingLight = [[ShopItem alloc] initWithSpell:[FadingLight defaultSpell]];
     [items addObject:[fadingLight autorelease]];
@@ -198,8 +193,14 @@ static NSArray *shopItems = nil;
     ShopItem *swirlingLight = [[ShopItem alloc] initWithSpell:[SwirlingLight defaultSpell]];
     [items addObject:[swirlingLight autorelease]];
     
-    ShopItem *barrier = [[ShopItem alloc] initWithSpell:[Barrier defaultSpell]];
-    [items addObject:[barrier autorelease]];
+    ShopItem *blessedArmor = [[ShopItem alloc] initWithSpell:[BlessedArmor defaultSpell]];
+    [items addObject:[blessedArmor autorelease]];
+    
+    ShopItem *lightEternal = [[ShopItem alloc] initWithSpell:[LightEternal defaultSpell]];
+    [items addObject:[lightEternal autorelease]];
+    
+    ShopItem *sunburst = [[ShopItem alloc] initWithSpell:[Sunburst defaultSpell]];
+    [items addObject:[sunburst autorelease]];
 
     return items;
     
@@ -237,13 +238,13 @@ static NSArray *shopItems = nil;
             val = 200;
             break;
         case 1:
-            val = 1000;
+            val = 500;
             break;
         case 2:
-            val = 1500;
+            val = 1000;
             break;
         case 3:
-            val = 2500;
+            val = 1500;
             break;
         case 4:
             val = 4000;

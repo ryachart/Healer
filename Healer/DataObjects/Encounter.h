@@ -29,7 +29,7 @@
 + (Encounter*)randomMultiplayerEncounter;
 + (Encounter*)survivalEncounterIsMultiplayer:(BOOL)multiplayer;
 + (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer;
-+ (NSInteger)goldForLevelNumber:(NSInteger)levelNumber isFirstWin:(BOOL)isFirstWin isMultiplayer:(BOOL)isMultiplayer;
++ (NSInteger)goldForLevelNumber:(NSInteger)levelNumber;
 + (void)configurePlayer:(Player*)player forRecSpells:(NSArray*)spells;
 + (NSInteger)goldRewardForSurvivalEncounterWithDuration:(NSTimeInterval)duration;
 

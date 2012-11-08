@@ -1927,7 +1927,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Alexei Gousev (557BVTLW6Y)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1944,14 +1944,14 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/TestFlightSDK1.0\"",
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
-				PROVISIONING_PROFILE = "7FD1F55F-BCAD-4303-9601-6E0F2E8DD6C9";
+				PROVISIONING_PROFILE = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = armv7;
@@ -1963,7 +1963,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Alexei Gousev (557BVTLW6Y)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Ryan Hart";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Ryan Hart";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1975,14 +1976,15 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/TestFlightSDK1.0\"",
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
-				PROVISIONING_PROFILE = "7FD1F55F-BCAD-4303-9601-6E0F2E8DD6C9";
+				PROVISIONING_PROFILE = "081051EC-039E-41F3-9D50-CDF119C685F1";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "081051EC-039E-41F3-9D50-CDF119C685F1";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
@@ -2013,7 +2015,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Alexei Gousev (557BVTLW6Y)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Ryan Hart";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Ryan Hart";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2025,14 +2028,15 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/TestFlightSDK1.0\"",
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
-				PROVISIONING_PROFILE = "7FD1F55F-BCAD-4303-9601-6E0F2E8DD6C9";
+				PROVISIONING_PROFILE = "081051EC-039E-41F3-9D50-CDF119C685F1";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "081051EC-039E-41F3-9D50-CDF119C685F1";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;

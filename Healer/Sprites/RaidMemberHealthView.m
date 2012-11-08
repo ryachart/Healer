@@ -334,21 +334,21 @@
 	
     Effect *negativeEffect = nil;
     Effect *positiveEffect = nil;
-    BOOL shieldEffectFound = NO;
-	for (Effect *eff in self.memberData.activeEffects){
-        if ([eff effectType] == EffectTypePositive){
-            if ([eff isKindOfClass:[ShieldEffect class]]){
-                shieldEffectFound = YES;
-            }else{
-                positiveEffect = eff;
-            }
-        }
-        if ([eff effectType] == EffectTypeNegative){
-            negativeEffect = eff;
-        }
-	}
+//    BOOL shieldEffectFound = NO;
+//	for (Effect *eff in self.memberData.activeEffects){
+//        if ([eff effectType] == EffectTypePositive){
+//            if ([eff isKindOfClass:[ShieldEffect class]]){
+//                shieldEffectFound = YES;
+//            }else{
+//                positiveEffect = eff;
+//            }
+//        }
+//        if ([eff effectType] == EffectTypeNegative){
+//            negativeEffect = eff;
+//        }
+//	}
     
-    [self setShieldedOn:shieldEffectFound];
+//    [self setShieldedOn:shieldEffectFound];
     
     if (positiveEffect && positiveEffect.spriteName && !self.memberData.isDead){
         if (!self.priorityPositiveEffectSprite){

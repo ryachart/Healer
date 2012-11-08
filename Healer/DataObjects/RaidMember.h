@@ -59,7 +59,6 @@ typedef enum {
 
 //AVERAGE HEALTH: 1240
 @interface Guardian : RaidMember
-@property (nonatomic, readwrite) NSInteger overhealingShield;
 +(Guardian*)defaultGuardian;
 @end
 @interface Berserker : RaidMember 

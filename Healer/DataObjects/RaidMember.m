@@ -166,14 +166,7 @@
 }
 - (void)didReceiveHealing:(NSInteger)amount andOverhealing:(NSInteger)overAmount{
     [super didReceiveHealing:amount andOverhealing:overAmount];
-    self.overhealingShield += overAmount;
-}
-- (void)setOverhealingShield:(NSInteger)overhealingShield{
-    _overhealingShield = overhealingShield;
-    NSInteger maxOverheal = 250;
-    if (_overhealingShield > maxOverheal){
-        _overhealingShield = maxOverheal;
-    }
+    self.absorb += (int)round(overAmount * 1.1);
 }
 
 -(id)init{
@@ -182,8 +175,8 @@
         self.dodgeChance = .15;
         self.info = @"The Guardian can draw attention from enemies and become focused.  Healing a Guardian beyond full health creates a shield that absorbs damage.";
         
-        GuardianBarrierEffect *gbe = [[GuardianBarrierEffect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible];
-        [gbe setOwningGuardian:self];
+        Effect *gbe = [[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible];
+        [gbe setMaximumAbsorbtionAdjustment:250];
         [gbe setTitle:@"guardian-barrier-eff"];
         [self addEffect:gbe];
         [gbe release];

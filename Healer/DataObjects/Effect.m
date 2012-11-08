@@ -230,37 +230,28 @@
 @end
 
 @implementation ShieldEffect
-@synthesize amountToShield;
 
 -(id)copy{
     ShieldEffect *copy = [super copy];
     [copy setAmountToShield:self.amountToShield];
     return copy;
-}   
-
--(void)willChangeHealthFrom:(NSInteger*)currentHealth toNewHealth:(NSInteger*)newHealth
-{
-	if (*newHealth >= *currentHealth)
-	{
-		return;
-	}
-	
-	NSInteger healthDelta = *currentHealth - *newHealth;
-	
-	if (healthDelta >= amountToShield){
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:amountToShield] andEventType:CombatEventTypeHeal]];
-		*newHealth += amountToShield;
-		amountToShield = 0;
-		isExpired = YES;
-	}
-	else if (healthDelta < amountToShield){
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:amountToShield] andEventType:CombatEventTypeHeal]];
-		*newHealth += healthDelta;
-		amountToShield -= healthDelta;
-	}
 }
--(void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth
+
+- (NSInteger)maximumAbsorbtionAdjustment
 {
+    return self.amountToShield;
+}
+
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta
+{
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+    if (!self.hasAppliedAbsorb) {
+        self.hasAppliedAbsorb = YES;
+        self.target.absorb += self.amountToShield;
+    }
+    if (self.target.absorb == 0) {
+        self.isExpired = YES;
+    }
 }
 @end
 
@@ -461,17 +452,6 @@
 		NSInteger newHealthDelta = healthDelta	* (1 + percentage);
 		*newHealth = *health - newHealthDelta;
 	}
-}
-@end
-
-@implementation BulwarkEffect
-+(id)defaultEffect{
-	BulwarkEffect *be = [[BulwarkEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive];
-    [be setTitle:@"bulwark-effect"];
-	[be setAmountToShield:600];
-    [be setSpriteName:@"healing_default.png"];
-    [be setMaxStacks:1];
-	return [be autorelease];
 }
 @end
 
@@ -833,29 +813,6 @@
 }
 @end
 
-@implementation GuardianBarrierEffect
-- (void)willChangeHealthFrom:(NSInteger*)currentHealth toNewHealth:(NSInteger*)newHealth
-{
-	if (*newHealth >= *currentHealth)
-	{
-		return;
-	}
-	
-	NSInteger healthDelta = *currentHealth - *newHealth;
-	
-	if (healthDelta >= self.owningGuardian.overhealingShield){
-		*newHealth += self.owningGuardian.overhealingShield;
-		self.owningGuardian.overhealingShield = 0;
-	}
-	else if (healthDelta < self.owningGuardian.overhealingShield){
-		*newHealth += healthDelta;
-		self.owningGuardian.overhealingShield -= healthDelta;
-	}
-}
-- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth {
-    
-}
-@end
 
 @implementation GraspOfTheDamnedEffect
 

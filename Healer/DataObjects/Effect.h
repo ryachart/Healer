@@ -55,6 +55,7 @@ typedef enum {
 @property (nonatomic, readwrite) float energyRegenAdjustment;
 @property (nonatomic, readwrite) BOOL causesConfusion;
 @property (nonatomic, readwrite) float maximumHealthMultiplierAdjustment;
+@property (nonatomic, readwrite) NSInteger maximumAbsorbtionAdjustment;
 @property (readwrite) BOOL isIndependent; //Max Stacks doesnt apply and other effects are never the same as this effect
 
 - (void)reset;
@@ -106,8 +107,9 @@ typedef enum {
 @interface SwirlingLightEffect : RepeatedHealthEffect
 @end
 
-@interface ShieldEffect : Effect <HealthAdjustmentModifier>
+@interface ShieldEffect : Effect
 @property (readwrite) NSInteger amountToShield;
+@property (readwrite) BOOL hasAppliedAbsorb;
 @end
 
 @interface HealingDoneAdjustmentEffect : Effect <HealthAdjustmentModifier>
@@ -148,10 +150,6 @@ typedef enum {
 
 @interface DarkCloudEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
 @property (nonatomic, readwrite) NSInteger baseValue;
-@end
-
-@interface BulwarkEffect : ShieldEffect
-+(id)defaultEffect;
 @end
 
 @interface DamageTakenIncreasedEffect : Effect <HealthAdjustmentModifier>
@@ -222,11 +220,6 @@ typedef enum {
 @interface AvatarEffect : Effect
 @property (nonatomic, readwrite) NSTimeInterval raidWidePulseCooldown;
 @property (nonatomic, readwrite) NSTimeInterval healingSpellCooldown;
-@end
-
-@class Guardian;
-@interface GuardianBarrierEffect : Effect <HealthAdjustmentModifier>
-@property (nonatomic, assign) Guardian *owningGuardian;
 @end
 
 @interface GraspOfTheDamnedEffect : RepeatedHealthEffect <HealthAdjustmentModifier>

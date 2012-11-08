@@ -438,7 +438,11 @@
 	[[bulwark spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicCasting" ofType:@"wav"]] andTitle:@"BWStart"];
 	[[bulwark spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicFizzle" ofType:@"wav"]] andTitle:@"BWFizzle"];
 	[[bulwark spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerInstantShield" ofType:@"wav"]] andTitle:@"BWFinish"];
-    [bulwark setAppliedEffect:[BulwarkEffect defaultEffect]];
+    
+    ShieldEffect *appliedEffect = [[[ShieldEffect alloc] initWithDuration:25.0 andEffectType:EffectTypePositive] autorelease];
+    [appliedEffect setAmountToShield:600];
+    [appliedEffect setTitle:@"barrier-eff"];
+    [bulwark setAppliedEffect:appliedEffect];
 	return [bulwark autorelease];
 }
 @end

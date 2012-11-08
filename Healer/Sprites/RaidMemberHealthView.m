@@ -22,6 +22,8 @@
 @property (nonatomic, assign) CCSprite *selectionSprite;
 @property (nonatomic, assign) CCSprite *classIconSprite;
 
+@property (nonatomic, assign) ClippingNode *absorptionClippingNode;
+@property (nonatomic, assign) CCSprite *absorptionMask;
 
 @property (nonatomic, assign) ClippingNode *pEffectClippingNode;
 @property (nonatomic, assign) CCSprite *pEffectDurationBack;
@@ -73,6 +75,20 @@
         [self.healthBarClippingNode addChild:self.healthBarMask];
         [self addChild:self.healthBarClippingNode];
         
+        self.absorptionClippingNode = [ClippingNode node];
+        self.absorptionMask = [CCSprite spriteWithSpriteFrameName:@"raid_frame_bar_mask.png"];
+        [self.absorptionMask setAnchorPoint:CGPointZero];
+        self.absorptionMask.position = CGPointMake(0, -self.absorptionMask.contentSize.height);
+        [self.absorptionMask setColor:ccc3(0, 100, 200)];
+        [self.absorptionMask setOpacity:155];
+        
+        [self.absorptionClippingNode setPosition:CGPointMake(0, 8)];
+        [self.absorptionClippingNode setContentSize:self.absorptionMask.contentSize];
+        [self.absorptionClippingNode setAnchorPoint:CGPointZero];
+        [self.absorptionClippingNode setClippingRegion:CGRectMake(0, 0, self.absorptionMask.contentSize.width, self.absorptionMask.contentSize.height)];
+        [self.absorptionClippingNode addChild:self.absorptionMask];
+        [self addChild:self.absorptionClippingNode];
+        
         self.raidFrameTexture = [CCSprite spriteWithSpriteFrameName:@"raid_frame.png"];
         [self.raidFrameTexture setAnchorPoint:CGPointZero];
         [self addChild:self.raidFrameTexture z:5];
@@ -117,6 +133,7 @@
         self.shieldBubble = [CCSprite spriteWithSpriteFrameName:@"shield_bubble.png"];
         [self.shieldBubble setVisible:NO];
         [self.shieldBubble setPosition:ccp(frame.size.width * .5,frame.size.height * .5)];
+        [self.shieldBubble setVisible:NO];
     
         [self addChild:self.healthLabel z:10];
         [self addChild:self.isFocusedLabel z:11];
@@ -303,6 +320,10 @@
         self.healthBarMask.position = CGPointMake(0, -(self.healthBarMask.contentSize.height) * (1 - self.memberData.healthPercentage));
         ccColor3B colorForPerc = [self colorForPercentage:(((float)self.memberData.health) / self.memberData.maximumHealth)];
         [self.healthBarMask setColor:colorForPerc];
+        
+        float absorbPercentage = self.memberData.absorb / (float)self.memberData.maximumHealth;
+        self.absorptionMask.position = CGPointMake(0, -(self.absorptionMask.contentSize.height) * (1 - absorbPercentage));
+
 	}
 	else {
         [self.nEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.nEffectDurationBack.contentSize.width, 0)];

@@ -24,6 +24,8 @@
 @property (nonatomic, retain) NSMutableArray *activeEffects;
 @property (nonatomic, readwrite) BOOL isFocused;
 @property (nonatomic, readonly) float healthPercentage;
+@property (nonatomic, readonly) NSInteger maximumAbsorbtion;
+@property (nonatomic, readwrite) NSInteger absorb;
 
 - (NSInteger)effectCountOfType:(EffectType)type;
 - (void)didReceiveHealing:(NSInteger)amount andOverhealing:(NSInteger)amount;

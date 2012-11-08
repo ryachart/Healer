@@ -61,13 +61,54 @@
     return (float)self.health/(float)self.maximumHealth;
 }
 
+-(NSInteger)maximumAbsorbtion
+{
+    NSInteger baseAbsorbtion = 0;
+    for (Effect *eff in self.activeEffects){
+        baseAbsorbtion += [eff maximumAbsorbtionAdjustment];
+    }
+    NSInteger finalMaxAbsorb = MIN(self.maximumHealth, baseAbsorbtion);
+    if (self.absorb > finalMaxAbsorb) {
+        _absorb = finalMaxAbsorb;
+    }
+    return finalMaxAbsorb;
+}
+
+- (void)setAbsorb:(NSInteger)absorb
+{
+    if (absorb > self.maximumAbsorbtion) {
+        absorb = self.maximumAbsorbtion;
+    }
+    if (absorb < 0){
+        absorb = 0;
+    }
+    _absorb = absorb;
+    
+}
+
 -(void)setHealth:(NSInteger)newHealth
 {
     NSInteger overHealing = 0;
     NSInteger totalHealing = 0;
+    NSInteger healingFromAbsorbtion = 0;
     if (self.hasDied){
         return;
     }
+    
+    NSInteger healthDelta = health - newHealth;
+    if (healthDelta > 0 && self.absorb > 0) {
+        if (healthDelta >= self.absorb){
+            healingFromAbsorbtion = self.absorb;
+            newHealth += self.absorb;
+            self.absorb = 0;
+        }
+        else if (healthDelta < self.absorb){
+            healingFromAbsorbtion = healthDelta;
+            newHealth += healthDelta;
+            self.absorb -= healthDelta;
+        }
+    }
+    
 	for (HealthAdjustmentModifier* ham in healthAdjustmentModifiers){
 		[ham willChangeHealthFrom:&health toNewHealth:&newHealth];
 	}
@@ -85,10 +126,16 @@
     if (prevHealth < health){
         totalHealing = health - prevHealth;
     }
-    [self didReceiveHealing:totalHealing andOverhealing:overHealing];
+    if (healthDelta < 0) {
+        [self didReceiveHealing:totalHealing andOverhealing:overHealing];
+    }
     if (health == 0){
         self.hasDied = YES;
         [self.logger logEvent:[CombatEvent eventWithSource:self target:self value:nil andEventType:CombatEventTypeMemberDied]];
+    }
+    
+    if (healingFromAbsorbtion) {
+        [self.logger logEvent:[CombatEvent eventWithSource:nil target:self value:[NSNumber numberWithInt:healingFromAbsorbtion] andEventType:CombatEventTypeHeal]];
     }
 }
 

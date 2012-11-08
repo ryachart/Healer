@@ -133,7 +133,6 @@
         self.shieldBubble = [CCSprite spriteWithSpriteFrameName:@"shield_bubble.png"];
         [self.shieldBubble setVisible:NO];
         [self.shieldBubble setPosition:ccp(frame.size.width * .5,frame.size.height * .5)];
-        [self.shieldBubble setVisible:NO];
     
         [self addChild:self.healthLabel z:10];
         [self addChild:self.isFocusedLabel z:11];
@@ -146,6 +145,7 @@
 }
 
 -(void)setShieldedOn:(BOOL)isOn{
+    return;
     if (isOn && !self.shieldBubble.visible){
         self.shieldBubble.scale = 0.0;
         self.shieldBubble.visible = YES;

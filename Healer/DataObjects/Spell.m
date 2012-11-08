@@ -433,14 +433,14 @@
     return self;
 }
 +(id)defaultSpell{
-	Barrier *bulwark = [[Barrier alloc] initWithTitle:@"Barrier" healAmnt:0 energyCost:100 castTime:0.0 andCooldown:5.0];
+	Barrier *bulwark = [[Barrier alloc] initWithTitle:@"Barrier" healAmnt:0 energyCost:50 castTime:0.0 andCooldown:1.0];
 	[bulwark setDescription:@"Sets a shield around a target that absorbs moderate damage."];
 	[[bulwark spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicCasting" ofType:@"wav"]] andTitle:@"BWStart"];
 	[[bulwark spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicFizzle" ofType:@"wav"]] andTitle:@"BWFizzle"];
 	[[bulwark spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerInstantShield" ofType:@"wav"]] andTitle:@"BWFinish"];
     
     ShieldEffect *appliedEffect = [[[ShieldEffect alloc] initWithDuration:25.0 andEffectType:EffectTypePositive] autorelease];
-    [appliedEffect setAmountToShield:600];
+    [appliedEffect setAmountToShield:400];
     [appliedEffect setTitle:@"barrier-eff"];
     [bulwark setAppliedEffect:appliedEffect];
 	return [bulwark autorelease];

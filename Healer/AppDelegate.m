@@ -24,7 +24,6 @@
     _window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
     [TestFlight takeOff:TestFlightToken];
-    [TestFlight setDeviceIdentifier:[UIDevice currentDevice].uniqueIdentifier];
     
     [Parse setApplicationId:@"BajbrSl60Pz6ukDojWg8CAaUdCU7FoWr7UJCiJPs"
                   clientKey:@"2CSX0jPgh7K4X7PfWbmfPdyo3G8OfCqSa41JW4BZ"];

@@ -21,6 +21,8 @@
 @property (nonatomic, readonly) NSInteger levelNumber;
 @property (nonatomic, readwrite) NSInteger difficulty;
 
+@property (nonatomic, readonly) NSInteger reward;
+
 - (id)initWithRaid:(Raid*)raid andBoss:(Boss*)boss andSpells:(NSArray*)spells;
 - (void)encounterWillBegin;
 

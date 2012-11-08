@@ -58,6 +58,13 @@
     [self.boss configureBossForDifficultyLevel:self.difficulty];
 }
 
+- (NSInteger)reward
+{
+    NSInteger baseGold = [Encounter goldForLevelNumber:self.levelNumber];
+    baseGold += self.difficulty * 25;
+    return baseGold;
+}
+
 #pragma mark - Class Methods
 
 + (Encounter*)randomMultiplayerEncounter{
@@ -342,89 +349,43 @@
     
 }
 
-+(NSInteger)goldForLevelNumber:(NSInteger)levelNumber isFirstWin:(BOOL)isFirstWin isMultiplayer:(BOOL)isMultiplayer{
++(NSInteger)goldForLevelNumber:(NSInteger)levelNumber{
     NSInteger gold = 0;
     
-    if (isFirstWin){
-        switch (levelNumber) {
-            case 1:
-                gold = 110;
-                break;
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                gold = 100;
-                break;
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-                gold = 200;
-                break;
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-                gold = 300;
-                break;
-            case 16:
-            case 17:
-            case 18:
-            case 19:
-                gold = 400;
-                break;
-            case 20:
-                gold = 500;
-                break;
-            case 21:
-                return 1;
-                break;
-        }
-    }else{
-        switch (levelNumber) {
-            case 1:
-                gold = 0;
-                break;
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                gold = 25;
-                break;
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-                gold = 50;
-                break;
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-                gold = 75;
-                break;
-            case 16:
-            case 17:
-            case 18:
-            case 19:
-                gold = 100;
-                break;
-            case 20:
-                gold = 125;
-                break;
-            case 21:
-                return 1;
-                break;
-                break;
-        }
-    }
-    if (isMultiplayer && !isFirstWin){
-        gold *= 2;
+    switch (levelNumber) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+            gold = 25;
+            break;
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+            gold = 50;
+            break;
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+            gold = 75;
+            break;
+        case 16:
+        case 17:
+        case 18:
+        case 19:
+            gold = 100;
+            break;
+        case 20:
+            gold = 125;
+            break;
+        case 21:
+            return 1;
+            break;
     }
     
     return gold;

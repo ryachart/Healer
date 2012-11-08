@@ -154,11 +154,14 @@
             if (!self.isMultiplayer){
                 [PlayerDataManager completeLevel:self.encounter.levelNumber];
             }
-            reward = [Encounter goldForLevelNumber:self.encounter.levelNumber isFirstWin:isFirstWin isMultiplayer:self.isMultiplayer];
+            reward = [self.encounter reward];
             
             oldRating = [PlayerDataManager levelRatingForLevel:self.encounter.levelNumber];
             rating = [self calculateRatingForNumDead:numDead];
             if (rating > oldRating && !self.isMultiplayer){
+                if (self.encounter.difficulty > 1) {
+                    reward += 25; //Completing a new difficulty bonus, basically.
+                }
                 [PlayerDataManager setLevelRating:rating forLevel:self.encounter.levelNumber];
             }
         }else {
@@ -175,10 +178,6 @@
                 partialProgressReward =  MIN(partialProgressReward, encounterRewardForSuccess * .5);
             }
             reward = partialProgressReward;
-            
-            if (isFirstWin){
-                reward *= .25;
-            }
         }
         
         if (self.encounter.levelNumber == ENDLESS_VOID_ENCOUNTER_NUMBER){

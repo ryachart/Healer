@@ -335,18 +335,14 @@
     Effect *negativeEffect = nil;
     Effect *positiveEffect = nil;
 //    BOOL shieldEffectFound = NO;
-//	for (Effect *eff in self.memberData.activeEffects){
-//        if ([eff effectType] == EffectTypePositive){
-//            if ([eff isKindOfClass:[ShieldEffect class]]){
-//                shieldEffectFound = YES;
-//            }else{
-//                positiveEffect = eff;
-//            }
-//        }
-//        if ([eff effectType] == EffectTypeNegative){
-//            negativeEffect = eff;
-//        }
-//	}
+	for (Effect *eff in self.memberData.activeEffects){
+        if ([eff effectType] == EffectTypePositive){
+            positiveEffect = eff;
+        }
+        if ([eff effectType] == EffectTypeNegative){
+            negativeEffect = eff;
+        }
+	}
     
 //    [self setShieldedOn:shieldEffectFound];
     

@@ -55,6 +55,7 @@ typedef enum {
 @property (nonatomic, readwrite) float energyRegenAdjustment;
 @property (nonatomic, readwrite) BOOL causesConfusion;
 @property (nonatomic, readwrite) float maximumHealthMultiplierAdjustment;
+@property (nonatomic, readwrite) float damageTakenMultiplierAdjustment;
 @property (nonatomic, readwrite) NSInteger maximumAbsorbtionAdjustment;
 @property (readwrite) BOOL isIndependent; //Max Stacks doesnt apply and other effects are never the same as this effect
 
@@ -152,14 +153,6 @@ typedef enum {
 @property (nonatomic, readwrite) NSInteger baseValue;
 @end
 
-@interface DamageTakenIncreasedEffect : Effect <HealthAdjustmentModifier>
-@property (nonatomic, readwrite) float percentage;
-@end
-
-@interface DamageTakenDecreasedEffect : Effect <HealthAdjustmentModifier>
-@property (nonatomic, readwrite) float percentage;
-@end
-
 @interface ExecutionEffect : DelayedHealthEffect
 @property (nonatomic, readwrite) float effectivePercentage;
 @end
@@ -205,9 +198,6 @@ typedef enum {
 + (id)defaultEffect;
 @end
 
-@interface BlessedArmorEffect : DelayedHealthEffect <HealthAdjustmentModifier>
-@end
-
 @protocol RedemptionDelegate <NSObject>
 - (void)redemptionDidTriggerOnTarget:(HealableTarget*)target;
 - (BOOL)canRedemptionTrigger;
@@ -226,7 +216,7 @@ typedef enum {
 @property (nonatomic, readwrite) BOOL needsDetonation;
 @end
 
-@interface SoulPrisonEffect : DamageTakenDecreasedEffect
+@interface SoulPrisonEffect : Effect
 @property (nonatomic, readwrite) BOOL healthReduced;
 @end
 

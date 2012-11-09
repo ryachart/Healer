@@ -1355,9 +1355,9 @@
         self.effectType = ProjectileEffectTypeThrow;
         self.spriteName = @"rock.png";
         self.explosionParticleName = nil;
-        DamageTakenIncreasedEffect *disorient = [[[DamageTakenIncreasedEffect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
+        Effect *disorient = [[[Effect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
         [disorient setTitle:@"disorient-effect"];
-        [disorient setPercentage:.25];
+        [disorient setDamageTakenMultiplierAdjustment:.25];
         [disorient setSpriteName:@"fallen-down.png"];
         self.appliedEffect = disorient;
         

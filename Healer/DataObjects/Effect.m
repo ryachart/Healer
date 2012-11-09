@@ -61,6 +61,7 @@
     copied.spellCostAdjustment = self.spellCostAdjustment;
     copied.failureChance = self.failureChance;
     copied.causesConfusion = self.causesConfusion;
+    copied.damageTakenMultiplierAdjustment = self.damageTakenMultiplierAdjustment;
     return copied;
 }
 
@@ -423,38 +424,6 @@
 }
 @end
 
-@implementation DamageTakenDecreasedEffect
-@synthesize percentage;
--(void)didChangeHealthFrom:(NSInteger )health toNewHealth:(NSInteger )newHealth
-{
-}
--(void)willChangeHealthFrom:(NSInteger *)health toNewHealth:(NSInteger *)newHealth{
-	
-	if (*health > *newHealth){
-		NSInteger healthDelta = *health - *newHealth;
-        
-		NSInteger newHealthDelta = healthDelta	* (1 - percentage);
-		*newHealth = *health - newHealthDelta;
-	}
-}
-@end
-
-@implementation DamageTakenIncreasedEffect
-@synthesize percentage;
--(void)didChangeHealthFrom:(NSInteger )health toNewHealth:(NSInteger )newHealth
-{
-}
--(void)willChangeHealthFrom:(NSInteger *)health toNewHealth:(NSInteger *)newHealth{
-	
-	if (*health > *newHealth){
-		NSInteger healthDelta = *health - *newHealth;
-        
-		NSInteger newHealthDelta = healthDelta	* (1 + percentage);
-		*newHealth = *health - newHealthDelta;
-	}
-}
-@end
-
 @implementation RothPoison
 @synthesize dispelDamageValue, baseValue, valuePerTick=_valuePerTick;
 -(void)setValuePerTick:(NSInteger)valPerTick{
@@ -746,21 +715,6 @@
 }
 @end
 
-@implementation BlessedArmorEffect
-
--(void)didChangeHealthFrom:(NSInteger )health toNewHealth:(NSInteger )newHealth
-{
-}
--(void)willChangeHealthFrom:(NSInteger *)health toNewHealth:(NSInteger *)newHealth{
-	
-	if (*health > *newHealth){
-		NSInteger healthDelta = *health - *newHealth;
-		NSInteger newHealthDelta = healthDelta	* .5;
-		*newHealth = *health - newHealthDelta;
-	}
-}
-@end
-
 @implementation RedemptionEffect
 
 -(void)didChangeHealthFrom:(NSInteger )health toNewHealth:(NSInteger )newHealth
@@ -845,7 +799,7 @@
 @implementation SoulPrisonEffect
 - (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type {
     if (self = [super initWithDuration:dur andEffectType:type]){
-        self.percentage = 1.0;
+        self.damageTakenMultiplierAdjustment = -1.0;
         self.title = @"soul-prison-eff";
         self.spriteName = @"soul_prison.png";
     }

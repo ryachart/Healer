@@ -528,11 +528,11 @@
     }
     
     if ((spell.spellType == SpellTypeBasic || spell.spellType == SpellTypePeriodic) && [self hasDivinityEffectWithTitle:@"shining-aegis"]){
-        DamageTakenDecreasedEffect *immunityEffect = [[[DamageTakenDecreasedEffect alloc] initWithDuration:7 andEffectType:EffectTypePositiveInvisible] autorelease];
-        [immunityEffect setOwner:self];
-        [immunityEffect setTitle:@"shining-aegis-dev-eff"];
-        [immunityEffect setPercentage:.075];
-        [target addEffect:immunityEffect];
+        Effect *armorEffect = [[[Effect alloc] initWithDuration:7 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [armorEffect setOwner:self];
+        [armorEffect setTitle:@"shining-aegis-armor-eff"];
+        [armorEffect setDamageTakenMultiplierAdjustment:-.075];
+        [target addEffect:armorEffect];
     }
     
     if ([self hasDivinityEffectWithTitle:@"purity-of-soul"]){

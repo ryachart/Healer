@@ -645,12 +645,11 @@
     NSArray *aliveMembers = [theRaid getAliveMembers];
     [theBoss.announcer displaySprite:@"shield_bubble.png" overRaidForDuration:6.0];
     for (RaidMember*member in aliveMembers){
-        DamageTakenDecreasedEffect *dtde = [[DamageTakenDecreasedEffect alloc] initWithDuration:6 andEffectType:EffectTypePositiveInvisible];
+        Effect *dtde = [[[Effect alloc] initWithDuration:6 andEffectType:EffectTypePositiveInvisible] autorelease];
         [dtde setTitle:@"ward-of-ancients-effect"];
-        [dtde setPercentage:.4];
+        [dtde setDamageTakenMultiplierAdjustment:-.4];
         [dtde setOwner:self.owner];
         [member addEffect:dtde];
-        [dtde release];
     }
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
     
@@ -840,10 +839,11 @@
     BlessedArmor *defaultSpell = [[BlessedArmor alloc] initWithTitle:@"Blessed Armor" healAmnt:0 energyCost:70 castTime:0.0 andCooldown:9.0];
     
     [defaultSpell setDescription:@"Reduces damage done to a target by 50% for 5 seconds.  When the effect ends it heals for a moderate amount."];
-    BlessedArmorEffect *bae = [[BlessedArmorEffect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
+    DelayedHealthEffect *bae = [[DelayedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
     [bae setSpriteName:@"blessed_armor.png"];
     [bae setTitle:@"blessed-armor-eff"];
     [bae setValue:500];
+    [bae setDamageTakenMultiplierAdjustment:-.5];
     [defaultSpell setAppliedEffect:bae];
     [bae release];
     return [defaultSpell autorelease];

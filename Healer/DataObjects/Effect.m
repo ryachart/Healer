@@ -256,6 +256,22 @@
 }
 @end
 
+@implementation BarrierEffect
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta
+{
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+    if (!self.hasAppliedAbsorb) {
+        self.hasAppliedAbsorb = YES;
+        self.target.absorb += self.amountToShield;
+    }
+    if (self.target.absorb == 0) {
+        self.isExpired = YES;
+        Player *owningPlayer = (Player*)self.owner;
+        [owningPlayer setEnergy:owningPlayer.energy + 12];
+    }
+}
+@end
+
 
 @implementation ReactiveHealEffect
 @synthesize amountPerReaction, triggerCooldown, effectCooldown=_effectCooldown;

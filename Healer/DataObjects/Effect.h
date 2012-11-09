@@ -220,6 +220,9 @@ typedef enum {
 @property (nonatomic, readwrite) BOOL healthReduced;
 @end
 
+@interface BarrierEffect : ShieldEffect
+@end
+
 #pragma mark - DEPRECATED EFFECTS
 @interface BigFireball : Effect {
 	NSInteger lastPosition;

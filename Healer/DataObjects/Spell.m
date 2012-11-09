@@ -433,13 +433,13 @@
     return self;
 }
 +(id)defaultSpell{
-	Barrier *bulwark = [[Barrier alloc] initWithTitle:@"Barrier" healAmnt:0 energyCost:50 castTime:0.0 andCooldown:1.0];
-	[bulwark setDescription:@"Sets a shield around a target that absorbs moderate damage."];
+	Barrier *bulwark = [[Barrier alloc] initWithTitle:@"Barrier" healAmnt:0 energyCost:75 castTime:0.0 andCooldown:4.0];
+	[bulwark setDescription:@"Shields the target absorbing moderate damage.  If the shield is fully consumed 50 energy is restored to the Healer."];
 	[[bulwark spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicCasting" ofType:@"wav"]] andTitle:@"BWStart"];
 	[[bulwark spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerBasicFizzle" ofType:@"wav"]] andTitle:@"BWFizzle"];
 	[[bulwark spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerInstantShield" ofType:@"wav"]] andTitle:@"BWFinish"];
     
-    ShieldEffect *appliedEffect = [[[ShieldEffect alloc] initWithDuration:25.0 andEffectType:EffectTypePositive] autorelease];
+    ShieldEffect *appliedEffect = [[[ShieldEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositive] autorelease];
     [appliedEffect setAmountToShield:400];
     [appliedEffect setTitle:@"barrier-eff"];
     [bulwark setAppliedEffect:appliedEffect];
@@ -665,7 +665,7 @@
 }
 + (id)defaultSpell {
     TouchOfHope *tol = [[TouchOfHope alloc] initWithTitle:@"Touch of Hope" healAmnt:300 energyCost:50 castTime:0.0 andCooldown:4.0];
-    [tol setDescription:@"Heals your target for a small amount and more over 4 seconds.  Each time the periodic effect heals it restores 12 energy."];
+    [tol setDescription:@"Heals your target for a small amount and more over 4 seconds.  Each time the periodic effect heals it restores 12 energy to the Healer."];
     return [tol autorelease];
 }
 
@@ -699,18 +699,17 @@
 }
 + (id)defaultSpell {
     SoaringSpirit *ss = [[SoaringSpirit alloc] initWithTitle:@"Soaring Spirit" healAmnt:0 energyCost:30 castTime:0 andCooldown:35.0];
-    [ss setDescription:@"Releases your inner light increasing your healing done and reduces cast times by 20% for 7.5 seconds."];
+    [ss setDescription:@"Releases your inner light increasing your healing done and reduces cast times by 50% for 7.5 seconds."];
     return [ss autorelease];
 }
 
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime {
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
-    float modifier = 0.0;
     [self.owner.announcer announce:@"You are filled with spiritual power."];
     Effect *soaringSpiritEffect = [[Effect alloc] initWithDuration:7.5 andEffectType:EffectTypePositive];
     [soaringSpiritEffect setOwner:self.owner];
-    [soaringSpiritEffect setHealingDoneMultiplierAdjustment:.2 + modifier];
-    [soaringSpiritEffect setCastTimeAdjustment:.2 + modifier];
+    [soaringSpiritEffect setHealingDoneMultiplierAdjustment:.5];
+    [soaringSpiritEffect setCastTimeAdjustment:.5];
     [self.owner addEffect:soaringSpiritEffect];
     [soaringSpiritEffect release];
 }
@@ -795,7 +794,7 @@
 
 + (id)defaultSpell {
     StarsOfAravon *spell = [[StarsOfAravon alloc] initWithTitle:@"Stars of Aravon" healAmnt:0 energyCost:66 castTime:1.75 andCooldown:0.0];
-    [spell setDescription:@"Summon 4 Stars of Aravon from the heavens.  The Stars travel for 2.5 seconds before healing their target for a small amount."];
+    [spell setDescription:@"Summon 4 Stars of Aravon from the heavens.  The Stars travel for 1.75 seconds before healing their target for a small amount."];
     return [spell autorelease];
 }
 

@@ -11,6 +11,7 @@
 #import "HealerStartScene.h"
 #import "PlayerDataManager.h"
 #import "EncounterCard.h"
+#import "BackgroundSprite.h"
 
 #define NUM_ENCOUNTERS 21
 
@@ -31,9 +32,16 @@
     if (self = [super initWithViewSize:CGSizeMake(1024, 768)]) {
         self.bounces = NO;
         
-        CGSize mapSize = CGSizeMake(2800, 768);
+        BackgroundSprite *map1 = [[[BackgroundSprite alloc] initWithJPEGAssetName:@"map-level-1"] autorelease];
+        [self addChild:map1];
+        
+        BackgroundSprite *map2 = [[[BackgroundSprite alloc] initWithJPEGAssetName:@"map-level-2"] autorelease];
+        [map2 setPosition:CGPointMake(1024, 0)];
+        [self addChild:map2];
+        
+        CGSize mapSize = CGSizeMake(2048, 768);
         CCLayerColor *layerWithColor = [CCLayerColor layerWithColor:ccc4(200, 137, 83, 255)];
-        [layerWithColor setContentSize:mapSize];
+        [layerWithColor setContentSize:CGSizeMake(mapSize.width * 2, mapSize.height)];
         [self addChild:layerWithColor z:-100];
         
         self.contentSize = mapSize;
@@ -94,7 +102,28 @@
 
 - (CGPoint)pointForLevelNumber:(NSInteger)levelNum
 {
-    return CGPointMake(100 * levelNum, 768.0 - 100.0f - (50 * (levelNum % 8)));
+    switch (levelNum) {
+        case 1:
+            return CGPointMake(590, 635);
+        case 2:
+            return CGPointMake(300, 516);
+        case 3:
+            return CGPointMake(150, 480);
+        case 4:
+            return CGPointMake(222, 330);
+        case 5:
+            return CGPointMake(560, 200);
+        case 6:
+            return CGPointMake(660, 270);
+        case 7:
+            return CGPointMake(784, 300);
+//        case 8:
+//            return CGPointMake(1024 + 120, 680); //The fuck? These appear on the 2nd page
+        default:
+            break;
+    }
+    
+    return CGPointMake(480 + 80 * levelNum, 768.0 - 100.0f - (50 * (levelNum % 7)));
 }
 
 - (void)selectFurthestLevel

@@ -20,6 +20,7 @@
 {
     if (self = [super init]) {
         self.levelNum = levelNum;
+        self.scale = 1.5;
         CCSprite *indicatorSprite = [CCSprite spriteWithSpriteFrameName:@"cross_blades.png"];        
         CCSprite *indicatorSpriteSelected = [CCSprite spriteWithSpriteFrameName:@"cross_blades.png"];
         [indicatorSpriteSelected setOpacity:122];
@@ -42,6 +43,7 @@
 - (void)setIsAccessible:(BOOL)isAccessible
 {
     _isAccessible = isAccessible;
+    [self setVisible:isAccessible];
 }
 
 - (void)setSelected:(BOOL)isSelected

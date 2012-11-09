@@ -102,8 +102,8 @@ static AudioController* sharedController = nil;
 	if ([audioPlayers count] > 0){
 		AVAudioPlayer *player = [audioPlayers objectForKey:title];
         [player setVolume:.3];
-#if DEBUG
-        [player setVolume:.1];
+#if TARGET_IPHONE_SIMULATOR
+        [player setVolume:0.0];
 #endif
 		[player setNumberOfLoops:0];
 		if ([player isPlaying]){

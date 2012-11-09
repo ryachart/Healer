@@ -24,14 +24,17 @@
         _levelNum = levelNum;
         
         self.background = [CCSprite spriteWithSpriteFrameName:@"encounter-card-bg.png"];
+        [self.background setColor:ccBLACK];
         [self addChild:self.background];
         
-        self.titleLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(300, 50) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:28.0];
+        self.titleLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(300, 50) hAlignment:kCCTextAlignmentLeft fontName:@"Avenir-Black" fontSize:28.0];
         [self.titleLabel setPosition:CGPointMake(10, 48)];
+        [self.titleLabel setColor:ccc3(220, 220, 220)];
         [self addChild:self.titleLabel];
         
-        self.descLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(350, 150) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:16.0];
-        [self.descLabel setPosition:CGPointMake(10, -25)];
+        self.descLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(350, 150) hAlignment:kCCTextAlignmentLeft fontName:@"Avenir-Light" fontSize:16.0];
+        [self.descLabel setPosition:CGPointMake(10, -35)];
+        [self.descLabel setColor:ccc3(220, 220, 220)];
         [self addChild:self.descLabel];
         
         [self reloadCard];

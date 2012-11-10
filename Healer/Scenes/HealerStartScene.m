@@ -77,7 +77,7 @@
 
 -(void)multiplayerSelected{
     if (![PlayerDataManager isMultiplayerUnlocked]){
-        UIAlertView *mplayerNotUnlocked = [[UIAlertView alloc] initWithTitle:@"Multiplayer not Unlocked!" message:@"Multiplayer is unlocked after slaying the Plaguebringer Colossus." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        UIAlertView *mplayerNotUnlocked = [[UIAlertView alloc] initWithTitle:@"Multiplayer Unavailable!" message:@"Multiplayer is coming in an update soon!" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [mplayerNotUnlocked show];
         [mplayerNotUnlocked release];
         

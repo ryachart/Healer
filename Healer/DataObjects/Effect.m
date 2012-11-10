@@ -188,11 +188,15 @@
 	{
         self.timeApplied += timeDelta;
 		lastTick += timeDelta;
-		if (lastTick >= (duration/numOfTicks)){
+        NSTimeInterval durationForTick = duration;
+        if (duration == -1.0) {
+            durationForTick = 1.0;
+        }
+		if (lastTick >= (durationForTick/numOfTicks)){
             [self tick];
 			lastTick = 0.0;
 		}
-		if (self.timeApplied >= duration){
+		if (self.timeApplied >= duration && duration != -1.0){
             if (self.numHasTicked < self.numOfTicks){
                 [self tick];
             }

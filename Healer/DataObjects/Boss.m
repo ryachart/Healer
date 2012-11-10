@@ -315,26 +315,19 @@
 }
 
 - (void)ownerDidBeginAbility:(Ability *)ability {
-    [self.announcer announce:@"The Corrupted Troll Smashes the cave ceiling"];
+    [self.announcer announce:@"The Troll smashes the cave ceiling"];
     [self.announcer displayScreenShakeForDuration:4.0];
     [self.announcer displayParticleSystemOverRaidWithName:@"falling_rocks.plist"];
 }
 
 -(void)startEnraging{
-    [self.announcer announce:@"The Cave Troll Swings his club furiously at the focused target!"];
+    [self.announcer announce:@"The Troll swings his club furiously at his focused target!"];
     self.enraging += 1.0;
-    float adjustment = .35;
-    Effect *enragingEffect = [[Effect alloc] initWithDuration:9 andEffectType:EffectTypePositiveInvisible];
-    [enragingEffect setTarget:self];
-    [enragingEffect setOwner:self];
-    [enragingEffect setTitle:@"troll-temp-enrage"];
-    [enragingEffect setDamageDoneMultiplierAdjustment:adjustment];
-    [self addEffect:enragingEffect];
-    [enragingEffect release];
+    self.autoAttack.cooldown = .95;
 }
 
 -(void)stopEnraging{
-    [self.announcer announce:@"The Cave Troll is Exhausted!"];
+    [self.announcer announce:@"The Troll is Exhausted!"];
     self.enraging = 0.0;
     self.autoAttack.cooldown = 1.4;
 }
@@ -900,7 +893,7 @@
         [self.announcer announce:@"A putrid green mist fills the area..."];
         [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:-1.0];
         for (RaidMember *member in raid.raidMembers){
-            RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegativeInvisible];
+            RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegativeInvisible];
             [rhe setOwner:self];
             [rhe setTitle:@"fungal-ravager-mist"];
             [rhe setValuePerTick:self.isMultiplayer ? -40 : -(arc4random() % 20 + 30)];

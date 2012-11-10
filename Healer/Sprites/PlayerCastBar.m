@@ -55,7 +55,6 @@
         [self.castBar setContentSize:CGSizeMake(0, self.castBar.contentSize.height)];
         if (self.castHasBegun) {
             self.castHasBegun = NO;
-            NSLog(@"Cast Finished: %@", spell.title);
         }
 	}
 	else {

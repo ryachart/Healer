@@ -404,7 +404,7 @@
 
 +(id)defaultSpell{
     Regrow *regrow = [[Regrow alloc] initWithTitle:@"Regrow" healAmnt:0 energyCost:50 castTime:0.0 andCooldown:1.0];
-    [regrow setDescription:@"Heals for a large amount over 12 seconds."];
+    [regrow setDescription:@"Heals for a moderate amount over 12 seconds."];
     [[regrow spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
     
     RepeatedHealthEffect *hotEffect = [[RepeatedHealthEffect alloc] initWithDuration:12.0 andEffectType:EffectTypePositive];

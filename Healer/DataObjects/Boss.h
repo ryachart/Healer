@@ -64,7 +64,7 @@
 @end
 
 @interface CorruptedTroll : Boss
-@property (readwrite) NSTimeInterval lastRockTime;
+@property (nonatomic, assign) Ability *caveIn;
 @property (readwrite) NSTimeInterval enraging;
 @end
 

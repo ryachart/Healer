@@ -13,6 +13,7 @@
 #import "ProjectileEffect.h"
 #import "Ability.h"
 #import "AbilityDescriptor.h"
+#import "Effect.h"
 
 @interface Boss ()
 @property (nonatomic, retain) NSMutableArray *queuedAbilitiesToAdd;
@@ -262,7 +263,7 @@
 @end
 
 @implementation CorruptedTroll
-@synthesize lastRockTime, enraging;
+@synthesize enraging;
 +(id)defaultBoss{
     NSInteger health = 18500;
     NSInteger damage = 220;
@@ -273,12 +274,23 @@
     [corTroll setTitle:@"Corrupted Troll"];
     [corTroll setInfo:@"A Troll of Raklor has been identified among the demons brewing in the south.  It has been corrupted and twisted into a foul and terrible creature.  You will journey with a small band of soldiers to the south to dispatch this troll."];
     
-    AbilityDescriptor *caveIn = [[AbilityDescriptor alloc] init];
-    [caveIn setAbilityDescription:@"Occasionally, the Corrupted Troll will smash the roof causing rocks to fall onto your allies."];
-    [caveIn setIconName:@"unknown_ability.png"];
-    [caveIn setAbilityName:@"Cave In"];
-    [corTroll addAbilityDescriptor:caveIn];
-    [caveIn release];
+    RaidApplyEffect *caveIn = [[[RaidApplyEffect alloc] init] autorelease];
+    RepeatedHealthEffect *caveInDoT = [[[RepeatedHealthEffect alloc] initWithDuration:2.5 andEffectType:EffectTypeNegativeInvisible] autorelease];
+    [caveInDoT setTitle:@"cave-in-damage"];
+    [caveInDoT setValuePerTick:-(arc4random() % 100 + 75)];
+    [caveInDoT setNumOfTicks:3];
+    [caveIn setTitle:@"troll-cave-in"];
+    [caveIn setAppliedEffect:caveInDoT];
+    [caveIn setCooldown:25.0];
+    [caveIn setActivationTime:1.5];
+    corTroll.caveIn = caveIn;
+    [corTroll addAbility:corTroll.caveIn];
+    
+    AbilityDescriptor *caveInDesc = [[[AbilityDescriptor alloc] init] autorelease];
+    [caveInDesc setAbilityDescription:@"Occasionally, the Corrupted Troll will smash the roof causing rocks to fall onto your allies."];
+    [caveInDesc setIconName:@"unknown_ability.png"];
+    [caveInDesc setAbilityName:@"Cave In"];
+    [caveIn setDescriptor:caveInDesc];
     
     AbilityDescriptor *frenzy = [[AbilityDescriptor alloc] init];
     [frenzy setAbilityDescription:@"Occasionally, the Corrupted Troll will attack his Focused target furiously dealing high damage."];
@@ -302,21 +314,10 @@
     }
 }
 
--(void)doCaveInOnRaid:(Raid*)theRaid{
-    [self.announcer displayScreenShakeForDuration:2.5];
+- (void)ownerDidBeginAbility:(Ability *)ability {
     [self.announcer announce:@"The Corrupted Troll Smashes the cave ceiling"];
+    [self.announcer displayScreenShakeForDuration:4.0];
     [self.announcer displayParticleSystemOverRaidWithName:@"falling_rocks.plist"];
-    for (RaidMember *member in theRaid.raidMembers){
-        if (!member.isDead){
-            NSInteger maxTankDamage = 250;
-            NSInteger damageDealt = (arc4random() % 200 + 200);
-            if (member.isFocused){
-                damageDealt = MAX(damageDealt, maxTankDamage); //The Tank has max damage
-            }
-            [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:damageDealt] andEventType:CombatEventTypeDamage]];
-            [member setHealth:member.health - damageDealt * self.damageDoneMultiplier];
-        }
-    }
 }
 
 -(void)startEnraging{
@@ -336,7 +337,6 @@
     [self.announcer announce:@"The Cave Troll is Exhausted!"];
     self.enraging = 0.0;
     self.autoAttack.cooldown = 1.4;
-    self.lastRockTime = 5.0;
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
@@ -348,19 +348,6 @@
 - (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
 {
     [super combatActions:players theRaid:theRaid gameTime:timeDelta];
-    lastRockTime += timeDelta;
-    float tickTime = 25.0;
-    
-//    if (self.difficulty == DifficultyModeHard){
-//        tickTime = 16.0;
-//    }
-    
-    if (lastRockTime > tickTime){
-        if (!self.enraging){
-            [self doCaveInOnRaid:theRaid];
-            lastRockTime = 0.0;
-        }
-    }
     
     if (self.enraging > 0){
         self.enraging += timeDelta;

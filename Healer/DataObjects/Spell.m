@@ -442,6 +442,7 @@
     ShieldEffect *appliedEffect = [[[ShieldEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositive] autorelease];
     [appliedEffect setAmountToShield:400];
     [appliedEffect setTitle:@"barrier-eff"];
+    [appliedEffect setSpriteName:@"blessed_armor.png"];
     [bulwark setAppliedEffect:appliedEffect];
 	return [bulwark autorelease];
 }

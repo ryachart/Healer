@@ -45,7 +45,7 @@
     for (Effect *eff in self.activeEffects) {
         multiplier += [eff damageTakenMultiplierAdjustment];
     }
-    return multiplier;
+    return MAX(0,multiplier);
 }
 
 -(float)healingDoneMultiplier{
@@ -106,25 +106,26 @@
     }
     
     NSInteger healthDelta = health - newHealth;
-    if (health > 0) { //If we are taking damage
-        newHealth *= self.damageTakenMultiplierAdjustment;
-        healthDelta = health - newHealth;
+    if (healthDelta > 0) { //If we are taking damage FIXME
+        NSInteger damage = healthDelta;
+        damage *= self.damageTakenMultiplierAdjustment;
         
         if (self.absorb > 0) {
-            if (healthDelta >= self.absorb){
+            if (damage >= self.absorb){
                 healingFromAbsorbtion = self.absorb;
-                newHealth += self.absorb;
+                damage -= self.absorb;
                 self.absorb = 0;
             }
-            else if (healthDelta < self.absorb){
-                healingFromAbsorbtion = healthDelta;
-                newHealth += healthDelta;
-                self.absorb -= healthDelta;
+            else if (damage < self.absorb){
+                healingFromAbsorbtion = damage;
+                self.absorb -= damage;
+                damage = 0;
             }
         }
+        newHealth = health - damage;
     }
 
-    
+
 	for (HealthAdjustmentModifier* ham in healthAdjustmentModifiers){
 		[ham willChangeHealthFrom:&health toNewHealth:&newHealth];
 	}

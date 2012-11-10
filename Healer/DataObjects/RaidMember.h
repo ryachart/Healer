@@ -77,7 +77,6 @@ typedef enum {
 +(Champion *)defaultChampion;
 @end
 @interface Warlock : RaidMember
-@property (nonatomic, readwrite) NSTimeInterval healCooldown;
 @property (nonatomic, readwrite) BOOL deathEffectApplied;
 +(Warlock*)defaultWarlock;
 @end

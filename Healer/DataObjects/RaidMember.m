@@ -122,7 +122,7 @@
     lastAttack += timeDelta;
     [self performAttackIfAbleOnTarget:theBoss];
     [self updateEffects:theBoss raid:theRaid player:thePlayer time:timeDelta];
-	
+	self.absorb = self.absorb; //Verify that our absorption amount is still valid.
 }
 
 
@@ -173,7 +173,7 @@
     if (self = [super initWithHealth:1750 damageDealt:29 andDmgFrequency:1.25 andPositioning:Melee]){
         self.title = @"Guardian";
         self.dodgeChance = .15;
-        self.info = @"The Guardian can draw attention from enemies and become focused.  Healing a Guardian beyond full health creates a shield that absorbs damage.";
+        self.info = @"The Guardian can draw attention from enemies and become focused. Overhealing a Guardian creates a shield that absorbs damage.";
         
         Effect *gbe = [[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible];
         [gbe setMaximumAbsorbtionAdjustment:250];
@@ -294,6 +294,20 @@
     }
     return self;
 }
+
+-(void)performAttackIfAbleOnTarget:(Boss*)target{
+	if (lastAttack >= damageFrequency && !self.isDead){
+		lastAttack = 0.0;
+        
+        if (self.healthPercentage < .5){
+            [self healSelfForAmount:50];
+        } else {
+            [target setHealth:[target health] - (self.damageDealt * self.damageDoneMultiplier)];
+        }
+		
+	}
+}
+
 - (void)combatActions:(Boss *)theBoss raid:(Raid *)theRaid players:(NSArray *)players gameTime:(float)timeDelta{
     [super combatActions:theBoss raid:theRaid players:players gameTime:timeDelta];
     
@@ -304,13 +318,6 @@
         [damageImprovement setDamageDoneMultiplierAdjustment:.05];
         [theBoss addEffect:damageImprovement];
         self.deathEffectApplied = YES;
-    }
-    if (self.healthPercentage < .5){
-        self.healCooldown += timeDelta;
-        if (self.healCooldown >= 1.5){
-            [self healSelfForAmount:25];
-            self.healCooldown = 0.0;
-        }
     }
     
 }

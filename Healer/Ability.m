@@ -73,7 +73,7 @@
         self.timeApplied = 0.0;
         self.isActivating = NO;
     }
-    if (self.activationTime > 0 && !self.isActivating && self.cooldown - self.timeApplied > self.activationTime) {
+    if (self.activationTime > 0 && !self.isActivating && self.cooldown - self.activationTime <= self.timeApplied) {
         self.isActivating = YES;
         [self.owner ownerDidBeginAbility:self];
     }

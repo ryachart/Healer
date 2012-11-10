@@ -18,6 +18,7 @@
 #import <Foundation/Foundation.h>
 #import "HealableTarget.h"
 #import "CombatEvent.h"
+#import "Announcer.h"
 
 @class Boss;
 @class Raid;
@@ -43,6 +44,7 @@ typedef enum {
 @property (readwrite) float dodgeChance;
 @property (readwrite) float criticalChance;
 @property (readonly) Positioning positioning;
+@property (nonatomic, assign) id<Announcer>announcer;
 
 - (float)dps;
 - (id)initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position;
@@ -70,6 +72,7 @@ typedef enum {
 @interface Wizard : RaidMember{
     float lastEnergyGrant;
 }
+@property (nonatomic, readwrite) BOOL energyGrantAnnounced;
 +(Wizard*)defaultWizard;
 @end
 @interface Champion : RaidMember

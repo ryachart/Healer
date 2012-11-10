@@ -40,6 +40,7 @@
         self.dodgeChance = 0.0;
         self.criticalChance = .05;
         positioning = position;
+        self.lastAttack = (arc4random() % (int)(dmgFreq * 10)) / 10.0; //Seed with slightly random attacks
     }
 	return self;
 }
@@ -261,7 +262,7 @@
         self.title = @"Wizard";
         self.dodgeChance = .07;
         self.info = @"The Wizard has moderate health and low damage but periodically grants you energy.";
-        lastEnergyGrant = 0.0;
+        lastEnergyGrant = arc4random() % 10; //Initialize to a random value so they arent all the same time
     }
     return self;
 }
@@ -270,13 +271,24 @@
 {
     [super combatActions:theBoss raid:theRaid players:players gameTime:timeDelta];
     lastEnergyGrant += timeDelta;
-    if (lastEnergyGrant > 1.0){
+    
+    NSTimeInterval tickTime = 10.0;
+    NSTimeInterval orbTravelTime = 2.0;
+    NSInteger energyGrant = 60;
+    
+    if (lastEnergyGrant > (tickTime - orbTravelTime) && !self.energyGrantAnnounced && !self.isDead) {
+        [self.announcer displayEnergyGainFrom:self];
+        self.energyGrantAnnounced = YES;
+    }
+    
+    if (lastEnergyGrant > tickTime) {
         if (!self.isDead){
             for (Player *player in players){
-                [player setEnergy:player.energy + 6];
+                [player setEnergy:player.energy + energyGrant];
             }
         }
         lastEnergyGrant = 0.0;
+        self.energyGrantAnnounced = NO;
     }
     
 }

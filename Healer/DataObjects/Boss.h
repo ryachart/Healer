@@ -73,6 +73,7 @@
 @end
 
 @interface Trulzar : Boss
+@property (nonatomic, assign) Ability *poisonNova;
 @property (readwrite) NSTimeInterval lastPoisonTime;
 @property (readwrite) NSTimeInterval lastPotionTime;
 @end

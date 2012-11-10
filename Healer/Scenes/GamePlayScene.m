@@ -562,6 +562,19 @@
     [collisionEffect setAutoRemoveOnFinish:YES];
     [self addChild:collisionEffect z:100];
 }
+
+- (void)displayParticleSystemOnRaidWithName:(NSString*)name delay:(float)delay
+{
+    if (delay == 0.0) {
+        [self displayParticleSystemOnRaidWithName:name forDuration:0.0];
+    } else {
+        [self runAction:[CCSequence actionOne:[CCDelayTime actionWithDuration:delay] two:[CCCallBlockN actionWithBlock:^(CCNode *node){
+            GamePlayScene *gps = (GamePlayScene *)node;
+            [gps displayParticleSystemOnRaidWithName:name forDuration:0.0];
+        }]]];
+    }
+}
+
 -(void)displayParticleSystemOverRaidWithName:(NSString*)name{
     if (self.isServer){
         NSString* networkMessage = [NSString stringWithFormat:@"STMOVER|%@", name];

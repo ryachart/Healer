@@ -80,6 +80,11 @@ typedef enum {
 @interface StackingDamage : Ability
 @end
 
+@interface RaidDamagePulse : Ability //Deals <abilityValue> damage over the duration to all raid members
+@property (nonatomic, readwrite) NSTimeInterval duration;
+@property (nonatomic, readwrite) NSInteger numTicks;
+@end
+
 @interface BaraghastBreakOff : Ability
 @property (nonatomic, retain) FocusedAttack *ownerAutoAttack;
 @end

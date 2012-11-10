@@ -1448,3 +1448,21 @@
     
 }
 @end
+
+@implementation RaidDamagePulse
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
+{
+    NSArray *targets = [theRaid getAliveMembers];
+    
+    for (RaidMember *member in targets) {
+        RepeatedHealthEffect *damage = [[[RepeatedHealthEffect alloc] initWithDuration:self.duration andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [damage setOwner:self.owner];
+        [damage setTitle:[NSString stringWithFormat:@"%@-%i-pulse", self.owner.sourceName, arc4random() % 20]];
+        [damage setNumOfTicks:self.numTicks];
+        [damage setValuePerTick:-(self.abilityValue/self.numTicks)];
+        [member addEffect:damage];
+    }
+}
+
+@end

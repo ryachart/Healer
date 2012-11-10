@@ -275,7 +275,7 @@
     [corTroll setInfo:@"A Troll of Raklor has been identified among the demons brewing in the south.  It has been corrupted and twisted into a foul and terrible creature.  You will journey with a small band of soldiers to the south to dispatch this troll."];
     
     RaidApplyEffect *caveIn = [[[RaidApplyEffect alloc] init] autorelease];
-    RepeatedHealthEffect *caveInDoT = [[[RepeatedHealthEffect alloc] initWithDuration:2.5 andEffectType:EffectTypeNegativeInvisible] autorelease];
+    RepeatedHealthEffect *caveInDoT = [[[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegativeInvisible] autorelease];
     [caveInDoT setTitle:@"cave-in-damage"];
     [caveInDoT setValuePerTick:-(arc4random() % 100 + 75)];
     [caveInDoT setNumOfTicks:3];
@@ -316,7 +316,7 @@
 
 - (void)ownerDidBeginAbility:(Ability *)ability {
     [self.announcer announce:@"The Troll smashes the cave ceiling"];
-    [self.announcer displayScreenShakeForDuration:4.0];
+    [self.announcer displayScreenShakeForDuration:6.75];
     [self.announcer displayParticleSystemOverRaidWithName:@"falling_rocks.plist"];
 }
 
@@ -423,10 +423,11 @@
 @implementation Trulzar
 @synthesize lastPoisonTime, lastPotionTime;
 +(id)defaultBoss {
-    Trulzar *boss = [[Trulzar alloc] initWithHealth:260000 damage:660 targets:2 frequency:3.0 choosesMT:NO ];
-    boss.autoAttack.failureChance = .25;
+    Trulzar *boss = [[Trulzar alloc] initWithHealth:260000 damage:0 targets:0 frequency:100.0 choosesMT:NO ];
     [boss setTitle:@"Trulzar the Maleficar"];
     [boss setInfo:@"Before the dark winds came, Trulzar was an aide to the King of Theranore and a teacher at the Academy of Alchemists.  Since the Dark winds, Trulzar has drawn into seclusion.  No one had heard from him for years until a brash student who had heard of his exploits paid him a visit.  The student was not heard from for days until a walking corpse that was later identified as the student was slaughtered at the gates by guardsmen.  Trulzar has been identified as a Maleficar by the Theranorian Sages."];
+    
+    boss.lastPotionTime = 6.0;
     
     AbilityDescriptor *poison = [[AbilityDescriptor alloc] init];
     [poison setAbilityDescription:@"Trulzar fills an allies veins with poison dealing increasing damage over time.  This effect may be removed with the Purify spell."];
@@ -434,6 +435,16 @@
     [poison setAbilityName:@"Necrotic Venom"];
     [boss addAbilityDescriptor:poison];
     [poison release];
+    
+    RaidDamagePulse *pulse = [[[RaidDamagePulse alloc] init] autorelease];
+    [pulse setTitle:@"poison-nova"];
+    [pulse setAbilityValue:550];
+    [pulse setNumTicks:4];
+    [pulse setDuration:12.0];
+    [pulse setCooldown:60.0];
+    [pulse setTimeApplied:40.0];
+    [boss addAbility:pulse];
+    boss.poisonNova = pulse;
     return [boss autorelease];
 }
 
@@ -525,11 +536,26 @@
     
     if (((int)percentage) == 7){
         [self.announcer announce:@"Trulzar cackles as the room fills with noxious poison."];
+        [self.poisonNova setIsDisabled:YES];
         [[AudioController sharedInstance] playTitle:@"trulzar_death"];
         for (RaidMember *member in raid.raidMembers){
             [self applyWeakPoisonToTarget:member];
         }
+        
     }
+}
+
+- (void)ownerDidExecuteAbility:(Ability *)ability
+{
+    if (ability == self.poisonNova) {
+        RaidDamagePulse *pulse = (RaidDamagePulse*)ability;
+        NSTimeInterval tickTime = pulse.duration / pulse.numTicks;
+        for (int i = 0; i < pulse.numTicks; i++) {
+            [self.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:(tickTime * (i + 1))];
+        }
+        
+    }
+    
 }
 
 @end

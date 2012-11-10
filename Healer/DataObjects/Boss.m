@@ -754,7 +754,7 @@
 @synthesize lastSickeningTime, numBubblesPopped;
 +(id)defaultBoss {
     //427500
-    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:150000 damage:330 targets:1 frequency:2.5 choosesMT:YES ];
+    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:58000 damage:330 targets:1 frequency:2.5 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Plaguebringer Colossus"];
     [boss setInfo:@"From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped.  The village people have foreseen their impending doom and sent young and brave hopefuls to join The Light Ascendant in exchange for protection.  You must lead this group to victory against the wretched beast."];
@@ -853,7 +853,7 @@
 @implementation FungalRavagers
 @synthesize isEnraged, secondTargetAttack, thirdTargetAttack;
 +(id)defaultBoss {
-    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:234600 damage:190 targets:1 frequency:2.5 choosesMT:YES ];
+    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:58000 damage:190 targets:1 frequency:2.5 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Fungal Ravagers"];
     [boss setInfo:@"Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate. Conversely, no villagers have left the town, either..."];

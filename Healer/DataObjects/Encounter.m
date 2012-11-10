@@ -133,10 +133,10 @@
         basicBoss = [PlaguebringerColossus defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [ForkedHeal defaultSpell], [Regrow defaultSpell], nil];
         
-        numWizard = 2;
+        numArcher = 2;
         numWarlock = 2;
-        numArcher = 4;
-        numChampion = 6;
+        numWizard = 2;
+        numChampion = 3;
         numGuardian = 1;
     }
     
@@ -144,11 +144,10 @@
         basicBoss = [FungalRavagers defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [LightEternal defaultSpell], [Regrow defaultSpell], nil];
         
-        numArcher = 4;
+        numArcher = 2;
+        numWarlock = 1;
         numWizard = 2;
-        numWarlock = 2;
-        numBerserker = 5;
-        numChampion = 4;
+        numChampion = 2;
         numGuardian = 3;
     }
     

@@ -22,6 +22,8 @@
 
 - (id)init {
     if (self = [super init]){
+        self.updatesAutomatically = YES;
+        
         CCSprite *backgroundSprite = [CCSprite spriteWithSpriteFrameName:@"gold_bg.png"];
         [self addChild:backgroundSprite];
         
@@ -36,10 +38,20 @@
     return self;
 }
 
+- (void)updateGoldAnimated:(BOOL)animated toGold:(NSInteger)gold
+{
+    if (animated) {
+        
+    } else {
+        NSString *labelText = [NSString stringWithFormat:@"%i", gold];
+        self.goldAmountLabel.string = labelText;
+    }
+}
+
 - (void)goldDidChange:(NSNotification*)notif {
-    NSInteger playerGold = [[[notif userInfo] objectForKey:PlayerGold] intValue];
-    NSString *labelText = [NSString stringWithFormat:@"%i", playerGold];
-    self.goldAmountLabel.string = labelText;
+    if (self.updatesAutomatically) {
+        [self updateGoldAnimated:NO toGold:[[[notif userInfo] objectForKey:PlayerGold] intValue]];
+    }
 }
 
 + (CCLabelTTF*)goldCostLabelWithCost:(NSInteger)cost andFontSize:(CGFloat)fontSize{

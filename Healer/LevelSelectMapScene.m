@@ -40,17 +40,17 @@
         [self addChild:self.mapScrollView];
         
         CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
-        [backButton setPosition:CGPointMake(100, 725)];
+        [backButton setPosition:CGPointMake(90, 725)];
         [self addChild:backButton z:100];
     
         self.encCard = [[[EncounterCard alloc] initWithLevelNum:1] autorelease];
         [self addChild:self.encCard z:5];
-        [self.encCard setPosition:CGPointMake(500, 100)];
+        [self.encCard setPosition:CGPointMake(512, 90)];
         
 
         self.battleButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(battle) andTitle:@"Battle!"];
         CCMenu *battleMenu = [CCMenu menuWithItems:self.battleButton, nil];
-        [battleMenu setPosition:CGPointMake(850, 100)];
+        [battleMenu setPosition:CGPointMake(900, 50)];
         [self addChild:battleMenu z:5];
         
     }

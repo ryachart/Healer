@@ -30,7 +30,7 @@
         self.energyLabel.position = CGPointMake(frame.size.width * .5, frame.size.height * .5);
         [self addChild:self.energyLabel z:100];
         
-        self.energyBar = [CCLayerGradient layerWithColor:ccc4(0, 0, 255, 255) fadingTo:ccc4(0, 0, 150, 200) alongVector:CGPointMake(-1, 0)];
+        self.energyBar = [CCLayerGradient layerWithColor:ccc4(0, 0, 230, 255) fadingTo:ccc4(0, 0, 130, 200) alongVector:CGPointMake(-1, 0)];
         [self.energyBar setPosition:CGPointMake(0, 0)];
         self.energyBar.contentSize = CGSizeMake(0, frame.size.height);
         [self addChild:self.energyBar];

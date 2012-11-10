@@ -56,16 +56,16 @@
             [damageMod setDamageDoneMultiplierAdjustment:-.4];
             break;
         case 2: //Damage Reduced by 10%
-            [damageMod setDamageDoneMultiplierAdjustment:-.1];
+            [damageMod setDamageDoneMultiplierAdjustment:-.2];
             break;
         case 3: //Normal
             [damageMod setDamageDoneMultiplierAdjustment:0.0];
             break;
         case 4: //Damage Increased by 10%
-            [damageMod setDamageDoneMultiplierAdjustment:.1];
+            [damageMod setDamageDoneMultiplierAdjustment:.125];
             break;
         case 5: //Damage Increased by 20%
-            [damageMod setDamageDoneMultiplierAdjustment:.2];
+            [damageMod setDamageDoneMultiplierAdjustment:.225];
             break;
     }
     [self addEffect:damageMod];
@@ -282,7 +282,7 @@
     [caveIn setTitle:@"troll-cave-in"];
     [caveIn setAppliedEffect:caveInDoT];
     [caveIn setCooldown:25.0];
-    [caveIn setActivationTime:1.5];
+    [caveIn setActivationTime:.75];
     corTroll.caveIn = caveIn;
     [corTroll addAbility:corTroll.caveIn];
     

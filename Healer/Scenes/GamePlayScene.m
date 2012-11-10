@@ -22,6 +22,8 @@
 #import "PlayerCastBar.h"
 #import "BackgroundSprite.h"
 #import "NormalModeCompleteScene.h"
+#import "BasicButton.h"
+
 
 #define NETWORK_THROTTLE 5
 
@@ -33,6 +35,7 @@
 @property (nonatomic, readonly) Boss *boss;
 @property (nonatomic, readonly) Player *player;
 @property (nonatomic, assign) CCLabelTTF *announcementLabel;
+@property (nonatomic, assign) CCLabelTTF *announcementLabelShadow;
 @property (nonatomic, assign) CCLabelTTF *errAnnouncementLabel;
 @property (nonatomic, retain) GamePlayPauseLayer *pauseMenuLayer;
 @property (nonatomic, readwrite) NSInteger networkThrottle;
@@ -156,12 +159,18 @@
         
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(100,40, 400, 50)] autorelease];
         self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(800, 485, 200, 50)] autorelease];
-        self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
-        [self.announcementLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .65)];
+        
+        self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Avenir-Heavy" fontSize:32.0];
+        [self.announcementLabel setPosition:CGPointMake(512, 500)];
         [self.announcementLabel setColor:ccYELLOW];
         [self.announcementLabel setVisible:NO];
         
-        self.errAnnouncementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
+        self.announcementLabelShadow = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Avenir-Heavy" fontSize:32.0];
+        [self.announcementLabelShadow setPosition:CGPointMake(511, 499)];
+        [self.announcementLabelShadow setColor:ccc3(25, 25, 25)];
+        [self.announcementLabelShadow setVisible:NO];
+        
+        self.errAnnouncementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Avenir-BlackOblique" fontSize:32.0];
         [self.errAnnouncementLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .4)];
         [self.errAnnouncementLabel setColor:ccRED];
         [self.errAnnouncementLabel setVisible:NO];
@@ -170,7 +179,8 @@
         [self addChild:self.playerCastBar];
         [self addChild:self.playerEnergyView];
         [self addChild:self.announcementLabel z:100];
-        [self addChild:self.errAnnouncementLabel z:99];
+        [self addChild:self.announcementLabelShadow z:99];
+        [self addChild:self.errAnnouncementLabel z:98];
         //CACHE SOUNDS
         AudioController *ac = [AudioController sharedInstance];
         for (Spell* aSpell in [self.player activeSpells]){
@@ -179,30 +189,38 @@
         [ac addNewPlayerWithTitle:CHANNELING_SPELL_TITLE andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/Channeling" ofType:@"wav"]]];
         [ac addNewPlayerWithTitle:OUT_OF_MANA_TITLE andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/OutOfMana" ofType:@"wav"]]];
         
-        for (int i = 0; i < [[self.player activeSpells] count]; i++){
+        for (int i = 0; i < 4; i++){
             switch (i) {
                 case 0:
                     self.spellView1 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 335, 100, 100)] autorelease];
-                    [self.spellView1  setSpellData:[[self.player activeSpells] objectAtIndex:i]];
-                    [self.spellView1 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                    if (self.player.activeSpells.count > i) {
+                        [self.spellView1  setSpellData:[[self.player activeSpells] objectAtIndex:i]];
+                        [self.spellView1 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                    }
                     [self addChild:self.spellView1];
                     break;
                 case 1:
                     self.spellView2 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 230, 100, 100)] autorelease];
-                    [self.spellView2 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
-                    [self.spellView2 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                    if (self.player.activeSpells.count > i) {
+                        [self.spellView2 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
+                        [self.spellView2 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                    }
                     [self addChild:self.spellView2];
                     break;
                 case 2:
                     self.spellView3 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 125, 100, 100)] autorelease];
-                    [self.spellView3 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
-                    [self.spellView3 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                    if (self.player.activeSpells.count > i) {
+                        [self.spellView3 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
+                        [self.spellView3 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                    }
                     [self addChild:self.spellView3];
                     break;
                 case 3:
                     self.spellView4 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 20, 100, 100)] autorelease];
-                    [self.spellView4 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
-                    [self.spellView4 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                    if (self.player.activeSpells.count > i) {
+                        [self.spellView4 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
+                        [self.spellView4 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                    }
                     [self addChild:self.spellView4];
                     break;
                 default:
@@ -227,10 +245,10 @@
         
         
         //The timer has to be scheduled after all the init is done!
-        CCLabelTTF *menuLabel = [CCLabelTTF labelWithString:@"Menu" fontName:@"Arial" fontSize:32.0];
-        CCMenu *menuButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:menuLabel target:self selector:@selector(showPauseMenu)], nil];
+        BasicButton *menuButtonItem = [BasicButton basicButtonWithTarget:self andSelector:@selector(showPauseMenu) andTitle:@"Menu"];
+        [menuButtonItem setScale:.4];
+        CCMenu *menuButton = [CCMenu menuWithItems:menuButtonItem, nil];
         [menuButton setPosition:CGPointMake(50, [CCDirector sharedDirector].winSize.height * .95)];
-        [menuButton setColor:ccWHITE];
         [self addChild:menuButton];
         
         self.networkThrottle = 0;
@@ -317,20 +335,26 @@
 
 -(void)battleBegin{
     self.announcementLabel.visible = YES;
+    self.announcementLabelShadow.visible = YES;
     __block GamePlayScene *blockSelf = self;
     [blockSelf runAction:[CCSequence actions:
                           [CCCallBlock actionWithBlock:^(){
         [blockSelf.announcementLabel setString:@"Battle Begins in 3"];
+        [blockSelf.announcementLabelShadow setString:@"Battle Begins in 3"];
     }], 
                           [CCDelayTime actionWithDuration:1.0], 
                           [CCCallBlock actionWithBlock:^(){
         [blockSelf.announcementLabel setString:@"Battle Begins in 2"];
+        [blockSelf.announcementLabelShadow setString:@"Battle Begins in 2"];
     }], [CCDelayTime actionWithDuration:1.0],
                           [CCCallBlock actionWithBlock:^(){
         [blockSelf.announcementLabel setString:@"Battle Begins in 1"];
+        [blockSelf.announcementLabelShadow setString:@"Battle Begins in 1"];
     }], [CCDelayTime actionWithDuration:1.0], [CCCallBlock actionWithBlock:^{
         blockSelf.announcementLabel.visible = NO;
         blockSelf.announcementLabel.string = @"";
+        blockSelf.announcementLabelShadow.visible = NO;
+        blockSelf.announcementLabelShadow.string = @"";
         [blockSelf setPaused:NO];
     }], nil]];
 }
@@ -674,6 +698,9 @@
         [self.announcementLabel stopAllActions];
         [self.announcementLabel setString:@""];
         [self.announcementLabel setScale:1.0];
+        [self.announcementLabelShadow stopAllActions];
+        [self.announcementLabelShadow setString:@""];
+        [self.announcementLabelShadow setScale:1.0];
     }
     
     if (self.isServer){
@@ -682,8 +709,14 @@
     }
     
     [self.announcementLabel setVisible:YES];
+    [self.announcementLabelShadow setVisible:YES];
     [self.announcementLabel setString:announcement];
+    [self.announcementLabelShadow setString:announcement];
     [self.announcementLabel runAction:[CCSequence actions:[CCScaleTo actionWithDuration:.3 scale:1.5], [CCScaleTo actionWithDuration:.3 scale:1.0],[CCDelayTime actionWithDuration:3.0], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [node setVisible:NO];
+        [(CCLabelTTF*)node setString:@""];
+    }],nil]];
+    [self.announcementLabelShadow runAction:[CCSequence actions:[CCScaleTo actionWithDuration:.3 scale:1.5], [CCScaleTo actionWithDuration:.3 scale:1.0],[CCDelayTime actionWithDuration:3.0], [CCCallBlockN actionWithBlock:^(CCNode *node){
         [node setVisible:NO];
         [(CCLabelTTF*)node setString:@""];
     }],nil]];

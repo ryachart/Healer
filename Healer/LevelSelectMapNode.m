@@ -64,7 +64,13 @@
     }
     [self.levelSelectSprites removeAllObjects];
     
-    for (int i = 1; i <= NUM_ENCOUNTERS; i++){
+    NSInteger startingLevel = 1;
+    
+    if ([PlayerDataManager highestLevelCompleted] > 0) {
+        startingLevel = 2;
+    }
+    
+    for (int i = startingLevel; i <= NUM_ENCOUNTERS; i++){
 
         //This level is valid for us to play
         LevelSelectSprite *levelSelectSprite = [[[LevelSelectSprite alloc] initWithLevel:i] autorelease];

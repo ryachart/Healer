@@ -25,7 +25,11 @@
         self.isTouchEnabled = YES;
         // Initialization code
         
-        self.spellIconSprite = [CCSprite spriteWithSpriteFrameName:@"unknown-icon.png"];
+        CCSprite *iconSlotBorder = [CCSprite spriteWithSpriteFrameName:@"spell_icon_back.png"];
+        [iconSlotBorder setAnchorPoint:CGPointZero];
+        [self addChild:iconSlotBorder];
+        
+        self.spellIconSprite = [CCSprite node];
         [self.spellIconSprite setAnchorPoint:CGPointZero];
         [self addChild:self.spellIconSprite];
         

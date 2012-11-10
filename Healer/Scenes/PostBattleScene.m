@@ -195,16 +195,18 @@
             [victoryLabel setPosition:CGPointMake(512, 384)];
             [self addChild:victoryLabel];
             
-            CCLabelTTF *scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Score: %i/10", rating] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:36.0];
-            [scoreLabel setPosition:CGPointMake(200, 300)];
-            [self addChild:scoreLabel];
-            
-            if (rating > oldRating && !self.isMultiplayer){
-                CCLabelTTF *newHighScore = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"New High Score!"] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:40.0];
-                [newHighScore setColor:ccGREEN];
-                [newHighScore setPosition:CGPointMake(200, 360)];
-                [self addChild:newHighScore];
-                [newHighScore runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
+            if (enc.levelNumber != 1) {
+                CCLabelTTF *scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Score: %i/10", rating] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:36.0];
+                [scoreLabel setPosition:CGPointMake(200, 300)];
+                [self addChild:scoreLabel];
+                
+                if (rating > oldRating && !self.isMultiplayer){
+                    CCLabelTTF *newHighScore = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"New High Score!"] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:40.0];
+                    [newHighScore setColor:ccGREEN];
+                    [newHighScore setPosition:CGPointMake(200, 360)];
+                    [self addChild:newHighScore];
+                    [newHighScore runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
+                }
             }
             
         }else{
@@ -221,9 +223,13 @@
     
         NSString* doneLabelString = self.isMultiplayer ? @"Leave Group" : @"Continue";
         CCMenuItem *done = [BasicButton basicButtonWithTarget:self andSelector:@selector(done) andTitle:doneLabelString];
-        CCMenu *menu = [CCMenu menuWithItems:done, nil];
+        CCMenu *menu = [CCMenu menuWithItems:nil];
         menu.position = CGPointMake(512, 200);
         [self addChild:menu];
+        
+        if (enc.levelNumber != 1) {
+            [menu addChild:done];
+        }
         
         if (self.isMultiplayer){
             self.queueAgainMenuItem = [BasicButton basicButtonWithTarget:self andSelector:@selector(queueAgain) andTitle:@"Battle Again"];

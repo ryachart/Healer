@@ -9,6 +9,9 @@
 #import "cocos2d.h"
 
 @interface GoldCounterSprite : CCSprite
+@property (nonatomic, readwrite) BOOL updatesAutomatically; //Defaults to YES
 + (CCLabelTTF*)goldCostLabelWithCost:(NSInteger)cost andFontSize:(CGFloat)fontSize;
 + (CCNode *)goldCostNodeForCost:(NSInteger)cost;
+
+- (void)updateGoldAnimated:(BOOL)animated toGold:(NSInteger)gold;
 @end

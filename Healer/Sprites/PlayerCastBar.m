@@ -9,6 +9,10 @@
 #import "PlayerCastBar.h"
 #import "Spell.h"
 
+@interface PlayerCastBar ()
+@property (nonatomic, readwrite) BOOL castHasBegun;
+@end
+
 @implementation PlayerCastBar
 @synthesize timeRemaining, castBar;
 
@@ -27,27 +31,39 @@
         [self.timeRemaining setPosition:CGPointMake(200, 15)];
         [self addChild:self.timeRemaining z:100];
         
-        self.castBar = [CCLayerColor layerWithColor:ccc4(0, 255, 0, 255)];
+        self.castBar = [CCLayerGradient layerWithColor:ccc4(0, 200, 50, 255) fadingTo:ccc4(0, 150, 100, 200) alongVector:CGPointMake(-1, 0)];
         
-        [self.castBar setPosition:CGPointMake(0, 0)];
+        [self.castBar setPosition:CGPointMake(4, 4)];
         [self.castBar setColor:ccGREEN];
         [self.castBar setOpacity:255];
-        self.castBar.contentSize = CGSizeMake(0, frame.size.height);
+        self.castBar.contentSize = CGSizeMake(0, frame.size.height - 8);
         [self addChild:self.castBar];
     }
     return self;
 }
 
+- (void)restartCast
+{
+    
+}
+
 -(void)updateTimeRemaining:(NSTimeInterval)remaining ofMaxTime:(NSTimeInterval)maxTime forSpell:(Spell*)spell
 {
 	if (remaining <= 0){
-		[self.timeRemaining setString:@"Not casting"];
+		[self.timeRemaining setString:@"Not Casting"];
 		percentTimeRemaining = 0.0;
         [self.castBar setContentSize:CGSizeMake(0, self.castBar.contentSize.height)];
+        if (self.castHasBegun) {
+            self.castHasBegun = NO;
+            NSLog(@"Cast Finished: %@", spell.title);
+        }
 	}
 	else {
+        if (!self.castHasBegun) {
+            self.castHasBegun = YES;
+        }
 		percentTimeRemaining = remaining/maxTime;
-        [self.castBar setContentSize:CGSizeMake(self.contentSize.width * (1 - percentTimeRemaining), self.castBar.contentSize.height)];
+        [self.castBar setContentSize:CGSizeMake((self.contentSize.width - 8) * (1 - percentTimeRemaining), self.castBar.contentSize.height)];
 		[timeRemaining setString:[NSString stringWithFormat:@"%@: %1.2f", spell.title,  remaining]];
 	}
 }

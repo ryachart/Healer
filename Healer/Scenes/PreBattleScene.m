@@ -120,9 +120,11 @@
             [self addChild:bossNameLabel];
         }
         
-        self.challengeStepper = [[[ChallengeRatingStepper alloc] initWithEncounter:self.encounter] autorelease];
-        [self.challengeStepper setPosition:CGPointMake(480, 20)];
-        [self addChild:self.challengeStepper];
+        if (enc.levelNumber != 1) {
+            self.challengeStepper = [[[ChallengeRatingStepper alloc] initWithEncounter:self.encounter] autorelease];
+            [self.challengeStepper setPosition:CGPointMake(480, 20)];
+            [self addChild:self.challengeStepper];
+        }
         
     }
     return self;

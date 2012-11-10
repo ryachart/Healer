@@ -84,7 +84,7 @@
     [self.abilityDescriptionsView removeFromParentAndCleanup:YES];
     self.abilityDescriptionsView = [[[BossAbilityDescriptionsView alloc] initWithBoss:self.bossData] autorelease];
     [self.abilityDescriptionsView setAnchorPoint:CGPointZero];
-    [self.abilityDescriptionsView setPosition:CGPointMake(-470, -320)];
+    [self.abilityDescriptionsView setPosition:CGPointMake(-468, -322)];
     [self.abilityDescriptionsView setDelegate:self];
     [self addChild:self.abilityDescriptionsView];
 	

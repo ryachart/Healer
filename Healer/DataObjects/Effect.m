@@ -188,15 +188,11 @@
 	{
         self.timeApplied += timeDelta;
 		lastTick += timeDelta;
-        NSTimeInterval durationForTick = duration;
-        if (duration == -1.0) {
-            durationForTick = 1.0;
-        }
-		if (lastTick >= (durationForTick/numOfTicks)){
+		if (lastTick >= (duration/numOfTicks)){
             [self tick];
 			lastTick = 0.0;
 		}
-		if (self.timeApplied >= duration && duration != -1.0){
+		if (self.timeApplied >= duration){
             if (self.numHasTicked < self.numOfTicks){
                 [self tick];
             }
@@ -204,7 +200,14 @@
 			self.timeApplied = 0.0;
 			isExpired = YES;
 		}
-	}
+	} else if (duration == -1.0) {
+        //For infinite durations, tick once a second.
+        lastTick += timeDelta;
+        if (lastTick >= 1.0) {
+            [self tick];
+            lastTick = 0.0;
+        }
+    }
 }
 
 

@@ -896,8 +896,7 @@
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegativeInvisible];
             [rhe setOwner:self];
             [rhe setTitle:@"fungal-ravager-mist"];
-            [rhe setValuePerTick:self.isMultiplayer ? -40 : -(arc4random() % 20 + 30)];
-            [rhe setNumOfTicks:60];
+            [rhe setValuePerTick:self.isMultiplayer ? -40 : -(arc4random() % 10 + 3)];
             [member addEffect:rhe];
             [rhe release];
         }

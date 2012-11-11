@@ -54,7 +54,7 @@
             [divinityButton setIsEnabled:NO];
         }
     
-        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, self.multiplayerButton, divinityButton, nil];
+        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, divinityButton,self.multiplayerButton, nil];
         
         [self.menu alignItemsVerticallyWithPadding:20.0];
         CGSize winSize = [CCDirector sharedDirector].winSize;

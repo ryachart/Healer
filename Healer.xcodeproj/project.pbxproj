@@ -852,6 +852,8 @@
 			children = (
 				382C46401648CDA400883CFA /* ChallengeRatingStepper.h */,
 				382C46411648CDA400883CFA /* ChallengeRatingStepper.m */,
+				BF8249D51526D7C2000B554B /* RaidMemberPreBattleCard.h */,
+				BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */,
 			);
 			name = PreBattle;
 			sourceTree = "<group>";
@@ -1118,8 +1120,6 @@
 				BF05579C15268CEF006B4781 /* Descriptors */,
 				387E7B78145E291C006D9266 /* Wrappers */,
 				387E7B73145E28CA006D9266 /* GamePlay */,
-				BF8249D51526D7C2000B554B /* RaidMemberPreBattleCard.h */,
-				BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */,
 			);
 			name = "View Objects";
 			sourceTree = "<group>";

@@ -69,7 +69,7 @@
 		lastAttack = 0.0;
 		
 		[target setHealth:[target health] - (self.damageDealt * self.damageDoneMultiplier)];
-		
+        [self.announcer displayAttackFromRaidMember:self];
 	}
 }
 
@@ -315,6 +315,7 @@
             [self healSelfForAmount:50];
         } else {
             [target setHealth:[target health] - (self.damageDealt * self.damageDoneMultiplier)];
+            [self.announcer displayAttackFromRaidMember:self];
         }
 		
 	}

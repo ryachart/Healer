@@ -168,9 +168,9 @@
         AddRemoveSpellLayer *arsl = [[AddRemoveSpellLayer alloc] initWithCurrentSpells:self.player.activeSpells];
         [arsl setDelegate:self];
         [arsl setOpacity:0];
-        [arsl setScale:.8];
+        [arsl setScale:0.0];
         [self addChild:arsl z:100];
-        [arsl runAction:[CCSpawn actionOne:[CCFadeIn actionWithDuration:.5] two:[CCScaleTo actionWithDuration:.5 scale:1.0]]];
+        [arsl runAction:[CCSpawn actionOne:[CCFadeIn actionWithDuration:.33] two:[CCScaleTo actionWithDuration:.33 scale:1.0]]];
     }
 }
 

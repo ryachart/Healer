@@ -26,4 +26,5 @@
 - (void)displayProjectileEffect:(ProjectileEffect*)effect fromOrigin:(CGPoint)origin;
 
 - (void)displayEnergyGainFrom:(RaidMember*)member;
+- (void)displayAttackFromRaidMember:(RaidMember*)member;
 @end

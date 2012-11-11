@@ -53,7 +53,7 @@
         [descLabel setPosition:ccp(100, 20)];
         [detailBackground addChild:descLabel];
         
-        CCLabelTTF *classNameLabel = [CCLabelTTF labelWithString:self.raidMember.title dimensions:CGSizeMake(95, 48) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16];
+        CCLabelTTF *classNameLabel = [CCLabelTTF labelWithString:self.raidMember.title dimensions:CGSizeMake(95, 48) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:16];
         [classNameLabel setPosition:ccp(50, 78)];
         [countBackground addChild:classNameLabel];
         
@@ -63,7 +63,7 @@
         
         NSString* classIconSpriteFrameName = [NSString stringWithFormat:@"class_icon_%@.png", [member title].lowercaseString];
         CCSprite *classIcon = [CCSprite spriteWithSpriteFrameName:classIconSpriteFrameName];
-        [classIcon setPosition:ccp(50, 44)];
+        [classIcon setPosition:ccp(30, 55)];
         [countBackground addChild:classIcon];
     }
     return self;

@@ -425,7 +425,7 @@
 +(id)defaultBoss {
     Trulzar *boss = [[Trulzar alloc] initWithHealth:260000 damage:0 targets:0 frequency:100.0 choosesMT:NO ];
     [boss setTitle:@"Trulzar the Maleficar"];
-    [boss setInfo:@"Before the dark winds came, Trulzar was an aide to the King of Theranore and a teacher at the Academy of Alchemists.  Since the Dark winds, Trulzar has drawn into seclusion.  No one had heard from him for years until a brash student who had heard of his exploits paid him a visit.  The student was not heard from for days until a walking corpse that was later identified as the student was slaughtered at the gates by guardsmen.  Trulzar has been identified as a Maleficar by the Theranorian Sages."];
+    [boss setInfo:@"Before the dark winds came, Trulzar was a teacher at the Academy of Alchemists.  Since then, Trulzar has drawn into seclusion and begun practicing dark magic.  Trulzar has been identified as a Maleficar by the Theranorian Sages."];
     
     boss.lastPotionTime = 6.0;
     
@@ -776,7 +776,7 @@
     PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:58000 damage:330 targets:1 frequency:2.5 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Plaguebringer Colossus"];
-    [boss setInfo:@"From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped.  The village people have foreseen their impending doom and sent young and brave hopefuls to join The Light Ascendant in exchange for protection.  You must lead this group to victory against the wretched beast."];
+    [boss setInfo:@"From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped. You must lead this group to victory against the wretched beast."];
     
     AbilityDescriptor *sickenDesc = [[AbilityDescriptor alloc] init];
     [sickenDesc setAbilityDescription:@"The Colossus will sicken targets causing them to take damage until they are healed to full health."];

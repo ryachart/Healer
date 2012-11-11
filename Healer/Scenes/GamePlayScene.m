@@ -24,6 +24,7 @@
 #import "NormalModeCompleteScene.h"
 #import "BasicButton.h"
 
+#define RAID_Z 5
 
 #define NETWORK_THROTTLE 5
 
@@ -147,7 +148,7 @@
         self.raidView = [[[RaidView alloc] init] autorelease];
         [self.raidView setPosition:CGPointMake(50, 150)];
         [self.raidView setContentSize:CGSizeMake(500, 400)];
-        [self addChild:self.raidView];
+        [self addChild:self.raidView z:RAID_Z];
         
         self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(100, 560, 884, 80)] autorelease];
         [self.bossHealthView setDelegate:self];
@@ -160,22 +161,22 @@
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(100,40, 400, 50)] autorelease];
         self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(800, 485, 200, 50)] autorelease];
         
-        self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Avenir-Heavy" fontSize:32.0];
+        self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Marion-Bold" fontSize:32.0];
         [self.announcementLabel setPosition:CGPointMake(512, 500)];
         [self.announcementLabel setColor:ccYELLOW];
         [self.announcementLabel setVisible:NO];
         
-        self.announcementLabelShadow = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Avenir-Heavy" fontSize:32.0];
+        self.announcementLabelShadow = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Marion-Bold" fontSize:32.0];
         [self.announcementLabelShadow setPosition:CGPointMake(511, 499)];
         [self.announcementLabelShadow setColor:ccc3(25, 25, 25)];
         [self.announcementLabelShadow setVisible:NO];
         
-        self.errAnnouncementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Avenir-BlackOblique" fontSize:32.0];
+        self.errAnnouncementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Marion-Bold" fontSize:32.0];
         [self.errAnnouncementLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .4)];
         [self.errAnnouncementLabel setColor:ccRED];
         [self.errAnnouncementLabel setVisible:NO];
         
-        [self addChild:self.bossHealthView];
+        [self addChild:self.bossHealthView z:RAID_Z+1];
         [self addChild:self.playerCastBar];
         [self addChild:self.playerEnergyView];
         [self addChild:self.announcementLabel z:100];
@@ -597,6 +598,61 @@
     [energyBall runAction:[CCSequence actions:[CCJumpTo actionWithDuration:1.5 position:self.playerEnergyView.position height:100 jumps:1],[CCScaleTo actionWithDuration:.33 scale:0.0], [CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
 }
 
+- (void)displayArcherAttackFromRaidMember:(RaidMember *)member{
+    CCSprite *arrowSprite = [CCSprite spriteWithSpriteFrameName:@"arrow_archer.png"];
+    [arrowSprite setScale:.5];
+    CGPoint position = [self.raidView frameCenterForMember:member];
+    CGFloat rotation = [self rotationFromPoint:position toPoint:CGPointMake(900, 700)] + 90.0;
+    [arrowSprite setPosition:position];
+    [arrowSprite setRotation:rotation];
+    [self addChild:arrowSprite z:RAID_Z-1];
+    
+    [arrowSprite runAction:[CCSequence actions:[CCJumpTo actionWithDuration:.66 position:CGPointMake(900, 700) height:25 jumps:1],[CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
+}
+
+- (void)displayWarlockAttackFromRaidMember:(RaidMember *)member{
+    CCSprite *arrowSprite = [CCSprite spriteWithSpriteFrameName:@"green_fireball.png"];
+    [arrowSprite setScale:.5];
+    CGPoint position = [self.raidView frameCenterForMember:member];
+    CGFloat rotation = [self rotationFromPoint:position toPoint:CGPointMake(900, 700)] + 270.0;
+    [arrowSprite setPosition:position];
+    [arrowSprite setRotation:rotation];
+    [self addChild:arrowSprite z:RAID_Z-1];
+    
+    [arrowSprite runAction:[CCSequence actions:[CCMoveTo actionWithDuration:1.25 position:CGPointMake(900, 700)],[CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
+}
+
+- (void)displayBerserkerAttackFromRaidMember:(RaidMember *)member{
+    CCSprite *axeSprite = [CCSprite spriteWithSpriteFrameName:@"axe_berserker.png"];
+    [axeSprite setScale:.75];
+    [axeSprite setPosition:CGPointMake(820 + arc4random() % 40 - 20, 600 + arc4random() % 40 - 20)];
+    [self addChild:axeSprite z:RAID_Z - 1];
+    
+    [axeSprite runAction:[CCSequence actions:[CCRotateBy actionWithDuration:.33 angle:- 45.0 - (arc4random() % 20)], [CCEaseBackIn actionWithAction:[CCRotateBy actionWithDuration:.33 angle:90.0 - (arc4random() % 20)]],[CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
+}
+
+- (void)displayChampionAttackFromRaidMember:(RaidMember *)member{
+    CCSprite *swordSprite = [CCSprite spriteWithSpriteFrameName:@"sword_champion.png"];
+    [swordSprite setScale:.75];
+    [swordSprite setPosition:CGPointMake(820 + arc4random() % 40 - 20, 600 + arc4random() % 40 - 20)];
+    [self addChild:swordSprite z:RAID_Z - 1];
+    
+    [swordSprite runAction:[CCSequence actions:[CCRotateBy actionWithDuration:.15 angle:- 30.0 - (arc4random() % 10)], [CCEaseBackIn actionWithAction:[CCRotateBy actionWithDuration:.45 angle:170.0 - (arc4random() % 20)]],[CCDelayTime actionWithDuration:.25], [CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
+}
+
+- (void)displayAttackFromRaidMember:(RaidMember*)member
+{
+    if ([member isMemberOfClass:[Archer class]]) {
+        [self displayArcherAttackFromRaidMember:member];
+    } else if ([member isMemberOfClass:[Champion class]]) {
+        [self displayChampionAttackFromRaidMember:member];
+    } else if ([member isMemberOfClass:[Warlock class]]) {
+        [self displayWarlockAttackFromRaidMember:member];
+    } else if ([member isMemberOfClass:[Berserker class]]) {
+        [self displayBerserkerAttackFromRaidMember:member];
+    }
+}
+
 - (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target {
     [self displayParticleSystemWithName:name onTarget:target withOffset:CGPointZero];
 }
@@ -630,7 +686,7 @@
     }
     [sprite setScale:0.0];
     [sprite setPosition:ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height/2))];
-    [self addChild:sprite];
+    [self addChild:sprite z:RAID_Z+1];
     [sprite runAction:[CCSequence actions:[CCScaleTo actionWithDuration:.33 scale:scaleTo],[CCDelayTime actionWithDuration:duration],[CCFadeOut actionWithDuration:.5] ,[CCCallBlockN actionWithBlock:^(CCNode*node){
         [node removeFromParentAndCleanup:YES];
         
@@ -678,7 +734,7 @@
         [projectileSprite setPosition:originLocation];
         [projectileSprite setRotation:[self rotationFromPoint:originLocation toPoint:destination] - 90.0];
         [projectileSprite setColor:effect.spriteColor];
-        [self addChild:projectileSprite];
+        [self addChild:projectileSprite z:RAID_Z+1];
         [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}], [CCMoveTo actionWithDuration:effect.collisionTime position:destination],[CCSpawn actions:[CCCallBlockN actionWithBlock:^(CCNode *node){
             if (collisionEffect){
                 [collisionEffect setPosition:destination];
@@ -707,7 +763,7 @@
         [projectileSprite setPosition:originLocation];
         [projectileSprite setRotation:CC_RADIANS_TO_DEGREES([self rotationFromPoint:originLocation toPoint:destination]) + 180.0];
         [projectileSprite setColor:effect.spriteColor];
-        [self addChild:projectileSprite];
+        [self addChild:projectileSprite z:RAID_Z+1];
         ccBezierConfig bezierConfig = {destination,ccp(destination.x ,originLocation.y), ccp(destination.x,originLocation.y) };
         [projectileSprite runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:.3 angle:360.0]]];
         [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}],[CCSpawn actions:[CCBezierTo actionWithDuration:effect.collisionTime bezier:bezierConfig] ,nil ],[CCSpawn actions:[CCScaleTo actionWithDuration:.33 scale:2.0], [CCFadeOut actionWithDuration:.33], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){

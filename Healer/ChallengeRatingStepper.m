@@ -49,9 +49,9 @@
     if (self = [super init]) {
         self.encounter = encounter;
         
-        CCLayerColor *background = [CCLayerColor layerWithColor:ccc4(25, 25, 25, 255) width:200 height:120];
-        [background setPosition:CGPointMake(-60, 0.0)];
-        [self addChild:background];
+//        CCLayerColor *background = [CCLayerColor layerWithColor:ccc4(25, 25, 25, 255) width:200 height:120];
+//        [background setPosition:CGPointMake(-60, 0.0)];
+//        [self addChild:background];
         
         self.difficultyLabel = [CCLabelTTF labelWithString:@"Difficulty:" dimensions:CGSizeMake(150, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:24.0];
         [self.difficultyLabel setPosition:CGPointMake(40.0, 100.0)];
@@ -59,7 +59,7 @@
         self.difficultyWordLabel = [CCLabelTTF labelWithString:[ChallengeRatingStepper difficultyWorldForDifficultyNumber:self.encounter.difficulty] dimensions:CGSizeMake(150, 60) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:32.0];
         [self.difficultyWordLabel setPosition:CGPointMake(40.0, 50.0)];
         
-        self.difficultyRankLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i/5",self.encounter.difficulty] dimensions:CGSizeMake(150, 24) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:14.0];
+        self.difficultyRankLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Max Score: %i",self.encounter.difficulty * 2] dimensions:CGSizeMake(150, 24) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:14.0];
         [self.difficultyRankLabel setPosition:CGPointMake(40.0, 20.0)];
         
         [self addChild:self.difficultyLabel];
@@ -81,8 +81,8 @@
 }
 
 - (void)reloadLabels {
-    self.difficultyRankLabel.string = [NSString stringWithFormat:@"%i/5",self.encounter.difficulty];
-    self.difficultyWordLabel.string     = [ChallengeRatingStepper difficultyWorldForDifficultyNumber:self.encounter.difficulty];
+    self.difficultyRankLabel.string = [NSString stringWithFormat:@"Max Score: %i",self.encounter.difficulty * 2];
+    self.difficultyWordLabel.string = [ChallengeRatingStepper difficultyWorldForDifficultyNumber:self.encounter.difficulty];
 }
 
 - (void)increaseSelected {

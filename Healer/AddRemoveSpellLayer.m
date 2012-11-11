@@ -188,7 +188,7 @@
         [self.delegate spellSwitchDidCompleteWithActiveSpells:newUsedSpells];
     }
 
-    [self runAction:[CCSequence actions:[CCSpawn actionOne:[CCFadeOut actionWithDuration:.5] two:[CCScaleTo actionWithDuration:.5 scale:.8]], [CCCallBlockN actionWithBlock:^(CCNode *node){
+    [self runAction:[CCSequence actions:[CCSpawn actionOne:[CCFadeOut actionWithDuration:.33] two:[CCScaleTo actionWithDuration:.33 scale:0.0]], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node removeFromParentAndCleanup:YES];
         }], nil]];
 }

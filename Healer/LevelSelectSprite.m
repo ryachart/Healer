@@ -12,6 +12,7 @@
 @interface LevelSelectSprite ()
 @property (nonatomic, assign) CCSprite *selectedRing;
 @property (nonatomic, assign) CCLabelTTF *scoreLabel;
+@property (nonatomic, assign) CCLabelTTF *scoreLabelShadow;
 @end
 
 @implementation LevelSelectSprite
@@ -32,9 +33,14 @@
         
         NSInteger rating = [PlayerDataManager levelRatingForLevel:levelNum];
         if (rating > 0) {
-            self.scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:CGSizeMake(60, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:24.0];
+            self.scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:CGSizeMake(60, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Regular" fontSize:24.0];
             [self.scoreLabel setPosition:CGPointMake(self.contentSize.width / 2.0, - 40)];
-            [self addChild:self.scoreLabel];
+            [self addChild:self.scoreLabel z:5];
+            
+            self.scoreLabelShadow = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:CGSizeMake(60, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Regular" fontSize:24.0];
+            [self.scoreLabelShadow setColor:ccc3(50, 50, 50)];
+            [self.scoreLabelShadow setPosition:CGPointMake(self.contentSize.width / 2.0 -1, - 40 - 1)];
+            [self addChild:self.scoreLabelShadow z:4];
         }
     }
     return self;

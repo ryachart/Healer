@@ -118,7 +118,7 @@
         case 4:
             return CGPointMake(222, 330);
         case 5:
-            return CGPointMake(560, 200);
+            return CGPointMake(500, 250);
         case 6:
             return CGPointMake(660, 270);
         case 7:

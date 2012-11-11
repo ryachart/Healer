@@ -105,8 +105,10 @@
     int safety = 0;
     while (targets.count < numTargets){
         RaidMember *candidate = [self randomLivingMemberWithPositioning:pos];
-        if (![targets containsObject:candidate]){
-            [targets addObject:candidate];
+        if (candidate) {
+            if (![targets containsObject:candidate]){
+                [targets addObject:candidate];
+            }
         }
         if (safety >= 25){
             break;

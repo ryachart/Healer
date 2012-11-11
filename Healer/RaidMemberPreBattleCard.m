@@ -16,6 +16,11 @@
 
 @implementation RaidMemberPreBattleCard
 @synthesize count, raidMember;
+- (void)dealloc {
+    [raidMember release];
+    [super dealloc];
+}
+
 -(id)initWithFrame:(CGRect)frame count:(NSInteger)cnt andRaidMember:(RaidMember *)member{
     if (self = [super initWithColor:ccc4(255, 255, 255, 255)]){
         self.raidMember = member;
@@ -55,12 +60,12 @@
         CCLabelTTF *countLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", count] dimensions:CGSizeMake(50, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24];
         [countLabel setPosition:ccp(50, 24)];
         [countBackground addChild:countLabel];
+        
+        NSString* classIconSpriteFrameName = [NSString stringWithFormat:@"class_icon_%@.png", [member title].lowercaseString];
+        CCSprite *classIcon = [CCSprite spriteWithSpriteFrameName:classIconSpriteFrameName];
+        [classIcon setPosition:ccp(50, 44)];
+        [countBackground addChild:classIcon];
     }
     return self;
-}
-
-- (void)dealloc {
-    [raidMember release];
-    [super dealloc];
 }
 @end

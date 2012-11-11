@@ -19,6 +19,7 @@
 #import "MultiplayerQueueScene.h"
 #import "GoldCounterSprite.h"
 #import "LevelSelectMapScene.h"
+#import "SettingsScene.h"
 
 @interface HealerStartScene ()
 @property (assign) CCMenu* menu;
@@ -71,8 +72,21 @@
         [logoSprite setPosition:CGPointMake(590, 250)];
         [self addChild:logoSprite z:1];
         
+        
+        CCMenuItem *settingsButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(settingsSelected) andTitle:@"Settings"];
+        [settingsButton setScale:.4];
+        
+        CCMenu *settingsMenu = [CCMenu menuWithItems:settingsButton, nil];
+        [settingsMenu setPosition:CGPointMake(50, 20)];
+        [self addChild:settingsMenu];
+        
     }
     return self;
+}
+
+- (void)settingsSelected {
+    SettingsScene *ss = [[SettingsScene new] autorelease];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR   transitionWithDuration:.5 scene:ss]];
 }
 
 -(void)multiplayerSelected{
@@ -130,11 +144,6 @@
 
 -(void)storeSelected{
     [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:.5 scene:[[[ShopScene alloc] init] autorelease]]];
-}
-
--(void)settingsSelected
-{
-	//No behavior defined yet.
 }
 
 -(void)divinitySelected{

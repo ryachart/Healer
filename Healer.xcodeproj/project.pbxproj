@@ -44,6 +44,7 @@
 		387E7B59145E1701006D9266 /* Boss.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B58145E1701006D9266 /* Boss.m */; };
 		387E7B63145E177B006D9266 /* PlayerMoveButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B5F145E177B006D9266 /* PlayerMoveButton.m */; };
 		387E7B64145E177B006D9266 /* PlayerSpellButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B61145E177B006D9266 /* PlayerSpellButton.m */; };
+		387E82A4164F1648009F11E6 /* SettingsScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E82A3164F1648009F11E6 /* SettingsScene.m */; };
 		38F1B45C15CA30D8008B2D99 /* backgrounds in Resources */ = {isa = PBXBuildFile; fileRef = 38F1B45B15CA30D8008B2D99 /* backgrounds */; };
 		BF0022BE163EE94C00384882 /* EncounterCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0022BD163EE94C00384882 /* EncounterCard.m */; };
 		BF0557A015268D0A006B4781 /* ProjectileEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF05579F15268D0A006B4781 /* ProjectileEffect.m */; };
@@ -608,6 +609,8 @@
 		387E7B5F145E177B006D9266 /* PlayerMoveButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayerMoveButton.m; path = Controls/PlayerMoveButton.m; sourceTree = "<group>"; };
 		387E7B60145E177B006D9266 /* PlayerSpellButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayerSpellButton.h; path = Controls/PlayerSpellButton.h; sourceTree = "<group>"; };
 		387E7B61145E177B006D9266 /* PlayerSpellButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayerSpellButton.m; path = Controls/PlayerSpellButton.m; sourceTree = "<group>"; };
+		387E82A2164F1648009F11E6 /* SettingsScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsScene.h; sourceTree = "<group>"; };
+		387E82A3164F1648009F11E6 /* SettingsScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsScene.m; sourceTree = "<group>"; };
 		38F1B45B15CA30D8008B2D99 /* backgrounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = backgrounds; sourceTree = SOURCE_ROOT; };
 		BF0022BC163EE94C00384882 /* EncounterCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncounterCard.h; sourceTree = "<group>"; };
 		BF0022BD163EE94C00384882 /* EncounterCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EncounterCard.m; sourceTree = "<group>"; };
@@ -960,6 +963,8 @@
 				BFD8EF4B160F9F1C00BAF83A /* LaunchScene.m */,
 				BFD106F5163A282D002318CE /* LevelSelectMapScene.h */,
 				BFD106F6163A282D002318CE /* LevelSelectMapScene.m */,
+				387E82A2164F1648009F11E6 /* SettingsScene.h */,
+				387E82A3164F1648009F11E6 /* SettingsScene.m */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -1877,6 +1882,7 @@
 				BF4CD1C91642D61600EB2336 /* DebugViewController.m in Sources */,
 				BF9DD8AA1644A6DC007DAE39 /* BossActivationBar.m in Sources */,
 				382C46421648CDA400883CFA /* ChallengeRatingStepper.m in Sources */,
+				387E82A4164F1648009F11E6 /* SettingsScene.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

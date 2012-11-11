@@ -594,7 +594,7 @@
     [energyBall setScale:.5];
     [energyBall setPosition:[self.raidView frameCenterForMember:member]];
     [self addChild:energyBall];
-    [energyBall runAction:[CCSequence actions:[CCJumpTo actionWithDuration:2.0 position:self.playerEnergyView.position height:100 jumps:1],[CCScaleTo actionWithDuration:.33 scale:0.0], [CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
+    [energyBall runAction:[CCSequence actions:[CCJumpTo actionWithDuration:1.5 position:self.playerEnergyView.position height:100 jumps:1],[CCScaleTo actionWithDuration:.33 scale:0.0], [CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
 }
 
 - (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target {

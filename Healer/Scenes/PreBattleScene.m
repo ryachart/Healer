@@ -60,13 +60,13 @@
         
         [self addChild:doneButton];
         
-        CCLabelTTF *changeLabel = [CCLabelTTF labelWithString:@"Change Spells" fontName:@"Arial" fontSize:24.0];
-        [changeLabel setColor:ccBLUE];
-        CCMenu *changeButton = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:changeLabel target:self selector:@selector(changeSpells)], nil];
-        [changeButton setPosition:CGPointMake(900, 650)];
-        [self addChild:changeButton z:2];
+        BasicButton *changeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(changeSpells) andTitle:@"Change"];
+        [changeButton setScale:.6];
+        CCMenu *changeButtonMenu = [CCMenu menuWithItems:changeButton, nil];
+        [changeButtonMenu setPosition:CGPointMake(940, 654)];
+        [self addChild:changeButtonMenu z:2];
         
-        CCLabelTTF *activeSpellsLabel = [CCLabelTTF labelWithString:@"Spells:" fontName:@"Arial" fontSize:32];
+        CCLabelTTF *activeSpellsLabel = [CCLabelTTF labelWithString:@"Spells" fontName:@"Arial" fontSize:32];
         [activeSpellsLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .75, [CCDirector sharedDirector].winSize.height * .85)];
         [self addChild:activeSpellsLabel];
         

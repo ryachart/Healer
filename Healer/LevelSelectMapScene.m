@@ -78,6 +78,11 @@
     }
 }
 
+- (void)onExitTransitionDidStart {
+    [super onExitTransitionDidStart];
+    [self.mapScrollView setContentOffset:CGPointZero];
+}
+
 -(void)back
 {
     [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInL transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];

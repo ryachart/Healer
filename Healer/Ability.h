@@ -52,6 +52,11 @@
 @property (nonatomic, retain) RaidMember *focusTarget;
 @end
 
+@interface SustainedAttack : Attack
+@property (nonatomic, retain) RaidMember *currentTarget;
+@property (nonatomic, readwrite) NSInteger currentAttacksRemaining;
+@end
+
 @interface BoneThrow : Ability
 @end
 

@@ -13,6 +13,8 @@
 
 @interface RaidMemberHealthView ()
 @property (nonatomic, assign) CCLabelTTF *isFocusedLabel;
+@property (nonatomic, assign) CCLabelTTF *isFocusedShadowLabel;
+
 @property (nonatomic, assign) CCSprite *priorityPositiveEffectSprite;
 @property (nonatomic, assign) CCSprite *priorityNegativeEffectSprite;
 
@@ -93,9 +95,13 @@
         [self.raidFrameTexture setAnchorPoint:CGPointZero];
         [self addChild:self.raidFrameTexture z:5];
         
-        self.isFocusedLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:15.0];
+        self.isFocusedLabel = [CCLabelTTF labelWithString:@"" fontName:@"Marion-Bold" fontSize:15.0];
         [self.isFocusedLabel setPosition:CGPointMake(50, 64)];
-        [self.isFocusedLabel setColor:ccBLACK];
+        [self.isFocusedLabel setColor:ccc3(220, 0, 0)];
+        
+        self.isFocusedShadowLabel = [CCLabelTTF labelWithString:@"" fontName:@"Marion-Bold" fontSize:15.0];
+        [self.isFocusedShadowLabel setPosition:CGPointMake(49, 63)];
+        [self.isFocusedShadowLabel setColor:ccBLACK];
         
 		self.healthLabel =  [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0f];   
         [self.healthLabel setPosition:CGPointMake(frame.size.width * .71, frame.size.height * .5)];
@@ -134,7 +140,8 @@
         [self.shieldBubble setVisible:NO];
         [self.shieldBubble setPosition:ccp(frame.size.width * .5,frame.size.height * .5)];
     
-        [self addChild:self.healthLabel z:10];
+        [self addChild:self.healthLabel z:9];
+        [self addChild:self.isFocusedShadowLabel z:10];
         [self addChild:self.isFocusedLabel z:11];
         [self addChild:self.shieldBubble z:100]; //Above all else!
 		_interactionDelegate = nil;
@@ -309,9 +316,15 @@
     }
     
     if (self.memberData.isFocused){
-        [self.isFocusedLabel setString:@"FOCUSED!"];
+        if (![self.isFocusedLabel.string isEqualToString:@"FOCUSED"]) {
+            [self.isFocusedLabel runAction:[CCSequence actionOne:[CCScaleTo actionWithDuration:.5 scale:1.2] two:[CCScaleTo actionWithDuration:.5 scale:1.0]]];
+            [self.isFocusedShadowLabel runAction:[CCSequence actionOne:[CCScaleTo actionWithDuration:.5 scale:1.2] two:[CCScaleTo actionWithDuration:.5 scale:1.0]]];
+        }
+        [self.isFocusedLabel setString:@"FOCUSED"];
+        [self.isFocusedShadowLabel setString:@"FOCUSED"];
     }else{
         [self.isFocusedLabel setString:@""];
+        [self.isFocusedShadowLabel setString:@""];
     }
     self.lastHealth = self.memberData.health;
 	NSString *healthText;

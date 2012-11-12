@@ -262,7 +262,7 @@
         self.title = @"Wizard";
         self.dodgeChance = .07;
         self.info = @"The Wizard has moderate health and low damage but periodically grants you energy.";
-        lastEnergyGrant = arc4random() % 10; //Initialize to a random value so they arent all the same time
+        lastEnergyGrant = arc4random() % 7; //Initialize to a random value so they arent all the same time
     }
     return self;
 }

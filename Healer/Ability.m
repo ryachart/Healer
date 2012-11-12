@@ -203,6 +203,46 @@
 
 @end
 
+@implementation SustainedAttack
+- (void)dealloc {
+    [_currentTarget release];
+    [super dealloc];
+}
+
+- (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd
+{
+    if (self = [super initWithDamage:dmg andCooldown:cd]) {
+        self.currentAttacksRemaining = arc4random() % 3 + 2;
+    }
+    return self;
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
+{
+    self.currentAttacksRemaining--;
+    if ([self checkFailed]) {
+        return;
+    }
+    [self damageTarget:[self targetFromRaid:theRaid]];
+}
+
+- (RaidMember*)targetFromRaid:(Raid *)raid
+{
+    if (self.currentAttacksRemaining <= 0){
+        self.currentAttacksRemaining = arc4random() % 3 + 2;
+        [self.currentTarget setIsFocused:NO];
+        self.currentTarget = nil;
+    }
+    if (!self.currentTarget) {
+        self.currentTarget = [super targetFromRaid:raid];
+        [self.currentTarget setIsFocused:YES];
+    }
+    
+    return self.currentTarget;
+}
+
+@end
+
 @implementation FocusedAttack
 @synthesize focusTarget;
 @synthesize enrageApplied;

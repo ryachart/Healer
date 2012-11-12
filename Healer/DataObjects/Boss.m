@@ -953,8 +953,11 @@
 @implementation MischievousImps
 @synthesize lastPotionThrow;
 +(id)defaultBoss {
-    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:40500 damage:340 targets:1 frequency:2.25 choosesMT:YES ];
+    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:40500 damage:0 targets:0 frequency:2.25 choosesMT:NO];
+    [boss removeAbility:boss.autoAttack];
+    boss.autoAttack = [[[SustainedAttack alloc] initWithDamage:340 andCooldown:2.25] autorelease];
     boss.autoAttack.failureChance = .25;
+    [boss addAbility:boss.autoAttack];
 //    if (mode == DifficultyModeHard) {
 //        boss.autoAttack.abilityValue = 450;
 //    }
@@ -1094,9 +1097,10 @@
         [[AudioController sharedInstance] playTitle:[NSString stringWithFormat:@"imp_throw1"]];
     }
     
-    if (percentage == 20.0){
-        [self.announcer announce:@"All of the imps angrily pounce on their focused target!"];
-        [self.autoAttack setCooldown:1.45];
+    if (percentage == 15.0){
+        [self.announcer announce:@"The imps begin attacking angrily!"];
+        [self.autoAttack setCooldown:1.35];
+        [self.autoAttack setFailureChance:.35];
     }
 }
 @end

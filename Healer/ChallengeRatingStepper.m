@@ -31,11 +31,11 @@
 {
     switch (difficulty) {
         case 1:
-            return @"Very Easy";
-        case 2:
             return @"Easy";
-        case 3:
+        case 2:
             return @"Normal";
+        case 3:
+            return @"Tough";
         case 4:
             return @"Painful";
         case 5:

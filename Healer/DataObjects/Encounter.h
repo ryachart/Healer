@@ -20,11 +20,20 @@
 @property (nonatomic, retain) NSArray *recommendedSpells;
 @property (nonatomic, readonly) NSInteger levelNumber;
 @property (nonatomic, readwrite) NSInteger difficulty;
+@property (nonatomic, retain) NSMutableArray *combatLog;
 
+//PostBattle
 @property (nonatomic, readonly) NSInteger reward;
+@property (nonatomic, readonly) NSInteger score;
+@property (nonatomic, readonly) NSInteger rating;
+@property (nonatomic, readonly) NSInteger healingDone;
+@property (nonatomic, readonly) NSInteger overhealingDone;
+@property (nonatomic, readonly) NSInteger damageTaken;
 
 - (id)initWithRaid:(Raid*)raid andBoss:(Boss*)boss andSpells:(NSArray*)spells;
 - (void)encounterWillBegin;
+
+- (void)saveCombatLog;
 
 + (Encounter*)randomMultiplayerEncounter;
 + (Encounter*)survivalEncounterIsMultiplayer:(BOOL)multiplayer;

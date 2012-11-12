@@ -42,7 +42,6 @@
 @property (nonatomic, retain) PlayerMoveButton *playerMoveButton;
 @property (nonatomic, retain) PlayerCastBar *playerCastBar;
 @property (nonatomic, retain) CCLabelTTF *alertStatus;
-@property (nonatomic, retain)  NSMutableArray *eventLog;
 - (id)initWithEncounter:(Encounter*)enc player:(Player*)player;
 - (id)initWithEncounter:(Encounter*)enc andPlayers:(NSArray*)plyers;
 //Multiplayer

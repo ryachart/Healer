@@ -53,7 +53,6 @@
 @synthesize spellView1, spellView2, spellView3, spellView4;
 @synthesize bossHealthView, playerEnergyView, playerMoveButton, playerCastBar;
 @synthesize alertStatus;
-@synthesize eventLog;
 @synthesize announcementLabel;
 @synthesize errAnnouncementLabel;
 @synthesize paused;
@@ -78,7 +77,6 @@
     [playerMoveButton release];
     [playerCastBar release];
     [alertStatus release];
-    [eventLog release];
     [serverPlayerID release];
     [match release];
     [matchVoiceChat release];
@@ -142,8 +140,6 @@
         [self.player initializeForCombat];
         
         self.players = [NSArray arrayWithObject:self.player];
-
-        self.eventLog = [NSMutableArray arrayWithCapacity:1000];
         
         self.raidView = [[[RaidView alloc] init] autorelease];
         [self.raidView setPosition:CGPointMake(50, 150)];
@@ -361,17 +357,15 @@
     }], nil]];
 }
 
--(void)battleEndWithSuccess:(BOOL)success{
-    NSInteger numDead = self.raid.raidMembers.count - self.raid.getAliveMembers.count;
-    
+-(void)battleEndWithSuccess:(BOOL)success{    
     if (success && !(self.isServer || self.isClient) && [NormalModeCompleteScene needsNormalModeCompleteSceneForLevelNumber:self.encounter.levelNumber]){
         //If we just beat the final boss for the first time, show the normal mode complete Scene
-        NormalModeCompleteScene *nmcs = [[[NormalModeCompleteScene alloc] initWithVictory:success eventLog:self.eventLog encounter:self.encounter andIsMultiplayer:NO deadCount:numDead andDuration:self.boss.duration] autorelease];
+        NormalModeCompleteScene *nmcs = [[[NormalModeCompleteScene alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:NO andDuration:self.boss.duration] autorelease];
         [self setPaused:YES];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:nmcs]];
         return;
     }
-    PostBattleScene *pbs = [[[PostBattleScene alloc] initWithVictory:success eventLog:self.eventLog encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer deadCount:numDead andDuration:self.boss.duration] autorelease];
+    PostBattleScene *pbs = [[[PostBattleScene alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer andDuration:self.boss.duration] autorelease];
     [self setPaused:YES];
     if (self.isServer){
         [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"BATTLEEND|%i|", success] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
@@ -812,7 +806,7 @@
 }
 
 -(void)logEvent:(CombatEvent *)event{
-    [self.eventLog addObject:event];
+    [self.encounter.combatLog addObject:event];
     
     if (event.type == CombatEventTypeDodge){
         RaidMember *dodgedTarget = (RaidMember*)event.target;

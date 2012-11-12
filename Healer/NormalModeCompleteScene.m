@@ -38,13 +38,11 @@
     return NO;
 }
 
-- (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog encounter:(Encounter*)encounter andIsMultiplayer:(BOOL)isMultiplayer deadCount:(NSInteger)numDead andDuration:(NSTimeInterval)duration {
+- (id)initWithVictory:(BOOL)victory encounter:(Encounter*)encounter andIsMultiplayer:(BOOL)isMultiplayer andDuration:(NSTimeInterval)duration {
     if (self = [super init]){
         self.encounter = encounter;
-        self.deadCount = self.deadCount;
         self.duration = duration;
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
-        self.eventLog = eventLog;
         
         CCLabelTTF *normalModeCompleteLabel = [CCLabelTTF labelWithString:@"Normal Cleared!" dimensions:CGSizeMake(600, 200) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:64.0];
         [normalModeCompleteLabel setPosition:CGPointMake(512, 600)];
@@ -66,7 +64,7 @@
 
 - (void)done {
     [PlayerDataManager hasShownNormalModeCompleteScene];
-    PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:YES eventLog:self.eventLog encounter:self.encounter andIsMultiplayer:NO deadCount:self.deadCount andDuration:self.duration];
+    PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:YES encounter:self.encounter andIsMultiplayer:NO andDuration:self.duration];
     [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:pbs]];
     [pbs release];
 }

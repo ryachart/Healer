@@ -23,9 +23,10 @@
 #import "HealerStartScene.h"
 #import "BasicButton.h"
 #import "Encounter.h"
+#import "Raid.h"
+
 
 @interface PostBattleScene ()
-@property (nonatomic, retain) NSArray *eventLog;
 @property (nonatomic, readwrite) BOOL isMultiplayer;
 @property (nonatomic, readwrite) BOOL isVictory;
 @property (nonatomic, readwrite) BOOL otherPlayerHasQueued;
@@ -36,19 +37,12 @@
 @property (nonatomic, assign) CCMenuItem *queueAgainMenuItem;
 @property (nonatomic, retain) Encounter *encounter;
 
-- (BOOL)writeApplicationData:(NSData *)data toFile:(NSString *)fileName;
-- (NSString*)timeStringForTimeInterval:(NSTimeInterval)interval;
-- (void)done;
-- (void)showDivinityUnlocked;
-- (void)goToDivinity;
-- (NSInteger)calculateRatingForNumDead:(NSInteger)numDead;
 @end
 
 @implementation PostBattleScene
-@synthesize matchVoiceChat, match=_match, serverPlayerId;
+@synthesize matchVoiceChat, serverPlayerId;
 @synthesize isMultiplayer;
 @synthesize isVictory;
-@synthesize eventLog;
 @synthesize healingDoneLabel;
 @synthesize overhealingDoneLabel;
 @synthesize damageTakenLabel;
@@ -60,91 +54,25 @@
     [_match release];
     [serverPlayerId release];
     [matchVoiceChat release];
-    [eventLog release];
     [_encounter release];
     [super dealloc];
 }
 
-- (NSInteger)calculateRatingForNumDead:(NSInteger)numDead {
-    NSInteger rating = 0;
-    
-    switch (numDead) {
-        case 0:
-            rating = 10;
-            break;
-        case 1:
-            rating = 9;
-            break;
-        case 2:
-        case 3:
-            rating = 8;
-            break;
-        case 4:
-        case 5:
-            rating = 7;
-            break;
-        case 6:
-        case 7:
-            rating = 6;
-            break;
-        case 8:
-        case 9:
-            rating = 6;
-            break;
-        case 10:
-        case 11:
-            rating = 5;
-            break;
-        case 12:
-        case 13:
-            rating = 4;
-            break;
-        case 14:
-        case 15:
-            rating = 3;
-            break;
-        case 16:
-        case 17:
-            rating = 2;
-            break;
-        case 18:
-        case 19:
-            rating = 1;
-            break;
-        default:
-            rating = 0;
-            break;
-    }
-    return MIN(rating, self.encounter.difficulty *2);
-}
-
-
-- (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eLog encounter:(Encounter*)enc andIsMultiplayer:(BOOL)isMult deadCount:(NSInteger)numDead andDuration:(NSTimeInterval)duration{
+- (id)initWithVictory:(BOOL)victory encounter:(Encounter*)enc andIsMultiplayer:(BOOL)isMult andDuration:(NSTimeInterval)duration {
     self = [super init];
     if (self){
         self.encounter = enc;
         self.isMultiplayer = isMult;
         self.isVictory = victory;
-        self.eventLog = eLog;
         NSInteger reward = 0;
         NSInteger oldRating = 0;
         NSInteger rating = 0;
+        NSInteger numDead = self.encounter.raid.deadCount;
         NSTimeInterval fightDuration = duration;
         
-        NSString *thisPlayerId = nil;
-        if (self.isMultiplayer) {
-            thisPlayerId = [GKLocalPlayer localPlayer].playerID;
-        }
-        int totalHealingDone = [[[CombatEvent statsForPlayer:thisPlayerId fromLog:self.eventLog] objectForKey:PlayerHealingDoneKey] intValue];
-        int overheal = [[[CombatEvent statsForPlayer:thisPlayerId fromLog:self.eventLog] objectForKey:PlayerOverHealingDoneKey] intValue];
-        
-        int totalDamageTaken = 0;
-        for (CombatEvent *event in eventLog){
-            if (event.type == CombatEventTypeDamage && [[event source] isKindOfClass:[Boss class]]){
-                NSInteger dmgVal = [[event value] intValue];
-                totalDamageTaken +=  abs(dmgVal);            
-            }
-        }
+        int totalHealingDone = self.encounter.healingDone;
+        int overheal = self.encounter.overhealingDone; 
+        int totalDamageTaken = self.encounter.damageTaken;
         
         //Data Operations
         if (victory){
@@ -155,7 +83,7 @@
             reward = [self.encounter reward];
             
             oldRating = [PlayerDataManager levelRatingForLevel:self.encounter.levelNumber];
-            rating = [self calculateRatingForNumDead:numDead];
+            rating = self.encounter.rating;
             if (rating > oldRating && !self.isMultiplayer){
                 if (self.encounter.difficulty > 1) {
                     reward += 25; //Completing a new difficulty bonus, basically.
@@ -265,15 +193,7 @@
         [self addChild:durationLabel];
         
 #if DEBUG
-        if (eventLog.count > 0){
-            NSMutableArray *events = [NSMutableArray arrayWithCapacity:eventLog.count];
-            for (CombatEvent *event in eventLog){
-                [events addObject:[event logLine]];
-            }
-            //Save the Combat Log to disk...
-            
-            [self writeApplicationData:(NSData*)events toFile:[NSString stringWithFormat:@"%@-%@", [[eventLog   objectAtIndex:0] timeStamp], [[eventLog lastObject] timeStamp]]];
-        }
+        [self.encounter saveCombatLog];
 #endif
     }
     return self;
@@ -284,17 +204,6 @@
     NSInteger seconds = (int)interval % 60;
     
     return [NSString stringWithFormat:@"%02d:%02d", minutes, seconds];
-}
-         
-- (BOOL)writeApplicationData:(NSData *)data toFile:(NSString *)fileName {
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString *documentsDirectory = [paths objectAtIndex:0];
-	if (!documentsDirectory) {
-		NSLog(@"Documents directory not found!");
-		return NO;
-	}
-	NSString *appFile = [documentsDirectory stringByAppendingPathComponent:fileName];
-	return ([data writeToFile:appFile atomically:YES]);
 }
 
 - (void)showRemotePlayerStats:(NSInteger)healingDone andOverhealing:(NSInteger)overhealing {
@@ -321,8 +230,8 @@
     if (self.isMultiplayer) {
         if ([self.serverPlayerId isEqualToString:[GKLocalPlayer localPlayer].playerID]){
             //We are the server.  Lets figure out the stats!
-            NSDictionary *localStats = [CombatEvent statsForPlayer:[GKLocalPlayer localPlayer].playerID fromLog:self.eventLog];
-            NSDictionary *remoteStats = [CombatEvent statsForPlayer:[self.match.playerIDs objectAtIndex:0] fromLog:self.eventLog];
+            NSDictionary *localStats = [CombatEvent statsForPlayer:[GKLocalPlayer localPlayer].playerID fromLog:self.encounter.combatLog];
+            NSDictionary *remoteStats = [CombatEvent statsForPlayer:[self.match.playerIDs objectAtIndex:0] fromLog:self.encounter.combatLog];
             int localTotalHealingDone = [[localStats objectForKey:PlayerHealingDoneKey] intValue];
             int localOverheal = [[localStats objectForKey:PlayerOverHealingDoneKey] intValue];
             
@@ -330,7 +239,7 @@
             int remoteOverheal = [[remoteStats objectForKey:PlayerOverHealingDoneKey] intValue];
             
             int totalDamageTaken = 0;
-            for (CombatEvent *event in eventLog){
+            for (CombatEvent *event in self.encounter.combatLog){
                 if (event.type == CombatEventTypeDamage && [[event source] isKindOfClass:[Boss class]]){
                     NSInteger dmgVal = [[event value] intValue];
                     totalDamageTaken +=  abs(dmgVal);            

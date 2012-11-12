@@ -14,7 +14,7 @@
 #import "Spell.h"
 #import "Shop.h"
 #import "PlayerDataManager.h"
-
+#import "CombatEvent.h"
 
 @interface Encounter ()
 @property (nonatomic, readwrite) NSInteger levelNumber;
@@ -28,6 +28,7 @@
     [boss release];
     [requiredSpells release];
     [recommendedSpells release];
+    [_combatLog release];
     [super dealloc];
 }
 
@@ -37,8 +38,56 @@
         self.boss = bs;
         self.recommendedSpells  = sps;
         self.difficulty = 2;
+        
+        self.combatLog = [NSMutableArray arrayWithCapacity:500];
     }
     return self;
+}
+
+- (NSInteger)rating
+{
+    NSInteger rating = self.difficulty * 2;
+    return MIN(rating - self.raid.deadCount, 1);
+}
+
+- (NSInteger)score
+{
+    NSInteger score = 0;
+    NSInteger livingAllies = self.raid.getAliveMembers.count;
+    score += livingAllies * 100;
+    NSInteger healingScore = (float)(self.healingDone - self.overhealingDone) / (float)self.damageTaken * 1000.0;
+    score += healingScore;
+    return score;
+}
+
+- (NSInteger)damageTaken
+{
+    int totalDamageTaken = 0;
+    for (CombatEvent *event in self.combatLog){
+        if (event.type == CombatEventTypeDamage && [[event source] isKindOfClass:[Boss class]]){
+            NSInteger dmgVal = [[event value] intValue];
+            totalDamageTaken +=  abs(dmgVal);
+        }
+    }
+    return totalDamageTaken;
+}
+
+- (NSInteger)healingDone
+{
+    NSString* thisPlayerId = nil;
+    //    if (self.isMultiplayer) {
+    //        thisPlayerId = [GKLocalPlayer localPlayer].playerID;
+    //    }
+    return [[[CombatEvent statsForPlayer:thisPlayerId fromLog:self.combatLog] objectForKey:PlayerHealingDoneKey] intValue];
+}
+
+- (NSInteger)overhealingDone
+{
+    NSString* thisPlayerId = nil;
+//    if (self.isMultiplayer) {
+//        thisPlayerId = [GKLocalPlayer localPlayer].playerID;
+//    }
+    return [[[CombatEvent statsForPlayer:thisPlayerId fromLog:self.combatLog] objectForKey:PlayerOverHealingDoneKey] intValue];
 }
 
 - (void)setLevelNumber:(NSInteger)levelNumber
@@ -63,6 +112,29 @@
     NSInteger baseGold = [Encounter goldForLevelNumber:self.levelNumber];
     baseGold += (self.difficulty - 1) * 25;
     return baseGold;
+}
+
+- (void)saveCombatLog
+{
+    if (self.combatLog.count > 0) {
+        NSMutableArray *events = [NSMutableArray arrayWithCapacity:self.combatLog.count];
+        for (CombatEvent *event in self.combatLog){
+            [events addObject:[event logLine]];
+        }
+        //Save the Combat Log to disk...
+        [self writeApplicationData:(NSData*)events toFile:[NSString stringWithFormat:@"%@-%@", [[self.combatLog   objectAtIndex:0] timeStamp], [[self.combatLog lastObject] timeStamp]]];
+    }
+}
+
+- (BOOL)writeApplicationData:(NSData *)data toFile:(NSString *)fileName {
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString *documentsDirectory = [paths objectAtIndex:0];
+	if (!documentsDirectory) {
+		NSLog(@"Documents directory not found!");
+		return NO;
+	}
+	NSString *appFile = [documentsDirectory stringByAppendingPathComponent:fileName];
+	return ([data writeToFile:appFile atomically:YES]);
 }
 
 #pragma mark - Class Methods

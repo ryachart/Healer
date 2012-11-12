@@ -13,6 +13,6 @@
 
 + (BOOL)needsNormalModeCompleteSceneForLevelNumber:(NSInteger)levelNumber;
 
-- (id)initWithVictory:(BOOL)victory eventLog:(NSArray*)eventLog encounter:(Encounter*)encounter andIsMultiplayer:(BOOL)isMultiplayer deadCount:(NSInteger)numDead andDuration:(NSTimeInterval)duration;
+- (id)initWithVictory:(BOOL)victory encounter:(Encounter*)encounter andIsMultiplayer:(BOOL)isMultiplayer andDuration:(NSTimeInterval)duration;
 
 @end

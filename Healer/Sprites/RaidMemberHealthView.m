@@ -237,6 +237,8 @@
 #define BLINK_ACTION_TAG 32432
 -(void)updateHealth
 {
+    NSInteger healthDelta = abs(self.memberData.health - self.lastHealth);
+    float deltaPercentage = healthDelta / (float)self.memberData.maximumHealth;
     if (self.memberData && self.memberData.health > self.lastHealth){
         //We were healed.  Lets fire some SCT!
         int heal = self.memberData.health - self.lastHealth;
@@ -329,8 +331,12 @@
     self.lastHealth = self.memberData.health;
 	NSString *healthText;
 	if (self.memberData.health >= 1){
+        float totalTime = .33;
 		healthText = [NSString stringWithFormat:@"%3.1f%%", (((float)self.memberData.health) / self.memberData.maximumHealth)*100];
-        self.healthBarMask.position = CGPointMake(0, -(self.healthBarMask.contentSize.height) * (1 - self.memberData.healthPercentage));
+        if (healthDelta != 0) {
+            [self.healthBarMask stopAllActions];
+            [self.healthBarMask runAction:[CCMoveTo actionWithDuration:totalTime * deltaPercentage position:CGPointMake(0, -(self.healthBarMask.contentSize.height) * (1 - self.memberData.healthPercentage))]];
+        }
         ccColor3B colorForPerc = [self colorForPercentage:(((float)self.memberData.health) / self.memberData.maximumHealth)];
         [self.healthBarMask setColor:colorForPerc];
         

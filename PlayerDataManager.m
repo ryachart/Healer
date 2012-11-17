@@ -94,7 +94,7 @@ NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
 + (void)failLevelInCurrentMode:(NSInteger)level {
     NSString *failedKey = [PlayerLevelFailed stringByAppendingFormat:@"-%i", level];
     NSInteger failedTimes = [[NSUserDefaults standardUserDefaults] integerForKey:failedKey];
-    
+    failedTimes += 1;
     [[NSUserDefaults standardUserDefaults] setInteger:failedTimes forKey:failedKey];
 }
 

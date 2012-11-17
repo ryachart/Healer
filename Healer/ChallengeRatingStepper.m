@@ -16,7 +16,7 @@
 @property (nonatomic, retain) Encounter *encounter;
 @property (nonatomic, assign) CCLabelTTF *difficultyLabel;
 @property (nonatomic, assign) CCLabelTTF *difficultyWordLabel;
-@property (nonatomic, assign) CCLabelTTF *difficultyRankLabel;
+@property (nonatomic, retain) NSMutableArray *difficultySkulls;
 @end
 
 @implementation ChallengeRatingStepper
@@ -24,6 +24,7 @@
 - (void)dealloc
 {
     [_encounter release];
+    [_difficultySkulls release];
     [super dealloc];
 }
 
@@ -49,9 +50,7 @@
     if (self = [super init]) {
         self.encounter = encounter;
         
-//        CCLayerColor *background = [CCLayerColor layerWithColor:ccc4(25, 25, 25, 255) width:200 height:120];
-//        [background setPosition:CGPointMake(-60, 0.0)];
-//        [self addChild:background];
+        self.difficultySkulls = [NSMutableArray arrayWithCapacity:5];
         
         self.difficultyLabel = [CCLabelTTF labelWithString:@"Difficulty:" dimensions:CGSizeMake(150, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:24.0];
         [self.difficultyLabel setPosition:CGPointMake(40.0, 100.0)];
@@ -59,12 +58,19 @@
         self.difficultyWordLabel = [CCLabelTTF labelWithString:[ChallengeRatingStepper difficultyWorldForDifficultyNumber:self.encounter.difficulty] dimensions:CGSizeMake(150, 60) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:32.0];
         [self.difficultyWordLabel setPosition:CGPointMake(40.0, 50.0)];
         
-        self.difficultyRankLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Max Score: %i",self.encounter.difficulty * 2] dimensions:CGSizeMake(150, 24) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:14.0];
-        [self.difficultyRankLabel setPosition:CGPointMake(40.0, 20.0)];
         
         [self addChild:self.difficultyLabel];
         [self addChild:self.difficultyWordLabel];
-        [self addChild:self.difficultyRankLabel];
+        
+        for (int i = 0; i < 5; i++) {
+            CGPoint skullPos = CGPointMake((i * 30) - 20, 10);
+            CCSprite *skullSprite = [CCSprite spriteWithSpriteFrameName:@"difficulty_skull.png"];
+            [skullSprite setPosition:skullPos];
+            [self addChild:skullSprite z:100];
+            [self.difficultySkulls addObject:skullSprite];
+        }
+        
+        [self configureDifficultySymbols];
         
         BasicButton *harder = [BasicButton basicButtonWithTarget:self andSelector:@selector(increaseSelected) andTitle:@"Harder"];
         [harder setScale:.5];
@@ -80,19 +86,31 @@
     return self;
 }
 
+- (void)configureDifficultySymbols {
+    for (int i = 0; i < 5; i++){
+        CCSprite *currentSkull = [self.difficultySkulls objectAtIndex:i];
+        if (self.encounter.difficulty > i) {
+            [currentSkull setVisible:YES];
+        } else {
+            [currentSkull setVisible:NO];
+        }
+    }
+}
+
 - (void)reloadLabels {
-    self.difficultyRankLabel.string = [NSString stringWithFormat:@"Max Score: %i",self.encounter.difficulty * 2];
     self.difficultyWordLabel.string = [ChallengeRatingStepper difficultyWorldForDifficultyNumber:self.encounter.difficulty];
 }
 
 - (void)increaseSelected {
     [self.encounter setDifficulty:self.encounter.difficulty + 1];
     [self reloadLabels];
+    [self configureDifficultySymbols];
 }
 
 - (void)decreaseSelected {
     [self.encounter setDifficulty:self.encounter.difficulty - 1];
     [self reloadLabels];
+    [self configureDifficultySymbols];
 }
 
 @end

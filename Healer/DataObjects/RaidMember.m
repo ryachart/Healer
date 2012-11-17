@@ -197,6 +197,7 @@
         self.info = @"The Berserker deals very high damage. When dealing a critical strike this ally heals itself.";
         self.dodgeChance = .07;
         self.criticalChance = .1;
+        self.lastAttack = arc4random() % 70 / 100.0;
     }
     return self;
 }
@@ -210,10 +211,11 @@
     return [[[Archer alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:1000 damageDealt:60 andDmgFrequency:.6 andPositioning:Ranged]){
+    if (self = [super initWithHealth:1000 damageDealt:120 andDmgFrequency:1.2 andPositioning:Ranged]){
         self.title = @"Archer";
         self.info = @"The Archer deals very high damage.";
         self.dodgeChance = .05;
+        self.lastAttack = arc4random() % 110 / 100.0;
     }
     return self;
 }
@@ -224,10 +226,11 @@
     return [[[Champion alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:1250 damageDealt:29 andDmgFrequency:1.1 andPositioning:Melee]){
+    if (self = [super initWithHealth:1250 damageDealt:66 andDmgFrequency:2.5 andPositioning:Melee]){
         self.title = @"Champion";
         self.info = @"The Champion deals more damage when healed to full and reduces enemy damage by 5%.";
         self.dodgeChance = .07;
+        self.lastAttack = arc4random() % 240 / 100.0f;
     }
     return self;
 }
@@ -303,6 +306,7 @@
         self.title = @"Warlock";
         self.info = @"The Warlock heals itself for a small amount when at low health and reduces enemy damage by 5%.";
         self.dodgeChance = .07;
+        self.lastAttack = arc4random() % 190 / 100.0f;
     }
     return self;
 }

@@ -38,6 +38,7 @@
 @property (nonatomic, retain) NSMutableArray *abilities;
 @property (nonatomic, retain) NSArray *abilityDescriptors;
 @property (nonatomic, assign) Ability *autoAttack;
+@property (nonatomic, retain) NSString *namePlateTitle;
 
 + (id)defaultBoss;
 - (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses;

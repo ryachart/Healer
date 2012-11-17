@@ -41,7 +41,7 @@
                 [self addChild:skullSprite z:100];
                 
                 if ((i + 1) > rating) {
-                    [skullSprite setColor:ccBLACK];
+                    [skullSprite setColor:ccc3(40, 40, 40)];
                 }
             }
             

@@ -31,6 +31,6 @@
 	<key>redemption</key>
 	<string>If an ally would die instead you will instantly heal that ally for a small amount.  This can not occur more than once every 30 seconds.</string>
 	<key>avatar</key>
-	<string>All healing done has a 3% chance to summon an Avatar that cast spells and heals allies by your side for 15 seconds.</string>
+	<string>All healing done has a 3% chance to summon an Avatar that heals allies for 15 seconds.</string>
 </dict>
 </plist>

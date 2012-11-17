@@ -9,15 +9,19 @@
 #import "BossHealthView.h"
 #import "ClippingNode.h"
 
+#define HEALTH_INSET_WIDTH 6.0
+#define HEALTH_INSET_HEIGHT 45.0
+
 @interface BossHealthView ()
-@property (nonatomic, assign) CCSprite *bossHealthFrame;
 @property (nonatomic, assign) ClippingNode *bossHealthBack;
 @property (nonatomic, readwrite) NSInteger lastHealth;
+@property (nonatomic, assign) CCLabelTTF *healthLabelShadow;
+@property (nonatomic, assign) CCLabelTTF *bossNameShadow;
 @end
 
 @implementation BossHealthView
 
-@synthesize bossNameLabel, healthLabel, bossData, lastHealth, bossHealthBack, bossHealthFrame;
+@synthesize bossNameLabel, healthLabel, bossData, lastHealth, bossHealthBack;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super init])) {
@@ -27,15 +31,15 @@
 
         CCSprite *portraitSprite = [CCSprite spriteWithSpriteFrameName:@"boss_portrait_back.png"];
         [portraitSprite setAnchorPoint:CGPointZero];
+        [portraitSprite setPosition:CGPointMake(660, -60)];
         [self addChild:portraitSprite z:10];
         
         CCSprite *portrait = [CCSprite spriteWithSpriteFrameName:@"boss_default.png"];
-        [portrait setAnchorPoint:CGPointZero];
+        [portrait setPosition:CGPointMake(84,84)];
         [portraitSprite addChild:portrait];
         
         
         lastHealth = 0;
-        CGPoint healthBarFramePosition = CGPointMake(0, 0);
         
         CCSprite *boss_plate_sprite = [CCSprite spriteWithSpriteFrameName:@"boss_plate.png"];
         [boss_plate_sprite setAnchorPoint:CGPointZero];
@@ -44,30 +48,37 @@
         CCSprite *healthBar = [CCSprite spriteWithSpriteFrameName:@"boss_health_back.png"];
         
         self.bossHealthBack = [ClippingNode node];
+        [self.bossHealthBack setAnchorPoint:CGPointZero];
         [self.bossHealthBack setContentSize:healthBar.contentSize];
-        [self.bossHealthBack setClippingRegion:CGRectMake(0,0, healthBar.contentSize.width, healthBar.contentSize.height)];
+        [self.bossHealthBack setClippingRegion:CGRectMake(HEALTH_INSET_WIDTH,HEALTH_INSET_HEIGHT, healthBar.contentSize.width, healthBar.contentSize.height)];
         [healthBar setAnchorPoint:ccp(0,0)];
-        [healthBar setPosition:CGPointMake(20, 0)];
+        [healthBar setPosition:CGPointMake(HEALTH_INSET_WIDTH, HEALTH_INSET_HEIGHT)];
         [self.bossHealthBack addChild:healthBar z:1];
+    
         
-        self.bossHealthFrame = [CCSprite spriteWithSpriteFrameName:@"boss_health_frame.png"];
-        self.bossHealthFrame.anchorPoint = CGPointZero;
-        self.bossHealthFrame.position = healthBarFramePosition;
+        self.bossNameLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(250, 40) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Bold" fontSize:28.0];
+        self.bossNameLabel.position = CGPointMake(170, 14);
+        [self.bossNameLabel setColor:ccc3(200, 0, 0)];
         
-        self.bossNameLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:32.0];
-        self.bossNameLabel.position = CGPointMake(300, 160);
-        self.bossNameLabel.contentSize = frame.size;
-        [self.bossNameLabel setColor:ccBLACK];
+        self.bossNameShadow = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(250, 40) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Bold" fontSize:28.0];
+        self.bossNameShadow.position = CGPointMake(169, 13);
+        [self.bossNameShadow setColor:ccc3(25, 25, 25)];
+
         
-        self.healthLabel = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:32.0];
-        [self.healthLabel setColor:ccBLACK];
-        self.healthLabel.contentSize = CGSizeMake(frame.size.width * .5, frame.size.height * .25);
-        [self.healthLabel setPosition:CGPointMake(300, 120)];
+        self.healthLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold"  fontSize:32.0];
+        [self.healthLabel setColor:ccc3(25, 25, 25)];
+        [self.healthLabel setPosition:CGPointMake(300, 60)];
         
+        self.healthLabelShadow = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold"  fontSize:32.0];
+        [self.healthLabelShadow setColor:ccc3(230, 230, 230)];
+        [self.healthLabelShadow setOpacity:155];
+        [self.healthLabelShadow setPosition:CGPointMake(299, 59)];
+        
+        [self addChild:self.bossNameShadow z:9];
         [self addChild:self.bossHealthBack];
-        [self addChild:self.bossHealthFrame];
         [self addChild:self.bossNameLabel z:10];
         [self addChild:self.healthLabel z:10];
+        [self addChild:self.healthLabelShadow z:self.healthLabel.zOrder - 1];
     }
     return self;
 }
@@ -78,13 +89,14 @@
 {
 	bossData = theBoss;
 	
-	[self.bossNameLabel setString:[bossData title]];
+	[self.bossNameLabel setString:[bossData namePlateTitle]];
+    [self.bossNameShadow setString:[bossData namePlateTitle]];
 	lastHealth = theBoss.health;
     
     [self.abilityDescriptionsView removeFromParentAndCleanup:YES];
     self.abilityDescriptionsView = [[[BossAbilityDescriptionsView alloc] initWithBoss:self.bossData] autorelease];
     [self.abilityDescriptionsView setAnchorPoint:CGPointZero];
-    [self.abilityDescriptionsView setPosition:CGPointMake(-468, -322)];
+    [self.abilityDescriptionsView setPosition:CGPointMake(-430, -425)];
     [self.abilityDescriptionsView setDelegate:self];
     [self addChild:self.abilityDescriptionsView];
 	
@@ -125,11 +137,12 @@
 	}
 	
 	if (![healthText isEqualToString:[self.healthLabel string]]){
-		[self. healthLabel setString:healthText];
+		[self.healthLabel setString:healthText];
+        [self.healthLabelShadow setString:healthText];
 	}
     
     double percentageOfHealth = ((float)[self.bossData health])/[self.bossData maximumHealth];
-    [self.bossHealthBack setClippingRegion:CGRectMake(0-(self.bossHealthBack.clippingRegion.size.width * (1 - percentageOfHealth)), self.bossHealthBack.clippingRegion.origin.y, self.bossHealthBack.clippingRegion.size.width, self.bossHealthBack.clippingRegion.size.height)];
+    [self.bossHealthBack setClippingRegion:CGRectMake(HEALTH_INSET_WIDTH-(self.bossHealthBack.clippingRegion.size.width * (1 - percentageOfHealth)), self.bossHealthBack.clippingRegion.origin.y, self.bossHealthBack.clippingRegion.size.width, self.bossHealthBack.clippingRegion.size.height)];
     
     [self.abilityDescriptionsView update];
 }

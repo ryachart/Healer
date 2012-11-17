@@ -7,12 +7,21 @@
 //
 
 #import "PlayerEnergyView.h"
+#import "ClippingNode.h"
+
+#define ENERGYBAR_INSET_WIDTH 5.0
+#define ENERGYBAR_INSET_HEIGHT 5.0
+
+@interface PlayerEnergyView ()
+@property (nonatomic, assign) ClippingNode *energyBarClippingNode;
+@property (nonatomic, assign) CCLabelTTF *energyLabelShadow;
+@end
 
 
 @implementation PlayerEnergyView
 
 @synthesize channelDelegate, percentChanneled;
-@synthesize energyBar, energyLabel, energyStyleFrame;
+@synthesize energyBar, energyLabel;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super init])) {
@@ -25,35 +34,49 @@
         self.isTouchEnabled = YES;
         isTouched = NO;
         
-        self.energyLabel = [CCLabelTTF labelWithString:@"Energy: 1000/1000" fontName:@"Arial" fontSize:18.0];
-        [self.energyLabel setColor:ccc3(25, 25, 25)];
-        self.energyLabel.position = CGPointMake(frame.size.width * .5, frame.size.height * .5);
+        CCSprite *background = [CCSprite spriteWithSpriteFrameName:@"energy_bar_back.png"];
+        [background setAnchorPoint:CGPointZero];
+        [self addChild:background];
+        
+        self.energyLabel = [CCLabelTTF labelWithString:@"1000/1000" fontName:@"Marion-Bold" fontSize:18.0];
+        [self.energyLabel setColor:ccc3(230, 230, 230)];
+        self.energyLabel.position = CGPointMake(frame.size.width * .75, frame.size.height * .30);
         [self addChild:self.energyLabel z:100];
         
-        self.energyBar = [CCLayerGradient layerWithColor:ccc4(0, 0, 230, 255) fadingTo:ccc4(0, 0, 130, 200) alongVector:CGPointMake(-1, 0)];
-        [self.energyBar setPosition:CGPointMake(0, 0)];
-        self.energyBar.contentSize = CGSizeMake(0, frame.size.height);
-        [self addChild:self.energyBar];
+        self.energyLabelShadow = [CCLabelTTF labelWithString:@"1000/1000" fontName:@"Marion-Bold" fontSize:18.0];
+        [self.energyLabelShadow setColor:ccc3(25, 25, 25)];
+        self.energyLabelShadow.position = ccpSub(self.energyLabel.position, ccp(1, 1));
+        [self addChild:self.energyLabelShadow z:100];
+        
+        self.energyBar = [CCSprite spriteWithSpriteFrameName:@"energy_bar_fill.png"];
+        [self.energyBar setPosition:CGPointMake(ENERGYBAR_INSET_WIDTH, ENERGYBAR_INSET_HEIGHT)];
+        [self.energyBar setAnchorPoint:CGPointZero];
+        
+        self.energyBarClippingNode = [ClippingNode node];
+        [self.energyBarClippingNode setAnchorPoint:CGPointZero];
+        [self.energyBarClippingNode setClippingRegion:CGRectMake(0,0,0,0)];
+        [self.energyBarClippingNode addChild:self.energyBar];
+        
+        [self addChild:self.energyBarClippingNode];
     }
     return self;
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
 	[channelDelegate beginChanneling];
-	[self setColor:ccc3(0, 255, 255)];
 }
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
 	[channelDelegate endChanneling];
-	[self setColor:ccc3(255, 255, 255)];
 }
 
 -(void)updateWithEnergy:(NSInteger)current andMaxEnergy:(NSInteger)max
 {
-	[energyLabel setString:[NSString stringWithFormat:@"Energy: %i/%i", current, max]];
+	[energyLabel setString:[NSString stringWithFormat:@"%i/%i", current, max]];
+    [self.energyLabelShadow setString:[NSString stringWithFormat:@"%i/%i", current, max]];
+    
     percentEnergy = ((float)current)/max;
-    self.energyBar.contentSize = CGSizeMake(self.contentSize.width * percentEnergy, self.contentSize.height);
-		
+    [self.energyBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.energyBar.contentSize.width + ENERGYBAR_INSET_WIDTH) * percentEnergy, self.energyBar.contentSize.height + ENERGYBAR_INSET_HEIGHT)];
 }
 
 

@@ -12,8 +12,9 @@
 @interface PlayerCastBar : CCLayerColor {
 	double percentTimeRemaining;
 }
-@property (nonatomic, retain) CCLabelTTF *timeRemaining;
-@property (nonatomic, retain) CCLayerColor *castBar;
+@property (nonatomic, assign) CCLabelTTF *timeRemaining;
+@property (nonatomic, assign) CCLabelTTF *timeRemainingShadow;
+@property (nonatomic, assign) CCSprite *castBar;
 
 -(id)initWithFrame:(CGRect)frame;
 -(void)updateTimeRemaining:(NSTimeInterval)remaining ofMaxTime:(NSTimeInterval)maxTime forSpell:(Spell*)spell;

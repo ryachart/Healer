@@ -21,14 +21,16 @@
 @end
 
 @implementation Boss
-@synthesize title, logger, announcer, criticalChance, info, isMultiplayer=_isMultiplayer,phase, duration, abilities;
+@synthesize title, logger, announcer, criticalChance, info, phase, duration, abilities;
 @synthesize queuedAbilitiesToAdd, shouldQueueAbilityAdds;
+
 -(void)dealloc{
     [abilities release];
     [info release];
     [title release];
     [queuedAbilitiesToAdd release];
     [_abilityDescriptors release];
+    [_namePlateTitle release];
     [super dealloc];
 }
 
@@ -42,6 +44,14 @@
     }
     
     return [_abilityDescriptors arrayByAddingObjectsFromArray:activeAbilitiesDescriptors];
+}
+
+- (NSString *)namePlateTitle
+{
+    if (!_namePlateTitle) {
+        return self.title;
+    }
+    return _namePlateTitle;
 }
 
 - (void)configureBossForDifficultyLevel:(NSInteger)difficulty
@@ -425,6 +435,7 @@
 +(id)defaultBoss {
     Trulzar *boss = [[Trulzar alloc] initWithHealth:260000 damage:0 targets:0 frequency:100.0 choosesMT:NO ];
     [boss setTitle:@"Trulzar the Maleficar"];
+    [boss setNamePlateTitle:@"Trulzar"];
     [boss setInfo:@"Before the dark winds came, Trulzar was a teacher at the Academy of Alchemists.  Since then, Trulzar has drawn into seclusion and begun practicing dark magic.  Trulzar has been identified as a Maleficar by the Theranorian Sages."];
     
     boss.lastPotionTime = 6.0;
@@ -565,6 +576,7 @@
 +(id)defaultBoss {
     DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:245000 damage:0 targets:1 frequency:.75 choosesMT:NO ];
     [boss setTitle:@"Council of Dark Summoners"];
+    [boss setNamePlateTitle:@"The Council"];
     [boss setInfo:@"A note scribbled in blood was found in Trulzar's quarters.  It mentions a Council responsible for The Dark Winds plaguing Theranore.  Go to the crypt beneath The Hollow and discover what this Council is up to."];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"roth_entrance" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/roth_entrance" ofType:@"m4a"]]];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"roth_death" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/roth_death" ofType:@"m4a"]]];
@@ -1203,6 +1215,7 @@
     [secondFA release];
     
     [boss setTitle:@"Twin Champions of Baraghast"];
+    [boss setNamePlateTitle:@"Twin Champions"];
     [boss setInfo:@"You and your soldiers have taken the fight straight to the warcamps of Baraghast--Leader of the Dark Horde.  You have been met outside the gates by only two heavily armored demon warriors.  These Champions of Baraghast will stop at nothing to keep you from finding Baraghast."];
     
 //    if (mode == DifficultyModeHard) {
@@ -1363,6 +1376,7 @@
     Baraghast *boss = [[Baraghast alloc] initWithHealth:304000 damage:150 targets:1 frequency:1.25 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
+    [boss setNamePlateTitle:@"Baraghast"];
     [boss setInfo:@"With his champions defeated, Baraghast himself confronts you and your allies."];
     
 //    if (mode == DifficultyModeHard) {
@@ -1427,6 +1441,7 @@
 + (id)defaultBoss {
     CrazedSeer *seer = [[CrazedSeer alloc] initWithHealth:272000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [seer setTitle:@"Crazed Seer Tyonath"];
+    [seer setNamePlateTitle:@"Tyonath"];
     [seer setInfo:@"Seer Tyonath was tormented and tortured after his capture by the Dark Horde.  The Darkness has driven him mad.  He guards the secrets to Baraghast's origin in the vaults beneath the Dark Horde's largest encampment - Serevilost."];
     
     ProjectileAttack *fireballAbility = [[ProjectileAttack alloc] init];
@@ -1467,7 +1482,6 @@
     [gsdesc release];
     
     return [seer autorelease];
-    
 }
 @end
 

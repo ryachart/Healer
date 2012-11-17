@@ -146,16 +146,11 @@
         [self.raidView setContentSize:CGSizeMake(500, 400)];
         [self addChild:self.raidView z:RAID_Z];
         
-        self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(100, 560, 884, 80)] autorelease];
+        self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(180, 646, 884, 80)] autorelease];
         [self.bossHealthView setDelegate:self];
         
-        CCLayerColor *playerStatusBackground = [CCLayerColor layerWithColor:ccc4(100, 100, 100, 200)];
-        [playerStatusBackground setContentSize:CGSizeMake(210, 60)];
-        [playerStatusBackground setPosition:CGPointMake(795, 480)];
-        [self addChild:playerStatusBackground];
-        
-        self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(100,40, 400, 50)] autorelease];
-        self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(800, 485, 200, 50)] autorelease];
+        self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(125,40, 400, 50)] autorelease];
+        self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(704, 485, 200, 50)] autorelease];
         
         self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Marion-Bold" fontSize:32.0];
         [self.announcementLabel setPosition:CGPointMake(512, 500)];
@@ -189,7 +184,7 @@
         for (int i = 0; i < 4; i++){
             switch (i) {
                 case 0:
-                    self.spellView1 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 335, 100, 100)] autorelease];
+                    self.spellView1 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(910, 370, 100, 100)] autorelease];
                     if (self.player.activeSpells.count > i) {
                         [self.spellView1  setSpellData:[[self.player activeSpells] objectAtIndex:i]];
                         [self.spellView1 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
@@ -197,7 +192,7 @@
                     [self addChild:self.spellView1];
                     break;
                 case 1:
-                    self.spellView2 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 230, 100, 100)] autorelease];
+                    self.spellView2 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(910, 265, 100, 100)] autorelease];
                     if (self.player.activeSpells.count > i) {
                         [self.spellView2 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
                         [self.spellView2 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
@@ -205,7 +200,7 @@
                     [self addChild:self.spellView2];
                     break;
                 case 2:
-                    self.spellView3 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 125, 100, 100)] autorelease];
+                    self.spellView3 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(910, 160, 100, 100)] autorelease];
                     if (self.player.activeSpells.count > i) {
                         [self.spellView3 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
                         [self.spellView3 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
@@ -213,7 +208,7 @@
                     [self addChild:self.spellView3];
                     break;
                 case 3:
-                    self.spellView4 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(874, 20, 100, 100)] autorelease];
+                    self.spellView4 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(910, 55, 100, 100)] autorelease];
                     if (self.player.activeSpells.count > i) {
                         [self.spellView4 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
                         [self.spellView4 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
@@ -244,9 +239,9 @@
         
         //The timer has to be scheduled after all the init is done!
         BasicButton *menuButtonItem = [BasicButton basicButtonWithTarget:self andSelector:@selector(showPauseMenu) andTitle:@"Menu"];
-        [menuButtonItem setScale:.4];
+        [menuButtonItem setScale:.6];
         CCMenu *menuButton = [CCMenu menuWithItems:menuButtonItem, nil];
-        [menuButton setPosition:CGPointMake(50, [CCDirector sharedDirector].winSize.height * .95)];
+        [menuButton setPosition:CGPointMake(86, [CCDirector sharedDirector].winSize.height * .9325)];
         [self addChild:menuButton];
         
         self.networkThrottle = 0;
@@ -514,7 +509,7 @@
     
     AbilityDescriptionModalLayer *modalLayer = [[AbilityDescriptionModalLayer alloc] initWithAbilityDescriptor:ability];
     [modalLayer setDelegate:self];
-    [self addChild:modalLayer];
+    [self addChild:modalLayer z:9999];
     [modalLayer release];
 }
 

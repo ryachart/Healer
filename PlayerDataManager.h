@@ -16,6 +16,8 @@ extern NSString* const PlayerRemoteObjectIdKey;
 
 @interface PlayerDataManager : NSObject
 
++ (NSInteger)totalScore;
+
 + (NSInteger)difficultyForLevelNumber:(NSInteger)levelNum;
 + (void)difficultySelected:(NSInteger)challenge forLevelNumber:(NSInteger)levelNum;
 

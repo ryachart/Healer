@@ -24,6 +24,7 @@
 #import "BasicButton.h"
 #import "Encounter.h"
 #import "Raid.h"
+#import "CCNumberChangeAction.h"
 
 
 @interface PostBattleScene ()
@@ -124,16 +125,16 @@
             [self addChild:victoryLabel];
             
             if (enc.levelNumber != 1) {
-                CCLabelTTF *scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Score: %i/10", rating] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:36.0];
+                CCLabelTTF *scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Score: %i", self.encounter.score] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:36.0];
                 [scoreLabel setPosition:CGPointMake(200, 300)];
                 [self addChild:scoreLabel];
                 
                 if (rating > oldRating && !self.isMultiplayer){
-                    CCLabelTTF *newHighScore = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"New High Score!"] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:40.0];
-                    [newHighScore setColor:ccGREEN];
-                    [newHighScore setPosition:CGPointMake(200, 360)];
-                    [self addChild:newHighScore];
-                    [newHighScore runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
+//                    CCLabelTTF *newHighScore = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"New High Score!"] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:40.0];
+//                    [newHighScore setColor:ccGREEN];
+//                    [newHighScore setPosition:CGPointMake(200, 360)];
+//                    [self addChild:newHighScore];
+//                    [newHighScore runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
                 }
             }
             
@@ -250,6 +251,11 @@
             [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"STATS|%i|%i|%i|%i|%i", localTotalHealingDone, localOverheal, remoteTotalHealingDone, remoteOverheal, totalDamageTaken] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
         }
     }
+
+    CCNumberChangeAction *numberChangeAction = [CCNumberChangeAction actionWithDuration:8.0 fromNumber:0 toNumber:self.encounter.damageTaken];
+    [numberChangeAction setPrefix:@"Damage Taken: "];
+    [self.damageTakenLabel runAction:numberChangeAction];
+
 }
 
 - (void)onExit {

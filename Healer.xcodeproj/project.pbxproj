@@ -80,6 +80,7 @@
 		BF865F2C15A031FB007F5DBF /* BasicButton.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F2B15A031FB007F5DBF /* BasicButton.m */; };
 		BF87D85B1601ABFB00BEAD5B /* tips.plist in Resources */ = {isa = PBXBuildFile; fileRef = BF87D85A1601ABFB00BEAD5B /* tips.plist */; };
 		BF8A50F415236D6300BEC882 /* GamePlayFTUELayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */; };
+		BF95CF79165736190058FB85 /* CCNumberChangeAction.m in Sources */ = {isa = PBXBuildFile; fileRef = BF95CF78165736190058FB85 /* CCNumberChangeAction.m */; };
 		BF98B18215D3572700017EA4 /* BossAbilityDescriptionsView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18115D3572700017EA4 /* BossAbilityDescriptionsView.m */; };
 		BF98B18615D3577A00017EA4 /* BossAbilityDescriptorIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18515D3577A00017EA4 /* BossAbilityDescriptorIcon.m */; };
 		BF98B18A15D37EAE00017EA4 /* AbilityDescriptionModalLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18915D37EAE00017EA4 /* AbilityDescriptionModalLayer.m */; };
@@ -672,6 +673,8 @@
 		BF87D85A1601ABFB00BEAD5B /* tips.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = tips.plist; sourceTree = "<group>"; };
 		BF8A50F215236D6300BEC882 /* GamePlayFTUELayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlayFTUELayer.h; sourceTree = "<group>"; };
 		BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlayFTUELayer.m; sourceTree = "<group>"; };
+		BF95CF77165736190058FB85 /* CCNumberChangeAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCNumberChangeAction.h; sourceTree = "<group>"; };
+		BF95CF78165736190058FB85 /* CCNumberChangeAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCNumberChangeAction.m; sourceTree = "<group>"; };
 		BF98B18015D3572700017EA4 /* BossAbilityDescriptionsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BossAbilityDescriptionsView.h; sourceTree = "<group>"; };
 		BF98B18115D3572700017EA4 /* BossAbilityDescriptionsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BossAbilityDescriptionsView.m; sourceTree = "<group>"; };
 		BF98B18415D3577A00017EA4 /* BossAbilityDescriptorIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BossAbilityDescriptorIcon.h; sourceTree = "<group>"; };
@@ -1110,6 +1113,7 @@
 		38F0504413C2618900BCADCB /* View Objects */ = {
 			isa = PBXGroup;
 			children = (
+				BF95CF76165736020058FB85 /* Animations */,
 				382C463F1648CD9000883CFA /* PreBattle */,
 				BFD106F8163A2944002318CE /* Map Views */,
 				BFAFA3F615F54B8A0052FCA5 /* Divinity Views */,
@@ -1200,6 +1204,15 @@
 				BF698672154CE45A0016F25E /* TestFlight.h */,
 			);
 			path = TestFlightSDK1.0;
+			sourceTree = "<group>";
+		};
+		BF95CF76165736020058FB85 /* Animations */ = {
+			isa = PBXGroup;
+			children = (
+				BF95CF77165736190058FB85 /* CCNumberChangeAction.h */,
+				BF95CF78165736190058FB85 /* CCNumberChangeAction.m */,
+			);
+			name = Animations;
 			sourceTree = "<group>";
 		};
 		BFAFA3F615F54B8A0052FCA5 /* Divinity Views */ = {
@@ -1883,6 +1896,7 @@
 				BF9DD8AA1644A6DC007DAE39 /* BossActivationBar.m in Sources */,
 				382C46421648CDA400883CFA /* ChallengeRatingStepper.m in Sources */,
 				387E82A4164F1648009F11E6 /* SettingsScene.m in Sources */,
+				BF95CF79165736190058FB85 /* CCNumberChangeAction.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

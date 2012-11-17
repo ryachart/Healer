@@ -43,6 +43,17 @@ NSString* const PlayerLevelDifficultyLevelsKey = @"com.healer.diffLevels";
     return difficultyLevels;
 }
 
++ (NSInteger)totalRating
+{
+    NSInteger highestLevelCompleted = [PlayerDataManager highestLevelCompleted];
+    NSInteger totalScore = 0;
+    for (int i = 1; i <= highestLevelCompleted; i++){
+        NSInteger rating =  [PlayerDataManager levelRatingForLevel:i];
+        totalScore += rating;
+    }
+    return totalScore;
+}
+
 + (NSInteger)difficultyForLevelNumber:(NSInteger)levelNum
 {
     NSMutableArray *difficultyLevels = [PlayerDataManager difficultyLevels];

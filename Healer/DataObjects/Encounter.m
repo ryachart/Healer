@@ -47,7 +47,7 @@
 - (NSInteger)rating
 {
     NSInteger rating = self.difficulty * 2;
-    return MIN(rating - self.raid.deadCount, 1);
+    return rating;
 }
 
 - (NSInteger)score

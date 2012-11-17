@@ -29,12 +29,6 @@ typedef enum {
 + (NSArray*)purchasedItems;
 + (NSArray*)allOwnedSpells;
 
-//Divinity
-+ (void)resetDivinity; //Debug
-+ (NSInteger)costForDivinityTier:(NSInteger)tier;
-+ (NSInteger)costForNextDivinityTier;
-+ (NSInteger)numDivinityTiersPurchased;
-+ (void)purchaseNextDivinityTier;
 
 //Shop Categories
 + (ShopCategory)highestCategoryUnlocked;

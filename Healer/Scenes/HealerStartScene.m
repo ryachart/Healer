@@ -20,6 +20,7 @@
 #import "GoldCounterSprite.h"
 #import "LevelSelectMapScene.h"
 #import "SettingsScene.h"
+#import "RatingCounterSprite.h"
 
 @interface HealerStartScene ()
 @property (assign) CCMenu* menu;
@@ -66,6 +67,10 @@
         GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
         [goldCounter setPosition:CGPointMake(900, 50)];
         [self addChild:goldCounter];
+        
+        RatingCounterSprite *ratingCounter = [[[RatingCounterSprite alloc] init] autorelease];
+        [ratingCounter setPosition:CGPointMake(750, 50)];
+        [self addChild:ratingCounter];
         
         CCSprite *logoSprite = [CCSprite spriteWithSpriteFrameName:@"home_logo.png"];
         [logoSprite setAnchorPoint:CGPointMake(0, 0)];

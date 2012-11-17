@@ -20,23 +20,32 @@
 @end
 
 @implementation DivinityTierCard
-- (id)initForDivinityTier:(NSInteger)tier {
+
+- (id)initForDivinityTier:(NSInteger)tier
+{
+    return [self initForDivinityTier:tier withSelectedChoice:[Divinity selectedChoiceForTier:tier] forceUnlocked:NO showsBackground:YES];
+}
+
+- (id)initForDivinityTier:(NSInteger)tier withSelectedChoice:(NSString *)choice forceUnlocked:(BOOL)forceUnlocked showsBackground:(BOOL)showsBackground {
     if (self = [super init]){
         self.tier = tier;
         self.anchorPoint = CGPointZero;
-        BOOL isUnlocked = [Shop numDivinityTiersPurchased] > tier;
+        BOOL isUnlocked = [Divinity numDivinityTiersUnlocked] > tier || forceUnlocked;
         
         if (isUnlocked){
             NSString *spriteName = [NSString stringWithFormat:@"divinity_tier%i_frame.png", tier + 1];
             CCSprite *divFrame = [CCSprite spriteWithSpriteFrameName:spriteName];
+            if (!showsBackground) {
+                [divFrame setOpacity:0];
+            }
             [divFrame setAnchorPoint:CGPointZero];
             [self addChild:divFrame];
             
             NSString* titleString = nil;
             NSString* iconFrameName = nil;
             NSString* titleDescription = nil;
-            if ([Divinity selectedChoiceForTier:self.tier]){
-                titleString = [Divinity selectedChoiceForTier:self.tier];
+            if (choice){
+                titleString = choice;
                 iconFrameName = [Divinity spriteFrameNameForChoice:titleString];
                 titleDescription = [Divinity descriptionForChoice:titleString];
                 titleString = [titleString uppercaseString];
@@ -66,26 +75,16 @@
             [self addChild:self.selectedChoiceDescription];
 
         }else {
-            BOOL isNextDivinityTierToUnlock = [Shop numDivinityTiersPurchased] == tier;
-            BasicButton *unlockButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(unlockTier:) andTitle:@"Unlock"];
-            [unlockButton setScale:.5];
-            [unlockButton setIsEnabled:isNextDivinityTierToUnlock];
-            CCMenu *unlockButtonMenu = [CCMenu menuWithItems:unlockButton, nil];
-            [unlockButtonMenu setPosition:CGPointMake(70, 68 - (self.tier * 5))];
-            [self addChild:unlockButtonMenu];
-            CCSprite *goldCoin = [CCSprite spriteWithSpriteFrameName:@"gold_coin.png"];
-            [goldCoin setPosition:CGPointMake(150, unlockButtonMenu.position.y)];
-            [goldCoin setScale:.28];
-            [self addChild:goldCoin];
-            CCLabelTTF *costLabel = [GoldCounterSprite goldCostLabelWithCost:[Shop costForDivinityTier:tier] andFontSize:24.0];
-            [costLabel setPosition:CGPointMake(168, unlockButtonMenu.position.y - 18.0)];
-            [self addChild:costLabel];
+            CCLabelTTF *requires = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Unlocks At %i", [Divinity requiredRatingForTier:tier]] dimensions:CGSizeMake(200, 30) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+            [requires setPosition:CGPointMake(130, 45)];
+            [self addChild:requires];
+            
+            CCSprite *difficultySkull = [CCSprite spriteWithSpriteFrameName:@"difficulty_skull.png"];
+            [difficultySkull setPosition:CGPointMake(requires.contentSize.width, 45)];
+            [self addChild:difficultySkull];
         }
     }
     return self;
 }
 
-- (void)unlockTier:(id)sender {
-    [self.delegate unlockPurchasedForDivinityTier:self.tier];
-}
 @end

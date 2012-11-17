@@ -9,6 +9,7 @@
 #import "PlayerDataManager.h"
 #import "Shop.h"
 #import "Spell.h"
+#import "Divinity.h"
 
 static dispatch_queue_t parse_queue = nil;
 
@@ -20,6 +21,8 @@ NSString* const PlayerRemoteObjectIdKey = @"com.healer.playerRemoteObjectID3";
 NSString* const PlayerLastUsedSpellsKey = @"com.healer.lastUsedSpells";
 NSString* const PlayerNormalModeCompleteShown = @"com.healer.nmcs";
 NSString* const PlayerLevelDifficultyLevelsKey = @"com.healer.diffLevels";
+NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
+
 
 @implementation PlayerDataManager 
 
@@ -47,9 +50,9 @@ NSString* const PlayerLevelDifficultyLevelsKey = @"com.healer.diffLevels";
 {
     NSInteger highestLevelCompleted = [PlayerDataManager highestLevelCompleted];
     NSInteger totalScore = 0;
-    for (int i = 1; i <= highestLevelCompleted; i++){
+    for (int i = 2; i <= highestLevelCompleted; i++){
         NSInteger rating =  [PlayerDataManager levelRatingForLevel:i];
-        totalScore += rating;
+        totalScore += (rating / 2); //Rating is divided by 2 because we score on a 1 out of 10 scale but skulls are served as 1 to 5
     }
     return totalScore;
 }
@@ -200,6 +203,13 @@ NSString* const PlayerLevelDifficultyLevelsKey = @"com.healer.diffLevels";
         }
     }
     return spells;
+}
+
+#pragma mark - Divinity
+
++ (void)resetDivinity {
+    [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:DivinityTiersUnlocked];
+    [Divinity resetConfig];
 }
 
 #pragma mark - Normal Mode Completion

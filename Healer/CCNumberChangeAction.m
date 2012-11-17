@@ -11,6 +11,7 @@
 @interface CCNumberChangeAction ()
 @property (nonatomic, readwrite) NSInteger startNumber;
 @property (nonatomic, readwrite) NSInteger finishNumber;
+@property (nonatomic, readwrite) ccTime elapsed;
 @end
 
 @implementation CCNumberChangeAction
@@ -22,9 +23,18 @@
     [super dealloc];
 }
 
+- (id)init
+{
+    if (self = [super init]) {
+        self.elapsed = 0.0;
+    }
+    return self;
+}
+
 + (CCNumberChangeAction*)actionWithDuration:(NSTimeInterval)duration fromNumber:(NSInteger)start toNumber:(NSInteger)finish
 {
-    CCNumberChangeAction *action = [CCNumberChangeAction actionWithDuration:duration];
+    CCNumberChangeAction *action = [CCNumberChangeAction action];
+    [action setDuration:duration];
     [action setStartNumber:start];
     [action setFinishNumber:finish];
     return action;
@@ -33,8 +43,8 @@
 - (void)update:(ccTime)time
 {
     [super update:time];
-    
-    float percentElapsed = elapsed_ / duration_;
+    self.elapsed += time;
+    float percentElapsed = MIN(duration_,self.elapsed) / duration_;
     
     NSInteger targetNumber = (self.finishNumber - self.startNumber) * percentElapsed;
     

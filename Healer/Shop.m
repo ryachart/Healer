@@ -12,7 +12,6 @@
 #import "Divinity.h"
 
 NSString* const PlayerGold = @"com.healer.playerId";
-NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
 NSString* const PlayerGoldDidChangeNotification = @"com.healer.goldDidChangeNotif";
 
 static NSArray *shopItems = nil;
@@ -226,52 +225,6 @@ static NSArray *shopItems = nil;
     
 }
 
-+ (void)resetDivinity {
-    [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:DivinityTiersUnlocked];
-    [Divinity resetConfig];
-}
 
-+ (NSInteger)costForDivinityTier:(NSInteger)tier {
-    NSInteger val = -1;
-    switch (tier) {
-        case 0:
-            val = 200;
-            break;
-        case 1:
-            val = 500;
-            break;
-        case 2:
-            val = 1000;
-            break;
-        case 3:
-            val = 1500;
-            break;
-        case 4:
-            val = 4000;
-            break;
-    }
-    return val;
-}
 
-+ (NSInteger)costForNextDivinityTier {
-    return [Shop costForDivinityTier:[Shop numDivinityTiersPurchased]];
-}
-
-+ (NSInteger)numDivinityTiersPurchased {
-    return [[NSUserDefaults standardUserDefaults] integerForKey:DivinityTiersUnlocked];
-}
-
-+ (void)purchaseNextDivinityTier {
-    NSInteger currentTiers = [Shop numDivinityTiersPurchased];
-    if (currentTiers == 5){
-        return; //You have em all =D
-    }
-    if ([Shop localPlayerGold] >= [Shop costForNextDivinityTier]){
-        [Shop playerLosesGold:[Shop costForNextDivinityTier]];
-    }
-
-    currentTiers++;
-    [[NSUserDefaults standardUserDefaults] setInteger:currentTiers forKey:DivinityTiersUnlocked];
-    
-}
 @end

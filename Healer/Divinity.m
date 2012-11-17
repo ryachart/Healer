@@ -8,7 +8,7 @@
 
 #import "Divinity.h"
 #import "Effect.h"
-
+#import "PlayerDataManager.h"
 
 NSString* const IsDivinityUnlockedKey = @"com.healer.isDivinityUnlocked";
 NSString* const DivinityConfig = @"com.healer.divinityConfig";
@@ -140,6 +140,34 @@ static NSDictionary *divinityInfo = nil;
 
 + (void)resetConfig {
     [[NSUserDefaults standardUserDefaults] setValue:[NSDictionary dictionary] forKey:DivinityConfig];
+}
+
++ (NSInteger)requiredRatingForTier:(NSInteger)tier {
+    switch (tier) {
+        case 0:
+            return 25;
+        case 1:
+            return 40;
+        case 2:
+            return 60;
+        case 3:
+            return 80;
+        case 4:
+            return 90;
+    }
+    return NSUIntegerMax; //Loooool
+}
+
++ (NSInteger)numDivinityTiersUnlocked
+{
+    NSInteger currentRating = [PlayerDataManager totalRating];
+    NSInteger totalTiers = 0;
+    for (int i = 0; i < 5; i++){
+        if (currentRating >= [Divinity requiredRatingForTier:i]) {
+            totalTiers++;
+        }
+    }
+    return totalTiers;
 }
 
 @end

@@ -31,16 +31,28 @@
         [menu setPosition:CGPointZero];
         [self addChild:menu z:100];
         
-        NSInteger rating = [PlayerDataManager levelRatingForLevel:levelNum];
+        NSInteger rating = [PlayerDataManager levelRatingForLevel:levelNum] / 2;
         if (rating > 0) {
-            self.scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:CGSizeMake(60, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Regular" fontSize:24.0];
-            [self.scoreLabel setPosition:CGPointMake(self.contentSize.width / 2.0, - 40)];
-            [self addChild:self.scoreLabel z:5];
+            for (int i = 0; i < 5; i++) {
+                CGPoint skullPos = CGPointMake((i * 15) - 32, -25);
+                CCSprite *skullSprite = [CCSprite spriteWithSpriteFrameName:@"difficulty_skull.png"];
+                [skullSprite setPosition:skullPos];
+                [skullSprite setScale:.5];
+                [self addChild:skullSprite z:100];
+                
+                if ((i + 1) > rating) {
+                    [skullSprite setColor:ccBLACK];
+                }
+            }
             
-            self.scoreLabelShadow = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:CGSizeMake(60, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Regular" fontSize:24.0];
-            [self.scoreLabelShadow setColor:ccc3(50, 50, 50)];
-            [self.scoreLabelShadow setPosition:CGPointMake(self.contentSize.width / 2.0 -1, - 40 - 1)];
-            [self addChild:self.scoreLabelShadow z:4];
+//            self.scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:CGSizeMake(60, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Regular" fontSize:24.0];
+//            [self.scoreLabel setPosition:CGPointMake(self.contentSize.width / 2.0, - 40)];
+//            [self addChild:self.scoreLabel z:5];
+//            
+//            self.scoreLabelShadow = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:CGSizeMake(60, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Regular" fontSize:24.0];
+//            [self.scoreLabelShadow setColor:ccc3(50, 50, 50)];
+//            [self.scoreLabelShadow setPosition:CGPointMake(self.contentSize.width / 2.0 -1, - 40 - 1)];
+//            [self addChild:self.scoreLabelShadow z:4];
         }
     }
     return self;

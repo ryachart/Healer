@@ -36,6 +36,7 @@
 @property (nonatomic, assign) CCLabelTTF *overhealingDoneLabel;
 @property (nonatomic, assign) CCLabelTTF *damageTakenLabel;
 @property (nonatomic, assign) CCMenuItem *queueAgainMenuItem;
+@property (nonatomic, assign) CCLabelTTF *scoreLabel;
 @property (nonatomic, retain) Encounter *encounter;
 
 @end
@@ -72,7 +73,6 @@
         NSTimeInterval fightDuration = duration;
         
         int totalHealingDone = self.encounter.healingDone;
-        int overheal = self.encounter.overhealingDone; 
         int totalDamageTaken = self.encounter.damageTaken;
         
         //Data Operations
@@ -125,9 +125,10 @@
             [self addChild:victoryLabel];
             
             if (enc.levelNumber != 1) {
-                CCLabelTTF *scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Score: %i", self.encounter.score] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:36.0];
-                [scoreLabel setPosition:CGPointMake(200, 300)];
-                [self addChild:scoreLabel];
+                self.scoreLabel = [CCLabelTTF labelWithString:@"Score: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:36.0];
+                [self.scoreLabel setPosition:CGPointMake(200, 300)];
+                self.scoreLabel.opacity = 0;
+                [self addChild:self.scoreLabel];
                 
                 if (rating > oldRating && !self.isMultiplayer){
 //                    CCLabelTTF *newHighScore = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"New High Score!"] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:40.0];
@@ -139,13 +140,13 @@
             }
             
         }else{
-            CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"DEFEAT!" fontName:@"Arial" fontSize:72];
+            CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"DEFEAT!" fontName:@"Marion-Bold" fontSize:72];
             [victoryLabel setPosition:CGPointMake(512, 384)];
             [self addChild:victoryLabel];
         }
         
         if (reward > 0){
-            CCLabelTTF *goldEarned = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold Earned: %i", reward] fontName:@"Arial" fontSize:32.0];            
+            CCLabelTTF *goldEarned = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold Earned: %i", reward] fontName:@"Marion-Bold" fontSize:32.0];            
             [goldEarned setPosition:CGPointMake(800, 150)];
             [self addChild:goldEarned];
         }
@@ -170,16 +171,19 @@
             [menu alignItemsVertically];
         }
         
-        self.healingDoneLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Healing Done: %i", totalHealingDone] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
+        self.healingDoneLabel = [CCLabelTTF labelWithString:@"Healing Done: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
+        self.healingDoneLabel.opacity = 0;
         [self.healingDoneLabel setPosition:CGPointMake(200, 200)];
         
-        self.overhealingDoneLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Overhealing: %i", overheal] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
+        self.overhealingDoneLabel = [CCLabelTTF labelWithString:@"Overhealing: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
+        self.overhealingDoneLabel.opacity = 0;
         [self.overhealingDoneLabel setPosition:CGPointMake(200, 160)];
         
-        self.damageTakenLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Damage Taken: %i", totalDamageTaken] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
+        self.damageTakenLabel = [CCLabelTTF labelWithString:@"Damage Taken: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
+        self.damageTakenLabel.opacity = 0;
         [self.damageTakenLabel setPosition:CGPointMake(200, 120)];
         
-        CCLabelTTF *playersLostLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Allies Lost:  %i", numDead] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
+        CCLabelTTF *playersLostLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Allies Lost:  %i", numDead] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
         [playersLostLabel setPosition:CGPointMake(200, 80)];
         
         [self addChild:self.healingDoneLabel];
@@ -189,7 +193,7 @@
         
         NSString *durationText = [@"Duration: " stringByAppendingString:[self timeStringForTimeInterval:fightDuration]];
         
-        CCLabelTTF *durationLabel = [CCLabelTTF labelWithString:durationText dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
+        CCLabelTTF *durationLabel = [CCLabelTTF labelWithString:durationText dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
         [durationLabel setPosition:CGPointMake(200, 240)];
         [self addChild:durationLabel];
         
@@ -208,15 +212,15 @@
 }
 
 - (void)showRemotePlayerStats:(NSInteger)healingDone andOverhealing:(NSInteger)overhealing {
-    CCLabelTTF *otherPlayersStatsLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Other Player Stats"] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:30.0];
+    CCLabelTTF *otherPlayersStatsLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Other Player Stats"] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:30.0];
     [otherPlayersStatsLabel setPosition:CGPointMake(900, 730)];
     [self addChild:otherPlayersStatsLabel];
     
-    CCLabelTTF *otherHealingDoneLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Healing Done: %i", healingDone] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
+    CCLabelTTF *otherHealingDoneLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Healing Done: %i", healingDone] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
     [otherHealingDoneLabel setPosition:CGPointMake(900, 680)];
     [self addChild:otherHealingDoneLabel];
     
-    CCLabelTTF *otherOverhealingDoneLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Overhealing: %i", overhealing] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24.0];
+    CCLabelTTF *otherOverhealingDoneLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Overhealing: %i", overhealing] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
     [otherOverhealingDoneLabel setPosition:CGPointMake(900, 630)];
     [self addChild:otherOverhealingDoneLabel];
 }
@@ -252,9 +256,22 @@
         }
     }
 
-    CCNumberChangeAction *numberChangeAction = [CCNumberChangeAction actionWithDuration:8.0 fromNumber:0 toNumber:self.encounter.damageTaken];
+    CCNumberChangeAction *numberChangeAction = [CCNumberChangeAction actionWithDuration:2.5 fromNumber:0 toNumber:self.encounter.damageTaken];
     [numberChangeAction setPrefix:@"Damage Taken: "];
-    [self.damageTakenLabel runAction:numberChangeAction];
+    [self.damageTakenLabel runAction:[CCSequence actionOne:[CCFadeIn actionWithDuration:0.0] two:numberChangeAction]];
+    
+    numberChangeAction = [CCNumberChangeAction actionWithDuration:2.5 fromNumber:0 toNumber:self.encounter.healingDone];
+    [numberChangeAction setPrefix:@"Healing Done: "];
+    [self.healingDoneLabel runAction:[CCSequence actionOne:[CCFadeIn actionWithDuration:1.5] two:numberChangeAction]];
+
+    numberChangeAction = [CCNumberChangeAction actionWithDuration:2.5 fromNumber:0 toNumber:self.encounter.overhealingDone];
+    [numberChangeAction setPrefix:@"Overhealing: "];
+    [self.overhealingDoneLabel runAction:[CCSequence actionOne:[CCFadeIn actionWithDuration:3.0] two:numberChangeAction]];
+
+    numberChangeAction = [CCNumberChangeAction actionWithDuration:2.5 fromNumber:0 toNumber:self.encounter.score];
+    [numberChangeAction setPrefix:@"Score: "];
+    [self.scoreLabel runAction:[CCSequence actionOne:[CCFadeIn actionWithDuration:4.5] two:numberChangeAction]];
+
 
 }
 
@@ -307,7 +324,7 @@
 }
 
 - (void)showDivinityUnlocked {
-    CCMenuItemLabel *goToDivinity = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Go to Divinity" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(goToDivinity)];
+    CCMenuItem *goToDivinity = [BasicButton basicButtonWithTarget:self andSelector:@selector(goToDivinity) andTitle:@"DIVINITY"];
     CCMenu *goToDivinityMenu = [CCMenu menuWithItems:goToDivinity, nil];
     [goToDivinityMenu setOpacity:0];
     [goToDivinityMenu setPosition:CGPointMake(512, 520)];

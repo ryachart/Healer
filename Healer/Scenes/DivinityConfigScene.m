@@ -13,12 +13,15 @@
 #import "GoldCounterSprite.h"
 #import "BackgroundSprite.h"
 #import "ModalDialogLayer.h"
+#import "RatingCounterSprite.h"
+
+
 
 #define TIER_TABLE_Z 100
 #define CHARGED_BAR_Z 50
 
 @interface DivinityConfigScene  ()
-- (void)back;
+@property (nonatomic, readwrite) BOOL showingDivPreview;
 
 @end
 
@@ -30,7 +33,7 @@
         BackgroundSprite *bgSprite = [[[BackgroundSprite alloc] initWithJPEGAssetName:@"divinity-bg"] autorelease];
         [self addChild:bgSprite z:-100];
         
-        GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
+        RatingCounterSprite *goldCounter = [[[RatingCounterSprite alloc] init] autorelease];
         [goldCounter setPosition:CGPointMake(924, 54)];
         [self addChild:goldCounter];
         
@@ -69,30 +72,13 @@
     }
 }
 
-- (void)unlockPurchasedForDivinityTier:(NSInteger)tier
-{
-    BOOL forceTierPurchase = NO;
-#if TARGET_IPHONE_SIMULATOR
-    forceTierPurchase = YES;
-#endif
-    if ([Shop localPlayerGold] >= [Shop costForNextDivinityTier] || forceTierPurchase) {
-        [Shop purchaseNextDivinityTier];
-        [self layoutTierTable];
-        [self layoutChargedPipeOverlays];
-        [self layoutDivinityItems];
-    }else {
-        ModalDialogLayer *alert = [[[ModalDialogLayer alloc] initWithText:@"Not enough Gold to unlock that Tier."] autorelease];
-        [alert show];
-    }
-}
-
 - (void)layoutChargedPipeOverlays {
     for (int i = 0; i < NUM_DIV_TIERS; i++){
         if (chargedPipes[i]){
             [chargedPipes[i] removeFromParentAndCleanup:YES];
         }
     }
-    for (int i = 0; i < [Shop numDivinityTiersPurchased]; i++){
+    for (int i = 0; i < [Divinity numDivinityTiersUnlocked]; i++){
         CCSprite *chargedPipe = [CCSprite spriteWithSpriteFrameName:@"divinity_unlocked_pipe.png"];
         [chargedPipe setAnchorPoint:CGPointZero];
         [chargedPipe setPosition:CGPointMake(133, 768 - 224 - (i * 111))];
@@ -139,7 +125,7 @@
             if ([[Divinity selectedChoiceForTier:i] isEqualToString:choice]){
                 [selectedButtonOverlay setOpacity:255];
             }
-            if ([Shop numDivinityTiersPurchased] > i){
+            if ([Divinity numDivinityTiersUnlocked] > i){
                 CCMenuItemSprite *menuItem = [CCMenuItemSprite itemWithNormalSprite:selectedButtonOverlay selectedSprite:selectedButtonOverlaySelected target:self selector:@selector(selectedChoice:)];
                 [menuItem setTag:i];
                 [menuItem setUserData:choice];
@@ -149,6 +135,15 @@
                 [self addChild:choiceMenu z:CHARGED_BAR_Z - 1];
                 buttonSprites[i][j] = choiceMenu;
             }else {
+                selectedButtonOverlaySelected = [CCSprite spriteWithSpriteFrameName:@"divinity_item_tested.png"];
+                CCMenuItemSprite *menuItem = [CCMenuItemSprite itemWithNormalSprite:selectedButtonOverlay selectedSprite:selectedButtonOverlaySelected target:self selector:@selector(testChoice:)];
+                [menuItem setTag:i];
+                [menuItem setUserData:choice];
+                [menuItem setNormalImage:selectedButtonOverlay];
+                CCMenu *choiceMenu = [CCMenu menuWithItems:menuItem, nil];
+                [choiceMenu  setPosition:CGPointMake(choicePosition.x + 90 + (j > 0 ? 16 : 0), choicePosition.y - 8)];
+                [self addChild:choiceMenu z:CHARGED_BAR_Z - 1];
+                buttonSprites[i][j] = choiceMenu;
                 [choiceSprite setOpacity:122];
             }
         }
@@ -158,10 +153,26 @@
 - (void)selectedChoice:(CCMenuItem*)sender{
     NSString* choice = (NSString*)[sender userData];
     NSInteger tier = [sender tag];
-    NSLog(@"CHOICE: %@", choice);
     [Divinity selectChoice:choice forTier:tier];
     [self layoutDivinityItems];
     [self layoutTierTable];
+}
+
+- (void)testChoice:(CCMenuItem*)sender {
+    if (!self.showingDivPreview) {
+        NSString* choice = (NSString*)[sender userData];
+        NSInteger tier = [sender tag];
+        ViewDivinityChoiceLayer *choiceAlert = [[[ViewDivinityChoiceLayer alloc] initWithDivinityChoice:choice inTier:tier] autorelease];
+        [choiceAlert setDelegate:self];
+        [self addChild:choiceAlert z:TIER_TABLE_Z + 100];
+        self.showingDivPreview = YES;
+    }
+}
+
+- (void)dismissDivinityChoiceLayer:(CCLayer *)layer
+{
+    [layer removeFromParentAndCleanup:YES];
+    self.showingDivPreview = NO;
 }
 
 - (void)back {

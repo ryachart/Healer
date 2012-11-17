@@ -45,6 +45,8 @@
 		387E7B63145E177B006D9266 /* PlayerMoveButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B5F145E177B006D9266 /* PlayerMoveButton.m */; };
 		387E7B64145E177B006D9266 /* PlayerSpellButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B61145E177B006D9266 /* PlayerSpellButton.m */; };
 		387E82A4164F1648009F11E6 /* SettingsScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E82A3164F1648009F11E6 /* SettingsScene.m */; };
+		38B0BB251657694300D31540 /* RatingCounterSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 38B0BB241657694300D31540 /* RatingCounterSprite.m */; };
+		38B0BB28165779BC00D31540 /* ViewDivinityChoiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 38B0BB27165779BC00D31540 /* ViewDivinityChoiceLayer.m */; };
 		38F1B45C15CA30D8008B2D99 /* backgrounds in Resources */ = {isa = PBXBuildFile; fileRef = 38F1B45B15CA30D8008B2D99 /* backgrounds */; };
 		BF0022BE163EE94C00384882 /* EncounterCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0022BD163EE94C00384882 /* EncounterCard.m */; };
 		BF0557A015268D0A006B4781 /* ProjectileEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF05579F15268D0A006B4781 /* ProjectileEffect.m */; };
@@ -612,6 +614,10 @@
 		387E7B61145E177B006D9266 /* PlayerSpellButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayerSpellButton.m; path = Controls/PlayerSpellButton.m; sourceTree = "<group>"; };
 		387E82A2164F1648009F11E6 /* SettingsScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsScene.h; sourceTree = "<group>"; };
 		387E82A3164F1648009F11E6 /* SettingsScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsScene.m; sourceTree = "<group>"; };
+		38B0BB231657694300D31540 /* RatingCounterSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RatingCounterSprite.h; sourceTree = "<group>"; };
+		38B0BB241657694300D31540 /* RatingCounterSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RatingCounterSprite.m; sourceTree = "<group>"; };
+		38B0BB26165779BC00D31540 /* ViewDivinityChoiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewDivinityChoiceLayer.h; sourceTree = "<group>"; };
+		38B0BB27165779BC00D31540 /* ViewDivinityChoiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewDivinityChoiceLayer.m; sourceTree = "<group>"; };
 		38F1B45B15CA30D8008B2D99 /* backgrounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = backgrounds; sourceTree = SOURCE_ROOT; };
 		BF0022BC163EE94C00384882 /* EncounterCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncounterCard.h; sourceTree = "<group>"; };
 		BF0022BD163EE94C00384882 /* EncounterCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EncounterCard.m; sourceTree = "<group>"; };
@@ -1191,6 +1197,8 @@
 				BF865F2B15A031FB007F5DBF /* BasicButton.m */,
 				BFB6A74B161540E10071EAB9 /* ModalDialogLayer.h */,
 				BFB6A74C161540E10071EAB9 /* ModalDialogLayer.m */,
+				38B0BB231657694300D31540 /* RatingCounterSprite.h */,
+				38B0BB241657694300D31540 /* RatingCounterSprite.m */,
 			);
 			name = "UI Layers";
 			sourceTree = "<group>";
@@ -1220,6 +1228,8 @@
 			children = (
 				BFAFA3F715F54BBD0052FCA5 /* DivinityTierCard.h */,
 				BFAFA3F815F54BBD0052FCA5 /* DivinityTierCard.m */,
+				38B0BB26165779BC00D31540 /* ViewDivinityChoiceLayer.h */,
+				38B0BB27165779BC00D31540 /* ViewDivinityChoiceLayer.m */,
 			);
 			name = "Divinity Views";
 			sourceTree = "<group>";
@@ -1897,6 +1907,8 @@
 				382C46421648CDA400883CFA /* ChallengeRatingStepper.m in Sources */,
 				387E82A4164F1648009F11E6 /* SettingsScene.m in Sources */,
 				BF95CF79165736190058FB85 /* CCNumberChangeAction.m in Sources */,
+				38B0BB251657694300D31540 /* RatingCounterSprite.m in Sources */,
+				38B0BB28165779BC00D31540 /* ViewDivinityChoiceLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

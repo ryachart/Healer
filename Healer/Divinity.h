@@ -20,6 +20,8 @@
 + (BOOL)isDivinityUnlocked;
 + (void)unlockDivinity;
 
++ (NSInteger)numDivinityTiersUnlocked;
+
 + (void)selectChoice:(NSString*)choice forTier:(NSInteger)tier;
 + (NSString*)selectedChoiceForTier:(NSInteger)tier;
 
@@ -27,5 +29,7 @@
 
 + (void)resetConfig;
 + (NSDictionary*)localDivinityConfig;
+
++ (NSInteger)requiredRatingForTier:(NSInteger)tier;
 
 @end

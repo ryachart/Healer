@@ -13,6 +13,7 @@
 #import "Parse/Parse.h"
 #import "PlayerDataManager.h"
 #import "LaunchScene.h"
+#import "Divinity.h"
 
 #define TestFlightToken @"a0f29ba29227f7587269ec6e6fc30455_NzU1NTQyMDEyLTA0LTI4IDIyOjQ4OjA4Ljk4NzkzMQ"
 
@@ -35,6 +36,10 @@
     director.wantsFullScreenLayout = YES;
 	[director setDelegate:self];
     
+    [Divinity resetConfig];
+    for (int i = 2; i < 22; i++) {
+        [PlayerDataManager setLevelRating:5 forLevel:i];
+    }
 	//
 	// Create the EAGLView manually
 	//  1. Create a RGB565 format. Alternative: RGBA8

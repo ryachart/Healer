@@ -9,9 +9,10 @@
 #import "cocos2d.h"
 #import "Divinity.h"
 #import "DivinityTierCard.h"
+#import "ViewDivinityChoiceLayer.h"
 
 @class DivinityTierCard;
-@interface DivinityConfigScene : CCScene <DivinityTierCardDelegate> {
+@interface DivinityConfigScene : CCScene <DivinityTierCardDelegate, ViewDivinityChoiceLayerDelegate> {
     DivinityTierCard *tierTableCards[NUM_DIV_TIERS];
     CCSprite *chargedPipes[NUM_DIV_TIERS];
     CCSprite *iconSprites[NUM_DIV_TIERS][3];

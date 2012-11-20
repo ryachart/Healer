@@ -25,7 +25,7 @@
         CCSprite *backgroundSprite = [CCSprite spriteWithSpriteFrameName:@"counter_bg.png"];
         [self addChild:backgroundSprite];
         
-        NSInteger rating = [PlayerDataManager totalRating];
+        NSInteger rating = [[PlayerDataManager localPlayer] totalRating];
         
         CCSprite *skullSprite = [CCSprite spriteWithSpriteFrameName:@"difficulty_skull_big.png"];
         [skullSprite setPosition:CGPointMake(30, 32)];

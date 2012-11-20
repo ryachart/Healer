@@ -79,21 +79,21 @@
         if (victory){
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",self.encounter.levelNumber]];
             if (!self.isMultiplayer){
-                [PlayerDataManager completeLevel:self.encounter.levelNumber];
+                [[PlayerDataManager localPlayer] completeLevel:self.encounter.levelNumber];
             }
             reward = [self.encounter reward];
             
-            oldRating = [PlayerDataManager levelRatingForLevel:self.encounter.levelNumber];
+            oldRating = [[PlayerDataManager localPlayer] levelRatingForLevel:self.encounter.levelNumber];
             rating = self.encounter.rating;
             if (rating > oldRating && !self.isMultiplayer){
                 if (self.encounter.difficulty > 1) {
                     reward += 25; //Completing a new difficulty bonus, basically.
                 }
-                [PlayerDataManager setLevelRating:rating forLevel:self.encounter.levelNumber];
+                [[PlayerDataManager localPlayer] setLevelRating:rating forLevel:self.encounter.levelNumber];
             }
         }else {
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelFailed:%i",self.encounter.levelNumber]];
-            [PlayerDataManager failLevelInCurrentMode:self.encounter.levelNumber];
+            [[PlayerDataManager localPlayer] failLevel:self.encounter.levelNumber];
             //Partial Progress Reward
             //10 % of the Reward per minute of encounter up to a maximum of 50% encounter reward
             
@@ -112,10 +112,10 @@
         }
         
         if (reward > 0){
-            [Shop playerEarnsGold:reward];
+            [[PlayerDataManager localPlayer] playerEarnsGold:reward];
         }
         
-        [PlayerDataManager saveRemotePlayer];
+        [[PlayerDataManager localPlayer] saveLocalPlayer];
         
         //UI
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
@@ -227,10 +227,9 @@
 
 - (void)onEnterTransitionDidFinish{
     [super onEnterTransitionDidFinish];
-    if (self.encounter.levelNumber >= 6 && ![Divinity isDivinityUnlocked] && !self.isMultiplayer && self.isVictory){
-        [Divinity unlockDivinity];
-        [self showDivinityUnlocked];
-    }
+//    if (self.encounter.levelNumber >= 6 && ![Divinity isDivinityUnlocked] && !self.isMultiplayer && self.isVictory){
+//        [self showDivinityUnlocked];
+//    }
     
     if (self.isMultiplayer) {
         if ([self.serverPlayerId isEqualToString:[GKLocalPlayer localPlayer].playerID]){

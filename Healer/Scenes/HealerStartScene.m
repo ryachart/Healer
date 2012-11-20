@@ -95,7 +95,7 @@
 }
 
 -(void)multiplayerSelected{
-    if (![PlayerDataManager isMultiplayerUnlocked]){
+    if (![[PlayerDataManager localPlayer] isMultiplayerUnlocked]){
         UIAlertView *mplayerNotUnlocked = [[UIAlertView alloc] initWithTitle:@"Multiplayer Unavailable!" message:@"Multiplayer is coming in an update soon!" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [mplayerNotUnlocked show];
         [mplayerNotUnlocked release];

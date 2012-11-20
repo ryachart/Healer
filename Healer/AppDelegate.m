@@ -36,10 +36,6 @@
     director.wantsFullScreenLayout = YES;
 	[director setDelegate:self];
     
-    [Divinity resetConfig];
-    for (int i = 2; i < 22; i++) {
-        [PlayerDataManager setLevelRating:5 forLevel:i];
-    }
 	//
 	// Create the EAGLView manually
 	//  1. Create a RGB565 format. Alternative: RGBA8
@@ -73,7 +69,7 @@
 
     // Run the intro Scene
 	[[CCDirector sharedDirector] pushScene: [[LaunchScene new] autorelease]];
-    [PlayerDataManager saveRemotePlayer];
+    [[PlayerDataManager localPlayer] saveRemotePlayer];
     
     self.navController = [[[UINavigationController alloc] initWithRootViewController:director] autorelease];
     self.navController.navigationBarHidden = YES;
@@ -99,7 +95,7 @@
 
 -(void) applicationDidEnterBackground:(UIApplication*)application {
 	[[CCDirector sharedDirector] stopAnimation];
-    [PlayerDataManager saveRemotePlayer];
+    [[PlayerDataManager localPlayer] saveLocalPlayer];
 }
 
 -(void) applicationWillEnterForeground:(UIApplication*)application {
@@ -115,7 +111,7 @@
 	
 	[director end];	
     
-    [PlayerDataManager saveRemotePlayer];
+    [[PlayerDataManager localPlayer] saveLocalPlayer];
 }
 
 - (void)applicationSignificantTimeChange:(UIApplication *)application {

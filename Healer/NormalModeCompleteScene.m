@@ -33,7 +33,7 @@
     }
 #endif
     if (levelNumber == 21){
-        return ![PlayerDataManager hasShownNormalModeCompleteScene];
+        return ![[PlayerDataManager  localPlayer] hasShownNormalModeCompleteScene];
     }
     return NO;
 }
@@ -63,7 +63,7 @@
 }
 
 - (void)done {
-    [PlayerDataManager hasShownNormalModeCompleteScene];
+    [[PlayerDataManager localPlayer] hasShownNormalModeCompleteScene];
     PostBattleScene *pbs = [[PostBattleScene alloc] initWithVictory:YES encounter:self.encounter andIsMultiplayer:NO andDuration:self.duration];
     [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:pbs]];
     [pbs release];

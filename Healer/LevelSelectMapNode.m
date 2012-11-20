@@ -66,7 +66,7 @@
     
     NSInteger startingLevel = 1;
     
-    if ([PlayerDataManager highestLevelCompleted] > 0) {
+    if ([[PlayerDataManager localPlayer] highestLevelCompleted] > 0) {
         startingLevel = 2;
     }
     
@@ -79,7 +79,7 @@
         [self addChild:levelSelectSprite];
         [self.levelSelectSprites addObject:levelSelectSprite];
         
-        if (i  > [PlayerDataManager highestLevelCompleted] + 1){
+        if (i  > [[PlayerDataManager localPlayer] highestLevelCompleted] + 1){
             //Invalid levels
             [levelSelectSprite setIsAccessible:NO];
         } else {

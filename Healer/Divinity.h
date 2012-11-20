@@ -18,17 +18,9 @@
 + (NSString*)spriteFrameNameForChoice:(NSString*)choice;
 
 + (BOOL)isDivinityUnlocked;
-+ (void)unlockDivinity;
-
 + (NSInteger)numDivinityTiersUnlocked;
 
-+ (void)selectChoice:(NSString*)choice forTier:(NSInteger)tier;
-+ (NSString*)selectedChoiceForTier:(NSInteger)tier;
-
 + (NSArray*)effectsForConfiguration:(NSDictionary*)configuration;
-
-+ (void)resetConfig;
-+ (NSDictionary*)localDivinityConfig;
 
 + (NSInteger)requiredRatingForTier:(NSInteger)tier;
 

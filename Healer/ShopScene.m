@@ -13,6 +13,7 @@
 #import "BasicButton.h"
 #import "GoldCounterSprite.h"
 #import "ShopItemNode.h"
+#import "PlayerDataManager.h"
 
 #define BOOK_Z -20
 #define FLAVOR_Z -19
@@ -198,8 +199,8 @@
 
 -(void)selectedItem:(ShopItemNode*)selectedNode
 {
-    if ([Shop playerCanAffordShopItem:selectedNode.item] && ![Shop playerHasShopItem:selectedNode.item]){
-        [Shop purchaseItem:selectedNode.item];
+    if ([[PlayerDataManager localPlayer] canAffordShopItem:selectedNode.item] && ![[PlayerDataManager localPlayer] hasShopItem:selectedNode.item]){
+        [[PlayerDataManager localPlayer] purchaseItem:selectedNode.item];
         [self configureCategoryButtons];
     }
 }

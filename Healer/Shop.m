@@ -11,86 +11,9 @@
 #import "PlayerDataManager.h"
 #import "Divinity.h"
 
-NSString* const PlayerGold = @"com.healer.playerId";
-NSString* const PlayerGoldDidChangeNotification = @"com.healer.goldDidChangeNotif";
-
 static NSArray *shopItems = nil;
 
 @implementation Shop
-
-+(BOOL)playerCanAffordShopItem:(ShopItem*)item{
-#if TARGET_IPHONE_SIMULATOR
-    return YES;
-#endif
-    return [Shop localPlayerGold] >= [item goldCost];
-}
-+(BOOL)playerHasShopItem:(ShopItem*)item{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:[item key]];
-}
-+(BOOL)playerHasSpell:(Spell*)spell{
-    if ([spell.title isEqualToString:@"Heal"]){
-        return YES;
-    }
-    return [Shop playerHasShopItem:[[[ShopItem alloc] initWithSpell:spell] autorelease]];
-}
-+(NSInteger)localPlayerGold{
-    return [[NSUserDefaults standardUserDefaults] integerForKey:PlayerGold];
-}
-
-+(void)purchaseItem:(ShopItem*)item{
-    if ([Shop playerCanAffordShopItem:item] && ![Shop playerHasShopItem:item]){
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[item key]];
-        [Shop playerLosesGold:item.goldCost];
-    }
-}
-
-+(void)playerEarnsGold:(NSInteger)gold{
-    if (gold < 0)
-        return;
-    NSInteger currentGold = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerGold] intValue];
-    currentGold+= gold;
-    if (currentGold > 5000){
-        currentGold = 5000; //MAX GOLD
-    }
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold];
-    [[NSNotificationCenter defaultCenter] postNotificationName:PlayerGoldDidChangeNotification object:nil userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold]];
-}
-
-+(void)playerLosesGold:(NSInteger)gold{
-    if (gold < 0)
-        return;
-    NSInteger currentGold = [[[NSUserDefaults standardUserDefaults] objectForKey:PlayerGold] intValue];
-    currentGold-= gold;
-    if (currentGold < 0){
-        currentGold = 0; //MAX GOLD
-    }
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold];
-    [[NSNotificationCenter defaultCenter] postNotificationName:PlayerGoldDidChangeNotification object:nil userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold]];
-}
-
-+(NSArray*)purchasedItems{
-    NSMutableArray *purchasedItems = [NSMutableArray arrayWithCapacity:20];
-    for (ShopItem *item in [Shop allShopItems]){
-        if ([Shop playerHasShopItem:item]){
-            [purchasedItems addObject: item];
-        }
-    }
-    return purchasedItems;
-}
-
-+(NSArray*)allOwnedSpells{
-    NSMutableArray *allSpells = [NSMutableArray arrayWithCapacity:20];
-    NSArray *allShopItems = [Shop allShopItems];
-    NSArray *purchasedItems = [Shop purchasedItems];
-    [allSpells addObject:[Heal defaultSpell]];
-    for (ShopItem *item in allShopItems){
-        if ([purchasedItems containsObject:item]){
-            [allSpells addObject:[[[item purchasedSpell] class] defaultSpell]];
-        }
-    }
-    return allSpells;
-}
-
 
 +(NSArray*)allShopItems{
     if (!shopItems){
@@ -121,7 +44,7 @@ static NSArray *shopItems = nil;
 }
 
 + (ShopCategory)highestCategoryUnlocked {
-    NSInteger totalPurchases = [Shop allOwnedSpells].count;
+    NSInteger totalPurchases = [[PlayerDataManager localPlayer] allOwnedSpells].count;
     ShopCategory category = ShopCategoryEssentials;
     if (totalPurchases >= [Shop purchasesForCategory:ShopCategoryAdvanced]){
         category = ShopCategoryAdvanced;
@@ -136,7 +59,7 @@ static NSArray *shopItems = nil;
 }
 
 + (NSInteger)numPurchasesUntilNextCategory {
-    NSInteger totalPurchases = [Shop allOwnedSpells].count;
+    NSInteger totalPurchases = [[PlayerDataManager localPlayer] allOwnedSpells].count;
     ShopCategory highestCategory = [Shop highestCategoryUnlocked];
     if (highestCategory == ShopCategoryVault){
         return 0;
@@ -224,7 +147,4 @@ static NSArray *shopItems = nil;
     return items;
     
 }
-
-
-
 @end

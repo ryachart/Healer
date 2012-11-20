@@ -36,7 +36,7 @@
 
 -(id)initWithCurrentSpells:(NSArray *)spells{
     if (self = [super initWithColor:ccc4(20, 20, 20, 255)]){
-        self.unusedSpells = [NSMutableArray arrayWithArray:[Shop allOwnedSpells]];
+        self.unusedSpells = [NSMutableArray arrayWithArray:[[PlayerDataManager localPlayer] allOwnedSpells]];
         [self.unusedSpells removeObjectsInArray:spells];
         
         self.usedSpells = [NSMutableArray arrayWithArray:spells];
@@ -61,7 +61,7 @@
         
         self.ownedSpellSlots = [NSMutableDictionary dictionaryWithCapacity:20];
         int j = 0;
-        for (Spell *spell in [Shop allOwnedSpells]){
+        for (Spell *spell in [[PlayerDataManager localPlayer] allOwnedSpells]){
             DraggableSpellIcon *inhabitant = nil;
             if (![self.usedSpells containsObject:spell]){
                 inhabitant = [[[DraggableSpellIcon alloc] initWithSpell:spell] autorelease];
@@ -184,7 +184,7 @@
                 [newUsedSpells addObject:inhabitant.spell];
             }
         }
-        [PlayerDataManager setUsedSpells:newUsedSpells];
+        [[PlayerDataManager localPlayer] setUsedSpells:newUsedSpells];
         [self.delegate spellSwitchDidCompleteWithActiveSpells:newUsedSpells];
     }
 

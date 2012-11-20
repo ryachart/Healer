@@ -10,8 +10,6 @@
 #import "Effect.h"
 #import "PlayerDataManager.h"
 
-NSString* const IsDivinityUnlockedKey = @"com.healer.isDivinityUnlocked";
-NSString* const DivinityConfig = @"com.healer.divinityConfig";
 
 static NSDictionary *divinityInfo = nil;
 
@@ -21,7 +19,7 @@ static NSDictionary *divinityInfo = nil;
 #if TARGET_IPHONE_SIMULATOR
     return YES;
 #endif
-    return [[NSUserDefaults standardUserDefaults] boolForKey:IsDivinityUnlockedKey];
+    return [[PlayerDataManager localPlayer] totalRating] >= 25;
 }
 
 + (NSArray*)divinityChoicesForTier:(NSInteger)tier {
@@ -85,26 +83,6 @@ static NSDictionary *divinityInfo = nil;
     return desc;
 }
 
-+ (void)unlockDivinity {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:IsDivinityUnlockedKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-+ (void)selectChoice:(NSString*)choice forTier:(NSInteger)tier{
-    NSDictionary *divinityConfig = [[NSUserDefaults standardUserDefaults] dictionaryForKey:DivinityConfig];
-    
-    if (!divinityConfig){
-        divinityConfig = [NSDictionary dictionary];
-    }
-    
-    NSMutableDictionary *newConfig = [NSMutableDictionary dictionaryWithDictionary:divinityConfig];
-    
-    [newConfig setObject:choice forKey:[NSString stringWithFormat:@"tier-%i", tier]];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:newConfig forKey:DivinityConfig];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
 + (NSArray*)effectsForConfiguration:(NSDictionary*)configuration {
     NSMutableArray *effects = [NSMutableArray arrayWithCapacity:5];
     for (int i = 0; i < 5; i++){
@@ -128,20 +106,6 @@ static NSDictionary *divinityInfo = nil;
     return effects;
 }
 
-+ (NSString*)selectedChoiceForTier:(NSInteger)tier {
-    NSDictionary *config =  [[NSUserDefaults standardUserDefaults] dictionaryForKey:DivinityConfig];
-    
-    return [config objectForKey:[NSString stringWithFormat:@"tier-%i", tier]];
-}
-
-+ (NSDictionary*)localDivinityConfig {
-    return [[NSUserDefaults standardUserDefaults] dictionaryForKey:DivinityConfig];
-}
-
-+ (void)resetConfig {
-    [[NSUserDefaults standardUserDefaults] setValue:[NSDictionary dictionary] forKey:DivinityConfig];
-}
-
 + (NSInteger)requiredRatingForTier:(NSInteger)tier {
     switch (tier) {
         case 0:
@@ -160,7 +124,7 @@ static NSDictionary *divinityInfo = nil;
 
 + (NSInteger)numDivinityTiersUnlocked
 {
-    NSInteger currentRating = [PlayerDataManager totalRating];
+    NSInteger currentRating = [[PlayerDataManager localPlayer] totalRating];
     NSInteger totalTiers = 0;
     for (int i = 0; i < 5; i++){
         if (currentRating >= [Divinity requiredRatingForTier:i]) {

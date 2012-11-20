@@ -11,6 +11,7 @@
 #import "ShopItemExtendedNode.h"
 #import "GoldCounterSprite.h"
 #import "BasicButton.h"
+#import "PlayerDataManager.h"
 
 @interface ShopItemNode ()
 @property (nonatomic, assign) id target;
@@ -123,7 +124,7 @@
 }
 
 -(void)checkPlayerHasItem{
-    if ([Shop playerHasShopItem:self.item]){
+    if ([[PlayerDataManager localPlayer] hasShopItem:self.item]){
         [self.goldCostNode setVisible:NO];
         [self.buyButton setVisible:NO];
     }

@@ -71,7 +71,7 @@
         PreBattleScene *pbs = [[[PreBattleScene alloc] initWithEncounter:encounter andPlayer:basicPlayer] autorelease];
         [pbs setLevelNumber:level];
         if ([Divinity isDivinityUnlocked]){
-            [basicPlayer setDivinityConfig:[Divinity localDivinityConfig]];
+            [basicPlayer setDivinityConfig:[[PlayerDataManager localPlayer] localDivinityConfig]];
         }
         [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:1.0 scene:pbs]];
     }

@@ -11,6 +11,7 @@
 #import "BasicButton.h"
 #import "Shop.h"
 #import "GoldCounterSprite.h"
+#import "PlayerDataManager.h"
 
 @interface DivinityTierCard ()
 @property (nonatomic, assign) CCSprite *selectedChoiceIcon;
@@ -23,7 +24,7 @@
 
 - (id)initForDivinityTier:(NSInteger)tier
 {
-    return [self initForDivinityTier:tier withSelectedChoice:[Divinity selectedChoiceForTier:tier] forceUnlocked:NO showsBackground:YES];
+    return [self initForDivinityTier:tier withSelectedChoice:[[PlayerDataManager localPlayer] selectedChoiceForTier:tier] forceUnlocked:NO showsBackground:YES];
 }
 
 - (id)initForDivinityTier:(NSInteger)tier withSelectedChoice:(NSString *)choice forceUnlocked:(BOOL)forceUnlocked showsBackground:(BOOL)showsBackground {

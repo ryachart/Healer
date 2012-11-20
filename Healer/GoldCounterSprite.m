@@ -8,6 +8,8 @@
 
 #import "GoldCounterSprite.h"
 #import "Shop.h"
+#import "PlayerDataManager.h"
+
 
 @interface GoldCounterSprite ()
 @property (nonatomic, assign) CCLabelTTF *goldAmountLabel;
@@ -27,7 +29,7 @@
         CCSprite *backgroundSprite = [CCSprite spriteWithSpriteFrameName:@"gold_bg.png"];
         [self addChild:backgroundSprite];
         
-        NSInteger playerGold = [Shop localPlayerGold];
+        NSInteger playerGold = [[PlayerDataManager localPlayer] gold];
         
         self.goldAmountLabel = [GoldCounterSprite goldCostLabelWithCost:playerGold andFontSize:32.0];
         [self.goldAmountLabel setPosition:CGPointMake(60, 20)];

@@ -13,6 +13,7 @@
 #import "GoldCounterSprite.h"
 #import "BackgroundSprite.h"
 #import "ModalDialogLayer.h"
+#import "PlayerDataManager.h"
 #import "RatingCounterSprite.h"
 
 
@@ -122,7 +123,7 @@
             CCSprite *selectedButtonOverlay = [CCSprite spriteWithSpriteFrameName:@"divinity_item_selected.png"];
             [selectedButtonOverlay setOpacity:0];
             CCSprite *selectedButtonOverlaySelected = [CCSprite spriteWithSpriteFrameName:@"divinity_item_selected.png"];
-            if ([[Divinity selectedChoiceForTier:i] isEqualToString:choice]){
+            if ([[[PlayerDataManager localPlayer] selectedChoiceForTier:i] isEqualToString:choice]){
                 [selectedButtonOverlay setOpacity:255];
             }
             if ([Divinity numDivinityTiersUnlocked] > i){
@@ -153,7 +154,7 @@
 - (void)selectedChoice:(CCMenuItem*)sender{
     NSString* choice = (NSString*)[sender userData];
     NSInteger tier = [sender tag];
-    [Divinity selectChoice:choice forTier:tier];
+    [[PlayerDataManager localPlayer] selectChoice:choice forTier:tier];
     [self layoutDivinityItems];
     [self layoutTierTable];
 }

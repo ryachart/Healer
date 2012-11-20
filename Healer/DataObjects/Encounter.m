@@ -93,13 +93,13 @@
 - (void)setLevelNumber:(NSInteger)levelNumber
 {
     _levelNumber = levelNumber;
-    self.difficulty = [PlayerDataManager difficultyForLevelNumber:levelNumber];
+    self.difficulty = [[PlayerDataManager localPlayer] difficultyForLevelNumber:levelNumber];
 }
 
 - (void)setDifficulty:(NSInteger)difficulty
 {
     _difficulty = MAX(1,MIN(5, difficulty));
-    [PlayerDataManager difficultySelected:self.difficulty forLevelNumber:self.levelNumber];
+    [[PlayerDataManager localPlayer] difficultySelected:self.difficulty forLevelNumber:self.levelNumber];
 }
 
 - (void)encounterWillBegin
@@ -425,6 +425,7 @@
     
     switch (levelNumber) {
         case 1:
+            return 0;
         case 2:
         case 3:
         case 4:
@@ -494,18 +495,18 @@
 
 + (void)configurePlayer:(Player*)player forRecSpells:(NSArray*)spells {
     NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
-    NSArray *lastUsedSpells = [PlayerDataManager lastUsedSpells];
+    NSArray *lastUsedSpells = [[PlayerDataManager localPlayer] lastUsedSpells];
     if (lastUsedSpells && lastUsedSpells.count > 0){
         [activeSpells addObjectsFromArray:lastUsedSpells];
     }else {
         for (Spell *spell in spells){
-            if ([Shop playerHasSpell:spell]){
+            if ([[PlayerDataManager localPlayer] hasSpell:spell]){
                 [activeSpells addObject:[[spell class] defaultSpell]];
             }
         }
     }
     //Add other spells the player has
-    for (Spell *spell in [Shop allOwnedSpells]){
+    for (Spell *spell in [[PlayerDataManager localPlayer] allOwnedSpells]){
         if (activeSpells.count < 4){
             if (![activeSpells containsObject:spell]){
                 [activeSpells addObject:[[spell class] defaultSpell]];

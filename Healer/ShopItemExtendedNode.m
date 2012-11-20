@@ -8,6 +8,7 @@
 
 #import "ShopItemExtendedNode.h"
 #import "ShopItem.h"
+#import "PlayerDataManager.h"
 #import "Shop.h"
 
 @interface ShopItemExtendedNode ()
@@ -87,7 +88,7 @@
         
         CCMenuItemLabel *purchaseLabel = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Buy!" fontName:@"Arial" fontSize:32.0] target:self selector:@selector(purchase)];
         purchaseLabel.label.color = ccBLUE;
-        if ([Shop playerHasShopItem:itm] || ![Shop playerCanAffordShopItem:itm]){
+        if ([[PlayerDataManager localPlayer] hasShopItem:itm] || ![[PlayerDataManager localPlayer] canAffordShopItem:itm]){
             [purchaseLabel setIsEnabled:NO];
             purchaseLabel.label.opacity = 122;
         }
@@ -109,8 +110,8 @@
 }
 
 - (void)purchase{
-    if ([Shop playerCanAffordShopItem:self.item] && ![Shop playerHasShopItem:self.item]){
-        [Shop purchaseItem:self.item];
+    if ([[PlayerDataManager localPlayer] canAffordShopItem:self.item] && ![[PlayerDataManager localPlayer] hasShopItem:self.item]){
+        [[PlayerDataManager localPlayer] purchaseItem:self.item];
     }
     
     [self.delegate extendedNodeDidCompleteForShopItem:self.item andNode:self];

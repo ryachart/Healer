@@ -7,9 +7,6 @@
 
 #import "ShopItem.h"
 
-extern NSString* const PlayerGold;
-extern NSString* const PlayerGoldDidChangeNotification;
-
 typedef enum {
     ShopCategoryEssentials,
     ShopCategoryAdvanced,
@@ -18,17 +15,7 @@ typedef enum {
 } ShopCategory;
 
 @interface Shop : NSObject
-+ (BOOL)playerCanAffordShopItem:(ShopItem*)item;
-+ (BOOL)playerHasSpell:(Spell*)spell;
-+ (BOOL)playerHasShopItem:(ShopItem*)item;
-+ (void)purchaseItem:(ShopItem*)item;
-+ (NSInteger)localPlayerGold;
-+ (void)playerEarnsGold:(NSInteger)gold;
-+ (void)playerLosesGold:(NSInteger)gold;
 + (NSArray*)allShopItems;
-+ (NSArray*)purchasedItems;
-+ (NSArray*)allOwnedSpells;
-
 
 //Shop Categories
 + (ShopCategory)highestCategoryUnlocked;

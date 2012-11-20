@@ -13,37 +13,60 @@
 extern NSString* const PlayerHighestLevelAttempted;
 extern NSString* const PlayerHighestLevelCompleted;
 extern NSString* const PlayerRemoteObjectIdKey;
+extern NSString* const PlayerGold;
+extern NSString* const PlayerGoldDidChangeNotification;
+
+@class ShopItem, Spell;
 
 @interface PlayerDataManager : NSObject
+@property (nonatomic, readonly) NSInteger gold;
+@property (nonatomic, readonly) NSArray* allOwnedSpells;
 
-+ (NSInteger)totalRating;
++ (PlayerDataManager *)localPlayer;
 
-+ (NSInteger)difficultyForLevelNumber:(NSInteger)levelNum;
-+ (void)difficultySelected:(NSInteger)challenge forLevelNumber:(NSInteger)levelNum;
+#pragma mark - Shop And Gold
+- (void)playerEarnsGold:(NSInteger)gold;
+- (void)playerLosesGold:(NSInteger)gold;
+- (void)purchaseItem:(ShopItem*)item;
+- (BOOL)canAffordShopItem:(ShopItem*)item;
+- (BOOL)hasShopItem:(ShopItem*)item;
+- (BOOL)hasSpell:(Spell*)spell;
 
-+ (BOOL)hasShownNormalModeCompleteScene;
-+ (void)normalModeCompleteSceneShown;
+#pragma mark - Divinity
+- (NSString*)selectedChoiceForTier:(NSInteger)tier;
+- (NSDictionary*)localDivinityConfig;
+- (void)resetConfig;
+- (void)selectChoice:(NSString*)choice forTier:(NSInteger)tier;
 
-+ (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level;
-+ (NSInteger)levelRatingForLevel:(NSInteger)level;
-+ (NSInteger)highestLevelCompleted;
-+ (NSInteger)highestLevelAttempted;
+#pragma mark - Saving
+- (void)saveLocalPlayer;
+- (void)saveRemotePlayer;
 
-+ (void)failLevelInCurrentMode:(NSInteger)level;
-+ (void)completeLevel:(NSInteger)level;
+#pragma mark - Progress
+- (NSInteger)difficultyForLevelNumber:(NSInteger)levelNum;
+- (void)difficultySelected:(NSInteger)challenge forLevelNumber:(NSInteger)levelNum;
 
-+ (BOOL)isMultiplayerUnlocked;
+- (BOOL)hasShownNormalModeCompleteScene;
+- (void)normalModeCompleteSceneShown;
+
+- (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level;
+- (NSInteger)levelRatingForLevel:(NSInteger)level;
+- (NSInteger)highestLevelCompleted;
+- (NSInteger)highestLevelAttempted;
+
+- (void)failLevel:(NSInteger)level;
+- (void)completeLevel:(NSInteger)level;
+
+- (BOOL)isMultiplayerUnlocked;
+- (NSInteger)totalRating;
 
 //Spells
-+ (void)setUsedSpells:(NSArray*)spells;
-+ (NSArray*)lastUsedSpells;
-
-//Parse!
-+ (void)saveRemotePlayer;
+- (void)setUsedSpells:(NSArray*)spells;
+- (NSArray*)lastUsedSpells;
 
 //DEBUG
-+ (void)clearLevelRatings;
+- (void)clearLevelRatings;
 
-+ (void)setPlayerObjectInformation:(PFObject*)obj;
+- (void)setPlayerObjectInformation:(PFObject*)obj;
 
 @end

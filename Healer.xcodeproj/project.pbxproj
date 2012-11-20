@@ -679,6 +679,7 @@
 		BF87D85A1601ABFB00BEAD5B /* tips.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = tips.plist; sourceTree = "<group>"; };
 		BF8A50F215236D6300BEC882 /* GamePlayFTUELayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlayFTUELayer.h; sourceTree = "<group>"; };
 		BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlayFTUELayer.m; sourceTree = "<group>"; };
+		BF9386F7165B4D0C00EB6359 /* libcorecrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcorecrypto.dylib; path = usr/lib/system/libcorecrypto.dylib; sourceTree = SDKROOT; };
 		BF95CF77165736190058FB85 /* CCNumberChangeAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCNumberChangeAction.h; sourceTree = "<group>"; };
 		BF95CF78165736190058FB85 /* CCNumberChangeAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCNumberChangeAction.m; sourceTree = "<group>"; };
 		BF98B18015D3572700017EA4 /* BossAbilityDescriptionsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BossAbilityDescriptionsView.h; sourceTree = "<group>"; };
@@ -767,6 +768,7 @@
 		38024DA013C2564D003D36F2 = {
 			isa = PBXGroup;
 			children = (
+				BF9386F7165B4D0C00EB6359 /* libcorecrypto.dylib */,
 				38024DBF13C2564D003D36F2 /* Healer */,
 				38024DAE13C2564D003D36F2 /* Frameworks */,
 				38024DAC13C2564D003D36F2 /* Products */,
@@ -1980,6 +1982,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/TestFlightSDK1.0\"",
+					"\"$(SDKROOT)/usr/lib/system\"",
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
@@ -2012,6 +2015,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/TestFlightSDK1.0\"",
+					"\"$(SDKROOT)/usr/lib/system\"",
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
@@ -2064,6 +2068,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/TestFlightSDK1.0\"",
+					"\"$(SDKROOT)/usr/lib/system\"",
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;

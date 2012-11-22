@@ -15,7 +15,7 @@
 	<key>after-light</key>
 	<string>Non-periodic healing shields the target for 10% of the healing done.</string>
 	<key>repel-the-darkness</key>
-	<string>Healing done and cast times are reduced by 5%.</string>
+	<string>Healing done and cast times are improved by 5%.</string>
 	<key>ancient-knowledge</key>
 	<string>25% of Overhealing is distributed to injured allies.</string>
 	<key>purity-of-soul</key>

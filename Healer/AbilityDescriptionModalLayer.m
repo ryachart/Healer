@@ -41,7 +41,7 @@
 - (void)onEnter {
     [super onEnter];
     
-    [self runAction:[CCScaleTo actionWithDuration:.5 scale:1.0]];
+    [self runAction:[CCScaleTo actionWithDuration:.33 scale:1.0]];
 }
 
 - (void)shouldDismiss {

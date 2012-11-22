@@ -46,7 +46,7 @@
                 [newIcon release];
             }
             [[self.descriptorIcons objectAtIndex:i] setAnchorPoint:CGPointZero];
-            [[self.descriptorIcons objectAtIndex:i] setPosition:CGPointMake(80 * i, 0)];
+            [[self.descriptorIcons objectAtIndex:i] setPosition:CGPointMake(40 * i, 0)];
 
         }
         

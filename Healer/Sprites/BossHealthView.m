@@ -56,21 +56,21 @@
         [self.bossHealthBack addChild:healthBar z:1];
     
         
-        self.bossNameLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(250, 40) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Bold" fontSize:28.0];
-        self.bossNameLabel.position = CGPointMake(170, 14);
-        [self.bossNameLabel setColor:ccc3(200, 0, 0)];
+        self.bossNameLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(280, 40) hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold" fontSize:32.0];
+        self.bossNameLabel.position = CGPointMake(510, 14);
+        [self.bossNameLabel setColor:ccc3(220, 220, 220)];
         
-        self.bossNameShadow = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(250, 40) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Bold" fontSize:28.0];
-        self.bossNameShadow.position = CGPointMake(169, 13);
+        self.bossNameShadow = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(280, 40) hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold" fontSize:32.0];
+        self.bossNameShadow.position = CGPointMake(509, 13);
         [self.bossNameShadow setColor:ccc3(25, 25, 25)];
 
         
         self.healthLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold"  fontSize:32.0];
-        [self.healthLabel setColor:ccc3(25, 25, 25)];
+        [self.healthLabel setColor:ccc3(230, 230, 230)];
         [self.healthLabel setPosition:CGPointMake(300, 60)];
         
         self.healthLabelShadow = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold"  fontSize:32.0];
-        [self.healthLabelShadow setColor:ccc3(230, 230, 230)];
+        [self.healthLabelShadow setColor:ccc3(25, 25, 25)];
         [self.healthLabelShadow setOpacity:155];
         [self.healthLabelShadow setPosition:CGPointMake(299, 59)];
         
@@ -96,7 +96,7 @@
     [self.abilityDescriptionsView removeFromParentAndCleanup:YES];
     self.abilityDescriptionsView = [[[BossAbilityDescriptionsView alloc] initWithBoss:self.bossData] autorelease];
     [self.abilityDescriptionsView setAnchorPoint:CGPointZero];
-    [self.abilityDescriptionsView setPosition:CGPointMake(-430, -425)];
+    [self.abilityDescriptionsView setPosition:CGPointMake(-454, -360)];
     [self.abilityDescriptionsView setDelegate:self];
     [self addChild:self.abilityDescriptionsView];
 	

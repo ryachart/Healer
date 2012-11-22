@@ -12,6 +12,7 @@
 #import "PlayerDataManager.h"
 #import "EncounterCard.h"
 #import "BackgroundSprite.h"
+#import "LevelSelectSprite.h"
 
 #define NUM_ENCOUNTERS 21
 
@@ -91,7 +92,12 @@
 
 - (void)onEnterTransitionDidFinish {
     [super onEnterTransitionDidFinish];
-    [self selectFurthestLevel];
+    
+    if ([[PlayerDataManager localPlayer] lastSelectedLevel] <= 1) {
+        [self selectFurthestLevel];
+    } else {
+        [self selectLevel:[[PlayerDataManager localPlayer] lastSelectedLevel]];
+    }
 }
 
 - (void)levelSelectSprite:(LevelSelectSprite *)sprite didSelectLevel:(NSInteger)level
@@ -132,13 +138,14 @@
     return CGPointMake(480 + 80 * levelNum, 768.0 - 100.0f - (50 * (levelNum % 7)));
 }
 
-- (void)selectFurthestLevel
+- (void)selectLevel:(NSInteger)level
 {
     LevelSelectSprite *lastLevelSprite = nil;
-
-    for (int i = self.levelSelectSprites.count - 1; i >= 0; i--) {
-        if ([[self.levelSelectSprites objectAtIndex:i] isAccessible]) {
-            lastLevelSprite = [self.levelSelectSprites objectAtIndex:i];
+    
+    for (int i = 0; i < self.levelSelectSprites.count; i++) {
+        LevelSelectSprite *sprite = [self.levelSelectSprites objectAtIndex:i];
+        if (sprite.levelNum == level) {
+            lastLevelSprite = sprite;
             break;
         }
     }
@@ -150,6 +157,11 @@
     
     CGPoint contentOffset = CGPointMake(MIN(0,-lastLevelSprite.position.x + self.viewSize.width * .5), 0);
     [self setContentOffset:contentOffset animated:YES];
+}
+
+- (void)selectFurthestLevel
+{
+    [self selectLevel:[[PlayerDataManager localPlayer] highestLevelCompleted] + 1];
 }
 
 @end

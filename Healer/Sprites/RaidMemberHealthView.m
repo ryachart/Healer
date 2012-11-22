@@ -317,7 +317,7 @@
         }
     }
     
-    if (self.memberData.isFocused){
+    if (self.memberData.isFocused && !self.memberData.isDead){
         if (![self.isFocusedLabel.string isEqualToString:@"FOCUSED"]) {
             [self.isFocusedLabel runAction:[CCSequence actionOne:[CCScaleTo actionWithDuration:.5 scale:1.2] two:[CCScaleTo actionWithDuration:.5 scale:1.0]]];
             [self.isFocusedShadowLabel runAction:[CCSequence actionOne:[CCScaleTo actionWithDuration:.5 scale:1.2] two:[CCScaleTo actionWithDuration:.5 scale:1.0]]];

@@ -1635,7 +1635,7 @@
         [self.announcer displayScreenShakeForDuration:.66];
         [self.announcer announce:@"The Skeletal Dragon crashes down onto your allies from the sky."];
         NSArray *livingMembers = [raid getAliveMembers];
-        NSInteger damageValue = 750 / livingMembers.count;
+        NSInteger damageValue = 7500 / livingMembers.count;
         for (RaidMember *member in livingMembers){
             FallenDownEffect *fde = [FallenDownEffect defaultEffect];
             [fde setOwner:self];

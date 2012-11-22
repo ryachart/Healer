@@ -75,7 +75,7 @@
         [self.background addChild:self.spellIcon];
         
         self.goldCostNode = [GoldCounterSprite goldCostNodeForCost:itm.goldCost];
-        [self.goldCostNode setPosition:CGPointMake(390, 73)];
+        [self.goldCostNode setPosition:CGPointMake(384, 73)];
         [self.background addChild:self.goldCostNode];
         
         self.buyButton = [CCMenu menuWithItems:[BasicButton basicButtonWithTarget:self andSelector:@selector(nodeSelected) andTitle:@"Learn"], nil];
@@ -103,9 +103,9 @@
         
         self.itemEnergyCost.position = CGPointMake(185, 70);
         self.itemCastTime.position = CGPointMake(185, 85);
-        self.itemCooldown.position = CGPointMake(285, 70);
+        self.itemCooldown.position = CGPointMake(283, 70);
         self.itemDescription.position = CGPointMake(200, 23);
-        self.itemSpellType.position = CGPointMake(285, 85);
+        self.itemSpellType.position = CGPointMake(283, 85);
         
         if (self.item.purchasedSpell.cooldown == 0.0) {
             [self.itemCooldown setVisible:NO];

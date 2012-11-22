@@ -43,6 +43,8 @@ extern NSString* const PlayerGoldDidChangeNotification;
 - (void)saveRemotePlayer;
 
 #pragma mark - Progress
+@property (nonatomic, readwrite) NSInteger lastSelectedLevel;
+- (NSInteger)totalRating;
 - (NSInteger)difficultyForLevelNumber:(NSInteger)levelNum;
 - (void)difficultySelected:(NSInteger)challenge forLevelNumber:(NSInteger)levelNum;
 
@@ -57,8 +59,9 @@ extern NSString* const PlayerGoldDidChangeNotification;
 - (void)failLevel:(NSInteger)level;
 - (void)completeLevel:(NSInteger)level;
 
+#pragma mark - Multiplayer
+
 - (BOOL)isMultiplayerUnlocked;
-- (NSInteger)totalRating;
 
 //Spells
 - (void)setUsedSpells:(NSArray*)spells;

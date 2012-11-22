@@ -126,6 +126,7 @@
             [self addChild:self.challengeStepper];
         }
         
+        [[PlayerDataManager localPlayer] setLastSelectedLevel:enc.levelNumber];
     }
     return self;
 }

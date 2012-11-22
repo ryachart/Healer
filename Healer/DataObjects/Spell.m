@@ -545,7 +545,7 @@
 }
 
 + (id)defaultSpell {
-    LightEternal *le = [[LightEternal alloc] initWithTitle:@"Light Eternal" healAmnt:660 energyCost:220 castTime:2.25 andCooldown:0.0];
+    LightEternal *le = [[LightEternal alloc] initWithTitle:@"Light Eternal" healAmnt:520 energyCost:220 castTime:2.25 andCooldown:0.0];
     [le setDescription:@"Heals up to 5 allies with the least health among allies for a moderate amount."];
     [[le spellAudioData] setBeginSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicCasting" ofType:@"wav"]] andTitle:@"ROLStart"];
 	[[le spellAudioData] setInterruptedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanBasicFizzle" ofType:@"wav"]] andTitle:@"ROLFizzle"];
@@ -803,7 +803,7 @@
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
     NSInteger totalTargets = 4;
     
-    NSArray *starTargets = [theRaid lowestHealthTargets:totalTargets withRequiredTarget:nil];
+    NSArray *starTargets = [theRaid randomTargets:totalTargets withPositioning:Any];
     
     NSTimeInterval healDelay = 1.75;
     for (RaidMember *starTarget in starTargets){

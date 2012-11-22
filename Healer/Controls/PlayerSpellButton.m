@@ -41,16 +41,33 @@
         self.cooldownCountLayer = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 175)];
         [self.cooldownCountLayer setContentSize:frame.size];
         [self.cooldownCountLayer setVisible:NO];
-        
-        self.spellTitle = [[[CCLabelTTF alloc] initWithString:[spellData title] fontName:@"Arial" fontSize:18.0f] autorelease];
-        [self.spellTitle setPosition:CGPointMake(50, 15)];
-        [self.spellTitle setColor:ccBLACK];
-        [self addChild:spellTitle];
-        
         [self addChild:self.cooldownCountLayer z:10];
+
         
     }
     return self;
+}
+
+- (void)configureLabels
+{
+    [self.spellTitle removeFromParentAndCleanup:YES];
+    [self.spellTitleShadow removeFromParentAndCleanup:YES];
+    
+    CGFloat fontSize = 18.0f;
+    CGFloat contentSizeDivisor = 4.5;
+    if ([spellData title].length > 8) {
+        contentSizeDivisor = 2.0;
+    }
+    self.spellTitle = [[[CCLabelTTF alloc] initWithString:[spellData title] dimensions:CGSizeMake(self.contentSize.width, self.contentSize.height / contentSizeDivisor) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Bold" fontSize:fontSize] autorelease];
+    [self.spellTitle setPosition:CGPointMake(50, 15)];
+    [self.spellTitle setColor:ccc3(25, 25, 25)];
+    [self addChild:self.spellTitle z:9];
+    
+    self.spellTitleShadow = [[[CCLabelTTF alloc] initWithString:[spellData title] dimensions:CGSizeMake(self.contentSize.width, self.contentSize.height / contentSizeDivisor) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Bold" fontSize:fontSize] autorelease];
+    [self.spellTitleShadow setPosition:CGPointMake(49, 14)];
+    [self.spellTitleShadow setColor:ccc3(200, 200, 200)];
+    [self addChild:self.spellTitleShadow z:8];
+    
 }
 
 -(void)setSpellData:(Spell*)theSpell{
@@ -59,7 +76,7 @@
 	if (spellData == nil)
 		[self setVisible:NO];
 	else{
-		[spellTitle setString:[spellData title]];
+        [self configureLabels];
         CCSpriteFrame *spriteFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[spellData spriteFrameName]];
         if (spriteFrame){
             [self.spellIconSprite setDisplayFrame:spriteFrame];
@@ -105,7 +122,6 @@
 
 - (void)dealloc {
     [spellData release];
-    [spellTitle release];
     [super dealloc];
 }
 

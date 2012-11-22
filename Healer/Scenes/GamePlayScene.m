@@ -149,16 +149,16 @@
         self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(180, 646, 884, 80)] autorelease];
         [self.bossHealthView setDelegate:self];
         
-        self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(125,40, 400, 50)] autorelease];
-        self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(704, 485, 200, 50)] autorelease];
+        self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(312,40, 400, 50)] autorelease];
+        self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(804, 485, 200, 50)] autorelease];
         
         self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Marion-Bold" fontSize:32.0];
-        [self.announcementLabel setPosition:CGPointMake(512, 500)];
+        [self.announcementLabel setPosition:CGPointMake(512, 480)];
         [self.announcementLabel setColor:ccYELLOW];
         [self.announcementLabel setVisible:NO];
         
         self.announcementLabelShadow = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Marion-Bold" fontSize:32.0];
-        [self.announcementLabelShadow setPosition:CGPointMake(511, 499)];
+        [self.announcementLabelShadow setPosition:CGPointMake(511, 479)];
         [self.announcementLabelShadow setColor:ccc3(25, 25, 25)];
         [self.announcementLabelShadow setVisible:NO];
         

@@ -72,9 +72,6 @@
         NSInteger numDead = self.encounter.raid.deadCount;
         NSTimeInterval fightDuration = duration;
         
-        int totalHealingDone = self.encounter.healingDone;
-        int totalDamageTaken = self.encounter.damageTaken;
-        
         //Data Operations
         if (victory){
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",self.encounter.levelNumber]];
@@ -96,15 +93,6 @@
             [[PlayerDataManager localPlayer] failLevel:self.encounter.levelNumber];
             //Partial Progress Reward
             //10 % of the Reward per minute of encounter up to a maximum of 50% encounter reward
-            
-            NSInteger encounterRewardForSuccess = self.encounter.reward;
-            NSInteger partialProgressReward = 0;
-            
-            if (totalHealingDone >= (totalDamageTaken * .33)){
-                partialProgressReward = (fightDuration / 60.0 * (encounterRewardForSuccess * .10));
-                partialProgressReward =  MIN(partialProgressReward, encounterRewardForSuccess * .5);
-            }
-            reward = partialProgressReward;
         }
         
         if (self.encounter.levelNumber == ENDLESS_VOID_ENCOUNTER_NUMBER){

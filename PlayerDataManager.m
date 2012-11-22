@@ -20,7 +20,6 @@ static dispatch_queue_t parse_queue = nil;
 static dispatch_queue_t saving_queue = nil;
 static PlayerDataManager *_localPlayer = nil;
 
-
 NSString* const PlayerHighestLevelAttempted = @"com.healer.playerHighestLevelAttempted";
 NSString* const PlayerHighestLevelCompleted = @"com.healer.playerHighestLevelCompleted";
 NSString* const PlayerLevelFailed = @"com.healer.playerLevelFailed1";
@@ -32,6 +31,8 @@ NSString* const PlayerLevelDifficultyLevelsKey = @"com.healer.diffLevels";
 NSString* const PlayerGold = @"com.healer.playerId";
 NSString* const PlayerGoldDidChangeNotification = @"com.healer.goldDidChangeNotif";
 NSString* const DivinityConfig = @"com.healer.divinityConfig";
+NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
+NSString* const PlayerLastSelectedLevelKey = @"com.healer.plsl";
 
 @implementation PlayerDataManager
 
@@ -68,7 +69,6 @@ NSString* const DivinityConfig = @"com.healer.divinityConfig";
         [[UIApplication sharedApplication] endBackgroundTask:backgroundExceptionIdentifer];
     });
 }
-NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
 
 - (void)saveRemotePlayer {
     NSInteger backgroundExceptionIdentifer = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{}];
@@ -425,6 +425,19 @@ NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
     [newConfig setObject:choice forKey:[NSString stringWithFormat:@"tier-%i", tier]];
     [self.playerData setObject:newConfig forKey:DivinityConfig];
     [self saveLocalPlayer];
+}
+
+#pragma mark - Cached Selections
+
+- (void)setLastSelectedLevel:(NSInteger)lastSelectedLevel {
+    [self.playerData setObject:[NSNumber numberWithInt:lastSelectedLevel] forKey:PlayerLastSelectedLevelKey];
+}
+
+- (NSInteger)lastSelectedLevel {
+    if ([self.playerData objectForKey:PlayerLastSelectedLevelKey]) {
+        return [[self.playerData objectForKey:PlayerLastSelectedLevelKey] intValue];
+    }
+    return -1;
 }
 
 #pragma mark - Debug

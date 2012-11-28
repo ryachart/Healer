@@ -796,7 +796,7 @@
     [infectedWound setOwner:self];
     [infectedWound setTitle:@"pbc-infected-wound"];
     [infectedWound setAilmentType:AilmentTrauma];
-    [infectedWound setValuePerTick:-60];
+    [infectedWound setValuePerTick:-100];
     [infectedWound setNumOfTicks:15];
     [infectedWound setSpriteName:@"bleeding.png"];
     if (target.health > target.maximumHealth * .58){
@@ -829,7 +829,7 @@
             [singleTickDot setTitle:@"pbc-pussBubble"];
             [singleTickDot setNumOfTicks:2];
             [singleTickDot setAilmentType:AilmentPoison];
-            [singleTickDot setValuePerTick:arc4random() % 150 + 200];
+            [singleTickDot setValuePerTick:-(arc4random() % 150 + 200)];
             [singleTickDot setSpriteName:@"poison.png"];
             [member addEffect:singleTickDot];
             [singleTickDot release];
@@ -954,9 +954,6 @@
     boss.autoAttack = [[[SustainedAttack alloc] initWithDamage:340 andCooldown:2.25] autorelease];
     boss.autoAttack.failureChance = .25;
     [boss addAbility:boss.autoAttack];
-//    if (mode == DifficultyModeHard) {
-//        boss.autoAttack.abilityValue = 450;
-//    }
     
     [boss setTitle:@"Mischievious Imps"];
     [boss setInfo:@" A local alchemist has posted a small reward for removing a pesky imp infestation from her store.  Sensing something a little more sinister a small party has been dispatched from the Light Ascendant just in case there is more than meets the eye."];
@@ -973,9 +970,9 @@
 
 -(void)throwPotionToTarget:(RaidMember *)target withDelay:(float)delay{
     NSInteger possiblePotions = 2;
-//    if (self.difficulty == DifficultyModeHard) {
-//        possiblePotions = 3;
-//    }
+    if (self.difficulty > 4) {
+        possiblePotions = 3;
+    }
     
     int potion = arc4random() % possiblePotions;
     float colTime = (1.5 + delay);
@@ -985,10 +982,6 @@
         NSInteger impactDamage = -150;
         NSInteger dotDamage = -200;
         
-//        if (self.difficulty == DifficultyModeHard) {
-//            impactDamage = -500;
-//            dotDamage = -250;
-//        }
         DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
         [bottleEffect setValue:impactDamage * self.damageDoneMultiplier];
         [bottleEffect setIsIndependent:YES];
@@ -1094,21 +1087,17 @@
 @implementation BefouledTreant
 @synthesize lastRootquake;
 +(id)defaultBoss {
-    NSInteger bossDamage = 440;
-//    if (mode == DifficultyModeHard) {
-//        bossDamage = 570;
-//    }
+    NSInteger bossDamage = 390;
     
     BefouledTreant *boss = [[BefouledTreant alloc] initWithHealth:58000 damage:bossDamage targets:1 frequency:3.0 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Befouled Treant"];
     [boss setInfo:@"The Akarus, an ancient tree that has sheltered travelers across the Gungoro Plains, has become tainted with the foul energy of The Dark Winds.  It is lashing its way through villagers and farmers.  This once great tree must be ended for good."];
     
-//    if (mode == DifficultyModeHard) {
-//        [boss addAbility:[Cleave hardCleave]];
-//    } else {
-    [boss addAbility:[Cleave normalCleave]];
-//    }
+    
+    Cleave *cleave = [Cleave normalCleave];
+    [cleave setAbilityValue:400]; //Gotta tone this shit down.  It's a bit too hard =/
+    [boss addAbility:cleave];
     
     return [boss autorelease];
 }
@@ -1128,11 +1117,6 @@
 -(void)performBranchAttackOnRaid:(Raid*)raid{
     NSInteger branchInitialDamage = 260;
     NSInteger branchDoTTick = -40;
-    
-//    if (self.difficulty == DifficultyModeHard) {
-//        branchInitialDamage = 480;
-//        branchDoTTick = -50;
-//    }
     
     for (RaidMember *member in raid.raidMembers){
         [member setHealth:member.health - branchInitialDamage * self.damageDoneMultiplier];
@@ -1154,7 +1138,7 @@
     for (RaidMember *member in raid.raidMembers){
         RepeatedHealthEffect *rootquake = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegativeInvisible];
         [rootquake setOwner:self];
-        [rootquake setValuePerTick:-40];
+        [rootquake setValuePerTick:-50];
         [rootquake setNumOfTicks:4];
         [rootquake setTitle:@"rootquake"];
         [member addEffect:[rootquake autorelease]];
@@ -1192,11 +1176,7 @@
     [boss setNamePlateTitle:@"Twin Champions"];
     [boss setInfo:@"You and your soldiers have taken the fight straight to the warcamps of Baraghast--Leader of the Dark Horde.  You have been met outside the gates by only two heavily armored demon warriors.  These Champions of Baraghast will stop at nothing to keep you from finding Baraghast."];
     
-//    if (mode == DifficultyModeHard) {
-//        [boss addAbility:[Cleave hardCleave]];
-//    } else {
     [boss addAbility:[Cleave normalCleave]];
-//    }
     
     AbilityDescriptor *axecutionDesc = [[AbilityDescriptor alloc] init];
     [axecutionDesc setAbilityDescription:@"The Twin Champions will periodically choose a target for execution.  This target will be instantly slain if not above 50% health when the effect expires."];

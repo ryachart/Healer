@@ -656,7 +656,16 @@
     [collisionEffect setPosition:ccpAdd(destination, offset)];
     [collisionEffect setAutoRemoveOnFinish:YES];
     [self addChild:collisionEffect z:100];
+}
 
+- (void)displayBreathEffectOnRaidForDuration:(float)duration {
+    if (self.isServer) {
+        //TODO: network this shit
+    }
+    CCParticleSystemQuad *breathEffect = [[ParticleSystemCache sharedCache] systemForKey:@"flame_breath"];
+    [breathEffect setDuration:duration];
+    [breathEffect setPosition:CGPointMake(800, 650)];
+    [self addChild:breathEffect z:100];
 }
 
 - (void)displaySprite:(NSString*)spriteName overRaidForDuration:(float)duration {
@@ -805,13 +814,13 @@
     
     if (event.type == CombatEventTypeDodge){
         RaidMember *dodgedTarget = (RaidMember*)event.target;
-        
-        for (RaidMemberHealthView *rmhv in self.raidView.raidViews){
-            if (rmhv.memberData == dodgedTarget){
-                [rmhv displaySCT:@"Dodge"];
-                break;
-            }
-        }
+        [[self.raidView healthViewForMember:dodgedTarget] displaySCT:@"Dodge"];
+    }
+    
+    if (event.type == CombatEventTypeHeal){
+        RaidMember *healedTarget = (RaidMember*)event.target;
+        NSInteger healingAmount = event.value.intValue;
+        [[self.raidView healthViewForMember:healedTarget] displaySCT:[NSString stringWithFormat:@"+%i",healingAmount] asCritical:event.critical];
     }
     
     if (event.type == CombatEventTypePlayerInterrupted) {

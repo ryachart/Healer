@@ -29,6 +29,12 @@ NSString* const PlayerOverHealingDoneKey = @"com.healer.eventlog.overhealingdone
     return [[[CombatEvent alloc] initWithSource:source target:target value:value andEventType:type] autorelease];
 }
 
++(CombatEvent*)eventWithSource:(id<EventDataSource>)source target:(id<EventDataSource>)target value:(NSNumber*)value eventType:(CombatEventType)type critical:(BOOL)critical{
+    CombatEvent *event = [[[CombatEvent alloc] initWithSource:source target:target value:value andEventType:type] autorelease];
+    [event setCritical:critical];
+    return event;
+}
+
 -(NSString*)nameForType:(CombatEventType)type{
     switch (type) {
         case CombatEventTypeBegan:

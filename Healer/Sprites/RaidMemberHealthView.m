@@ -210,24 +210,47 @@
     [super onExit];
 }
 
--(void)displaySCT:(NSString*)sct{
-    CCLabelTTF *shadowLabel = [CCLabelTTF labelWithString:sct fontName:@"Arial" fontSize:20];
+-(void)displaySCT:(NSString*)sct {
+    [self displaySCT:sct asCritical:NO];
+}
+
+-(void)displaySCT:(NSString*)sct asCritical:(BOOL)critical {
+    CGFloat fontSize = 20;
+    NSString *fontName = @"Arial";
+    float scale = 1.0;
+    CCSequence *sctAction = [CCSequence actions:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [node removeFromParentAndCleanup:YES];
+    }], nil];
+    CCSequence *shadowAction = [CCSequence actions:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [node removeFromParentAndCleanup:YES];
+    }], nil];
+
+    
+    if (critical) {
+        fontSize = 36;
+        fontName = @"Arial-BoldMT";
+        scale = 0.0;
+        sctAction = [CCSequence actions:[CCScaleTo actionWithDuration:.15 scale:1.0], [CCDelayTime actionWithDuration:.25], [CCScaleTo actionWithDuration:.5 scale:.75],[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+            [node removeFromParentAndCleanup:YES];}], nil];
+        shadowAction = [CCSequence actions:[CCScaleTo actionWithDuration:.15 scale:1.0], [CCDelayTime actionWithDuration:.25], [CCScaleTo actionWithDuration:.5 scale:.75],[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+            [node removeFromParentAndCleanup:YES];}], nil];
+    }
+    
+    CCLabelTTF *shadowLabel = [CCLabelTTF labelWithString:sct fontName:fontName fontSize:fontSize];
     [shadowLabel setColor:ccBLACK];
     [shadowLabel setPosition:CGPointMake(self.contentSize.width /2 -1 , self.contentSize.height /2 + 1)];
+    [shadowLabel setScale:scale];
     
-    CCLabelTTF *sctLabel = [CCLabelTTF labelWithString:sct fontName:@"Arial" fontSize:20];
+    CCLabelTTF *sctLabel = [CCLabelTTF labelWithString:sct fontName:fontName fontSize:fontSize];
     [sctLabel setColor:ccGREEN];
     [sctLabel setPosition:CGPointMake(self.contentSize.width /2 , self.contentSize.height /2)];
+    [sctLabel setScale:scale];
     
     [self addChild:shadowLabel z:100];
     [self addChild:sctLabel z:100];
     
-    [sctLabel runAction:[CCSequence actions:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
-        [node removeFromParentAndCleanup:YES];
-    }], nil]];
-    [shadowLabel runAction:[CCSequence actions:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
-        [node removeFromParentAndCleanup:YES];
-    }], nil]];
+    [sctLabel runAction:sctAction];
+    [shadowLabel runAction:shadowAction];
 }
 
 - (void)animateNewNegativeSprite {
@@ -239,11 +262,6 @@
 {
     NSInteger healthDelta = abs(self.memberData.health - self.lastHealth);
     float deltaPercentage = healthDelta / (float)self.memberData.maximumHealth;
-    if (self.memberData && self.memberData.health > self.lastHealth){
-        //We were healed.  Lets fire some SCT!
-        int heal = self.memberData.health - self.lastHealth;
-        [self displaySCT:[NSString stringWithFormat:@"+%i", heal]];
-    }
     
     switch (self.selectionState) {
         case RaidViewSelectionStateNone:

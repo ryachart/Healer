@@ -40,7 +40,7 @@
         
         self.energyLabel = [CCLabelTTF labelWithString:@"1000/1000" dimensions:self.contentSize hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold" fontSize:18.0];
         [self.energyLabel setColor:ccc3(230, 230, 230)];
-        self.energyLabel.position = CGPointMake(frame.size.width * .45, 0);
+        self.energyLabel.position = CGPointMake(frame.size.width * .45, -2);
         [self addChild:self.energyLabel z:100];
         
         self.energyLabelShadow = [CCLabelTTF labelWithString:@"1000/1000" dimensions:self.contentSize hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold" fontSize:18.0];

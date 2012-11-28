@@ -77,6 +77,8 @@ typedef int CastingDisabledReason;
 @property NSInteger maximumEnergy;
 @property (nonatomic, readwrite) float castTimeAdjustment;
 @property (nonatomic, readwrite) float spellCostAdjustment;
+@property (nonatomic, readwrite) float spellCriticalChance;
+@property (nonatomic, readwrite) float criticalBonusMultiplier;
 @property (nonatomic, readwrite) NSInteger avatarCounter;
 @property (nonatomic, readwrite) BOOL isConfused;
 @property (nonatomic, readwrite) NSInteger overhealingToDistribute;
@@ -107,8 +109,8 @@ typedef int CastingDisabledReason;
 - (BOOL)isDead;
 - (void)setEnergy:(NSInteger)newEnergy;
 
-- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell withOverhealing:(NSInteger)overhealing;
-- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect withOverhealing:(NSInteger)overhealing;
+- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical;
+- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical;
 
 - (BOOL)hasDivinityEffectWithTitle:(NSString*)title;
 //Multiplayer

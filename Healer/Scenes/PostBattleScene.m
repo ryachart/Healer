@@ -88,6 +88,7 @@
                 }
                 [[PlayerDataManager localPlayer] setLevelRating:rating forLevel:self.encounter.levelNumber];
             }
+            [[PlayerDataManager localPlayer] setLastSelectedLevel:-1]; //Clear it so it advances to the furthest level next time
         }else {
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelFailed:%i",self.encounter.levelNumber]];
             [[PlayerDataManager localPlayer] failLevel:self.encounter.levelNumber];

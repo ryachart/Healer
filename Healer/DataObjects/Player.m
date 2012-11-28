@@ -55,6 +55,8 @@
         maxChannelTime = 5;
         castStart = 0.0f;
         self.castTimeAdjustment = 1.0;
+        self.spellCriticalChance = .1; //10% Base chance to crit
+        self.criticalBonusMultiplier = 1.5; //50% more on a crit
         
         _spellsOnCooldown = [[NSMutableSet setWithCapacity:4] retain];
         
@@ -296,7 +298,7 @@
         }
     }
     
-    if (self.overhealingToDistribute > 15) {
+    if (self.overhealingToDistribute > 150) {
         //For the divinity choice that distributes overhealing
         NSArray *targets = [theRaid lowestHealthTargets:5 withRequiredTarget:nil];
         NSInteger perTarget = MAX(2,self.overhealingToDistribute / 5);
@@ -488,10 +490,8 @@
 
 
 
-- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell withOverhealing:(NSInteger)overhealing{
-    if (amount > 0){
-        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:amount] andEventType:CombatEventTypeHeal]];
-    }
+- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical{
+    NSInteger loggedAmount = amount;
     
     if ( [self hasDivinityEffectWithTitle:@"healing-hands"]){
         if (spell.spellType == SpellTypeBasic) {
@@ -551,7 +551,7 @@
             NSInteger preHealth = target.health;
             [target setHealth:target.health + bonusAmount];
             NSInteger finalAmount = target.health - preHealth;
-            [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:finalAmount] andEventType:CombatEventTypeHeal]];
+            loggedAmount += finalAmount;
         }
     }
     
@@ -561,7 +561,7 @@
             NSInteger preHealth = target.health;
             [target setHealth:target.health + bonusAmount];
             NSInteger finalAmount = target.health - preHealth;
-            [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:finalAmount] andEventType:CombatEventTypeHeal]];
+            loggedAmount += finalAmount;
         }
     }
     
@@ -571,8 +571,12 @@
             NSInteger preHealth = target.health;
             [target setHealth:target.health + bonusAmount];
             NSInteger finalAmount = target.health - preHealth;
-            [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:finalAmount] andEventType:CombatEventTypeHeal]];
+            loggedAmount += finalAmount;
         }
+    }
+    
+    if (amount > 0){
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:loggedAmount] eventType:CombatEventTypeHeal critical:critical]];
     }
     
     if (overhealing > 0){
@@ -580,9 +584,9 @@
     }
 }
 
-- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect withOverhealing:(NSInteger)overhealing{
+- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical{
     if (amount > 0){
-        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:amount] andEventType:CombatEventTypeHeal]]; 
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:amount] eventType:CombatEventTypeHeal critical:critical]];
     }
     if (overhealing > 0){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:overhealing] andEventType:CombatEventTypeOverheal]];

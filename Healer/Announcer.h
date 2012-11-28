@@ -24,6 +24,7 @@
 - (void)displayParticleSystemOnRaidWithName:(NSString*)name forDuration:(float)duration;
 - (void)displayParticleSystemOnRaidWithName:(NSString*)name delay:(float)delay;
 - (void)displayProjectileEffect:(ProjectileEffect*)effect fromOrigin:(CGPoint)origin;
+- (void)displayBreathEffectOnRaidForDuration:(float)duration;
 
 - (void)displayEnergyGainFrom:(RaidMember*)member;
 - (void)displayAttackFromRaidMember:(RaidMember*)member;

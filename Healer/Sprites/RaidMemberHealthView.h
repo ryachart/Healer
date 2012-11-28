@@ -30,7 +30,7 @@ typedef enum {
 -(id)initWithFrame:(CGRect)frame;
 
 -(void)displaySCT:(NSString*)sct;
-
+-(void)displaySCT:(NSString*)sct asCritical:(BOOL)critical;
 - (void)triggerConfusion;
 @end
 

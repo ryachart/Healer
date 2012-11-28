@@ -186,10 +186,7 @@
     return [NSString stringWithFormat:@"B-%@", self.title];
 }
 
--(void)setIsMultiplayer:(BOOL)isMultiplayer{
-    _isMultiplayer = isMultiplayer;
-    
-}
+
 -(float)healthPercentage{
     return (float)self.health / (float)self.maximumHealth * 100;
 }
@@ -367,16 +364,9 @@
     [drake setTitle:@"Tainted Drake"];
     [drake setInfo:@"A Tainted Drake is hidden in the Paragon Cliffs. You and your allies must stop the beast from doing any more damage to the Kingdom.  The king will provide you with a great reward for defeating the beast."];
     
-    
     NSInteger fireballDamage = 400;
     float fireballFailureChance = .05;
     float fireballCooldown = 2.5;
-    
-//    if (mode == DifficultyModeHard) {
-//        fireballDamage = 450;
-//        fireballFailureChance = .15;
-//        fireballCooldown     = 2.25;
-//    }
     
     AbilityDescriptor *fireball = [[AbilityDescriptor alloc] init];
     [fireball setAbilityDescription:@"The Drake hurls deadly Fireballs at your allies."];
@@ -393,38 +383,26 @@
     [drake.fireballAbility setCooldown:fireballCooldown];
     [drake addAbility:drake.fireballAbility];
     
-//    if (mode == DifficultyModeHard) {
-//        RepeatedHealthEffect *burningEffect = [[[RepeatedHealthEffect alloc] initWithDuration:12.0 andEffectType:EffectTypeNegative] autorelease];
-//        [burningEffect setSpriteName:@"burning.png"];
-//        [burningEffect setNumOfTicks:8];
-//        [burningEffect setValuePerTick:-180];
-//        [burningEffect setAilmentType:AilmentTrauma];
-//        [burningEffect setTitle:@"burning-eff"];
-//        
-//        ProjectileAttack *ignitionFireball = [[ProjectileAttack new] autorelease];
-//        [ignitionFireball setTitle:@"ign-fireball-ab"];
-//        [ignitionFireball setSpriteName:@"fireball.png"];
-//        [ignitionFireball setAbilityValue:100];
-//        [ignitionFireball setFailureChance:.05];
-//        [ignitionFireball setCooldown:12.0];
-//        [ignitionFireball setAppliedEffect:burningEffect];
-//        [drake addAbility:ignitionFireball];
-//    }
     return [drake autorelease];
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (self.isMultiplayer ? (percentage == 75.0 || percentage == 50.0 || percentage == 25.0) : (percentage == 50.0) ){
-        int i = 0;
-        for (RaidMember *member in raid.raidMembers){
-            if (!member.isDead){
-                //Woh WTF Making a new raid?  We want the ability to trigger for each member and not possible do two at the same member
-                Raid *singlePlayerRaid = [[Raid alloc] init];
-                [singlePlayerRaid addRaidMember:member];
-                [self.fireballAbility triggerAbilityForRaid:singlePlayerRaid andPlayers:[NSArray arrayWithObject:player]];
-                [singlePlayerRaid release];
-            }
-            i++;
+    if (percentage == 77.0 || percentage == 52.0 || percentage == 27.0){
+        [self.announcer announce:@"The Drake takes a deep breath..."];
+    }
+    
+    if (percentage == 50.0 || percentage == 75.0 || percentage == 25.0){
+        
+        [self.fireballAbility setTimeApplied:-5.0]; //Turn off this ability for 5 seconds.
+        float effectDuration = 5.0;
+        [self.announcer displayBreathEffectOnRaidForDuration:effectDuration];
+        for (RaidMember *member in raid.getAliveMembers) {
+            RepeatedHealthEffect *flameBreathEffect = [[[RepeatedHealthEffect alloc] initWithDuration:effectDuration andEffectType:EffectTypeNegativeInvisible] autorelease];
+            [flameBreathEffect setNumOfTicks:5];
+            [flameBreathEffect setValuePerTick:-(arc4random() % 50 + 100)];
+            [flameBreathEffect setOwner:self];
+            [flameBreathEffect setTitle:@"flame-breath-eff"];
+            [member addEffect:flameBreathEffect];
         }
     }
 }
@@ -526,7 +504,7 @@
     self.lastPoisonTime += timeDelta;
     self.lastPotionTime += timeDelta;
     
-    float tickTime = self.isMultiplayer ? 5 : 10;
+    float tickTime = 10;
     if (self.lastPoisonTime > tickTime){ 
         if (self.healthPercentage > 10.0){
             [self.announcer announce:@"Trulzar fills an ally with poison."];
@@ -641,7 +619,7 @@
     [fireballVisual release];
     [fireball setIsIndependent:YES];
     [fireball setOwner:self];
-    [fireball setValue:self.isMultiplayer ? -(arc4random() % 200 + 300) : -(arc4random() % 100 + 300)];
+    [fireball setValue:-(arc4random() % 100 + 300)];
     [target addEffect:fireball];
     [fireball release];
 }
@@ -818,7 +796,7 @@
     [infectedWound setOwner:self];
     [infectedWound setTitle:@"pbc-infected-wound"];
     [infectedWound setAilmentType:AilmentTrauma];
-    [infectedWound setValuePerTick: self.isMultiplayer ? -80 : -40];
+    [infectedWound setValuePerTick:-60];
     [infectedWound setNumOfTicks:15];
     [infectedWound setSpriteName:@"bleeding.png"];
     if (target.health > target.maximumHealth * .58){
@@ -846,12 +824,12 @@
     
     for (RaidMember *member in theRaid.raidMembers){
         if (!member.isDead){
-            RepeatedHealthEffect *singleTickDot = [[RepeatedHealthEffect alloc] initWithDuration:1.5 andEffectType:EffectTypeNegative];
+            RepeatedHealthEffect *singleTickDot = [[RepeatedHealthEffect alloc] initWithDuration:3.0 andEffectType:EffectTypeNegative];
             [singleTickDot setOwner:self];
             [singleTickDot setTitle:@"pbc-pussBubble"];
-            [singleTickDot setNumOfTicks:1];
+            [singleTickDot setNumOfTicks:2];
             [singleTickDot setAilmentType:AilmentPoison];
-            [singleTickDot setValuePerTick:-500];
+            [singleTickDot setValuePerTick:arc4random() % 150 + 200];
             [singleTickDot setSpriteName:@"poison.png"];
             [member addEffect:singleTickDot];
             [singleTickDot release];
@@ -864,7 +842,7 @@
     [super combatActions:players theRaid:theRaid gameTime:timeDelta];
     
     self.lastSickeningTime += timeDelta;
-    float tickTime = self.isMultiplayer ? 7.0 : 15.0;
+    float tickTime =  15.0;
     if (self.lastSickeningTime > tickTime){
         for ( int i = 0; i < 2; i++){
             [self sickenTarget:theRaid.randomLivingMember];
@@ -884,7 +862,7 @@
 @implementation FungalRavagers
 @synthesize isEnraged, secondTargetAttack, thirdTargetAttack;
 +(id)defaultBoss {
-    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:58000 damage:190 targets:1 frequency:2.5 choosesMT:YES ];
+    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:58000 damage:152 targets:1 frequency:2.0 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Fungal Ravagers"];
     [boss setInfo:@"Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate. Conversely, no villagers have left the town, either..."];
@@ -895,14 +873,14 @@
     [boss addAbility:secondFocusedAttack];
     [boss setSecondTargetAttack:secondFocusedAttack];
     [secondFocusedAttack release];
-    FocusedAttack *thirdFocusedAttack = [[FocusedAttack alloc] initWithDamage:180 andCooldown:2.7];
+    FocusedAttack *thirdFocusedAttack = [[FocusedAttack alloc] initWithDamage:213 andCooldown:3.2];
     thirdFocusedAttack.failureChance = .25;
     [boss addAbility:thirdFocusedAttack];
     [boss setThirdTargetAttack:thirdFocusedAttack];
     [thirdFocusedAttack release];
     
     AbilityDescriptor *vileExploDesc = [[AbilityDescriptor alloc] init];
-    [vileExploDesc setAbilityDescription:@"When a Fungal Ravager dies, it explodes dealing high damage to random nearby targets."];
+    [vileExploDesc setAbilityDescription:@"When a Fungal Ravager dies, it explodes coating random targets in toxic venom."];
     [vileExploDesc setIconName:@"unknown_ability.png"];
     [vileExploDesc setAbilityName:@"Vile Explosion"];
     [boss addAbilityDescriptor:vileExploDesc];
@@ -919,9 +897,15 @@
     
     NSArray *members = [raid randomTargets:numTargets withPositioning:Any];
     for (RaidMember *member in members){
-        NSInteger damage = arc4random() % 450 + 300;
-        [member setHealth:member.health - damage * self.damageDoneMultiplier];
-        [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
+        NSInteger damage = arc4random() % 350 + 550;
+        RepeatedHealthEffect *damageEffect = [[[RepeatedHealthEffect alloc] initWithDuration:2.5 andEffectType:EffectTypeNegative] autorelease];
+        [damageEffect setAilmentType:AilmentPoison];
+        [damageEffect setSpriteName:@"poison.png"];
+        [damageEffect setNumOfTicks:3];
+        [damageEffect setValuePerTick:-damage / 3];
+        [damageEffect setOwner:self];
+        [damageEffect setTitle:@"ravager-explo"];
+        [member addEffect:damageEffect];
     }
 }
 
@@ -934,7 +918,7 @@
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegativeInvisible];
             [rhe setOwner:self];
             [rhe setTitle:@"fungal-ravager-mist"];
-            [rhe setValuePerTick:self.isMultiplayer ? -40 : -(arc4random() % 10 + 3)];
+            [rhe setValuePerTick:-(arc4random() % 16 + 6)];
             [member addEffect:rhe];
             [rhe release];
         }
@@ -1073,7 +1057,7 @@
     [super combatActions:players theRaid:theRaid gameTime:timeDelta];
     if (self.healthPercentage > 21.0){
         self.lastPotionThrow+=timeDelta;
-        float tickTime = self.isMultiplayer ? 6.0 : 12.0;
+        float tickTime = 12.0;
         if (self.lastPotionThrow > tickTime){
             [self throwPotionToTarget:[theRaid randomLivingMember] withDelay:0.0];
             self.lastPotionThrow = 0.0;
@@ -1087,16 +1071,6 @@
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (percentage == 99.0){
         [self.announcer announce:@"An imp grabs a bundle of vials off of a nearby desk."];
-    }
-    
-    if ((self.isMultiplayer) && percentage == 75.0){
-        for (RaidMember *member in raid.raidMembers){
-            if (!member.isDead){
-                [self throwPotionToTarget:member withDelay:0.0];
-            }
-        }
-        [self.announcer announce:@"An imp angrily hurls the entire case of flasks at you!"];
-        [[AudioController sharedInstance] playTitle:[NSString stringWithFormat:@"imp_throw1"]];
     }
     
     if (percentage == 50.0){

@@ -183,25 +183,37 @@
     //For subclass overrides
 }
 
+- (BOOL)checkCritical
+{
+    if (!self.owner) {
+        return NO;
+    }
+    return arc4random() % 100 < self.owner.spellCriticalChance * 100;
+}
+
 -(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
 {
-    
 	if ([self targets] <= 1){
         int currentTargetHealth = [thePlayer spellTarget].health;
         NSInteger amount = [self healingAmount];
+        BOOL critical = [self checkCritical];
+        if (critical) {
+            amount *= self.owner.criticalBonusMultiplier;
+        }
         [self willHealTarget:[thePlayer spellTarget] inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:amount];
 		[[thePlayer spellTarget] setHealth:[[thePlayer spellTarget] health] + amount];
         int newHealth = [thePlayer spellTarget].health;
         NSInteger finalAmount = newHealth - currentTargetHealth;
         [self didHealTarget:[thePlayer spellTarget] inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
         NSInteger overheal = amount - finalAmount;
-        [self.owner playerDidHealFor:finalAmount onTarget:thePlayer.spellTarget fromSpell:self withOverhealing:overheal];
+        [self.owner playerDidHealFor:finalAmount onTarget:thePlayer.spellTarget fromSpell:self withOverhealing:overheal asCritical:critical];
 		[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
         [self applyEffectToTarget:thePlayer.spellTarget];
 	}
 	else if ([self targets] > 1){
 		int limit = [self targets];
 		if ([[thePlayer additionalTargets] count] < limit) limit = [[thePlayer additionalTargets] count];
+        BOOL critical = [self checkCritical];
 		for (int i = 0; i < limit; i++){
 			RaidMember *currentTarget = [[thePlayer additionalTargets] objectAtIndex:i];
 			if ([currentTarget isDead]) continue;
@@ -209,13 +221,16 @@
 				double PercentageThisTarget = [[[self percentagesPerTarget] objectAtIndex:i] doubleValue];
                 int currentTargetHealth = currentTarget.health;
                 NSInteger amount = ([self healingAmount]*PercentageThisTarget);
+                if (critical) {
+                    amount *= self.owner.criticalBonusMultiplier;
+                }
                 [self willHealTarget:currentTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:amount];
 				[currentTarget setHealth:[[thePlayer spellTarget] health] + amount];
                 int newTargetHealth = currentTarget.health;
                 NSInteger finalAmount = newTargetHealth - currentTargetHealth;
                 [self didHealTarget:currentTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
                 NSInteger overheal = amount - finalAmount;
-                [self.owner playerDidHealFor:finalAmount onTarget:currentTarget fromSpell:self withOverhealing:overheal];
+                [self.owner playerDidHealFor:finalAmount onTarget:currentTarget fromSpell:self withOverhealing:overheal asCritical:critical];
                 [self applyEffectToTarget:currentTarget];
 			}
 			
@@ -360,13 +375,16 @@
     NSInteger totalTargets = 2;
     
     NSArray *myTargets = [theRaid lowestHealthTargets:totalTargets withRequiredTarget:thePlayer.spellTarget];
-    
-    int i = 0; 
+    BOOL critical = [self checkCritical];
+    int i = 0;
     for (RaidMember *healableTarget in myTargets){
         int currentTargetHealth = healableTarget.health;
         NSInteger amount = [self healingAmount];
         if (i != 0) {
             amount *= .66;
+        }
+        if (critical) {
+            amount *= self.owner.criticalBonusMultiplier;
         }
         [self willHealTarget:healableTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:amount];
 		[healableTarget setHealth:[healableTarget health] + amount];
@@ -374,7 +392,7 @@
         NSInteger finalAmount = newHealth - currentTargetHealth;
         [self didHealTarget:healableTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
         NSInteger overheal = amount - finalAmount;
-        [self.owner playerDidHealFor:finalAmount onTarget:healableTarget fromSpell:self withOverhealing:overheal];
+        [self.owner playerDidHealFor:finalAmount onTarget:healableTarget fromSpell:self withOverhealing:overheal asCritical:critical];
     }
     
     [thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
@@ -557,17 +575,21 @@
     NSInteger totalTargets = 5;
 
     NSArray *myTargets = [theRaid lowestHealthTargets:totalTargets  withRequiredTarget:thePlayer.spellTarget];
-    
+    BOOL critical = [self checkCritical];
+
     for (RaidMember *healableTarget in myTargets){
         int currentTargetHealth = healableTarget.health;
         NSInteger amount = [self healingAmount];
+        if (critical) {
+            amount *= self.owner.criticalBonusMultiplier;
+        }
         [self willHealTarget:healableTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:amount];
 		[healableTarget setHealth:[healableTarget health] + amount];
         int newHealth = healableTarget.health;
         NSInteger finalAmount = newHealth - currentTargetHealth;
         [self didHealTarget:healableTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
         NSInteger overheal = amount - finalAmount;
-        [self.owner playerDidHealFor:finalAmount onTarget:healableTarget fromSpell:self withOverhealing:overheal];
+        [self.owner playerDidHealFor:finalAmount onTarget:healableTarget fromSpell:self withOverhealing:overheal asCritical:critical];
     }
     
     [thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
@@ -763,7 +785,7 @@
         if (target != self.owner.spellTarget) {
             [self willHealTarget:target inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:0];
             [self didHealTarget:target inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:0];
-            [self.owner playerDidHealFor:0 onTarget:target fromSpell:self withOverhealing:0];
+            [self.owner playerDidHealFor:0 onTarget:target fromSpell:self withOverhealing:0 asCritical:NO];
         }
         
         RepeatedHealthEffect *sunburstEffect = [[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
@@ -810,7 +832,7 @@
         if (starTarget != self.owner.spellTarget) {
             [self willHealTarget:starTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:0];
             [self didHealTarget:starTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:0];
-            [self.owner playerDidHealFor:0 onTarget:starTarget fromSpell:self withOverhealing:0];
+            [self.owner playerDidHealFor:0 onTarget:starTarget fromSpell:self withOverhealing:0 asCritical:NO];
         }
         ProjectileEffect *starProjectile = [[ProjectileEffect alloc] initWithSpriteName:@"star.png" target:starTarget andCollisionTime:healDelay];
         [starProjectile setCollisionParticleName:@"star_explosion.plist"];

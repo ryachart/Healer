@@ -14,6 +14,8 @@
 /* A RaidView contains an Array of all the Raid member health views and lays them 
    out based on the frame size.
  */
+
+@class RaidMemberHealthView;
 @interface RaidView : CCLayer {
 	NSInteger nextRectToUse;
 }
@@ -24,6 +26,7 @@
 -(BOOL)addRaidMemberHealthView:(RaidMemberHealthView*)healthView;
 
 -(CGPoint)frameCenterForMember:(RaidMember*)raidMember;
+-(RaidMemberHealthView*)healthViewForMember:(RaidMember*)raidMember;
 -(CGPoint)randomMissedProjectileDestination;
 -(void)spawnRects;
 -(CGRect)vendNextUsableRect;

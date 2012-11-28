@@ -123,5 +123,14 @@
     [super dealloc];
 }
 
+-(RaidMemberHealthView*)healthViewForMember:(RaidMember*)raidMember
+{
+    for (RaidMemberHealthView *rmhv in self.raidViews){
+        if (rmhv.memberData == raidMember){
+            return rmhv;
+        }
+    }
+    return nil;
+}
 
 @end

@@ -133,4 +133,11 @@
     return nil;
 }
 
+- (void)endBattleWithSuccess:(BOOL)success
+{
+    for (RaidMemberHealthView *healthView in self.raidViews) {
+        [healthView runAction:[CCFadeOut actionWithDuration:1.0]];
+    }
+}
+
 @end

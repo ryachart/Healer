@@ -57,6 +57,8 @@
 
 - (void)configureBossForDifficultyLevel:(NSInteger)difficulty;
 
+- (Ability*)abilityWithTitle:(NSString*)ability;
+
 @end
 
 

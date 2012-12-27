@@ -722,7 +722,7 @@
 + (id)defaultEffect {
     EngulfingSlimeEffect *ese = [[EngulfingSlimeEffect alloc] initWithDuration:45.0 andEffectType:EffectTypeNegative];
     [ese setTitle:@"e-slime-eff"];
-    [ese setValuePerTick:-1];
+    [ese setValuePerTick:-10];
     [ese setNumOfTicks:50];
     [ese setSpriteName:@"engulfing_slime.png"];
     [ese setMaxStacks:5];

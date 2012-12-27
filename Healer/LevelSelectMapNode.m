@@ -161,7 +161,7 @@
 
 - (void)selectFurthestLevel
 {
-    [self selectLevel:[[PlayerDataManager localPlayer] highestLevelCompleted] + 1];
+    [self selectLevel:MIN(NUM_ENCOUNTERS, [[PlayerDataManager localPlayer] highestLevelCompleted] + 1)];
 }
 
 @end

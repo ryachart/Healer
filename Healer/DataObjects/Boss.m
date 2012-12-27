@@ -79,6 +79,10 @@
             break;
     }
     [self addEffect:damageMod];
+    
+    for (Ability *ab in self.abilities) {
+        [ab setDifficulty:self.difficulty];
+    }
 }
 
 - (void)addAbilityDescriptor:(AbilityDescriptor*)descriptor {
@@ -109,6 +113,7 @@
         return;
     }
     ab.owner = self;
+    ab.difficulty = self.difficulty;
     [self.abilities addObject:ab];
 }
 
@@ -162,7 +167,16 @@
         self.queuedAbilitiesToAdd = [NSMutableArray arrayWithCapacity:1];
     }
 	return self;
-	
+}
+
+- (Ability*)abilityWithTitle:(NSString*)abilityTitle
+{
+    for (Ability*ab in self.abilities) {
+        if ([ab.title isEqualToString:abilityTitle]) {
+            return ab;
+        }
+    }
+    return nil;
 }
 
 -(void)updateEffects:(Boss*)theBoss raid:(Raid*)theRaid player:(Player*)thePlayer time:(float)timeDelta{
@@ -248,7 +262,7 @@
 
 @implementation Ghoul
 +(id)defaultBoss{
-    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:2184 damage:200 targets:1 frequency:2.0 choosesMT:NO ];
+    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:21840 damage:200 targets:1 frequency:2.0 choosesMT:NO ];
     [ghoul setTitle:@"The Night Ghoul"];
     [ghoul setInfo:@"A ghoul has found its way onto a nearby farmer's land.  It has already killed the farmer's wife.  You will accompany a small band of mercenaries to dispatch the ghoul."];
     return [ghoul autorelease];
@@ -272,7 +286,7 @@
 @implementation CorruptedTroll
 @synthesize enraging;
 +(id)defaultBoss{
-    NSInteger health = 18500;
+    NSInteger health = 185000;
     NSInteger damage = 220;
     NSTimeInterval freq = 1.4;
     
@@ -360,7 +374,7 @@
 
 @implementation Drake 
 +(id)defaultBoss {
-    Drake *drake = [[Drake alloc] initWithHealth:40000 damage:0 targets:0 frequency:0 choosesMT:NO ];
+    Drake *drake = [[Drake alloc] initWithHealth:400000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [drake setTitle:@"Tainted Drake"];
     [drake setInfo:@"A Tainted Drake is hidden in the Paragon Cliffs. You and your allies must stop the beast from doing any more damage to the Kingdom.  The king will provide you with a great reward for defeating the beast."];
     
@@ -408,10 +422,404 @@
 }
 @end
 
+
+@implementation MischievousImps
+@synthesize lastPotionThrow;
++(id)defaultBoss {
+    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:405000 damage:0 targets:0 frequency:2.25 choosesMT:NO];
+    [boss removeAbility:boss.autoAttack];
+    boss.autoAttack = [[[SustainedAttack alloc] initWithDamage:340 andCooldown:2.25] autorelease];
+    boss.autoAttack.failureChance = .25;
+    [boss addAbility:boss.autoAttack];
+    
+    [boss setTitle:@"Mischievious Imps"];
+    [boss setInfo:@" A local alchemist has posted a small reward for removing a pesky imp infestation from her store.  Sensing something a little more sinister a small party has been dispatched from the Light Ascendant just in case there is more than meets the eye."];
+    [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw1" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw1" ofType:@"m4a"]]];
+    [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw2" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw2" ofType:@"m4a"]]];
+    return [boss autorelease];
+}
+
+-(void)dealloc{
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"imp_throw1"];
+    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"imp_throw2"];
+    [super dealloc];
+}
+
+-(void)throwPotionToTarget:(RaidMember *)target withDelay:(float)delay{
+    NSInteger possiblePotions = 2;
+    if (self.difficulty > 4) {
+        possiblePotions = 3;
+    }
+    
+    int potion = arc4random() % possiblePotions;
+    float colTime = (1.5 + delay);
+    
+    if (potion == 0){
+        //Liquid Fire
+        NSInteger impactDamage = -150;
+        NSInteger dotDamage = -200;
+        
+        DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [bottleEffect setValue:impactDamage * self.damageDoneMultiplier];
+        [bottleEffect setIsIndependent:YES];
+        [bottleEffect setOwner:self];
+        [target addEffect:bottleEffect];
+        
+        RepeatedHealthEffect *burnDoT = [[[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative] autorelease];
+        [burnDoT setOwner:self];
+        [burnDoT setTitle:@"imp-burn-dot"];
+        [burnDoT setSpriteName:@"burning.png"];
+        [burnDoT setValuePerTick:dotDamage];
+        [burnDoT setNumOfTicks:4];
+        [bottleEffect setAppliedEffect:burnDoT];
+        
+        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
+        [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
+        [bottleVisual setType:ProjectileEffectTypeThrow];
+        [self.announcer displayProjectileEffect:bottleVisual];
+        
+        
+    }else if (potion == 1) {
+        //Lightning In a Bottle
+        DelayedHealthEffect *bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
+        
+        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
+        [bottleVisual setSpriteColor:ccc3(0, 128, 128)];
+        [bottleVisual setType:ProjectileEffectTypeThrow];
+        [self.announcer displayProjectileEffect:bottleVisual];
+        [bottleEffect setIsIndependent:YES];
+        [bottleEffect setOwner:self];
+        NSInteger damage = FUZZ(-550, 10);
+        //        if (self.difficulty == DifficultyModeHard) {
+        //            damage *= 1.25;
+        //        }
+        [bottleEffect setValue:damage];
+        [target addEffect:bottleEffect];
+    } else if (potion == 2) {
+        //Angry Spirit
+        NSInteger impactDamage = -150;
+        NSInteger dotDamage = -200;
+        
+        DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [bottleEffect setValue:impactDamage * self.damageDoneMultiplier];
+        [bottleEffect setIsIndependent:YES];
+        [bottleEffect setOwner:self];
+        [target addEffect:bottleEffect];
+        
+        WanderingSpiritEffect *wse = [[[WanderingSpiritEffect alloc] initWithDuration:14.0 andEffectType:EffectTypeNegative] autorelease];
+        [wse setAilmentType:AilmentCurse];
+        [wse setTitle:@"angry-spirit-effect"];
+        [wse setSpriteName:@"angry_spirit.png"];
+        [wse setValuePerTick:dotDamage];
+        [wse setNumOfTicks:8.0];
+        [bottleEffect setAppliedEffect:wse];
+        
+        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
+        [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
+        [bottleVisual setType:ProjectileEffectTypeThrow];
+        [self.announcer displayProjectileEffect:bottleVisual];
+    }
+    
+}
+
+- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+{
+    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
+    if (self.healthPercentage > 21.0){
+        self.lastPotionThrow+=timeDelta;
+        float tickTime = 12.0;
+        if (self.lastPotionThrow > tickTime){
+            [self throwPotionToTarget:[theRaid randomLivingMember] withDelay:0.0];
+            self.lastPotionThrow = 0.0;
+            int throwSound = arc4random() %2 + 1;
+            [[AudioController sharedInstance] playTitle:[NSString stringWithFormat:@"imp_throw%i", throwSound]];
+            
+        }
+    }
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    if (percentage == 99.0){
+        [self.announcer announce:@"An imp grabs a bundle of vials off of a nearby desk."];
+    }
+    
+    if (percentage == 50.0){
+        for (RaidMember *member in raid.raidMembers){
+            if (!member.isDead){
+                [self throwPotionToTarget:member withDelay:0.0];
+            }
+        }
+        [self.announcer announce:@"An imp angrily hurls the entire case of flasks at you!"];
+        [[AudioController sharedInstance] playTitle:[NSString stringWithFormat:@"imp_throw1"]];
+    }
+    
+    if (percentage == 15.0){
+        [self.announcer announce:@"The imps begin attacking angrily!"];
+        [self.autoAttack setCooldown:1.35];
+        [self.autoAttack setFailureChance:.35];
+    }
+}
+@end
+
+@implementation BefouledTreant
+@synthesize lastRootquake;
++(id)defaultBoss {
+    NSInteger bossDamage = 390;
+    
+    BefouledTreant *boss = [[BefouledTreant alloc] initWithHealth:580000 damage:bossDamage targets:1 frequency:3.0 choosesMT:YES ];
+    boss.autoAttack.failureChance = .25;
+    [boss setTitle:@"Befouled Treant"];
+    [boss setInfo:@"The Akarus, an ancient tree that has sheltered travelers across the Gungoro Plains, has become tainted with the foul energy of The Dark Winds.  It is lashing its way through villagers and farmers.  This once great tree must be ended for good."];
+    
+    
+    Cleave *cleave = [Cleave normalCleave];
+    [cleave setAbilityValue:400]; //Gotta tone this shit down.  It's a bit too hard =/
+    [boss addAbility:cleave];
+    
+    return [boss autorelease];
+}
+
+- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+{
+    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
+    
+    float tickTime = 30.0;
+    self.lastRootquake += timeDelta;
+    if (self.lastRootquake > tickTime){
+        [self performRootquakeOnRaid:theRaid];
+        self.lastRootquake = 0.0;
+    }
+}
+
+-(void)performBranchAttackOnRaid:(Raid*)raid{
+    NSInteger branchInitialDamage = 260;
+    NSInteger branchDoTTick = -40;
+    
+    for (RaidMember *member in raid.raidMembers){
+        [member setHealth:member.health - branchInitialDamage * self.damageDoneMultiplier];
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:branchInitialDamage * self.damageDoneMultiplier] andEventType:CombatEventTypeDamage]];
+        RepeatedHealthEffect *lashDoT = [[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative];
+        [lashDoT setOwner:self];
+        [lashDoT setTitle:@"lash"];
+        [lashDoT setAilmentType:AilmentTrauma];
+        [lashDoT setValuePerTick:branchDoTTick];
+        [lashDoT setNumOfTicks:5];
+        [lashDoT setSpriteName:@"bleeding.png"];
+        [member addEffect:[lashDoT autorelease]];
+    }
+}
+
+-(void)performRootquakeOnRaid:(Raid*)raid{
+    [self.announcer announce:@"The Treant's roots move the earth."];
+    [self.announcer displayScreenShakeForDuration:6.0];
+    for (RaidMember *member in raid.raidMembers){
+        RepeatedHealthEffect *rootquake = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegativeInvisible];
+        [rootquake setOwner:self];
+        [rootquake setValuePerTick:-50];
+        [rootquake setNumOfTicks:4];
+        [rootquake setTitle:@"rootquake"];
+        [member addEffect:[rootquake autorelease]];
+    }
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    if (percentage == 97.0 || percentage == 75.0 || percentage == 51.0 || percentage == 30.0){
+        [self.announcer announce:@"The Befouled Treant's pulls its enormous branches back to lash out at your allies."];
+    }
+    if (percentage == 96.0 || percentage == 74.0 || percentage == 50.0 || percentage == 29.0){
+        [self performBranchAttackOnRaid:raid];
+    }
+}
+@end
+
+@implementation FungalRavagers
+@synthesize isEnraged, secondTargetAttack, thirdTargetAttack;
++(id)defaultBoss {
+    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:580000 damage:152 targets:1 frequency:2.0 choosesMT:YES ];
+    boss.autoAttack.failureChance = .25;
+    [boss setTitle:@"Fungal Ravagers"];
+    [boss setInfo:@"Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate. Conversely, no villagers have left the town, either..."];
+    [boss setCriticalChance:.5];
+    
+    FocusedAttack *secondFocusedAttack = [[FocusedAttack alloc] initWithDamage:180 andCooldown:2.6];
+    secondFocusedAttack.failureChance = .25;
+    [boss addAbility:secondFocusedAttack];
+    [boss setSecondTargetAttack:secondFocusedAttack];
+    [secondFocusedAttack release];
+    FocusedAttack *thirdFocusedAttack = [[FocusedAttack alloc] initWithDamage:213 andCooldown:3.2];
+    thirdFocusedAttack.failureChance = .25;
+    [boss addAbility:thirdFocusedAttack];
+    [boss setThirdTargetAttack:thirdFocusedAttack];
+    [thirdFocusedAttack release];
+    
+    AbilityDescriptor *vileExploDesc = [[AbilityDescriptor alloc] init];
+    [vileExploDesc setAbilityDescription:@"When a Fungal Ravager dies, it explodes coating random targets in toxic venom."];
+    [vileExploDesc setIconName:@"unknown_ability.png"];
+    [vileExploDesc setAbilityName:@"Vile Explosion"];
+    [boss addAbilityDescriptor:vileExploDesc];
+    [vileExploDesc release];
+    
+    return [boss autorelease];
+}
+
+-(void)ravagerDiedFocusing:(RaidMember*)focus andRaid:(Raid*)raid{
+    [self.announcer announce:@"A Fungal Ravager falls to the ground and explodes!"];
+    [focus setIsFocused:NO];
+    
+    NSInteger numTargets = arc4random() % 3 + 3;
+    
+    NSArray *members = [raid randomTargets:numTargets withPositioning:Any];
+    for (RaidMember *member in members){
+        NSInteger damage = arc4random() % 350 + 550;
+        RepeatedHealthEffect *damageEffect = [[[RepeatedHealthEffect alloc] initWithDuration:2.5 andEffectType:EffectTypeNegative] autorelease];
+        [damageEffect setAilmentType:AilmentPoison];
+        [damageEffect setSpriteName:@"poison.png"];
+        [damageEffect setNumOfTicks:3];
+        [damageEffect setValuePerTick:-damage / 3];
+        [damageEffect setOwner:self];
+        [damageEffect setTitle:@"ravager-explo"];
+        [member addEffect:damageEffect];
+    }
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    
+    if (percentage == 96.0){
+        [self.announcer announce:@"A putrid green mist fills the area..."];
+        [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:-1.0];
+        for (RaidMember *member in raid.raidMembers){
+            RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegativeInvisible];
+            [rhe setOwner:self];
+            [rhe setTitle:@"fungal-ravager-mist"];
+            [rhe setValuePerTick:-(arc4random() % 16 + 6)];
+            [member addEffect:rhe];
+            [rhe release];
+        }
+    }
+    if (percentage == 66.0){
+        [self ravagerDiedFocusing:self.thirdTargetAttack.focusTarget andRaid:raid];
+        [self removeAbility:self.thirdTargetAttack];
+    }
+    if (percentage == 33.0){
+        [self ravagerDiedFocusing:self.secondTargetAttack.focusTarget andRaid:raid];
+        [self removeAbility:self.secondTargetAttack];
+    }
+    
+    if (percentage == 30.0){
+        [self.announcer announce:@"The last remaining Ravager glows with rage."];
+        Effect *enragedEffect = [[Effect alloc] initWithDuration:300 andEffectType:EffectTypePositiveInvisible];
+        [enragedEffect setIsIndependent:YES];
+        [enragedEffect setTarget:self];
+        [enragedEffect setOwner:self];
+        [enragedEffect setDamageDoneMultiplierAdjustment:1.25];
+        [self addEffect:enragedEffect];
+        [enragedEffect release];
+    }
+}
+
+@end
+
+
+@implementation PlaguebringerColossus
+@synthesize lastSickeningTime, numBubblesPopped;
++(id)defaultBoss {
+    //427500
+    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:580000 damage:330 targets:1 frequency:2.5 choosesMT:YES ];
+    boss.autoAttack.failureChance = .30;
+    [boss setTitle:@"Plaguebringer Colossus"];
+    [boss setInfo:@"From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped. You must lead this group to victory against the wretched beast."];
+    
+    AbilityDescriptor *sickenDesc = [[AbilityDescriptor alloc] init];
+    [sickenDesc setAbilityDescription:@"The Colossus will sicken targets causing them to take damage until they are healed to full health."];
+    [sickenDesc setIconName:@"unknown_ability.png"];
+    [sickenDesc setAbilityName:@"Strange Sickness"];
+    [boss addAbilityDescriptor:sickenDesc];
+    [sickenDesc release];
+    
+    AbilityDescriptor *pusExploDesc = [[AbilityDescriptor alloc] init];
+    [pusExploDesc setAbilityDescription:@"When your allies deal enough damage to the Plaguebringer Colossus to break off a section of its body the section explodes vile toxin dealing high damage to your raid."];
+    [pusExploDesc setIconName:@"unknown_ability.png"];
+    [pusExploDesc setAbilityName:@"Limb Bomb"];
+    [boss addAbilityDescriptor:pusExploDesc];
+    [pusExploDesc release];
+    
+    [boss addAbility:[Cleave normalCleave]];
+    
+    return [boss autorelease];
+}
+
+-(void)sickenTarget:(RaidMember *)target{
+    ExpiresAtFullHealthRHE *infectedWound = [[ExpiresAtFullHealthRHE alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative];
+    [infectedWound setOwner:self];
+    [infectedWound setTitle:@"pbc-infected-wound"];
+    [infectedWound setAilmentType:AilmentTrauma];
+    [infectedWound setValuePerTick:-100];
+    [infectedWound setNumOfTicks:15];
+    [infectedWound setSpriteName:@"bleeding.png"];
+    if (target.health > target.maximumHealth * .58){
+        // Spike the health for funsies!
+        NSInteger preHealth = target.health;
+        [target setHealth:target.health * .58];
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:preHealth - target.health] andEventType:CombatEventTypeDamage]];
+    }
+    [target addEffect:infectedWound];
+    [infectedWound release];
+    
+}
+
+-(void)burstPussBubbleOnRaid:(Raid*)theRaid{
+    [self.announcer announce:@"A putrid sac of filth bursts onto your allies"];
+    self.numBubblesPopped++;
+    //Boss does 10% less damage for each bubble popped
+    Effect *reducedDamageEffect = [[Effect alloc] initWithDuration:300 andEffectType:EffectTypePositiveInvisible];
+    [reducedDamageEffect setIsIndependent:YES];
+    [reducedDamageEffect setTarget:self];
+    [reducedDamageEffect setOwner:self];
+    [reducedDamageEffect setDamageDoneMultiplierAdjustment:-0.1];
+    [self addEffect:reducedDamageEffect];
+    [reducedDamageEffect release];
+    
+    for (RaidMember *member in theRaid.raidMembers){
+        if (!member.isDead){
+            RepeatedHealthEffect *singleTickDot = [[RepeatedHealthEffect alloc] initWithDuration:3.0 andEffectType:EffectTypeNegative];
+            [singleTickDot setOwner:self];
+            [singleTickDot setTitle:@"pbc-pussBubble"];
+            [singleTickDot setNumOfTicks:2];
+            [singleTickDot setAilmentType:AilmentPoison];
+            [singleTickDot setValuePerTick:-(arc4random() % 150 + 200)];
+            [singleTickDot setSpriteName:@"poison.png"];
+            [member addEffect:singleTickDot];
+            [singleTickDot release];
+        }
+    }
+}
+
+- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+{
+    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
+    
+    self.lastSickeningTime += timeDelta;
+    float tickTime =  15.0;
+    if (self.lastSickeningTime > tickTime){
+        for ( int i = 0; i < 2; i++){
+            [self sickenTarget:theRaid.randomLivingMember];
+        }
+        self.lastSickeningTime = 0.0;
+    }
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    if (((int)percentage) % 20 == 0 && percentage != 100){
+        [self burstPussBubbleOnRaid:raid];
+    }
+}
+
+@end
+
 @implementation Trulzar
 @synthesize lastPoisonTime, lastPotionTime;
 +(id)defaultBoss {
-    Trulzar *boss = [[Trulzar alloc] initWithHealth:260000 damage:0 targets:0 frequency:100.0 choosesMT:NO ];
+    Trulzar *boss = [[Trulzar alloc] initWithHealth:2600000 damage:0 targets:0 frequency:100.0 choosesMT:NO ];
     [boss setTitle:@"Trulzar the Maleficar"];
     [boss setNamePlateTitle:@"Trulzar"];
     [boss setInfo:@"Before the dark winds came, Trulzar was a teacher at the Academy of Alchemists.  Since then, Trulzar has drawn into seclusion and begun practicing dark magic.  Trulzar has been identified as a Maleficar by the Theranorian Sages."];
@@ -552,9 +960,9 @@
 @implementation DarkCouncil
 @synthesize lastPoisonballTime, rothVictim, lastDarkCloud;
 +(id)defaultBoss {
-    DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:245000 damage:0 targets:1 frequency:.75 choosesMT:NO ];
+    DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:2450000 damage:0 targets:1 frequency:.75 choosesMT:NO ];
     [boss setTitle:@"Council of Dark Summoners"];
-    [boss setNamePlateTitle:@"The Council"];
+    [boss setNamePlateTitle:@"Roth"];
     [boss setInfo:@"A note scribbled in blood was found in Trulzar's quarters.  It mentions a Council responsible for The Dark Winds plaguing Theranore.  Go to the crypt beneath The Hollow and discover what this Council is up to."];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"roth_entrance" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/roth_entrance" ofType:@"m4a"]]];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"roth_death" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/roth_death" ofType:@"m4a"]]];
@@ -652,6 +1060,7 @@
     
     if (self.phase == 2){
         //Grimgon
+        [self setNamePlateTitle:@"Grimgon"];
         self.lastPoisonballTime += timeDelta;
         float tickTime = self.isMultiplayer ? 7.5 : 9;
         if (self.lastPoisonballTime > tickTime){ 
@@ -664,6 +1073,7 @@
     
     if (self.phase == 3){
         //Serevon
+        [self setNamePlateTitle:@"Serevon"];
         self.lastDarkCloud += timeDelta;
         float tickTime = 18.0;
         if (self.lastDarkCloud > tickTime){
@@ -673,7 +1083,7 @@
     }
     
     if (self.phase == 4){
-        
+        [self setNamePlateTitle:@"Galcyon"];
     }
 
 }
@@ -725,7 +1135,7 @@
     if (percentage == 49.0){
         [[AudioController sharedInstance] playTitle:@"serevon_entrance"];
         AbilityDescriptor *serevonDesc = [[AbilityDescriptor alloc] init];
-        [serevonDesc setAbilityDescription:@"Periodically, Serevon summons a dark cloud over all of your allies that deals more damage to lower health allies."];
+        [serevonDesc setAbilityDescription:@"Periodically, Serevon summons a dark cloud over all of your allies that deals more damage to lower health allies and weakens healing magic."];
         [serevonDesc setIconName:@"unknown_ability.png"];
         [serevonDesc setAbilityName:@"Choking Cloud"];
         [self addAbilityDescriptor:serevonDesc];
@@ -739,6 +1149,7 @@
         [self.announcer announce:@"Galcyon, Overlord of Darkness pushes away Serevon's corpse and slithers into the fray."];
         self.phase = 4;
     }
+    
     if (percentage == 24.0){
         [[AudioController sharedInstance] playTitle:@"galcyon_entrance"];
     }
@@ -758,411 +1169,13 @@
 }
 @end
 
-
-@implementation PlaguebringerColossus
-@synthesize lastSickeningTime, numBubblesPopped;
-+(id)defaultBoss {
-    //427500
-    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:58000 damage:330 targets:1 frequency:2.5 choosesMT:YES ];
-    boss.autoAttack.failureChance = .30;
-    [boss setTitle:@"Plaguebringer Colossus"];
-    [boss setInfo:@"From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped. You must lead this group to victory against the wretched beast."];
-    
-    AbilityDescriptor *sickenDesc = [[AbilityDescriptor alloc] init];
-    [sickenDesc setAbilityDescription:@"The Colossus will sicken targets causing them to take damage until they are healed to full health."];
-    [sickenDesc setIconName:@"unknown_ability.png"];
-    [sickenDesc setAbilityName:@"Strange Sickness"];
-    [boss addAbilityDescriptor:sickenDesc];
-    [sickenDesc release];
-    
-    AbilityDescriptor *pusExploDesc = [[AbilityDescriptor alloc] init];
-    [pusExploDesc setAbilityDescription:@"When your allies deal enough damage to the Plaguebringer Colossus to break off a section of its body the section explodes vile toxin dealing high damage to your raid."];
-    [pusExploDesc setIconName:@"unknown_ability.png"];
-    [pusExploDesc setAbilityName:@"Limb Bomb"];
-    [boss addAbilityDescriptor:pusExploDesc];
-    [pusExploDesc release];
-    
-//    if (mode == DifficultyModeHard) {
-//        [boss addAbility:[Cleave hardCleave]];
-//    } else {
-    [boss addAbility:[Cleave normalCleave]];
-//    }
-    
-    return [boss autorelease];
-}
-
--(void)sickenTarget:(RaidMember *)target{
-    ExpiresAtFullHealthRHE *infectedWound = [[ExpiresAtFullHealthRHE alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative];
-    [infectedWound setOwner:self];
-    [infectedWound setTitle:@"pbc-infected-wound"];
-    [infectedWound setAilmentType:AilmentTrauma];
-    [infectedWound setValuePerTick:-100];
-    [infectedWound setNumOfTicks:15];
-    [infectedWound setSpriteName:@"bleeding.png"];
-    if (target.health > target.maximumHealth * .58){
-        // Spike the health for funsies!
-        NSInteger preHealth = target.health;
-        [target setHealth:target.health * .58];
-        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:preHealth - target.health] andEventType:CombatEventTypeDamage]];
-    }
-    [target addEffect:infectedWound];
-    [infectedWound release];
-    
-}
-
--(void)burstPussBubbleOnRaid:(Raid*)theRaid{
-    [self.announcer announce:@"A putrid sac of filth bursts onto your allies"];
-    self.numBubblesPopped++;
-    //Boss does 10% less damage for each bubble popped
-    Effect *reducedDamageEffect = [[Effect alloc] initWithDuration:300 andEffectType:EffectTypePositiveInvisible];
-    [reducedDamageEffect setIsIndependent:YES];
-    [reducedDamageEffect setTarget:self];
-    [reducedDamageEffect setOwner:self];
-    [reducedDamageEffect setDamageDoneMultiplierAdjustment:-0.1];
-    [self addEffect:reducedDamageEffect];
-    [reducedDamageEffect release];
-    
-    for (RaidMember *member in theRaid.raidMembers){
-        if (!member.isDead){
-            RepeatedHealthEffect *singleTickDot = [[RepeatedHealthEffect alloc] initWithDuration:3.0 andEffectType:EffectTypeNegative];
-            [singleTickDot setOwner:self];
-            [singleTickDot setTitle:@"pbc-pussBubble"];
-            [singleTickDot setNumOfTicks:2];
-            [singleTickDot setAilmentType:AilmentPoison];
-            [singleTickDot setValuePerTick:-(arc4random() % 150 + 200)];
-            [singleTickDot setSpriteName:@"poison.png"];
-            [member addEffect:singleTickDot];
-            [singleTickDot release];
-        }
-    }
-}
-     
-- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
-{
-    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
-    
-    self.lastSickeningTime += timeDelta;
-    float tickTime =  15.0;
-    if (self.lastSickeningTime > tickTime){
-        for ( int i = 0; i < 2; i++){
-            [self sickenTarget:theRaid.randomLivingMember];
-        }
-        self.lastSickeningTime = 0.0;
-    }
-}
-
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (((int)percentage) % 20 == 0 && percentage != 100){
-        [self burstPussBubbleOnRaid:raid];
-    }
-}
-
-@end
-
-@implementation FungalRavagers
-@synthesize isEnraged, secondTargetAttack, thirdTargetAttack;
-+(id)defaultBoss {
-    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:58000 damage:152 targets:1 frequency:2.0 choosesMT:YES ];
-    boss.autoAttack.failureChance = .25;
-    [boss setTitle:@"Fungal Ravagers"];
-    [boss setInfo:@"Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate. Conversely, no villagers have left the town, either..."];
-    [boss setCriticalChance:.5];
-    
-    FocusedAttack *secondFocusedAttack = [[FocusedAttack alloc] initWithDamage:180 andCooldown:2.6];
-    secondFocusedAttack.failureChance = .25;
-    [boss addAbility:secondFocusedAttack];
-    [boss setSecondTargetAttack:secondFocusedAttack];
-    [secondFocusedAttack release];
-    FocusedAttack *thirdFocusedAttack = [[FocusedAttack alloc] initWithDamage:213 andCooldown:3.2];
-    thirdFocusedAttack.failureChance = .25;
-    [boss addAbility:thirdFocusedAttack];
-    [boss setThirdTargetAttack:thirdFocusedAttack];
-    [thirdFocusedAttack release];
-    
-    AbilityDescriptor *vileExploDesc = [[AbilityDescriptor alloc] init];
-    [vileExploDesc setAbilityDescription:@"When a Fungal Ravager dies, it explodes coating random targets in toxic venom."];
-    [vileExploDesc setIconName:@"unknown_ability.png"];
-    [vileExploDesc setAbilityName:@"Vile Explosion"];
-    [boss addAbilityDescriptor:vileExploDesc];
-    [vileExploDesc release];
-    
-    return [boss autorelease];
-}
-
--(void)ravagerDiedFocusing:(RaidMember*)focus andRaid:(Raid*)raid{
-    [self.announcer announce:@"A Fungal Ravager falls to the ground and explodes!"];
-    [focus setIsFocused:NO];
-    
-    NSInteger numTargets = arc4random() % 3 + 3;
-    
-    NSArray *members = [raid randomTargets:numTargets withPositioning:Any];
-    for (RaidMember *member in members){
-        NSInteger damage = arc4random() % 350 + 550;
-        RepeatedHealthEffect *damageEffect = [[[RepeatedHealthEffect alloc] initWithDuration:2.5 andEffectType:EffectTypeNegative] autorelease];
-        [damageEffect setAilmentType:AilmentPoison];
-        [damageEffect setSpriteName:@"poison.png"];
-        [damageEffect setNumOfTicks:3];
-        [damageEffect setValuePerTick:-damage / 3];
-        [damageEffect setOwner:self];
-        [damageEffect setTitle:@"ravager-explo"];
-        [member addEffect:damageEffect];
-    }
-}
-
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    
-    if (percentage == 96.0){
-        [self.announcer announce:@"A putrid green mist fills the area..."];
-        [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:-1.0];
-        for (RaidMember *member in raid.raidMembers){
-            RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegativeInvisible];
-            [rhe setOwner:self];
-            [rhe setTitle:@"fungal-ravager-mist"];
-            [rhe setValuePerTick:-(arc4random() % 16 + 6)];
-            [member addEffect:rhe];
-            [rhe release];
-        }
-    }
-    if (percentage == 66.0){
-        [self ravagerDiedFocusing:self.thirdTargetAttack.focusTarget andRaid:raid];
-        [self removeAbility:self.thirdTargetAttack];
-    }
-    if (percentage == 33.0){
-        [self ravagerDiedFocusing:self.secondTargetAttack.focusTarget andRaid:raid];
-        [self removeAbility:self.secondTargetAttack];
-    }
-    
-    if (percentage == 30.0){
-        [self.announcer announce:@"The last remaining Ravager glows with rage."];
-        Effect *enragedEffect = [[Effect alloc] initWithDuration:300 andEffectType:EffectTypePositiveInvisible];
-        [enragedEffect setIsIndependent:YES];
-        [enragedEffect setTarget:self];
-        [enragedEffect setOwner:self];
-        [enragedEffect setDamageDoneMultiplierAdjustment:1.25];
-        [self addEffect:enragedEffect];
-        [enragedEffect release];
-    }
-}
-
-@end
-
-@implementation MischievousImps
-@synthesize lastPotionThrow;
-+(id)defaultBoss {
-    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:40500 damage:0 targets:0 frequency:2.25 choosesMT:NO];
-    [boss removeAbility:boss.autoAttack];
-    boss.autoAttack = [[[SustainedAttack alloc] initWithDamage:340 andCooldown:2.25] autorelease];
-    boss.autoAttack.failureChance = .25;
-    [boss addAbility:boss.autoAttack];
-    
-    [boss setTitle:@"Mischievious Imps"];
-    [boss setInfo:@" A local alchemist has posted a small reward for removing a pesky imp infestation from her store.  Sensing something a little more sinister a small party has been dispatched from the Light Ascendant just in case there is more than meets the eye."];
-    [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw1" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw1" ofType:@"m4a"]]];
-    [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw2" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw2" ofType:@"m4a"]]];
-    return [boss autorelease];
-}
-
--(void)dealloc{
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"imp_throw1"];
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"imp_throw2"];
-    [super dealloc];
-}
-
--(void)throwPotionToTarget:(RaidMember *)target withDelay:(float)delay{
-    NSInteger possiblePotions = 2;
-    if (self.difficulty > 4) {
-        possiblePotions = 3;
-    }
-    
-    int potion = arc4random() % possiblePotions;
-    float colTime = (1.5 + delay);
-
-    if (potion == 0){
-        //Liquid Fire
-        NSInteger impactDamage = -150;
-        NSInteger dotDamage = -200;
-        
-        DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
-        [bottleEffect setValue:impactDamage * self.damageDoneMultiplier];
-        [bottleEffect setIsIndependent:YES];
-        [bottleEffect setOwner:self];
-        [target addEffect:bottleEffect];
-        
-        RepeatedHealthEffect *burnDoT = [[[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative] autorelease];
-        [burnDoT setOwner:self];
-        [burnDoT setTitle:@"imp-burn-dot"];
-        [burnDoT setSpriteName:@"burning.png"];
-        [burnDoT setValuePerTick:dotDamage];
-        [burnDoT setNumOfTicks:4];
-        [bottleEffect setAppliedEffect:burnDoT];
-        
-        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
-        [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
-        [bottleVisual setType:ProjectileEffectTypeThrow];
-        [self.announcer displayProjectileEffect:bottleVisual];
-
-        
-    }else if (potion == 1) {
-        //Lightning In a Bottle
-        DelayedHealthEffect *bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
-        
-        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
-        [bottleVisual setSpriteColor:ccc3(0, 128, 128)];
-        [bottleVisual setType:ProjectileEffectTypeThrow];
-        [self.announcer displayProjectileEffect:bottleVisual];
-        [bottleEffect setIsIndependent:YES];
-        [bottleEffect setOwner:self];
-        NSInteger damage = FUZZ(-550, 10);
-//        if (self.difficulty == DifficultyModeHard) {
-//            damage *= 1.25;
-//        }
-        [bottleEffect setValue:damage];
-        [target addEffect:bottleEffect];
-    } else if (potion == 2) {
-        //Angry Spirit
-        NSInteger impactDamage = -150;
-        NSInteger dotDamage = -200;
-        
-        DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
-        [bottleEffect setValue:impactDamage * self.damageDoneMultiplier];
-        [bottleEffect setIsIndependent:YES];
-        [bottleEffect setOwner:self];
-        [target addEffect:bottleEffect];
-        
-        WanderingSpiritEffect *wse = [[[WanderingSpiritEffect alloc] initWithDuration:14.0 andEffectType:EffectTypeNegative] autorelease];
-        [wse setAilmentType:AilmentCurse];
-        [wse setTitle:@"angry-spirit-effect"];
-        [wse setSpriteName:@"angry_spirit.png"];
-        [wse setValuePerTick:dotDamage];
-        [wse setNumOfTicks:8.0];
-        [bottleEffect setAppliedEffect:wse];
-        
-        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
-        [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
-        [bottleVisual setType:ProjectileEffectTypeThrow];
-        [self.announcer displayProjectileEffect:bottleVisual];
-    }
-    
-}
-
-- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
-{
-    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
-    if (self.healthPercentage > 21.0){
-        self.lastPotionThrow+=timeDelta;
-        float tickTime = 12.0;
-        if (self.lastPotionThrow > tickTime){
-            [self throwPotionToTarget:[theRaid randomLivingMember] withDelay:0.0];
-            self.lastPotionThrow = 0.0;
-            int throwSound = arc4random() %2 + 1;
-            [[AudioController sharedInstance] playTitle:[NSString stringWithFormat:@"imp_throw%i", throwSound]];
-
-        }
-    }
-}
-
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (percentage == 99.0){
-        [self.announcer announce:@"An imp grabs a bundle of vials off of a nearby desk."];
-    }
-    
-    if (percentage == 50.0){
-        for (RaidMember *member in raid.raidMembers){
-            if (!member.isDead){
-                [self throwPotionToTarget:member withDelay:0.0];
-            }
-        }
-        [self.announcer announce:@"An imp angrily hurls the entire case of flasks at you!"];
-        [[AudioController sharedInstance] playTitle:[NSString stringWithFormat:@"imp_throw1"]];
-    }
-    
-    if (percentage == 15.0){
-        [self.announcer announce:@"The imps begin attacking angrily!"];
-        [self.autoAttack setCooldown:1.35];
-        [self.autoAttack setFailureChance:.35];
-    }
-}
-@end
-
-@implementation BefouledTreant
-@synthesize lastRootquake;
-+(id)defaultBoss {
-    NSInteger bossDamage = 390;
-    
-    BefouledTreant *boss = [[BefouledTreant alloc] initWithHealth:58000 damage:bossDamage targets:1 frequency:3.0 choosesMT:YES ];
-    boss.autoAttack.failureChance = .25;
-    [boss setTitle:@"Befouled Treant"];
-    [boss setInfo:@"The Akarus, an ancient tree that has sheltered travelers across the Gungoro Plains, has become tainted with the foul energy of The Dark Winds.  It is lashing its way through villagers and farmers.  This once great tree must be ended for good."];
-    
-    
-    Cleave *cleave = [Cleave normalCleave];
-    [cleave setAbilityValue:400]; //Gotta tone this shit down.  It's a bit too hard =/
-    [boss addAbility:cleave];
-    
-    return [boss autorelease];
-}
-
-- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
-{
-    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
-    
-    float tickTime = 30.0;
-    self.lastRootquake += timeDelta;
-    if (self.lastRootquake > tickTime){
-        [self performRootquakeOnRaid:theRaid];
-        self.lastRootquake = 0.0;
-    }
-}
-
--(void)performBranchAttackOnRaid:(Raid*)raid{
-    NSInteger branchInitialDamage = 260;
-    NSInteger branchDoTTick = -40;
-    
-    for (RaidMember *member in raid.raidMembers){
-        [member setHealth:member.health - branchInitialDamage * self.damageDoneMultiplier];
-        [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:branchInitialDamage * self.damageDoneMultiplier] andEventType:CombatEventTypeDamage]];
-        RepeatedHealthEffect *lashDoT = [[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative];
-        [lashDoT setOwner:self];
-        [lashDoT setTitle:@"lash"];
-        [lashDoT setAilmentType:AilmentTrauma];
-        [lashDoT setValuePerTick:branchDoTTick];
-        [lashDoT setNumOfTicks:5];
-        [lashDoT setSpriteName:@"bleeding.png"];
-        [member addEffect:[lashDoT autorelease]];
-    }
-}
-
--(void)performRootquakeOnRaid:(Raid*)raid{
-    [self.announcer announce:@"The Treant's roots move the earth."];
-    [self.announcer displayScreenShakeForDuration:6.0];
-    for (RaidMember *member in raid.raidMembers){
-        RepeatedHealthEffect *rootquake = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegativeInvisible];
-        [rootquake setOwner:self];
-        [rootquake setValuePerTick:-50];
-        [rootquake setNumOfTicks:4];
-        [rootquake setTitle:@"rootquake"];
-        [member addEffect:[rootquake autorelease]];
-    }
-}
-
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (percentage == 97.0 || percentage == 75.0 || percentage == 51.0 || percentage == 30.0){
-        [self.announcer announce:@"The Befouled Treant's pulls its enormous branches back to lash out at your allies."];
-    }
-    if (percentage == 96.0 || percentage == 74.0 || percentage == 50.0 || percentage == 29.0){
-        [self performBranchAttackOnRaid:raid];
-    }
-}
-@end
-
-
 @implementation TwinChampions
 @synthesize firstFocusedAttack, secondFocusedAttack;
 @synthesize lastAxecution, lastGushingWound;
 +(id)defaultBoss {
     NSInteger damage = 190;
     float frequency = 1.30;
-    TwinChampions *boss = [[TwinChampions alloc] initWithHealth:255000 damage:damage targets:1 frequency:frequency choosesMT:YES ];
+    TwinChampions *boss = [[TwinChampions alloc] initWithHealth:2550000 damage:damage targets:1 frequency:frequency choosesMT:YES];
     [boss setFirstFocusedAttack:[[boss abilities] objectAtIndex:0]];
     boss.autoAttack.failureChance = .25;
     
@@ -1327,17 +1340,13 @@
 }
 
 +(id)defaultBoss {
-    Baraghast *boss = [[Baraghast alloc] initWithHealth:304000 damage:150 targets:1 frequency:1.25 choosesMT:YES ];
+    Baraghast *boss = [[Baraghast alloc] initWithHealth:3040000 damage:150 targets:1 frequency:1.25 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
     [boss setNamePlateTitle:@"Baraghast"];
     [boss setInfo:@"With his champions defeated, Baraghast himself confronts you and your allies."];
     
-//    if (mode == DifficultyModeHard) {
-//        [boss addAbility:[Cleave hardCleave]];
-//    } else {
     [boss addAbility:[Cleave normalCleave]];
-//    }
     
     return [boss autorelease];
 }
@@ -1393,7 +1402,7 @@
 
 @implementation CrazedSeer
 + (id)defaultBoss {
-    CrazedSeer *seer = [[CrazedSeer alloc] initWithHealth:272000 damage:0 targets:0 frequency:0 choosesMT:NO ];
+    CrazedSeer *seer = [[CrazedSeer alloc] initWithHealth:2720000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [seer setTitle:@"Crazed Seer Tyonath"];
     [seer setNamePlateTitle:@"Tyonath"];
     [seer setInfo:@"Seer Tyonath was tormented and tortured after his capture by the Dark Horde.  The Darkness has driven him mad.  He guards the secrets to Baraghast's origin in the vaults beneath the Dark Horde's largest encampment - Serevilost."];
@@ -1441,16 +1450,13 @@
 
 @implementation GatekeeperDelsarn
 + (id)defaultBoss {
-    GatekeeperDelsarn *boss = [[GatekeeperDelsarn alloc] initWithHealth:203000 damage:500 targets:1 frequency:2.1 choosesMT:YES ];
+    GatekeeperDelsarn *boss = [[GatekeeperDelsarn alloc] initWithHealth:2030000 damage:500 targets:1 frequency:2.1 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setInfo:@"Delsarn is the name the Theronian Seers have given to the land that exists beyond the rift discovered within the tome that Seer Tyonath left behind.  The Gatekeeper is a foul beast that stands between your party and passage into Delsarn."];
     [boss setTitle:@"Gatekeeper of Delsarn"];
+    [boss setNamePlateTitle:@"The Gatekeeper"];
     
-//    if (mode == DifficultyModeHard) {
-//        [boss addAbility:[Cleave hardCleave]];
-//    } else {
     [boss addAbility:[Cleave normalCleave]];
-//    }
     
     Grip *gripAbility = [[Grip alloc] init];
     [gripAbility setTitle:@"grip-ability"];
@@ -1534,7 +1540,7 @@
     [super dealloc];
 }
 + (id)defaultBoss {
-    SkeletalDragon *boss = [[SkeletalDragon alloc] initWithHealth:219000 damage:0 targets:0 frequency:100 choosesMT:NO ];
+    SkeletalDragon *boss = [[SkeletalDragon alloc] initWithHealth:2190000 damage:0 targets:0 frequency:100 choosesMT:NO ];
     [boss setInfo:@"After moving beyond the gates of Delsarn, you encounter a horrifying Skeletal Dragon.  It assaults your party and bars the way."];
     [boss setTitle:@"Skeletal Dragon"];
     
@@ -1619,7 +1625,7 @@
     [super dealloc];
 }
 + (id)defaultBoss {
-    ColossusOfBone *cob = [[ColossusOfBone alloc] initWithHealth:171000 damage:0 targets:0 frequency:0 choosesMT:NO ];
+    ColossusOfBone *cob = [[ColossusOfBone alloc] initWithHealth:1710000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [cob setTitle:@"Colossus of Bone"];
     [cob setInfo:@"While traveling even deeper into Delsarn you and your allies are waylayed by a towering creature of unimaginable strength."];
     
@@ -1688,8 +1694,9 @@
 }
 
 + (id)defaultBoss {
-    OverseerOfDelsarn *boss = [[OverseerOfDelsarn alloc] initWithHealth:258000 damage:0 targets:0 frequency:0 choosesMT:NO ];
+    OverseerOfDelsarn *boss = [[OverseerOfDelsarn alloc] initWithHealth:2580000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [boss setTitle:@"Overseer of Delsarn"];
+    [boss setNamePlateTitle:@"The Overseer"];
     [boss setInfo:@"After defeating his most powerful beasts, the Overseer of this treacherous realm confronts you himself.  He bars your way into the inner sanctum."];
     
     boss.projectilesAbility = [[[OverseerProjectiles alloc] init] autorelease];
@@ -1761,7 +1768,7 @@
 }
 
 + (id)defaultBoss {
-    TheUnspeakable *boss = [[TheUnspeakable alloc] initWithHealth:303000 damage:690 targets:1 frequency:10.0 choosesMT:NO ];
+    TheUnspeakable *boss = [[TheUnspeakable alloc] initWithHealth:2900000 damage:0 targets:0 frequency:10.0 choosesMT:NO ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"The Unspeakable"];
     [boss setInfo:@"A disgusting mass of bones and rotten corpses waits in a crypt beneath Delsarn.  It seems to be ... alive."];
@@ -1776,7 +1783,8 @@
     [boss addAbility:boss.oozeAll];
     
     OozeTwoTargets *oozeTwo = [[OozeTwoTargets alloc] init];
-    [oozeTwo setCooldown:10.0];
+    [oozeTwo setAbilityValue:450];
+    [oozeTwo setCooldown:17.0];
     [oozeTwo setTitle:@"ooze-two"];
     [boss addAbility:oozeTwo];
     [oozeTwo release];
@@ -1784,9 +1792,19 @@
     return [boss autorelease];
 }
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+- (void)setDifficulty:(NSInteger)difficulty
+{
+    [super setDifficulty:difficulty];
+    
+    OozeTwoTargets *oozeTwo = (OozeTwoTargets*)[self abilityWithTitle:@"ooze-two"];
+    NSTimeInterval oozeTwoCD = oozeTwo.cooldown - difficulty;
+    [oozeTwo setCooldown:oozeTwoCD];
+}
+
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {    
     if ((int)percentage % 10 == 0){
-        [(OozeRaid*)self.oozeAll setOriginalCooldown:[(OozeRaid*)self.oozeAll originalCooldown] - 1.5];
+        NSTimeInterval reduction = 1.775 * (self.difficulty) / 5.0;
+        [(OozeRaid*)self.oozeAll setOriginalCooldown:[(OozeRaid*)self.oozeAll originalCooldown] - reduction];
     }
 }
 @end
@@ -1797,16 +1815,12 @@
     [super dealloc];
 }
 + (id)defaultBoss {
-    BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:340000 damage:150 targets:1 frequency:1.25 choosesMT:YES ];
+    BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:3400000 damage:150 targets:1 frequency:1.25 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast Reborn"];
     [boss setInfo:@"Before you stands the destroyed but risen warchief Baraghast.  His horrible visage once again sows fear in the hearts of all of your allies.  This time he is not only guarding a terrible secret, but his hateful gaze reveals his true purpose -- Revenge."];
     
-//    if (mode == DifficultyModeHard) {
-//        [boss addAbility:[Cleave hardCleave]];
-//    } else {
     [boss addAbility:[Cleave normalCleave]];
-//    }
     
     BaraghastRoar *roar = [[[BaraghastRoar alloc] init] autorelease];
     [roar setCooldown:24.0];
@@ -1823,7 +1837,7 @@
     [graspEffect setValuePerTick:-100];
     [graspEffect setSpriteName:@"blood_curse.png"];
     [graspEffect setTitle:@"grasp-of-the-damned-eff"];
-    [graspEffect setAilmentType:AilmentCurse];
+    [graspEffect setAilmentType:AilmentTrauma];
     GraspOfTheDamned *graspOfTheDamned = [[[GraspOfTheDamned alloc] initWithDamage:0 andCooldown:15.0] autorelease];
     [boss addAbility:graspOfTheDamned];
     [graspOfTheDamned setAppliedEffect:graspEffect];
@@ -1849,8 +1863,9 @@
 
 @implementation AvatarOfTorment1
 + (id)defaultBoss {
-    AvatarOfTorment1 *boss = [[AvatarOfTorment1 alloc] initWithHealth:288000 damage:0 targets:0 frequency:0.0 choosesMT:NO ];
+    AvatarOfTorment1 *boss = [[AvatarOfTorment1 alloc] initWithHealth:2880000 damage:0 targets:0 frequency:0.0 choosesMT:NO ];
     [boss setTitle:@"The Avatar of Torment"];
+    [boss setNamePlateTitle:@"Torment"];
     [boss setInfo:@"From the fallen black heart of Baraghast's shattered soul rose a portal into another plane of existence.  Your allies cautiously moved through the portal and found themselves in a terrifying realm surrounded by shackled and burning souls.  Before you stands a massive creature of spawned of pure hatred and built for torment.  The final battle for your realm's purity begins now."];
     
     
@@ -1886,8 +1901,9 @@
 @implementation AvatarOfTorment2
 
 + (id)defaultBoss {
-    AvatarOfTorment2 *boss = [[AvatarOfTorment2 alloc] initWithHealth:132000 damage:0 targets:0 frequency:0.0 choosesMT:NO ];
+    AvatarOfTorment2 *boss = [[AvatarOfTorment2 alloc] initWithHealth:1320000 damage:0 targets:0 frequency:0.0 choosesMT:NO ];
     [boss setTitle:@"The Avatar of Torment"];
+    [boss setNamePlateTitle:@"Torment"];
     [boss setInfo:@"The Avatar of Torment will not be defeated so easily."];
     
     DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
@@ -1936,6 +1952,7 @@
 + (id)defaultBoss {
     SoulOfTorment *boss = [[SoulOfTorment alloc] initWithHealth:1 damage:0 targets:0 frequency:0.0 choosesMT:NO ];
     [boss setTitle:@"The Soul of Torment"];
+    [boss setNamePlateTitle:@"Torment"];
     [boss setInfo:@"Its body shattered and broken--the last gasp of this terrible creature conspires to unleash its most unspeakable power.  This is the last stand of your realm against the evil that terrorizes it."];
     
     return [boss autorelease];

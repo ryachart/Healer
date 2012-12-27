@@ -10,7 +10,7 @@
 
 @class AbilityDescriptor;
 
-@interface BossAbilityDescriptorIcon : CCNode
+@interface BossAbilityDescriptorIcon : CCNode <CCRGBAProtocol>
 @property (nonatomic, retain) AbilityDescriptor *ability;
 
 - (id)initWithAbility:(AbilityDescriptor*)ability target:(id)target selector:(SEL)selector;

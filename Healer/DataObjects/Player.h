@@ -121,4 +121,6 @@ typedef int CastingDisabledReason;
 - (NSString*)initialStateMessage; //For notifying servers what our player state looks like
 - (NSString*)asNetworkMessage;
 - (void)updateWithNetworkMessage:(NSString*)message;
+
+
 @end

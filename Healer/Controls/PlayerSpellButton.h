@@ -12,7 +12,7 @@
 
 @class PlayerSpellButtonDelegate;
 @class Chargable;
-@interface PlayerSpellButton : CCLayer {
+@interface PlayerSpellButton : CCLayer <CCRGBAProtocol> {
     
 	PlayerSpellButtonDelegate *interactionDelegate;
 }

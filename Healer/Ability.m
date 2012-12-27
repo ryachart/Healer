@@ -409,7 +409,7 @@
 - (id)init {
     if (self = [super init]){
         AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"Baraghast ignores his focused target temporarily and attempts to slay a random ally instead."];
+        [desc setAbilityDescription:@"Baraghast ignores his focused target and attacks a random ally instead."];
         [desc setIconName:@"unknown_ability.png"];
         [desc setAbilityName:@"Disengage"];
         [self setDescriptor:desc];
@@ -471,7 +471,7 @@
     }
     for (RaidMember *member in theRaid.raidMembers ){
         [member setHealth:member.health - (150.0 * self.owner.damageDoneMultiplier)];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(15.0 * self.owner.damageDoneMultiplier)]  andEventType:CombatEventTypeDamage]];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(150.0 * self.owner.damageDoneMultiplier)]  andEventType:CombatEventTypeDamage]];
         for (Effect *effect in member.activeEffects){
             if (effect.effectType == EffectTypePositive){
                 [effect setIsExpired:YES];
@@ -573,8 +573,9 @@
     for (RaidMember *member in theRaid.getAliveMembers){
         NSInteger deathWaveDamage = (int)round((float)self.abilityValue / livingMemberCount);
         deathWaveDamage *= (arc4random() % 50 + 50) / 100.0;
-        [member setHealth:member.health - (deathWaveDamage * self.owner.damageDoneMultiplier)];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(deathWaveDamage * self.owner.damageDoneMultiplier)] andEventType:CombatEventTypeDamage]]; 
+        deathWaveDamage *= self.owner.damageDoneMultiplier;
+        [member setHealth:member.health - deathWaveDamage];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:deathWaveDamage] andEventType:CombatEventTypeDamage]];
     }
 }
 @end
@@ -926,6 +927,11 @@
     NSArray *targets = [self targetsFromRaid:theRaid];
     for (RaidMember *target in targets) {
         [self damageTarget:target];
+        if (self.appliedEffect) {
+            Effect *eff = [[self.appliedEffect copy] autorelease];
+            [eff setOwner:self.owner];
+            [target addEffect:eff];
+        }
     }
 }
 @end
@@ -1223,7 +1229,7 @@
 - (id)init {
     if (self = [super init]){
         AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"As your allies hack their way through the filth beast they become covered in a disgusting slime.  If this slime builds to 5 stacks on any ally that ally will be instantly slain.  Whenever an ally receives healing from you the slime is removed."];
+        [desc setAbilityDescription:@"As your allies hack their way through the filth beast they become covered in a disgusting slime.  If this slime builds to 5 stacks on any ally that ally will be consumed.  Whenever an ally receives healing from you the slime is removed."];
         [desc setAbilityName:@"Engulfing Slime"];
         [desc setIconName:@"engulfing_slime_ability.png"];
         self.descriptor = [desc autorelease];
@@ -1232,7 +1238,7 @@
 }
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     [super triggerAbilityForRaid:theRaid andPlayers:players];
-    self.cooldown = self.originalCooldown * (theRaid.getAliveMembers.count / 20.0);
+    self.cooldown = MAX(1.0, self.originalCooldown * (theRaid.getAliveMembers.count / 20.0));
 }
 @end
 
@@ -1241,8 +1247,11 @@
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {    
     NSArray *targets = [theRaid lowestHealthTargets:2 withRequiredTarget:nil];
     NSInteger numApplications = arc4random() % 3 + 2;
+    
+    numApplications = MIN(numApplications, self.difficulty + 1);
 
     for (RaidMember *target in targets){
+        [self damageTarget:target];
         for (int i = 0; i < numApplications; i++){
             NSTimeInterval delay = 0.25 + (i * 1.5);
             DelayedHealthEffect *delayedSlime = [[DelayedHealthEffect alloc] initWithDuration:delay andEffectType:EffectTypeNegativeInvisible];
@@ -1425,14 +1434,6 @@
     [cleave setAbilityValue:600];
     [cleave setCooldown:12.5];
     [cleave setFailureChance:.4];
-    return cleave;
-}
-+ (Cleave *)hardCleave {
-    Cleave *cleave = [[[Cleave alloc] init] autorelease];
-    [cleave setTitle:@"cleave"];
-    [cleave setAbilityValue:800];
-    [cleave setCooldown:11.5];
-    [cleave setFailureChance:.35];
     return cleave;
 }
 

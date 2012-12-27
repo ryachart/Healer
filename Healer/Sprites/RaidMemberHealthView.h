@@ -18,7 +18,7 @@ typedef enum {
 
 @class RaidMemberHealthViewDelegate;
 
-@interface RaidMemberHealthView : CCLayer
+@interface RaidMemberHealthView : CCLayer <CCRGBAProtocol>
 @property (nonatomic, assign, setter=setMemberData:) HealableTarget* memberData;
 @property (nonatomic, retain) CCLabelTTF *healthLabel;
 @property (nonatomic, assign) RaidMemberHealthViewDelegate *interactionDelegate;
@@ -32,6 +32,7 @@ typedef enum {
 -(void)displaySCT:(NSString*)sct;
 -(void)displaySCT:(NSString*)sct asCritical:(BOOL)critical;
 - (void)triggerConfusion;
+
 @end
 
 @protocol RaidMemberHealthViewDelegate

@@ -9,7 +9,7 @@
 #import <cocos2d.h>
 
 /** Restricts (clips) drawing of all children to a specific region. */
-@interface ClippingNode : CCNode 
+@interface ClippingNode : CCNode <CCRGBAProtocol>
 {
 }
 

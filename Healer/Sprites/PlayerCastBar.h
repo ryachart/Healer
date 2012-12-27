@@ -9,7 +9,7 @@
 #import <cocos2d.h>
 
 @class Spell;
-@interface PlayerCastBar : CCLayerColor {
+@interface PlayerCastBar : CCLayer <CCRGBAProtocol> {
 	double percentTimeRemaining;
 }
 @property (nonatomic, assign) CCLabelTTF *timeRemaining;

@@ -26,6 +26,7 @@
 @property (nonatomic, readwrite) BOOL isDisabled;
 @property (nonatomic, retain) AbilityDescriptor *descriptor;
 @property (nonatomic, retain) NSString *attackParticleEffectName; //Defaults to blood_spurt.plist
+@property (nonatomic, readwrite) NSInteger difficulty;
 
 //Activation Times
 @property (nonatomic, readwrite) BOOL isActivating;
@@ -139,6 +140,7 @@ typedef enum {
 @interface TargetTypeAttack : Ability
 @property (nonatomic, readwrite) Positioning targetPositioningType;
 @property (nonatomic, readwrite) NSInteger numTargets;
+@property (nonatomic, retain) Effect *appliedEffect;
 @end
 
 @interface TargetTypeFlameBreath : TargetTypeAttack
@@ -187,6 +189,5 @@ typedef enum {
 
 @interface Cleave : Ability
 + (Cleave *)normalCleave;
-+ (Cleave *)hardCleave;
 //Hits a random number of melee opponents. Always affects at least 1 Guardian when it triggers
 @end

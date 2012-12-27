@@ -828,6 +828,8 @@
     NSArray *starTargets = [theRaid randomTargets:totalTargets withPositioning:Any];
     
     NSTimeInterval healDelay = 1.75;
+    NSTimeInterval preDelay = .33;
+    healDelay -= preDelay;
     for (RaidMember *starTarget in starTargets){
         if (starTarget != self.owner.spellTarget) {
             [self willHealTarget:starTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:0];
@@ -836,6 +838,7 @@
         }
         ProjectileEffect *starProjectile = [[ProjectileEffect alloc] initWithSpriteName:@"star.png" target:starTarget andCollisionTime:healDelay];
         [starProjectile setCollisionParticleName:@"star_explosion.plist"];
+        [starProjectile setDelay:preDelay];
         [theBoss.announcer displayProjectileEffect:starProjectile fromOrigin:CGPointMake(400 - (arc4random() % 300 - 150), 800)];
         DelayedHealthEffect *starDelayedHealthEff = [[DelayedHealthEffect alloc] initWithDuration:healDelay andEffectType:EffectTypePositiveInvisible];
         [starDelayedHealthEff setIsIndependent:YES];

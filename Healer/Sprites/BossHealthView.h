@@ -27,5 +27,5 @@
 - (void)setBossData:(Boss*)theBoss;
 - (id)initWithFrame:(CGRect)frame ;
 - (void)updateHealth;
-
+- (void)endBattleWithSuccess:(BOOL)success;
 @end

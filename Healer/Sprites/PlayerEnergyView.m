@@ -79,5 +79,37 @@
     [self.energyBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.energyBar.contentSize.width + ENERGYBAR_INSET_WIDTH) * percentEnergy, self.energyBar.contentSize.height + ENERGYBAR_INSET_HEIGHT)];
 }
 
+#pragma mark - CCRBGAProtocol
+- (void)setColor:(ccColor3B)color
+{
+    //Nothing
+}
+
+- (ccColor3B)color
+{
+    return ccBLACK;
+}
+
+- (void)setOpacity:(GLubyte)opacity
+{
+    for (CCNode *child in self.children){
+        if ([child conformsToProtocol:@protocol(CCRGBAProtocol)]) {
+            id<CCRGBAProtocol> colorChild = (CCSprite*)child;
+            [colorChild setOpacity:opacity];
+        }
+    }
+}
+
+- (GLubyte)opacity
+{
+    float highestOpacity = 0;
+    for (CCNode *child in self.children){
+        if ([child conformsToProtocol:@protocol(CCRGBAProtocol)]) {
+            id<CCRGBAProtocol> colorChild = (CCSprite*)child;
+            highestOpacity = [colorChild opacity] > highestOpacity ? [colorChild opacity] : highestOpacity;
+        }
+    }
+    return highestOpacity;
+}
 
 @end

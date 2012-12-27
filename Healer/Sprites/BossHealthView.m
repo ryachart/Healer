@@ -17,6 +17,8 @@
 @property (nonatomic, readwrite) NSInteger lastHealth;
 @property (nonatomic, assign) CCLabelTTF *healthLabelShadow;
 @property (nonatomic, assign) CCLabelTTF *bossNameShadow;
+@property (nonatomic, assign) CCSprite *portraitSprite;
+@property (nonatomic, assign) CCSprite *bossPlateSprite;
 @end
 
 @implementation BossHealthView
@@ -29,21 +31,20 @@
         self.position = frame.origin;
         self.contentSize = frame.size;
 
-        CCSprite *portraitSprite = [CCSprite spriteWithSpriteFrameName:@"boss_portrait_back.png"];
-        [portraitSprite setAnchorPoint:CGPointZero];
-        [portraitSprite setPosition:CGPointMake(660, -60)];
-        [self addChild:portraitSprite z:10];
+        self.portraitSprite = [CCSprite spriteWithSpriteFrameName:@"boss_portrait_back.png"];
+        [self.portraitSprite setPosition:CGPointMake(736, 20)];
+        [self addChild:self.portraitSprite z:10];
         
         CCSprite *portrait = [CCSprite spriteWithSpriteFrameName:@"boss_default.png"];
         [portrait setPosition:CGPointMake(84,84)];
-        [portraitSprite addChild:portrait];
+        [self.portraitSprite addChild:portrait];
         
         
         lastHealth = 0;
         
-        CCSprite *boss_plate_sprite = [CCSprite spriteWithSpriteFrameName:@"boss_plate.png"];
-        [boss_plate_sprite setAnchorPoint:CGPointZero];
-        [self addChild:boss_plate_sprite];
+        self.bossPlateSprite = [CCSprite spriteWithSpriteFrameName:@"boss_plate.png"];
+        [self.bossPlateSprite setAnchorPoint:CGPointZero];
+        [self addChild:self.bossPlateSprite];
         
         CCSprite *healthBar = [CCSprite spriteWithSpriteFrameName:@"boss_health_back.png"];
         
@@ -151,6 +152,31 @@
     [self.delegate bossHealthViewShouldDisplayAbility:descriptor];
 }
 
+- (void)endBattleWithSuccess:(BOOL)success
+{
+    [self.bossHealthBack runAction:[CCFadeOut actionWithDuration:3.0]];
+    [self.bossNameLabel runAction:[CCFadeOut actionWithDuration:3.0]];
+    [self.bossNameShadow runAction:[CCFadeOut actionWithDuration:3.0]];
+    [self.bossPlateSprite runAction:[CCFadeOut actionWithDuration:3.0]];
+    [self.healthLabel runAction:[CCFadeOut actionWithDuration:3.0]];
+    [self.healthLabelShadow runAction:[CCFadeOut actionWithDuration:3.0]];
+    [self.abilityDescriptionsView runAction:[CCFadeOut actionWithDuration:3.0]];
+    
+    CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"VICTORY!" fontName:@"Marion-Bold" fontSize:72.0];
+    [victoryLabel setColor:ccBLACK];
+    [victoryLabel setPosition:[self convertToNodeSpace:CGPointMake(512, 500)]];
+    [victoryLabel setScale:2.0];
+    [victoryLabel setOpacity:0];
+    [self addChild:victoryLabel];
+    [victoryLabel runAction:[CCSequence actions:[CCDelayTime actionWithDuration:2.75],[CCSpawn actions:[CCScaleTo actionWithDuration:.5 scale:1.0], [CCFadeIn actionWithDuration:1.0], nil], nil]];
+    
+    if (success) {
+        CGPoint destination = [self convertToNodeSpace:CGPointMake(512, 320)];
+        [self.portraitSprite runAction:[CCSequence actions:[CCMoveTo actionWithDuration:2.5 position:destination],[CCDelayTime actionWithDuration:1.0] ,[CCSpawn actionOne:[CCFadeOut actionWithDuration:1.5] two:[CCScaleTo actionWithDuration:1.5]], nil]];
+    } else {
+        victoryLabel.string = @"DEFEAT!";
+    }
+}
 
 - (void)dealloc {
     [bossNameLabel release];

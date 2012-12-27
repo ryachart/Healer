@@ -202,17 +202,6 @@
     }
     
     if (level == 6){
-        basicBoss = [PlaguebringerColossus defaultBoss];
-        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [ForkedHeal defaultSpell], [Regrow defaultSpell], nil];
-        
-        numArcher = 2;
-        numWarlock = 2;
-        numWizard = 2;
-        numChampion = 3;
-        numGuardian = 1;
-    }
-    
-    if (level == 7){
         basicBoss = [FungalRavagers defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [LightEternal defaultSpell], [Regrow defaultSpell], nil];
         
@@ -221,6 +210,17 @@
         numWizard = 2;
         numChampion = 2;
         numGuardian = 3;
+    }
+    
+    if (level == 7){
+        basicBoss = [PlaguebringerColossus defaultBoss];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [ForkedHeal defaultSpell], [Regrow defaultSpell], nil];
+        
+        numArcher = 2;
+        numWarlock = 2;
+        numWizard = 2;
+        numChampion = 3;
+        numGuardian = 1;
     }
     
     if (level == 8){

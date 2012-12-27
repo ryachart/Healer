@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <Parse/Parse.h>
+#import "Shop.h"
+
 #define MAX_CHARACTERS 5
 
 extern NSString* const PlayerHighestLevelAttempted;
@@ -58,6 +60,15 @@ extern NSString* const PlayerGoldDidChangeNotification;
 
 - (void)failLevel:(NSInteger)level;
 - (void)completeLevel:(NSInteger)level;
+
+#pragma mark - Purchasing Content
+- (void)purchaseContentWithKey:(NSString*)key;
+- (BOOL)hasPurchasedContentWithKey:(NSString*)key;
+/* Painful and Brutal Difficulties, The final Campaign, and the final shop category require purchasing the third campaign to unlock */
+- (BOOL)isEncounterPurchased:(NSInteger)encounterNum;
+- (BOOL)isShopCategoryPurchased:(ShopCategory)category;
+- (NSInteger)isDifficultyPurchased:(NSInteger)difficulty;
+- (void)offerCampaignUnlock;
 
 #pragma mark - Multiplayer
 

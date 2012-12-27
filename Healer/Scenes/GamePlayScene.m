@@ -25,6 +25,7 @@
 #import "BasicButton.h"
 
 #define RAID_Z 5
+#define PAUSEABLE_TAG 812
 
 #define NETWORK_THROTTLE 5
 
@@ -170,9 +171,9 @@
         [self addChild:self.bossHealthView z:RAID_Z+1];
         [self addChild:self.playerCastBar];
         [self addChild:self.playerEnergyView];
-        [self addChild:self.announcementLabel z:100];
-        [self addChild:self.announcementLabelShadow z:99];
-        [self addChild:self.errAnnouncementLabel z:98];
+        [self addChild:self.announcementLabel z:100 tag:PAUSEABLE_TAG];
+        [self addChild:self.announcementLabelShadow z:99 tag:PAUSEABLE_TAG];
+        [self addChild:self.errAnnouncementLabel z:98 tag:PAUSEABLE_TAG];
         //CACHE SOUNDS
         AudioController *ac = [AudioController sharedInstance];
         for (Spell* aSpell in [self.player activeSpells]){
@@ -234,7 +235,6 @@
             [raidView addRaidMemberHealthView:rmhv];
         }
         [bossHealthView setBossData:self.boss];
-//        [playerEnergyView setChannelDelegate:(ChannelingDelegate*)self];
         
         
         //The timer has to be scheduled after all the init is done!
@@ -263,8 +263,18 @@
     }
     
     if (self.paused){
+        for (CCNode *node in self.children) {
+            if (node.tag == PAUSEABLE_TAG) {
+                [node pauseSchedulerAndActions];
+            }
+        }
         [self unschedule:@selector(gameEvent:)];
     }else{
+        for (CCNode *node in self.children) {
+            if (node.tag == PAUSEABLE_TAG) {
+                [node resumeSchedulerAndActions];
+            }
+        }
         [self schedule:@selector(gameEvent:)];
     }
 }
@@ -281,7 +291,6 @@
         self.pauseMenuLayer.delegate = self;
     }
     [self addChild:self.pauseMenuLayer z:10000];
-
 }
 
 -(void)pauseLayerDidFinish{
@@ -360,17 +369,55 @@
         [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:nmcs]];
         return;
     }
-    PostBattleScene *pbs = [[[PostBattleScene alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer andDuration:self.boss.duration] autorelease];
+
     [self setPaused:YES];
     if (self.isServer){
         [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"BATTLEEND|%i|", success] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
     }
+
+    ccTime totalTime = 8.0;
+    ccTime fadeTime = 2.0;
+    
+    for (CCNode *child in self.children) {
+        if (child.tag == PAUSEABLE_TAG) {
+            if ([child conformsToProtocol:@protocol(CCRGBAProtocol)]) {
+                [child resumeSchedulerAndActions];
+                [child runAction:[CCFadeOut actionWithDuration:fadeTime]];
+            } else {
+                [child setVisible:NO];
+            }
+        }
+    }
+    
+    [self.spellView1 setIsTouchEnabled:NO];
+    [self.spellView1 runAction:[CCFadeOut actionWithDuration:fadeTime]];
+    [self.spellView2 setIsTouchEnabled:NO];
+    [self.spellView2 runAction:[CCFadeOut actionWithDuration:fadeTime]];
+    [self.spellView3 setIsTouchEnabled:NO];
+    [self.spellView3 runAction:[CCFadeOut actionWithDuration:fadeTime]];
+    [self.spellView4 setIsTouchEnabled:NO];
+    [self.spellView4 runAction:[CCFadeOut actionWithDuration:fadeTime]];
+    
+    [self.playerCastBar runAction:[CCFadeOut actionWithDuration:fadeTime]];
+    [self.playerEnergyView runAction:[CCFadeOut actionWithDuration:fadeTime]];
+    
+    [self.raidView endBattleWithSuccess:success];
+    [self.bossHealthView endBattleWithSuccess:success];
+    
+    [self runAction:[CCSequence actions:[CCDelayTime actionWithDuration:totalTime], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [(GamePlayScene*)node transitionToPostBattleWithSuccess:success];
+    }], nil]];
+}
+
+- (void)transitionToPostBattleWithSuccess:(BOOL)success {
+    PostBattleScene *pbs = [[[PostBattleScene alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer andDuration:self.boss.duration] autorelease];
     if (self.isServer || self.isClient){
         [pbs setServerPlayerId:self.serverPlayerID];
         [pbs setMatch:self.match];
         [pbs setMatchVoiceChat:self.matchVoiceChat];
     }
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:pbs]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:pbs]];
+
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -551,7 +598,8 @@
     }
     [collisionEffect setPosition:destination];
     [collisionEffect setAutoRemoveOnFinish:YES];
-    [self addChild:collisionEffect z:100];
+    [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
+    
 }
 
 - (void)displayParticleSystemOnRaidWithName:(NSString*)name delay:(float)delay
@@ -575,7 +623,7 @@
     CGPoint destination = ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height));
     [collisionEffect setPosition:destination];
     [collisionEffect setAutoRemoveOnFinish:YES];
-    [self addChild:collisionEffect z:100];
+    [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
 }
 
 - (void)displayEnergyGainFrom:(RaidMember*)member
@@ -583,7 +631,7 @@
     CCSprite *energyBall = [CCSprite spriteWithSpriteFrameName:@"energy_orb.png"];
     [energyBall setScale:.5];
     [energyBall setPosition:[self.raidView frameCenterForMember:member]];
-    [self addChild:energyBall];
+    [self addChild:energyBall z:0 tag:PAUSEABLE_TAG];
     [energyBall runAction:[CCSequence actions:[CCJumpTo actionWithDuration:1.5 position:self.playerEnergyView.position height:100 jumps:1],[CCScaleTo actionWithDuration:.33 scale:0.0], [CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
 }
 
@@ -594,7 +642,7 @@
     CGFloat rotation = [self rotationFromPoint:position toPoint:CGPointMake(900, 700)] + 90.0;
     [arrowSprite setPosition:position];
     [arrowSprite setRotation:rotation];
-    [self addChild:arrowSprite z:RAID_Z-1];
+    [self addChild:arrowSprite z:RAID_Z-1 tag:PAUSEABLE_TAG];
     
     [arrowSprite runAction:[CCSequence actions:[CCJumpTo actionWithDuration:.66 position:CGPointMake(900, 700) height:25 jumps:1],[CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
 }
@@ -606,7 +654,7 @@
     CGFloat rotation = [self rotationFromPoint:position toPoint:CGPointMake(900, 700)] + 270.0;
     [arrowSprite setPosition:position];
     [arrowSprite setRotation:rotation];
-    [self addChild:arrowSprite z:RAID_Z-1];
+    [self addChild:arrowSprite z:RAID_Z-1 tag:PAUSEABLE_TAG];
     
     [arrowSprite runAction:[CCSequence actions:[CCMoveTo actionWithDuration:1.25 position:CGPointMake(900, 700)],[CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
 }
@@ -615,7 +663,7 @@
     CCSprite *axeSprite = [CCSprite spriteWithSpriteFrameName:@"axe_berserker.png"];
     [axeSprite setScale:.75];
     [axeSprite setPosition:CGPointMake(820 + arc4random() % 40 - 20, 600 + arc4random() % 40 - 20)];
-    [self addChild:axeSprite z:RAID_Z - 1];
+    [self addChild:axeSprite z:RAID_Z - 1 tag:PAUSEABLE_TAG];
     
     [axeSprite runAction:[CCSequence actions:[CCRotateBy actionWithDuration:.33 angle:- 45.0 - (arc4random() % 20)], [CCEaseBackIn actionWithAction:[CCRotateBy actionWithDuration:.33 angle:90.0 - (arc4random() % 20)]],[CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
 }
@@ -624,7 +672,7 @@
     CCSprite *swordSprite = [CCSprite spriteWithSpriteFrameName:@"sword_champion.png"];
     [swordSprite setScale:.75];
     [swordSprite setPosition:CGPointMake(820 + arc4random() % 40 - 20, 600 + arc4random() % 40 - 20)];
-    [self addChild:swordSprite z:RAID_Z - 1];
+    [self addChild:swordSprite z:RAID_Z - 1 tag:PAUSEABLE_TAG];
     
     [swordSprite runAction:[CCSequence actions:[CCRotateBy actionWithDuration:.15 angle:- 30.0 - (arc4random() % 10)], [CCEaseBackIn actionWithAction:[CCRotateBy actionWithDuration:.45 angle:170.0 - (arc4random() % 20)]],[CCDelayTime actionWithDuration:.25], [CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
 }
@@ -655,7 +703,7 @@
     CGPoint destination = [self.raidView frameCenterForMember:target];
     [collisionEffect setPosition:ccpAdd(destination, offset)];
     [collisionEffect setAutoRemoveOnFinish:YES];
-    [self addChild:collisionEffect z:100];
+    [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
 }
 
 - (void)displayBreathEffectOnRaidForDuration:(float)duration {
@@ -665,7 +713,7 @@
     CCParticleSystemQuad *breathEffect = [[ParticleSystemCache sharedCache] systemForKey:@"flame_breath"];
     [breathEffect setDuration:duration];
     [breathEffect setPosition:CGPointMake(800, 650)];
-    [self addChild:breathEffect z:100];
+    [self addChild:breathEffect z:100 tag:PAUSEABLE_TAG];
 }
 
 - (void)displaySprite:(NSString*)spriteName overRaidForDuration:(float)duration {
@@ -684,7 +732,7 @@
     }
     [sprite setScale:0.0];
     [sprite setPosition:ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height/2))];
-    [self addChild:sprite z:RAID_Z+1];
+    [self addChild:sprite z:RAID_Z+1 tag:PAUSEABLE_TAG];
     [sprite runAction:[CCSequence actions:[CCScaleTo actionWithDuration:.33 scale:scaleTo],[CCDelayTime actionWithDuration:duration],[CCFadeOut actionWithDuration:.5] ,[CCCallBlockN actionWithBlock:^(CCNode*node){
         [node removeFromParentAndCleanup:YES];
         
@@ -732,12 +780,12 @@
         [projectileSprite setPosition:originLocation];
         [projectileSprite setRotation:[self rotationFromPoint:originLocation toPoint:destination] - 90.0];
         [projectileSprite setColor:effect.spriteColor];
-        [self addChild:projectileSprite z:RAID_Z+1];
+        [self addChild:projectileSprite z:RAID_Z+1 tag:PAUSEABLE_TAG];
         [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}], [CCMoveTo actionWithDuration:effect.collisionTime position:destination],[CCSpawn actions:[CCCallBlockN actionWithBlock:^(CCNode *node){
             if (collisionEffect){
                 [collisionEffect setPosition:destination];
                 [collisionEffect setAutoRemoveOnFinish:YES];
-                [self addChild:collisionEffect z:100];
+                [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
             }
         }],[CCScaleTo actionWithDuration:.33 scale:2.0], [CCFadeOut actionWithDuration:.33], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node removeFromParentAndCleanup:YES];
@@ -761,7 +809,7 @@
         [projectileSprite setPosition:originLocation];
         [projectileSprite setRotation:CC_RADIANS_TO_DEGREES([self rotationFromPoint:originLocation toPoint:destination]) + 180.0];
         [projectileSprite setColor:effect.spriteColor];
-        [self addChild:projectileSprite z:RAID_Z+1];
+        [self addChild:projectileSprite z:RAID_Z+1 tag:PAUSEABLE_TAG];
         ccBezierConfig bezierConfig = {destination,ccp(destination.x ,originLocation.y), ccp(destination.x,originLocation.y) };
         [projectileSprite runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:.3 angle:360.0]]];
         [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}],[CCSpawn actions:[CCBezierTo actionWithDuration:effect.collisionTime bezier:bezierConfig] ,nil ],[CCSpawn actions:[CCScaleTo actionWithDuration:.33 scale:2.0], [CCFadeOut actionWithDuration:.33], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){

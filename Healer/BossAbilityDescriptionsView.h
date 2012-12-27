@@ -18,7 +18,7 @@
 
 @end
 
-@interface BossAbilityDescriptionsView : CCNode
+@interface BossAbilityDescriptionsView : CCNode <CCRGBAProtocol>
 @property (nonatomic, assign) Boss *boss;
 @property (nonatomic, assign) id<AbilityDescriptionViewDelegate> delegate;
 

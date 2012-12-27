@@ -33,6 +33,10 @@ NSString* const PlayerGoldDidChangeNotification = @"com.healer.goldDidChangeNoti
 NSString* const DivinityConfig = @"com.healer.divinityConfig";
 NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
 NSString* const PlayerLastSelectedLevelKey = @"com.healer.plsl";
+NSString* const ContentKeys = @"com.healer.contentKeys";
+
+//Content Keys
+NSString* const DelsarnContentKey = @"com.healer.content1Key";
 
 @implementation PlayerDataManager
 
@@ -447,5 +451,62 @@ NSString* const PlayerLastSelectedLevelKey = @"com.healer.plsl";
     }
 }
 
+#pragma mark - Purchases
+
+- (void)purchaseContentWithKey:(NSString*)key
+{
+    //Yay you made a purchase =D
+    NSMutableArray *contentKeys = [NSMutableArray arrayWithArray:[self.playerData objectForKey:ContentKeys]];
+    [contentKeys addObject:key];
+    [self.playerData setObject:contentKeys forKey:ContentKeys];
+    [self saveLocalPlayer];
+}
+
+- (BOOL)hasPurchasedContentWithKey:(NSString*)key
+{
+    NSMutableArray *contentKeys = [NSMutableArray arrayWithArray:[self.playerData objectForKey:ContentKeys]];
+    if ([contentKeys containsObject:key]) {
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)isEncounterPurchased:(NSInteger)encounterNum {
+    if (encounterNum < 14) {
+        //The first 13 encounters are free
+        return YES;
+    }
+    
+    if (encounterNum >= 14 && encounterNum < 22) {
+        return [self hasPurchasedContentWithKey:DelsarnContentKey];
+    }
+    return NO;
+}
+
+- (BOOL)isShopCategoryPurchased:(ShopCategory)category {
+    switch (category) {
+        case ShopCategoryEssentials:
+            return YES;
+        case ShopCategoryAdvanced:
+            return YES;
+        case ShopCategoryArchives:
+            return YES;
+        case ShopCategoryVault:
+            return [self hasPurchasedContentWithKey:DelsarnContentKey];
+    }
+    return NO;
+}
+
+- (NSInteger)isDifficultyPurchased:(NSInteger)difficulty {
+    if (difficulty < 4) {
+        //Easy, Normal, and Tough are all free
+        return YES;
+    }
+    
+    return [self hasPurchasedContentWithKey:DelsarnContentKey];
+}
+- (void)offerCampaignUnlock {
+    //TODO: Show that UI?
+}
 
 @end

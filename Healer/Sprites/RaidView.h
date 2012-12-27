@@ -33,4 +33,5 @@
 
 -(void)updateRaidHealthWithPlayer:(Player*)player andTimeDelta:(ccTime)delta;
 
+- (void)endBattleWithSuccess:(BOOL)success;
 @end

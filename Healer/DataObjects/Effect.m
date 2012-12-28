@@ -167,8 +167,6 @@
 #pragma mark - Shipping Spell Effects
 @implementation RepeatedHealthEffect
 
-@synthesize numOfTicks, valuePerTick,numHasTicked;
-
 -(id)copy{
     RepeatedHealthEffect *copy = [super copy];
     [copy setNumOfTicks:self.numOfTicks];
@@ -188,7 +186,7 @@
 	{
         self.timeApplied += timeDelta;
 		lastTick += timeDelta;
-		if (lastTick >= (duration/numOfTicks)){
+		if (lastTick >= (duration/_numOfTicks)){
             [self tick];
 			lastTick = 0.0;
 		}
@@ -293,7 +291,6 @@
 
 
 @implementation ReactiveHealEffect
-@synthesize amountPerReaction, triggerCooldown, effectCooldown=_effectCooldown;
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type{
     if (self = [super initWithDuration:dur andEffectType:type]){
         self.effectCooldown = 1.0;
@@ -342,9 +339,8 @@
 @end
 
 @implementation  DelayedHealthEffect
-@synthesize value, appliedEffect;
 - (void)dealloc{
-    [appliedEffect release];
+    [_appliedEffect release];
     [super dealloc];
 }
 - (id)copy{
@@ -476,12 +472,11 @@
 @end
 
 @implementation RothPoison
-@synthesize dispelDamageValue, baseValue, valuePerTick=_valuePerTick;
 -(void)setValuePerTick:(NSInteger)valPerTick{
     if (self.baseValue == 0){
         self.baseValue = valPerTick;
     }
-    _valuePerTick = valPerTick;
+    [super setValuePerTick:valPerTick];
 }
 
 -(void)tick{
@@ -498,16 +493,15 @@
 
 
 @implementation DarkCloudEffect 
-@synthesize baseValue, valuePerTick=_valuePerTick;
 
 -(void)setValuePerTick:(NSInteger)valPerTick{
     if (self.baseValue == 0){
         self.baseValue = valPerTick;
     }
-    _valuePerTick = valPerTick;
+    [super setValuePerTick:valPerTick];
 }
 -(void)tick{
-    self.valuePerTick = (2 - self.target.healthPercentage) * baseValue;
+    self.valuePerTick = (2 - self.target.healthPercentage) * _baseValue;
     [super tick];
 }
 -(void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
@@ -543,7 +537,6 @@
 @end
 
 @implementation IntensifyingRepeatedHealthEffect
-@synthesize increasePerTick;
 -(id)copy{
     IntensifyingRepeatedHealthEffect *copy = [super copy];
     [copy setIncreasePerTick:self.increasePerTick];
@@ -551,13 +544,11 @@
 }
 -(void)tick{
     [super tick];
-    self.valuePerTick *= (1 + increasePerTick);
+    self.valuePerTick *= (1 + _increasePerTick);
 }
 @end
 
 @implementation WanderingSpiritEffect
-@synthesize raid;
-
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta{
     if (!self.raid) {
         self.raid = theRaid;
@@ -864,146 +855,6 @@
     [finisher setOwner:self.owner];
     [self.target addEffect:finisher];
     
-}
-
-@end
-
-#pragma mark - DEPRECATED SPELLS
-#pragma mark -
-#pragma mark Shaman Spells
-
-@implementation RoarOfLifeEffect
-+(id)defaultEffect{
-	RoarOfLifeEffect *rolEffect = [[RoarOfLifeEffect alloc] initWithDuration:12 andEffectType:EffectTypePositive];
-	[rolEffect setNumOfTicks:6];
-	[rolEffect setValuePerTick:3];
-	return [rolEffect autorelease];
-}
-@end
-
-@implementation WoundWeavingEffect
-+(id)defaultEffect{
-	WoundWeavingEffect *wwe = [[WoundWeavingEffect alloc] initWithDuration:9 andEffectType:EffectTypePositive];
-	[wwe setNumOfTicks:3];
-	[wwe setValuePerTick:12];
-	return [wwe autorelease];
-}
-@end
-
-@implementation SurgingGrowthEffect
-+(id)defaultEffect{
-	SurgingGrowthEffect *sge = [[SurgingGrowthEffect alloc] initWithDuration:5 andEffectType:EffectTypePositive];
-	[sge setNumOfTicks:5];
-	[sge setValuePerTick:1];
-	return [sge autorelease];
-}
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
-{
-	if (self.timeApplied != 0.0 && !isExpired)
-	{
-		lastTick += timeDelta;
-		if (lastTick  >= (duration/self.numOfTicks)){
-			[self.target setHealth:[self.target health] + self.valuePerTick];
-			//NSLog(@"Tick");
-			self.valuePerTick += 1;
-			lastTick = 0.0;
-		}
-		if (self.timeApplied >= duration){
-			[self.target setHealth:[self.target health] + self.valuePerTick];
-			[self.target setHealth:[self.target health] + self.valuePerTick*2];
-			//NSLog(@"Tick");
-			//Here we do some effect, but we have to subclass Effects to decide what that is
-			//NSLog(@"Expired");
-			//The one thing we always do here is expire the effect
-			self.timeApplied = 0.0;;
-			isExpired = YES;
-			
-		}
-		
-	}
-	
-}
-@end
-
-@implementation FieryAdrenalineEffect
-+(id)defaultEffect{
-	FieryAdrenalineEffect * fae = [[FieryAdrenalineEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];
-	[fae setNumOfTicks:5];
-	[fae setValuePerTick:3];
-	return [fae autorelease];
-}
--(void)didChangeHealthFrom:(NSInteger )health toNewHealth:(NSInteger )newHealth
-{
-	if (health > newHealth){
-		self.timeApplied = 0.001; //BAD: It should actually refresh to zero but that breaks other logic
-		NSLog(@"Target took damage...refreshing duration");
-	}
-}
--(void)willChangeHealthFrom:(NSInteger *)health toNewHealth:(NSInteger *)newHealth{
-	
-}
-@end
-
-@implementation TwoWindsEffect
-+(id)defaultEffect{
-	TwoWindsEffect *twe = [[TwoWindsEffect alloc] initWithDuration:12 andEffectType:EffectTypePositive];
-	[twe setNumOfTicks:4];
-	[twe setValuePerTick:8];
-	return [twe autorelease];
-}
-
-@end
-
-@implementation SymbioticConnectionEffect
-+(id)defaultEffect{
-	SymbioticConnectionEffect *sce = [[SymbioticConnectionEffect alloc] initWithDuration:9 andEffectType:EffectTypePositive];
-	[sce setNumOfTicks:3];
-	[sce setValuePerTick:10];
-	return [sce autorelease];
-	
-}
-@end
-
-@implementation UnleashedNatureEffect
-+(id)defaultEffect{
-	UnleashedNatureEffect *unle = [[UnleashedNatureEffect alloc] initWithDuration:12 andEffectType:EffectTypePositive];
-	[unle setNumOfTicks:6];
-	[unle setValuePerTick:3];
-	return [unle autorelease];
-}
-@end
-
-#pragma mark -
-#pragma mark Seer Effects
-
-@implementation ShiningAegisEffect
-+(id)defaultEffect{
-	ShiningAegisEffect *sae = [[ShiningAegisEffect alloc] initWithDuration:12 andEffectType:EffectTypePositive];
-	[sae setAmountToShield:20];
-	return [sae autorelease];
-}
-
-@end
-
-
-
-@implementation EtherealArmorEffect
-+(id)defaultEffect{
-	EtherealArmorEffect *eae = [[EtherealArmorEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive];
-	return [eae autorelease];
-}
-
--(void)didChangeHealthFrom:(NSInteger )health toNewHealth:(NSInteger )newHealth
-{
-}
--(void)willChangeHealthFrom:(NSInteger *)health toNewHealth:(NSInteger *)newHealth{
-	
-	if (*health > *newHealth){
-		NSInteger healthDelta = *health - *newHealth;
-	
-		NSInteger newHealthDelta = healthDelta	* .25;
-		*newHealth = *health - newHealthDelta;
-	}
 }
 
 @end

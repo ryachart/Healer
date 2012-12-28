@@ -1733,8 +1733,22 @@
 - (void)addRandomDemonAbility {
     NSInteger indexToAdd = arc4random() % self.demonAbilities.count;
     
-    [self addAbility:[self.demonAbilities objectAtIndex:indexToAdd]];
+    Ability *addedAbility = [self.demonAbilities objectAtIndex:indexToAdd];
+    [self addAbility:addedAbility];
     [self.demonAbilities removeObjectAtIndex:indexToAdd];
+    
+    NSString *minionTitle = nil;
+    if ([addedAbility.title isEqualToString:@"shadow-minion"]) {
+        minionTitle = @"Minion of Shadow";
+    } else if ([addedAbility.title isEqualToString:@"fire-minion"]) {
+        minionTitle = @"Minion of Fire";
+    } else if ([addedAbility.title isEqualToString:@"blood-minion"]) {
+        minionTitle = @"Minion of Blood";
+    }
+    
+    if (minionTitle) {
+        [self.announcer announce:[NSString stringWithFormat:@"The Overseer brings forth a %@", minionTitle]];
+    }
 }
 
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {

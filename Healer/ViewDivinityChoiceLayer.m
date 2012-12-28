@@ -31,8 +31,9 @@
         [self.alertDialogBackground addChild:tierCard];
         
         BasicButton *doneButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(complete) andTitle:@"Done"];
+        [doneButton setScale:.75];
         CCMenu *menu = [CCMenu menuWithItems:doneButton, nil];
-        [menu setPosition:CGPointMake(356, 200)];
+        [menu setPosition:CGPointMake(356, 194)];
         [self.alertDialogBackground addChild:menu];
         
     }

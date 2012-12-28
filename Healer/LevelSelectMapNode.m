@@ -135,7 +135,7 @@
             break;
     }
     
-    return CGPointMake(480 + 80 * levelNum, 768.0 - 100.0f - (50 * (levelNum % 7)));
+    return CGPointMake(330 + 80 * levelNum, 768.0 - 100.0f - (50 * (levelNum % 7)));
 }
 
 - (void)selectLevel:(NSInteger)level

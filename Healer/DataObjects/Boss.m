@@ -410,7 +410,7 @@
         [self.fireballAbility setTimeApplied:-5.0]; //Turn off this ability for 5 seconds.
         float effectDuration = 5.0;
         [self.announcer displayBreathEffectOnRaidForDuration:effectDuration];
-        for (RaidMember *member in raid.getAliveMembers) {
+        for (RaidMember *member in raid.livingMembers) {
             RepeatedHealthEffect *flameBreathEffect = [[[RepeatedHealthEffect alloc] initWithDuration:effectDuration andEffectType:EffectTypeNegativeInvisible] autorelease];
             [flameBreathEffect setNumOfTicks:5];
             [flameBreathEffect setValuePerTick:-(arc4random() % 50 + 100)];
@@ -1480,7 +1480,7 @@
     if (percentage == 75.0){
         //Pestilence
         [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:20];
-        NSArray *livingMembers = [raid getAliveMembers];
+        NSArray *livingMembers = [raid livingMembers];
         for (RaidMember *member in livingMembers){
             RepeatedHealthEffect *pestilenceDot = [[RepeatedHealthEffect alloc] initWithDuration:20 andEffectType:EffectTypeNegativeInvisible];
             [pestilenceDot setValuePerTick:-40];
@@ -1594,7 +1594,7 @@
     if (percentage == 5.0){
         [self.announcer displayScreenShakeForDuration:.66];
         [self.announcer announce:@"The Skeletal Dragon crashes down onto your allies from the sky."];
-        NSArray *livingMembers = [raid getAliveMembers];
+        NSArray *livingMembers = [raid livingMembers];
         NSInteger damageValue = 7500 / livingMembers.count;
         for (RaidMember *member in livingMembers){
             FallenDownEffect *fde = [FallenDownEffect defaultEffect];

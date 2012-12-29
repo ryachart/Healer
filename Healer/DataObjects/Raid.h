@@ -17,7 +17,7 @@
 @property (nonatomic, retain, readonly) NSMutableArray *raidMembers;
 
 - (void)addRaidMember:(RaidMember*)member;
-- (NSArray*)getAliveMembers;
+- (NSArray*)livingMembers;
 - (NSInteger)deadCount;
 
 - (NSArray *)livingMembersWithPositioning:(Positioning)pos;

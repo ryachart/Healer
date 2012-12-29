@@ -142,6 +142,9 @@
         [self.healthLabelShadow setString:healthText];
 	}
     
+    [self.bossNameLabel setString:[bossData namePlateTitle]];
+    [self.bossNameShadow setString:[bossData namePlateTitle]];
+    
     double percentageOfHealth = ((float)[self.bossData health])/[self.bossData maximumHealth];
     [self.bossHealthBack setClippingRegion:CGRectMake(HEALTH_INSET_WIDTH-(self.bossHealthBack.clippingRegion.size.width * (1 - percentageOfHealth)), self.bossHealthBack.clippingRegion.origin.y, self.bossHealthBack.clippingRegion.size.width, self.bossHealthBack.clippingRegion.size.height)];
     

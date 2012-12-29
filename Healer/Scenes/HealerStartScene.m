@@ -91,7 +91,7 @@
 
 - (void)settingsSelected {
     SettingsScene *ss = [[SettingsScene new] autorelease];
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR   transitionWithDuration:.5 scene:ss]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade   transitionWithDuration:.5 scene:ss]];
 }
 
 -(void)multiplayerSelected{
@@ -144,15 +144,15 @@
 -(void)quickPlaySelected
 {
 	LevelSelectMapScene *qpS = [[LevelSelectMapScene new] autorelease];
-	[[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:.5 scene:qpS]];
+	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:qpS]];
 }
 
 -(void)storeSelected{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:.5 scene:[[[ShopScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[ShopScene alloc] init] autorelease]]];
 }
 
 -(void)divinitySelected{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
 }
 
 - (void)dealloc {

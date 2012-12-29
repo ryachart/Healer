@@ -53,7 +53,7 @@
 - (NSInteger)score
 {
     NSInteger score = 0;
-    NSInteger livingAllies = self.raid.getAliveMembers.count;
+    NSInteger livingAllies = self.raid.livingMembers.count;
     score += livingAllies * 100;
     NSInteger healingScore = (float)(self.healingDone - self.overhealingDone) / (float)self.damageTaken * 1000.0;
     score += healingScore;

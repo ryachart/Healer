@@ -54,7 +54,7 @@
     return deadCount;
 }
 
--(NSArray*)getAliveMembers
+-(NSArray*)livingMembers
 {
 	NSMutableArray *aliveMembers = [[[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED] autorelease];
 	
@@ -150,11 +150,11 @@
 
 - (NSArray*)lowestHealthTargets:(NSInteger)numTargets withRequiredTarget:(RaidMember*)reqTarget{
     NSMutableArray *finalTargets = [NSMutableArray arrayWithCapacity:numTargets];
-    NSMutableArray *candidates = [NSMutableArray arrayWithArray:[self getAliveMembers]];
+    NSMutableArray *candidates = [NSMutableArray arrayWithArray:[self livingMembers]];
     [candidates removeObject:reqTarget];
     
     
-    int aliveMembers = [[self getAliveMembers] count];
+    int aliveMembers = [[self livingMembers] count];
     int possibleTargets = numTargets - (reqTarget ? 1 : 0);
     if (possibleTargets > aliveMembers){
         possibleTargets = aliveMembers;
@@ -175,7 +175,7 @@
 
 - (NSArray *)livingMembersWithPositioning:(Positioning)pos {
     NSMutableArray *targets = [NSMutableArray arrayWithCapacity:20];
-    NSArray *candidates = [self getAliveMembers];
+    NSArray *candidates = [self livingMembers];
     
     for (RaidMember *member in candidates) {
         if (member.positioning == pos) {

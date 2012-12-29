@@ -277,7 +277,7 @@
 {
     if (!self.isRedemptionApplied){
         if ([self hasDivinityEffectWithTitle:@"redemption"]){
-            NSArray *raid = [theRaid getAliveMembers];
+            NSArray *raid = [theRaid livingMembers];
             for (RaidMember *member in raid){
                 RedemptionEffect *redemp = [[RedemptionEffect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible];
                 [redemp setRedemptionDelegate:self];

@@ -262,7 +262,7 @@
     RaidMember *mainTank = nil;
     
     //Find an Unfocused guardian
-    for (RaidMember *member in raid.getAliveMembers){
+    for (RaidMember *member in raid.livingMembers){
         if ([member isKindOfClass:[Guardian class]] && !member.isFocused){
             mainTank = member;
             break;
@@ -270,7 +270,7 @@
     }
     //Otherwise find a focused guardian
     if (!mainTank){
-        for (RaidMember *member in raid.getAliveMembers){
+        for (RaidMember *member in raid.livingMembers){
             if ([member isKindOfClass:[Guardian class]]){
                 mainTank = member;
                 break;
@@ -427,7 +427,7 @@
     
     RaidMember *selectTarget = nil;
     
-    NSArray *aliveMembers = theRaid.getAliveMembers;
+    NSArray *aliveMembers = theRaid.livingMembers;
     if (aliveMembers.count == 1 && [aliveMembers objectAtIndex:0] == self.ownerAutoAttack.focusTarget){
         selectTarget = self.ownerAutoAttack.focusTarget;
     }else {
@@ -569,8 +569,8 @@
     [[(Boss*)self.owner announcer] displayScreenShakeForDuration:1.0];
     [[(Boss*)self.owner announcer] displayParticleSystemOnRaidWithName:@"death_ring.plist" forDuration:2.0];
 
-    NSInteger livingMemberCount = theRaid.getAliveMembers.count;
-    for (RaidMember *member in theRaid.getAliveMembers){
+    NSInteger livingMemberCount = theRaid.livingMembers.count;
+    for (RaidMember *member in theRaid.livingMembers){
         NSInteger deathWaveDamage = (int)round((float)self.abilityValue / livingMemberCount);
         deathWaveDamage *= (arc4random() % 50 + 50) / 100.0;
         deathWaveDamage *= self.owner.damageDoneMultiplier;
@@ -806,7 +806,7 @@
 @implementation RaidDamage
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
-    NSArray *livingMembers = theRaid.getAliveMembers;
+    NSArray *livingMembers = theRaid.livingMembers;
     
     for (RaidMember *member in livingMembers){
         NSInteger damage = self.abilityValue * self.owner.damageDoneMultiplier;
@@ -1000,7 +1000,7 @@
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     [super triggerAbilityForRaid:theRaid andPlayers:players];
-    NSArray *members = theRaid.getAliveMembers;
+    NSArray *members = theRaid.livingMembers;
     
     for (RaidMember *member in members) {
         RepeatedHealthEffect *bonequakeDot = [[RepeatedHealthEffect alloc] initWithDuration:3.0 andEffectType:EffectTypeNegative];
@@ -1118,7 +1118,7 @@
 }
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     
-    for (RaidMember *member in theRaid.getAliveMembers){
+    for (RaidMember *member in theRaid.livingMembers){
         HealingDoneAdjustmentEffect *reducedHealingDone = [[HealingDoneAdjustmentEffect alloc] initWithDuration:(self.cooldown - .1) andEffectType:EffectTypeNegativeInvisible];
         [reducedHealingDone setOwner:self.owner];
         [reducedHealingDone setTitle:@"blood-minion-healing-debuff"];
@@ -1155,7 +1155,7 @@
 }
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
-    for (RaidMember *member in theRaid.getAliveMembers){
+    for (RaidMember *member in theRaid.livingMembers){
         RepeatedHealthEffect *burning = [[RepeatedHealthEffect alloc] initWithDuration:self.cooldown - .1 andEffectType:EffectTypeNegativeInvisible];
         [burning setValuePerTick:-20];
         [burning setNumOfTicks:8];
@@ -1217,7 +1217,7 @@
     if ([self checkFailed]){
         return;
     }
-    for (RaidMember *member in theRaid.getAliveMembers){
+    for (RaidMember *member in theRaid.livingMembers){
         Effect *appliedEffect = [[self.appliedEffect copy] autorelease];
         [appliedEffect setOwner:self.owner];
         [member addEffect:appliedEffect];
@@ -1238,7 +1238,7 @@
 }
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     [super triggerAbilityForRaid:theRaid andPlayers:players];
-    self.cooldown = MAX(1.0, self.originalCooldown * (theRaid.getAliveMembers.count / 20.0));
+    self.cooldown = MAX(1.0, self.originalCooldown * (theRaid.livingMembers.count / 20.0));
 }
 @end
 
@@ -1363,7 +1363,7 @@
         [player addEffect:disruptionCastTimeEffect];
     }
     
-    NSArray *livingMembers = [theRaid getAliveMembers];
+    NSArray *livingMembers = [theRaid livingMembers];
     for (RaidMember *member in livingMembers){
         RepeatedHealthEffect *disruptionEffect = [[[RepeatedHealthEffect alloc] initWithDuration:duration andEffectType:EffectTypeNegativeInvisible] autorelease];
         [disruptionEffect setTitle:@"disruption-dmg"];
@@ -1494,7 +1494,7 @@
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
 {
-    NSArray *targets = [theRaid getAliveMembers];
+    NSArray *targets = [theRaid livingMembers];
     
     for (RaidMember *member in targets) {
         RepeatedHealthEffect *damage = [[[RepeatedHealthEffect alloc] initWithDuration:self.duration andEffectType:EffectTypeNegativeInvisible] autorelease];

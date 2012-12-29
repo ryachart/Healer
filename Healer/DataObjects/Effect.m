@@ -271,6 +271,22 @@
         self.isExpired = YES;
     }
 }
+
+- (void)expire
+{
+    NSInteger absorptionUsed = self.amountToShield - self.target.absorb;
+    NSInteger wastedAbsorb = self.amountToShield - absorptionUsed;
+    
+    if (absorptionUsed > 0) {
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:absorptionUsed] andEventType:CombatEventTypeHeal]];
+    }
+    
+    if (wastedAbsorb > 0) {
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:wastedAbsorb] andEventType:CombatEventTypeOverheal]];
+    }
+    
+    [super expire];
+}
 @end
 
 @implementation BarrierEffect
@@ -775,7 +791,7 @@
 
 @implementation AvatarEffect
 - (void)healRaidWithPulse:(Raid*)theRaid{
-    NSArray* raid = [theRaid getAliveMembers];
+    NSArray* raid = [theRaid livingMembers];
     for (RaidMember* member in raid){
         [member setHealth:member.health + 20];
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:@20 andEventType:CombatEventTypeHeal]];
@@ -815,7 +831,7 @@
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta {
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
     if (self.needsDetonation && !self.isExpired){
-        NSArray *aliveMembers = [theRaid getAliveMembers];
+        NSArray *aliveMembers = [theRaid livingMembers];
         NSInteger damageDealt = 350 * (self.owner.damageDoneMultiplier);
         for (RaidMember *member in aliveMembers){
             [member setHealth:member.health - damageDealt];

@@ -450,6 +450,13 @@
     }
     return self;
 }
+
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime
+{
+    [(ShieldEffect*)self.appliedEffect setAmountToShield:400*self.owner.healingDoneMultiplier];
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+}
+
 +(id)defaultSpell{
 	Barrier *bulwark = [[Barrier alloc] initWithTitle:@"Barrier" healAmnt:0 energyCost:75 castTime:0.0 andCooldown:4.0];
 	[bulwark setDescription:@"Shields the target absorbing moderate damage.  If the shield is fully consumed 50 energy is restored to the Healer."];
@@ -458,7 +465,6 @@
 	[[bulwark spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/SeerInstantShield" ofType:@"wav"]] andTitle:@"BWFinish"];
     
     ShieldEffect *appliedEffect = [[[ShieldEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositive] autorelease];
-    [appliedEffect setAmountToShield:400];
     [appliedEffect setTitle:@"barrier-eff"];
     [appliedEffect setSpriteName:@"blessed_armor.png"];
     [bulwark setAppliedEffect:appliedEffect];
@@ -477,12 +483,12 @@
 
 +(id)defaultSpell{
     Purify *purify = [[Purify alloc] initWithTitle:@"Purify" healAmnt:50 energyCost:40 castTime:0.0 andCooldown:5.0];
-    [purify setDescription:@"Dispels negative poison and curse effects from allies."];
+    [purify setDescription:@"Removes evil curses or poisons from your enemies.  If there are none to remove, Purify heals for a moderate amount."];
     [[purify spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
     return [purify autorelease];
 }
 -(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+    NSInteger initialHealAmount = self.healingAmount;
     Effect *effectToRemove = nil;
     for (Effect *effect in [thePlayer.spellTarget activeEffects]){
         if (effect.effectType == EffectTypeNegative && (effect.ailmentType == AilmentCurse || effect.ailmentType == AilmentPoison)){
@@ -490,6 +496,13 @@
             break;
         }
     }
+    if (!effectToRemove) {
+        self.healingAmount = initialHealAmount * 8;
+    }
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+    
+    self.healingAmount = initialHealAmount;
+    
     [effectToRemove effectWillBeDispelled:theRaid player:thePlayer];
     [effectToRemove expire];
     [thePlayer.spellTarget removeEffect:effectToRemove];
@@ -659,13 +672,13 @@
     return self;
 }
 + (id)defaultSpell {
-    WardOfAncients *woa = [[WardOfAncients alloc] initWithTitle:@"Ward of Ancients" healAmnt:0 energyCost:100 castTime:1.5 andCooldown:35.0];
+    WardOfAncients *woa = [[WardOfAncients alloc] initWithTitle:@"Ward of Ancients" healAmnt:0 energyCost:100 castTime:0.0 andCooldown:35.0];
     [woa setDescription:@"Covers all allies in a protective barrier that reduces incoming damage by 40% for 6 seconds."];
     return [woa autorelease];
 }
 
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
-    NSArray *aliveMembers = [theRaid getAliveMembers];
+    NSArray *aliveMembers = [theRaid livingMembers];
     [theBoss.announcer displaySprite:@"shield_bubble.png" overRaidForDuration:6.0];
     for (RaidMember*member in aliveMembers){
         Effect *dtde = [[[Effect alloc] initWithDuration:6 andEffectType:EffectTypePositiveInvisible] autorelease];
@@ -722,7 +735,7 @@
 }
 + (id)defaultSpell {
     SoaringSpirit *ss = [[SoaringSpirit alloc] initWithTitle:@"Soaring Spirit" healAmnt:0 energyCost:30 castTime:0 andCooldown:35.0];
-    [ss setDescription:@"Releases your inner light increasing your healing done and reduces cast times by 50% for 7.5 seconds."];
+    [ss setDescription:@"Releases your inner light increasing healing done and reducing cast times by 50% for 7.5 seconds."];
     return [ss autorelease];
 }
 
@@ -883,20 +896,30 @@
     return self;
 }
 + (id)defaultSpell {
-    Attunement *defaultSpell = [[Attunement alloc] initWithTitle:@"Attunement" healAmnt:0 energyCost:20 castTime:0.0 andCooldown:40.0];
-    
-    [defaultSpell setDescription:@"For 12 Seconds, all spells you cast cost 50% less."];
+    Attunement *defaultSpell = [[Attunement alloc] initWithTitle:@"Attunement" healAmnt:0 energyCost:100 castTime:0.0 andCooldown:35.0];
+    [defaultSpell setDescription:@"Binds the souls of all allies redistributing health evenly and reducing damage taken for those allies by 15% for 6 seconds."];
     return [defaultSpell autorelease];
 }
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
-    float adjustmentAdjustment = 0.0;
-    Effect *costReductionEffect = [[Effect alloc] initWithDuration:12.0 andEffectType:EffectTypePositive];
-    [costReductionEffect setTitle:@"attunement-effect"];
-    [costReductionEffect setSpellCostAdjustment:.5 + adjustmentAdjustment];
-    [thePlayer addEffect:costReductionEffect];
-    [costReductionEffect release];
+    NSArray *livingMembers = [theRaid livingMembers];
+    
+    NSInteger totalHealth = 0;
+    NSInteger currentHealth = 0;
+    for (RaidMember *member in livingMembers) {
+        totalHealth += member.maximumHealth;
+        currentHealth += member.health;
+    }
 
+    float healthPercentage = (float)currentHealth/(float)totalHealth;
+    for (RaidMember *member in livingMembers) {
+        [member setHealth:member.maximumHealth * healthPercentage];
+        Effect *armorEffect = [[[Effect alloc] initWithDuration:6.0 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [armorEffect setDamageTakenMultiplierAdjustment:-.15];
+        [armorEffect setTitle:@"attunement-armor"];
+        [armorEffect setOwner:self.owner];
+        [member addEffect:armorEffect];
+    }
 }
 @end
 

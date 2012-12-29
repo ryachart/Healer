@@ -374,6 +374,10 @@
     if (self.isServer){
         [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"BATTLEEND|%i|", success] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
     }
+    
+    //UNTIL I FINISH THIS EXPERIENCE
+    [self transitionToPostBattleWithSuccess:success];
+    return;
 
     ccTime totalTime = 8.0;
     ccTime fadeTime = 2.0;

@@ -24,6 +24,7 @@ NSString* const PlayerHighestLevelAttempted = @"com.healer.playerHighestLevelAtt
 NSString* const PlayerHighestLevelCompleted = @"com.healer.playerHighestLevelCompleted";
 NSString* const PlayerLevelFailed = @"com.healer.playerLevelFailed1";
 NSString* const PlayerLevelRatingKeyPrefix = @"com.healer.playerLevelRatingForLevel1";
+NSString* const PlayerLevelScoreKeyPrefix = @"com.healer.playerScoreForLevel";
 NSString* const PlayerRemoteObjectIdKey = @"com.healer.playerRemoteObjectID3";
 NSString* const PlayerLastUsedSpellsKey = @"com.healer.lastUsedSpells";
 NSString* const PlayerNormalModeCompleteShown = @"com.healer.nmcs";
@@ -215,7 +216,19 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
 }
 
 - (NSInteger)levelRatingForLevel:(NSInteger)level {
-    return [[self.playerData objectForKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%d", level]] intValue];
+    NSInteger rating = [[self.playerData objectForKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%d", level]] intValue];
+    if (rating > 5) { //Gross Migration code
+        rating /= 2;
+    }
+    return rating;
+}
+
+- (void)setScore:(NSInteger)score forLevel:(NSInteger)level {
+    [self.playerData setValue:[NSNumber numberWithInt:score] forKey:[PlayerLevelScoreKeyPrefix stringByAppendingFormat:@"%d", level]];
+}
+
+- (NSInteger)scoreForLevel:(NSInteger)level {
+    return [[self.playerData objectForKey:[PlayerLevelScoreKeyPrefix stringByAppendingFormat:@"%d", level]] intValue];
 }
 
 - (NSInteger)highestLevelCompleted {
@@ -251,8 +264,8 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     }
     
     NSInteger highestLevelCompleted = [self highestLevelCompleted];
-    if (highestLevelCompleted > 20){
-        highestLevelCompleted = 20; //Because of debugging stuff..
+    if (highestLevelCompleted > 25){
+        highestLevelCompleted = 25; //Because of debugging stuff..
     }
     
     NSMutableArray *levelRatings = [NSMutableArray arrayWithCapacity:highestLevelCompleted];
@@ -263,6 +276,15 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     }
     
     [obj setObject:levelRatings forKey:@"levelRatings"];
+    
+    NSMutableArray *levelScores = [NSMutableArray arrayWithCapacity:highestLevelCompleted];
+    for (int i = 1; i <= highestLevelCompleted; i++){
+        NSInteger score =  [self scoreForLevel:i];
+        NSNumber *numberObj = [NSNumber numberWithInt:score];
+        [levelRatings addObject:numberObj];
+    }
+    
+    [obj setObject:levelScores forKey:@"levelScores"];
     
     NSMutableArray *levelFails = [NSMutableArray arrayWithCapacity:highestLevelCompleted];
     for (int i = 1; i <= highestLevelCompleted; i++){

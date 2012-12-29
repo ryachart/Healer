@@ -555,8 +555,15 @@
     
     if (percentage == 15.0){
         [self.announcer announce:@"The imps begin attacking angrily!"];
-        [self.autoAttack setCooldown:1.35];
-        [self.autoAttack setFailureChance:.35];
+        self.autoAttack.isDisabled = YES;
+        
+        for (RaidMember *member in raid.livingMembers) {
+            FocusedAttack *attack = [[[FocusedAttack alloc] initWithDamage:self.autoAttack.abilityValue * .75 andCooldown:self.autoAttack.cooldown] autorelease];
+            [attack setFailureChance:self.autoAttack.failureChance];
+            [attack setFocusTarget:member];
+            [member setIsFocused:YES];
+            [self addAbility:attack];
+        }
     }
 }
 @end

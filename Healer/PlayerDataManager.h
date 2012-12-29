@@ -55,6 +55,8 @@ extern NSString* const PlayerGoldDidChangeNotification;
 
 - (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level;
 - (NSInteger)levelRatingForLevel:(NSInteger)level;
+- (void)setScore:(NSInteger)score forLevel:(NSInteger)level;
+- (NSInteger)scoreForLevel:(NSInteger)level;
 - (NSInteger)highestLevelCompleted;
 - (NSInteger)highestLevelAttempted;
 

@@ -22,6 +22,9 @@
     if (self = [super init]) {
         self.levelNum = levelNum;
         self.scale = 1.5;
+        
+//        NSInteger bestScore = [[PlayerDataManager localPlayer] scoreForLevel:self.levelNum];
+        
         CCSprite *indicatorSprite = [CCSprite spriteWithSpriteFrameName:@"cross_blades.png"];        
         CCSprite *indicatorSpriteSelected = [CCSprite spriteWithSpriteFrameName:@"cross_blades.png"];
         [indicatorSpriteSelected setOpacity:122];
@@ -45,13 +48,14 @@
                 }
             }
             
-//            self.scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:CGSizeMake(60, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Regular" fontSize:24.0];
-//            [self.scoreLabel setPosition:CGPointMake(self.contentSize.width / 2.0, - 40)];
+//            self.scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", bestScore] dimensions:CGSizeMake(60, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Regular" fontSize:20.0f];
+//            [self.scoreLabel setColor:ccc3(25, 25, 25)];
+//            [self.scoreLabel setPosition:CGPointMake(self.contentSize.width / 2.0, - 50)];
 //            [self addChild:self.scoreLabel z:5];
 //            
-//            self.scoreLabelShadow = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:CGSizeMake(60, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Regular" fontSize:24.0];
-//            [self.scoreLabelShadow setColor:ccc3(50, 50, 50)];
-//            [self.scoreLabelShadow setPosition:CGPointMake(self.contentSize.width / 2.0 -1, - 40 - 1)];
+//            self.scoreLabelShadow = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", bestScore] dimensions:CGSizeMake(60, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Regular" fontSize:20.0f];
+//            [self.scoreLabelShadow setColor:ccc3(120, 120, 120)];
+//            [self.scoreLabelShadow setPosition:CGPointMake(self.contentSize.width / 2.0 - 1, - 50 - 1)];
 //            [self addChild:self.scoreLabelShadow z:4];
         }
     }

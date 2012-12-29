@@ -25,7 +25,6 @@
 //PostBattle
 @property (nonatomic, readonly) NSInteger reward;
 @property (nonatomic, readonly) NSInteger score;
-@property (nonatomic, readonly) NSInteger rating;
 @property (nonatomic, readonly) NSInteger healingDone;
 @property (nonatomic, readonly) NSInteger overhealingDone;
 @property (nonatomic, readonly) NSInteger damageTaken;

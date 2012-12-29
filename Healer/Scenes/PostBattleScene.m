@@ -32,6 +32,7 @@
 @property (nonatomic, readwrite) BOOL isVictory;
 @property (nonatomic, readwrite) BOOL otherPlayerHasQueued;
 @property (nonatomic, readwrite) BOOL localPlayerHasQueued;
+@property (nonatomic, readwrite) BOOL isNewBestScore;
 @property (nonatomic, assign) CCLabelTTF *healingDoneLabel;
 @property (nonatomic, assign) CCLabelTTF *overhealingDoneLabel;
 @property (nonatomic, assign) CCLabelTTF *damageTakenLabel;
@@ -69,6 +70,8 @@
         NSInteger reward = 0;
         NSInteger oldRating = 0;
         NSInteger rating = 0;
+        NSInteger oldScore = [[PlayerDataManager localPlayer] scoreForLevel:self.encounter.levelNumber];
+        NSInteger score = self.encounter.score;
         NSInteger numDead = self.encounter.raid.deadCount;
         NSTimeInterval fightDuration = duration;
         
@@ -81,13 +84,19 @@
             reward = [self.encounter reward];
             
             oldRating = [[PlayerDataManager localPlayer] levelRatingForLevel:self.encounter.levelNumber];
-            rating = self.encounter.rating;
+            rating = self.encounter.difficulty;
             if (rating > oldRating && !self.isMultiplayer){
                 if (self.encounter.difficulty > 1) {
                     reward += 25; //Completing a new difficulty bonus, basically.
                 }
                 [[PlayerDataManager localPlayer] setLevelRating:rating forLevel:self.encounter.levelNumber];
             }
+            
+            if (oldScore < score && !self.isMultiplayer) {
+                self.isNewBestScore = YES;
+                [[PlayerDataManager localPlayer] setScore:score forLevel:self.encounter.levelNumber];
+            }
+            
             [[PlayerDataManager localPlayer] setLastSelectedLevel:-1]; //Clear it so it advances to the furthest level next time
         }else {
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelFailed:%i",self.encounter.levelNumber]];
@@ -116,16 +125,7 @@
             if (enc.levelNumber != 1) {
                 self.scoreLabel = [CCLabelTTF labelWithString:@"Score: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:36.0];
                 [self.scoreLabel setPosition:CGPointMake(200, 300)];
-                self.scoreLabel.opacity = 0;
                 [self addChild:self.scoreLabel];
-                
-                if (rating > oldRating && !self.isMultiplayer){
-//                    CCLabelTTF *newHighScore = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"New High Score!"] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:40.0];
-//                    [newHighScore setColor:ccGREEN];
-//                    [newHighScore setPosition:CGPointMake(200, 360)];
-//                    [self addChild:newHighScore];
-//                    [newHighScore runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
-                }
             }
             
         }else{
@@ -161,15 +161,12 @@
         }
         
         self.healingDoneLabel = [CCLabelTTF labelWithString:@"Healing Done: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
-        self.healingDoneLabel.opacity = 0;
         [self.healingDoneLabel setPosition:CGPointMake(200, 200)];
         
         self.overhealingDoneLabel = [CCLabelTTF labelWithString:@"Overhealing: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
-        self.overhealingDoneLabel.opacity = 0;
         [self.overhealingDoneLabel setPosition:CGPointMake(200, 160)];
         
         self.damageTakenLabel = [CCLabelTTF labelWithString:@"Damage Taken: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
-        self.damageTakenLabel.opacity = 0;
         [self.damageTakenLabel setPosition:CGPointMake(200, 120)];
         
         CCLabelTTF *playersLostLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Allies Lost:  %i", numDead] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
@@ -243,24 +240,36 @@
             [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"STATS|%i|%i|%i|%i|%i", localTotalHealingDone, localOverheal, remoteTotalHealingDone, remoteOverheal, totalDamageTaken] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
         }
     }
-
-    CCNumberChangeAction *numberChangeAction = [CCNumberChangeAction actionWithDuration:2.5 fromNumber:0 toNumber:self.encounter.damageTaken];
-    [numberChangeAction setPrefix:@"Damage Taken: "];
-    [self.damageTakenLabel runAction:[CCSequence actionOne:[CCFadeIn actionWithDuration:0.0] two:numberChangeAction]];
     
-    numberChangeAction = [CCNumberChangeAction actionWithDuration:2.5 fromNumber:0 toNumber:self.encounter.healingDone];
+    NSInteger finalScore = self.encounter.score;
+
+    CCNumberChangeAction *numberChangeAction = [CCNumberChangeAction actionWithDuration:2.0 fromNumber:0 toNumber:self.encounter.damageTaken];
+    [numberChangeAction setPrefix:@"Damage Taken: "];
+    [self.damageTakenLabel runAction:numberChangeAction];
+    
+    numberChangeAction = [CCNumberChangeAction actionWithDuration:3.5 fromNumber:0 toNumber:self.encounter.healingDone];
     [numberChangeAction setPrefix:@"Healing Done: "];
-    [self.healingDoneLabel runAction:[CCSequence actionOne:[CCFadeIn actionWithDuration:1.5] two:numberChangeAction]];
+    [self.healingDoneLabel runAction:numberChangeAction];
 
-    numberChangeAction = [CCNumberChangeAction actionWithDuration:2.5 fromNumber:0 toNumber:self.encounter.overhealingDone];
+    numberChangeAction = [CCNumberChangeAction actionWithDuration:5.0 fromNumber:0 toNumber:self.encounter.overhealingDone];
     [numberChangeAction setPrefix:@"Overhealing: "];
-    [self.overhealingDoneLabel runAction:[CCSequence actionOne:[CCFadeIn actionWithDuration:3.0] two:numberChangeAction]];
+    [self.overhealingDoneLabel runAction:numberChangeAction];
 
-    numberChangeAction = [CCNumberChangeAction actionWithDuration:2.5 fromNumber:0 toNumber:self.encounter.score];
+    numberChangeAction = [CCNumberChangeAction actionWithDuration:5.0+(finalScore/10000.0) fromNumber:0 toNumber:finalScore];
     [numberChangeAction setPrefix:@"Score: "];
-    [self.scoreLabel runAction:[CCSequence actionOne:[CCFadeIn actionWithDuration:4.5] two:numberChangeAction]];
+    [self.scoreLabel runAction:[CCSequence actionOne:numberChangeAction two:[CCCallFunc actionWithTarget:self selector:@selector(completeStatAnimations)]]];
 
 
+}
+
+- (void)completeStatAnimations {
+    if (self.isNewBestScore && !self.isMultiplayer){
+        CCLabelTTF *newHighScore = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"New High Score!"] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:40.0];
+        [newHighScore setColor:ccGREEN];
+        [newHighScore setPosition:CGPointMake(200, 360)];
+        [self addChild:newHighScore];
+        [newHighScore runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
+    }
 }
 
 - (void)onExit {

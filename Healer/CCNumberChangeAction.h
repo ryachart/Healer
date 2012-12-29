@@ -8,7 +8,7 @@
 
 #import "cocos2d.h"
 
-@interface CCNumberChangeAction : CCFiniteTimeAction
+@interface CCNumberChangeAction : CCActionInterval
 @property (nonatomic, retain) NSString *prefix;
 @property (nonatomic, retain) NSString *suffix;
 + (CCNumberChangeAction*)actionWithDuration:(NSTimeInterval)duration fromNumber:(NSInteger)start toNumber:(NSInteger)finishNumber;

@@ -891,7 +891,7 @@
 @implementation Attunement
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
-        self.spellType = SpellTypeEmpowering;
+        self.spellType = SpellTypeProtective;
     }
     return self;
 }

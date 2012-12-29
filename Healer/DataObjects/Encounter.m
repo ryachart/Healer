@@ -44,19 +44,9 @@
     return self;
 }
 
-- (NSInteger)rating
-{
-    NSInteger rating = self.difficulty * 2;
-    return rating;
-}
-
 - (NSInteger)score
 {
-    NSInteger score = 0;
-    NSInteger livingAllies = self.raid.livingMembers.count;
-    score += livingAllies * 100;
-    NSInteger healingScore = (float)(self.healingDone - self.overhealingDone) / (float)self.damageTaken * 1000.0;
-    score += healingScore;
+    NSInteger score = self.difficulty * (14000 * self.healingDone / self.damageTaken + 14000 * self.raid.livingMembers.count / self.raid.raidMembers.count) ;
     return score;
 }
 
@@ -69,7 +59,7 @@
             totalDamageTaken +=  abs(dmgVal);
         }
     }
-    return totalDamageTaken;
+    return MAX(1, totalDamageTaken);
 }
 
 - (NSInteger)healingDone

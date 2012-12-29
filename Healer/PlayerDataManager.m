@@ -188,7 +188,7 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     NSInteger totalScore = 0;
     for (int i = 2; i <= highestLevelCompleted; i++){
         NSInteger rating =  [self levelRatingForLevel:i];
-        totalScore += (rating / 2); //Rating is divided by 2 because we score on a 1 out of 10 scale but skulls are served as 1 to 5
+        totalScore += rating;
     }
     return totalScore;
 }

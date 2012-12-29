@@ -34,7 +34,7 @@
         [menu setPosition:CGPointZero];
         [self addChild:menu z:100];
         
-        NSInteger rating = [[PlayerDataManager localPlayer] levelRatingForLevel:levelNum] / 2;
+        NSInteger rating = [[PlayerDataManager localPlayer] levelRatingForLevel:levelNum];
         if (rating > 0) {
             for (int i = 0; i < 5; i++) {
                 CGPoint skullPos = CGPointMake((i * 15) - 32, -25);

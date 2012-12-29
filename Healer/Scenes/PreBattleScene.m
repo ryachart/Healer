@@ -152,7 +152,7 @@
 
 -(void)back{
     if (!self.changingSpells){
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInL transitionWithDuration:1.0 scene:[[[LevelSelectMapScene alloc] init] autorelease]]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[[[LevelSelectMapScene alloc] init] autorelease]]];
     }
 }
 

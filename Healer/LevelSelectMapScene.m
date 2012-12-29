@@ -73,7 +73,7 @@
         if ([Divinity isDivinityUnlocked]){
             [basicPlayer setDivinityConfig:[[PlayerDataManager localPlayer] localDivinityConfig]];
         }
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionSlideInR transitionWithDuration:1.0 scene:pbs]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:pbs]];
     }
 }
 

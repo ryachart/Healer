@@ -234,7 +234,16 @@
         self.currentTarget = nil;
     }
     if (!self.currentTarget) {
-        self.currentTarget = [super targetFromRaid:raid];
+        RaidMember *candidate = nil;
+        NSInteger safety = 0;
+        while (!candidate && safety < 20) {
+            candidate = [super targetFromRaid:raid];
+            if (candidate.isFocused) {
+                candidate = nil;
+            }
+            safety++;
+        }
+        self.currentTarget = candidate;
         [self.currentTarget setIsFocused:YES];
     }
     
@@ -1506,4 +1515,25 @@
     }
 }
 
+@end
+
+@implementation EnsureEffectActiveAbility
+- (void)combatActions:(Raid *)theRaid boss:(Boss *)theBoss players:(NSArray *)players gameTime:(float)timeDelta
+{
+    if (!self.isDisabled) {
+        BOOL hasEffect = NO;
+        for (Effect* effect in self.victim.activeEffects){
+            if ([effect.title isEqualToString:self.ensuredEffect.title]){
+                hasEffect = YES;
+                break;
+            }
+        }
+        if (!hasEffect || self.victim.isDead){
+            self.victim = [theRaid randomLivingMember];
+            Effect *eff = [self.ensuredEffect copy];
+            [eff setOwner:self.owner];
+            [self.victim addEffect:[eff autorelease]];
+        }
+    }
+}
 @end

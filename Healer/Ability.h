@@ -191,3 +191,8 @@ typedef enum {
 + (Cleave *)normalCleave;
 //Hits a random number of melee opponents. Always affects at least 1 Guardian when it triggers
 @end
+
+@interface EnsureEffectActiveAbility : Ability
+@property (nonatomic, retain) RaidMember *victim;
+@property (nonatomic, retain) Effect *ensuredEffect;
+@end

@@ -49,6 +49,7 @@ typedef enum {
 @property (nonatomic, readwrite) float cooldownRemaining;
 @property (nonatomic, readwrite) float cooldown;
 @property (nonatomic, retain) Effect* appliedEffect;
+@property (nonatomic, readwrite) BOOL isExclusiveEffectTarget;
 
 @property (nonatomic, readonly) NSString* spellTypeDescription;
 @property (nonatomic, readwrite) SpellType spellType;

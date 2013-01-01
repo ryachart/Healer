@@ -41,7 +41,7 @@ typedef enum {
 @property (nonatomic, retain) NSString* info;
 @property (nonatomic,  readwrite) NSInteger damageDealt; //All RaidMembers deal some damage
 @property (readwrite) float lastAttack;
-@property (readwrite) float dodgeChance;
+@property (nonatomic, readwrite) float dodgeChance;
 @property (readwrite) float criticalChance;
 @property (readonly) Positioning positioning;
 @property (nonatomic, assign) id<Announcer>announcer;

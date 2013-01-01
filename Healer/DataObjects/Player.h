@@ -41,7 +41,7 @@ typedef int CastingDisabledReason;
 @interface Player : HealableTarget <RedemptionDelegate> {
 	//In Game Data
 	NSArray *activeSpells;
-	NSInteger energy;
+	float energy;
 	NSInteger energyRegenPerSecond;
 	NSInteger maximumEnergy;
 	
@@ -69,7 +69,7 @@ typedef int CastingDisabledReason;
 @property (nonatomic, retain, readonly) NSMutableSet *spellsOnCooldown;
 @property (nonatomic, retain) NSDictionary *divinityConfig;
 @property (nonatomic, retain) Spell *spellBeingCast;
-@property (nonatomic, setter=setEnergy:) NSInteger energy;
+@property (nonatomic, setter=setEnergy:) float energy;
 @property (nonatomic, retain) NSArray* additionalTargets;
 @property (assign) RaidMember* spellTarget;
 @property (nonatomic, retain) NSString *statusText;
@@ -79,6 +79,7 @@ typedef int CastingDisabledReason;
 @property (nonatomic, readwrite) float spellCostAdjustment;
 @property (nonatomic, readwrite) float spellCriticalChance;
 @property (nonatomic, readwrite) float criticalBonusMultiplier;
+@property (nonatomic, readwrite) float cooldownAdjustment;
 @property (nonatomic, readwrite) NSInteger avatarCounter;
 @property (nonatomic, readwrite) BOOL isConfused;
 @property (nonatomic, readwrite) NSInteger overhealingToDistribute;
@@ -107,7 +108,7 @@ typedef int CastingDisabledReason;
 - (NSTimeInterval)channelingTime;
 
 - (BOOL)isDead;
-- (void)setEnergy:(NSInteger)newEnergy;
+- (void)setEnergy:(float)newEnergy;
 
 - (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical;
 - (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical;

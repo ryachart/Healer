@@ -16,6 +16,7 @@ typedef enum {
     CombatEventTypeDamage,
     CombatEventTypeMemberDied,
     CombatEventTypePlayerInterrupted,
+    CombatEventTypeShielding,
     CombatEventEnded
 } CombatEventType;
 
@@ -37,6 +38,7 @@ extern NSString* const PlayerOverHealingDoneKey;
 @property (nonatomic, retain) NSNumber *value;
 @property (readwrite) CombatEventType type;
 @property (readwrite) BOOL critical;
+
 +(CombatEvent*)eventWithSource:(id<EventDataSource>)source target:(id<EventDataSource>)target value:(NSNumber*)value andEventType:(CombatEventType)type;
 +(CombatEvent*)eventWithSource:(id<EventDataSource>)source target:(id<EventDataSource>)target value:(NSNumber*)value eventType:(CombatEventType)type critical:(BOOL)critical;
 

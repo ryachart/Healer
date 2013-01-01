@@ -281,7 +281,7 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     for (int i = 1; i <= highestLevelCompleted; i++){
         NSInteger score =  [self scoreForLevel:i];
         NSNumber *numberObj = [NSNumber numberWithInt:score];
-        [levelRatings addObject:numberObj];
+        [levelScores addObject:numberObj];
     }
     
     [obj setObject:levelScores forKey:@"levelScores"];

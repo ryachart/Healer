@@ -45,6 +45,15 @@
 	return self;
 }
 
+- (float)dodgeChance
+{
+    float base = dodgeChance;
+    for (Effect *eff in self.activeEffects) {
+        base += eff.dodgeChanceAdjustment;
+    }
+    return base;
+}
+
 - (void)healSelfForAmount:(NSInteger)amount {
     if (amount > 0){
         if (!self.hasDied && !self.isDead){
@@ -110,6 +119,10 @@
         finalAmount *= 1.5;
         [self didPerformCriticalStrikeForAmount:finalAmount];
     }
+    
+    //Health adjustment
+    finalAmount *= MAX(self.healthPercentage, 0.6);
+    
     return finalAmount;
 }
 
@@ -128,7 +141,7 @@
 
 
 -(NSString*)asNetworkMessage{
-    NSMutableString* message = [NSMutableString stringWithFormat:@"RDMBR|%@|%i|%i|", self.battleID, self.health, self.isFocused];
+    NSMutableString* message = [NSMutableString stringWithFormat:@"RDMBR|%@|%i|%i|%i|%i", self.battleID, self.health, self.isFocused, self.absorb, self.maximumAbsorbtion];
     for (Effect*effect in self.activeEffects){
         [message appendFormat:@"#%@", effect.asNetworkMessage];
     }
@@ -156,6 +169,8 @@
     BOOL focused = [[components objectAtIndex:3] boolValue];
     
     self.isFocused = focused;
+    
+    self.absorb = [[components objectAtIndex:4] intValue];
 }
 
 
@@ -248,11 +263,6 @@
     }
 }
 
--(int)damageDealt{
-    int baseDamage = [super damageDealt];
-    int fullHealthBonus = self.health == self.maximumHealth ? 10 : 0;
-    return baseDamage + fullHealthBonus;
-}
 @end
 
 @implementation  Wizard

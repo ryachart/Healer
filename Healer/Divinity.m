@@ -88,18 +88,21 @@ static NSDictionary *divinityInfo = nil;
     for (int i = 0; i < 5; i++){
         NSString *tierChoice = [configuration objectForKey:[NSString stringWithFormat:@"tier-%i", i]];
         if (tierChoice){
+            NSString *tierChoiceKey = [self choiceTitleToKey:tierChoice];
             DivinityEffect *divEff = [[DivinityEffect alloc] initWithDivinityKey:[Divinity choiceTitleToKey:tierChoice]];
             [effects addObject:[divEff autorelease]];
-            if ([tierChoice isEqualToString:@"surging-glory"]) {
-                [divEff setEnergyRegenAdjustment:.1];
-            }
-            if ([tierChoice isEqualToString:@"repel-the-darkness"]) {
-                [divEff setHealingDoneMultiplierAdjustment:.05];
-                [divEff setCastTimeAdjustment:-.05];
+            
+            if ([tierChoiceKey isEqualToString:@"healing-hands"]) {
+                [divEff setCriticalChanceAdjustment:0.1];
             }
             
-            if ([tierChoice isEqualToString:@"blessed-power"]){
-                [divEff setCastTimeAdjustment:-0.075];
+            if ([tierChoiceKey isEqualToString:@"surging-glory"]) {
+                [divEff setEnergyRegenAdjustment:.5];
+            }
+            
+            if ([tierChoiceKey isEqualToString:@"blessed-power"]){
+                [divEff setCastTimeAdjustment:-0.1];
+                [divEff setCooldownMultiplierAdjustment:-0.1];
             }
         }
     }
@@ -111,13 +114,13 @@ static NSDictionary *divinityInfo = nil;
         case 0:
             return 25;
         case 1:
-            return 40;
+            return 35;
         case 2:
-            return 60;
+            return 50;
         case 3:
-            return 80;
+            return 75;
         case 4:
-            return 90;
+            return 85;
     }
     return NSUIntegerMax; //Loooool
 }

@@ -16,6 +16,8 @@
 #import "Effect.h"
 
 @interface Boss ()
+@property (nonatomic, readwrite) float challengeDamageDoneModifier;
+@property (nonatomic, readwrite) BOOL hasAppliedChallengeEffects;
 @property (nonatomic, retain) NSMutableArray *queuedAbilitiesToAdd;
 @property (nonatomic, readwrite) BOOL shouldQueueAbilityAdds;
 @end
@@ -54,31 +56,31 @@
     return _namePlateTitle;
 }
 
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1: 
+            return -.40;
+        case 2:
+            return -.20;
+        case 4:
+            return .1;
+        case 5:
+            return .15;
+        case 3: //Normal
+        default:
+            return 0.0;
+    }
+}
+
+- (float)damageDoneMultiplier
+{
+    return [super damageDoneMultiplier] + [self challengeDamageDoneModifier];
+}
+
 - (void)configureBossForDifficultyLevel:(NSInteger)difficulty
 {
     self.difficulty = difficulty;
-    
-    Effect *damageMod = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypeNeutral] autorelease];
-    [damageMod setOwner:self];
-    [damageMod setTitle:@"difficulty-damage"];
-    switch (difficulty) {
-        case 1: //Damage Reduced by 20%
-            [damageMod setDamageDoneMultiplierAdjustment:-.4];
-            break;
-        case 2: //Damage Reduced by 10%
-            [damageMod setDamageDoneMultiplierAdjustment:-.2];
-            break;
-        case 3: //Normal
-            [damageMod setDamageDoneMultiplierAdjustment:0.0];
-            break;
-        case 4: //Damage Increased by 10%
-            [damageMod setDamageDoneMultiplierAdjustment:.125];
-            break;
-        case 5: //Damage Increased by 20%
-            [damageMod setDamageDoneMultiplierAdjustment:.225];
-            break;
-    }
-    [self addEffect:damageMod];
     
     for (Ability *ab in self.abilities) {
         [ab setDifficulty:self.difficulty];
@@ -230,6 +232,23 @@
     }
     self.duration += timeDelta;
     
+    if (!self.hasAppliedChallengeEffects) {
+        if (self.difficulty > 3) {
+            for (Player *plyer in players) {
+                Effect *healingReductionChallengeEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypeNegativeInvisible] autorelease];
+                float mod = -.10;
+                if (self.difficulty == 5) {
+                    mod = -.15;
+                }
+                [healingReductionChallengeEffect setTitle:@"hr-red-challengeeff"];
+                [healingReductionChallengeEffect setOwner:self];
+                [healingReductionChallengeEffect setHealingDoneMultiplierAdjustment:mod];
+                [plyer addEffect:healingReductionChallengeEffect];
+            }
+        }
+        self.hasAppliedChallengeEffects = YES;
+    }
+    
     self.shouldQueueAbilityAdds = YES;
     for (Ability *ability in self.abilities){
         [ability combatActions:theRaid boss:self players:players gameTime:timeDelta];
@@ -328,9 +347,7 @@
     
     [self addAbility:[Cleave normalCleave]];
 
-    if (difficulty > 3) {
-        self.autoAttack.abilityValue = 400;
-        self.autoAttack.failureChance = .4;
+    if (difficulty == 5) {
         [self addAbility:[[DisorientingBoulder new] autorelease]];
     }
 }
@@ -1252,7 +1269,14 @@
         }
     }
     [self.announcer announce:@"An Ally Has been chosen for Execution..."];
-    [target setHealth:target.maximumHealth * .4];
+    NSInteger currentHealth = target.health;
+    NSInteger healthLimit = target.maximumHealth * .4;
+    if (currentHealth > healthLimit) {
+        [target setHealth:healthLimit];
+        if (currentHealth > healthLimit) {
+            [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:(currentHealth - healthLimit)] andEventType:CombatEventTypeDamage]];
+        }
+    }
     ExecutionEffect *effect = [[ExecutionEffect alloc] initWithDuration:3.75 andEffectType:EffectTypeNegative];
     [effect setOwner:self];
     [effect setValue:-2000];
@@ -1971,12 +1995,105 @@
 
 @implementation SoulOfTorment
 + (id)defaultBoss {
-    SoulOfTorment *boss = [[SoulOfTorment alloc] initWithHealth:1 damage:0 targets:0 frequency:0.0 choosesMT:NO ];
+    SoulOfTorment *boss = [[SoulOfTorment alloc] initWithHealth:5040000 damage:0 targets:0 frequency:0.0 choosesMT:NO];
+    
+    FocusedAttack *tankAttack = [[[FocusedAttack alloc] initWithDamage:500 andCooldown:2.25] autorelease];
+    [tankAttack setFailureChance:.18];
+    [boss addAbility:tankAttack];
+    boss.autoAttack = tankAttack;
+    
     [boss setTitle:@"The Soul of Torment"];
     [boss setNamePlateTitle:@"Torment"];
     [boss setInfo:@"Its body shattered and broken--the last gasp of this terrible creature conspires to unleash its most unspeakable power.  This is the last stand of your realm against the evil that terrorizes it."];
     
+    RaidDamagePulse *pulse = [[[RaidDamagePulse alloc] init] autorelease];
+    [pulse setTitle:@"shadow-nova"];
+    [pulse setAbilityValue:550];
+    [pulse setNumTicks:3];
+    [pulse setDuration:15.0];
+    [pulse setCooldown:80.0];
+    [pulse setTimeApplied:75.0];
+    [boss addAbility:pulse];
+    
     return [boss autorelease];
+}
+
+- (void)gainSoulDrain
+{
+    [self.announcer announce:@"The Soul of Torment hungers for souls"];
+
+    IRHEDispelsOnHeal *soulDrainEffect = [[[IRHEDispelsOnHeal alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+    [soulDrainEffect setIncreasePerTick:.05];
+    [soulDrainEffect setValuePerTick:-80];
+    [soulDrainEffect setNumOfTicks:10];
+    [soulDrainEffect setSpriteName:@"shadow_curse.png"];
+    [soulDrainEffect setTitle:@"soul-drain-eff"];
+    
+    EnsureEffectActiveAbility *eeaa = [[[EnsureEffectActiveAbility alloc] init] autorelease];
+    [eeaa setEnsuredEffect:soulDrainEffect];
+    [self addAbility:eeaa];
+}
+
+- (void)soulPrisonAll:(Raid *)raid
+{
+    [self.announcer announce:@"\"YOUR SOULS BELONG TO THE ABYSS\""];
+    for (RaidMember *member in raid.livingMembers) {
+        SoulPrisonEffect *spe = [[[SoulPrisonEffect alloc] initWithDuration:60.0 andEffectType:EffectTypeNegative] autorelease];
+        [spe setOwner:self];
+        NSInteger damage = member.health - 1;
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
+        [member setHealth:1];
+        [member addEffect:spe];
+    }
+}
+
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
+{
+    if (percentage == 90.0) {
+        [self.announcer announce:@"You will beg for death."];
+        [self gainSoulDrain];
+    }
+
+    if (percentage == 70.0) {
+        [self.announcer announce:@"Such glorious anguish"];
+        [self gainSoulDrain];
+    }
+    
+    if (percentage == 50.0) {
+        [self.announcer announce:@"Your cries of pain only strengthen me"];
+        [self gainSoulDrain];
+    }
+
+    if (percentage == 40.0) {
+        [self.announcer announce:@"YOU CANNOT WITHSTAND THIS TORMENT"];
+        [self soulPrisonAll:raid];
+    }
+    
+    if (percentage == 30.0) {
+        [self.announcer announce:@"The Soul of Torment poisons your mind and clouds your vision."];
+        Confusion *confusionAbility = [[[Confusion alloc] init] autorelease];
+        [confusionAbility setCooldown:14.0];
+        [confusionAbility setAbilityValue:8.0];
+        [confusionAbility setTitle:@"confusion"];
+        [self addAbility:confusionAbility];
+        [confusionAbility setTimeApplied:10.0];
+    }
+    
+    if (percentage == 10.0) {
+        [self.announcer announce:@"YOUR SOULS WILL BURN IN DARKNESS"];
+        [self soulPrisonAll:raid];
+    }
+}
+
+- (void)ownerDidExecuteAbility:(Ability *)ability
+{
+    if ([ability.title isEqualToString:@"shadow-nova"]){
+        RaidDamagePulse *pulse = (RaidDamagePulse*)ability;
+        NSTimeInterval tickTime = pulse.duration / pulse.numTicks;
+        for (int i = 0; i < pulse.numTicks; i++) {
+            [self.announcer displayParticleSystemOnRaidWithName:@"shadow_raid_burst.plist" delay:(tickTime * (i + 1))];
+        }
+    }
 }
 @end
 

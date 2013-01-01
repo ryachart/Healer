@@ -46,7 +46,7 @@
 
 - (NSInteger)score
 {
-    NSInteger score = self.difficulty * (14000 * self.healingDone / self.damageTaken + 14000 * self.raid.livingMembers.count / self.raid.raidMembers.count) ;
+    NSInteger score = self.difficulty * (1400 * self.healingDone / self.damageTaken + 1400 * self.raid.livingMembers.count / self.raid.raidMembers.count) ;
     return score;
 }
 
@@ -54,7 +54,7 @@
 {
     int totalDamageTaken = 0;
     for (CombatEvent *event in self.combatLog){
-        if (event.type == CombatEventTypeDamage && [[event source] isKindOfClass:[Boss class]]){
+        if ((event.type == CombatEventTypeDamage || event.type == CombatEventTypeShielding) && [[event source] isKindOfClass:[Boss class]]){
             NSInteger dmgVal = [[event value] intValue];
             totalDamageTaken +=  abs(dmgVal);
         }

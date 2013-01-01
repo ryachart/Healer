@@ -62,6 +62,12 @@
     copied.failureChance = self.failureChance;
     copied.causesConfusion = self.causesConfusion;
     copied.damageTakenMultiplierAdjustment = self.damageTakenMultiplierAdjustment;
+    copied.cooldownMultiplierAdjustment = self.cooldownMultiplierAdjustment;
+    copied.energyRegenAdjustment = self.energyRegenAdjustment;
+    copied.criticalChanceAdjustment = self.criticalChanceAdjustment;
+    copied.maximumHealthMultiplierAdjustment = self.maximumHealthMultiplierAdjustment;
+    copied.maximumAbsorbtionAdjustment = self.maximumAbsorbtionAdjustment;
+    copied.dodgeChanceAdjustment = self.dodgeChanceAdjustment;
     return copied;
 }
 
@@ -122,7 +128,7 @@
 
 //EFF|TARGET|TITLE|DURATION|TYPE|SPRITENAME|OWNER|HDM|DDM|Ind
 -(NSString*)asNetworkMessage{
-    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@|%f|%f|%i", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner, self.healingDoneMultiplierAdjustment, self.damageDoneMultiplierAdjustment, self.isIndependent];
+    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@|%f|%f|%i|%f|%f|%i", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner, self.healingDoneMultiplierAdjustment, self.damageDoneMultiplierAdjustment, self.isIndependent, self.castTimeAdjustment, self.cooldownMultiplierAdjustment, self.maximumAbsorbtionAdjustment];
     
     return message;
 }
@@ -136,6 +142,9 @@
         self.healingDoneMultiplierAdjustment = [[messageComponents objectAtIndex:7] floatValue];
         self.damageDoneMultiplierAdjustment = [[messageComponents objectAtIndex:8] floatValue];
         self.isIndependent = [[messageComponents objectAtIndex:9] boolValue];
+        self.castTimeAdjustment = [[messageComponents objectAtIndex:10] floatValue];
+        self.cooldownMultiplierAdjustment = [[messageComponents objectAtIndex:11] floatValue];
+        self.maximumAbsorbtionAdjustment = [[messageComponents objectAtIndex:12] intValue];
     }
     return self;
 }
@@ -153,11 +162,6 @@
     if (self=[super initWithDuration:-1 andEffectType:EffectTypeDivinity]){
         self.divinityKey = divKey;
         self.title = divKey;
-        
-        if ([divKey isEqualToString:@"godstouch"]){
-            self.healingDoneMultiplierAdjustment = .1;
-            self.spellCostAdjustment = .1;
-        }
     }
     return self;
 }
@@ -214,7 +218,7 @@
     if (!self.target.isDead){
         if (self.shouldFail){
             
-        }else{
+        } else {
             BOOL critical = NO;
             Player *owningPlayer = nil;
             if ([self.owner isKindOfClass:[Player class]]) {
@@ -276,10 +280,6 @@
 {
     NSInteger absorptionUsed = self.amountToShield - self.target.absorb;
     NSInteger wastedAbsorb = self.amountToShield - absorptionUsed;
-    
-    if (absorptionUsed > 0) {
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:absorptionUsed] andEventType:CombatEventTypeHeal]];
-    }
     
     if (wastedAbsorb > 0) {
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:wastedAbsorb] andEventType:CombatEventTypeOverheal]];
@@ -894,6 +894,36 @@
     if ([self.target isMemberOfClass:[Player class]]){
         Player *targettedPlayer = (Player*)self.target;
         [targettedPlayer setEnergy:targettedPlayer.energy - self.energyChangePerCast];
+    }
+}
+@end
+
+@implementation IRHEDispelsOnHeal
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
+    
+}
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth {
+    if (currentHealth < newHealth){
+		self.isExpired = YES;
+	}
+}
+@end
+
+@implementation ExpiresAfterSpellCastsEffect
+
+- (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
+{
+    if (self = [super initWithDuration:dur andEffectType:type]) {
+        self.numCastsRemaining = 1;
+    }
+    return self;
+}
+
+- (void)targetDidCastSpell:(Spell *)spell
+{
+    self.numCastsRemaining--;
+    if (self.numCastsRemaining <= 0) {
+        self.isExpired = YES;
     }
 }
 @end

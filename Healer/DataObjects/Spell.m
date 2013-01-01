@@ -171,8 +171,27 @@
 	
 }
 
--(void)applyEffectToTarget:(RaidMember*)target{
+-(void)applyEffectToTarget:(RaidMember*)target inRaid:(Raid*)raid {
     if (self.appliedEffect){
+        if (self.isExclusiveEffectTarget) {
+            for (RaidMember *member in raid.livingMembers) {
+                if (member == target) {
+                    continue; //We can stack it up on the same target
+                }
+                NSIndexSet *similarEffectIndexes = [[member activeEffects] indexesOfObjectsPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop){
+                    Effect *eff = (Effect *)obj;
+                    if (eff.title == self.appliedEffect.title && eff.owner == self.owner) {
+                        return YES;
+                    }
+                    return NO;
+                }];
+                NSArray *objectsToRemove = [[member activeEffects] objectsAtIndexes:similarEffectIndexes];
+                for (Effect *effToRemove in objectsToRemove) {
+                    NSLog(@"Removing similar effect because");
+                    [member removeEffect:effToRemove];
+                }
+            }
+        }
         Effect *effectToApply = [[self.appliedEffect copy] autorelease];
         [effectToApply setOwner:self.owner];
         [target addEffect:effectToApply];
@@ -208,7 +227,7 @@
         NSInteger overheal = amount - finalAmount;
         [self.owner playerDidHealFor:finalAmount onTarget:thePlayer.spellTarget fromSpell:self withOverhealing:overheal asCritical:critical];
 		[thePlayer setEnergy:[thePlayer energy] - [self energyCost]];
-        [self applyEffectToTarget:thePlayer.spellTarget];
+        [self applyEffectToTarget:thePlayer.spellTarget inRaid:theRaid];
 	}
 	else if ([self targets] > 1){
 		int limit = [self targets];
@@ -231,7 +250,7 @@
                 [self didHealTarget:currentTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:finalAmount];
                 NSInteger overheal = amount - finalAmount;
                 [self.owner playerDidHealFor:finalAmount onTarget:currentTarget fromSpell:self withOverhealing:overheal asCritical:critical];
-                [self applyEffectToTarget:currentTarget];
+                [self applyEffectToTarget:currentTarget inRaid:theRaid];
 			}
 			
 		}
@@ -240,7 +259,7 @@
     
     if (self.cooldown > 0.0){
         [[thePlayer spellsOnCooldown] addObject:self];
-        self.cooldownRemaining = self.cooldown;
+        self.cooldownRemaining = self.cooldown * self.owner.cooldownAdjustment;
     }
 }
 -(void)updateCooldowns:(float)theTime{
@@ -553,14 +572,16 @@
 }
 +(id)defaultSpell{
     SwirlingLight *swirl = [[SwirlingLight alloc] initWithTitle:@"Swirling Light" healAmnt:0 energyCost:20 castTime:0.0 andCooldown:1.0];
-    [swirl setDescription:@"Heals a target over 10 seconds.  Each additional stack improves all the healing of all stacks. Maximum 4 Stacks."];
+    [swirl setDescription:@"Heals a target over 10 seconds. Maximum 3 Stacks. Each stack reduces damage taken by 2%%. Can only be applied to 1 ally."];
 	[[swirl spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
-    SwirlingLightEffect *sle = [[SwirlingLightEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];
-    [sle setMaxStacks:4];
+    [swirl setIsExclusiveEffectTarget:YES];
+    RepeatedHealthEffect *sle = [[RepeatedHealthEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];
+    [sle setMaxStacks:3];
+    [sle setDamageTakenMultiplierAdjustment:-.02];
     [sle setSpriteName:@"swirling_light.png"];
     [sle setTitle:@"swirling-light-effect"];
-    [sle setNumOfTicks:20];
-    [sle setValuePerTick:20];
+    [sle setNumOfTicks:15];
+    [sle setValuePerTick:25];
     [swirl setAppliedEffect:sle];
     [sle release];
     return [swirl autorelease];
@@ -876,12 +897,12 @@
 + (id)defaultSpell {
     BlessedArmor *defaultSpell = [[BlessedArmor alloc] initWithTitle:@"Blessed Armor" healAmnt:0 energyCost:70 castTime:0.0 andCooldown:9.0];
     
-    [defaultSpell setDescription:@"Reduces damage done to a target by 50% for 5 seconds.  When the effect ends it heals for a moderate amount."];
+    [defaultSpell setDescription:@"Reduces damage done to a target by 25% for 5 seconds.  When the effect ends it heals for a moderate amount."];
     DelayedHealthEffect *bae = [[DelayedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
     [bae setSpriteName:@"blessed_armor.png"];
     [bae setTitle:@"blessed-armor-eff"];
     [bae setValue:500];
-    [bae setDamageTakenMultiplierAdjustment:-.5];
+    [bae setDamageTakenMultiplierAdjustment:-.25];
     [defaultSpell setAppliedEffect:bae];
     [bae release];
     return [defaultSpell autorelease];

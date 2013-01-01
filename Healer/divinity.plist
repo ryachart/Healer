@@ -3,33 +3,33 @@
 <plist version="1.0">
 <dict>
 	<key>healing-hands</key>
-	<string>Basic spells heal for an additional 15% over 6 seconds.</string>
+	<string>Increases the critical chance of spells by 10%</string>
 	<key>blessed-power</key>
-	<string>Reduces Cast Times by 7.5%.</string>
+	<string>Reduces Cast Times and Cooldowns by 10%.</string>
 	<key>insight</key>
-	<string>Reduces Energy Costs by 7.5%.</string>
+	<string>Reduces Energy Costs by 10%.</string>
 	<key>surging-glory</key>
-	<string>Increases Energy Regeneration by 10%.</string>
+	<string>Increases natural energy regeneration by 50%.</string>
 	<key>shining-aegis</key>
-	<string>Periodic and Multi heals reduce their targets damage taken by 7.5% for 7 seconds.</string>
+	<string>Your heals reduce their target&apos;s damage taken by 7.5% for 10 seconds.</string>
 	<key>after-light</key>
 	<string>Non-periodic healing shields the target for 10% of the healing done.</string>
 	<key>repel-the-darkness</key>
-	<string>Healing done and cast times are improved by 5%.</string>
+	<string>Your heals increase the target&apos;s damage dealt by 25% for 10 seconds.</string>
 	<key>ancient-knowledge</key>
-	<string>25% of Overhealing is distributed to injured allies.</string>
+	<string>50% of Overhealing is distributed to injured allies.</string>
 	<key>purity-of-soul</key>
-	<string>Spells have a 5% chance to refund their energy cost.</string>
+	<string>Spell critical hits decrease your next 2 spell casts by 50% and reduce spell cooldowns by 10%.</string>
 	<key>searing-power</key>
-	<string>Increases healing by 9% on Wizards, Warlocks, and Archers</string>
+	<string>Your healing spells increase the maximum health of the target by 10% for 1 minute.</string>
 	<key>sunlight</key>
-	<string>Increases healing by 20% on Guardians.</string>
+	<string>Your healing spells increase the dodge chance of the target by 10% for 1 minute.</string>
 	<key>torrent-of-faith</key>
-	<string>Increases healing by 9% on Berserkers, Champions and Guardians.</string>
+	<string>Your healing spells increase the healing received of the target by 10% for 1 minute.</string>
 	<key>godstouch</key>
-	<string>Healing done is increased by 10% and spell costs are reduced by 10%.</string>
+	<string>Each second you grant a small amount of shielding to all allies.</string>
 	<key>redemption</key>
-	<string>If an ally would die instead you will instantly heal that ally for a small amount.  This can not occur more than once every 30 seconds.</string>
+	<string>If an ally would die instead you instantly heal that ally for a small amount.  This can not occur more than once every 30 seconds.</string>
 	<key>avatar</key>
 	<string>All healing done has a 3% chance to summon an Avatar that heals allies for 15 seconds.</string>
 </dict>

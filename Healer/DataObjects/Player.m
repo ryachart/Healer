@@ -16,6 +16,8 @@
 @interface Player ()
 @property (nonatomic, readwrite) NSTimeInterval redemptionTimeApplied;
 @property (nonatomic, readwrite) BOOL isRedemptionApplied;
+@property (nonatomic, readwrite) BOOL isGodstouchApplied;
+@property (nonatomic, readwrite) NSTimeInterval godstouchTimeApplied;
 @end
 
 @implementation Player
@@ -54,6 +56,7 @@
         position = 0;
         maxChannelTime = 5;
         castStart = 0.0f;
+        self.cooldownAdjustment = 1.0;
         self.castTimeAdjustment = 1.0;
         self.spellCriticalChance = .1; //10% Base chance to crit
         self.criticalBonusMultiplier = 1.5; //50% more on a crit
@@ -68,19 +71,29 @@
 	return self;
 }
 
-- (void)setEnergy:(NSInteger)newEnergy
+- (float)cooldownAdjustment
 {
-    if (newEnergy > energy) {
-        float adjustment = 1.0;
-        
-        for (Effect *eff in self.activeEffects) {
-            adjustment += [eff energyRegenAdjustment];
-        }
-        
-        
-        newEnergy *= adjustment;
+    float base = _cooldownAdjustment;
+    
+    for (Effect *eff in self.activeEffects) {
+        base += eff.cooldownMultiplierAdjustment;
+    }
+    return base;
+}
+
+- (float)spellCriticalChance
+{
+    float base = _spellCriticalChance;
+    
+    for (Effect *eff in self.activeEffects) {
+        base += eff.criticalChanceAdjustment;
     }
     
+    return base;
+}
+
+- (void)setEnergy:(float)newEnergy
+{
     energy = newEnergy;
     if (energy < 0) energy = 0;
 	if (energy > maximumEnergy) energy = maximumEnergy;
@@ -240,14 +253,14 @@
 }
 
 - (NSString*)asNetworkMessage{
-    NSString *message = [NSString stringWithFormat:@"PLYR|%@|%i|%i|%1.3f|%i", self.playerID, self.health, self.energy, self.castTimeAdjustment, self.isConfused];
+    NSString *message = [NSString stringWithFormat:@"PLYR|%@|%i|%f|%1.3f|%i", self.playerID, self.health, self.energy, self.castTimeAdjustment, self.isConfused];
     return message;
 }
 - (void)updateWithNetworkMessage:(NSString*)message{
     NSArray *components = [message componentsSeparatedByString:@"|"];
     if ([self.playerID isEqualToString:[components objectAtIndex:1]]){
         self.health = [[components objectAtIndex:2] intValue];
-        self.energy = [[components objectAtIndex:3] intValue];
+        self.energy = [[components objectAtIndex:3] floatValue];
         self.castTimeAdjustment = [[components objectAtIndex:4] floatValue];
         self.isConfused = [[components objectAtIndex:5] boolValue];
     }else{
@@ -290,6 +303,26 @@
         self.isRedemptionApplied = YES;
     }
     
+    if ([self hasDivinityEffectWithTitle:@"godstouch"]) {
+        if (!self.isGodstouchApplied) {
+            for (RaidMember *member in theRaid.livingMembers) {
+                Effect *godsTouchEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
+                [godsTouchEffect setOwner:self];
+                [godsTouchEffect setTitle:@"godstouch-shield"];
+                [godsTouchEffect setMaximumAbsorbtionAdjustment:120];
+                [member addEffect:godsTouchEffect];
+            }
+            self.isGodstouchApplied = YES;
+        }
+        self.godstouchTimeApplied += timeDelta;
+        if (self.godstouchTimeApplied >= 1.0) {
+            self.godstouchTimeApplied = 0.0;
+            for (RaidMember *member in theRaid.livingMembers) {
+                [member setAbsorb:member.absorb + 5];
+            }
+        }
+    }
+
     if (self.redemptionTimeApplied > 0.0){
         if (self.redemptionTimeApplied < 30.0){
             self.redemptionTimeApplied += timeDelta;
@@ -307,7 +340,9 @@
             [member setHealth:member.health + perTarget];
             NSInteger finalHealing =  member.health - memberCurrentHealth;
             self.overhealingToDistribute -= finalHealing;
-            [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:finalHealing] andEventType:CombatEventTypeHeal]];
+            if (finalHealing > 0) {
+                [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:finalHealing] andEventType:CombatEventTypeHeal]];
+            }
         }
         self.overhealingToDistribute = 0;
     }
@@ -336,9 +371,16 @@
 	}
 	
     lastEnergyRegen+= timeDelta;
-    if (lastEnergyRegen >= 1.0)
+    float tickFactor = .1;
+    if (lastEnergyRegen >= 1.0 * tickFactor)
     {
-        [self setEnergy:energy + energyRegenPerSecond + [self channelingBonus]];
+        float energyRegenAdjustment = 1.0;
+        
+        for (Effect *eff in self.activeEffects) {
+            energyRegenAdjustment += [eff energyRegenAdjustment];
+        }
+        
+        [self setEnergy:energy + (energyRegenPerSecond * energyRegenAdjustment * tickFactor) + [self channelingBonus]];
         lastEnergyRegen = 0.0;
     }
     
@@ -493,17 +535,6 @@
 - (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical{
     NSInteger loggedAmount = amount;
     
-    if ( [self hasDivinityEffectWithTitle:@"healing-hands"]){
-        if (spell.spellType == SpellTypeBasic) {
-            RepeatedHealthEffect *hhEffect = [[[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypePositiveInvisible] autorelease];
-            [hhEffect setValuePerTick:(int)round((amount + overhealing) * .15 / 6.0)];
-            [hhEffect setNumOfTicks:6.0];
-            [hhEffect setTitle:@"hh-div-eff"];
-            [hhEffect setOwner:self];
-            [target addEffect:hhEffect];
-        }
-    }
-    
     if ([self hasDivinityEffectWithTitle:@"avatar"]){
         if (amount >= MINIMUM_AVATAR_TRIGGER_AMOUNT){
             [self triggerAvatar];
@@ -527,8 +558,8 @@
         [target addEffect:shield];
     }
     
-    if ((spell.spellType == SpellTypeBasic || spell.spellType == SpellTypePeriodic) && [self hasDivinityEffectWithTitle:@"shining-aegis"]){
-        Effect *armorEffect = [[[Effect alloc] initWithDuration:7 andEffectType:EffectTypePositiveInvisible] autorelease];
+    if ([self hasDivinityEffectWithTitle:@"shining-aegis"]){
+        Effect *armorEffect = [[[Effect alloc] initWithDuration:10 andEffectType:EffectTypePositiveInvisible] autorelease];
         [armorEffect setOwner:self];
         [armorEffect setTitle:@"shining-aegis-armor-eff"];
         [armorEffect setDamageTakenMultiplierAdjustment:-.075];
@@ -536,43 +567,55 @@
     }
     
     if ([self hasDivinityEffectWithTitle:@"purity-of-soul"]){
-        if ((arc4random() % 100) < 5) {
-            self.energy += spell.energyCost;
+        if (critical) {
+            [self.announcer announce:@"The purity of your soul glows brightly"];
+            ExpiresAfterSpellCastsEffect *critHaste = [[[ExpiresAfterSpellCastsEffect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
+            [critHaste setCastTimeAdjustment:.5];
+            [critHaste setNumCastsRemaining:3]; //Why three? This current spell is going to count, unfortunately.
+            [critHaste setOwner:self];
+            [critHaste setTitle:@"pos-crit-haste"];
+            [self addEffect:critHaste];
+            
+            for (Spell *spell in self.spellsOnCooldown) {
+                [spell setCooldownRemaining:spell.cooldownRemaining - spell.cooldown * .1];
+            }
         }
     }
     
     if ([self hasDivinityEffectWithTitle:@"ancient-knowledge"]){
-        self.overhealingToDistribute += (int)round(overhealing * .25);
+        self.overhealingToDistribute += (int)round(overhealing * .5);
     }
 
     if ([self hasDivinityEffectWithTitle:@"searing-power"]){
-        if (target.positioning == Ranged) {
-            NSInteger bonusAmount = amount * .09;
-            NSInteger preHealth = target.health;
-            [target setHealth:target.health + bonusAmount];
-            NSInteger finalAmount = target.health - preHealth;
-            loggedAmount += finalAmount;
-        }
+        Effect *searingHealth = [[[Effect alloc] initWithDuration:60.0 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [searingHealth setMaximumHealthMultiplierAdjustment:.1];
+        [searingHealth setOwner:self];
+        [searingHealth setTitle:@"searing-health"];
+        [target addEffect:searingHealth];
+    }
+    
+    if ([self hasDivinityEffectWithTitle:@"repel-the-darkness"]){
+        Effect *repelTheDarknessEffect = [[[Effect alloc] initWithDuration:10.0 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [repelTheDarknessEffect setDamageDoneMultiplierAdjustment:.25];
+        [repelTheDarknessEffect setOwner:self];
+        [repelTheDarknessEffect setTitle:@"repel-damage"];
+        [target addEffect:repelTheDarknessEffect];
     }
     
     if ([self hasDivinityEffectWithTitle:@"torrent-of-faith"]){
-        if (target.positioning == Melee) {
-            NSInteger bonusAmount = amount * .09;
-            NSInteger preHealth = target.health;
-            [target setHealth:target.health + bonusAmount];
-            NSInteger finalAmount = target.health - preHealth;
-            loggedAmount += finalAmount;
-        }
+        HealingDoneAdjustmentEffect *torrentOfFaith = [[[HealingDoneAdjustmentEffect alloc] initWithDuration:60.0 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [torrentOfFaith setPercentageHealingReceived:1.1];
+        [torrentOfFaith setOwner:self];
+        [torrentOfFaith setTitle:@"torrent-of-faith-hr"];
+        [target addEffect:torrentOfFaith];
     }
     
     if ([self hasDivinityEffectWithTitle:@"sunlight"]){
-        if ([target isMemberOfClass:[Guardian class]]) {
-            NSInteger bonusAmount = amount * .2;
-            NSInteger preHealth = target.health;
-            [target setHealth:target.health + bonusAmount];
-            NSInteger finalAmount = target.health - preHealth;
-            loggedAmount += finalAmount;
-        }
+        Effect *sunlight = [[[Effect alloc] initWithDuration:60.0 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [sunlight setDodgeChanceAdjustment:.1];
+        [sunlight setOwner:self];
+        [sunlight setTitle:@"sunlight-dodge"];
+        [target addEffect:sunlight];
     }
     
     if (amount > 0){

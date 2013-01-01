@@ -57,8 +57,11 @@ typedef enum {
 @property (nonatomic, readwrite) float maximumHealthMultiplierAdjustment;
 @property (nonatomic, readwrite) float damageTakenMultiplierAdjustment;
 @property (nonatomic, readwrite) NSInteger maximumAbsorbtionAdjustment;
+@property (nonatomic, readwrite) float criticalChanceAdjustment;
+@property (nonatomic, readwrite) float cooldownMultiplierAdjustment;
+@property (nonatomic, readwrite) float dodgeChanceAdjustment;
 @property (readwrite) BOOL isIndependent; //Max Stacks doesnt apply and other effects are never the same as this effect
-
+@property (nonatomic, readwrite) BOOL considerDodgeForDamage;
 - (void)reset;
 - (BOOL)isKindOfEffect:(Effect*)effect;
 //Weird fucking hacky solution for figuring out the owner in network play
@@ -221,4 +224,11 @@ typedef enum {
 @end
 
 @interface BarrierEffect : ShieldEffect
+@end
+
+@interface IRHEDispelsOnHeal : IntensifyingRepeatedHealthEffect <HealthAdjustmentModifier>
+@end
+
+@interface ExpiresAfterSpellCastsEffect : Effect
+@property (nonatomic, readwrite) NSInteger numCastsRemaining;
 @end

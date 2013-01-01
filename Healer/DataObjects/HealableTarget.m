@@ -152,7 +152,7 @@
     }
     
     if (healingFromAbsorbtion) {
-        [self.logger logEvent:[CombatEvent eventWithSource:nil target:self value:[NSNumber numberWithInt:healingFromAbsorbtion] andEventType:CombatEventTypeHeal]];
+        [self.logger logEvent:[CombatEvent eventWithSource:nil target:self value:[NSNumber numberWithInt:healingFromAbsorbtion] andEventType:CombatEventTypeShielding]];
     }
 }
 

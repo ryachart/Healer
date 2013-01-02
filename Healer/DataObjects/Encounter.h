@@ -29,6 +29,9 @@
 @property (nonatomic, readonly) NSInteger overhealingDone;
 @property (nonatomic, readonly) NSInteger damageTaken;
 
+//Data Loading
+@property (nonatomic, retain) NSString *bossKey;
+
 - (id)initWithRaid:(Raid*)raid andBoss:(Boss*)boss andSpells:(NSArray*)spells;
 - (void)encounterWillBegin;
 

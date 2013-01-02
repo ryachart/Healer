@@ -147,7 +147,7 @@
         [self.raidView setContentSize:CGSizeMake(500, 400)];
         [self addChild:self.raidView z:RAID_Z];
         
-        self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(180, 646, 884, 80)] autorelease];
+        self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(180, 646, 884, 80) andBossKey:self.encounter.bossKey] autorelease];
         [self.bossHealthView setDelegate:self];
         
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(312,40, 400, 50)] autorelease];

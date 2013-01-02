@@ -52,3 +52,4 @@ shop_flavor_2_sheet=$ASSETS_DIR/shop-flavor-2-ipad-hd.pvr.ccz
 /usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $shop_flavor_2_plist --format cocos2d --sheet $shop_flavor_2_sheet --auto-sd $shop_flavor_2_dir/*.png
 /usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $shop_flavor_2_plist --format cocos2d --sheet $shop_flavor_2_sheet $shop_flavor_2_dir/*.png
 
+sh ${PROJECT_DIR}/scripts/build-boss-assets.sh

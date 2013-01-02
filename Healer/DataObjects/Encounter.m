@@ -146,10 +146,13 @@
     NSInteger numWizard = 0;
     NSInteger numBerserker = 0;
     
+    NSString *bossKey = nil;
+    
     if (level == 1){
         basicBoss = [Ghoul defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], nil];
         numChampion = 2;
+        bossKey = @"ghoul";
     }
     
     if (level == 2){
@@ -159,6 +162,7 @@
         numWizard = 1;
         numChampion = 3;
         numGuardian = 1;
+        bossKey = @"troll";
     }
     
     if (level == 3){
@@ -168,6 +172,7 @@
         numArcher = 2;
         numChampion = 1;
         numGuardian = 1;
+        bossKey = @"drake";
     }
     
     if (level == 4){
@@ -178,6 +183,7 @@
         numBerserker = 1;
         numChampion = 1;
         numGuardian = 1;
+        bossKey = @"imps";
     }
     
     if (level == 5){
@@ -189,6 +195,7 @@
         numWizard = 1;
         numChampion = 4;
         numGuardian = 1;
+        bossKey = @"treant";
     }
     
     if (level == 6){
@@ -200,6 +207,7 @@
         numWizard = 2;
         numChampion = 2;
         numGuardian = 3;
+        bossKey = @"fungalravagers";
     }
     
     if (level == 7){
@@ -211,6 +219,7 @@
         numWizard = 2;
         numChampion = 3;
         numGuardian = 1;
+        bossKey = @"plaguebringer";
     }
     
     if (level == 8){
@@ -223,6 +232,7 @@
         numBerserker = 6;
         numChampion = 5;
         numGuardian = 1;
+        bossKey = @"trulzar";
     }
     
     if (level == 9){
@@ -234,6 +244,7 @@
         numBerserker = 6;
         numChampion = 6;
         numGuardian = 1;
+        bossKey = @"council";
     }
     
     if (level == 10){
@@ -245,6 +256,7 @@
         numBerserker = 5;
         numChampion = 5;
         numGuardian = 2;
+        bossKey = @"twinchampions";
     }
     
     if (level == 11){
@@ -257,6 +269,7 @@
         numBerserker = 5;
         numChampion = 5;
         numGuardian = 1;
+        bossKey = @"baraghast";
     }
     
     if (level == 12){
@@ -269,6 +282,7 @@
         numBerserker = 5;
         numChampion = 5;
         numGuardian = 1;
+        bossKey = @"tyonath";
     }
     
     if (level == 13){
@@ -281,7 +295,7 @@
         numBerserker = 4;
         numChampion = 5;
         numGuardian = 3; //Blooddrinkers
-        
+        bossKey = @"gatekeeper";
     }
     
     if (level == 14){
@@ -294,6 +308,7 @@
         numBerserker = 4;
         numChampion = 4;
         numGuardian = 1;
+        bossKey = @"skeletaldragon";
     }
     
     if (level == 15){
@@ -306,6 +321,7 @@
         numBerserker = 4;
         numChampion = 4;
         numGuardian = 1;
+        bossKey = @"colossusbone";
     }
     
     if (level == 16){
@@ -313,11 +329,12 @@
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numArcher = 4;
-        numWizard = 4;
         numWarlock = 3;
+        numWizard = 4;
         numBerserker = 4;
         numChampion = 4;
         numGuardian = 1;
+        bossKey = @"overseer";
     }
     
     if (level == 17){
@@ -325,11 +342,12 @@
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numArcher = 4;
-        numWizard = 4;
         numWarlock = 3;
+        numWizard = 4;
         numBerserker = 4;
         numChampion = 4;
         numGuardian = 1;
+        bossKey = @"unspeakable";
     }
     
     if (level == 18){
@@ -341,6 +359,7 @@
         numBerserker = 4;
         numChampion = 4;
         numGuardian = 1;
+        bossKey = @"baraghastreborn";
     }
     
     if (level == 19){
@@ -353,6 +372,7 @@
         numBerserker = 4;
         numChampion = 4;
         numGuardian = 1;
+        bossKey = @"avataroftorment";
     }
     
     if (level == 20){
@@ -365,6 +385,7 @@
         numBerserker = 4;
         numChampion = 4;
         numGuardian = 1;
+        bossKey = @"avataroftorment";
     }
     
     if (level == 21){
@@ -377,6 +398,7 @@
         numBerserker = 4;
         numChampion = 4;
         numGuardian = 1;
+        bossKey = @"souloftorment";
     }
     
     if (!basicBoss){
@@ -406,6 +428,7 @@
     basicBoss.isMultiplayer = multiplayer;
     Encounter *encToReturn = [[Encounter alloc] initWithRaid:basicRaid andBoss:basicBoss andSpells:spells];
     [encToReturn setLevelNumber:level];
+    [encToReturn setBossKey:bossKey];
     return [encToReturn autorelease];
     
 }

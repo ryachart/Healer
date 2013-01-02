@@ -48,6 +48,7 @@
 - (id)initWithEncounter:(Encounter*)enc andPlayer:(Player*)player {
     if (self = [super init]){
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"pre-battle"] autorelease]];
+        
         self.encounter = enc;
         self.player = player;
         self.spellInfoNodes = [NSMutableArray arrayWithCapacity:5];
@@ -106,7 +107,7 @@
             
             [bossLabel setColor:ccc3(88, 54, 22)];
             [bossNameLabel setColor:ccc3(88, 54, 22)];
-            [bossLabel setPosition:CGPointMake(200, 50)];
+            [bossLabel setPosition:CGPointMake(200, 90)];
             [self addChild:bossLabel];
             [self addChild:bossNameLabel];
         }
@@ -115,6 +116,18 @@
             self.challengeStepper = [[[ChallengeRatingStepper alloc] initWithEncounter:self.encounter] autorelease];
             [self.challengeStepper setPosition:CGPointMake(480, 20)];
             [self addChild:self.challengeStepper];
+        }
+        
+        if (self.encounter.bossKey) {
+            [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:[NSString stringWithFormat:@"assets/%@.plist", self.encounter.bossKey]];
+            
+            CCSpriteFrame *bossPortraitFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"%@_full_portrait.png", self.encounter.bossKey]];
+            
+            if (bossPortraitFrame) {
+                CCSprite *bossPortrait = [CCSprite spriteWithSpriteFrame:bossPortraitFrame];
+                [bossPortrait setPosition:CGPointMake(200, 450)];
+                [self addChild:bossPortrait];
+            }
         }
         
         [[PlayerDataManager localPlayer] setLastSelectedLevel:enc.levelNumber];
@@ -143,6 +156,9 @@
 
 -(void)back{
     if (!self.changingSpells){
+        if (self.encounter.bossKey) {
+            [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:[NSString stringWithFormat:@"assets/%@.plist", self.encounter.bossKey]];
+        }
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[[[LevelSelectMapScene alloc] init] autorelease]]];
     }
 }

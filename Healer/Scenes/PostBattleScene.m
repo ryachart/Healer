@@ -54,6 +54,10 @@
 @synthesize localPlayerHasQueued;
 
 - (void)dealloc {
+    if (_encounter && _encounter.bossKey) {
+        //Unload the boss specific sprites;
+        [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:[NSString stringWithFormat:@"assets/%@.plist", _encounter.bossKey]];
+    }
     [_match release];
     [serverPlayerId release];
     [matchVoiceChat release];

@@ -25,7 +25,7 @@
 
 @synthesize bossNameLabel, healthLabel, bossData, lastHealth, bossHealthBack;
 
-- (id)initWithFrame:(CGRect)frame {
+- (id)initWithFrame:(CGRect)frame andBossKey:(NSString *)bossKey {
     if ((self = [super init])) {
         // Initialization code
         self.position = frame.origin;
@@ -35,7 +35,16 @@
         [self.portraitSprite setPosition:CGPointMake(736, 20)];
         [self addChild:self.portraitSprite z:10];
         
-        CCSprite *portrait = [CCSprite spriteWithSpriteFrameName:@"boss_default.png"];
+        CCSpriteFrame *bossPortraitFrame = nil;
+        
+        if (bossKey) {
+            bossPortraitFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"%@_battle_portrait.png", bossKey]];
+        }
+        if (!bossPortraitFrame) {
+            bossPortraitFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"boss_default.png"];
+        }
+        
+        CCSprite *portrait = [CCSprite spriteWithSpriteFrame:bossPortraitFrame];
         [portrait setPosition:CGPointMake(84,84)];
         [self.portraitSprite addChild:portrait];
         

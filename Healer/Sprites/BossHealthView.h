@@ -25,7 +25,7 @@
 @property (nonatomic, assign) BossAbilityDescriptionsView* abilityDescriptionsView;
 
 - (void)setBossData:(Boss*)theBoss;
-- (id)initWithFrame:(CGRect)frame ;
+- (id)initWithFrame:(CGRect)frame andBossKey:(NSString *)bossKey;
 - (void)updateHealth;
 - (void)endBattleWithSuccess:(BOOL)success;
 @end

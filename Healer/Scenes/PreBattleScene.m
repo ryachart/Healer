@@ -47,7 +47,7 @@
 }
 - (id)initWithEncounter:(Encounter*)enc andPlayer:(Player*)player {
     if (self = [super init]){
-        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
+        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"pre-battle"] autorelease]];
         self.encounter = enc;
         self.player = player;
         self.spellInfoNodes = [NSMutableArray arrayWithCapacity:5];
@@ -63,18 +63,10 @@
         BasicButton *changeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(changeSpells) andTitle:@"Change"];
         [changeButton setScale:.6];
         CCMenu *changeButtonMenu = [CCMenu menuWithItems:changeButton, nil];
-        [changeButtonMenu setPosition:CGPointMake(940, 654)];
+        [changeButtonMenu setPosition:CGPointMake(908, 632)];
         [self addChild:changeButtonMenu z:2];
         
-        CCLabelTTF *activeSpellsLabel = [CCLabelTTF labelWithString:@"Spells" fontName:@"Arial" fontSize:32];
-        [activeSpellsLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .75, [CCDirector sharedDirector].winSize.height * .85)];
-        [self addChild:activeSpellsLabel];
-        
         [self configureSpells];
-
-        CCLabelTTF *alliesLabel = [CCLabelTTF labelWithString:@"Your Allies:" fontName:@"Arial" fontSize:32];
-        [alliesLabel setPosition:ccp(120, 664)];
-        [self addChild:alliesLabel];
         
         NSMutableDictionary *raidMemberTypes = [NSMutableDictionary dictionaryWithCapacity:5];
         
@@ -98,7 +90,7 @@
                     break;
                 }
             }
-            RaidMemberPreBattleCard *preBattleCard = [[[RaidMemberPreBattleCard alloc] initWithFrame:CGRectMake(50, 540 - (101 * i), 200, 100) count:[[raidMemberTypes objectForKey:types] intValue] andRaidMember:member] autorelease];
+            RaidMemberPreBattleCard *preBattleCard = [[[RaidMemberPreBattleCard alloc] initWithFrame:CGRectMake(388, 550 - (66 * i), 200, 62) count:[[raidMemberTypes objectForKey:types] intValue] andRaidMember:member] autorelease];
             [self addChild:preBattleCard];
             i++;
         }
@@ -108,15 +100,14 @@
         [self addChild:backButton];
         
         if (self.encounter.boss.info){
-            CCLabelTTF *yourEnemyLAbel = [CCLabelTTF labelWithString:@"Your Enemy:" fontName:@"Arial" fontSize:32.0];
-            CCLabelTTF *bossNameLabel = [CCLabelTTF labelWithString:self.encounter.boss.title dimensions:CGSizeMake(300, 200) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:32.0];
-            [yourEnemyLAbel setPosition:CGPointMake(520, 600)];
-            [bossNameLabel setPosition:CGPointMake(520, 480)];
-            CCLabelTTF *bossLabel = [CCLabelTTF labelWithString:self.encounter.boss.info dimensions:CGSizeMake(300, 500) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
+            CCLabelTTF *bossNameLabel = [CCLabelTTF labelWithString:self.encounter.boss.title dimensions:CGSizeMake(300, 200) hAlignment:UITextAlignmentCenter fontName:@"Cochin-BoldItalic" fontSize:32.0];
+            [bossNameLabel setPosition:CGPointMake(200, 520)];
+            CCLabelTTF *bossLabel = [CCLabelTTF labelWithString:self.encounter.boss.info dimensions:CGSizeMake(300, 500) hAlignment:UITextAlignmentLeft fontName:@"Cochin-BoldItalic" fontSize:20.0];
             
-            [bossLabel setPosition:CGPointMake(525, 250)];
+            [bossLabel setColor:ccc3(88, 54, 22)];
+            [bossNameLabel setColor:ccc3(88, 54, 22)];
+            [bossLabel setPosition:CGPointMake(200, 50)];
             [self addChild:bossLabel];
-            [self addChild:yourEnemyLAbel];
             [self addChild:bossNameLabel];
         }
         
@@ -141,7 +132,7 @@
     int i = 0;
     for (Spell *activeSpell in self.player.activeSpells){
         SpellInfoNode *spellInfoNode = [[SpellInfoNode alloc] initWithSpell:activeSpell];
-        [spellInfoNode setPosition:CGPointMake(716, 530 - (105 * i))];
+        [spellInfoNode setPosition:CGPointMake(708, 554 - (95 * i))];
         [self.spellInfoNodes addObject:spellInfoNode];
         [self addChild:spellInfoNode];
         [spellInfoNode release];

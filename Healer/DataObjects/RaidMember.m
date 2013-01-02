@@ -186,10 +186,10 @@
 }
 
 -(id)init{
-    if (self = [super initWithHealth:1750 damageDealt:290 andDmgFrequency:1.25 andPositioning:Melee]){
+    if (self = [super initWithHealth:1753 damageDealt:287 andDmgFrequency:1.25 andPositioning:Melee]){
         self.title = @"Guardian";
         self.dodgeChance = .15;
-        self.info = @"The Guardian can draw attention from enemies and become focused. Overhealing a Guardian creates a shield that absorbs damage.";
+        self.info = @"Overhealing creates protective shield";
         
         Effect *gbe = [[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible];
         [gbe setMaximumAbsorbtionAdjustment:250];
@@ -207,9 +207,9 @@
     return [[[Berserker alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:1200 damageDealt:750 andDmgFrequency:.75 andPositioning:Melee]){
+    if (self = [super initWithHealth:1192 damageDealt:748 andDmgFrequency:.75 andPositioning:Melee]){
         self.title = @"Berserker";
-        self.info = @"The Berserker deals very high damage. When dealing a critical strike this ally heals itself.";
+        self.info = @"";
         self.dodgeChance = .07;
         self.criticalChance = .1;
         self.lastAttack = arc4random() % 70 / 100.0;
@@ -226,9 +226,9 @@
     return [[[Archer alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:1000 damageDealt:1200 andDmgFrequency:1.2 andPositioning:Ranged]){
+    if (self = [super initWithHealth:1013 damageDealt:1232 andDmgFrequency:1.2 andPositioning:Ranged]){
         self.title = @"Archer";
-        self.info = @"The Archer deals very high damage.";
+        self.info = @"";
         self.dodgeChance = .05;
         self.lastAttack = arc4random() % 110 / 100.0;
     }
@@ -241,9 +241,9 @@
     return [[[Champion alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:1250 damageDealt:660 andDmgFrequency:2.5 andPositioning:Melee]){
+    if (self = [super initWithHealth:1246 damageDealt:664 andDmgFrequency:2.5 andPositioning:Melee]){
         self.title = @"Champion";
-        self.info = @"The Champion deals more damage when healed to full and reduces enemy damage by 5%.";
+        self.info = @"Reduces enemy damage by 5%.";
         self.dodgeChance = .07;
         self.lastAttack = arc4random() % 240 / 100.0f;
     }
@@ -271,10 +271,10 @@
 }
 
 -(id)init{
-    if (self = [super initWithHealth:1250 damageDealt:300 andDmgFrequency:1.2 andPositioning:Ranged]){
+    if (self = [super initWithHealth:1157 damageDealt:304 andDmgFrequency:1.2 andPositioning:Ranged]){
         self.title = @"Wizard";
         self.dodgeChance = .07;
-        self.info = @"The Wizard has moderate health and low damage but periodically grants you energy.";
+        self.info = @"Periodically grants you energy";
         lastEnergyGrant = arc4random() % 7; //Initialize to a random value so they arent all the same time
     }
     return self;
@@ -312,9 +312,9 @@
     return [[[Warlock alloc] init] autorelease];
 }
 -(id)init{
-    if (self = [super initWithHealth:1100 damageDealt:500 andDmgFrequency:2.0 andPositioning:Ranged]){
+    if (self = [super initWithHealth:1142 damageDealt:521 andDmgFrequency:2.0 andPositioning:Ranged]){
         self.title = @"Warlock";
-        self.info = @"The Warlock heals itself for a small amount when at low health and reduces enemy damage by 5%.";
+        self.info = @"Reduces enemy damage by 5%";
         self.dodgeChance = .07;
         self.lastAttack = arc4random() % 190 / 100.0f;
     }

@@ -44,7 +44,7 @@
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/spell-sprites.plist"];
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"homescreen-bg"] autorelease]];
         
-        self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
+        //self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
         
         self.quickPlayButton= [BasicButton basicButtonWithTarget:self andSelector:@selector(quickPlaySelected) andTitle:@"Play"];
         
@@ -55,12 +55,12 @@
             [divinityButton setIsEnabled:NO];
         }
     
-        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, divinityButton,self.multiplayerButton, nil];
+        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, divinityButton, nil];
         
         [self.menu alignItemsVerticallyWithPadding:20.0];
         CGSize winSize = [CCDirector sharedDirector].winSize;
         
-        [self.menu setPosition:ccp(winSize.width * .81, winSize.height * .45)];
+        [self.menu setPosition:ccp(winSize.width * .81, winSize.height * .48)];
         [self.menu setColor:ccc3(255, 255, 255)];
         [self addChild:self.menu z:2];
         

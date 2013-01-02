@@ -42,6 +42,10 @@
 {
     float multiplier = 1.0;
     
+    if (self.absorb > 0) {
+        multiplier -= .05;
+    }
+    
     for (Effect *eff in self.activeEffects) {
         multiplier += [eff damageTakenMultiplierAdjustment];
     }

@@ -22,49 +22,38 @@
 }
 
 -(id)initWithFrame:(CGRect)frame count:(NSInteger)cnt andRaidMember:(RaidMember *)member{
-    if (self = [super initWithColor:ccc4(255, 255, 255, 255)]){
+    if (self = [super init]){
         self.raidMember = member;
         self.count = cnt;
         self.contentSize = frame.size;
         self.position = frame.origin;
+        self.anchorPoint = CGPointZero;
         
-        CCLayerColor *countBackground = [CCLayerColor layerWithColor:ccc4(130, 130, 130, 255)];
-        [countBackground setPosition:ccp(0, 0)];
-        [countBackground setContentSize:CGSizeMake(100, 100)];
-        [self addChild:countBackground];
         
-        CCLayerColor *detailBackground = [CCLayerColor layerWithColor:ccc4(255, 255, 255, 255)];
-        [detailBackground setPosition: ccp(100, 0)];
-        [detailBackground setContentSize:CGSizeMake(200, 100)];
-        [self addChild:detailBackground];
+        CCLabelTTF *descLabel = [CCLabelTTF labelWithString:self.raidMember.info dimensions:CGSizeMake(98, 80) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS" fontSize:10.0f];
+        [descLabel setPosition:ccp(154, -2)];
+        [self addChild:descLabel];
         
-        CCLabelTTF *healthLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Health: %i", raidMember.maximumHealth] dimensions:CGSizeMake(200, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24];
-        [healthLabel setColor:ccBLACK];
-        [healthLabel setPosition:ccp(100, 78)];
-        [detailBackground addChild:healthLabel];
+        CCLabelTTF *classNameLabel = [CCLabelTTF labelWithString:self.raidMember.title dimensions:CGSizeMake(80, 25) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:16];
+        [classNameLabel setPosition:ccp(78, 48)];
+        [self addChild:classNameLabel];
         
-        CCLabelTTF *DPSLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"DPS: %1.2f", raidMember.dps] dimensions:CGSizeMake(200, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24];
-        [DPSLabel setColor:ccBLACK];
-        [DPSLabel setPosition:ccp(100, 58)];
-        [detailBackground addChild:DPSLabel];
+        CCLabelTTF *healthLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i HP", raidMember.maximumHealth] dimensions:CGSizeMake(120, 25) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0f];
+        [healthLabel setPosition:ccp(98, 28)];
+        [self addChild:healthLabel];
         
-        CCLabelTTF *descLabel = [CCLabelTTF labelWithString:self.raidMember.info dimensions:CGSizeMake(200, 80) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12];
-        [descLabel setColor:ccBLACK];
-        [descLabel setPosition:ccp(100, 20)];
-        [detailBackground addChild:descLabel];
-        
-        CCLabelTTF *classNameLabel = [CCLabelTTF labelWithString:self.raidMember.title dimensions:CGSizeMake(95, 48) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:16];
-        [classNameLabel setPosition:ccp(50, 78)];
-        [countBackground addChild:classNameLabel];
-        
-        CCLabelTTF *countLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", count] dimensions:CGSizeMake(50, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:24];
-        [countLabel setPosition:ccp(50, 24)];
-        [countBackground addChild:countLabel];
+        CCLabelTTF *DPSLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i DPS", (int)raidMember.dps] dimensions:CGSizeMake(120, 25) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
+        [DPSLabel setPosition:ccp(98, 12)];
+        [self addChild:DPSLabel];
         
         NSString* classIconSpriteFrameName = [NSString stringWithFormat:@"class_icon_%@.png", [member title].lowercaseString];
         CCSprite *classIcon = [CCSprite spriteWithSpriteFrameName:classIconSpriteFrameName];
-        [classIcon setPosition:ccp(30, 55)];
-        [countBackground addChild:classIcon];
+        [classIcon setPosition:ccp(-12, 54)];
+        [self addChild:classIcon];
+        
+        CCLabelTTF *countLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"x%i", count] dimensions:CGSizeMake(50, 50) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:16.0f];
+        [countLabel setPosition:ccp(206, 38)];
+        [self addChild:countLabel];
     }
     return self;
 }

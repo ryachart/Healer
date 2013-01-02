@@ -32,15 +32,15 @@
 {
     switch (difficulty) {
         case 1:
-            return @"Easy";
+            return @"EASY";
         case 2:
-            return @"Normal";
+            return @"NORMAL";
         case 3:
-            return @"Tough";
+            return @"TOUGH";
         case 4:
-            return @"Painful";
+            return @"PAINFUL";
         case 5:
-            return @"Brutal";
+            return @"BRUTAL";
     }
     return @"";
 }
@@ -52,18 +52,14 @@
         
         self.difficultySkulls = [NSMutableArray arrayWithCapacity:5];
         
-        self.difficultyLabel = [CCLabelTTF labelWithString:@"Difficulty:" dimensions:CGSizeMake(150, 30) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:24.0];
-        [self.difficultyLabel setPosition:CGPointMake(40.0, 100.0)];
+        self.difficultyWordLabel = [CCLabelTTF labelWithString:[ChallengeRatingStepper difficultyWorldForDifficultyNumber:self.encounter.difficulty] dimensions:CGSizeMake(150, 60) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:36.0];
+        [self.difficultyWordLabel setPosition:CGPointMake(216.0f, 92.0)];
+        [self.difficultyWordLabel setColor:ccYELLOW];
         
-        self.difficultyWordLabel = [CCLabelTTF labelWithString:[ChallengeRatingStepper difficultyWorldForDifficultyNumber:self.encounter.difficulty] dimensions:CGSizeMake(150, 60) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:32.0];
-        [self.difficultyWordLabel setPosition:CGPointMake(40.0, 50.0)];
-        
-        
-        [self addChild:self.difficultyLabel];
         [self addChild:self.difficultyWordLabel];
         
         for (int i = 0; i < 5; i++) {
-            CGPoint skullPos = CGPointMake((i * 30) - 20, 10);
+            CGPoint skullPos = CGPointMake((i * 30) + 45, 56);
             CCSprite *skullSprite = [CCSprite spriteWithSpriteFrameName:@"difficulty_skull.png"];
             [skullSprite setPosition:skullPos];
             [self addChild:skullSprite z:100];
@@ -77,9 +73,9 @@
         BasicButton *easier = [BasicButton basicButtonWithTarget:self andSelector:@selector(decreaseSelected) andTitle:@"Easier"];
         [easier setScale:.5];
         
-        CCMenu *steppers = [CCMenu menuWithItems:harder, easier, nil];
-        [steppers setPosition:CGPointMake(200.0, 60.0)];
-        [steppers alignItemsVertically];
+        CCMenu *steppers = [CCMenu menuWithItems:easier, harder, nil];
+        [steppers setPosition:CGPointMake(110.0f, 10.0)];
+        [steppers alignItemsHorizontally];
         [self addChild:steppers];
         
     }

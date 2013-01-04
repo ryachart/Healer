@@ -108,7 +108,7 @@ typedef enum {
 -(void)tick;
 @end
 
-@interface SwirlingLightEffect : RepeatedHealthEffect
+@interface SwirlingLightEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
 @end
 
 @interface ShieldEffect : Effect

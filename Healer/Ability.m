@@ -367,10 +367,9 @@
     return fbCopy;
 }
 
-- (void) triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
-    
+- (void)fireAtTarget:(RaidMember*)target
+{
     BOOL didFail = self.checkFailed;
-    RaidMember *target = [theRaid randomLivingMember];
     NSTimeInterval colTime = 1.75;
     
     ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:self.spriteName target:target andCollisionTime:colTime];
@@ -393,6 +392,19 @@
     [fireball setValue:-damage];
     [target addEffect:fireball];
     [fireball release];
+}
+
+- (void) triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
+    RaidMember *target = [theRaid randomLivingMember];
+    [self fireAtTarget:target];
+
+}
+
+- (void)fireAtRaid:(Raid*)raid
+{
+    for (RaidMember *member in raid.livingMembers) {
+        [self fireAtTarget:member];
+    }
 }
 
 @end
@@ -1361,7 +1373,7 @@
 }
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
-    NSTimeInterval duration = 10.0;
+    NSTimeInterval duration = 5.0;
     Boss *bossOwner = (Boss*)self.owner;
     [bossOwner.announcer displayParticleSystemOnRaidWithName:@"red_mist.plist" forDuration:duration];
     for (Player *player in players){
@@ -1375,6 +1387,7 @@
     NSArray *livingMembers = [theRaid livingMembers];
     for (RaidMember *member in livingMembers){
         RepeatedHealthEffect *disruptionEffect = [[[RepeatedHealthEffect alloc] initWithDuration:duration andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [disruptionEffect setOwner:self.owner];
         [disruptionEffect setTitle:@"disruption-dmg"];
         [disruptionEffect setValuePerTick:-self.abilityValue];
         [disruptionEffect setOwner:self.owner];
@@ -1535,5 +1548,53 @@
             [self.victim addEffect:[eff autorelease]];
         }
     }
+}
+@end
+
+@implementation WaveOfTorment
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
+{
+    Boss *bossOwner = (Boss*)self.owner;
+    NSMutableArray *groups = [NSMutableArray arrayWithCapacity:4];
+    for (int i = 0; i < 4; i++) {
+        NSMutableArray *group = [NSMutableArray arrayWithCapacity:5];
+        for (int j = 5 * i; j < 5 * (i + 1); j++) {
+            [group addObject:[theRaid.raidMembers objectAtIndex:j]];
+        }
+        [groups addObject:group];
+    }
+
+    NSTimeInterval delay = 1.25;
+    for (int i = 0; i < 4; i++) {
+        NSMutableArray *groupToHurt = [groups objectAtIndex:arc4random() % groups.count];
+        for (RaidMember *member in groupToHurt) {
+            DelayedHealthEffect *wotEffect = [[[DelayedHealthEffect alloc] initWithDuration:0.01 + (delay * i) andEffectType:EffectTypeNegativeInvisible] autorelease];
+            [wotEffect setOwner:bossOwner];
+            [wotEffect setTitle:@"wave-of-torment-dmg"];
+            [wotEffect setValue:-self.abilityValue * (1.1 * (i+1))];
+            [member addEffect:wotEffect];
+            [bossOwner.announcer displayParticleSystemWithName:@"shadow_burst.plist" onTarget:member withOffset:CGPointZero delay:0.01 + (delay * i)];
+        }
+        [groups removeObject:groupToHurt];
+    }
+
+}
+@end
+
+@implementation StackingEnrage
+
+- (void)setOwner:(Agent *)owner
+{
+    [super setOwner:owner];
+    
+    self.enrageEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible]  autorelease];
+    [self.enrageEffect setOwner:owner];
+    [self.enrageEffect setTitle:@"enraging"];
+    [(HealableTarget*)owner addEffect:self.enrageEffect];
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
+{
+    self.enrageEffect.damageDoneMultiplierAdjustment += (self.abilityValue / 100.0);
 }
 @end

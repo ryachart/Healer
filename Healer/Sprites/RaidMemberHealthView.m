@@ -12,8 +12,7 @@
 #define HEALTH_BAR_BORDER 6
 
 @interface RaidMemberHealthView ()
-@property (nonatomic, assign) CCLabelTTF *isFocusedLabel;
-@property (nonatomic, assign) CCLabelTTF *isFocusedShadowLabel;
+@property (nonatomic, assign) CCLabelTTFShadow *isFocusedLabel;
 
 @property (nonatomic, assign) CCSprite *priorityPositiveEffectSprite;
 @property (nonatomic, assign) CCSprite *priorityNegativeEffectSprite;
@@ -95,13 +94,10 @@
         [self.raidFrameTexture setAnchorPoint:CGPointZero];
         [self addChild:self.raidFrameTexture z:5];
         
-        self.isFocusedLabel = [CCLabelTTF labelWithString:@"" fontName:@"Marion-Bold" fontSize:15.0];
+        self.isFocusedLabel = [CCLabelTTFShadow labelWithString:@"" fontName:@"Marion-Bold" fontSize:15.0];
         [self.isFocusedLabel setPosition:CGPointMake(50, 64)];
         [self.isFocusedLabel setColor:ccc3(220, 0, 0)];
-        
-        self.isFocusedShadowLabel = [CCLabelTTF labelWithString:@"" fontName:@"Marion-Bold" fontSize:15.0];
-        [self.isFocusedShadowLabel setPosition:CGPointMake(49, 63)];
-        [self.isFocusedShadowLabel setColor:ccBLACK];
+        [self.isFocusedLabel setShadowOffset:CGPointMake(-1, -1)];
         
 		self.healthLabel =  [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0f];   
         [self.healthLabel setPosition:CGPointMake(frame.size.width * .71, frame.size.height * .5)];
@@ -141,7 +137,6 @@
         [self.shieldBubble setPosition:ccp(frame.size.width * .5,frame.size.height * .5)];
     
         [self addChild:self.healthLabel z:9];
-        [self addChild:self.isFocusedShadowLabel z:10];
         [self addChild:self.isFocusedLabel z:11];
         [self addChild:self.shieldBubble z:100]; //Above all else!
 		_interactionDelegate = nil;
@@ -221,9 +216,6 @@
     CCSequence *sctAction = [CCSequence actions:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
         [node removeFromParentAndCleanup:YES];
     }], nil];
-    CCSequence *shadowAction = [CCSequence actions:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
-        [node removeFromParentAndCleanup:YES];
-    }], nil];
 
     
     if (critical) {
@@ -232,25 +224,17 @@
         scale = 0.0;
         sctAction = [CCSequence actions:[CCScaleTo actionWithDuration:.15 scale:1.0], [CCDelayTime actionWithDuration:.25], [CCScaleTo actionWithDuration:.5 scale:.75],[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node removeFromParentAndCleanup:YES];}], nil];
-        shadowAction = [CCSequence actions:[CCScaleTo actionWithDuration:.15 scale:1.0], [CCDelayTime actionWithDuration:.25], [CCScaleTo actionWithDuration:.5 scale:.75],[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
-            [node removeFromParentAndCleanup:YES];}], nil];
     }
     
-    CCLabelTTF *shadowLabel = [CCLabelTTF labelWithString:sct fontName:fontName fontSize:fontSize];
-    [shadowLabel setColor:ccBLACK];
-    [shadowLabel setPosition:CGPointMake(self.contentSize.width /2 -1 , self.contentSize.height /2 + 1)];
-    [shadowLabel setScale:scale];
     
-    CCLabelTTF *sctLabel = [CCLabelTTF labelWithString:sct fontName:fontName fontSize:fontSize];
+    CCLabelTTFShadow *sctLabel = [CCLabelTTFShadow labelWithString:sct fontName:fontName fontSize:fontSize];
     [sctLabel setColor:ccGREEN];
     [sctLabel setPosition:CGPointMake(self.contentSize.width /2 , self.contentSize.height /2)];
     [sctLabel setScale:scale];
     
-    [self addChild:shadowLabel z:100];
     [self addChild:sctLabel z:100];
     
     [sctLabel runAction:sctAction];
-    [shadowLabel runAction:shadowAction];
 }
 
 - (void)animateNewNegativeSprite {
@@ -338,13 +322,10 @@
     if (self.memberData.isFocused && !self.memberData.isDead){
         if (![self.isFocusedLabel.string isEqualToString:@"FOCUSED"]) {
             [self.isFocusedLabel runAction:[CCSequence actionOne:[CCScaleTo actionWithDuration:.5 scale:1.2] two:[CCScaleTo actionWithDuration:.5 scale:1.0]]];
-            [self.isFocusedShadowLabel runAction:[CCSequence actionOne:[CCScaleTo actionWithDuration:.5 scale:1.2] two:[CCScaleTo actionWithDuration:.5 scale:1.0]]];
         }
         [self.isFocusedLabel setString:@"FOCUSED"];
-        [self.isFocusedShadowLabel setString:@"FOCUSED"];
     }else{
         [self.isFocusedLabel setString:@""];
-        [self.isFocusedShadowLabel setString:@""];
     }
     self.lastHealth = self.memberData.health;
 	NSString *healthText;

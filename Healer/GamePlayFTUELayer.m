@@ -7,8 +7,12 @@
 
 #import "GamePlayFTUELayer.h"
 
+@interface GamePlayFTUELayer ()
+@property (nonatomic, retain) CCSprite *ftueArrow;
+@property (nonatomic, assign) CCLabelTTF *informationLabel;
+@end
+
 @implementation GamePlayFTUELayer
-@synthesize highlightLayer, informationLabel, delegate;
 -(id)init{
     if (self = [super initWithColor:ccc4(0, 0, 0, 100)]){
         
@@ -16,7 +20,6 @@
         [self.informationLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .65)];
         [self.informationLabel setColor:ccYELLOW];
         
-        self.highlightLayer = [CCLayerColor layerWithColor:ccc4(0, 255, 255, 0)];
         
         [self addChild:self.highlightLayer z:85];
         [self addChild:self.informationLabel z: 100];

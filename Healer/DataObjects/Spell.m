@@ -572,12 +572,11 @@
 }
 +(id)defaultSpell{
     SwirlingLight *swirl = [[SwirlingLight alloc] initWithTitle:@"Swirling Light" healAmnt:0 energyCost:20 castTime:0.0 andCooldown:1.0];
-    [swirl setDescription:@"Heals a target over 10 seconds. Maximum 3 Stacks. Each stack reduces damage taken by 2%%. Can only be applied to 1 ally."];
+    [swirl setDescription:@"Heals a target over 10 seconds. Maximum 3 Stacks. At 3 stacks this increases healing received by 5%. Can only be applied to 1 ally."];
 	[[swirl spellAudioData] setFinishedSound:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/ShamanInstantHoT" ofType:@"wav"]] andTitle:@"WWFinished"];
     [swirl setIsExclusiveEffectTarget:YES];
-    RepeatedHealthEffect *sle = [[RepeatedHealthEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];
+    SwirlingLightEffect *sle = [[SwirlingLightEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];
     [sle setMaxStacks:3];
-    [sle setDamageTakenMultiplierAdjustment:-.02];
     [sle setSpriteName:@"swirling_light.png"];
     [sle setTitle:@"swirling-light-effect"];
     [sle setNumOfTicks:15];
@@ -652,7 +651,7 @@
 }
 + (id)defaultSpell{
     Respite *respite = [[Respite alloc] initWithTitle:@"Respite" healAmnt:0 energyCost:0 castTime:0.0 andCooldown:30.0];
-    [respite setDescription:@"Restores 105 Mana to the caster."];
+    [respite setDescription:@"Restores 105 Energy to the caster."];
     return [respite autorelease];
 }
 

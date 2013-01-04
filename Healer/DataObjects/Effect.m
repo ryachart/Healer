@@ -411,23 +411,28 @@
 
 @implementation SwirlingLightEffect
 
--(void)tick{
-    int similarEffectCount = 1;
-    for (Effect *effect in self.target.activeEffects){
-        if ([effect isKindOfEffect:self]){
-            similarEffectCount++;
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth
+{
+    
+}
+
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth
+{
+    if (*currentHealth < *newHealth){
+        int similarEffectCount = 0;
+        for (Effect *effect in self.target.activeEffects){
+            if ([effect isKindOfEffect:self]){
+                similarEffectCount++;
+            }
         }
-    }
-    BOOL critical = arc4random() % 100 < [(Player*)self.owner spellCriticalChance] * 100;
-    NSInteger preHealth = self.target.health;
-    NSInteger amount = (int)round((self.owner.healingDoneMultiplier * self.valuePerTick * (similarEffectCount * .25)));
-    if (critical) {
-        amount *= [(Player*)self.owner criticalBonusMultiplier];
-    }
-    [self.target setHealth:self.target.health + amount];
-    NSInteger finalAmount = self.target.health - preHealth;
-    NSInteger overheal = self.valuePerTick - finalAmount;
-    [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self withOverhealing:overheal asCritical:critical];
+        
+        if (similarEffectCount == 3) {
+            NSInteger healthDelta = *currentHealth - *newHealth;
+            NSInteger newHealthDelta = healthDelta * 1.01667;
+            *newHealth = *currentHealth - newHealthDelta;
+        }
+	}
+
 }
 @end
 

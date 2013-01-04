@@ -1913,33 +1913,112 @@
     [boss setNamePlateTitle:@"Torment"];
     [boss setInfo:@"From the fallen black heart of Baraghast's shattered soul rose a portal into another plane of existence.  Your allies cautiously moved through the portal and found themselves in a terrifying realm surrounded by shackled and burning souls.  Before you stands a massive creature of spawned of pure hatred and built for torment.  The final battle for your realm's purity begins now."];
     
-    
-    SoulPrison *spAbility = [[SoulPrison alloc] init];
-    [spAbility setTitle:@"soul-prison"];
-    [spAbility setCooldown:30.0];
-    [spAbility setTimeApplied:16.0];
-    [spAbility setAbilityValue:7];
-    [boss addAbility:spAbility];
-    [spAbility release];
-    
     DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
     [dcAbility setTitle:@"dis-cloud"];
     [dcAbility setCooldown:23.0];
-    [dcAbility setAbilityValue:30];
+    [dcAbility setAbilityValue:20];
     [dcAbility setTimeApplied:20.0];
     [boss addAbility:dcAbility];
     [dcAbility release];
     
     ProjectileAttack *projectileAttack = [[ProjectileAttack alloc] init];
-    [projectileAttack setSpriteName:@"blood_ball.png"];
+    [projectileAttack setSpriteName:@"purple_fireball.png"];
+    [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack setAbilityValue:-500];
     [projectileAttack setCooldown:2.5];
     [projectileAttack setFailureChance:.7];
     [boss addAbility:projectileAttack];
     [projectileAttack release];
     
+    ProjectileAttack *projectileAttack2 = [[ProjectileAttack alloc] init];
+    [projectileAttack2 setSpriteName:@"purple_fireball.png"];
+    [projectileAttack2 setExplosionParticleName:@"shadow_burst.plist"];
+    [projectileAttack2 setAbilityValue:-500];
+    [projectileAttack2 setCooldown:2.5];
+    [projectileAttack setTimeApplied:2.0];
+    [projectileAttack2 setFailureChance:.7];
+    [boss addAbility:projectileAttack2];
+    [projectileAttack2 release];
+    
     
     return [boss autorelease];
+}
+
+- (void)soulPrisonAll:(Raid *)raid
+{
+    [self.announcer announce:@"\"YOUR SOULS BELONG TO THE ABYSS\""];
+    for (RaidMember *member in raid.livingMembers) {
+        SoulPrisonEffect *spe = [[[SoulPrisonEffect alloc] initWithDuration:60.0 andEffectType:EffectTypeNegative] autorelease];
+        [spe setOwner:self];
+        NSInteger damage = member.health - 1;
+        [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
+        [member setHealth:1];
+        [member addEffect:spe];
+    }
+}
+
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
+{
+    if (percentage == 92.0) {
+        [self.announcer announce:@"Your mortal souls will shatter beneath the power of torment!"];
+    }
+    
+    if (percentage == 52.0) {
+        [self.announcer announce:@"Your pain shall be unending!"];
+    }
+    
+    if (percentage == 90.0 || percentage == 50.0) {
+        [self soulPrisonAll:raid];
+        SoulPrison *spAbility = [[[SoulPrison alloc] init] autorelease];
+        [spAbility setTitle:@"soul-prison"]; 
+        [spAbility setCooldown:30.0];
+        [spAbility setTimeApplied:-60.0];
+        [spAbility setAbilityValue:7];
+        [self addAbility:spAbility];
+    }
+    
+    if (percentage == 72.0) {
+        [self.announcer announce:@"The Avatar of Torment cackles maniacally and pulses with power."];
+    }
+    
+    if (percentage == 70.0) {
+        WaveOfTorment *wot = [[[WaveOfTorment alloc] init] autorelease];
+        [wot setTitle:@"wot"];
+        [wot setCooldown:40.0];
+        [wot setTimeApplied:39.0];
+        [wot setAbilityValue:100];
+        [self addAbility:wot];
+    }
+    
+    if (percentage == 41.0) {
+        [self.announcer announce:@"The Avatar of Torment drains your mind"];
+    }
+    if (percentage == 40.0) {
+        [player setEnergy:0];
+        [[self abilityWithTitle:@"wot"] setTimeApplied:-20.0];
+    }
+    
+    if (percentage == 25.0) {
+        [self.announcer announce:@"Your pain fills me with such power!"];
+        GainAbility *gainAbility = [[[GainAbility alloc] init] autorelease];
+        [gainAbility setCooldown:20.0];
+        
+        ProjectileAttack *projectileAttack = [[[ProjectileAttack alloc] init] autorelease];
+        [projectileAttack setSpriteName:@"purple_fireball.png"];
+        [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
+        [projectileAttack setAbilityValue:-300];
+        [projectileAttack setCooldown:1.2];
+        [projectileAttack setFailureChance:.2];
+        [gainAbility setAbilityToGain:projectileAttack];
+        
+        [self addAbility:projectileAttack];
+        [projectileAttack fireAtRaid:raid];
+        [projectileAttack setAbilityValue:-100];
+        [projectileAttack setFailureChance:.7];
+        [self removeAbility:projectileAttack];
+        
+        [self addAbility:gainAbility];
+    }
 }
 @end
 
@@ -1960,7 +2039,8 @@
     [dcAbility release];
     
     ProjectileAttack *projectileAttack = [[ProjectileAttack alloc] init];
-    [projectileAttack setSpriteName:@"blood_ball.png"];
+    [projectileAttack setSpriteName:@"purple_fireball.png"];
+    [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack setAbilityValue:-500];
     [projectileAttack setCooldown:.75];
     [projectileAttack setFailureChance:.85];
@@ -1968,7 +2048,8 @@
     [projectileAttack release];
     
     ProjectileAttack *projectileAttack2 = [[ProjectileAttack alloc] init];
-    [projectileAttack2 setSpriteName:@"blood_ball.png"];
+    [projectileAttack2 setSpriteName:@"purple_fireball.png"];
+    [projectileAttack2 setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack2 setAbilityValue:-500];
     [projectileAttack2 setCooldown:.83];
     [projectileAttack2 setFailureChance:.85];
@@ -1976,20 +2057,51 @@
     [projectileAttack2 release];
     
     ProjectileAttack *projectileAttack3 = [[ProjectileAttack alloc] init];
-    [projectileAttack3 setSpriteName:@"blood_ball.png"];
+    [projectileAttack3 setSpriteName:@"purple_fireball.png"];
+    [projectileAttack3 setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack3 setAbilityValue:-350];
     [projectileAttack3 setCooldown:2.5];
     [projectileAttack3 setFailureChance:.2];
     [boss addAbility:projectileAttack3];
     [projectileAttack3 release];
     
-    Confusion *confusionAbility = [[[Confusion alloc] init] autorelease];
-    [confusionAbility setCooldown:14.0];
-    [confusionAbility setAbilityValue:8.0];
-    [confusionAbility setTitle:@"confusion"];
-    [boss addAbility:confusionAbility];
-    [confusionAbility setTimeApplied:10.0];
     return [boss autorelease];
+}
+
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
+{
+    if (percentage == 99.0 || percentage == 95.0) {
+        
+        WaveOfTorment *wot = [[[WaveOfTorment alloc] init] autorelease];
+        [wot setCooldown:40.0];
+        [wot setAbilityValue:100];
+        [wot setTitle:@"wot"];
+        [self addAbility:wot];
+        [wot triggerAbilityForRaid:raid andPlayers:[NSArray arrayWithObject:player]];
+        if (percentage == 95.0) {
+            [self removeAbility:wot]; //Dont add 2 copies of this ability for the second trigger
+        } else {
+            [self.announcer announce:@"The Avatar of Torment erupts power!"];
+        }
+    }
+    if (percentage == 50.0) {
+        [self.announcer announce:@"You feel Anguish cloud your mind..."];
+        Confusion *confusionAbility = [[[Confusion alloc] init] autorelease];
+        [confusionAbility setCooldown:14.0];
+        [confusionAbility setAbilityValue:8.0];
+        [confusionAbility setTitle:@"confusion"];
+        [self addAbility:confusionAbility];
+        [confusionAbility setTimeApplied:10.0];
+    }
+    
+    if (percentage == 20.0) {
+        [self.announcer announce:@"The Avatar becomes enraged."];
+        StackingEnrage *se = [[[StackingEnrage alloc] init] autorelease];
+        [se setAbilityValue:10];
+        [se setCooldown:10];
+        [self addAbility:se];
+        [se triggerAbilityForRaid:raid andPlayers:[NSArray arrayWithObject:player]];
+    }
 }
 @end
 
@@ -2034,18 +2146,6 @@
     [self addAbility:eeaa];
 }
 
-- (void)soulPrisonAll:(Raid *)raid
-{
-    [self.announcer announce:@"\"YOUR SOULS BELONG TO THE ABYSS\""];
-    for (RaidMember *member in raid.livingMembers) {
-        SoulPrisonEffect *spe = [[[SoulPrisonEffect alloc] initWithDuration:60.0 andEffectType:EffectTypeNegative] autorelease];
-        [spe setOwner:self];
-        NSInteger damage = member.health - 1;
-        [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
-        [member setHealth:1];
-        [member addEffect:spe];
-    }
-}
 
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
 {
@@ -2066,7 +2166,6 @@
 
     if (percentage == 40.0) {
         [self.announcer announce:@"YOU CANNOT WITHSTAND THIS TORMENT"];
-        [self soulPrisonAll:raid];
     }
     
     if (percentage == 30.0) {
@@ -2081,7 +2180,6 @@
     
     if (percentage == 10.0) {
         [self.announcer announce:@"YOUR SOULS WILL BURN IN DARKNESS"];
-        [self soulPrisonAll:raid];
     }
 }
 

@@ -15,7 +15,6 @@
 
 @interface GamePlayFTUELayer : CCLayerColor
 @property (nonatomic, assign) CCLayerColor *highlightLayer;
-@property (nonatomic, assign) CCLabelTTF *informationLabel;
 @property (nonatomic, assign) id delegate;
 
 -(void)showWelcome;

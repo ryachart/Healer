@@ -698,16 +698,30 @@
     [self displayParticleSystemWithName:name onTarget:target withOffset:CGPointZero];
 }
 
-- (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target withOffset:(CGPoint)offset{
+- (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target withOffset:(CGPoint)offset delay:(NSTimeInterval)delay
+{
     if (self.isServer){
         NSString* networkMessage = [NSString stringWithFormat:@"STMTGT|%@|%@", name, target.battleID];
         [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
     }
     CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
     CGPoint destination = [self.raidView frameCenterForMember:target];
-    [collisionEffect setPosition:ccpAdd(destination, offset)];
-    [collisionEffect setAutoRemoveOnFinish:YES];
-    [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
+    
+    void (^completionBlock)(void) = ^{
+        [collisionEffect setPosition:ccpAdd(destination, offset)];
+        [collisionEffect setAutoRemoveOnFinish:YES];
+        [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
+    };
+    
+    if (delay > 0) {
+        [self runAction:[CCSequence actionOne:[CCDelayTime actionWithDuration:delay] two:[CCCallBlock actionWithBlock:completionBlock]]];
+    } else {
+        completionBlock();
+    }
+}
+
+- (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target withOffset:(CGPoint)offset{
+    [self displayParticleSystemWithName:name onTarget:target withOffset:offset delay:0.0];
 }
 
 - (void)displayBreathEffectOnRaidForDuration:(float)duration {

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "GameObjects.h"
 #import "cocos2d.h"
+#import "CCLabelTTFShadow.h"
 
 typedef enum {
     RaidViewSelectionStateNone,
@@ -20,7 +21,7 @@ typedef enum {
 
 @interface RaidMemberHealthView : CCLayer <CCRGBAProtocol>
 @property (nonatomic, assign, setter=setMemberData:) HealableTarget* memberData;
-@property (nonatomic, retain) CCLabelTTF *healthLabel;
+@property (nonatomic, retain) CCLabelTTFShadow *healthLabel;
 @property (nonatomic, assign) RaidMemberHealthViewDelegate *interactionDelegate;
 @property (nonatomic) BOOL isTouched;
 @property (nonatomic, readwrite) RaidViewSelectionState selectionState;

@@ -66,6 +66,7 @@
 @property (nonatomic, retain) NSString* spriteName;
 @property (nonatomic, retain) NSString* explosionParticleName;
 @property (nonatomic, readwrite) ProjectileEffectType effectType;
+- (void)fireAtRaid:(Raid*)raid;
 
 @end
 
@@ -195,4 +196,11 @@ typedef enum {
 @interface EnsureEffectActiveAbility : Ability
 @property (nonatomic, retain) RaidMember *victim;
 @property (nonatomic, retain) Effect *ensuredEffect;
+@end
+
+@interface WaveOfTorment : Ability
+@end
+
+@interface StackingEnrage : Ability
+@property (nonatomic, retain) Effect *enrageEffect;
 @end

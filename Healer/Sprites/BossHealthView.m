@@ -15,8 +15,6 @@
 @interface BossHealthView ()
 @property (nonatomic, assign) ClippingNode *bossHealthBack;
 @property (nonatomic, readwrite) NSInteger lastHealth;
-@property (nonatomic, assign) CCLabelTTF *healthLabelShadow;
-@property (nonatomic, assign) CCLabelTTF *bossNameShadow;
 @property (nonatomic, assign) CCSprite *portraitSprite;
 @property (nonatomic, assign) CCSprite *bossPlateSprite;
 @end
@@ -66,29 +64,20 @@
         [self.bossHealthBack addChild:healthBar z:1];
     
         
-        self.bossNameLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(280, 40) hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold" fontSize:32.0];
+        self.bossNameLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(280, 40) hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold" fontSize:32.0];
         self.bossNameLabel.position = CGPointMake(510, 14);
         [self.bossNameLabel setColor:ccc3(220, 220, 220)];
         
-        self.bossNameShadow = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(280, 40) hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold" fontSize:32.0];
-        self.bossNameShadow.position = CGPointMake(509, 13);
-        [self.bossNameShadow setColor:ccc3(25, 25, 25)];
 
         
-        self.healthLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold"  fontSize:32.0];
+        self.healthLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold"  fontSize:32.0];
         [self.healthLabel setColor:ccc3(230, 230, 230)];
         [self.healthLabel setPosition:CGPointMake(300, 60)];
         
-        self.healthLabelShadow = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold"  fontSize:32.0];
-        [self.healthLabelShadow setColor:ccc3(25, 25, 25)];
-        [self.healthLabelShadow setOpacity:155];
-        [self.healthLabelShadow setPosition:CGPointMake(299, 59)];
         
-        [self addChild:self.bossNameShadow z:9];
         [self addChild:self.bossHealthBack];
         [self addChild:self.bossNameLabel z:10];
         [self addChild:self.healthLabel z:10];
-        [self addChild:self.healthLabelShadow z:self.healthLabel.zOrder - 1];
     }
     return self;
 }
@@ -100,7 +89,6 @@
 	bossData = theBoss;
 	
 	[self.bossNameLabel setString:[bossData namePlateTitle]];
-    [self.bossNameShadow setString:[bossData namePlateTitle]];
 	lastHealth = theBoss.health;
     
     [self.abilityDescriptionsView removeFromParentAndCleanup:YES];
@@ -118,22 +106,16 @@
         int startingFuzzX = arc4random() % 20 + self.bossHealthBack.clippingRegion.origin.x + self.bossHealthBack.clippingRegion.size.width ;
         int startingFuzzY = arc4random() % 20;
         int heal = bossData.health - lastHealth;
-        CCLabelTTF *shadowLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
-        [shadowLabel setColor:ccBLACK];
-        [shadowLabel setPosition:CGPointMake(startingFuzzX -1, self.contentSize.height + 1 + startingFuzzY)];
         
-        CCLabelTTF *sctLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
-        [sctLabel setColor:ccWHITE];
+        CCLabelTTF *sctLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
+        [sctLabel setColor:ccRED];
         [sctLabel setPosition:CGPointMake(startingFuzzX, self.contentSize.height + startingFuzzY)];
         
-        [self addChild:shadowLabel z:10];
         [self addChild:sctLabel z:11];
         
         int direction = arc4random() % 2 == 1 ? -1 : 1;
         int distanceFuzz = arc4random() % 50;
-        [sctLabel runAction:[CCSequence actions:[CCSpawn actions:[CCJumpBy actionWithDuration:2.0 position:CGPointMake(direction * 50 + distanceFuzz, -50) height:20 jumps:1], [CCFadeOut actionWithDuration:2.0], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
-            [node removeFromParentAndCleanup:YES];}], nil]];
-        [shadowLabel runAction:[CCSequence actions:[CCSpawn actions:[CCJumpBy actionWithDuration:2.0 position:CGPointMake(direction * 50 + distanceFuzz, -50) height:20 jumps:1], [CCFadeOut actionWithDuration:2.0], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [sctLabel runAction:[CCSequence actions:[CCSpawn actions:[CCJumpBy actionWithDuration:2.0 position:CGPointMake(direction * 50 + distanceFuzz, -50) height:20 jumps:1], [CCFadeTo actionWithDuration:2.0 opacity:0], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node removeFromParentAndCleanup:YES];}], nil]];
     }
     
@@ -148,11 +130,9 @@
 	
 	if (![healthText isEqualToString:[self.healthLabel string]]){
 		[self.healthLabel setString:healthText];
-        [self.healthLabelShadow setString:healthText];
 	}
     
     [self.bossNameLabel setString:[bossData namePlateTitle]];
-    [self.bossNameShadow setString:[bossData namePlateTitle]];
     
     double percentageOfHealth = ((float)[self.bossData health])/[self.bossData maximumHealth];
     [self.bossHealthBack setClippingRegion:CGRectMake(HEALTH_INSET_WIDTH-(self.bossHealthBack.clippingRegion.size.width * (1 - percentageOfHealth)), self.bossHealthBack.clippingRegion.origin.y, self.bossHealthBack.clippingRegion.size.width, self.bossHealthBack.clippingRegion.size.height)];
@@ -168,10 +148,8 @@
 {
     [self.bossHealthBack runAction:[CCFadeOut actionWithDuration:3.0]];
     [self.bossNameLabel runAction:[CCFadeOut actionWithDuration:3.0]];
-    [self.bossNameShadow runAction:[CCFadeOut actionWithDuration:3.0]];
     [self.bossPlateSprite runAction:[CCFadeOut actionWithDuration:3.0]];
     [self.healthLabel runAction:[CCFadeOut actionWithDuration:3.0]];
-    [self.healthLabelShadow runAction:[CCFadeOut actionWithDuration:3.0]];
     [self.abilityDescriptionsView runAction:[CCFadeOut actionWithDuration:3.0]];
     
     CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"VICTORY!" fontName:@"Marion-Bold" fontSize:72.0];

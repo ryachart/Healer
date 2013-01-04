@@ -60,6 +60,7 @@
 		BF261C351602C74F003307DF /* DraggableSpellIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = BF261C341602C74F003307DF /* DraggableSpellIcon.m */; };
 		BF261C381602C7A4003307DF /* Slot.m in Sources */ = {isa = PBXBuildFile; fileRef = BF261C371602C7A3003307DF /* Slot.m */; };
 		BF26BFC615CA0B5D00B7132D /* AbilityDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = BF26BFC515CA0B5D00B7132D /* AbilityDescriptor.m */; };
+		BF2D1C1C16968A14006DCA9A /* CCLabelTTFShadow.m in Sources */ = {isa = PBXBuildFile; fileRef = BF2D1C1B16968A14006DCA9A /* CCLabelTTFShadow.m */; };
 		BF448C57154BA4D1009401A6 /* AddRemoveSpellLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */; };
 		BF448C5A154BB04A009401A6 /* SpellInfoNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C59154BB04A009401A6 /* SpellInfoNode.m */; };
 		BF4CD1C91642D61600EB2336 /* DebugViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BF4CD1C71642D61500EB2336 /* DebugViewController.m */; };
@@ -640,6 +641,8 @@
 		BF261C371602C7A3003307DF /* Slot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Slot.m; sourceTree = "<group>"; };
 		BF26BFC415CA0B5D00B7132D /* AbilityDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbilityDescriptor.h; sourceTree = "<group>"; };
 		BF26BFC515CA0B5D00B7132D /* AbilityDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbilityDescriptor.m; sourceTree = "<group>"; };
+		BF2D1C1A16968A14006DCA9A /* CCLabelTTFShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCLabelTTFShadow.h; sourceTree = "<group>"; };
+		BF2D1C1B16968A14006DCA9A /* CCLabelTTFShadow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCLabelTTFShadow.m; sourceTree = "<group>"; };
 		BF448C55154BA4D1009401A6 /* AddRemoveSpellLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddRemoveSpellLayer.h; sourceTree = "<group>"; };
 		BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddRemoveSpellLayer.m; sourceTree = "<group>"; };
 		BF448C58154BB04A009401A6 /* SpellInfoNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellInfoNode.h; sourceTree = "<group>"; };
@@ -1161,6 +1164,8 @@
 				BF68CBA51537364B0096B6CF /* ClippingNode.m */,
 				BF69866A154C7B5F0016F25E /* BackgroundSprite.h */,
 				BF69866B154C7B5F0016F25E /* BackgroundSprite.m */,
+				BF2D1C1A16968A14006DCA9A /* CCLabelTTFShadow.h */,
+				BF2D1C1B16968A14006DCA9A /* CCLabelTTFShadow.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1924,6 +1929,7 @@
 				38B0BB251657694300D31540 /* RatingCounterSprite.m in Sources */,
 				38B0BB28165779BC00D31540 /* ViewDivinityChoiceLayer.m in Sources */,
 				BFFF9919168D7F52007AF447 /* PlayerDataManager.m in Sources */,
+				BF2D1C1C16968A14006DCA9A /* CCLabelTTFShadow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2278,6 +2284,7 @@
 				BFFF991E169437E1007AF447 /* Ad Hoc */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

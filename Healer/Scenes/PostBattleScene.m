@@ -33,6 +33,7 @@
 @property (nonatomic, readwrite) BOOL otherPlayerHasQueued;
 @property (nonatomic, readwrite) BOOL localPlayerHasQueued;
 @property (nonatomic, readwrite) BOOL isNewBestScore;
+@property (nonatomic, readwrite) BOOL showsFirstLevelFTUE;
 @property (nonatomic, assign) CCLabelTTF *healingDoneLabel;
 @property (nonatomic, assign) CCLabelTTF *overhealingDoneLabel;
 @property (nonatomic, assign) CCLabelTTF *damageTakenLabel;
@@ -78,6 +79,8 @@
         NSInteger score = self.encounter.score;
         NSInteger numDead = self.encounter.raid.deadCount;
         NSTimeInterval fightDuration = duration;
+        
+        self.showsFirstLevelFTUE = victory && enc.levelNumber == 1 && [[PlayerDataManager localPlayer] highestLevelCompleted] == 0;
         
         //Data Operations
         if (victory){
@@ -150,7 +153,7 @@
         menu.position = CGPointMake(512, 200);
         [self addChild:menu];
         
-        if (enc.levelNumber != 1) {
+        if (!self.showsFirstLevelFTUE) {
             [menu addChild:done];
         }
         
@@ -347,7 +350,9 @@
 }
 
 - (void)goToStore {
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:[[ShopScene new] autorelease]]];
+    ShopScene *ss = [[ShopScene new] autorelease];
+    [ss setRequiresGreaterHealFtuePurchase:self.showsFirstLevelFTUE];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:ss]];
 }
 
 #pragma mark - GKMatchDelegate

@@ -30,8 +30,10 @@
 @property (nonatomic, assign) CCMenuItemSprite *advancedButton;
 @property (nonatomic, assign) CCMenuItemSprite *archivesButton;
 @property (nonatomic, assign) CCMenuItemSprite *vaultButton;
-
+@property (nonatomic, assign) CCMenu *backButton;
 @property (nonatomic, retain) CCSprite *selectedCategorySprite;
+
+@property (nonatomic, assign) CCSprite *ftueArrow;
 
 - (void)back;
 - (void)configureShopForCategory:(ShopCategory)category;
@@ -64,9 +66,9 @@
         
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/shop-sprites.plist"];
         
-        CCMenu *storeBackMenu = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
-        [storeBackMenu setPosition:CGPointMake(90, 715)];
-        [self addChild:storeBackMenu];
+        self.backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
+        [self.backButton setPosition:CGPointMake(90, 715)];
+        [self addChild:self.backButton];
                 
         GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
         [goldCounter setPosition:CGPointMake(925, 50)];
@@ -187,9 +189,23 @@
 
 }
 
+- (void)onEnter
+{
+    [super onEnter];
+    if (self.requiresGreaterHealFtuePurchase) {
+        [self.itemsTable setIsScrollingEnabled:NO];
+        [[self.backButton.children objectAtIndex:0] setIsEnabled:NO];
+        
+        self.ftueArrow = [CCSprite spriteWithSpriteFrameName:@"ftue-arrow.png"];
+        [self.ftueArrow setPosition:CGPointMake(884, 660)];
+        [self.ftueArrow runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCEaseBackOut actionWithAction:[CCMoveBy actionWithDuration:.5 position:CGPointMake(0, 40)]],[CCMoveBy actionWithDuration:.33 position:CGPointMake(0, -40)], nil]]];
+        [self addChild:self.ftueArrow];
+        
+    }
+}
+
 -(void)onEnterTransitionDidFinish {
     [super onEnterTransitionDidFinish];
-    
     [self.itemsTable scrollToTopAnimated:NO];
 }
 
@@ -200,8 +216,13 @@
 -(void)selectedItem:(ShopItemNode*)selectedNode
 {
     if ([[PlayerDataManager localPlayer] canAffordShopItem:selectedNode.item] && ![[PlayerDataManager localPlayer] hasShopItem:selectedNode.item]){
-        [[PlayerDataManager localPlayer] purchaseItem:selectedNode.item];
-        [self configureCategoryButtons];
+            [[PlayerDataManager localPlayer] purchaseItem:selectedNode.item];
+            [self configureCategoryButtons];
+            if (self.requiresGreaterHealFtuePurchase) {
+                self.requiresGreaterHealFtuePurchase = NO;
+                [[self.backButton.children objectAtIndex:0] setIsEnabled:YES];
+                [self.itemsTable setIsScrollingEnabled:YES];
+            }
     }
 }
 

@@ -38,7 +38,6 @@
 @synthesize authenticationAttempted;
 -(id)init{
     if (self = [super init]){
-        [[AudioController sharedInstance] addNewPlayerWithTitle:@"title" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/title" ofType:@"m4a"]]];
         //Perform Scene Setup   
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/spell-sprites.plist"];
@@ -133,11 +132,6 @@
 - (void)onEnterTransitionDidFinish {
     [super onEnterTransitionDidFinish];
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-
-    if (![[AudioController sharedInstance] isTitlePlaying:@"title"]) {
-        [[AudioController sharedInstance] stopAll];
-        [[AudioController sharedInstance] playTitle:@"title" looping:10];
-    }
 }
 
 
@@ -148,7 +142,8 @@
 }
 
 -(void)storeSelected{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[ShopScene alloc] init] autorelease]]];
+    ShopScene *ss = [[ShopScene new] autorelease];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:ss]];
 }
 
 -(void)divinitySelected{
@@ -156,9 +151,6 @@
 }
 
 - (void)dealloc {
-    self.menu = nil;
-    self.multiplayerButton = nil;
-    self.quickPlayButton = nil;
     [super dealloc];
 }
 

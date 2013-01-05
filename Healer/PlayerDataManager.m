@@ -86,13 +86,17 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
             [self setPlayerObjectInformation:playerObject];
             [playerObject saveEventually];
         } else {
-            PFObject *newPlayerObject = [PFObject objectWithClassName:@"player"];
-            [self setPlayerObjectInformation:newPlayerObject];
-            if ([newPlayerObject save]) {
-                if (newPlayerObject.objectId){
-                    [[NSUserDefaults standardUserDefaults] setObject:newPlayerObject.objectId forKey:PlayerRemoteObjectIdKey];
-                    [[NSUserDefaults standardUserDefaults] synchronize];
+            @try {
+                PFObject *newPlayerObject = [PFObject objectWithClassName:@"player"];
+                [self setPlayerObjectInformation:newPlayerObject];
+                if ([newPlayerObject save]) {
+                    if (newPlayerObject.objectId){
+                        [[NSUserDefaults standardUserDefaults] setObject:newPlayerObject.objectId forKey:PlayerRemoteObjectIdKey];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
+                    }
                 }
+            } @catch (NSException *e) {
+                NSLog(@"Failed to create a new player remote object");
             }
             
         }

@@ -47,7 +47,7 @@
     CCSprite *basicButton = [CCSprite spriteWithSpriteFrameName:frameName];
     CCSprite *basicButtonSelected = [CCSprite spriteWithSpriteFrameName:frameName];
     CCSprite *basicButtonDisabled = [CCSprite spriteWithSpriteFrameName:frameName];
-    [basicButtonDisabled setColor:ccBLACK];
+    [basicButtonDisabled setOpacity:100];
     [basicButtonSelected setOpacity:200];
     
     CCMenuItemSprite *menuItem = [CCMenuItemSprite itemWithNormalSprite:basicButton selectedSprite:basicButtonSelected disabledSprite:basicButtonDisabled target:target selector:selector];

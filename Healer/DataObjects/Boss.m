@@ -284,6 +284,12 @@
     Ghoul *ghoul = [[Ghoul alloc] initWithHealth:21840 damage:200 targets:1 frequency:2.0 choosesMT:NO ];
     [ghoul setTitle:@"The Night Ghoul"];
     [ghoul setInfo:@"A ghoul has found its way onto a nearby farmer's land.  It has already killed the farmer's wife.  You will accompany a small band of mercenaries to dispatch the ghoul."];
+    
+    AbilityDescriptor *ad = [[[AbilityDescriptor alloc] init] autorelease];
+    [ad setAbilityName:@"Undead Attacks"];
+    [ad setAbilityDescription:@"The Ghoul attacks its enemies randomly."];
+    [ad setIconName:@"unknown_ability.png"];
+    [ghoul addAbilityDescriptor:ad];
     return [ghoul autorelease];
 }
 

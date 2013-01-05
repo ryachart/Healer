@@ -61,12 +61,6 @@
 @synthesize match, isClient, isServer, players, networkThrottle, matchVoiceChat, serverPlayerID;
 
 - (void)dealloc {
-    AudioController *ac = [AudioController sharedInstance];
-	for (Spell* aSpell in [self.player activeSpells]){
-		[[aSpell spellAudioData] releaseSpellAudio];
-	}
-	[ac removeAudioPlayerWithTitle:CHANNELING_SPELL_TITLE];
-	[ac removeAudioPlayerWithTitle:OUT_OF_MANA_TITLE];
     
     [spellView1 release];
     [spellView2 release];
@@ -118,7 +112,6 @@
         
         NSAssert(self.players.count > 0, @"A Battle with no players was initiated.");
         
-        [[AudioController sharedInstance] addNewPlayerWithTitle:@"battle" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/battle" ofType:@"mp3"]]];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/battle-sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/effect-sprites.plist"];
         
@@ -175,12 +168,6 @@
         [self addChild:self.announcementLabelShadow z:99 tag:PAUSEABLE_TAG];
         [self addChild:self.errAnnouncementLabel z:98 tag:PAUSEABLE_TAG];
         //CACHE SOUNDS
-        AudioController *ac = [AudioController sharedInstance];
-        for (Spell* aSpell in [self.player activeSpells]){
-            [[aSpell spellAudioData] cacheSpellAudio];
-        }
-        [ac addNewPlayerWithTitle:CHANNELING_SPELL_TITLE andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/Channeling" ofType:@"wav"]]];
-        [ac addNewPlayerWithTitle:OUT_OF_MANA_TITLE andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/OutOfMana" ofType:@"wav"]]];
         
         for (int i = 0; i < 4; i++){
             switch (i) {
@@ -310,12 +297,6 @@
 
 -(void)onEnterTransitionDidFinish{
     [super onEnterTransitionDidFinish];
-#if DEBUG
-    if (self.encounter.levelNumber == 1){
-        [self gameEvent:0.0]; //Bump the UI
-        [self battleBegin];
-    }else
-#endif
     if (self.encounter.levelNumber == 1){
         [self gameEvent:0.0]; //Bump the UI
         GamePlayFTUELayer *gpfl = [[[GamePlayFTUELayer alloc] init] autorelease];
@@ -326,8 +307,6 @@
         [self gameEvent:0.0]; //Bump the UI
         [self battleBegin];
     }
-    [[AudioController sharedInstance] stopAll];
-    [[AudioController sharedInstance] playTitle:@"battle" looping:20];
 }
 
 -(void)ftueLayerDidComplete:(CCNode*)ftueLayer{

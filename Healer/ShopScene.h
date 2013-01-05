@@ -9,5 +9,5 @@
 
 
 @interface ShopScene : CCScene
-
+@property (nonatomic, readwrite) BOOL requiresGreaterHealFtuePurchase;
 @end

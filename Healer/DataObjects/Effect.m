@@ -300,7 +300,7 @@
     if (self.target.absorb == 0) {
         self.isExpired = YES;
         Player *owningPlayer = (Player*)self.owner;
-        [owningPlayer setEnergy:owningPlayer.energy + 12];
+        [owningPlayer setEnergy:owningPlayer.energy + 50];
     }
 }
 @end

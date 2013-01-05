@@ -219,6 +219,7 @@
             [[PlayerDataManager localPlayer] purchaseItem:selectedNode.item];
             [self configureCategoryButtons];
             if (self.requiresGreaterHealFtuePurchase) {
+                [self.ftueArrow setVisible:NO];
                 self.requiresGreaterHealFtuePurchase = NO;
                 [[self.backButton.children objectAtIndex:0] setIsEnabled:YES];
                 [self.itemsTable setIsScrollingEnabled:YES];

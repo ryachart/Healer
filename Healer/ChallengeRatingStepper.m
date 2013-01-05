@@ -52,8 +52,12 @@
         
         self.difficultySkulls = [NSMutableArray arrayWithCapacity:5];
         
+        CCLabelTTF *difficulty = [CCLabelTTF labelWithString:@"DIFFICULTY:" fontName:@"TrebuchetMS" fontSize:36.0];
+        [difficulty setPosition:CGPointMake(44, 101)];
+        [self addChild:difficulty];
+        
         self.difficultyWordLabel = [CCLabelTTF labelWithString:[ChallengeRatingStepper difficultyWorldForDifficultyNumber:self.encounter.difficulty] dimensions:CGSizeMake(150, 60) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:36.0];
-        [self.difficultyWordLabel setPosition:CGPointMake(216.0f, 92.0)];
+        [self.difficultyWordLabel setPosition:CGPointMake(218.0f, 92.0)];
         [self.difficultyWordLabel setColor:ccYELLOW];
         
         [self addChild:self.difficultyWordLabel];

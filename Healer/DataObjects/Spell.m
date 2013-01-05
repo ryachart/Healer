@@ -467,7 +467,7 @@
 	Barrier *bulwark = [[Barrier alloc] initWithTitle:@"Barrier" healAmnt:0 energyCost:75 castTime:0.0 andCooldown:4.0];
 	[bulwark setDescription:@"Shields the target absorbing moderate damage.  If the shield is fully consumed 50 energy is restored to the Healer."];
     
-    ShieldEffect *appliedEffect = [[[ShieldEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositive] autorelease];
+    BarrierEffect* appliedEffect = [[[BarrierEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositive] autorelease];
     [appliedEffect setTitle:@"barrier-eff"];
     [appliedEffect setSpriteName:@"blessed_armor.png"];
     [bulwark setAppliedEffect:appliedEffect];

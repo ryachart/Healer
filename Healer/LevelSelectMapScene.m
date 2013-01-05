@@ -47,7 +47,7 @@
         [self addChild:self.encCard z:5];
         [self.encCard setPosition:CGPointMake(512, 100)];
         
-        self.battleButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(battle) andTitle:@"Battle!"];
+        self.battleButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(battle) andTitle:@"Continue"];
         CCMenu *battleMenu = [CCMenu menuWithItems:self.battleButton, nil];
         [battleMenu setPosition:CGPointMake(900, 40)];
         [self addChild:battleMenu z:5];

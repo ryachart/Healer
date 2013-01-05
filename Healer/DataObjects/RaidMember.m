@@ -209,7 +209,7 @@
 -(id)init{
     if (self = [super initWithHealth:1192 damageDealt:748 andDmgFrequency:.75 andPositioning:Melee]){
         self.title = @"Berserker";
-        self.info = @"";
+        self.info = @"Deals very high damage";
         self.dodgeChance = .07;
         self.criticalChance = .1;
         self.lastAttack = arc4random() % 70 / 100.0;
@@ -228,7 +228,7 @@
 -(id)init{
     if (self = [super initWithHealth:1013 damageDealt:1232 andDmgFrequency:1.2 andPositioning:Ranged]){
         self.title = @"Archer";
-        self.info = @"";
+        self.info = @"Deals very high damage";
         self.dodgeChance = .05;
         self.lastAttack = arc4random() % 110 / 100.0;
     }

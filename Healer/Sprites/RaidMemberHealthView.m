@@ -352,17 +352,19 @@
 	
     Effect *negativeEffect = nil;
     Effect *positiveEffect = nil;
-//    BOOL shieldEffectFound = NO;
+    
 	for (Effect *eff in self.memberData.activeEffects){
         if ([eff effectType] == EffectTypePositive){
-            positiveEffect = eff;
+            if (!positiveEffect || eff.visibilityPriority > positiveEffect.visibilityPriority) {
+                positiveEffect = eff;
+            }
         }
         if ([eff effectType] == EffectTypeNegative){
-            negativeEffect = eff;
+            if (!negativeEffect || eff.visibilityPriority > negativeEffect.visibilityPriority) {
+                negativeEffect = eff;
+            }
         }
 	}
-    
-//    [self setShieldedOn:shieldEffectFound];
     
     if (positiveEffect && positiveEffect.spriteName && !self.memberData.isDead){
         if (!self.priorityPositiveEffectSprite){

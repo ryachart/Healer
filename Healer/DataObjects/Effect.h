@@ -42,14 +42,15 @@ typedef enum {
 @property (nonatomic, readwrite) AilmentType ailmentType;
 @property (nonatomic, assign) Agent *owner;
 @property NSTimeInterval duration;
+@property (nonatomic, readwrite) NSInteger stacks;
 @property (readwrite) NSInteger maxStacks;
 @property (readwrite) float timeApplied;
 @property (nonatomic, assign) HealableTarget *target;
 @property (readonly) EffectType effectType;
 @property (readwrite) float failureChance;
 @property (readonly) BOOL shouldFail;
-@property (readwrite) float healingDoneMultiplierAdjustment;
-@property (readwrite) float damageDoneMultiplierAdjustment;
+@property (nonatomic, readwrite) float healingDoneMultiplierAdjustment;
+@property (nonatomic, readwrite) float damageDoneMultiplierAdjustment;
 @property (nonatomic, readwrite) float castTimeAdjustment;
 @property (nonatomic, readwrite) float spellCostAdjustment;
 @property (nonatomic, readwrite) float energyRegenAdjustment;
@@ -62,6 +63,7 @@ typedef enum {
 @property (nonatomic, readwrite) float dodgeChanceAdjustment;
 @property (readwrite) BOOL isIndependent; //Max Stacks doesnt apply and other effects are never the same as this effect
 @property (nonatomic, readwrite) BOOL considerDodgeForDamage;
+@property (nonatomic, readwrite) NSInteger visibilityPriority;
 - (void)reset;
 - (BOOL)isKindOfEffect:(Effect*)effect;
 //Weird fucking hacky solution for figuring out the owner in network play

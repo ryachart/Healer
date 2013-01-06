@@ -533,6 +533,7 @@
     [rhe setTitle:@"orbs-of-light-effect"];
     [rhe setEffectCooldown:2.0];
     [rhe setMaxStacks:1];
+    [rhe setVisibilityPriority:49];
     [rhe setSpriteName:@"regrow.png"];
     [rhe setAmountPerReaction:350];
     [orbs setAppliedEffect:rhe];
@@ -556,6 +557,7 @@
     [swirl setIsExclusiveEffectTarget:YES];
     SwirlingLightEffect *sle = [[SwirlingLightEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];
     [sle setMaxStacks:3];
+    [sle setVisibilityPriority:50];
     [sle setSpriteName:@"swirling_light.png"];
     [sle setTitle:@"swirling-light-effect"];
     [sle setNumOfTicks:15];
@@ -849,7 +851,7 @@
         [starProjectile setCollisionParticleName:@"star_explosion.plist"];
         [starProjectile setDelay:preDelay];
         [theBoss.announcer displayProjectileEffect:starProjectile fromOrigin:CGPointMake(400 - (arc4random() % 300 - 150), 800)];
-        DelayedHealthEffect *starDelayedHealthEff = [[DelayedHealthEffect alloc] initWithDuration:healDelay andEffectType:EffectTypePositiveInvisible];
+        DelayedHealthEffect *starDelayedHealthEff = [[DelayedHealthEffect alloc] initWithDuration:healDelay+preDelay andEffectType:EffectTypePositiveInvisible];
         [starDelayedHealthEff setIsIndependent:YES];
         [starDelayedHealthEff setOwner:self.owner];
         [starDelayedHealthEff setValue:190];

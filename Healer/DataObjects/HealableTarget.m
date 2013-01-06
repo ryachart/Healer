@@ -171,7 +171,7 @@
     NSInteger count = 0;
     for (Effect *eff in self.activeEffects){
         if (eff.effectType == type){
-            count++;
+            count+= eff.stacks;
         }
     }
     return count;
@@ -180,34 +180,24 @@
 -(void)addEffect:(Effect*)theEffect
 {
 	if (activeEffects != nil){
-        NSMutableArray *similarEffects = [NSMutableArray arrayWithCapacity:theEffect.maxStacks];
+        BOOL didUpdateSimilarEffect = NO;
 		for (Effect *effectFA in activeEffects){
 			if ([effectFA isKindOfEffect:theEffect] && effectFA.owner == theEffect.owner && !effectFA.isIndependent){
-                [similarEffects addObject:effectFA];
+                effectFA.stacks++;
+                [effectFA reset];
+                didUpdateSimilarEffect = YES;
 			}
 		}
         
-        if (similarEffects.count >= theEffect.maxStacks){
-            for (Effect *simEffect in similarEffects){
-                [simEffect reset]; //Refresh the duration of the existing versions of the effects if a second one is applied over.
+		if (!didUpdateSimilarEffect) {
+            [theEffect reset];
+            if ([theEffect conformsToProtocol:@protocol(HealthAdjustmentModifier)]){
+                [self addHealthAdjustmentModifier:(HealthAdjustmentModifier*)theEffect];
             }
-            return;
+            [theEffect setTarget:self];
+            [activeEffects addObject:theEffect];
         }
-		
-		[theEffect reset];
-        for (Effect *simEffect in similarEffects){
-            [simEffect reset]; //Refresh the duration of the existing versions of the effects if a second one is applied over.
-        }
-		if ([theEffect conformsToProtocol:@protocol(HealthAdjustmentModifier)]){
-			[self addHealthAdjustmentModifier:(HealthAdjustmentModifier*)theEffect];
-		}
-		[theEffect setTarget:self];
-		[activeEffects addObject:theEffect];
 	}
-	else {
-		NSLog(@"Effects Array is nil");
-	}
-
 }
 
 - (void)removeEffect:(Effect *)theEffect{

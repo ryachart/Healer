@@ -32,10 +32,51 @@
         isExpired = NO;
         effectType = type;
         self.maxStacks = 1;
+        self.stacks = 1;
         self.isIndependent = NO;
         self.spellCostAdjustment = 0.0;
     }
 	return self;
+}
+
+- (float)healingDoneMultiplierAdjustment {
+    return healingDoneMultiplierAdjustment * self.stacks;
+}
+
+- (float)damageDoneMultiplierAdjustment {
+    return damageDoneMultiplierAdjustment * self.stacks;
+}
+
+- (float)castTimeAdjustment {
+    return damageDoneMultiplierAdjustment * self.stacks;
+}
+
+- (float)spellCostAdjustment {
+    return _spellCostAdjustment * self.stacks;
+}
+
+- (float)energyRegenAdjustment {
+    return _energyRegenAdjustment * self.stacks;
+}
+
+- (float)maximumHealthMultiplierAdjustment {
+    return _maximumHealthMultiplierAdjustment * self.stacks;
+}
+
+- (NSInteger)maximumAbsorbtionAdjustment {
+    return _maximumAbsorbtionAdjustment * self.stacks;
+}
+
+- (float)criticalChanceAdjustment {
+    return _criticalChanceAdjustment * self.stacks;
+}
+
+- (float)cooldownMultiplierAdjustment {
+    return _cooldownMultiplierAdjustment * self.stacks;
+}
+
+- (float)dodgeChanceAdjustment {
+    return _dodgeChanceAdjustment * self.stacks;
 }
 
 -(BOOL)shouldFail{
@@ -49,25 +90,27 @@
 
 -(id)copy{
     Effect *copied = [[[self class] alloc] initWithDuration:self.duration andEffectType:self.effectType];
-    copied.maxStacks = self.maxStacks;
+    copied.maxStacks = maxStacks;
     copied.spriteName = self.spriteName;
     copied.title = self.title;
     copied.owner = self.owner;
     copied.isIndependent = self.isIndependent;
     copied.ailmentType = self.ailmentType;
-    copied.damageDoneMultiplierAdjustment = self.damageDoneMultiplierAdjustment;
-    copied.healingDoneMultiplierAdjustment = self.healingDoneMultiplierAdjustment;
-    copied.castTimeAdjustment = self.castTimeAdjustment;
-    copied.spellCostAdjustment = self.spellCostAdjustment;
+    copied.damageDoneMultiplierAdjustment = damageDoneMultiplierAdjustment;
+    copied.healingDoneMultiplierAdjustment = healingDoneMultiplierAdjustment;
+    copied.castTimeAdjustment = castTimeAdjustment;
+    copied.spellCostAdjustment = _spellCostAdjustment;
     copied.failureChance = self.failureChance;
     copied.causesConfusion = self.causesConfusion;
-    copied.damageTakenMultiplierAdjustment = self.damageTakenMultiplierAdjustment;
-    copied.cooldownMultiplierAdjustment = self.cooldownMultiplierAdjustment;
-    copied.energyRegenAdjustment = self.energyRegenAdjustment;
-    copied.criticalChanceAdjustment = self.criticalChanceAdjustment;
-    copied.maximumHealthMultiplierAdjustment = self.maximumHealthMultiplierAdjustment;
-    copied.maximumAbsorbtionAdjustment = self.maximumAbsorbtionAdjustment;
-    copied.dodgeChanceAdjustment = self.dodgeChanceAdjustment;
+    copied.damageTakenMultiplierAdjustment = _damageTakenMultiplierAdjustment;
+    copied.cooldownMultiplierAdjustment = _cooldownMultiplierAdjustment;
+    copied.energyRegenAdjustment = _energyRegenAdjustment;
+    copied.criticalChanceAdjustment = _criticalChanceAdjustment;
+    copied.maximumHealthMultiplierAdjustment = _maximumHealthMultiplierAdjustment;
+    copied.maximumAbsorbtionAdjustment = _maximumAbsorbtionAdjustment;
+    copied.dodgeChanceAdjustment = _dodgeChanceAdjustment;
+    copied.stacks = self.stacks;
+    copied.visibilityPriority = self.visibilityPriority;
     return copied;
 }
 
@@ -126,9 +169,17 @@
     //This gets called when an effect is removed, not to cause an effect to expire
 }
 
+- (void)setStacks:(NSInteger)stacks
+{
+    if (stacks > self.maxStacks) {
+        stacks = self.maxStacks;
+    }
+    _stacks = stacks;
+}
+
 //EFF|TARGET|TITLE|DURATION|TYPE|SPRITENAME|OWNER|HDM|DDM|Ind
 -(NSString*)asNetworkMessage{
-    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@|%f|%f|%i|%f|%f|%i", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner, self.healingDoneMultiplierAdjustment, self.damageDoneMultiplierAdjustment, self.isIndependent, self.castTimeAdjustment, self.cooldownMultiplierAdjustment, self.maximumAbsorbtionAdjustment];
+    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@|%f|%f|%i|%f|%f|%i|%i|%i", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner, healingDoneMultiplierAdjustment, damageDoneMultiplierAdjustment, self.isIndependent, castTimeAdjustment, _cooldownMultiplierAdjustment, _maximumAbsorbtionAdjustment, self.stacks, self.visibilityPriority];
     
     return message;
 }
@@ -145,6 +196,8 @@
         self.castTimeAdjustment = [[messageComponents objectAtIndex:10] floatValue];
         self.cooldownMultiplierAdjustment = [[messageComponents objectAtIndex:11] floatValue];
         self.maximumAbsorbtionAdjustment = [[messageComponents objectAtIndex:12] intValue];
+        self.stacks = [[messageComponents objectAtIndex:13] intValue];
+        self.visibilityPriority = [[messageComponents objectAtIndex:14] intValue];
     }
     return self;
 }
@@ -236,7 +289,7 @@
             CombatEventType eventType = amount > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
             float modifier = amount > 0 ? self.owner.healingDoneMultiplier : self.owner.damageDoneMultiplier;
             NSInteger preHealth = self.target.health;
-            [self.target setHealth:[self.target health] + amount * modifier];
+            [self.target setHealth:[self.target health] + amount * modifier * self.stacks];
             NSInteger finalAmount = self.target.health - preHealth;
             if (owningPlayer){
                 NSInteger overheal = amount - finalAmount;
@@ -261,7 +314,13 @@
 
 - (NSInteger)maximumAbsorbtionAdjustment
 {
-    return self.amountToShield;
+    return self.amountToShield * self.stacks;
+}
+
+- (void)reset
+{
+    [super reset];
+    self.hasAppliedAbsorb = NO;
 }
 
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta
@@ -269,7 +328,7 @@
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
     if (!self.hasAppliedAbsorb) {
         self.hasAppliedAbsorb = YES;
-        self.target.absorb += self.amountToShield;
+        self.target.absorb += self.amountToShield * self.stacks;
     }
     if (self.target.absorb == 0) {
         self.isExpired = YES;
@@ -278,8 +337,8 @@
 
 - (void)expire
 {
-    NSInteger absorptionUsed = self.amountToShield - self.target.absorb;
-    NSInteger wastedAbsorb = self.amountToShield - absorptionUsed;
+    NSInteger absorptionUsed = self.amountToShield * self.stacks - self.target.absorb;
+    NSInteger wastedAbsorb = self.amountToShield * self.stacks - absorptionUsed;
     
     if (wastedAbsorb > 0) {
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:wastedAbsorb] andEventType:CombatEventTypeOverheal]];
@@ -293,12 +352,7 @@
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta
 {
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
-    if (!self.hasAppliedAbsorb) {
-        self.hasAppliedAbsorb = YES;
-        self.target.absorb += self.amountToShield;
-    }
-    if (self.target.absorb == 0) {
-        self.isExpired = YES;
+    if (self.isExpired) {
         Player *owningPlayer = (Player*)self.owner;
         [owningPlayer setEnergy:owningPlayer.energy + 50];
     }
@@ -389,7 +443,7 @@
                 amount *= owningPlayer.criticalBonusMultiplier;
             }
             NSInteger preHealth = self.target.health;
-            [self.target setHealth:self.target.health + amount];
+            [self.target setHealth:self.target.health + amount * self.stacks];
             NSInteger finalAmount = self.target.health - preHealth;
             if (owningPlayer){
                 NSInteger overheal = amount - finalAmount;
@@ -418,16 +472,10 @@
 - (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth
 {
     if (*currentHealth < *newHealth){
-        int similarEffectCount = 0;
-        for (Effect *effect in self.target.activeEffects){
-            if ([effect isKindOfEffect:self]){
-                similarEffectCount++;
-            }
-        }
         
-        if (similarEffectCount == 3) {
+        if (self.stacks == 3) {
             NSInteger healthDelta = *currentHealth - *newHealth;
-            NSInteger newHealthDelta = healthDelta * 1.01667;
+            NSInteger newHealthDelta = healthDelta * 1.05;
             *newHealth = *currentHealth - newHealthDelta;
         }
 	}
@@ -719,7 +767,7 @@
 - (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
     if (*currentHealth < *newHealth){
 		NSInteger healthDelta = *currentHealth - *newHealth;
-		NSInteger newHealthDelta = healthDelta * self.percentageHealingReceived;
+		NSInteger newHealthDelta = healthDelta * self.percentageHealingReceived * self.stacks;
 		*newHealth = *currentHealth - newHealthDelta;
 	}
 }
@@ -759,13 +807,7 @@
 }
 - (void)tick {
     [super tick];
-    NSInteger similarEffectsCount = 0;
-    for (Effect *effect in self.target.activeEffects){
-        if ([effect isKindOfEffect:self]){
-            similarEffectsCount++;
-        }
-    }
-    if (similarEffectsCount >= 5 && !self.target.isDead){
+    if (self.stacks >= 5 && !self.target.isDead){
         self.target.health = 0;
         [[(Boss*)self.owner announcer] announce:@"This Unspeakable grows stronger by consuming your ally."];
         Effect *damageBoost = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositive] autorelease];
@@ -897,7 +939,7 @@
 - (void)targetDidCastSpell:(Spell *)spell {
     if ([self.target isMemberOfClass:[Player class]]){
         Player *targettedPlayer = (Player*)self.target;
-        [targettedPlayer setEnergy:targettedPlayer.energy - self.energyChangePerCast];
+        [targettedPlayer setEnergy:targettedPlayer.energy - self.energyChangePerCast * self.stacks];
     }
 }
 @end

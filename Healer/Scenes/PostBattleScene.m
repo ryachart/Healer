@@ -123,7 +123,7 @@
         [[PlayerDataManager localPlayer] saveLocalPlayer];
         
         //UI
-        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
+        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"post-battle"] autorelease]];
         if (victory){
             CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"VICTORY!" fontName:@"Arial" fontSize:72];
             [victoryLabel setPosition:CGPointMake(512, 384)];

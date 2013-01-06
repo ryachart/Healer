@@ -351,7 +351,7 @@
     return self;
 }
 +(id)defaultSpell{
-    HealingBurst *heal = [[HealingBurst alloc] initWithTitle:@"Healing Burst" healAmnt:500 energyCost:70 castTime:1.0 andCooldown:0.0];
+    HealingBurst *heal = [[HealingBurst alloc] initWithTitle:@"Healing Burst" healAmnt:500 energyCost:50 castTime:1.0 andCooldown:0.0];
     [heal setDescription:@"Heals your target for a moderate amount very quickly."];
     return [heal autorelease];
 }
@@ -373,7 +373,7 @@
 }
 +(id)defaultSpell
 {
-	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:475 energyCost:100 castTime:1.85 andCooldown:0.0];//10h/erk
+	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:475 energyCost:80 castTime:1.85 andCooldown:0.0];//10h/erk
     [forkedHeal setDescription:@"Heals up to two targets simultaneously."];
 	return [forkedHeal autorelease];
 }
@@ -779,7 +779,7 @@
     return self;
 }
 + (id)defaultSpell {
-    Sunburst *sb = [[Sunburst alloc] initWithTitle:@"Sunburst" healAmnt:0 energyCost:320 castTime:0.0 andCooldown:10.0];
+    Sunburst *sb = [[Sunburst alloc] initWithTitle:@"Sunburst" healAmnt:0 energyCost:80 castTime:0.0 andCooldown:10.0];
     [sb setDescription:@"Heals up to 7 injured allies for a small amount over 5 seconds."];
     return [sb autorelease];
 }
@@ -801,7 +801,7 @@
         [sunburstEffect setTitle:@"sunburst-hot"];
         [sunburstEffect setSpriteName:@"sunburst.png"];
         [sunburstEffect setNumOfTicks:5];
-        [sunburstEffect setValuePerTick:60];
+        [sunburstEffect setValuePerTick:30];
         [sunburstEffect setOwner:self.owner];
         [target addEffect:sunburstEffect];
         [sunburstEffect release];

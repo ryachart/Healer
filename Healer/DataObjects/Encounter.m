@@ -192,8 +192,8 @@
         
         numArcher = 2;
         numWarlock = 2;
-        numWizard = 1;
-        numChampion = 4;
+        numWizard = 2;
+        numChampion = 3;
         numGuardian = 1;
         bossKey = @"treant";
     }
@@ -315,8 +315,8 @@
         basicBoss = [ColossusOfBone defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
-        numArcher = 3;
-        numWizard = 4;
+        numArcher = 4;
+        numWizard = 3;
         numWarlock = 4;
         numBerserker = 4;
         numChampion = 4;
@@ -329,8 +329,8 @@
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numArcher = 4;
-        numWarlock = 3;
-        numWizard = 4;
+        numWarlock = 4;
+        numWizard = 3;
         numBerserker = 4;
         numChampion = 4;
         numGuardian = 1;
@@ -342,8 +342,8 @@
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numArcher = 4;
-        numWarlock = 3;
-        numWizard = 4;
+        numWarlock = 4;
+        numWizard = 3;
         numBerserker = 4;
         numChampion = 4;
         numGuardian = 1;
@@ -353,8 +353,8 @@
     if (level == 18){
         basicBoss = [BaraghastReborn defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
-        numWizard = 4;
-        numWarlock = 3;
+        numWizard = 3;
+        numWarlock = 4;
         numArcher = 4;
         numBerserker = 4;
         numChampion = 4;
@@ -366,8 +366,8 @@
         basicBoss = [AvatarOfTorment1 defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
-        numWizard = 4;
-        numWarlock = 3;
+        numWizard = 3;
+        numWarlock = 4;
         numArcher = 4;
         numBerserker = 4;
         numChampion = 4;
@@ -379,8 +379,8 @@
         basicBoss = [AvatarOfTorment2 defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
-        numWizard = 4;
-        numWarlock = 3;
+        numWizard = 3;
+        numWarlock = 4;
         numArcher = 4;
         numBerserker = 4;
         numChampion = 4;
@@ -392,8 +392,8 @@
         basicBoss = [SoulOfTorment defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
-        numWizard = 4;
-        numWarlock = 3;
+        numWizard = 3;
+        numWarlock = 4;
         numArcher = 4;
         numBerserker = 4;
         numChampion = 4;

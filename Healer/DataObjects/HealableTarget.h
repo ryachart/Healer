@@ -34,6 +34,7 @@
 - (BOOL)isDead;
 - (void)addEffect:(Effect*)theEffect;
 - (void)removeEffect:(Effect*)theEffect;
+- (void)removeEffectsWithTitle:(NSString *)effectTitle;
 - (void)addHealthAdjustmentModifier:(HealthAdjustmentModifier*)hamod;
 - (BOOL)hasEffectWithTitle:(NSString*)title;
 @end

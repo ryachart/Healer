@@ -1930,9 +1930,9 @@
     ProjectileAttack *projectileAttack = [[ProjectileAttack alloc] init];
     [projectileAttack setSpriteName:@"purple_fireball.png"];
     [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
-    [projectileAttack setAbilityValue:-500];
+    [projectileAttack setAbilityValue:-250];
     [projectileAttack setCooldown:2.5];
-    [projectileAttack setFailureChance:.7];
+    [projectileAttack setFailureChance:.35];
     [boss addAbility:projectileAttack];
     [projectileAttack release];
     
@@ -1952,9 +1952,9 @@
 
 - (void)soulPrisonAll:(Raid *)raid
 {
-    [self.announcer announce:@"\"YOUR SOULS BELONG TO THE ABYSS\""];
+    [self.announcer announce:@"YOUR SOULS BELONG TO THE ABYSS"];
     for (RaidMember *member in raid.livingMembers) {
-        SoulPrisonEffect *spe = [[[SoulPrisonEffect alloc] initWithDuration:60.0 andEffectType:EffectTypeNegative] autorelease];
+        SoulPrisonEffect *spe = [[[SoulPrisonEffect alloc] initWithDuration:35.0 - (self.difficulty - 1.0 * 2) andEffectType:EffectTypeNegative] autorelease];
         [spe setOwner:self];
         NSInteger damage = member.health - 1;
         [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
@@ -1973,14 +1973,8 @@
         [self.announcer announce:@"Your pain shall be unending!"];
     }
     
-    if (percentage == 90.0 || percentage == 50.0) {
+    if (percentage == 90.0 || percentage == 50.0 || percentage == 70.0) {
         [self soulPrisonAll:raid];
-        SoulPrison *spAbility = [[[SoulPrison alloc] init] autorelease];
-        [spAbility setTitle:@"soul-prison"]; 
-        [spAbility setCooldown:30.0];
-        [spAbility setTimeApplied:-60.0];
-        [spAbility setAbilityValue:7];
-        [self addAbility:spAbility];
     }
     
     if (percentage == 72.0) {
@@ -1991,15 +1985,13 @@
         WaveOfTorment *wot = [[[WaveOfTorment alloc] init] autorelease];
         [wot setTitle:@"wot"];
         [wot setCooldown:40.0];
-        [wot setTimeApplied:39.0];
+        [wot setTimeApplied:0];
         [wot setAbilityValue:100];
         [self addAbility:wot];
     }
     
-    if (percentage == 41.0) {
-        [self.announcer announce:@"The Avatar of Torment drains your mind"];
-    }
     if (percentage == 40.0) {
+        [self.announcer announce:@"The Avatar of Torment drains your mind"];
         [player setEnergy:0];
         [[self abilityWithTitle:@"wot"] setTimeApplied:-20.0];
     }
@@ -2039,7 +2031,7 @@
     DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
     [dcAbility setTitle:@"dis-cloud"];
     [dcAbility setCooldown:23.0];
-    [dcAbility setAbilityValue:30];
+    [dcAbility setAbilityValue:26];
     [dcAbility setTimeApplied:20.0];
     [boss addAbility:dcAbility];
     [dcAbility release];
@@ -2047,7 +2039,7 @@
     ProjectileAttack *projectileAttack = [[ProjectileAttack alloc] init];
     [projectileAttack setSpriteName:@"purple_fireball.png"];
     [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
-    [projectileAttack setAbilityValue:-500];
+    [projectileAttack setAbilityValue:-400];
     [projectileAttack setCooldown:.75];
     [projectileAttack setFailureChance:.85];
     [boss addAbility:projectileAttack];
@@ -2056,7 +2048,7 @@
     ProjectileAttack *projectileAttack2 = [[ProjectileAttack alloc] init];
     [projectileAttack2 setSpriteName:@"purple_fireball.png"];
     [projectileAttack2 setExplosionParticleName:@"shadow_burst.plist"];
-    [projectileAttack2 setAbilityValue:-500];
+    [projectileAttack2 setAbilityValue:-400];
     [projectileAttack2 setCooldown:.83];
     [projectileAttack2 setFailureChance:.85];
     [boss addAbility:projectileAttack2];
@@ -2065,7 +2057,7 @@
     ProjectileAttack *projectileAttack3 = [[ProjectileAttack alloc] init];
     [projectileAttack3 setSpriteName:@"purple_fireball.png"];
     [projectileAttack3 setExplosionParticleName:@"shadow_burst.plist"];
-    [projectileAttack3 setAbilityValue:-350];
+    [projectileAttack3 setAbilityValue:-320];
     [projectileAttack3 setCooldown:2.5];
     [projectileAttack3 setFailureChance:.2];
     [boss addAbility:projectileAttack3];
@@ -2080,7 +2072,7 @@
         
         WaveOfTorment *wot = [[[WaveOfTorment alloc] init] autorelease];
         [wot setCooldown:40.0];
-        [wot setAbilityValue:100];
+        [wot setAbilityValue:80];
         [wot setTitle:@"wot"];
         [self addAbility:wot];
         [wot triggerAbilityForRaid:raid andPlayers:[NSArray arrayWithObject:player]];
@@ -2094,7 +2086,7 @@
         [self.announcer announce:@"You feel Anguish cloud your mind..."];
         Confusion *confusionAbility = [[[Confusion alloc] init] autorelease];
         [confusionAbility setCooldown:14.0];
-        [confusionAbility setAbilityValue:8.0];
+        [confusionAbility setAbilityValue:7.0];
         [confusionAbility setTitle:@"confusion"];
         [self addAbility:confusionAbility];
         [confusionAbility setTimeApplied:10.0];
@@ -2113,25 +2105,29 @@
 
 @implementation SoulOfTorment
 + (id)defaultBoss {
-    SoulOfTorment *boss = [[SoulOfTorment alloc] initWithHealth:5040000 damage:0 targets:0 frequency:0.0 choosesMT:NO];
-    
-    FocusedAttack *tankAttack = [[[FocusedAttack alloc] initWithDamage:500 andCooldown:2.25] autorelease];
-    [tankAttack setFailureChance:.18];
-    [boss addAbility:tankAttack];
-    boss.autoAttack = tankAttack;
+    SoulOfTorment *boss = [[SoulOfTorment alloc] initWithHealth:6040000 damage:0 targets:0 frequency:0.0 choosesMT:NO];
     
     [boss setTitle:@"The Soul of Torment"];
     [boss setNamePlateTitle:@"Torment"];
     [boss setInfo:@"Its body shattered and broken--the last gasp of this terrible creature conspires to unleash its most unspeakable power.  This is the last stand of your realm against the evil that terrorizes it."];
     
-    RaidDamagePulse *pulse = [[[RaidDamagePulse alloc] init] autorelease];
-    [pulse setTitle:@"shadow-nova"];
-    [pulse setAbilityValue:550];
-    [pulse setNumTicks:3];
-    [pulse setDuration:15.0];
-    [pulse setCooldown:80.0];
-    [pulse setTimeApplied:75.0];
-    [boss addAbility:pulse];
+    Attack *attack = [[[Attack alloc] initWithDamage:120 andCooldown:20] autorelease];
+    ContagiousEffect *contagious = [[[ContagiousEffect alloc] initWithDuration:10.0 andEffectType:EffectTypeNegative] autorelease];
+    [contagious setSpriteName:@"poison.png"];
+    [contagious setTitle:@"contagion"];
+    [contagious setNumOfTicks:10];
+    [contagious setValuePerTick:-50];
+    [contagious setAilmentType:AilmentPoison];
+    [attack setAppliedEffect:contagious];
+    [boss addAbility:attack];
+    
+    AbilityDescriptor *contagiousDesc = [[[AbilityDescriptor alloc] init] autorelease];
+    [contagiousDesc setAbilityDescription:@"The Soul of Torment poisons a target causes them to take damage periodically.  If the target's health is healed too highly this effect will spread to up to 3 additional allies."];
+    [contagiousDesc setAbilityName:@"Contagious Toxin"];
+    [contagiousDesc setIconName:@"unknown_ability.png"];
+    [boss addAbilityDescriptor:contagiousDesc];
+    
+    [boss gainSoulDrain];
     
     return [boss autorelease];
 }
@@ -2148,14 +2144,36 @@
     [soulDrainEffect setTitle:@"soul-drain-eff"];
     
     EnsureEffectActiveAbility *eeaa = [[[EnsureEffectActiveAbility alloc] init] autorelease];
+    [eeaa setTitle:@"soul-drain"];
     [eeaa setEnsuredEffect:soulDrainEffect];
     [self addAbility:eeaa];
+}
+
+- (void)raidDamageToRaid:(Raid*)raid forPlayers:(NSArray*)players
+{
+    for (Player *player in players) {
+        [player setEnergy:player.maximumEnergy];
+    }
+    for (RaidMember *member in raid.livingMembers) {
+        RepeatedHealthEffect *damage = [[[RepeatedHealthEffect alloc] initWithDuration:10.0 andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [damage setNumOfTicks:8];
+        [damage setOwner:self];
+        [damage setTitle:@"gather-souls"];
+        [damage setValuePerTick:-100];
+        [member addEffect:damage];
+    }
+    
 }
 
 
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
 {
-    if (percentage == 90.0) {
+    if (percentage != 100.0 && (int) percentage % 10 == 0) {
+        //Every 10 percent that isn't 100%...
+        [self raidDamageToRaid:raid forPlayers:[NSArray arrayWithObject:player]];
+    }
+    
+    if (percentage == 85.0) {
         [self.announcer announce:@"You will beg for death."];
         [self gainSoulDrain];
     }
@@ -2165,16 +2183,23 @@
         [self gainSoulDrain];
     }
     
-    if (percentage == 50.0) {
-        [self.announcer announce:@"Your cries of pain only strengthen me"];
-        [self gainSoulDrain];
-    }
-
-    if (percentage == 40.0) {
-        [self.announcer announce:@"YOU CANNOT WITHSTAND THIS TORMENT"];
+    if (percentage == 45.0) {
+        [self.announcer announce:@"ENOUGH! YOU SHALL KNOW TRUE TORMENT."];
+        NSMutableArray *abilitiesToRemove = [NSMutableArray arrayWithCapacity:5];
+        for (RaidMember *member in raid.livingMembers) {
+            [member removeEffectsWithTitle:@"soul-drain"];
+        }
+        for (Ability *ability in self.abilities) {
+            if ([ability.title isEqualToString:@"soul-drain"]){
+                [abilitiesToRemove addObject:ability];
+            }
+        }
+        for (Ability *ab in abilitiesToRemove) {
+            [self removeAbility:ab];
+        }
     }
     
-    if (percentage == 30.0) {
+    if (percentage == 20.0) {
         [self.announcer announce:@"The Soul of Torment poisons your mind and clouds your vision."];
         Confusion *confusionAbility = [[[Confusion alloc] init] autorelease];
         [confusionAbility setCooldown:14.0];
@@ -2185,7 +2210,11 @@
     }
     
     if (percentage == 10.0) {
-        [self.announcer announce:@"YOUR SOULS WILL BURN IN DARKNESS"];
+        [self.announcer announce:@"YOUR SOULS WILL ANGUISH ALONE IN DARKNESS"];
+    }
+    
+    if (percentage == 2.0) {
+        [self.announcer announce:@"NO.  NO.  IT CANNOT BE.  TORMENT CAN NOT BE UNDONE..."];
     }
 }
 

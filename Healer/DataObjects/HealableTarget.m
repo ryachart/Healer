@@ -220,6 +220,19 @@
     }
 }
 
+- (void)removeEffectsWithTitle:(NSString *)effectTitle {
+    NSMutableArray *toRemove = [NSMutableArray arrayWithCapacity:self.activeEffects.count];
+    for (Effect *eff in self.activeEffects) {
+        if ([eff.title isEqualToString:effectTitle]) {
+            [toRemove addObject:eff];
+        }
+    }
+    
+    for (Effect *eff in toRemove) {
+        [self removeEffect:eff];
+    }
+}
+
 -(void)addHealthAdjustmentModifier:(HealthAdjustmentModifier*)hamod{
 	if (healthAdjustmentModifiers == nil){
 		healthAdjustmentModifiers = [[NSMutableArray alloc] initWithCapacity:5];

@@ -305,7 +305,6 @@
 }
 @end
 
-
 @implementation ReactiveHealEffect
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type{
     if (self = [super initWithDuration:dur andEffectType:type]){
@@ -931,4 +930,29 @@
         self.isExpired = YES;
     }
 }
+@end
+
+@implementation ContagiousEffect
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta
+{
+    float thresholdValue = .95;
+    if (self.target.healthPercentage >= thresholdValue) {
+        for (int i = 0; i < 3; i++) {
+            ContagiousEffect *spreadEffect = [self.copy autorelease];
+            [spreadEffect setValuePerTick:spreadEffect.valuePerTick * 1.05];
+            RaidMember *randomTarget = [theRaid randomLivingMember];
+            if (randomTarget.healthPercentage >= thresholdValue) {
+                [randomTarget setAbsorb:0];
+                NSInteger preHealth = randomTarget.health;
+                [randomTarget setHealth:randomTarget.maximumHealth * .94];
+                NSInteger damageCaused = preHealth - randomTarget.health;
+                [theBoss.logger logEvent:[CombatEvent eventWithSource:self.owner target:randomTarget value:[NSNumber numberWithInt:damageCaused] andEventType:CombatEventTypeDamage]];
+            }
+            [randomTarget addEffect:spreadEffect];
+        }
+        self.isExpired = YES;
+    }
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+}
+
 @end

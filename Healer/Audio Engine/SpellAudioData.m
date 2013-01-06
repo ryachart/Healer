@@ -10,52 +10,50 @@
 #import "AudioController.h"
 
 @implementation SpellAudioData
-
-@synthesize beginTitle, interruptedTitle, finishedTitle;
 -(id)init{
 	if (self = [super init]){
-		beginSound = nil;
-		beginTitle = nil;
-		interruptedSound = nil;
-		interruptedTitle = nil;
-		finishedSound = nil;
-		finishedTitle = nil;
+		_beginSound = nil;
+		_beginTitle = nil;
+		_interruptedSound = nil;
+		_interruptedTitle = nil;
+		_finishedSound = nil;
+		_finishedTitle = nil;
 	}
 	return self;
 }
 -(void)setBeginSound:(NSURL*)soundPath andTitle:(NSString*)title
 {
-    [beginSound release];
-	beginSound = [soundPath retain];
+    [_beginSound release];
+	_beginSound = [soundPath retain];
 	self.beginTitle = title;
 	
 }
 -(void)setInterruptedSound:(NSURL*)soundPath andTitle:(NSString*)title
 {
-    [interruptedSound release];
-	interruptedSound = [soundPath retain];
+    [_interruptedSound release];
+	_interruptedSound = [soundPath retain];
 	self.interruptedTitle = title;
 	
 }
 -(void)setFinishedSound:(NSURL*)soundPath andTitle:(NSString*)title
 {
     NSAssert(soundPath, @"Attempt to initialize a song with a nil path and title %@", title);
-    [finishedSound release];
-	finishedSound = [soundPath retain];
+    [_finishedSound release];
+	_finishedSound = [soundPath retain];
 	self.finishedTitle = title;
 }
 
 -(void)cacheSpellAudio{
 	AudioController* ac = [AudioController sharedInstance];
 	
-	if (beginTitle != nil && beginSound != nil){
-		[ac addNewPlayerWithTitle:beginTitle andURL:beginSound];
+	if (_beginTitle != nil && _beginSound != nil){
+		[ac addNewPlayerWithTitle:_beginTitle andURL:_beginSound];
 	}
-	if (interruptedTitle != nil && interruptedSound != nil){
-		[ac addNewPlayerWithTitle:interruptedTitle andURL:interruptedSound];
+	if (_interruptedTitle != nil && _interruptedSound != nil){
+		[ac addNewPlayerWithTitle:_interruptedTitle andURL:_interruptedSound];
 	}
-	if (finishedTitle != nil && finishedSound != nil){
-		[ac addNewPlayerWithTitle:finishedTitle andURL:finishedSound];
+	if (_finishedTitle != nil && _finishedSound != nil){
+		[ac addNewPlayerWithTitle:_finishedTitle andURL:_finishedSound];
 	}
 }
 
@@ -63,24 +61,24 @@
 {
 	AudioController *ac = [AudioController sharedInstance];
 	
-	if (beginTitle != nil){
-		[ac removeAudioPlayerWithTitle:beginTitle];
+	if (_beginTitle != nil){
+		[ac removeAudioPlayerWithTitle:_beginTitle];
 	}
-	if (interruptedTitle != nil){
-		[ac removeAudioPlayerWithTitle:interruptedTitle];
+	if (_interruptedTitle != nil){
+		[ac removeAudioPlayerWithTitle:_interruptedTitle];
 	}
-	if (finishedTitle != nil){
-		[ac removeAudioPlayerWithTitle:finishedTitle];
+	if (_finishedTitle != nil){
+		[ac removeAudioPlayerWithTitle:_finishedTitle];
 	}
 }
 
 -(void)dealloc{
-	[beginSound release];
-	[interruptedSound release];
-	[finishedSound release];
-    [beginTitle release];
-    [interruptedTitle release];
-    [finishedTitle release];
+	[_beginSound release];
+	[_interruptedSound release];
+	[_finishedSound release];
+    [_beginTitle release];
+    [_interruptedTitle release];
+    [_finishedTitle release];
     [super dealloc];
 }
 @end

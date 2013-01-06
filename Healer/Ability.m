@@ -192,8 +192,10 @@
     if (target.isFocused){
         return; //We fail when trying to hit tanks with attacks
     }
+    NSInteger preHealth = target.health;
     [self damageTarget:target];
-    if (self.appliedEffect){
+    if (self.appliedEffect && preHealth > target.health){
+        //Only apply the effect if we actually did damage.
         Effect *applyThis = [self.appliedEffect copy];
         [applyThis setOwner:self.owner];
         [target addEffect:applyThis];

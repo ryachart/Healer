@@ -925,9 +925,13 @@
 
 - (void)targetDidCastSpell:(Spell *)spell
 {
-    self.numCastsRemaining--;
-    if (self.numCastsRemaining <= 0) {
-        self.isExpired = YES;
+    if (self.ignoresInstantSpells && spell.castTime == 0.0) {
+        
+    } else {
+        self.numCastsRemaining--;
+        if (self.numCastsRemaining <= 0) {
+            self.isExpired = YES;
+        }
     }
 }
 @end

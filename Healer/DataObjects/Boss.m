@@ -2197,6 +2197,19 @@
         for (Ability *ab in abilitiesToRemove) {
             [self removeAbility:ab];
         }
+        
+        FocusedAttack *focusedAttack = [[[FocusedAttack alloc] initWithDamage:550 andCooldown:2.25] autorelease];
+        [focusedAttack setFailureChance:.4];
+        RepeatedHealthEffect *bleeding = [[[RepeatedHealthEffect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
+        [bleeding setSpriteName:@"bleeding.png"];
+        [bleeding setDodgeChanceAdjustment:.1];
+        [bleeding setMaxStacks:5];
+        [bleeding setValuePerTick:-50];
+        [bleeding setNumOfTicks:4];
+        [focusedAttack setAppliedEffect:bleeding];
+        [self addAbility:focusedAttack];
+        
+        [[self abilityWithTitle:@"contagion"] setCooldown:6.0];
     }
     
     if (percentage == 20.0) {
@@ -2214,7 +2227,7 @@
     }
     
     if (percentage == 2.0) {
-        [self.announcer announce:@"NO.  NO.  IT CANNOT BE.  TORMENT CAN NOT BE UNDONE..."];
+        [self.announcer announce:@"NO...NO...IT CANNOT BE...I CAN NOT BE DEFEATED!"];
     }
 }
 

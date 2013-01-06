@@ -18,6 +18,7 @@
 @property (nonatomic, readwrite) BOOL isRedemptionApplied;
 @property (nonatomic, readwrite) BOOL isGodstouchApplied;
 @property (nonatomic, readwrite) NSTimeInterval godstouchTimeApplied;
+@property (nonatomic, readwrite) NSTimeInterval currentSpellCastTime;
 @end
 
 @implementation Player
@@ -363,6 +364,7 @@
             }
 			spellTarget = nil;
 			self.spellBeingCast = nil;
+            self.currentSpellCastTime = 0.0;
 			isCasting = NO;
 			castStart = 0.0f;
 			[additionalTargets release]; additionalTargets = nil;
@@ -408,12 +410,13 @@
     self.spellBeingCast = nil;
     isCasting = NO;
     castStart = 0.0f;
+    self.currentSpellCastTime = 0.0;
 }
 
 -(NSTimeInterval) remainingCastTime
 {
 	if (castStart != 0.0 && isCasting){
-		return [self.spellBeingCast castTime] - castStart;
+		return self.currentSpellCastTime - castStart;
 	}
 	else {
 		return 0.0;
@@ -470,6 +473,7 @@
         [theSpell spellBeganCasting];
     }
 	self.spellBeingCast = theSpell;
+    self.currentSpellCastTime = theSpell.castTime;
 	spellTarget = primaryTarget;
 	castStart = 0.0001;
 	isCasting = YES;
@@ -574,6 +578,7 @@
             [critHaste setNumCastsRemaining:3]; //Why three? This current spell is going to count, unfortunately.
             [critHaste setOwner:self];
             [critHaste setTitle:@"pos-crit-haste"];
+            [critHaste setIgnoresInstantSpells:YES];
             [self addEffect:critHaste];
             
             for (Spell *spell in self.spellsOnCooldown) {

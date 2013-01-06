@@ -231,6 +231,7 @@ typedef enum {
 
 @interface ExpiresAfterSpellCastsEffect : Effect
 @property (nonatomic, readwrite) NSInteger numCastsRemaining;
+@property (nonatomic, readwrite) BOOL ignoresInstantSpells;
 @end
 
 @interface ContagiousEffect : RepeatedHealthEffect

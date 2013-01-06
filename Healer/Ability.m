@@ -195,7 +195,7 @@
     NSInteger preHealth = target.health;
     [self damageTarget:target];
     if (self.appliedEffect && preHealth > target.health){
-        //Only apply the effect if we actually did damage.
+        //Only apply the effect if we actually did damaww ge.
         Effect *applyThis = [self.appliedEffect copy];
         [applyThis setOwner:self.owner];
         [target addEffect:applyThis];

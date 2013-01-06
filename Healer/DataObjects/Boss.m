@@ -1927,6 +1927,12 @@
     [boss addAbility:dcAbility];
     [dcAbility release];
     
+    AbilityDescriptor *spDescriptor = [[[AbilityDescriptor alloc] init] autorelease];
+    [spDescriptor setIconName:@"soul_prison_ability.png"];
+    [spDescriptor setAbilityName:@"Soul Prison"];
+    [spDescriptor setAbilityDescription:@"Emprisons an ally's soul in unimaginable torment reducing them to just shy of death but preventing all damage done to them."];
+    [boss addAbilityDescriptor:spDescriptor];
+    
     ProjectileAttack *projectileAttack = [[ProjectileAttack alloc] init];
     [projectileAttack setSpriteName:@"purple_fireball.png"];
     [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];

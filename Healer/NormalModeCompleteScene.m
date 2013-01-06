@@ -48,7 +48,7 @@
         [normalModeCompleteLabel setPosition:CGPointMake(512, 600)];
         [self addChild:normalModeCompleteLabel];
         
-        NSString* storyDesc = @"Good job beating the game, Tester! Soul of Torment will be available in the final release!  More challenges await you in Hard Mode.";
+        NSString* storyDesc = @"The Avatar of Torment has been silenced, and the demons pouring into your homeworld have receeded.  Peace fills your mind, but only for a moment.  Delsarn is but one terrible realm, and it is only a matter of time before more of these terrors find their way to your homeland.";
         CCLabelTTF *storyDescLabel = [CCLabelTTF labelWithString:storyDesc dimensions:CGSizeMake(400, 400) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:20.0];
         [storyDescLabel setPosition:CGPointMake(512, 250)];
         [self addChild:storyDescLabel];

@@ -2208,7 +2208,7 @@
         [self gainSoulDrain];
     }
     
-    if (percentage == 99.0) {
+    if (percentage == 40.0) {
         [self.announcer announce:@"ENOUGH! YOU SHALL KNOW TRUE TORMENT."];
         NSMutableArray *abilitiesToRemove = [NSMutableArray arrayWithCapacity:5];
         for (RaidMember *member in raid.livingMembers) {

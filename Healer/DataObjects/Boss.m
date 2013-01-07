@@ -64,9 +64,9 @@
         case 2:
             return -.20;
         case 4:
-            return .1;
+            return .12;
         case 5:
-            return .15;
+            return .18;
         case 3: //Normal
         default:
             return 0.0;
@@ -352,6 +352,11 @@
     [super configureBossForDifficultyLevel:difficulty];
     
     [self addAbility:[Cleave normalCleave]];
+    
+    if (difficulty >= 4) {
+        self.autoAttack.abilityValue = 380;
+        self.autoAttack.failureChance = .25;
+    }
 
     if (difficulty == 5) {
         [self addAbility:[[DisorientingBoulder new] autorelease]];
@@ -421,6 +426,20 @@
     [drake addAbility:drake.fireballAbility];
     
     return [drake autorelease];
+}
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    
+    if (difficulty == 5) {
+        Effect *improvedDamageEffect = [[[Effect alloc] initWithDuration:7 andEffectType:EffectTypeNegative] autorelease];
+        [improvedDamageEffect setSpriteName:@"soul_burn.png"];
+        [improvedDamageEffect setTitle:@"imprvd-dmg-fireball"];
+        [improvedDamageEffect setMaxStacks:3];
+        [improvedDamageEffect setDamageTakenMultiplierAdjustment:.2];
+        [(ProjectileAttack*)self.fireballAbility setAppliedEffect:improvedDamageEffect];
+    }
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
@@ -2189,7 +2208,7 @@
         [self gainSoulDrain];
     }
     
-    if (percentage == 45.0) {
+    if (percentage == 99.0) {
         [self.announcer announce:@"ENOUGH! YOU SHALL KNOW TRUE TORMENT."];
         NSMutableArray *abilitiesToRemove = [NSMutableArray arrayWithCapacity:5];
         for (RaidMember *member in raid.livingMembers) {
@@ -2208,6 +2227,7 @@
         [focusedAttack setFailureChance:.4];
         RepeatedHealthEffect *bleeding = [[[RepeatedHealthEffect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
         [bleeding setSpriteName:@"bleeding.png"];
+        [bleeding setTitle:@"soul-bleed"];
         [bleeding setDodgeChanceAdjustment:.1];
         [bleeding setMaxStacks:5];
         [bleeding setValuePerTick:-50];

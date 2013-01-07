@@ -322,9 +322,12 @@
         return;
     }
     RaidMember *target = [self targetFromRaid:theRaid];
+    NSInteger preHealth = target.health + target.absorb;
     [self damageTarget:target];
-    if (self.appliedEffect){
-        [target addEffect:self.appliedEffect];
+    if (self.appliedEffect && preHealth > target.health + target.absorb){
+        Effect *applyThis = [[self.appliedEffect copy] autorelease];
+        [applyThis setOwner:self.owner];
+        [target addEffect:applyThis];
     }
     if (self.focusTarget.isDead){
         self.focusTarget = target;

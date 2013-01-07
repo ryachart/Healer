@@ -295,6 +295,10 @@
                 NSInteger overheal = amount - finalAmount;
                 [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self withOverhealing:overheal asCritical:critical];
             } else {
+                NSLog(@"Dealt %i DMG from %@", amount, self.title);
+                if ([self.title isEqualToString:@"soul-bleed"]) {
+                    NSLog(@"Made it");
+                }
                 //This is boss damage in the form of dots
                 [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:amount] andEventType:eventType]];
             }
@@ -452,8 +456,9 @@
                 [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]];
             }
             if (self.appliedEffect){
+                Effect *applyThis = [[self.appliedEffect copy] autorelease];
                 [self.appliedEffect setOwner:self.owner];
-                [self.target addEffect:self.appliedEffect];
+                [self.target addEffect:applyThis];
                 self.appliedEffect = nil;
             }
         }

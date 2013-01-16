@@ -274,7 +274,7 @@
     if (self = [super initWithHealth:1157 damageDealt:304 andDmgFrequency:1.2 andPositioning:Ranged]){
         self.title = @"Wizard";
         self.dodgeChance = .07;
-        self.info = @"Periodically grants you energy";
+        self.info = @"Periodically grants you Mana";
         lastEnergyGrant = arc4random() % 7; //Initialize to a random value so they arent all the same time
     }
     return self;
@@ -287,7 +287,8 @@
     
     NSTimeInterval tickTime = 10.0;
     NSTimeInterval orbTravelTime = 1.5;
-    NSInteger energyGrant = 60;
+    NSInteger energyGrant = 20;
+    NSInteger criticalGrantChance = 5;
     
     if (lastEnergyGrant > (tickTime - orbTravelTime) && !self.energyGrantAnnounced && !self.isDead) {
         [self.announcer displayEnergyGainFrom:self];
@@ -297,6 +298,9 @@
     if (lastEnergyGrant > tickTime) {
         if (!self.isDead){
             for (Player *player in players){
+                if (arc4random() % 100 < criticalGrantChance) {
+                    energyGrant *= 2;
+                }
                 [player setEnergy:player.energy + energyGrant];
             }
         }

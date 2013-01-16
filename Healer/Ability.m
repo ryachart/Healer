@@ -40,6 +40,7 @@
     [ab setOwner:self.owner];
     [ab setAbilityValue:self.abilityValue];
     [ab setDescriptor:self.descriptor];
+    [ab setCooldownVariance:self.cooldownVariance];
     return ab;
 }
 - (void)dealloc{
@@ -67,15 +68,16 @@
     self.timeApplied += timeDelta;
     if (self.cooldown != kAbilityRequiresTrigger && self.timeApplied >= self.cooldown){
         if (!self.isDisabled){
+            [(Boss*)self.owner ownerWillExecuteAbility:self];
             [self triggerAbilityForRaid:theRaid andPlayers:players];
             [(Boss*)self.owner ownerDidExecuteAbility:self];
         }
-        self.timeApplied = 0.0;
+        self.timeApplied = 0.0 + self.cooldown * self.cooldownVariance * (arc4random() % 1000 / 1000.0);
         self.isActivating = NO;
     }
     if (self.activationTime > 0 && !self.isActivating && self.cooldown - self.activationTime <= self.timeApplied) {
         self.isActivating = YES;
-        [self.owner ownerDidBeginAbility:self];
+        [(Boss*)self.owner ownerDidBeginAbility:self];
     }
     
 }
@@ -176,6 +178,7 @@
         self.abilityValue = dmg;
         self.cooldown = cd;
         self.failureChance = .05;
+        self.cooldownVariance = .1;
     }
     return self;
 }
@@ -352,6 +355,7 @@
 {
     if (self = [super init]){
         self.explosionParticleName = @"fire_explosion.plist";
+        self.cooldownVariance = .1;
     }
     return self;
 }
@@ -412,6 +416,32 @@
     }
 }
 
+@end
+
+@implementation CaveIn
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
+{
+    for (RaidMember *member in theRaid.livingMembers) {
+        NSInteger tickDamage = -self.abilityValue;
+        NSInteger numberOfTicks = 3;
+        
+        if (arc4random() % 2 == 1) {
+            numberOfTicks += arc4random() % 3;
+        }
+        
+        if ([member isKindOfClass:[Guardian class]]) {
+            tickDamage *= .5;
+        }
+        
+        RepeatedHealthEffect *caveInDoT = [[[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [caveInDoT setTitle:@"cave-in-damage"];
+        [caveInDoT setValuePerTick:tickDamage];
+        [caveInDoT setNumOfTicks:numberOfTicks];
+        [caveInDoT setOwner:self.owner];
+        [member addEffect:caveInDoT];
+        
+    }
+}
 @end
 
 @implementation  StackingDamage
@@ -496,7 +526,7 @@
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:player value:[NSNumber numberWithFloat:2.0]  andEventType:CombatEventTypePlayerInterrupted]];
     }
     for (RaidMember *member in theRaid.raidMembers ){
-        [member setHealth:member.health - (150.0 * self.owner.damageDoneMultiplier)];
+        [member setHealth:member.health - (125.0 * self.owner.damageDoneMultiplier)];
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(150.0 * self.owner.damageDoneMultiplier)]  andEventType:CombatEventTypeDamage]];
         for (Effect *effect in member.activeEffects){
             if (effect.effectType == EffectTypePositive){
@@ -670,7 +700,7 @@
     [allAbilities addObject:tankAttack];
     [tankAttack release];
     
-    TargetTypeFlameBreath *sweepingFlame = [[[TargetTypeFlameBreath alloc] init] autorelease];
+    AlternatingFlame *sweepingFlame = [[[AlternatingFlame alloc] init] autorelease];
     [sweepingFlame setCooldown:9.0];
     [sweepingFlame setAbilityValue:600];
     [sweepingFlame setNumTargets:5];
@@ -794,7 +824,7 @@
 - (id)init {
     if (self = [super init]){
         AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"Deals moderate damage over time to its target and any healing done to an affected target will burn 75 energy from the Healer."];
+        [desc setAbilityDescription:@"Deals moderate damage over time to its target and any healing done to an affected target will burn 75 Mana from the Healer."];
         [desc setIconName:@"unknown_ability.png"];
         [desc setAbilityName:@"Soul Burn"];
         [self setDescriptor:desc];
@@ -998,7 +1028,7 @@
 }
 @end
 
-@implementation TargetTypeFlameBreath
+@implementation AlternatingFlame
 
 - (id)init {
     if (self = [super init]){
@@ -1007,14 +1037,19 @@
         [desc setIconName:@"unknown_ability.png"];
         [desc setAbilityName:@"Breath of Flame"];
         [self setDescriptor:desc];
+        self.targetPositioningType = Melee;
         [desc release];
     }
     return self;
 }
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
-    self.targetPositioningType = arc4random() % 2;
     [super triggerAbilityForRaid:theRaid andPlayers:players];
+    if (self.targetPositioningType == Ranged) {
+        self.targetPositioningType = Melee;
+    } else {
+        self.targetPositioningType = Ranged;
+    }
 }
 
 - (void)willDamageTarget:(RaidMember *)target {
@@ -1202,7 +1237,7 @@
 - (id)init {
     if (self = [super init]){
         AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"A viscious being of pure darkness.  This creature drains energy from Healers each time they cast a spell and casts a viscious curse on random allies."];
+        [desc setAbilityDescription:@"A viscious being of pure darkness.  This creature drains mana from Healers each time they cast a spell and casts a viscious curse on random allies."];
         [desc setAbilityName:@"Minion of Shadow"];
         [desc setIconName:@"shadow_minion_ability.png"];
         self.descriptor = [desc autorelease];
@@ -1458,7 +1493,7 @@
 + (Cleave *)normalCleave {
     Cleave *cleave = [[[Cleave alloc] init] autorelease];
     [cleave setTitle:@"cleave"];
-    [cleave setAbilityValue:600];
+    [cleave setAbilityValue:400];
     [cleave setCooldown:12.5];
     [cleave setFailureChance:.4];
     return cleave;
@@ -1493,6 +1528,7 @@
         }
     }
     
+    
     NSInteger guardianDamage = self.abilityValue * .25 * self.owner.damageDoneMultiplier;
     NSInteger normalDamage = self.abilityValue * self.owner.damageDoneMultiplier;
     
@@ -1504,15 +1540,17 @@
         }
         RaidMember *target = [meleeTargets objectAtIndex:arc4random() % meleeTargets.count];
         if ([target isKindOfClass:[Guardian class]]) {
-            [self damageTarget:target forDamage:guardianDamage];
+            NSInteger finalValue = FUZZ(guardianDamage, 50);
+            [self damageTarget:target forDamage:finalValue];
         } else {
-            [self damageTarget:target forDamage:normalDamage];
+            NSInteger finalValue =FUZZ(normalDamage, 50);
+            [self damageTarget:target forDamage:finalValue];
         }
         [meleeTargets removeObject:target];
 
     }
     
-    [self damageTarget:guardianTarget forDamage:guardianDamage];
+    [self damageTarget:guardianTarget forDamage:FUZZ(guardianDamage, 50)];
     
 }
 @end

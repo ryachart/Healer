@@ -76,7 +76,7 @@
         }
     }
 	for (RaidMemberHealthView *rmhv in self.raidViews){
-		[rmhv updateHealth];
+		[rmhv updateHealthForInterval:delta];
 	}
 }
 

@@ -9,6 +9,7 @@ effect_sprites_dir=${PROJECT_DIR}/effect-sprites
 divinity_spires_dir=${PROJECT_DIR}/divinity-sprites
 shop_flavor_1_dir=${PROJECT_DIR}/shop-flavor-1
 shop_flavor_2_dir=${PROJECT_DIR}/shop-flavor-2
+post_battle_dir=${PROJECT_DIR}/postbattle
 
 asset=`basename $sprites_dir`
 mkdir -p $ASSETS_DIR
@@ -51,5 +52,10 @@ shop_flavor_2_plist=$ASSETS_DIR/shop-flavor-2-ipad-hd.plist
 shop_flavor_2_sheet=$ASSETS_DIR/shop-flavor-2-ipad-hd.pvr.ccz
 /usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $shop_flavor_2_plist --format cocos2d --sheet $shop_flavor_2_sheet --auto-sd $shop_flavor_2_dir/*.png
 /usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $shop_flavor_2_plist --format cocos2d --sheet $shop_flavor_2_sheet $shop_flavor_2_dir/*.png
+
+postbattle_plist=$ASSETS_DIR/postbattle-ipad-hd.plist
+postbattle_sheet=$ASSETS_DIR/postbattle-ipad-hd.pvr.ccz
+/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $postbattle_plist --format cocos2d --sheet $postbattle_sheet --auto-sd $post_battle_dir/*.png
+/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $postbattle_plist --format cocos2d --sheet $postbattle_sheet $post_battle_dir/*.png
 
 sh ${PROJECT_DIR}/scripts/build-boss-assets.sh

@@ -69,7 +69,7 @@ typedef int CastingDisabledReason;
 @property (nonatomic, retain, readonly) NSMutableSet *spellsOnCooldown;
 @property (nonatomic, retain) NSDictionary *divinityConfig;
 @property (nonatomic, retain) Spell *spellBeingCast;
-@property (nonatomic, setter=setEnergy:) float energy;
+@property (nonatomic, readwrite) float energy;
 @property (nonatomic, retain) NSArray* additionalTargets;
 @property (assign) RaidMember* spellTarget;
 @property (nonatomic, retain) NSString *statusText;

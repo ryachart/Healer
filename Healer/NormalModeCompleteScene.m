@@ -44,7 +44,7 @@
         self.duration = duration;
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
         
-        CCLabelTTF *normalModeCompleteLabel = [CCLabelTTF labelWithString:@"Normal Cleared!" dimensions:CGSizeMake(600, 200) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:64.0];
+        CCLabelTTF *normalModeCompleteLabel = [CCLabelTTF labelWithString:@"Torment has been Vanquished!" dimensions:CGSizeMake(600, 200) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:64.0];
         [normalModeCompleteLabel setPosition:CGPointMake(512, 600)];
         [self addChild:normalModeCompleteLabel];
         

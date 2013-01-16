@@ -27,7 +27,7 @@ typedef enum {
 @property (nonatomic, readwrite) RaidViewSelectionState selectionState;
 -(void)setMemberData:(HealableTarget*)rdMember;
 
--(void)updateHealth;
+-(void)updateHealthForInterval:(ccTime)time;
 -(id)initWithFrame:(CGRect)frame;
 
 -(void)displaySCT:(NSString*)sct;

@@ -49,7 +49,7 @@
         
         self.storeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(storeSelected) andTitle:@"Academy"];
         
-        CCMenuItem *divinityButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(divinitySelected) andTitle:@"Divinity"];
+        CCMenuItem *divinityButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(divinitySelected) andTitle:@"Talents"];
         if (![Divinity isDivinityUnlocked]){
             [divinityButton setIsEnabled:NO];
         }

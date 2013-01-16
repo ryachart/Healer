@@ -66,7 +66,7 @@
 }
 
 -(void)showPlayerInformation{
-    [self.informationLabel setString:@"This is your energy.  Energy is spent when you cast spells."];
+    [self.informationLabel setString:@"This is your Mana.  Mana is spent when you cast spells."];
     [self.informationLabel runAction:[CCFadeIn actionWithDuration:1.0]];
 
     self.ftueArrow.position = CGPointMake(720, 500);

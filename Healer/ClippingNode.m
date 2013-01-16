@@ -33,6 +33,7 @@
     glScissor((GLint) scissorRect.origin.x, (GLint) scissorRect.origin.y,
               (GLint) scissorRect.size.width, (GLint) scissorRect.size.height);
 }
+
 -(void)postVisit{
     glDisable(GL_SCISSOR_TEST);
 }

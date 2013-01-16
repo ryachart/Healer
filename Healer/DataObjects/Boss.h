@@ -47,17 +47,20 @@
 
 - (float)healthPercentage; //In Hundreds form
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid*)raid andPlayer:(Player*)player;
+
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty;
+
+#pragma Ability Methods
 - (void)addAbility:(Ability*)ability;
 - (void)removeAbility:(Ability*)ability;
 - (void)addAbilityDescriptor:(AbilityDescriptor*)descriptor;
 - (void)clearExtraDescriptors;
-
-- (void)setAttackDamage:(NSInteger)damage; //Configures all Attacks' abilityValues
-- (void)setAttackSpeed:(float)frequency; //Configures all Attack's cooldown values
-
-- (void)configureBossForDifficultyLevel:(NSInteger)difficulty;
-
 - (Ability*)abilityWithTitle:(NSString*)ability;
+
+- (void)ownerWillExecuteAbility:(Ability*)ability;
+- (void)ownerDidExecuteAbility:(Ability*)ability;
+- (void)ownerDidBeginAbility:(Ability*)ability;
 
 @end
 

@@ -535,4 +535,20 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     //TODO: Show that UI?
 }
 
+- (void)resetPlayer
+{
+    [self resetConfig];
+    self.playerData = [NSMutableDictionary dictionary];
+    [self saveLocalPlayer];
+    [self saveRemotePlayer];
+}
+
+- (void)unlockAll
+{
+    for (int i = 1; i <= 21; i++) {
+        [self completeLevel:i];
+        [self setLevelRating:5 forLevel:i];
+    }
+    [self saveLocalPlayer];
+}
 @end

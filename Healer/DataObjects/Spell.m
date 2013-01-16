@@ -14,6 +14,8 @@
 #import "Player.h"
 #import "ProjectileEffect.h"
 
+#define kCostEfficiencyScale 1.2
+
 @interface Spell ()
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *spellID;
@@ -130,7 +132,7 @@
 }
 
 - (NSString*)info{
-    return [NSString stringWithFormat:@"Energy Cost : %i \n %@", energyCost, description];
+    return [NSString stringWithFormat:@"Mana Cost : %i \n %@", energyCost, description];
 }
 
 -(NSString*)spellDescription{
@@ -308,7 +310,7 @@
     return self;
 }
 +(id)defaultSpell{
-    Heal *heal = [[[Heal alloc] initWithTitle:@"Heal" healAmnt:250 energyCost:16 castTime:1.6 andCooldown:0.0] autorelease];
+    Heal *heal = [[[Heal alloc] initWithTitle:@"Heal" healAmnt:250 energyCost:10 * kCostEfficiencyScale castTime:2.0 andCooldown:0.0] autorelease];
     [heal setDescription:@"Heals your target for a small amount."];
     return heal;
 }
@@ -330,7 +332,7 @@
     return self;
 }
 +(id)defaultSpell{
-    GreaterHeal *heal = [[GreaterHeal alloc] initWithTitle:@"Greater Heal" healAmnt:750 energyCost:60 castTime:2.0 andCooldown:0.0];
+    GreaterHeal *heal = [[GreaterHeal alloc] initWithTitle:@"Greater Heal" healAmnt:750 energyCost:50 * kCostEfficiencyScale castTime:2.0 andCooldown:0.0];
     [heal setDescription:@"Heals your target for a large amount."];
     return [heal autorelease];
 }
@@ -351,7 +353,7 @@
     return self;
 }
 +(id)defaultSpell{
-    HealingBurst *heal = [[HealingBurst alloc] initWithTitle:@"Healing Burst" healAmnt:500 energyCost:50 castTime:1.0 andCooldown:0.0];
+    HealingBurst *heal = [[HealingBurst alloc] initWithTitle:@"Healing Burst" healAmnt:500 energyCost:50 * kCostEfficiencyScale castTime:1.25 andCooldown:0.0];
     [heal setDescription:@"Heals your target for a moderate amount very quickly."];
     return [heal autorelease];
 }
@@ -373,7 +375,7 @@
 }
 +(id)defaultSpell
 {
-	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:475 energyCost:80 castTime:1.85 andCooldown:0.0];//10h/erk
+	ForkedHeal *forkedHeal = [[ForkedHeal alloc] initWithTitle:@"Forked Heal" healAmnt:325 energyCost:52 * kCostEfficiencyScale castTime:1.5 andCooldown:0.0];//10h/erk
     [forkedHeal setDescription:@"Heals up to two targets simultaneously."];
 	return [forkedHeal autorelease];
 }
@@ -428,7 +430,7 @@
 }
 
 +(id)defaultSpell{
-    Regrow *regrow = [[Regrow alloc] initWithTitle:@"Regrow" healAmnt:0 energyCost:50 castTime:0.0 andCooldown:1.0];
+    Regrow *regrow = [[Regrow alloc] initWithTitle:@"Regrow" healAmnt:0 energyCost:40 * kCostEfficiencyScale castTime:0.0 andCooldown:1.0];
     [regrow setDescription:@"Heals for a moderate amount over 12 seconds."];
     
     RepeatedHealthEffect *hotEffect = [[RepeatedHealthEffect alloc] initWithDuration:12.0 andEffectType:EffectTypePositive];
@@ -464,8 +466,9 @@
 }
 
 +(id)defaultSpell{
-	Barrier *bulwark = [[Barrier alloc] initWithTitle:@"Barrier" healAmnt:0 energyCost:75 castTime:0.0 andCooldown:4.0];
-	[bulwark setDescription:@"Shields the target absorbing moderate damage.  If the shield is fully consumed 50 energy is restored to the Healer."];
+	Barrier *bulwark = [[Barrier alloc] initWithTitle:@"Barrier" healAmnt:0 energyCost:75 * kCostEfficiencyScale castTime:0.0 andCooldown:4.0];
+    NSString *desc = [NSString stringWithFormat:@"Shields the target absorbing moderate damage.  If the shield is fully consumed %i energy is restored to the Healer.", (int)(bulwark.energyCost * .66)];
+	[bulwark setDescription:desc];
     
     BarrierEffect* appliedEffect = [[[BarrierEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositive] autorelease];
     [appliedEffect setTitle:@"barrier-eff"];
@@ -485,7 +488,7 @@
 }
 
 +(id)defaultSpell{
-    Purify *purify = [[Purify alloc] initWithTitle:@"Purify" healAmnt:50 energyCost:40 castTime:0.0 andCooldown:5.0];
+    Purify *purify = [[Purify alloc] initWithTitle:@"Purify" healAmnt:50 * kCostEfficiencyScale  energyCost:40 castTime:0.0 andCooldown:5.0];
     [purify setDescription:@"Removes evil curses or poisons from your enemies.  If there are none to remove, Purify heals for a moderate amount."];
     return [purify autorelease];
 }
@@ -527,7 +530,7 @@
 }
 
 +(id)defaultSpell{
-    OrbsOfLight *orbs = [[OrbsOfLight alloc] initWithTitle:@"Orbs of Light" healAmnt:0 energyCost:120 castTime:1.0 andCooldown:4.0];
+    OrbsOfLight *orbs = [[OrbsOfLight alloc] initWithTitle:@"Orbs of Light" healAmnt:0 energyCost:120 * kCostEfficiencyScale  castTime:1.0 andCooldown:4.0];
     [orbs setDescription:@"Heals a target for a moderate amount each time it takes damage. Lasts 10 seconds."];
     ReactiveHealEffect *rhe = [[ReactiveHealEffect alloc] initWithDuration:20.0 andEffectType:EffectTypePositive];
     [rhe setTitle:@"orbs-of-light-effect"];
@@ -552,7 +555,7 @@
     return self;
 }
 +(id)defaultSpell{
-    SwirlingLight *swirl = [[SwirlingLight alloc] initWithTitle:@"Swirling Light" healAmnt:0 energyCost:20 castTime:0.0 andCooldown:1.0];
+    SwirlingLight *swirl = [[SwirlingLight alloc] initWithTitle:@"Swirling Light" healAmnt:0 energyCost:20 * kCostEfficiencyScale  castTime:0.0 andCooldown:1.0];
     [swirl setDescription:@"Heals a target over 10 seconds. Maximum 3 Stacks. At 3 stacks this increases healing received by 5%. Can only be applied to 1 ally."];
     [swirl setIsExclusiveEffectTarget:YES];
     SwirlingLightEffect *sle = [[SwirlingLightEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];
@@ -577,7 +580,7 @@
 }
 
 + (id)defaultSpell {
-    LightEternal *le = [[LightEternal alloc] initWithTitle:@"Light Eternal" healAmnt:520 energyCost:220 castTime:2.25 andCooldown:0.0];
+    LightEternal *le = [[LightEternal alloc] initWithTitle:@"Light Eternal" healAmnt:300 energyCost:140 * kCostEfficiencyScale  castTime:2.5 andCooldown:0.0];
     [le setDescription:@"Heals up to 5 allies with the least health among allies for a moderate amount."];
     return [le autorelease];
 }
@@ -649,7 +652,7 @@
     return self;
 }
 + (id)defaultSpell {
-    WanderingSpirit *ws = [[WanderingSpirit alloc] initWithTitle:@"Wandering Spirit" healAmnt:0 energyCost:200 castTime:0.0 andCooldown:15.0];
+    WanderingSpirit *ws = [[WanderingSpirit alloc] initWithTitle:@"Wandering Spirit" healAmnt:0 energyCost:90 * kCostEfficiencyScale  castTime:0.0 andCooldown:15.0];
     WanderingSpiritEffect *wse = [[WanderingSpiritEffect alloc] initWithDuration:14.0 andEffectType:EffectTypePositive];
     [wse setTitle:@"wandering-spirit-effect"];
     [wse setSpriteName:@"wandering_spirit.png"];
@@ -670,7 +673,7 @@
     return self;
 }
 + (id)defaultSpell {
-    WardOfAncients *woa = [[WardOfAncients alloc] initWithTitle:@"Ward of Ancients" healAmnt:0 energyCost:100 castTime:0.0 andCooldown:35.0];
+    WardOfAncients *woa = [[WardOfAncients alloc] initWithTitle:@"Ward of Ancients" healAmnt:0 energyCost:100 * kCostEfficiencyScale  castTime:0.0 andCooldown:35.0];
     [woa setDescription:@"Covers all allies in a protective barrier that reduces incoming damage by 40% for 6 seconds."];
     return [woa autorelease];
 }
@@ -698,8 +701,9 @@
     return self;
 }
 + (id)defaultSpell {
-    TouchOfHope *tol = [[TouchOfHope alloc] initWithTitle:@"Touch of Hope" healAmnt:300 energyCost:50 castTime:0.0 andCooldown:4.0];
-    [tol setDescription:@"Heals your target for a small amount and more over 4 seconds.  Each time the periodic effect heals it restores 12 energy to the Healer."];
+    TouchOfHope *tol = [[TouchOfHope alloc] initWithTitle:@"Touch of Hope" healAmnt:300 energyCost:54 * kCostEfficiencyScale castTime:0.0 andCooldown:6.0];
+    NSString *desc = [NSString stringWithFormat:@"Heals your target for a small amount and more over 4 seconds.  Each time the periodic effect heals it restores %i energy to the Healer.", (int)(tol.energyCost * .1)];
+    [tol setDescription:desc];
     return [tol autorelease];
 }
 
@@ -732,7 +736,7 @@
     return self;
 }
 + (id)defaultSpell {
-    SoaringSpirit *ss = [[SoaringSpirit alloc] initWithTitle:@"Soaring Spirit" healAmnt:0 energyCost:30 castTime:0 andCooldown:35.0];
+    SoaringSpirit *ss = [[SoaringSpirit alloc] initWithTitle:@"Soaring Spirit" healAmnt:0 energyCost:30 * kCostEfficiencyScale  castTime:0 andCooldown:35.0];
     [ss setDescription:@"Releases your inner light increasing healing done and reducing cast times by 50% for 7.5 seconds."];
     return [ss autorelease];
 }
@@ -757,14 +761,14 @@
     return self;
 }
 + (id)defaultSpell {
-    FadingLight *fl = [[FadingLight alloc] initWithTitle:@"Fading Light" healAmnt:0 energyCost:90 castTime:0.0 andCooldown:2.0];
+    FadingLight *fl = [[FadingLight alloc] initWithTitle:@"Fading Light" healAmnt:0 energyCost:80 * kCostEfficiencyScale  castTime:0.0 andCooldown:6.0];
     [fl setDescription:@"Heals for a large amount over 10 seconds.  The healing done starts high but decreases each tick."];
     
     IntensifyingRepeatedHealthEffect *fadingLightEffect = [[IntensifyingRepeatedHealthEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositive];
     [fadingLightEffect setTitle:@"fading-light-effect"];
     [fadingLightEffect setSpriteName:@"fading_light.png"];
-    [fadingLightEffect setNumOfTicks:5];
-    [fadingLightEffect setIncreasePerTick:-0.5];
+    [fadingLightEffect setNumOfTicks:8];
+    [fadingLightEffect setIncreasePerTick:-0.25];
     [fadingLightEffect setValuePerTick:400];
     [fl setAppliedEffect:fadingLightEffect];
     [fadingLightEffect release];
@@ -781,7 +785,7 @@
     return self;
 }
 + (id)defaultSpell {
-    Sunburst *sb = [[Sunburst alloc] initWithTitle:@"Sunburst" healAmnt:0 energyCost:80 castTime:0.0 andCooldown:10.0];
+    Sunburst *sb = [[Sunburst alloc] initWithTitle:@"Sunburst" healAmnt:0 energyCost:100 * kCostEfficiencyScale  castTime:0.0 andCooldown:10.0];
     [sb setDescription:@"Heals up to 7 injured allies for a small amount over 5 seconds."];
     return [sb autorelease];
 }
@@ -803,7 +807,7 @@
         [sunburstEffect setTitle:@"sunburst-hot"];
         [sunburstEffect setSpriteName:@"sunburst.png"];
         [sunburstEffect setNumOfTicks:5];
-        [sunburstEffect setValuePerTick:30];
+        [sunburstEffect setValuePerTick:20];
         [sunburstEffect setOwner:self.owner];
         [target addEffect:sunburstEffect];
         [sunburstEffect release];
@@ -827,7 +831,7 @@
 }
 
 + (id)defaultSpell {
-    StarsOfAravon *spell = [[StarsOfAravon alloc] initWithTitle:@"Stars of Aravon" healAmnt:0 energyCost:66 castTime:1.75 andCooldown:0.0];
+    StarsOfAravon *spell = [[StarsOfAravon alloc] initWithTitle:@"Stars of Aravon" healAmnt:0 energyCost:60 * kCostEfficiencyScale  castTime:1.75 andCooldown:0.0];
     [spell setDescription:@"Summon 4 Stars of Aravon from the heavens.  The Stars travel for 1.75 seconds before healing their target for a small amount."];
     return [spell autorelease];
 }
@@ -836,12 +840,15 @@
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
     NSInteger totalTargets = 4;
     
-    NSArray *starTargets = [theRaid randomTargets:totalTargets withPositioning:Any];
+    NSArray *starTargets = [theRaid lowestHealthTargets:2 withRequiredTarget:thePlayer.spellTarget];
+    NSArray *randomTargets = [theRaid randomTargets:totalTargets - 2 withPositioning:Any excludingTargets:starTargets];
+    
+    NSArray *finalTargets = [starTargets arrayByAddingObjectsFromArray:randomTargets];
     
     NSTimeInterval healDelay = 1.75;
     NSTimeInterval preDelay = .33;
     healDelay -= preDelay;
-    for (RaidMember *starTarget in starTargets){
+    for (RaidMember *starTarget in finalTargets){
         if (starTarget != self.owner.spellTarget) {
             [self willHealTarget:starTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:0];
             [self didHealTarget:starTarget inRaid:theRaid withBoss:theBoss andPlayers:[NSArray arrayWithObject:thePlayer] forAmount:0];
@@ -872,7 +879,7 @@
     return self;
 }
 + (id)defaultSpell {
-    BlessedArmor *defaultSpell = [[BlessedArmor alloc] initWithTitle:@"Blessed Armor" healAmnt:0 energyCost:70 castTime:0.0 andCooldown:9.0];
+    BlessedArmor *defaultSpell = [[BlessedArmor alloc] initWithTitle:@"Blessed Armor" healAmnt:0 energyCost:50 * kCostEfficiencyScale  castTime:0.0 andCooldown:9.0];
     
     [defaultSpell setDescription:@"Reduces damage done to a target by 25% for 5 seconds.  When the effect ends it heals for a moderate amount."];
     DelayedHealthEffect *bae = [[DelayedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
@@ -894,7 +901,7 @@
     return self;
 }
 + (id)defaultSpell {
-    Attunement *defaultSpell = [[Attunement alloc] initWithTitle:@"Attunement" healAmnt:0 energyCost:100 castTime:0.0 andCooldown:35.0];
+    Attunement *defaultSpell = [[Attunement alloc] initWithTitle:@"Attunement" healAmnt:0 energyCost:100 * kCostEfficiencyScale  castTime:0.0 andCooldown:35.0];
     [defaultSpell setDescription:@"Binds the souls of all allies redistributing health evenly and reducing damage taken for those allies by 15% for 6 seconds."];
     return [defaultSpell autorelease];
 }

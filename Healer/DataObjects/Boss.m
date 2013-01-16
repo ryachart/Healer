@@ -64,9 +64,9 @@
         case 2:
             return -.20;
         case 4:
-            return .12;
+            return .125;
         case 5:
-            return .18;
+            return .25;
         case 3: //Normal
         default:
             return 0.0;
@@ -96,7 +96,17 @@
     _abilityDescriptors = [[NSMutableArray arrayWithCapacity:5] retain];
 }
 
-- (void)ownerDidExecuteAbility:(Ability*)ability {
+- (void)ownerDidExecuteAbility:(Ability*)ability
+{
+    
+}
+
+- (void)ownerDidBeginAbility:(Ability*)ability
+{
+    
+}
+
+- (void)ownerWillExecuteAbility:(Ability *)ability {
     
 }
 
@@ -121,22 +131,6 @@
 
 - (void)removeAbility:(Ability*)ab{
     [self.abilities removeObject:ab];
-}
-
-- (void)setAttackDamage:(NSInteger)damage{
-    for (Ability *ab in self.abilities){
-        if ([ab isKindOfClass:[Attack class]]){
-            [ab setAbilityValue:damage];
-        }
-    }
-}
-
-- (void)setAttackSpeed:(float)frequency{
-    for (Ability *ab in self.abilities){
-        if ([ab isKindOfClass:[Attack class]]){
-            [ab setCooldown:frequency];
-        }
-    }
 }
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses {
@@ -236,9 +230,9 @@
         if (self.difficulty > 3) {
             for (Player *plyer in players) {
                 Effect *healingReductionChallengeEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypeNegativeInvisible] autorelease];
-                float mod = -.10;
+                float mod = 0;//-.10;
                 if (self.difficulty == 5) {
-                    mod = -.15;
+                    mod = 0;//-.15;
                 }
                 [healingReductionChallengeEffect setTitle:@"hr-red-challengeeff"];
                 [healingReductionChallengeEffect setOwner:self];
@@ -312,23 +306,20 @@
 @synthesize enraging;
 +(id)defaultBoss{
     NSInteger health = 185000;
-    NSInteger damage = 220;
-    NSTimeInterval freq = 1.4;
+    NSInteger damage = 350;
+    NSTimeInterval freq = 2.25;
     
     CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:health damage:damage targets:1 frequency:freq choosesMT:YES ];
+    corTroll.autoAttack.failureChance = .1;
     
     [corTroll setTitle:@"Corrupted Troll"];
     [corTroll setInfo:@"A Troll of Raklor has been identified among the demons brewing in the south.  It has been corrupted and twisted into a foul and terrible creature.  You will journey with a small band of soldiers to the south to dispatch this troll."];
     
-    RaidApplyEffect *caveIn = [[[RaidApplyEffect alloc] init] autorelease];
-    RepeatedHealthEffect *caveInDoT = [[[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegativeInvisible] autorelease];
-    [caveInDoT setTitle:@"cave-in-damage"];
-    [caveInDoT setValuePerTick:-(arc4random() % 100 + 75)];
-    [caveInDoT setNumOfTicks:3];
+    CaveIn *caveIn = [[[CaveIn alloc] init] autorelease];
+    [caveIn setAbilityValue:75];
     [caveIn setTitle:@"troll-cave-in"];
-    [caveIn setAppliedEffect:caveInDoT];
     [caveIn setCooldown:25.0];
-    [caveIn setActivationTime:.75];
+    [caveIn setActivationTime:.5];
     corTroll.caveIn = caveIn;
     [corTroll addAbility:corTroll.caveIn];
     
@@ -354,7 +345,7 @@
     [self addAbility:[Cleave normalCleave]];
     
     if (difficulty >= 4) {
-        self.autoAttack.abilityValue = 380;
+        self.autoAttack.abilityValue = 500;
         self.autoAttack.failureChance = .25;
     }
 
@@ -365,20 +356,20 @@
 
 - (void)ownerDidBeginAbility:(Ability *)ability {
     [self.announcer announce:@"The Troll smashes the cave ceiling"];
-    [self.announcer displayScreenShakeForDuration:6.75];
+    [self.announcer displayScreenShakeForDuration:6.5];
     [self.announcer displayParticleSystemOverRaidWithName:@"falling_rocks.plist"];
 }
 
 -(void)startEnraging{
     [self.announcer announce:@"The Troll swings his club furiously at his focused target!"];
     self.enraging += 1.0;
-    self.autoAttack.cooldown = .95;
+    self.autoAttack.cooldown = 1.5;
 }
 
 -(void)stopEnraging{
     [self.announcer announce:@"The Troll is Exhausted!"];
     self.enraging = 0.0;
-    self.autoAttack.cooldown = 1.4;
+    self.autoAttack.cooldown = 2.25;
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
@@ -518,6 +509,7 @@
         ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
         [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
         [bottleVisual setType:ProjectileEffectTypeThrow];
+        [bottleVisual setCollisionParticleName:@"fire_explosion.plist"];
         [self.announcer displayProjectileEffect:bottleVisual];
         
         
@@ -622,7 +614,6 @@
     
     
     Cleave *cleave = [Cleave normalCleave];
-    [cleave setAbilityValue:400]; //Gotta tone this shit down.  It's a bit too hard =/
     [boss addAbility:cleave];
     
     return [boss autorelease];
@@ -641,8 +632,8 @@
 }
 
 -(void)performBranchAttackOnRaid:(Raid*)raid{
-    NSInteger branchInitialDamage = 260;
-    NSInteger branchDoTTick = -40;
+    NSInteger branchInitialDamage = 208;
+    NSInteger branchDoTTick = -36;
     
     for (RaidMember *member in raid.raidMembers){
         [member setHealth:member.health - branchInitialDamage * self.damageDoneMultiplier];
@@ -664,7 +655,7 @@
     for (RaidMember *member in raid.raidMembers){
         RepeatedHealthEffect *rootquake = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegativeInvisible];
         [rootquake setOwner:self];
-        [rootquake setValuePerTick:-50];
+        [rootquake setValuePerTick:-40];
         [rootquake setNumOfTicks:4];
         [rootquake setTitle:@"rootquake"];
         [member addEffect:[rootquake autorelease]];
@@ -684,18 +675,18 @@
 @implementation FungalRavagers
 @synthesize isEnraged, secondTargetAttack, thirdTargetAttack;
 +(id)defaultBoss {
-    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:580000 damage:152 targets:1 frequency:2.0 choosesMT:YES ];
+    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:580000 damage:141 targets:1 frequency:2.0 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Fungal Ravagers"];
     [boss setInfo:@"Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate. Conversely, no villagers have left the town, either..."];
     [boss setCriticalChance:.5];
     
-    FocusedAttack *secondFocusedAttack = [[FocusedAttack alloc] initWithDamage:180 andCooldown:2.6];
+    FocusedAttack *secondFocusedAttack = [[FocusedAttack alloc] initWithDamage:162 andCooldown:2.6];
     secondFocusedAttack.failureChance = .25;
     [boss addAbility:secondFocusedAttack];
     [boss setSecondTargetAttack:secondFocusedAttack];
     [secondFocusedAttack release];
-    FocusedAttack *thirdFocusedAttack = [[FocusedAttack alloc] initWithDamage:213 andCooldown:3.2];
+    FocusedAttack *thirdFocusedAttack = [[FocusedAttack alloc] initWithDamage:193 andCooldown:3.2];
     thirdFocusedAttack.failureChance = .25;
     [boss addAbility:thirdFocusedAttack];
     [boss setThirdTargetAttack:thirdFocusedAttack];
@@ -715,11 +706,11 @@
     [self.announcer announce:@"A Fungal Ravager falls to the ground and explodes!"];
     [focus setIsFocused:NO];
     
-    NSInteger numTargets = arc4random() % 3 + 3;
+    NSInteger numTargets = arc4random() % 3 + 2;
     
     NSArray *members = [raid randomTargets:numTargets withPositioning:Any];
     for (RaidMember *member in members){
-        NSInteger damage = arc4random() % 350 + 550;
+        NSInteger damage = arc4random() % 300 + 450;
         RepeatedHealthEffect *damageEffect = [[[RepeatedHealthEffect alloc] initWithDuration:2.5 andEffectType:EffectTypeNegative] autorelease];
         [damageEffect setAilmentType:AilmentPoison];
         [damageEffect setSpriteName:@"poison.png"];
@@ -740,7 +731,7 @@
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegativeInvisible];
             [rhe setOwner:self];
             [rhe setTitle:@"fungal-ravager-mist"];
-            [rhe setValuePerTick:-(arc4random() % 16 + 6)];
+            [rhe setValuePerTick:-(arc4random() % 10 + 5)];
             [member addEffect:rhe];
             [rhe release];
         }
@@ -1139,7 +1130,7 @@
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (percentage == 99.0){
-        [self setAttackDamage:0];
+        self.autoAttack.abilityValue = 0;
         [self.announcer announce:@"The room fills with demonic laughter."];
     }
     if (percentage == 97.0){
@@ -1178,7 +1169,7 @@
         [self.announcer announce:@"Grimgon fades to nothing.  Serevon, Anguish Mage cackles with glee."];
         //Serevon, Anguish Mage steps forward
         self.phase = 3;
-        [self setAttackDamage:270];
+        self.autoAttack.abilityValue = 270;
         self.autoAttack.failureChance = .25;
     }
     if (percentage == 49.0){
@@ -1265,7 +1256,7 @@
         RaidMember *member = [theRaid.raidMembers objectAtIndex:index];
         RaidMember *member2 = [theRaid.raidMembers objectAtIndex:i];
         
-        NSInteger axeSweepDamage = arc4random() % 200 + 200;
+        NSInteger axeSweepDamage = FUZZ(250, 40);
         
         DelayedHealthEffect *axeSweepEffect = [[DelayedHealthEffect alloc] initWithDuration:i * .5 andEffectType:EffectTypeNegativeInvisible];
         [axeSweepEffect setOwner:self];
@@ -1488,7 +1479,7 @@
     [gainShadowbolts release];
     
     RaidDamage *horrifyingLaugh = [[RaidDamage alloc] init];
-    [horrifyingLaugh setAbilityValue:150];
+    [horrifyingLaugh setAbilityValue:125];
     [horrifyingLaugh setCooldown:25];
     [seer addAbility:horrifyingLaugh];
     [horrifyingLaugh release];
@@ -1604,10 +1595,17 @@
     [boss.boneThrowAbility  setCooldown:5.0];
     [boss addAbility:boss.boneThrowAbility];
     
-    boss.sweepingFlame = [[[TargetTypeFlameBreath alloc] init] autorelease];
+    RepeatedHealthEffect *burningEffect = [[[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative] autorelease];
+    [burningEffect setValuePerTick:-25];
+    [burningEffect setNumOfTicks:5];
+    [burningEffect setSpriteName:@"burning.png"];
+    [burningEffect setTitle:@"alternating-flame-burn"];
+    
+    boss.sweepingFlame = [[[AlternatingFlame alloc] init] autorelease];
+    [(AlternatingFlame*)boss.sweepingFlame setAppliedEffect:burningEffect];
     [boss.sweepingFlame setCooldown:9.0];
-    [boss.sweepingFlame setAbilityValue:550];
-    [(TargetTypeFlameBreath*)boss.sweepingFlame setNumTargets:5];
+    [boss.sweepingFlame setAbilityValue:400];
+    [(AlternatingFlame*)boss.sweepingFlame setNumTargets:5];
     [boss addAbility:boss.sweepingFlame];
     
     boss.tankDamage = [[[FocusedAttack alloc] init] autorelease];

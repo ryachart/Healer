@@ -59,6 +59,9 @@
         //Unload the boss specific sprites;
         [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:[NSString stringWithFormat:@"assets/%@.plist", _encounter.bossKey]];
     }
+    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/battle-sprites.plist"];
+    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/effect-sprites.plist"];
+    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/postbattle.plist"];
     [_match release];
     [serverPlayerId release];
     [matchVoiceChat release];
@@ -123,34 +126,39 @@
         [[PlayerDataManager localPlayer] saveLocalPlayer];
         
         //UI
+        CGPoint textLocation = CGPointMake(512, 680);
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"post-battle"] autorelease]];
         if (victory){
-            CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"VICTORY!" fontName:@"Arial" fontSize:72];
-            [victoryLabel setPosition:CGPointMake(512, 384)];
+            CCSprite *victoryLabel = [CCSprite spriteWithSpriteFrameName:@"victory_text.png"];
+            [victoryLabel setPosition:textLocation];
             [self addChild:victoryLabel];
             
+            CCSprite *characterSprite = [CCSprite spriteWithSpriteFrameName:@"victory_sprite.png"];
+            [characterSprite setAnchorPoint:CGPointZero];
+            [self addChild:characterSprite];
+            
             if (enc.levelNumber != 1) {
-                self.scoreLabel = [CCLabelTTF labelWithString:@"Score: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:36.0];
-                [self.scoreLabel setPosition:CGPointMake(200, 300)];
-                [self addChild:self.scoreLabel];
+                self.scoreLabel = [CCLabelTTF labelWithString:@"Score: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:36.0];
+                [self.scoreLabel setPosition:CGPointMake(54, 230)];
+                [self.scoreLabel setAnchorPoint:CGPointZero];
             }
             
         }else{
-            CCLabelTTF *victoryLabel = [CCLabelTTF labelWithString:@"DEFEAT!" fontName:@"Marion-Bold" fontSize:72];
-            [victoryLabel setPosition:CGPointMake(512, 384)];
+            CCSprite *victoryLabel = [CCSprite spriteWithSpriteFrameName:@"defeated_text.png"];
+            [victoryLabel setPosition:textLocation];
             [self addChild:victoryLabel];
+            
+            CCSprite *characterSprite = [CCSprite spriteWithSpriteFrameName:@"defeat_sprite.png"];
+            [characterSprite setAnchorPoint:CGPointZero];
+            [self addChild:characterSprite];
         }
         
-        if (reward > 0){
-            CCLabelTTF *goldEarned = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold Earned: %i", reward] fontName:@"Marion-Bold" fontSize:32.0];            
-            [goldEarned setPosition:CGPointMake(800, 150)];
-            [self addChild:goldEarned];
-        }
+
     
         NSString* doneLabelString = self.isMultiplayer ? @"Leave Group" : @"Continue";
         CCMenuItem *done = [BasicButton basicButtonWithTarget:self andSelector:@selector(done) andTitle:doneLabelString];
         CCMenu *menu = [CCMenu menuWithItems:nil];
-        menu.position = CGPointMake(512, 200);
+        menu.position = CGPointMake(880, 150);
         [self addChild:menu];
         
         if (!self.showsFirstLevelFTUE) {
@@ -167,28 +175,48 @@
             [menu alignItemsVertically];
         }
         
-        self.healingDoneLabel = [CCLabelTTF labelWithString:@"Healing Done: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
-        [self.healingDoneLabel setPosition:CGPointMake(200, 200)];
+        CCSprite *statsContainer = [CCSprite spriteWithSpriteFrameName:@"stats_container.png"];
+        [statsContainer setPosition:CGPointMake(180, 160)];
+        [self addChild:statsContainer];
         
-        self.overhealingDoneLabel = [CCLabelTTF labelWithString:@"Overhealing: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
-        [self.overhealingDoneLabel setPosition:CGPointMake(200, 160)];
+        if (self.scoreLabel) {
+            [statsContainer addChild:self.scoreLabel];
+        }
         
-        self.damageTakenLabel = [CCLabelTTF labelWithString:@"Damage Taken: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
-        [self.damageTakenLabel setPosition:CGPointMake(200, 120)];
+        if (reward > 0){
+            CCLabelTTF *goldEarned = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold Earned: %i", reward] fontName:@"TrebuchetMS-Bold" fontSize:32.0];
+            [goldEarned setPosition:CGPointMake(36, 30)];
+            [goldEarned setAnchorPoint:CGPointZero];
+            [statsContainer addChild:goldEarned];
+        }
         
-        CCLabelTTF *playersLostLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Allies Lost:  %i", numDead] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
-        [playersLostLabel setPosition:CGPointMake(200, 80)];
+        self.healingDoneLabel = [CCLabelTTF labelWithString:@"Healing Done: " dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        [self.healingDoneLabel setPosition:CGPointMake(12, 150)];
+        [self.healingDoneLabel setAnchorPoint:CGPointZero];
         
-        [self addChild:self.healingDoneLabel];
-        [self addChild:self.overhealingDoneLabel];
-        [self addChild:self.damageTakenLabel];
-        [self addChild:playersLostLabel];
+        self.overhealingDoneLabel = [CCLabelTTF labelWithString:@"Overhealing: " dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        [self.overhealingDoneLabel setPosition:CGPointMake(12, 120)];
+        [self.overhealingDoneLabel setAnchorPoint:CGPointZero];
+        
+        self.damageTakenLabel = [CCLabelTTF labelWithString:@"Damage Taken: " dimensions:CGSizeMake(280, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        [self.damageTakenLabel setPosition:CGPointMake(14, 90)];
+        [self.damageTakenLabel setAnchorPoint:CGPointZero];
+        
+        CCLabelTTF *playersLostLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Allies Lost:  %i", numDead] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        [playersLostLabel setPosition:CGPointMake(12, 60)];
+        [playersLostLabel setAnchorPoint:CGPointZero];
+        
+        [statsContainer addChild:self.healingDoneLabel];
+        [statsContainer addChild:self.overhealingDoneLabel];
+        [statsContainer addChild:self.damageTakenLabel];
+        [statsContainer addChild:playersLostLabel];
         
         NSString *durationText = [@"Duration: " stringByAppendingString:[self timeStringForTimeInterval:fightDuration]];
         
-        CCLabelTTF *durationLabel = [CCLabelTTF labelWithString:durationText dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:24.0];
-        [durationLabel setPosition:CGPointMake(200, 240)];
-        [self addChild:durationLabel];
+        CCLabelTTF *durationLabel = [CCLabelTTF labelWithString:durationText dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        [durationLabel setPosition:CGPointMake(10, 180)];
+        [durationLabel setAnchorPoint:CGPointZero];
+        [statsContainer addChild:durationLabel];
         
 #if DEBUG
         [self.encounter saveCombatLog];
@@ -220,9 +248,6 @@
 
 - (void)onEnterTransitionDidFinish{
     [super onEnterTransitionDidFinish];
-//    if (self.encounter.levelNumber >= 6 && ![Divinity isDivinityUnlocked] && !self.isMultiplayer && self.isVictory){
-//        [self showDivinityUnlocked];
-//    }
     
     if (self.isMultiplayer) {
         if ([self.serverPlayerId isEqualToString:[GKLocalPlayer localPlayer].playerID]){
@@ -271,9 +296,8 @@
 
 - (void)completeStatAnimations {
     if (self.isNewBestScore && !self.isMultiplayer){
-        CCLabelTTF *newHighScore = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"New High Score!"] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"Marion-Bold" fontSize:40.0];
-        [newHighScore setColor:ccGREEN];
-        [newHighScore setPosition:CGPointMake(200, 360)];
+        CCSprite *newHighScore = [CCSprite spriteWithSpriteFrameName:@"new_high_score_text.png"];
+        [newHighScore setPosition:CGPointMake(190, 354)];
         [self addChild:newHighScore];
         [newHighScore runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
     }

@@ -46,7 +46,7 @@
         [backMenu setPosition:CGPointMake(90, 710)];
         [self addChild:backMenu];
         
-        CCLabelTTF *divinityLabel = [CCLabelTTF labelWithString:@"DIVINITY" fontName:@"TeluguSangamMN-Bold" fontSize:64.0];
+        CCLabelTTF *divinityLabel = [CCLabelTTF labelWithString:@"TALENTS" fontName:@"TeluguSangamMN-Bold" fontSize:64.0];
         [divinityLabel setPosition:CGPointMake(512, 700)];
         [self addChild:divinityLabel];
         

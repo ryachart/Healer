@@ -8,6 +8,6 @@
 
 #import "cocos2d.h"
 
-@interface SettingsScene : CCScene
+@interface SettingsScene : CCScene <UIAlertViewDelegate>
 
 @end

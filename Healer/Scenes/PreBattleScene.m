@@ -61,11 +61,13 @@
         
         [self addChild:doneButton];
         
-        BasicButton *changeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(changeSpells) andTitle:@"Change"];
-        [changeButton setScale:.6];
-        CCMenu *changeButtonMenu = [CCMenu menuWithItems:changeButton, nil];
-        [changeButtonMenu setPosition:CGPointMake(908, 632)];
-        [self addChild:changeButtonMenu z:2];
+        if ([PlayerDataManager localPlayer].allOwnedSpells.count > 1) {
+            BasicButton *changeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(changeSpells) andTitle:@"Change"];
+            [changeButton setScale:.6];
+            CCMenu *changeButtonMenu = [CCMenu menuWithItems:changeButton, nil];
+            [changeButtonMenu setPosition:CGPointMake(908, 632)];
+            [self addChild:changeButtonMenu z:2];
+        }
         
         [self configureSpells];
         

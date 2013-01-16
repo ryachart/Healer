@@ -114,6 +114,7 @@
         
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/battle-sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/effect-sprites.plist"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/postbattle.plist"];
         
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:[Encounter backgroundPathForEncounter:self.encounter.levelNumber]] autorelease]];
 
@@ -225,7 +226,7 @@
         
         
         //The timer has to be scheduled after all the init is done!
-        BasicButton *menuButtonItem = [BasicButton basicButtonWithTarget:self andSelector:@selector(showPauseMenu) andTitle:@"Menu"];
+        BasicButton *menuButtonItem = [BasicButton basicButtonWithTarget:self andSelector:@selector(showPauseMenu) andTitle:@"Pause"];
         [menuButtonItem setScale:.6];
         CCMenu *menuButton = [CCMenu menuWithItems:menuButtonItem, nil];
         [menuButton setPosition:CGPointMake(86, [CCDirector sharedDirector].winSize.height * .9325)];
@@ -797,9 +798,15 @@
         [self.match sendDataToAllPlayers:[effect.asNetworkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
     }
     CCSprite *projectileSprite = [CCSprite spriteWithSpriteFrameName:effect.spriteName];;
-    
+
     CGPoint originLocation = CGPointMake(650, 600);
     CGPoint destination = [self.raidView frameCenterForMember:effect.target];
+    
+    CCParticleSystemQuad  *collisionEffect = nil;
+    if (effect.collisionParticleName && !effect.isFailed){
+        collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:effect.collisionParticleName];
+    }
+    
     if (projectileSprite){
         [projectileSprite setAnchorPoint:CGPointMake(.5, .5)];
         [projectileSprite setVisible:NO];
@@ -809,7 +816,13 @@
         [self addChild:projectileSprite z:RAID_Z+1 tag:PAUSEABLE_TAG];
         ccBezierConfig bezierConfig = {destination,ccp(destination.x ,originLocation.y), ccp(destination.x,originLocation.y) };
         [projectileSprite runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:.3 angle:360.0]]];
-        [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}],[CCSpawn actions:[CCBezierTo actionWithDuration:effect.collisionTime bezier:bezierConfig] ,nil ],[CCSpawn actions:[CCScaleTo actionWithDuration:.33 scale:2.0], [CCFadeOut actionWithDuration:.33], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}],[CCSpawn actions:[CCBezierTo actionWithDuration:effect.collisionTime bezier:bezierConfig],nil],[CCSpawn actions:[CCCallBlockN actionWithBlock:^(CCNode *node){
+            if (collisionEffect){
+                [collisionEffect setPosition:destination];
+                [collisionEffect setAutoRemoveOnFinish:YES];
+                [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
+            }
+        }],[CCScaleTo actionWithDuration:.33 scale:2.0], [CCFadeOut actionWithDuration:.33], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node removeFromParentAndCleanup:YES];
         }], nil]];
     }

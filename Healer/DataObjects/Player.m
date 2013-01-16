@@ -473,7 +473,7 @@
         [theSpell spellBeganCasting];
     }
 	self.spellBeingCast = theSpell;
-    self.currentSpellCastTime = theSpell.castTime;
+    self.currentSpellCastTime = theSpell.castTime * self.castTimeAdjustment;
 	spellTarget = primaryTarget;
 	castStart = 0.0001;
 	isCasting = YES;

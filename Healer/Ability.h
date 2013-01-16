@@ -27,6 +27,7 @@
 @property (nonatomic, retain) AbilityDescriptor *descriptor;
 @property (nonatomic, retain) NSString *attackParticleEffectName; //Defaults to blood_spurt.plist
 @property (nonatomic, readwrite) NSInteger difficulty;
+@property (nonatomic, readwrite) float cooldownVariance;
 
 //Activation Times
 @property (nonatomic, readwrite) BOOL isActivating;
@@ -144,7 +145,7 @@ typedef enum {
 @property (nonatomic, retain) Effect *appliedEffect;
 @end
 
-@interface TargetTypeFlameBreath : TargetTypeAttack
+@interface AlternatingFlame : TargetTypeAttack
 @end
 
 @interface BoneQuake : RaidDamage
@@ -157,6 +158,9 @@ typedef enum {
 @end
 
 @interface ShadowMinion : Ability
+@end
+
+@interface CaveIn : Ability
 @end
 
 @interface RaidApplyEffect : Ability

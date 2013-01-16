@@ -41,6 +41,8 @@
 @property (nonatomic, readwrite) NSInteger lastNegativeEffectsCount;
 
 @property (nonatomic, readwrite) BOOL confusionTriggered;
+
+@property (nonatomic, readwrite) NSTimeInterval alertTextCooldown;
 @end
 
 @implementation RaidMemberHealthView
@@ -242,7 +244,7 @@
 }
 
 #define BLINK_ACTION_TAG 32432
--(void)updateHealth
+-(void)updateHealthForInterval:(ccTime)timeDelta
 {
     NSInteger healthDelta = abs(self.memberData.health - self.lastHealth);
     float deltaPercentage = healthDelta / (float)self.memberData.maximumHealth;
@@ -263,7 +265,11 @@
             break;
     }
     
-    if (self.memberData && self.memberData.health < self.lastHealth){
+    if (self.alertTextCooldown > 0.0) {
+        self.alertTextCooldown -= timeDelta;
+    }
+    
+    if (self.alertTextCooldown <= 0.0 && self.memberData && self.memberData.health < self.lastHealth){
         int damage = self.lastHealth - self.memberData.health;
         
         if ((float)damage / self.memberData.maximumHealth >= .33){
@@ -289,6 +295,7 @@
                     break;
             }
             [self displaySCT:sctString];
+            self.alertTextCooldown += 2.0;
         }
         
         if ((float)self.memberData.health / self.memberData.maximumHealth <= .25){

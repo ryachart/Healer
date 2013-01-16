@@ -99,14 +99,19 @@
     return selectedMember;
 }
 
-- (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos{
+- (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos {
+    return [self randomTargets:numTargets withPositioning:pos excludingTargets:[NSArray array]];
+}
+
+
+- (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos excludingTargets:(NSArray*)exclTargets {
     NSMutableArray *targets = [NSMutableArray arrayWithCapacity:numTargets];
     
     int safety = 0;
     while (targets.count < numTargets){
         RaidMember *candidate = [self randomLivingMemberWithPositioning:pos];
         if (candidate) {
-            if (![targets containsObject:candidate]){
+            if (![targets containsObject:candidate] && ![exclTargets containsObject:candidate]){
                 [targets addObject:candidate];
             }
         }

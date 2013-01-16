@@ -85,4 +85,8 @@ extern NSString* const PlayerGoldDidChangeNotification;
 
 - (void)setPlayerObjectInformation:(PFObject*)obj;
 
+//Settings Options
+- (void)resetPlayer;
+- (void)unlockAll;
+
 @end

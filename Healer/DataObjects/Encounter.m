@@ -226,10 +226,10 @@
         basicBoss = [Trulzar defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Purify defaultSpell], [Regrow defaultSpell], nil];
     
-        numWizard = 2;
+        numWizard = 3;
         numArcher = 4;
         numWarlock = 2;
-        numBerserker = 6;
+        numBerserker = 5;
         numChampion = 5;
         numGuardian = 1;
         bossKey = @"trulzar";
@@ -238,11 +238,11 @@
     if (level == 9){
         basicBoss = [DarkCouncil defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [Purify defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
-        numWizard = 2;
+        numWizard = 3;
         numArcher = 2;
-        numWarlock = 3;
-        numBerserker = 6;
-        numChampion = 6;
+        numWarlock = 4;
+        numBerserker = 5;
+        numChampion = 5;
         numGuardian = 1;
         bossKey = @"council";
     }
@@ -252,7 +252,8 @@
         spells = [NSArray arrayWithObjects:[Heal  defaultSpell], [GreaterHeal defaultSpell] , [Barrier defaultSpell], [HealingBurst defaultSpell], nil];
         
         numWizard = 3;
-        numWarlock = 5;
+        numArcher = 2;
+        numWarlock = 3;
         numBerserker = 5;
         numChampion = 5;
         numGuardian = 2;
@@ -290,10 +291,10 @@
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numWizard = 3;
-        numArcher = 2;
-        numWarlock = 3;
-        numBerserker = 4;
-        numChampion = 5;
+        numArcher = 3;
+        numWarlock = 4;
+        numBerserker = 3;
+        numChampion = 4;
         numGuardian = 3; //Blooddrinkers
         bossKey = @"gatekeeper";
     }

@@ -97,7 +97,7 @@ static NSDictionary *divinityInfo = nil;
             }
             
             if ([tierChoiceKey isEqualToString:@"surging-glory"]) {
-                [divEff setEnergyRegenAdjustment:.5];
+                [divEff setEnergyRegenAdjustment:.25];
             }
             
             if ([tierChoiceKey isEqualToString:@"blessed-power"]){

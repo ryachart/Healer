@@ -87,7 +87,7 @@
         
         self.itemCooldown = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cooldown: %1.2f%@",self.item.purchasedSpell.cooldown, @"s"] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
         
-        self.itemEnergyCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i Energy",self.item.purchasedSpell.energyCost] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+        self.itemEnergyCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i Mana",self.item.purchasedSpell.energyCost] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
         
         NSString *castTimeString = self.item.purchasedSpell.castTime == 0.0 ? @"Instant Cast" : [NSString stringWithFormat:@"Cast Time: %1.2f%@", self.item.purchasedSpell.castTime, @"s"];
         

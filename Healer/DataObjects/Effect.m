@@ -295,10 +295,6 @@
                 NSInteger overheal = amount - finalAmount;
                 [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self withOverhealing:overheal asCritical:critical];
             } else {
-                NSLog(@"Dealt %i DMG from %@", amount, self.title);
-                if ([self.title isEqualToString:@"soul-bleed"]) {
-                    NSLog(@"Made it");
-                }
                 //This is boss damage in the form of dots
                 [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:amount] andEventType:eventType]];
             }
@@ -318,12 +314,14 @@
 
 - (NSInteger)maximumAbsorbtionAdjustment
 {
-    return self.amountToShield * self.stacks;
+    Player *owningPlayer = (Player*)self.owner;
+    return self.amountToShield * self.stacks * (self.isCriticalShield ? (owningPlayer.criticalBonusMultiplier) : 1);
 }
 
 - (void)reset
 {
     [super reset];
+    self.isCriticalShield = NO;
     self.hasAppliedAbsorb = NO;
 }
 
@@ -331,8 +329,12 @@
 {
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
     if (!self.hasAppliedAbsorb) {
+        Player *owningPlayer = (Player *)self.owner;
+        if (arc4random() % 1000 <= owningPlayer.spellCriticalChance * 1000) {
+            self.isCriticalShield = YES;
+        }
         self.hasAppliedAbsorb = YES;
-        self.target.absorb += self.amountToShield * self.stacks;
+        self.target.absorb += self.maximumAbsorbtionAdjustment;
     }
     if (self.target.absorb == 0) {
         self.isExpired = YES;
@@ -358,7 +360,7 @@
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
     if (self.isExpired) {
         Player *owningPlayer = (Player*)self.owner;
-        [owningPlayer setEnergy:owningPlayer.energy + 50];
+        [owningPlayer setEnergy:owningPlayer.energy + [(Spell*)[Barrier defaultSpell] energyCost] * .66];
     }
 }
 @end
@@ -457,7 +459,7 @@
             }
             if (self.appliedEffect){
                 Effect *applyThis = [[self.appliedEffect copy] autorelease];
-                [self.appliedEffect setOwner:self.owner];
+                [applyThis setOwner:self.owner];
                 [self.target addEffect:applyThis];
                 self.appliedEffect = nil;
             }
@@ -623,9 +625,7 @@
 
 @implementation WanderingSpiritEffect
 - (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta{
-    if (!self.raid) {
-        self.raid = theRaid;
-    }
+    self.raid = theRaid;
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
 }
 
@@ -728,7 +728,7 @@
 - (void)tick {
     if (self.target.healthPercentage < 1.0){
         Player *owningPlayer = (Player*)self.owner;
-        [owningPlayer setEnergy:owningPlayer.energy + 12];
+        [owningPlayer setEnergy:owningPlayer.energy + [(Spell*)[TouchOfHope defaultSpell] energyCost] * .1];
     }
     [super tick];
 }

@@ -114,6 +114,7 @@ typedef enum {
 @end
 
 @interface ShieldEffect : Effect
+@property (readwrite) BOOL isCriticalShield;
 @property (readwrite) NSInteger amountToShield;
 @property (readwrite) BOOL hasAppliedAbsorb;
 @end

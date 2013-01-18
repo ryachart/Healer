@@ -45,6 +45,7 @@
 
 @interface Attack : Ability
 @property (nonatomic, retain) Effect *appliedEffect;
+@property (nonatomic, readwrite) BOOL requiresDamageToApplyEffect;
 - (RaidMember *)targetFromRaid:(Raid*)raid;
 - (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd;
 @end

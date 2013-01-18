@@ -197,7 +197,7 @@
     }
     NSInteger preHealth = target.health;
     [self damageTarget:target];
-    if (self.appliedEffect && preHealth > target.health){
+    if (self.appliedEffect && (preHealth > target.health || !self.requiresDamageToApplyEffect) ){
         //Only apply the effect if we actually did damaww ge.
         Effect *applyThis = [self.appliedEffect copy];
         [applyThis setOwner:self.owner];
@@ -1079,7 +1079,6 @@
 
 @implementation OverseerProjectiles
 - (void)dealloc {
-    
     [super dealloc];
 }
 
@@ -1218,7 +1217,7 @@
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     for (RaidMember *member in theRaid.livingMembers){
         RepeatedHealthEffect *burning = [[RepeatedHealthEffect alloc] initWithDuration:self.cooldown - .1 andEffectType:EffectTypeNegativeInvisible];
-        [burning setValuePerTick:-20];
+        [burning setValuePerTick:(self.abilityValue * -.05)];
         [burning setNumOfTicks:8];
         [burning setOwner:self.owner];
         [burning setTitle:@"fire-minion-burn"];

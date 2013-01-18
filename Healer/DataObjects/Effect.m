@@ -421,7 +421,7 @@
 - (id)copy{
     DelayedHealthEffect *copy = [super copy];
     [copy setValue:self.value];
-    [copy setAppliedEffect:self.appliedEffect];
+    [copy setAppliedEffect:[[self.appliedEffect copy] autorelease]];
     return copy;
 }
 
@@ -762,6 +762,13 @@
 @end
 
 @implementation HealingDoneAdjustmentEffect
+
+- (id)copy
+{
+    HealingDoneAdjustmentEffect *copy = [super copy];
+    [copy setPercentageHealingReceived:self.percentageHealingReceived];
+    return copy;
+}
 
 - (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type {
     if (self = [super initWithDuration:dur andEffectType:type]){

@@ -1754,7 +1754,7 @@
     [boss setInfo:@"After defeating his most powerful beasts, the Overseer of this treacherous realm confronts you himself.  He bars your way into the inner sanctum."];
     
     boss.projectilesAbility = [[[OverseerProjectiles alloc] init] autorelease];
-    [boss.projectilesAbility setAbilityValue:560];
+    [boss.projectilesAbility setAbilityValue:514];
     [boss.projectilesAbility setCooldown:1.5];
     [boss addAbility:boss.projectilesAbility];
     
@@ -1763,21 +1763,21 @@
     BloodMinion *bm = [[BloodMinion alloc] init];
     [bm setTitle:@"blood-minion"];
     [bm setCooldown:10.0];
-    [bm setAbilityValue:100];
+    [bm setAbilityValue:90];
     [boss.demonAbilities addObject:bm];
     [bm release];
     
     FireMinion *fm = [[FireMinion alloc] init];
     [fm setTitle:@"fire-minion"];
     [fm setCooldown:15.0];
-    [fm setAbilityValue:350];
+    [fm setAbilityValue:315];
     [boss.demonAbilities addObject:fm];
     [fm release];
     
     ShadowMinion *sm = [[ShadowMinion alloc] init];
     [sm setTitle:@"shadow-minion"];
     [sm setCooldown:12.0];
-    [sm setAbilityValue:170];
+    [sm setAbilityValue:153];
     [boss.demonAbilities addObject:sm];
     [sm release];
     
@@ -1822,7 +1822,7 @@
     
     if (percentage == 15.0){
         [self.announcer announce:@"The Overseer laughs maniacally and raises his staff again."];
-        self.projectilesAbility.abilityValue = 480.0;
+        self.projectilesAbility.abilityValue = 432.0;
         self.projectilesAbility.cooldown = 3.75;
         self.projectilesAbility.isDisabled = NO;
     }
@@ -1883,7 +1883,7 @@
     [super dealloc];
 }
 + (id)defaultBoss {
-    BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:3400000 damage:150 targets:1 frequency:1.25 choosesMT:YES ];
+    BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:3400000 damage:270 targets:1 frequency:2.25 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast Reborn"];
     [boss setInfo:@"Before you stands the destroyed but risen warchief Baraghast.  His horrible visage once again sows fear in the hearts of all of your allies.  This time he is not only guarding a terrible secret, but his hateful gaze reveals his true purpose -- Revenge."];
@@ -1900,16 +1900,28 @@
     [boss.deathwave  setTitle:@"deathwave"];
     [boss addAbility:boss.deathwave ];
     
-    GraspOfTheDamnedEffect *graspEffect = [[[GraspOfTheDamnedEffect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
-    [graspEffect setNumOfTicks:6];
-    [graspEffect setValuePerTick:-100];
-    [graspEffect setSpriteName:@"blood_curse.png"];
-    [graspEffect setTitle:@"grasp-of-the-damned-eff"];
-    [graspEffect setAilmentType:AilmentTrauma];
-    GraspOfTheDamned *graspOfTheDamned = [[[GraspOfTheDamned alloc] initWithDamage:0 andCooldown:15.0] autorelease];
-    [boss addAbility:graspOfTheDamned];
-    [graspOfTheDamned setAppliedEffect:graspEffect];
     return [boss autorelease];
+}
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    
+    if (self.difficulty <= 3) {
+        self.deathwave.abilityValue = 9000;
+    }
+    
+    if (difficulty == 5) {
+        GraspOfTheDamnedEffect *graspEffect = [[[GraspOfTheDamnedEffect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
+        [graspEffect setNumOfTicks:6];
+        [graspEffect setValuePerTick:-100];
+        [graspEffect setSpriteName:@"blood_curse.png"];
+        [graspEffect setTitle:@"grasp-of-the-damned-eff"];
+        [graspEffect setAilmentType:AilmentTrauma];
+        GraspOfTheDamned *graspOfTheDamned = [[[GraspOfTheDamned alloc] initWithDamage:0 andCooldown:15.0] autorelease];
+        [self addAbility:graspOfTheDamned];
+        [graspOfTheDamned setAppliedEffect:graspEffect];
+    }
 }
 
 - (void)ownerDidExecuteAbility:(Ability *)ability {
@@ -1922,7 +1934,12 @@
 }
 
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (percentage == 99.0 || percentage == 80.0 || percentage == 60.0 || percentage == 40.0 || percentage == 20.0){
+    
+    if (self.difficulty <= 3) {
+        if (percentage == 99.0 || percentage == 75.0 || percentage == 50.0 || percentage == 25.0){
+            [self.deathwave triggerAbilityForRaid:raid andPlayers:[NSArray arrayWithObject:player]];
+        }
+    } else if (percentage == 99.0 || percentage == 80.0 || percentage == 60.0 || percentage == 40.0 || percentage == 20.0){
         [self.deathwave triggerAbilityForRaid:raid andPlayers:[NSArray arrayWithObject:player]];
     }
     
@@ -2142,6 +2159,7 @@
     [contagious setValuePerTick:-50];
     [contagious setAilmentType:AilmentPoison];
     [attack setAppliedEffect:contagious];
+    [attack setRequiresDamageToApplyEffect:YES];
     [boss addAbility:attack];
     
     AbilityDescriptor *contagiousDesc = [[[AbilityDescriptor alloc] init] autorelease];

@@ -9,7 +9,8 @@
 #import <cocos2d.h>
 #import "GameObjects.h"
 
-@class ChannelingDelegate;
+
+@class ChannelingDelegate, CCLabelTTFShadow;
 
 @interface PlayerEnergyView : CCLayer {
 	double percentEnergy;
@@ -18,7 +19,7 @@
 }
 @property (nonatomic, assign) ChannelingDelegate *channelDelegate;
 @property (nonatomic, assign) CCSprite *energyBar;
-@property (nonatomic, assign) CCLabelTTF *energyLabel;
+@property (nonatomic, assign) CCLabelTTFShadow *energyLabel;
 @property (readwrite) double percentChanneled;
 - (id)initWithFrame:(CGRect)frame;
 - (void)updateWithEnergy:(NSInteger)current andMaxEnergy:(NSInteger)max;

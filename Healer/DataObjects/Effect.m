@@ -177,6 +177,11 @@
     _stacks = stacks;
 }
 
+- (NSInteger)visibleStacks
+{
+    return self.stacks;
+}
+
 //EFF|TARGET|TITLE|DURATION|TYPE|SPRITENAME|OWNER|HDM|DDM|Ind
 -(NSString*)asNetworkMessage{
     NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@|%f|%f|%i|%f|%f|%i|%i|%i", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner, healingDoneMultiplierAdjustment, damageDoneMultiplierAdjustment, self.isIndependent, castTimeAdjustment, _cooldownMultiplierAdjustment, _maximumAbsorbtionAdjustment, self.stacks, self.visibilityPriority];
@@ -546,18 +551,7 @@
 }
 @end
 
-@implementation RothPoison
--(void)setValuePerTick:(NSInteger)valPerTick{
-    if (self.baseValue == 0){
-        self.baseValue = valPerTick;
-    }
-    [super setValuePerTick:valPerTick];
-}
-
--(void)tick{
-    [super tick];
-    self.valuePerTick = self.baseValue * self.numHasTicked;
-}
+@implementation RaidDamageOnDispelStackingRHE
 -(void)effectWillBeDispelled:(Raid *)raid player:(Player *)player{
     for (RaidMember*member in raid.raidMembers){
         [member setHealth:member.health + (self.dispelDamageValue * self.owner.damageDoneMultiplier)];
@@ -1012,5 +1006,23 @@
     }
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
 }
+@end
 
+@implementation StackingRepeatedHealthEffect
+- (void)tick
+{
+    [super tick];
+    self.stacks++;
+}
+@end
+
+@implementation StackingRHEDispelsOnHeal
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
+    
+}
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth {
+    if (currentHealth < newHealth){
+		self.isExpired = YES;
+	}
+}
 @end

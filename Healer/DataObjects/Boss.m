@@ -276,8 +276,8 @@
 @implementation Ghoul
 +(id)defaultBoss{
     Ghoul *ghoul = [[Ghoul alloc] initWithHealth:21840 damage:200 targets:1 frequency:2.0 choosesMT:NO ];
-    [ghoul setTitle:@"The Night Ghoul"];
-    [ghoul setInfo:@"A ghoul has found its way onto a nearby farmer's land.  It has already killed the farmer's wife.  You will accompany a small band of mercenaries to dispatch the ghoul."];
+    [ghoul setTitle:@"The Ghoul"];
+    [ghoul setInfo:@"These are strange times in the once peaceful kingdom of Theronia.  A dark mist has set beyond the Eastern Mountains and corrupt creatures have begun attacking innocent villagers and travelers along the roads."];
     
     AbilityDescriptor *ad = [[[AbilityDescriptor alloc] init] autorelease];
     [ad setAbilityName:@"Undead Attacks"];
@@ -313,7 +313,7 @@
     corTroll.autoAttack.failureChance = .1;
     
     [corTroll setTitle:@"Corrupted Troll"];
-    [corTroll setInfo:@"A Troll of Raklor has been identified among the demons brewing in the south.  It has been corrupted and twisted into a foul and terrible creature.  You will journey with a small band of soldiers to the south to dispatch this troll."];
+    [corTroll setInfo:@"Three days ago a Raklorian Troll stumbled out from beyond the mountains and began ravaging the farmlands.  This was unusual behavior for a cave troll, but survivors noted that the troll seemed to be empowered by an evil magic."];
     
     CaveIn *caveIn = [[[CaveIn alloc] init] autorelease];
     [caveIn setAbilityValue:75];
@@ -395,7 +395,7 @@
 +(id)defaultBoss {
     Drake *drake = [[Drake alloc] initWithHealth:400000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [drake setTitle:@"Tainted Drake"];
-    [drake setInfo:@"A Tainted Drake is hidden in the Paragon Cliffs. You and your allies must stop the beast from doing any more damage to the Kingdom.  The king will provide you with a great reward for defeating the beast."];
+    [drake setInfo:@"A Drake of Soldorn has not been seen in Theronia for ages, but the foul creature has been burning down cottages and farms as well as killing countless innocents.  You and your allies have cornered the drake and forced a confrontation."];
     
     NSInteger fireballDamage = 400;
     float fireballFailureChance = .05;
@@ -466,7 +466,7 @@
     [boss addAbility:boss.autoAttack];
     
     [boss setTitle:@"Mischievious Imps"];
-    [boss setInfo:@" A local alchemist has posted a small reward for removing a pesky imp infestation from her store.  Sensing something a little more sinister a small party has been dispatched from the Light Ascendant just in case there is more than meets the eye."];
+    [boss setInfo:@"As the dark mists further encroach upon the kingdom more strange creatures begin terrorizing the innocents.  Viscious imps have infiltrated the alchemical storehouses on the outskirts of Terun."];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw1" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw1" ofType:@"m4a"]]];
     [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw2" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw2" ofType:@"m4a"]]];
     return [boss autorelease];
@@ -478,10 +478,10 @@
     [super dealloc];
 }
 
--(void)throwPotionToTarget:(RaidMember *)target withDelay:(float)delay{
-    NSInteger possiblePotions = 2;
+-(void)throwPotionToTarget:(RaidMember *)target withDelay:(float)delay inRaid:(Raid*)theRaid {
+    NSInteger possiblePotions = 3;
     if (self.difficulty > 4) {
-        possiblePotions = 3;
+        possiblePotions = 4;
     }
     
     int potion = arc4random() % possiblePotions;
@@ -524,12 +524,28 @@
         [bottleEffect setIsIndependent:YES];
         [bottleEffect setOwner:self];
         NSInteger damage = FUZZ(-550, 10);
-        //        if (self.difficulty == DifficultyModeHard) {
-        //            damage *= 1.25;
-        //        }
         [bottleEffect setValue:damage];
         [target addEffect:bottleEffect];
     } else if (potion == 2) {
+        //Poison explosion
+        
+        NSInteger impactDamage = FUZZ(-100, 20);
+        
+        for (RaidMember *member in theRaid.livingMembers) {
+            DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
+            [bottleEffect setValue:impactDamage * self.damageDoneMultiplier];
+            [bottleEffect setIsIndependent:YES];
+            [bottleEffect setOwner:self];
+            [member addEffect:bottleEffect];
+        }
+        
+        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
+        [bottleVisual setSpriteColor:ccc3(0, 128, 128)];
+        [bottleVisual setType:ProjectileEffectTypeThrow];
+        [bottleVisual setCollisionParticleName:@"gas_explosion.plist"];
+        [self.announcer displayProjectileEffect:bottleVisual];
+        
+    } else if (potion == 3) {
         //Angry Spirit
         NSInteger impactDamage = -150;
         NSInteger dotDamage = -200;
@@ -563,7 +579,7 @@
         self.lastPotionThrow+=timeDelta;
         float tickTime = 12.0;
         if (self.lastPotionThrow > tickTime){
-            [self throwPotionToTarget:[theRaid randomLivingMember] withDelay:0.0];
+            [self throwPotionToTarget:[theRaid randomLivingMember] withDelay:0.0 inRaid:theRaid];
             self.lastPotionThrow = 0.0;
             int throwSound = arc4random() %2 + 1;
             [[AudioController sharedInstance] playTitle:[NSString stringWithFormat:@"imp_throw%i", throwSound]];
@@ -580,7 +596,7 @@
     if (percentage == 50.0){
         for (RaidMember *member in raid.raidMembers){
             if (!member.isDead){
-                [self throwPotionToTarget:member withDelay:0.0];
+                [self throwPotionToTarget:member withDelay:0.0 inRaid:raid];
             }
         }
         [self.announcer announce:@"An imp angrily hurls the entire case of flasks at you!"];
@@ -610,7 +626,7 @@
     BefouledTreant *boss = [[BefouledTreant alloc] initWithHealth:580000 damage:bossDamage targets:1 frequency:3.0 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Befouled Treant"];
-    [boss setInfo:@"The Akarus, an ancient tree that has sheltered travelers across the Gungoro Plains, has become tainted with the foul energy of The Dark Winds.  It is lashing its way through villagers and farmers.  This once great tree must be ended for good."];
+    [boss setInfo:@"The Akarus, an ancient tree that has long rested in the Peraxu Forest, has become tainted with the foul energy of the dark mists. This once great tree must be ended for good."];
     
     
     Cleave *cleave = [Cleave normalCleave];
@@ -678,7 +694,7 @@
     FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:580000 damage:141 targets:1 frequency:2.0 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Fungal Ravagers"];
-    [boss setInfo:@"Royal scouts report toxic spores are bursting from the remains of the colossus slain a few days prior near the outskirts of Theranore.  The spores are releasing a dense fog into a near-by village, and no-one has been able to get close enough to the town to investigate. Conversely, no villagers have left the town, either..."];
+    [boss setInfo:@"As the dark mist consumes the Akarus ferocious beasts are birthed from its roots.  The ravagers immediately attack you and your allies."];
     [boss setCriticalChance:.5];
     
     FocusedAttack *secondFocusedAttack = [[FocusedAttack alloc] initWithDamage:162 andCooldown:2.6];
@@ -767,7 +783,7 @@
     PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:580000 damage:330 targets:1 frequency:2.5 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Plaguebringer Colossus"];
-    [boss setInfo:@"From the west a foul beast is making its way from the Pits of Ulgrust towards a village on the outskirts of Theranore.  This putrid wretch is sure to destroy the village if not stopped. You must lead this group to victory against the wretched beast."];
+    [boss setInfo:@"As the Akarus is finally consumed its branches begin to quiver and shake.  As the whole ground rumbles beneath its might, you and your allies witness a hideous transformation.  What once was a peaceful treant has now become an abomination.  Only truly foul magics could have caused this."];
     
     AbilityDescriptor *sickenDesc = [[AbilityDescriptor alloc] init];
     [sickenDesc setAbilityDescription:@"The Colossus will sicken targets causing them to take damage until they are healed to full health."];
@@ -862,7 +878,7 @@
     Trulzar *boss = [[Trulzar alloc] initWithHealth:2600000 damage:0 targets:0 frequency:100.0 choosesMT:NO ];
     [boss setTitle:@"Trulzar the Maleficar"];
     [boss setNamePlateTitle:@"Trulzar"];
-    [boss setInfo:@"Before the dark winds came, Trulzar was a teacher at the Academy of Alchemists.  Since then, Trulzar has drawn into seclusion and begun practicing dark magic.  Trulzar has been identified as a Maleficar by the Theranorian Sages."];
+    [boss setInfo:@"Days before the dark mists came, Trulzar disappeared into the Peraxu forest with only a spell book.  This once loyal warlock is wanted for questioning regarding the strange events that have befallen the land.  You have been sent with a large warband to bring Trulzar to justice."];
     
     boss.lastPotionTime = 6.0;
     
@@ -1002,29 +1018,13 @@
 +(id)defaultBoss {
     DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:2450000 damage:0 targets:1 frequency:.75 choosesMT:NO ];
     [boss setTitle:@"Council of Dark Summoners"];
-    [boss setNamePlateTitle:@"Roth"];
-    [boss setInfo:@"A note scribbled in blood was found in Trulzar's quarters.  It mentions a Council responsible for The Dark Winds plaguing Theranore.  Go to the crypt beneath The Hollow and discover what this Council is up to."];
-    [[AudioController sharedInstance] addNewPlayerWithTitle:@"roth_entrance" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/roth_entrance" ofType:@"m4a"]]];
-    [[AudioController sharedInstance] addNewPlayerWithTitle:@"roth_death" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/roth_death" ofType:@"m4a"]]];
-    [[AudioController sharedInstance] addNewPlayerWithTitle:@"grimgon_entrance" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/grimgon_entrance" ofType:@"m4a"]]];
-    [[AudioController sharedInstance] addNewPlayerWithTitle:@"grimgon_death" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/grimgon_death" ofType:@"m4a"]]];
-    [[AudioController sharedInstance] addNewPlayerWithTitle:@"serevon_entrance" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/serevon_entrance" ofType:@"m4a"]]];
-    [[AudioController sharedInstance] addNewPlayerWithTitle:@"serevon_death" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/serevon_death" ofType:@"m4a"]]];
-    [[AudioController sharedInstance] addNewPlayerWithTitle:@"galcyon_entrance" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/galcyon_entrance" ofType:@"m4a"]]];
-    [[AudioController sharedInstance] addNewPlayerWithTitle:@"galcyon_death" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/galcyon_death" ofType:@"m4a"]]];
+    [boss setNamePlateTitle:@"Teritha"];
+    [boss setInfo:@"A contract in blood lay signed and sealed in Trulzar's belongings.  He had been summoned by a council of dark summoners to participate in an arcane ritual for some horrible purpose.  You and your allies have followed the sanguine invitation to a dark chamber beneath the Vargothian Swamps."];
     return [boss autorelease];
 }
 
 -(void)dealloc{
     [rothVictim release];
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"roth_entrance"];
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"roth_death"];
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"grimgon_entrance"];
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"grimgon_death"];
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"serevon_entrance"];
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"serevon_death"];
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"galcyon_entrance"];
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"galcyon_death"];
     [super dealloc];
 }
 
@@ -1086,13 +1086,14 @@
         }
         if (!hasPoison || self.rothVictim.isDead){
             self.rothVictim = [self chooseVictimInRaid:theRaid];
-            RothPoison *poison = [[RothPoison alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative];
+            RaidDamageOnDispelStackingRHE *poison = [[RaidDamageOnDispelStackingRHE alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegative];
             [poison setOwner:self];
             [poison setTitle:@"roth_poison"];
             [poison setSpriteName:@"poison.png"];
             [poison setAilmentType:AilmentPoison];
-            [poison setNumOfTicks:15];
-            [poison setValuePerTick:-100];
+            [poison setNumOfTicks:20];
+            [poison setMaxStacks:50];
+            [poison setValuePerTick:-35];
             [poison setDispelDamageValue:-200];
             [self.rothVictim addEffect:[poison autorelease]];
         }
@@ -1136,10 +1137,9 @@
     if (percentage == 97.0){
         //Roth of the Shadows steps forward
         self.phase = 1;
-        [self.announcer announce:@"Roth, The Toxin Mage steps forward."];
-        [[AudioController sharedInstance] playTitle:@"roth_entrance"];
+        [self.announcer announce:@"Teritha, The Toxin Mage steps forward."];
         AbilityDescriptor *rothDesc = [[AbilityDescriptor alloc] init];
-        [rothDesc setAbilityDescription:@"Roth channels a curse on an ally dealing increasing damage over time.  When this curse is dispelled it will explode dealing moderate damage to all of your allies."];
+        [rothDesc setAbilityDescription:@"Teritha channels a curse on an ally dealing increasing damage over time.  When this curse is dispelled it will explode dealing moderate damage to all of your allies."];
         [rothDesc setIconName:@"unknown_ability.png"];
         [rothDesc setAbilityName:@"Curse of Detonation"];
         [self addAbilityDescriptor:rothDesc];
@@ -1149,12 +1149,10 @@
     if (percentage == 75.0){
         [self clearExtraDescriptors];
         //Roth dies
-        [[AudioController sharedInstance] playTitle:@"roth_death"];
-        [self.announcer announce:@"Roth falls to his knees.  Grimgon, The Darkener takes his place."];
+        [self.announcer announce:@"Teritha falls to her knees.  Grimgon, The Darkener takes her place."];
         self.phase = 2;
     }
     if (percentage == 74.0){
-        [[AudioController sharedInstance] playTitle:@"grimgon_entrance"];
         AbilityDescriptor *grimgonDesc = [[AbilityDescriptor alloc] init];
         [grimgonDesc setAbilityDescription:@"Grimgon fires vile green bolts at his enemies dealing damage and causing the targets to have healing done to them reduced by 50%."];
         [grimgonDesc setIconName:@"unknown_ability.png"];
@@ -1165,17 +1163,15 @@
     
     if (percentage == 50.0){
         [self clearExtraDescriptors];
-        [[AudioController sharedInstance] playTitle:@"grimgon_death"];
-        [self.announcer announce:@"Grimgon fades to nothing.  Serevon, Anguish Mage cackles with glee."];
+        [self.announcer announce:@"Grimgon fades to nothing.  Galcyon, Overlord of Darkness pushes away his corpse and raises his wand."];
         //Serevon, Anguish Mage steps forward
         self.phase = 3;
         self.autoAttack.abilityValue = 270;
         self.autoAttack.failureChance = .25;
     }
     if (percentage == 49.0){
-        [[AudioController sharedInstance] playTitle:@"serevon_entrance"];
         AbilityDescriptor *serevonDesc = [[AbilityDescriptor alloc] init];
-        [serevonDesc setAbilityDescription:@"Periodically, Serevon summons a dark cloud over all of your allies that deals more damage to lower health allies and weakens healing magic."];
+        [serevonDesc setAbilityDescription:@"Periodically, Galcyon summons a dark cloud over all of your allies that deals more damage to lower health allies and weakens healing magic."];
         [serevonDesc setIconName:@"unknown_ability.png"];
         [serevonDesc setAbilityName:@"Choking Cloud"];
         [self addAbilityDescriptor:serevonDesc];
@@ -1185,13 +1181,7 @@
     if (percentage == 25.0){
         [self clearExtraDescriptors];
         //Galcyon, Lord of the Dark Council steps forward
-        [[AudioController sharedInstance] playTitle:@"serevon_death"];
-        [self.announcer announce:@"Galcyon, Overlord of Darkness pushes away Serevon's corpse and slithers into the fray."];
         self.phase = 4;
-    }
-    
-    if (percentage == 24.0){
-        [[AudioController sharedInstance] playTitle:@"galcyon_entrance"];
     }
     
     if (percentage == 23.0){
@@ -1201,7 +1191,6 @@
     }
     
     if (percentage == 5.0){
-        [[AudioController sharedInstance] playTitle:@"galcyon_death"];
         [self.announcer announce:@"Galycon cries out as steel and magic burns through his flesh."];
         [self summonDarkCloud:raid];
         //Galcyon, Lord of the Dark Council does his last thing..
@@ -1227,7 +1216,7 @@
     
     [boss setTitle:@"Twin Champions of Baraghast"];
     [boss setNamePlateTitle:@"Twin Champions"];
-    [boss setInfo:@"You and your soldiers have taken the fight straight to the warcamps of Baraghast--Leader of the Dark Horde.  You have been met outside the gates by only two heavily armored demon warriors.  These Champions of Baraghast will stop at nothing to keep you from finding Baraghast."];
+    [boss setInfo:@"You have crossed the eastern mountains through a path filled with ghouls, demons, and other terrible creatures.  Blood stained and battle worn, you and your allies have come across an encampment guarded by two skeletal champions."];
     
     [boss addAbility:[Cleave normalCleave]];
     
@@ -1391,7 +1380,7 @@
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
     [boss setNamePlateTitle:@"Baraghast"];
-    [boss setInfo:@"With his champions defeated, Baraghast himself confronts you and your allies."];
+    [boss setInfo:@"As his champions fell, the dark warlord emerged from deep in the encampment.  Disgusted with the failure of his champions, he confront you and your allies himself."];
     
     [boss addAbility:[Cleave normalCleave]];
     
@@ -1452,7 +1441,7 @@
     CrazedSeer *seer = [[CrazedSeer alloc] initWithHealth:2720000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [seer setTitle:@"Crazed Seer Tyonath"];
     [seer setNamePlateTitle:@"Tyonath"];
-    [seer setInfo:@"Seer Tyonath was tormented and tortured after his capture by the Dark Horde.  The Darkness has driven him mad.  He guards the secrets to Baraghast's origin in the vaults beneath the Dark Horde's largest encampment - Serevilost."];
+    [seer setInfo:@"Seer Tyonath was tormented and tortured after his capture by the Dark Horde. He guards the secrets to Baraghast's origin in a horrific chamber beneath the encampment."];
     
     ProjectileAttack *fireballAbility = [[ProjectileAttack alloc] init];
     [fireballAbility setSpriteName:@"purple_fireball.png"];
@@ -1499,7 +1488,7 @@
 + (id)defaultBoss {
     GatekeeperDelsarn *boss = [[GatekeeperDelsarn alloc] initWithHealth:2030000 damage:500 targets:1 frequency:2.1 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
-    [boss setInfo:@"Delsarn is the name the Theronian Seers have given to the land that exists beyond the rift discovered within the tome that Seer Tyonath left behind.  The Gatekeeper is a foul beast that stands between your party and passage into Delsarn."];
+    [boss setInfo:@"Still deeper beneath the encampment you have discovered a portal to Delsarn.  No mortal has ever set foot in this ancient realm of evil and unless you and your allies can dispatch the gatekeeper no mortal ever will."];
     [boss setTitle:@"Gatekeeper of Delsarn"];
     [boss setNamePlateTitle:@"The Gatekeeper"];
     
@@ -1588,7 +1577,7 @@
 }
 + (id)defaultBoss {
     SkeletalDragon *boss = [[SkeletalDragon alloc] initWithHealth:2190000 damage:0 targets:0 frequency:100 choosesMT:NO ];
-    [boss setInfo:@"After moving beyond the gates of Delsarn, you encounter a horrifying Skeletal Dragon.  It assaults your party and bars the way."];
+    [boss setInfo:@"After slaying countless minor demons upon entering Delsarn your party has encountered a towering Skeletal Dragon."];
     [boss setTitle:@"Skeletal Dragon"];
     
     boss.boneThrowAbility = [[[BoneThrow alloc] init] autorelease];
@@ -1681,7 +1670,7 @@
 + (id)defaultBoss {
     ColossusOfBone *cob = [[ColossusOfBone alloc] initWithHealth:1710000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [cob setTitle:@"Colossus of Bone"];
-    [cob setInfo:@"While traveling even deeper into Delsarn you and your allies are waylayed by a towering creature of unimaginable strength."];
+    [cob setInfo:@"As the skeletal dragon falls and crashes to the ground you feel a rumbling in the distance.  Before you and your allies can even recover from the encounter with the skeletal dragon you are besieged by a monstrosity."];
     
     FocusedAttack *tankAttack = [[FocusedAttack alloc] initWithDamage:620 andCooldown:2.15];
     [tankAttack setFailureChance:.4];
@@ -1751,7 +1740,7 @@
     OverseerOfDelsarn *boss = [[OverseerOfDelsarn alloc] initWithHealth:2580000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [boss setTitle:@"Overseer of Delsarn"];
     [boss setNamePlateTitle:@"The Overseer"];
-    [boss setInfo:@"After defeating his most powerful beasts, the Overseer of this treacherous realm confronts you himself.  He bars your way into the inner sanctum."];
+    [boss setInfo:@"After defeating the most powerful and terrible creatures in Delsarn the Overseer of this treacherous realm confronts you himself."];
     
     boss.projectilesAbility = [[[OverseerProjectiles alloc] init] autorelease];
     [boss.projectilesAbility setAbilityValue:514];
@@ -1839,7 +1828,7 @@
     TheUnspeakable *boss = [[TheUnspeakable alloc] initWithHealth:2900000 damage:0 targets:0 frequency:10.0 choosesMT:NO ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"The Unspeakable"];
-    [boss setInfo:@"A disgusting mass of bones and rotten corpses waits in a crypt beneath Delsarn.  It seems to be ... alive."];
+    [boss setInfo:@"As you peel back the blood-sealed door to the inner sanctum of the Delsari citadel you find a horrific room filled with a disgusting mass of bones and rotten corpses.  The room itself seems to be ... alive."];
     
     boss.oozeAll = [[[OozeRaid alloc] init] autorelease];
     [boss.oozeAll setTimeApplied:19.0];
@@ -1886,7 +1875,7 @@
     BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:3400000 damage:270 targets:1 frequency:2.25 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast Reborn"];
-    [boss setInfo:@"Before you stands the destroyed but risen warchief Baraghast.  His horrible visage once again sows fear in the hearts of all of your allies.  This time he is not only guarding a terrible secret, but his hateful gaze reveals his true purpose -- Revenge."];
+    [boss setInfo:@"Before you stands the destroyed but risen warchief Baraghast.  His horrible visage once again sows fear in the hearts of all of your allies.  His undead ferocity swells with the ancient and evil power of Delsarn."];
     
     [boss addAbility:[Cleave normalCleave]];
     
@@ -1951,7 +1940,7 @@
     AvatarOfTorment1 *boss = [[AvatarOfTorment1 alloc] initWithHealth:2880000 damage:0 targets:0 frequency:0.0 choosesMT:NO ];
     [boss setTitle:@"The Avatar of Torment"];
     [boss setNamePlateTitle:@"Torment"];
-    [boss setInfo:@"From the fallen black heart of Baraghast's shattered soul rose a portal into another plane of existence.  Your allies cautiously moved through the portal and found themselves in a terrifying realm surrounded by shackled and burning souls.  Before you stands a massive creature of spawned of pure hatred and built for torment.  The final battle for your realm's purity begins now."];
+    [boss setInfo:@"From the dark heart of Baraghast's shattered corpse emerges a hideous and cackling demon of unfathomable power. Before you stands a massive creature spawned of pure hatred whose only purpose is torment."];
     
     DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
     [dcAbility setTitle:@"dis-cloud"];
@@ -2066,7 +2055,7 @@
     AvatarOfTorment2 *boss = [[AvatarOfTorment2 alloc] initWithHealth:1320000 damage:0 targets:0 frequency:0.0 choosesMT:NO ];
     [boss setTitle:@"The Avatar of Torment"];
     [boss setNamePlateTitle:@"Torment"];
-    [boss setInfo:@"The Avatar of Torment will not be defeated so easily."];
+    [boss setInfo:@"Torment will not be vanquished so easily."];
     
     DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
     [dcAbility setTitle:@"dis-cloud"];
@@ -2149,7 +2138,7 @@
     
     [boss setTitle:@"The Soul of Torment"];
     [boss setNamePlateTitle:@"Torment"];
-    [boss setInfo:@"Its body shattered and broken--the last gasp of this terrible creature conspires to unleash its most unspeakable power.  This is the last stand of your realm against the evil that terrorizes it."];
+    [boss setInfo:@"Its body shattered and broken--the last gasp of this terrible creature conspires to unleash its most unspeakable power.  Your allies are bleeding and broken and your souls are exhausted by the strain of endless battle, but the final evil must be vanquished..."];
     
     Attack *attack = [[[Attack alloc] initWithDamage:120 andCooldown:20] autorelease];
     ContagiousEffect *contagious = [[[ContagiousEffect alloc] initWithDuration:10.0 andEffectType:EffectTypeNegative] autorelease];
@@ -2163,7 +2152,7 @@
     [boss addAbility:attack];
     
     AbilityDescriptor *contagiousDesc = [[[AbilityDescriptor alloc] init] autorelease];
-    [contagiousDesc setAbilityDescription:@"The Soul of Torment poisons a target causes them to take damage periodically.  If the target's health is healed too highly this effect will spread to up to 3 additional allies."];
+    [contagiousDesc setAbilityDescription:@"The Soul of Torment poisons a target causing them to take damage periodically.  If the target's health is healed too much this effect will spread to up to 3 additional allies."];
     [contagiousDesc setAbilityName:@"Contagious Toxin"];
     [contagiousDesc setIconName:@"unknown_ability.png"];
     [boss addAbilityDescriptor:contagiousDesc];
@@ -2177,9 +2166,9 @@
 {
     [self.announcer announce:@"The Soul of Torment hungers for souls"];
 
-    IRHEDispelsOnHeal *soulDrainEffect = [[[IRHEDispelsOnHeal alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
-    [soulDrainEffect setIncreasePerTick:.05];
-    [soulDrainEffect setValuePerTick:-80];
+    StackingRHEDispelsOnHeal *soulDrainEffect = [[[StackingRHEDispelsOnHeal alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+    [soulDrainEffect setMaxStacks:25];
+    [soulDrainEffect setValuePerTick:-20];
     [soulDrainEffect setNumOfTicks:10];
     [soulDrainEffect setSpriteName:@"shadow_curse.png"];
     [soulDrainEffect setTitle:@"soul-drain-eff"];

@@ -463,7 +463,7 @@
 	NSInteger energyDiff = [self energy] - [theSpell energyCost];
 	if (energyDiff < 0) {
         if (self.isLocalPlayer){
-            [self.announcer errorAnnounce:@"Not enough Energy"];
+            [self.announcer errorAnnounce:@"Not enough mana"];
             [[AudioController sharedInstance] playTitle:OUT_OF_MANA_TITLE];
         }
 		return;

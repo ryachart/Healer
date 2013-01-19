@@ -23,6 +23,7 @@
 #import "BackgroundSprite.h"
 #import "NormalModeCompleteScene.h"
 #import "BasicButton.h"
+#import "CCLabelTTFShadow.h"
 
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812
@@ -147,18 +148,18 @@
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(312,40, 400, 50)] autorelease];
         self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(804, 485, 200, 50)] autorelease];
         
-        self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Marion-Bold" fontSize:32.0];
+        self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
         [self.announcementLabel setPosition:CGPointMake(512, 480)];
         [self.announcementLabel setColor:ccYELLOW];
         [self.announcementLabel setVisible:NO];
         
-        self.announcementLabelShadow = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Marion-Bold" fontSize:32.0];
+        self.announcementLabelShadow = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
         [self.announcementLabelShadow setPosition:CGPointMake(511, 479)];
         [self.announcementLabelShadow setColor:ccc3(25, 25, 25)];
         [self.announcementLabelShadow setVisible:NO];
         
-        self.errAnnouncementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"Marion-Bold" fontSize:32.0];
-        [self.errAnnouncementLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .4)];
+        self.errAnnouncementLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
+        [self.errAnnouncementLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .62)];
         [self.errAnnouncementLabel setColor:ccRED];
         [self.errAnnouncementLabel setVisible:NO];
         
@@ -177,6 +178,7 @@
                     if (self.player.activeSpells.count > i) {
                         [self.spellView1  setSpellData:[[self.player activeSpells] objectAtIndex:i]];
                         [self.spellView1 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                        [self.spellView1 setPlayer:self.player];
                     }
                     [self addChild:self.spellView1];
                     break;
@@ -185,6 +187,7 @@
                     if (self.player.activeSpells.count > i) {
                         [self.spellView2 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
                         [self.spellView2 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                        [self.spellView2 setPlayer:self.player];
                     }
                     [self addChild:self.spellView2];
                     break;
@@ -193,6 +196,7 @@
                     if (self.player.activeSpells.count > i) {
                         [self.spellView3 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
                         [self.spellView3 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                        [self.spellView3 setPlayer:self.player];
                     }
                     [self addChild:self.spellView3];
                     break;
@@ -201,6 +205,7 @@
                     if (self.player.activeSpells.count > i) {
                         [self.spellView4 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
                         [self.spellView4 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                        [self.spellView4 setPlayer:self.player];
                     }
                     [self addChild:self.spellView4];
                     break;
@@ -859,9 +864,10 @@
 }
 
 -(void)errorAnnounce:(NSString*)announcement{
+    [self.errAnnouncementLabel stopAllActions];
     [self.errAnnouncementLabel setVisible:YES];
     [self.errAnnouncementLabel setString:announcement];
-    [self.errAnnouncementLabel runAction:[CCSequence actions:[CCScaleTo actionWithDuration:1.5 scale:1.25], [CCScaleTo actionWithDuration:1.5 scale:1.0],[CCDelayTime actionWithDuration:5.0], [CCCallBlockN actionWithBlock:^(CCNode *node){
+    [self.errAnnouncementLabel runAction:[CCSequence actions:[CCScaleTo actionWithDuration:.2 scale:1.25], [CCScaleTo actionWithDuration:.33 scale:1.0],[CCDelayTime actionWithDuration:.5], [CCCallBlockN actionWithBlock:^(CCNode *node){
         [node setVisible:NO];
         [(CCLabelTTF*)node setString:@""];
     }],nil]];

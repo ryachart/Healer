@@ -101,10 +101,10 @@
         [self.isFocusedLabel setColor:ccc3(220, 0, 0)];
         [self.isFocusedLabel setShadowOffset:CGPointMake(-1, -1)];
         
-		self.healthLabel =  [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:12.0f];   
+		self.healthLabel =  [CCLabelTTF labelWithString:@"" fontName:@"TrebuchetMS-Bold" fontSize:12.0f];
+        [self.healthLabel setColor:ccBLACK];
         [self.healthLabel setPosition:CGPointMake(frame.size.width * .71, frame.size.height * .5)];
         [self.healthLabel setContentSize:CGSizeMake(frame.size.width * .5, frame.size.height * .25)];
-        [self.healthLabel setColor:ccc3(0, 0, 0)];
         
         self.pEffectClippingNode = [ClippingNode node];
         self.pEffectDurationBack = [CCSprite spriteWithSpriteFrameName:@"effect_bottom_mask.png"];
@@ -338,7 +338,7 @@
 	NSString *healthText;
 	if (self.memberData.health >= 1){
         float totalTime = .33;
-		healthText = [NSString stringWithFormat:@"%3.1f%%", (((float)self.memberData.health) / self.memberData.maximumHealth)*100];
+		healthText = [NSString stringWithFormat:@"%3.0f%%", (((float)self.memberData.health) / self.memberData.maximumHealth)*100];
         if (healthDelta != 0) {
             [self.healthBarMask stopAllActions];
             [self.healthBarMask runAction:[CCMoveTo actionWithDuration:totalTime * deltaPercentage position:CGPointMake(0, -(self.healthBarMask.contentSize.height) * (1 - self.memberData.healthPercentage))]];

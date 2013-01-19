@@ -7,9 +7,12 @@
 //
 
 #import "PlayerSpellButton.h"
+#import "Player.h"
+
 
 @interface PlayerSpellButton ()
 @property (nonatomic, assign) CCLayerColor *cooldownCountLayer;
+@property (nonatomic, assign) CCLayerColor *oomLayer;
 @property (nonatomic, assign) CCSprite *spellIconSprite;
 @property (nonatomic, assign) CCSprite *pressedSprite;
 @end
@@ -42,6 +45,11 @@
         [self.cooldownCountLayer setContentSize:frame.size];
         [self.cooldownCountLayer setVisible:NO];
         [self addChild:self.cooldownCountLayer z:10];
+        
+        self.oomLayer = [CCLayerColor layerWithColor:ccc4(255, 0, 0, 120)];
+        [self.oomLayer setContentSize:CGSizeMake(self.contentSize.width, self.contentSize.height)];
+        [self.oomLayer setVisible:NO];
+        [self addChild:self.oomLayer z:11];
 
         
     }
@@ -96,6 +104,12 @@
     }else if ([self.cooldownCountLayer visible]){
         [self.cooldownCountLayer setVisible:NO];
         [self.cooldownCountLayer setContentSize:self.contentSize];
+    }
+    
+    if (self.player && self.player.energy < self.spellData.energyCost && !self.cooldownCountLayer.visible) {
+        [self.oomLayer setVisible:YES];
+    } else {
+        [self.oomLayer setVisible:NO];
     }
 }
 

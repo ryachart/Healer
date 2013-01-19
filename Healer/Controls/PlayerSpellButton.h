@@ -12,13 +12,13 @@
 
 @class PlayerSpellButtonDelegate;
 @class Chargable;
-@interface PlayerSpellButton : CCLayer <CCRGBAProtocol> {
-    
-	PlayerSpellButtonDelegate *interactionDelegate;
-}
+@class Player;
+@interface PlayerSpellButton : CCLayer <CCRGBAProtocol>
+
 @property (nonatomic, assign) CCLabelTTF *spellTitle;
 @property (nonatomic, assign) CCLabelTTF *spellTitleShadow;
 @property (nonatomic, retain, setter=setSpellData:) Spell *spellData;
+@property (nonatomic, assign) Player *player;
 @property (nonatomic, assign) PlayerSpellButtonDelegate *interactionDelegate;
 - (id)initWithFrame:(CGRect)frame;
 -(void)setSpellData:(Spell*)theSpell;

@@ -14,6 +14,8 @@
 #endif
 
 #define FUZZ(value, range) (((arc4random() % ((int)range * 2) + (100 - (int)range)))/100.0 * (int)value)
+#define LOAD_EFFECT(effectPath) [[SimpleAudioController sharedEngine] preloadEffect:effectPath]
+#define PLAY_EFFECT(effectPath) [[SimpleAudioController sharedEngine] playEffect:effectPath]
+#define STOP_EFFECT(effectInt) [[SimpleAudioController sharedEngine] stopEffect:effectInt]
 
-
-
+#define PLAY_BG_MUSIC(musicPath) [[SimpleAudioController sharedEngine] playBackgroundMusic:musicPath]

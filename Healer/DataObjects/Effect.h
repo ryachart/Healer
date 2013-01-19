@@ -64,6 +64,7 @@ typedef enum {
 @property (readwrite) BOOL isIndependent; //Max Stacks doesnt apply and other effects are never the same as this effect
 @property (nonatomic, readwrite) BOOL considerDodgeForDamage;
 @property (nonatomic, readwrite) NSInteger visibilityPriority;
+@property (nonatomic, readonly) NSInteger visibleStacks;
 - (void)reset;
 - (BOOL)isKindOfEffect:(Effect*)effect;
 //Weird fucking hacky solution for figuring out the owner in network play
@@ -150,10 +151,6 @@ typedef enum {
 @interface ExpiresAtFullHealthRHE: RepeatedHealthEffect
 @end
 
-@interface RothPoison : RepeatedHealthEffect
-@property (nonatomic, readwrite) NSInteger dispelDamageValue;
-@property (nonatomic, readwrite) NSInteger baseValue;
-@end
 
 @interface DarkCloudEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
 @property (nonatomic, readwrite) NSInteger baseValue;
@@ -238,4 +235,14 @@ typedef enum {
 @end
 
 @interface ContagiousEffect : RepeatedHealthEffect
+@end
+
+@interface StackingRepeatedHealthEffect : RepeatedHealthEffect
+@end
+
+@interface StackingRHEDispelsOnHeal : StackingRepeatedHealthEffect <HealthAdjustmentModifier>
+@end
+
+@interface RaidDamageOnDispelStackingRHE : StackingRepeatedHealthEffect
+@property (nonatomic, readwrite) NSInteger dispelDamageValue;
 @end

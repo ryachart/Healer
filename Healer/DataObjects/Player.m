@@ -453,13 +453,12 @@
 	if ([self canCast] == NO){
 		return;
 	}
+    
+    if (self.spellBeingCast) {
+        return;
+    }
 	
 	RaidMember* primaryTarget = [targets objectAtIndex:0];
-	
-	if (self.spellBeingCast == theSpell && spellTarget == primaryTarget ) {
-		//NSLog(@"Attempting a recast on the same target.  Cancelling..");
-		return;
-	}
 	NSInteger energyDiff = [self energy] - [theSpell energyCost];
 	if (energyDiff < 0) {
         if (self.isLocalPlayer){

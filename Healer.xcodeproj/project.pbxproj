@@ -106,6 +106,7 @@
 		BFD106F7163A282D002318CE /* LevelSelectMapScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106F6163A282D002318CE /* LevelSelectMapScene.m */; };
 		BFD106FB163A2956002318CE /* LevelSelectMapNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106FA163A2956002318CE /* LevelSelectMapNode.m */; };
 		BFD106FE163A29D5002318CE /* LevelSelectSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106FD163A29D5002318CE /* LevelSelectSprite.m */; };
+		BFD240CD16AC8E09007010D0 /* bosses in Resources */ = {isa = PBXBuildFile; fileRef = BFD240CC16AC8E09007010D0 /* bosses */; };
 		BFD804F51530D17400570A0A /* Encounter.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD804F41530D17400570A0A /* Encounter.m */; };
 		BFD8EC59160ED2E100BAF83A /* libChipmunk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB70160ED1FF00BAF83A /* libChipmunk.a */; };
 		BFD8EC5A160ED2E100BAF83A /* libcocos2d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB72160ED1FF00BAF83A /* libcocos2d.a */; };
@@ -721,6 +722,7 @@
 		BFD106FA163A2956002318CE /* LevelSelectMapNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelSelectMapNode.m; sourceTree = "<group>"; };
 		BFD106FC163A29D5002318CE /* LevelSelectSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelSelectSprite.h; sourceTree = "<group>"; };
 		BFD106FD163A29D5002318CE /* LevelSelectSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelSelectSprite.m; sourceTree = "<group>"; };
+		BFD240CC16AC8E09007010D0 /* bosses */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bosses; sourceTree = SOURCE_ROOT; };
 		BFD804F31530D17400570A0A /* Encounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Encounter.h; path = DataObjects/Encounter.h; sourceTree = "<group>"; };
 		BFD804F41530D17400570A0A /* Encounter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Encounter.m; path = DataObjects/Encounter.m; sourceTree = "<group>"; };
 		BFD8EAFB160ED1FC00BAF83A /* cocos2d-ios.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "cocos2d-ios.xcodeproj"; path = "cocos2d-iphone/cocos2d-ios.xcodeproj"; sourceTree = "<group>"; };
@@ -832,6 +834,7 @@
 		38024DC013C2564D003D36F2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BFD240CC16AC8E09007010D0 /* bosses */,
 				BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */,
 				BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */,
 				BF865F22159F8655007F5DBF /* healer.png */,
@@ -1847,6 +1850,7 @@
 				BF87D85B1601ABFB00BEAD5B /* tips.plist in Resources */,
 				BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */,
 				BF4CD1CA1642D61600EB2336 /* DebugViewController.xib in Resources */,
+				BFD240CD16AC8E09007010D0 /* bosses in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

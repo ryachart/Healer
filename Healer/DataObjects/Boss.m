@@ -467,14 +467,10 @@
     
     [boss setTitle:@"Mischievious Imps"];
     [boss setInfo:@"As the dark mists further encroach upon the kingdom more strange creatures begin terrorizing the innocents.  Viscious imps have infiltrated the alchemical storehouses on the outskirts of Terun."];
-    [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw1" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw1" ofType:@"m4a"]]];
-    [[AudioController sharedInstance] addNewPlayerWithTitle:@"imp_throw2" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/imp_throw2" ofType:@"m4a"]]];
     return [boss autorelease];
 }
 
 -(void)dealloc{
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"imp_throw1"];
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"imp_throw2"];
     [super dealloc];
 }
 
@@ -625,7 +621,7 @@
     
     BefouledTreant *boss = [[BefouledTreant alloc] initWithHealth:580000 damage:bossDamage targets:1 frequency:3.0 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
-    [boss setTitle:@"Befouled Treant"];
+    [boss setTitle:@"Befouled Akarus"];
     [boss setInfo:@"The Akarus, an ancient tree that has long rested in the Peraxu Forest, has become tainted with the foul energy of the dark mists. This once great tree must be ended for good."];
     
     
@@ -666,7 +662,7 @@
 }
 
 -(void)performRootquakeOnRaid:(Raid*)raid{
-    [self.announcer announce:@"The Treant's roots move the earth."];
+    [self.announcer announce:@"The Akarus' roots move the earth."];
     [self.announcer displayScreenShakeForDuration:6.0];
     for (RaidMember *member in raid.raidMembers){
         RepeatedHealthEffect *rootquake = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegativeInvisible];
@@ -680,7 +676,7 @@
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (percentage == 97.0 || percentage == 75.0 || percentage == 51.0 || percentage == 30.0){
-        [self.announcer announce:@"The Befouled Treant's pulls its enormous branches back to lash out at your allies."];
+        [self.announcer announce:@"The Akarus pulls its enormous branches back to lash out at your allies."];
     }
     if (percentage == 96.0 || percentage == 74.0 || percentage == 50.0 || percentage == 29.0){
         [self performBranchAttackOnRaid:raid];
@@ -903,15 +899,11 @@
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses {
     if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq choosesMT:chooses ]){
-        [[AudioController sharedInstance] addNewPlayerWithTitle:@"trulzar_laugh" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/trulzar_laugh" ofType:@"m4a"]]];
-        [[AudioController sharedInstance] addNewPlayerWithTitle:@"trulzar_death" andURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Sounds/trulzar_death" ofType:@"m4a"]]];
     }
     return self;
 }
 
 -(void)dealloc{
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"trulzar_laugh"];
-    [[AudioController sharedInstance] removeAudioPlayerWithTitle:@"trulzar_death"];
     [super dealloc];
 }
 -(void)applyPoisonToTarget:(RaidMember*)target{

@@ -430,7 +430,7 @@
 }
 
 +(id)defaultSpell{
-    Regrow *regrow = [[Regrow alloc] initWithTitle:@"Regrow" healAmnt:0 energyCost:40 * kCostEfficiencyScale castTime:0.0 andCooldown:1.0];
+    Regrow *regrow = [[Regrow alloc] initWithTitle:@"Regrow" healAmnt:0 energyCost:25 * kCostEfficiencyScale castTime:0.0 andCooldown:1.0];
     [regrow setDescription:@"Heals for a moderate amount over 12 seconds."];
     
     RepeatedHealthEffect *hotEffect = [[RepeatedHealthEffect alloc] initWithDuration:12.0 andEffectType:EffectTypePositive];
@@ -463,6 +463,13 @@
 {
     [(ShieldEffect*)self.appliedEffect setAmountToShield:400*self.owner.healingDoneMultiplier];
     [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:theTime];
+}
+
+- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount{
+    //Override with a subclass
+    if (self.owner.isLocalPlayer){
+        [self.owner.announcer displayParticleSystemWithName:@"barrier_shimmer.plist" onTarget:target withOffset:CGPointMake(0,0)];
+    }
 }
 
 +(id)defaultSpell{
@@ -890,6 +897,12 @@
     [defaultSpell setAppliedEffect:bae];
     [bae release];
     return [defaultSpell autorelease];
+}
+- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount{
+    //Override with a subclass
+    if (self.owner.isLocalPlayer){
+        [self.owner.announcer displayParticleSystemWithName:@"barrier_shimmer.plist" onTarget:target withOffset:CGPointMake(0,0)];
+    }
 }
 @end
 

@@ -7,9 +7,9 @@
 	<key>blessed-power</key>
 	<string>Reduces Cast Times and Cooldowns by 10%.</string>
 	<key>insight</key>
-	<string>Reduces Energy Costs by 10%.</string>
+	<string>Reduces Mana Costs by 10%.</string>
 	<key>surging-glory</key>
-	<string>Increases natural mana regeneration by 25%.</string>
+	<string>Increases natural mana regeneration by 10%.</string>
 	<key>shining-aegis</key>
 	<string>Your heals reduce their target&apos;s damage taken by 7.5% for 10 seconds.</string>
 	<key>after-light</key>

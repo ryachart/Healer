@@ -6,16 +6,16 @@
 //  Copyright (c) 2012 Apple. All rights reserved.
 //
 
-#import "ViewDivinityChoiceLayer.h"
-#import "DivinityTierCard.h"
+#import "ViewTalentChoiceLayer.h"
+#import "TalentTierCard.h"
 #import "BasicButton.h"
 #import "BackgroundSprite.h"
 
-@interface ViewDivinityChoiceLayer ()
+@interface ViewTalentChoiceLayer ()
 @property (nonatomic, assign) BackgroundSprite *alertDialogBackground;
 @end
 
-@implementation ViewDivinityChoiceLayer
+@implementation ViewTalentChoiceLayer
 
 - (id)initWithDivinityChoice:(NSString *)choice inTier:(NSInteger)tier {
     if (self = [super init]) {
@@ -25,7 +25,7 @@
         [self.alertDialogBackground setAnchorPoint:CGPointMake(.5, .5)];
         [self addChild:self.alertDialogBackground];
         
-        DivinityTierCard *tierCard = [[[DivinityTierCard alloc] initForDivinityTier:tier withSelectedChoice:choice forceUnlocked:YES showsBackground:NO] autorelease];
+        TalentTierCard *tierCard = [[[TalentTierCard alloc] initForDivinityTier:tier withSelectedChoice:choice forceUnlocked:YES showsBackground:NO] autorelease];
         [tierCard setAnchorPoint:CGPointMake(.5, .5)];
         [tierCard setPosition:CGPointMake(210, 230)];
         [self.alertDialogBackground addChild:tierCard];

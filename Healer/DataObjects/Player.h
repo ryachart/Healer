@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HealableTarget.h"
+#import "RaidMember.h"
 #import "Announcer.h"
 
 /* The Player class contains the necessary information for managing a player while
@@ -31,14 +31,13 @@ typedef int CastingDisabledReason;
 @class Boss;
 @class Raid;
 @class Spell;
-@class RaidMember;
 @class Effect;
 
 
 #define MINIMUM_AVATAR_TRIGGER_AMOUNT 25
 @protocol RedemptionDelegate;
 
-@interface Player : HealableTarget <RedemptionDelegate> {
+@interface Player : RaidMember <RedemptionDelegate> {
 	//In Game Data
 	NSArray *activeSpells;
 	float energy;

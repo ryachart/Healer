@@ -12,8 +12,8 @@
 #import "Shop.h"
 #import "ShopScene.h"
 #import "BackgroundSprite.h"
-#import "Divinity.h"
-#import "DivinityConfigScene.h"
+#import "Talents.h"
+#import "TalentScene.h"
 #import "BasicButton.h"
 #import "AudioController.h"
 #import "MultiplayerQueueScene.h"
@@ -50,7 +50,7 @@
         self.storeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(storeSelected) andTitle:@"Academy"];
         
         CCMenuItem *divinityButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(divinitySelected) andTitle:@"Talents"];
-        if (![Divinity isDivinityUnlocked]){
+        if (![Talents isDivinityUnlocked]){
             [divinityButton setIsEnabled:NO];
         }
     
@@ -147,7 +147,7 @@
 }
 
 -(void)divinitySelected{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[TalentScene alloc] init] autorelease]]];
 }
 
 - (void)dealloc {

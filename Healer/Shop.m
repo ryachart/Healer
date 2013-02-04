@@ -9,7 +9,7 @@
 #import "Spell.h"
 #import "ShopItem.h"
 #import "PlayerDataManager.h"
-#import "Divinity.h"
+#import "Talents.h"
 
 static NSArray *shopItems = nil;
 

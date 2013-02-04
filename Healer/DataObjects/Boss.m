@@ -275,7 +275,7 @@
 
 @implementation Ghoul
 +(id)defaultBoss{
-    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:21840 damage:200 targets:1 frequency:2.0 choosesMT:NO ];
+    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:10920 damage:200 targets:1 frequency:2.0 choosesMT:NO ];
     [ghoul setTitle:@"The Ghoul"];
     [ghoul setInfo:@"These are strange times in the once peaceful kingdom of Theronia.  A dark mist has set beyond the Eastern Mountains and corrupt creatures have begun attacking innocent villagers and travelers along the roads."];
     
@@ -393,7 +393,7 @@
 
 @implementation Drake 
 +(id)defaultBoss {
-    Drake *drake = [[Drake alloc] initWithHealth:400000 damage:0 targets:0 frequency:0 choosesMT:NO ];
+    Drake *drake = [[Drake alloc] initWithHealth:185000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [drake setTitle:@"Tainted Drake"];
     [drake setInfo:@"A Drake of Soldorn has not been seen in Theronia for ages, but the foul creature has been burning down cottages and farms as well as killing countless innocents.  You and your allies have cornered the drake and forced a confrontation."];
     
@@ -459,7 +459,7 @@
 @implementation MischievousImps
 @synthesize lastPotionThrow;
 +(id)defaultBoss {
-    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:405000 damage:0 targets:0 frequency:2.25 choosesMT:NO];
+    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:225000 damage:0 targets:0 frequency:2.25 choosesMT:NO];
     [boss removeAbility:boss.autoAttack];
     boss.autoAttack = [[[SustainedAttack alloc] initWithDamage:340 andCooldown:2.25] autorelease];
     boss.autoAttack.failureChance = .25;
@@ -619,7 +619,7 @@
 +(id)defaultBoss {
     NSInteger bossDamage = 390;
     
-    BefouledTreant *boss = [[BefouledTreant alloc] initWithHealth:580000 damage:bossDamage targets:1 frequency:3.0 choosesMT:YES ];
+    BefouledTreant *boss = [[BefouledTreant alloc] initWithHealth:560000 damage:bossDamage targets:1 frequency:3.0 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Befouled Akarus"];
     [boss setInfo:@"The Akarus, an ancient tree that has long rested in the Peraxu Forest, has become tainted with the foul energy of the dark mists. This once great tree must be ended for good."];
@@ -687,7 +687,7 @@
 @implementation FungalRavagers
 @synthesize isEnraged, secondTargetAttack, thirdTargetAttack;
 +(id)defaultBoss {
-    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:580000 damage:141 targets:1 frequency:2.0 choosesMT:YES ];
+    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:560000 damage:141 targets:1 frequency:2.0 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Fungal Ravagers"];
     [boss setInfo:@"As the dark mist consumes the Akarus ferocious beasts are birthed from its roots.  The ravagers immediately attack you and your allies."];
@@ -776,10 +776,10 @@
 @synthesize lastSickeningTime, numBubblesPopped;
 +(id)defaultBoss {
     //427500
-    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:580000 damage:330 targets:1 frequency:2.5 choosesMT:YES ];
+    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:560000 damage:330 targets:1 frequency:2.5 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Plaguebringer Colossus"];
-    [boss setInfo:@"As the Akarus is finally consumed its branches begin to quiver and shake.  As the whole ground rumbles beneath its might, you and your allies witness a hideous transformation.  What once was a peaceful treant has now become an abomination.  Only truly foul magics could have caused this."];
+    [boss setInfo:@"As the Akarus is finally consumed its branches begin to quiver and shake.  As the ground rumbles beneath its might, you and your allies witness a hideous transformation.  What once was a peaceful treant has now become an abomination.  Only truly foul magics could have caused this."];
     
     AbilityDescriptor *sickenDesc = [[AbilityDescriptor alloc] init];
     [sickenDesc setAbilityDescription:@"The Colossus will sicken targets causing them to take damage until they are healed to full health."];
@@ -1368,11 +1368,11 @@
 }
 
 +(id)defaultBoss {
-    Baraghast *boss = [[Baraghast alloc] initWithHealth:3040000 damage:150 targets:1 frequency:1.25 choosesMT:YES ];
+    Baraghast *boss = [[Baraghast alloc] initWithHealth:3040000 damage:150 targets:1 frequency:1.25 choosesMT:YES];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
     [boss setNamePlateTitle:@"Baraghast"];
-    [boss setInfo:@"As his champions fell, the dark warlord emerged from deep in the encampment.  Disgusted with the failure of his champions, he confront you and your allies himself."];
+    [boss setInfo:@"As his champions fell, the dark warlord emerged from deep in the encampment.  Disgusted with the failure of his champions, he confronts you and your allies himself."];
     
     [boss addAbility:[Cleave normalCleave]];
     

@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Apple. All rights reserved.
 //
 
-#import "DivinityConfigScene.h"
+#import "TalentScene.h"
 #import "HealerStartScene.h"
 #import "BasicButton.h"
 #import "Shop.h"
@@ -21,12 +21,12 @@
 #define TIER_TABLE_Z 100
 #define CHARGED_BAR_Z 50
 
-@interface DivinityConfigScene  ()
+@interface TalentScene  ()
 @property (nonatomic, readwrite) BOOL showingDivPreview;
 
 @end
 
-@implementation DivinityConfigScene
+@implementation TalentScene
 
 - (id)init {
     if (self = [super init]){
@@ -65,7 +65,7 @@
     }
     
     for (int i = 0; i < NUM_DIV_TIERS; i++){
-        DivinityTierCard *tierCard = [[[DivinityTierCard alloc] initForDivinityTier:i] autorelease];
+        TalentTierCard *tierCard = [[[TalentTierCard alloc] initForDivinityTier:i] autorelease];
         [tierCard setDelegate:self];
         [tierCard setPosition:CGPointMake(696, 768 - 250 - (i * 96))];
         [self addChild:tierCard z:TIER_TABLE_Z + 1];
@@ -79,7 +79,7 @@
             [chargedPipes[i] removeFromParentAndCleanup:YES];
         }
     }
-    for (int i = 0; i < [Divinity numDivinityTiersUnlocked]; i++){
+    for (int i = 0; i < [Talents numDivinityTiersUnlocked]; i++){
         CCSprite *chargedPipe = [CCSprite spriteWithSpriteFrameName:@"divinity_unlocked_pipe.png"];
         [chargedPipe setAnchorPoint:CGPointZero];
         [chargedPipe setPosition:CGPointMake(133, 768 - 224 - (i * 111))];
@@ -101,11 +101,11 @@
     }
     
     for (int i = 0; i < NUM_DIV_TIERS; i++){
-        NSArray *choices = [Divinity divinityChoicesForTier:i];
+        NSArray *choices = [Talents divinityChoicesForTier:i];
         for (int j = 0; j < choices.count; j++){
             NSString *choice = [choices objectAtIndex:j];
             CGPoint choicePosition = CGPointMake(90 + (j * 200), 768 - 152 - (i * 111));
-            CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[Divinity spriteFrameNameForChoice:choice]];
+            CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[Talents spriteFrameNameForChoice:choice]];
             if (!frame){
                 frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"default_divinity.png"];
             }
@@ -126,7 +126,7 @@
             if ([[[PlayerDataManager localPlayer] selectedChoiceForTier:i] isEqualToString:choice]){
                 [selectedButtonOverlay setOpacity:255];
             }
-            if ([Divinity numDivinityTiersUnlocked] > i){
+            if ([Talents numDivinityTiersUnlocked] > i){
                 CCMenuItemSprite *menuItem = [CCMenuItemSprite itemWithNormalSprite:selectedButtonOverlay selectedSprite:selectedButtonOverlaySelected target:self selector:@selector(selectedChoice:)];
                 [menuItem setTag:i];
                 [menuItem setUserData:choice];
@@ -163,7 +163,7 @@
     if (!self.showingDivPreview) {
         NSString* choice = (NSString*)[sender userData];
         NSInteger tier = [sender tag];
-        ViewDivinityChoiceLayer *choiceAlert = [[[ViewDivinityChoiceLayer alloc] initWithDivinityChoice:choice inTier:tier] autorelease];
+        ViewTalentChoiceLayer *choiceAlert = [[[ViewTalentChoiceLayer alloc] initWithDivinityChoice:choice inTier:tier] autorelease];
         [choiceAlert setDelegate:self];
         [self addChild:choiceAlert z:TIER_TABLE_Z + 100];
         self.showingDivPreview = YES;

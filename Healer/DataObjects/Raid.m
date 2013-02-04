@@ -7,31 +7,35 @@
 //
 
 #import "Raid.h"
+#import "Player.h"
+
 @interface Raid ()
 @property (nonatomic, retain) NSMutableDictionary *raidMemberBattleIDDictionary;
 @end
 
 @implementation Raid
 
-@synthesize raidMembers, raidMemberBattleIDDictionary;
+@synthesize raidMemberBattleIDDictionary;
 -(void)dealloc{
-    [raidMembers release]; raidMembers = nil;
+    [_players release]; _players = nil;
+    [_members release]; _members = nil;
     [raidMemberBattleIDDictionary release]; raidMemberBattleIDDictionary = nil;
     [super dealloc];
 }
 
 -(id)init{
     if (self = [super init]){
-        raidMembers = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];
+        _members = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];
         self.raidMemberBattleIDDictionary = [NSMutableDictionary dictionaryWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];
+        _players = [[NSMutableArray arrayWithCapacity:2] retain];
 	}
 	return self;
 }
 
 -(void)addRaidMember:(RaidMember*)member
 {
-	if ([raidMembers count] < MAXIMUM_RAID_MEMBERS_ALLOWED && ![raidMembers containsObject:member]){
-		[raidMembers addObject:member];
+	if ([self.raidMembers count] < MAXIMUM_RAID_MEMBERS_ALLOWED && ![self.raidMembers containsObject:member]){
+		[_members addObject:member];
         
         if (member.battleID){
             [self.raidMemberBattleIDDictionary setObject:member forKey:member.battleID];
@@ -41,6 +45,13 @@
 
         }
 	}
+}
+
+- (void)addPlayer:(Player *)player
+{
+    if (![self.players containsObject:player]) {
+        [self.players addObject:player];
+    }
 }
 
 -(NSInteger)deadCount{
@@ -54,11 +65,16 @@
     return deadCount;
 }
 
+- (NSArray *)raidMembers
+{
+    NSArray *members = [self.players arrayByAddingObjectsFromArray:_members];
+    return members;
+}
+
 -(NSArray*)livingMembers
 {
 	NSMutableArray *aliveMembers = [[[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED] autorelease];
-	
-	for (HealableTarget *member in raidMembers)
+	for (HealableTarget *member in self.raidMembers)
 	{
 		if (![member isDead]){
 			[aliveMembers addObject:member];

@@ -160,7 +160,8 @@
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
         
         numWizard = 1;
-        numChampion = 3;
+        numArcher = 1;
+        numChampion = 1;
         numGuardian = 1;
         bossKey = @"troll";
     }
@@ -169,7 +170,7 @@
         basicBoss = [Drake defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell],[GreaterHeal defaultSpell], nil];
         numWizard = 1;
-        numArcher = 2;
+        numArcher = 1;
         numChampion = 1;
         numGuardian = 1;
         bossKey = @"drake";
@@ -180,7 +181,6 @@
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
         numWizard = 1;
         numArcher = 1;
-        numBerserker = 1;
         numChampion = 1;
         numGuardian = 1;
         bossKey = @"imps";
@@ -190,10 +190,10 @@
         basicBoss = [BefouledTreant defaultBoss];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell],[ForkedHeal defaultSpell], nil];
         
+        numWizard = 2;
         numArcher = 2;
         numWarlock = 2;
-        numWizard = 2;
-        numChampion = 3;
+        numChampion = 2;
         numGuardian = 1;
         bossKey = @"treant";
     }
@@ -205,7 +205,7 @@
         numArcher = 2;
         numWarlock = 1;
         numWizard = 2;
-        numChampion = 2;
+        numChampion = 1;
         numGuardian = 3;
         bossKey = @"fungalravagers";
     }
@@ -217,7 +217,7 @@
         numArcher = 2;
         numWarlock = 2;
         numWizard = 2;
-        numChampion = 3;
+        numChampion = 2;
         numGuardian = 1;
         bossKey = @"plaguebringer";
     }
@@ -230,7 +230,7 @@
         numArcher = 4;
         numWarlock = 2;
         numBerserker = 5;
-        numChampion = 5;
+        numChampion = 4;
         numGuardian = 1;
         bossKey = @"trulzar";
     }
@@ -242,7 +242,7 @@
         numArcher = 2;
         numWarlock = 4;
         numBerserker = 5;
-        numChampion = 5;
+        numChampion = 4;
         numGuardian = 1;
         bossKey = @"council";
     }
@@ -255,7 +255,7 @@
         numArcher = 2;
         numWarlock = 3;
         numBerserker = 5;
-        numChampion = 5;
+        numChampion = 4;
         numGuardian = 2;
         bossKey = @"twinchampions";
     }
@@ -268,7 +268,7 @@
         numArcher = 3;
         numWarlock = 3;
         numBerserker = 5;
-        numChampion = 5;
+        numChampion = 4;
         numGuardian = 1;
         bossKey = @"baraghast";
     }
@@ -281,7 +281,7 @@
         numArcher = 3;
         numWarlock = 3;
         numBerserker = 5;
-        numChampion = 5;
+        numChampion = 4;
         numGuardian = 1;
         bossKey = @"tyonath";
     }
@@ -294,7 +294,7 @@
         numArcher = 3;
         numWarlock = 4;
         numBerserker = 3;
-        numChampion = 4;
+        numChampion = 3;
         numGuardian = 3; //Blooddrinkers
         bossKey = @"gatekeeper";
     }
@@ -307,7 +307,7 @@
         numWarlock = 4;
         numArcher = 4;
         numBerserker = 4;
-        numChampion = 4;
+        numChampion = 3;
         numGuardian = 1;
         bossKey = @"skeletaldragon";
     }
@@ -320,7 +320,7 @@
         numWizard = 3;
         numWarlock = 4;
         numBerserker = 4;
-        numChampion = 4;
+        numChampion = 3;
         numGuardian = 1;
         bossKey = @"colossusbone";
     }
@@ -333,7 +333,7 @@
         numWarlock = 4;
         numWizard = 3;
         numBerserker = 4;
-        numChampion = 4;
+        numChampion = 3;
         numGuardian = 1;
         bossKey = @"overseer";
     }
@@ -346,7 +346,7 @@
         numWarlock = 4;
         numWizard = 3;
         numBerserker = 4;
-        numChampion = 4;
+        numChampion = 3;
         numGuardian = 1;
         bossKey = @"unspeakable";
     }
@@ -358,7 +358,7 @@
         numWarlock = 4;
         numArcher = 4;
         numBerserker = 4;
-        numChampion = 4;
+        numChampion = 3;
         numGuardian = 1;
         bossKey = @"baraghastreborn";
     }
@@ -371,7 +371,7 @@
         numWarlock = 4;
         numArcher = 4;
         numBerserker = 4;
-        numChampion = 4;
+        numChampion = 3;
         numGuardian = 1;
         bossKey = @"avataroftorment";
     }
@@ -384,7 +384,7 @@
         numWarlock = 4;
         numArcher = 4;
         numBerserker = 4;
-        numChampion = 4;
+        numChampion = 3;
         numGuardian = 1;
         bossKey = @"avataroftorment";
     }
@@ -397,7 +397,7 @@
         numWarlock = 4;
         numArcher = 4;
         numBerserker = 4;
-        numChampion = 4;
+        numChampion = 3;
         numGuardian = 1;
         bossKey = @"souloftorment";
     }

@@ -311,7 +311,7 @@
 }
 +(id)defaultSpell{
     Heal *heal = [[[Heal alloc] initWithTitle:@"Heal" healAmnt:250 energyCost:10 * kCostEfficiencyScale castTime:2.0 andCooldown:0.0] autorelease];
-    [heal setDescription:@"Heals your target for a small amount."];
+    [heal setDescription:@"Heals your target for a small amount. This spell is extremely mana efficient."];
     return heal;
 }
 

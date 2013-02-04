@@ -33,7 +33,7 @@
 		387E7B08145E1263006D9266 /* Spell.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AFE145E1263006D9266 /* Spell.m */; };
 		387E7B27145E1375006D9266 /* BossHealthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B0A145E1375006D9266 /* BossHealthView.m */; };
 		387E7B2E145E1375006D9266 /* PlayerCastBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B18145E1375006D9266 /* PlayerCastBar.m */; };
-		387E7B2F145E1375006D9266 /* PlayerEnergyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B1A145E1375006D9266 /* PlayerEnergyView.m */; };
+		387E7B2F145E1375006D9266 /* PlayerStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B1A145E1375006D9266 /* PlayerStatusView.m */; };
 		387E7B30145E1375006D9266 /* PlayerHealthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B1C145E1375006D9266 /* PlayerHealthView.m */; };
 		387E7B31145E1375006D9266 /* RaidMemberHealthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B1E145E1375006D9266 /* RaidMemberHealthView.m */; };
 		387E7B32145E1375006D9266 /* RaidView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B20145E1375006D9266 /* RaidView.m */; };
@@ -45,7 +45,7 @@
 		387E7B64145E177B006D9266 /* PlayerSpellButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B61145E177B006D9266 /* PlayerSpellButton.m */; };
 		387E82A4164F1648009F11E6 /* SettingsScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E82A3164F1648009F11E6 /* SettingsScene.m */; };
 		38B0BB251657694300D31540 /* RatingCounterSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 38B0BB241657694300D31540 /* RatingCounterSprite.m */; };
-		38B0BB28165779BC00D31540 /* ViewDivinityChoiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 38B0BB27165779BC00D31540 /* ViewDivinityChoiceLayer.m */; };
+		38B0BB28165779BC00D31540 /* ViewTalentChoiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 38B0BB27165779BC00D31540 /* ViewTalentChoiceLayer.m */; };
 		38F1B45C15CA30D8008B2D99 /* backgrounds in Resources */ = {isa = PBXBuildFile; fileRef = 38F1B45B15CA30D8008B2D99 /* backgrounds */; };
 		BF0022BE163EE94C00384882 /* EncounterCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0022BD163EE94C00384882 /* EncounterCard.m */; };
 		BF0557A015268D0A006B4781 /* ProjectileEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF05579F15268D0A006B4781 /* ProjectileEffect.m */; };
@@ -77,8 +77,8 @@
 		BF8249D71526D7C2000B554B /* RaidMemberPreBattleCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */; };
 		BF865F21159F8652007F5DBF /* healer@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF865F20159F8651007F5DBF /* healer@2x.png */; };
 		BF865F23159F8655007F5DBF /* healer.png in Resources */ = {isa = PBXBuildFile; fileRef = BF865F22159F8655007F5DBF /* healer.png */; };
-		BF865F26159F9878007F5DBF /* Divinity.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F25159F9878007F5DBF /* Divinity.m */; };
-		BF865F29159F9C1F007F5DBF /* DivinityConfigScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F28159F9C1F007F5DBF /* DivinityConfigScene.m */; };
+		BF865F26159F9878007F5DBF /* Talents.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F25159F9878007F5DBF /* Talents.m */; };
+		BF865F29159F9C1F007F5DBF /* TalentScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F28159F9C1F007F5DBF /* TalentScene.m */; };
 		BF865F2C15A031FB007F5DBF /* BasicButton.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F2B15A031FB007F5DBF /* BasicButton.m */; };
 		BF87D85B1601ABFB00BEAD5B /* tips.plist in Resources */ = {isa = PBXBuildFile; fileRef = BF87D85A1601ABFB00BEAD5B /* tips.plist */; };
 		BF8A50F415236D6300BEC882 /* GamePlayFTUELayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */; };
@@ -95,7 +95,7 @@
 		BFA60E44160CD331005FFE1B /* NormalModeCompleteScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA60E43160CD331005FFE1B /* NormalModeCompleteScene.m */; };
 		BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */; };
 		BFAFA3F415F43C650052FCA5 /* GoldCounterSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */; };
-		BFAFA3F915F54BBD0052FCA5 /* DivinityTierCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F815F54BBD0052FCA5 /* DivinityTierCard.m */; };
+		BFAFA3F915F54BBD0052FCA5 /* TalentTierCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F815F54BBD0052FCA5 /* TalentTierCard.m */; };
 		BFB46407154A25DD00503E30 /* ShopScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46406154A25DD00503E30 /* ShopScene.m */; };
 		BFB4640C154A262800503E30 /* ShopItemNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB4640B154A262800503E30 /* ShopItemNode.m */; };
 		BFB46411154A268900503E30 /* Shop.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46410154A268900503E30 /* Shop.m */; };
@@ -590,8 +590,8 @@
 		387E7B0A145E1375006D9266 /* BossHealthView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BossHealthView.m; path = Sprites/BossHealthView.m; sourceTree = "<group>"; };
 		387E7B17145E1375006D9266 /* PlayerCastBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayerCastBar.h; path = Sprites/PlayerCastBar.h; sourceTree = "<group>"; };
 		387E7B18145E1375006D9266 /* PlayerCastBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayerCastBar.m; path = Sprites/PlayerCastBar.m; sourceTree = "<group>"; };
-		387E7B19145E1375006D9266 /* PlayerEnergyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayerEnergyView.h; path = Sprites/PlayerEnergyView.h; sourceTree = "<group>"; };
-		387E7B1A145E1375006D9266 /* PlayerEnergyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayerEnergyView.m; path = Sprites/PlayerEnergyView.m; sourceTree = "<group>"; };
+		387E7B19145E1375006D9266 /* PlayerStatusView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayerStatusView.h; path = Sprites/PlayerStatusView.h; sourceTree = "<group>"; };
+		387E7B1A145E1375006D9266 /* PlayerStatusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayerStatusView.m; path = Sprites/PlayerStatusView.m; sourceTree = "<group>"; };
 		387E7B1B145E1375006D9266 /* PlayerHealthView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayerHealthView.h; path = Sprites/PlayerHealthView.h; sourceTree = "<group>"; };
 		387E7B1C145E1375006D9266 /* PlayerHealthView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayerHealthView.m; path = Sprites/PlayerHealthView.m; sourceTree = "<group>"; };
 		387E7B1D145E1375006D9266 /* RaidMemberHealthView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RaidMemberHealthView.h; path = Sprites/RaidMemberHealthView.h; sourceTree = "<group>"; };
@@ -616,8 +616,8 @@
 		387E82A3164F1648009F11E6 /* SettingsScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsScene.m; sourceTree = "<group>"; };
 		38B0BB231657694300D31540 /* RatingCounterSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RatingCounterSprite.h; sourceTree = "<group>"; };
 		38B0BB241657694300D31540 /* RatingCounterSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RatingCounterSprite.m; sourceTree = "<group>"; };
-		38B0BB26165779BC00D31540 /* ViewDivinityChoiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewDivinityChoiceLayer.h; sourceTree = "<group>"; };
-		38B0BB27165779BC00D31540 /* ViewDivinityChoiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewDivinityChoiceLayer.m; sourceTree = "<group>"; };
+		38B0BB26165779BC00D31540 /* ViewTalentChoiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewTalentChoiceLayer.h; sourceTree = "<group>"; };
+		38B0BB27165779BC00D31540 /* ViewTalentChoiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewTalentChoiceLayer.m; sourceTree = "<group>"; };
 		38F1B45B15CA30D8008B2D99 /* backgrounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = backgrounds; sourceTree = SOURCE_ROOT; };
 		BF0022BC163EE94C00384882 /* EncounterCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncounterCard.h; sourceTree = "<group>"; };
 		BF0022BD163EE94C00384882 /* EncounterCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EncounterCard.m; sourceTree = "<group>"; };
@@ -672,10 +672,10 @@
 		BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RaidMemberPreBattleCard.m; sourceTree = "<group>"; };
 		BF865F20159F8651007F5DBF /* healer@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "healer@2x.png"; path = "../healer@2x.png"; sourceTree = "<group>"; };
 		BF865F22159F8655007F5DBF /* healer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = healer.png; path = ../healer.png; sourceTree = "<group>"; };
-		BF865F24159F9878007F5DBF /* Divinity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Divinity.h; path = Healer/Divinity.h; sourceTree = "<group>"; };
-		BF865F25159F9878007F5DBF /* Divinity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Divinity.m; path = Healer/Divinity.m; sourceTree = "<group>"; };
-		BF865F27159F9C1E007F5DBF /* DivinityConfigScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DivinityConfigScene.h; path = Scenes/DivinityConfigScene.h; sourceTree = "<group>"; };
-		BF865F28159F9C1F007F5DBF /* DivinityConfigScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DivinityConfigScene.m; path = Scenes/DivinityConfigScene.m; sourceTree = "<group>"; };
+		BF865F24159F9878007F5DBF /* Talents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Talents.h; path = Healer/Talents.h; sourceTree = "<group>"; };
+		BF865F25159F9878007F5DBF /* Talents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Talents.m; path = Healer/Talents.m; sourceTree = "<group>"; };
+		BF865F27159F9C1E007F5DBF /* TalentScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TalentScene.h; path = Scenes/TalentScene.h; sourceTree = "<group>"; };
+		BF865F28159F9C1F007F5DBF /* TalentScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TalentScene.m; path = Scenes/TalentScene.m; sourceTree = "<group>"; };
 		BF865F2A15A031FB007F5DBF /* BasicButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicButton.h; sourceTree = "<group>"; };
 		BF865F2B15A031FB007F5DBF /* BasicButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BasicButton.m; sourceTree = "<group>"; };
 		BF87D85A1601ABFB00BEAD5B /* tips.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = tips.plist; sourceTree = "<group>"; };
@@ -701,8 +701,8 @@
 		BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape~ipad.png"; path = "../Default-Landscape~ipad.png"; sourceTree = "<group>"; };
 		BFAFA3F215F43C650052FCA5 /* GoldCounterSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoldCounterSprite.h; sourceTree = "<group>"; };
 		BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoldCounterSprite.m; sourceTree = "<group>"; };
-		BFAFA3F715F54BBD0052FCA5 /* DivinityTierCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DivinityTierCard.h; sourceTree = "<group>"; };
-		BFAFA3F815F54BBD0052FCA5 /* DivinityTierCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DivinityTierCard.m; sourceTree = "<group>"; };
+		BFAFA3F715F54BBD0052FCA5 /* TalentTierCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TalentTierCard.h; sourceTree = "<group>"; };
+		BFAFA3F815F54BBD0052FCA5 /* TalentTierCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TalentTierCard.m; sourceTree = "<group>"; };
 		BFB46405154A25DD00503E30 /* ShopScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopScene.h; sourceTree = "<group>"; };
 		BFB46406154A25DD00503E30 /* ShopScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopScene.m; sourceTree = "<group>"; };
 		BFB4640A154A262800503E30 /* ShopItemNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopItemNode.h; sourceTree = "<group>"; };
@@ -823,6 +823,7 @@
 				386DD03A145DFF2D0086763E /* Model Objects */,
 				38F0504413C2618900BCADCB /* View Objects */,
 				387E7B5B145E1756006D9266 /* Controls */,
+				BF21072015292726001B93D7 /* Animations */,
 				387E7AE3145E0D09006D9266 /* Scenes */,
 				387E7AE9145E0F8F006D9266 /* Audio */,
 				38024F0713C2564E003D36F2 /* Supporting Files */,
@@ -957,7 +958,6 @@
 		387E7AE3145E0D09006D9266 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
-				BF21072015292726001B93D7 /* Animations */,
 				387E7B44145E1382006D9266 /* HealerStartScene.h */,
 				387E7B45145E1382006D9266 /* HealerStartScene.m */,
 				BF80763115214A04001EB2B3 /* PreBattleScene.h */,
@@ -970,8 +970,8 @@
 				BFB46406154A25DD00503E30 /* ShopScene.m */,
 				BFFB58E4152D69C7005B760E /* MultiplayerSetupScene.h */,
 				BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */,
-				BF865F27159F9C1E007F5DBF /* DivinityConfigScene.h */,
-				BF865F28159F9C1F007F5DBF /* DivinityConfigScene.m */,
+				BF865F27159F9C1E007F5DBF /* TalentScene.h */,
+				BF865F28159F9C1F007F5DBF /* TalentScene.m */,
 				BF730C3E15ABC1BD00E09B81 /* MultiplayerQueueScene.h */,
 				BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */,
 				BFA60E42160CD331005FFE1B /* NormalModeCompleteScene.h */,
@@ -991,8 +991,8 @@
 			children = (
 				BFFF9917168D7F52007AF447 /* PlayerDataManager.h */,
 				BFFF9918168D7F52007AF447 /* PlayerDataManager.m */,
-				BF865F24159F9878007F5DBF /* Divinity.h */,
-				BF865F25159F9878007F5DBF /* Divinity.m */,
+				BF865F24159F9878007F5DBF /* Talents.h */,
+				BF865F25159F9878007F5DBF /* Talents.m */,
 			);
 			name = "Persistent Stores";
 			path = ..;
@@ -1036,12 +1036,12 @@
 				BFC1022E153F90BA00884677 /* Agent.m */,
 				387E7AF1145E1263006D9266 /* HealableTarget.h */,
 				387E7AF2145E1263006D9266 /* HealableTarget.m */,
+				387E7AFB145E1263006D9266 /* RaidMember.h */,
+				387E7AFC145E1263006D9266 /* RaidMember.m */,
 				387E7B57145E1701006D9266 /* Boss.h */,
 				387E7B58145E1701006D9266 /* Boss.m */,
 				387E7AF7145E1263006D9266 /* Player.h */,
 				387E7AF8145E1263006D9266 /* Player.m */,
-				387E7AFB145E1263006D9266 /* RaidMember.h */,
-				387E7AFC145E1263006D9266 /* RaidMember.m */,
 			);
 			name = Agents;
 			sourceTree = "<group>";
@@ -1066,8 +1066,8 @@
 			children = (
 				387E7B17145E1375006D9266 /* PlayerCastBar.h */,
 				387E7B18145E1375006D9266 /* PlayerCastBar.m */,
-				387E7B19145E1375006D9266 /* PlayerEnergyView.h */,
-				387E7B1A145E1375006D9266 /* PlayerEnergyView.m */,
+				387E7B19145E1375006D9266 /* PlayerStatusView.h */,
+				387E7B1A145E1375006D9266 /* PlayerStatusView.m */,
 				387E7B1B145E1375006D9266 /* PlayerHealthView.h */,
 				387E7B1C145E1375006D9266 /* PlayerHealthView.m */,
 				387E7B1D145E1375006D9266 /* RaidMemberHealthView.h */,
@@ -1125,10 +1125,9 @@
 		38F0504413C2618900BCADCB /* View Objects */ = {
 			isa = PBXGroup;
 			children = (
-				BF95CF76165736020058FB85 /* Animations */,
 				382C463F1648CD9000883CFA /* PreBattle */,
 				BFD106F8163A2944002318CE /* Map Views */,
-				BFAFA3F615F54B8A0052FCA5 /* Divinity Views */,
+				BFAFA3F615F54B8A0052FCA5 /* Talent Views */,
 				BF448C53154BA49E009401A6 /* UI Layers */,
 				BFB46409154A260D00503E30 /* Store Views */,
 				BF210746152AAACC001B93D7 /* UI */,
@@ -1152,6 +1151,8 @@
 		BF21072015292726001B93D7 /* Animations */ = {
 			isa = PBXGroup;
 			children = (
+				BF95CF77165736190058FB85 /* CCNumberChangeAction.h */,
+				BF95CF78165736190058FB85 /* CCNumberChangeAction.m */,
 				BF21072115292740001B93D7 /* CCShakeScreen.h */,
 				BF21072215292740001B93D7 /* CCShakeScreen.m */,
 			);
@@ -1222,24 +1223,15 @@
 			path = TestFlightSDK1.0;
 			sourceTree = "<group>";
 		};
-		BF95CF76165736020058FB85 /* Animations */ = {
+		BFAFA3F615F54B8A0052FCA5 /* Talent Views */ = {
 			isa = PBXGroup;
 			children = (
-				BF95CF77165736190058FB85 /* CCNumberChangeAction.h */,
-				BF95CF78165736190058FB85 /* CCNumberChangeAction.m */,
+				BFAFA3F715F54BBD0052FCA5 /* TalentTierCard.h */,
+				BFAFA3F815F54BBD0052FCA5 /* TalentTierCard.m */,
+				38B0BB26165779BC00D31540 /* ViewTalentChoiceLayer.h */,
+				38B0BB27165779BC00D31540 /* ViewTalentChoiceLayer.m */,
 			);
-			name = Animations;
-			sourceTree = "<group>";
-		};
-		BFAFA3F615F54B8A0052FCA5 /* Divinity Views */ = {
-			isa = PBXGroup;
-			children = (
-				BFAFA3F715F54BBD0052FCA5 /* DivinityTierCard.h */,
-				BFAFA3F815F54BBD0052FCA5 /* DivinityTierCard.m */,
-				38B0BB26165779BC00D31540 /* ViewDivinityChoiceLayer.h */,
-				38B0BB27165779BC00D31540 /* ViewDivinityChoiceLayer.m */,
-			);
-			name = "Divinity Views";
+			name = "Talent Views";
 			sourceTree = "<group>";
 		};
 		BFB46409154A260D00503E30 /* Store Views */ = {
@@ -1873,7 +1865,7 @@
 				387E7B08145E1263006D9266 /* Spell.m in Sources */,
 				387E7B27145E1375006D9266 /* BossHealthView.m in Sources */,
 				387E7B2E145E1375006D9266 /* PlayerCastBar.m in Sources */,
-				387E7B2F145E1375006D9266 /* PlayerEnergyView.m in Sources */,
+				387E7B2F145E1375006D9266 /* PlayerStatusView.m in Sources */,
 				387E7B30145E1375006D9266 /* PlayerHealthView.m in Sources */,
 				387E7B31145E1375006D9266 /* RaidMemberHealthView.m in Sources */,
 				387E7B32145E1375006D9266 /* RaidView.m in Sources */,
@@ -1906,8 +1898,8 @@
 				BF69866C154C7B5F0016F25E /* BackgroundSprite.m in Sources */,
 				BF4E508D155C9C4400FC4EE0 /* Ability.m in Sources */,
 				BF0DCF64156C6DEE005E74C7 /* ShopItemExtendedNode.m in Sources */,
-				BF865F26159F9878007F5DBF /* Divinity.m in Sources */,
-				BF865F29159F9C1F007F5DBF /* DivinityConfigScene.m in Sources */,
+				BF865F26159F9878007F5DBF /* Talents.m in Sources */,
+				BF865F29159F9C1F007F5DBF /* TalentScene.m in Sources */,
 				BF865F2C15A031FB007F5DBF /* BasicButton.m in Sources */,
 				BF730C4015ABC1BD00E09B81 /* MultiplayerQueueScene.m in Sources */,
 				BF26BFC615CA0B5D00B7132D /* AbilityDescriptor.m in Sources */,
@@ -1915,7 +1907,7 @@
 				BF98B18615D3577A00017EA4 /* BossAbilityDescriptorIcon.m in Sources */,
 				BF98B18A15D37EAE00017EA4 /* AbilityDescriptionModalLayer.m in Sources */,
 				BFAFA3F415F43C650052FCA5 /* GoldCounterSprite.m in Sources */,
-				BFAFA3F915F54BBD0052FCA5 /* DivinityTierCard.m in Sources */,
+				BFAFA3F915F54BBD0052FCA5 /* TalentTierCard.m in Sources */,
 				BF261C351602C74F003307DF /* DraggableSpellIcon.m in Sources */,
 				BF261C381602C7A4003307DF /* Slot.m in Sources */,
 				BFA60E44160CD331005FFE1B /* NormalModeCompleteScene.m in Sources */,
@@ -1931,7 +1923,7 @@
 				387E82A4164F1648009F11E6 /* SettingsScene.m in Sources */,
 				BF95CF79165736190058FB85 /* CCNumberChangeAction.m in Sources */,
 				38B0BB251657694300D31540 /* RatingCounterSprite.m in Sources */,
-				38B0BB28165779BC00D31540 /* ViewDivinityChoiceLayer.m in Sources */,
+				38B0BB28165779BC00D31540 /* ViewTalentChoiceLayer.m in Sources */,
 				BFFF9919168D7F52007AF447 /* PlayerDataManager.m in Sources */,
 				BF2D1C1C16968A14006DCA9A /* CCLabelTTFShadow.m in Sources */,
 			);
@@ -1998,7 +1990,7 @@
 					"COCOS2D_DEBUG=0",
 				);
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
@@ -2031,7 +2023,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Healer/Prefix.pch;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
@@ -2084,7 +2076,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Healer/Prefix.pch;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;

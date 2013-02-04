@@ -7,13 +7,13 @@
 //
 
 #import "cocos2d.h"
-#import "Divinity.h"
-#import "DivinityTierCard.h"
-#import "ViewDivinityChoiceLayer.h"
+#import "Talents.h"
+#import "TalentTierCard.h"
+#import "ViewTalentChoiceLayer.h"
 
-@class DivinityTierCard;
-@interface DivinityConfigScene : CCScene <DivinityTierCardDelegate, ViewDivinityChoiceLayerDelegate> {
-    DivinityTierCard *tierTableCards[NUM_DIV_TIERS];
+@class TalentTierCard;
+@interface TalentScene : CCScene <TalentTierCardDelegate, ViewTalentChoiceLayerDelegate> {
+    TalentTierCard *tierTableCards[NUM_DIV_TIERS];
     CCSprite *chargedPipes[NUM_DIV_TIERS];
     CCSprite *iconSprites[NUM_DIV_TIERS][3];
     CCMenu *buttonSprites[NUM_DIV_TIERS][3];

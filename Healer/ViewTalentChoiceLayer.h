@@ -8,14 +8,14 @@
 
 #import "cocos2d.h"
 
-@protocol ViewDivinityChoiceLayerDelegate <NSObject>
+@protocol ViewTalentChoiceLayerDelegate <NSObject>
 
 - (void)dismissDivinityChoiceLayer:(CCLayer*)layer;
 
 @end
 
-@interface ViewDivinityChoiceLayer : CCLayer
-@property (nonatomic, assign) id<ViewDivinityChoiceLayerDelegate> delegate;
+@interface ViewTalentChoiceLayer : CCLayer
+@property (nonatomic, assign) id<ViewTalentChoiceLayerDelegate> delegate;
 
 - (id)initWithDivinityChoice:(NSString*)choice inTier:(NSInteger)tier;
 

@@ -6,14 +6,14 @@
 //  Copyright (c) 2012 Apple. All rights reserved.
 //
 
-#import "Divinity.h"
+#import "Talents.h"
 #import "Effect.h"
 #import "PlayerDataManager.h"
 
 
 static NSDictionary *divinityInfo = nil;
 
-@implementation Divinity
+@implementation Talents
 
 + (BOOL)isDivinityUnlocked {
 #if TARGET_IPHONE_SIMULATOR
@@ -63,7 +63,7 @@ static NSDictionary *divinityInfo = nil;
 
 + (NSString*)spriteFrameNameForChoice:(NSString*)choice
 {
-    return [[[Divinity choiceTitleToKey:choice] stringByAppendingString:@"-icon"] stringByAppendingPathExtension:@"png"];
+    return [[[Talents choiceTitleToKey:choice] stringByAppendingString:@"-icon"] stringByAppendingPathExtension:@"png"];
 }
 
 + (void)loadDivinityInfo {
@@ -75,7 +75,7 @@ static NSDictionary *divinityInfo = nil;
     if (!divinityInfo){
         [self loadDivinityInfo];
     }
-    NSString* desc = [divinityInfo objectForKey:[Divinity choiceTitleToKey:choice]];
+    NSString* desc = [divinityInfo objectForKey:[Talents choiceTitleToKey:choice]];
     
     if (!desc){
         return @"Unfinished!";
@@ -89,7 +89,7 @@ static NSDictionary *divinityInfo = nil;
         NSString *tierChoice = [configuration objectForKey:[NSString stringWithFormat:@"tier-%i", i]];
         if (tierChoice){
             NSString *tierChoiceKey = [self choiceTitleToKey:tierChoice];
-            DivinityEffect *divEff = [[DivinityEffect alloc] initWithDivinityKey:[Divinity choiceTitleToKey:tierChoice]];
+            DivinityEffect *divEff = [[DivinityEffect alloc] initWithDivinityKey:[Talents choiceTitleToKey:tierChoice]];
             [effects addObject:[divEff autorelease]];
             
             if ([tierChoiceKey isEqualToString:@"healing-hands"]) {
@@ -130,7 +130,7 @@ static NSDictionary *divinityInfo = nil;
     NSInteger currentRating = [[PlayerDataManager localPlayer] totalRating];
     NSInteger totalTiers = 0;
     for (int i = 0; i < 5; i++){
-        if (currentRating >= [Divinity requiredRatingForTier:i]) {
+        if (currentRating >= [Talents requiredRatingForTier:i]) {
             totalTiers++;
         }
     }

@@ -7,13 +7,13 @@
 //
 
 #import "cocos2d.h"
-@protocol DivinityTierCardDelegate <NSObject>
+@protocol TalentTierCardDelegate <NSObject>
 
 @end
 
-@interface DivinityTierCard : CCSprite
+@interface TalentTierCard : CCSprite
 @property (nonatomic, readwrite) NSInteger tier;
-@property (nonatomic, assign) id <DivinityTierCardDelegate> delegate;
+@property (nonatomic, assign) id <TalentTierCardDelegate> delegate;
 - (id)initForDivinityTier:(NSInteger)tier;
 - (id)initForDivinityTier:(NSInteger)tier withSelectedChoice:(NSString *)choice forceUnlocked:(BOOL)forceUnlocked showsBackground:(BOOL)showsBackground;
 

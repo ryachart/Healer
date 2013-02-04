@@ -6,21 +6,21 @@
 //  Copyright (c) 2012 Apple. All rights reserved.
 //
 
-#import "DivinityTierCard.h"
-#import "Divinity.h"
+#import "TalentTierCard.h"
+#import "Talents.h"
 #import "BasicButton.h"
 #import "Shop.h"
 #import "GoldCounterSprite.h"
 #import "PlayerDataManager.h"
 
-@interface DivinityTierCard ()
+@interface TalentTierCard ()
 @property (nonatomic, assign) CCSprite *selectedChoiceIcon;
 @property (nonatomic, assign) CCLabelTTF *selectedChoiceTitle;
 @property (nonatomic, assign) CCLabelTTF *selectedChoiceDescription;
 
 @end
 
-@implementation DivinityTierCard
+@implementation TalentTierCard
 
 - (id)initForDivinityTier:(NSInteger)tier
 {
@@ -31,7 +31,7 @@
     if (self = [super init]){
         self.tier = tier;
         self.anchorPoint = CGPointZero;
-        BOOL isUnlocked = [Divinity numDivinityTiersUnlocked] > tier || forceUnlocked;
+        BOOL isUnlocked = [Talents numDivinityTiersUnlocked] > tier || forceUnlocked;
         
         if (isUnlocked){
             NSString *spriteName = [NSString stringWithFormat:@"divinity_tier%i_frame.png", tier + 1];
@@ -47,8 +47,8 @@
             NSString* titleDescription = nil;
             if (choice){
                 titleString = choice;
-                iconFrameName = [Divinity spriteFrameNameForChoice:titleString];
-                titleDescription = [Divinity descriptionForChoice:titleString];
+                iconFrameName = [Talents spriteFrameNameForChoice:titleString];
+                titleDescription = [Talents descriptionForChoice:titleString];
                 titleString = [titleString uppercaseString];
                 
                 if (![[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:iconFrameName]){
@@ -76,7 +76,7 @@
             [self addChild:self.selectedChoiceDescription];
 
         }else {
-            CCLabelTTF *requires = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Unlocks At %i", [Divinity requiredRatingForTier:tier]] dimensions:CGSizeMake(200, 30) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+            CCLabelTTF *requires = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Unlocks At %i", [Talents requiredRatingForTier:tier]] dimensions:CGSizeMake(200, 30) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
             [requires setPosition:CGPointMake(130, 45)];
             [self addChild:requires];
             

@@ -11,7 +11,7 @@
 
 #define NUM_DIV_TIERS 5
 
-@interface Divinity : NSObject
+@interface Talents : NSObject
 
 + (NSArray*)divinityChoicesForTier:(NSInteger)tier;
 + (NSString*)descriptionForChoice:(NSString*)choice;

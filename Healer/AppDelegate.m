@@ -13,7 +13,7 @@
 #import "Parse/Parse.h"
 #import "PlayerDataManager.h"
 #import "LaunchScene.h"
-#import "Divinity.h"
+#import "Talents.h"
 
 #define TestFlightToken @"a0f29ba29227f7587269ec6e6fc30455_NzU1NTQyMDEyLTA0LTI4IDIyOjQ4OjA4Ljk4NzkzMQ"
 

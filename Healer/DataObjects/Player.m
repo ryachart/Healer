@@ -10,7 +10,7 @@
 #import "GameObjects.h"
 #import "AudioController.h"
 #import <GameKit/GameKit.h>
-#import "Divinity.h"
+#import "Talents.h"
 #import "CombatEvent.h"
 
 @interface Player ()
@@ -72,6 +72,11 @@
 	return self;
 }
 
+- (NSString *)title
+{
+    return @"Healer";
+}
+
 - (float)cooldownAdjustment
 {
     float base = _cooldownAdjustment;
@@ -91,6 +96,14 @@
     }
     
     return base;
+}
+
+- (void)setHealth:(NSInteger)newHealth
+{
+    [super setHealth:newHealth];
+    if (self.isDead) {
+        [self interrupt];
+    }
 }
 
 - (void)setEnergy:(float)newEnergy
@@ -198,7 +211,7 @@
     for (Effect* effect in divinityEffectsToRemove){
         [self.activeEffects removeObject:effect];
     }
-    NSArray *newDivinityEffects = [Divinity effectsForConfiguration:divinityConfig];
+    NSArray *newDivinityEffects = [Talents effectsForConfiguration:divinityConfig];
     for (Effect *effect in newDivinityEffects){
         [self addEffect:effect];
     }
@@ -428,7 +441,7 @@
 	for (int i = 0; i < CastingDisabledReasonTotal; i++){
 		cast = cast || castingDisabledReasons[i];
 	}
-	return !cast;
+	return !cast && !self.isDead;
 }
 
 -(void)enableCastingWithReason:(CastingDisabledReason)reason{
@@ -450,7 +463,7 @@
 
 -(void)beginCasting:(Spell*)theSpell withTargets:(NSArray*)targets
 {
-	if ([self canCast] == NO){
+	if (![self canCast]){
 		return;
 	}
     

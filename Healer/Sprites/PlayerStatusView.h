@@ -12,7 +12,7 @@
 
 @class ChannelingDelegate, CCLabelTTFShadow;
 
-@interface PlayerEnergyView : CCLayer {
+@interface PlayerStatusView : CCLayer {
 	double percentEnergy;
 	double percentChanneled;
     BOOL isTouched;
@@ -22,7 +22,7 @@
 @property (nonatomic, assign) CCLabelTTFShadow *energyLabel;
 @property (readwrite) double percentChanneled;
 - (id)initWithFrame:(CGRect)frame;
-- (void)updateWithEnergy:(NSInteger)current andMaxEnergy:(NSInteger)max;
+- (void)updateWithPlayer:(Player*)player;
 @end
 
 @protocol ChannelingDelegate

@@ -13,7 +13,7 @@
 #import "Encounter.h"
 #import "PreBattleScene.h"
 #import "Player.h"
-#import "Divinity.h"
+#import "Talents.h"
 #import "PlayerDataManager.h"
 
 @interface LevelSelectMapScene ()
@@ -63,14 +63,14 @@
 - (void)battle {
     NSInteger level = self.encCard.levelNum;
     Encounter *encounter = [Encounter encounterForLevel:level isMultiplayer:NO];
-    Player *basicPlayer = [[[Player alloc] initWithHealth:100 energy:1000 energyRegen:10] autorelease];
+    Player *basicPlayer = [[[Player alloc] initWithHealth:1400 energy:1000 energyRegen:10] autorelease];
     [Encounter configurePlayer:basicPlayer forRecSpells:encounter.recommendedSpells];
     
     if (encounter.boss && basicPlayer && encounter.raid){
         
         PreBattleScene *pbs = [[[PreBattleScene alloc] initWithEncounter:encounter andPlayer:basicPlayer] autorelease];
         [pbs setLevelNumber:level];
-        if ([Divinity isDivinityUnlocked]){
+        if ([Talents isDivinityUnlocked]){
             [basicPlayer setDivinityConfig:[[PlayerDataManager localPlayer] localDivinityConfig]];
         }
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:pbs]];

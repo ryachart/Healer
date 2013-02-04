@@ -17,8 +17,8 @@
 #import "ShopScene.h"
 #import "BackgroundSprite.h"
 #import "TestFlight.h"
-#import "Divinity.h"
-#import "DivinityConfigScene.h"
+#import "Talents.h"
+#import "TalentScene.h"
 #import "AudioController.h"
 #import "HealerStartScene.h"
 #import "BasicButton.h"
@@ -370,7 +370,7 @@
 }
                                                                     
 - (void)goToDivinity {
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:[[[DivinityConfigScene alloc] init] autorelease]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:[[[TalentScene alloc] init] autorelease]]];
 }
 
 - (void)goToStore {

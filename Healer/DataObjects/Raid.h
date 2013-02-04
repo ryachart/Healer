@@ -8,14 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import "RaidMember.h"
-
 #define MAXIMUM_RAID_MEMBERS_ALLOWED 26
 /* A collection of RaidMembers */
 
+@class Player;
 
 @interface Raid : NSObject
-@property (nonatomic, retain, readonly) NSMutableArray *raidMembers;
-
+@property (nonatomic, retain, readonly) NSMutableArray *members;
+@property (nonatomic, retain, readonly) NSMutableArray *players;
+@property (nonatomic, readonly) NSArray *raidMembers;
+- (void)addPlayer:(Player*)player;
 - (void)addRaidMember:(RaidMember*)member;
 - (NSArray*)livingMembers;
 - (NSInteger)deadCount;

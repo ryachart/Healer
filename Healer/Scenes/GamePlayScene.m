@@ -18,7 +18,7 @@
 #import "Encounter.h"
 #import "HealableTarget.h"
 #import "PlayerHealthView.h"
-#import "PlayerEnergyView.h"
+#import "PlayerStatusView.h"
 #import "PlayerCastBar.h"
 #import "BackgroundSprite.h"
 #import "NormalModeCompleteScene.h"
@@ -146,7 +146,7 @@
         [self.bossHealthView setDelegate:self];
         
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(312,40, 400, 50)] autorelease];
-        self.playerEnergyView = [[[PlayerEnergyView alloc] initWithFrame:CGRectMake(804, 485, 200, 50)] autorelease];
+        self.playerEnergyView = [[[PlayerStatusView alloc] initWithFrame:CGRectMake(804, 485, 200, 50)] autorelease];
         
         self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
         [self.announcementLabel setPosition:CGPointMake(512, 480)];
@@ -214,9 +214,12 @@
             }
         }
         
+        for (Player *player in self.players) {
+            [self.raid addPlayer:player];
+        }
         
         [raidView spawnRects];
-        NSMutableArray *raidMembers = [self.raid raidMembers];
+        NSArray *raidMembers = [self.raid raidMembers];
         selectedRaidMembers = [[NSMutableArray alloc] initWithCapacity:5];
         for (RaidMember *member in raidMembers)
         {
@@ -228,7 +231,6 @@
             [raidView addRaidMemberHealthView:rmhv];
         }
         [bossHealthView setBossData:self.boss];
-        
         
         //The timer has to be scheduled after all the init is done!
         BasicButton *menuButtonItem = [BasicButton basicButtonWithTarget:self andSelector:@selector(showPauseMenu) andTitle:@"Pause"];
@@ -571,10 +573,22 @@
 }
 
 -(void)displayScreenShakeForDuration:(float)duration{
-    [self runAction:[CCSequence actions:[CCShakeScreen actionWithDuration:duration], [CCCallBlockN actionWithBlock:^(CCNode *node){
-        [node setPosition:CGPointMake(0, 0)];
-    }], nil] ];
+    [self displayScreenShakeForDuration:duration afterDelay:0.0];
 }
+
+- (void)displayScreenShakeForDuration:(float)duration afterDelay:(float)delay
+{
+    if (delay > 0) {
+        [self runAction:[CCSequence actions:[CCDelayTime actionWithDuration:delay], [CCShakeScreen actionWithDuration:duration], [CCCallBlockN actionWithBlock:^(CCNode *node){
+            [node setPosition:CGPointMake(0, 0)];
+        }], nil] ];
+    } else {
+        [self runAction:[CCSequence actions:[CCShakeScreen actionWithDuration:duration], [CCCallBlockN actionWithBlock:^(CCNode *node){
+            [node setPosition:CGPointMake(0, 0)];
+        }], nil] ];
+    }
+}
+
 -(void)displayParticleSystemOnRaidWithName:(NSString*)name forDuration:(float)duration{
     if (self.isServer){
         NSString* networkMessage = [NSString stringWithFormat:@"STMON|%@", name];
@@ -950,7 +964,7 @@
 	[raidView updateRaidHealthWithPlayer:self.player andTimeDelta:deltaT];
 	[bossHealthView updateHealth];
 	[playerCastBar updateTimeRemaining:[self.player remainingCastTime] ofMaxTime:[[self.player spellBeingCast] castTime] forSpell:[self.player spellBeingCast]];
-	[playerEnergyView updateWithEnergy:[self.player energy] andMaxEnergy:[self.player maximumEnergy]];
+	[playerEnergyView updateWithPlayer:self.player];
 	[alertStatus setString:[self.player statusText]];
 	[self.spellView1 updateUI];
 	[self.spellView2 updateUI];
@@ -959,7 +973,7 @@
 	
     
 	//Determine if there will be another iteration of the gamestate
-    NSMutableArray *raidMembers = [self.raid raidMembers];
+    NSArray *raidMembers = [self.raid raidMembers];
     NSInteger survivors = 0;
     for (RaidMember *member in raidMembers)
     {
@@ -972,9 +986,6 @@
     if (!self.isClient){
         if (survivors == 0)
         {
-            [self battleEndWithSuccess:NO];
-        }
-        if ([self.player isDead]){
             [self battleEndWithSuccess:NO];
         }
         if ([self.boss isDead]){

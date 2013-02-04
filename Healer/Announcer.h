@@ -16,6 +16,7 @@
 
 //Graphical Announcements
 - (void)displayScreenShakeForDuration:(float)duration;
+- (void)displayScreenShakeForDuration:(float)duration afterDelay:(float)delay;
 - (void)displaySprite:(NSString*)spriteName overRaidForDuration:(float)duration;
 - (void)displayProjectileEffect:(ProjectileEffect*)effect;
 - (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target withOffset:(CGPoint)offset;

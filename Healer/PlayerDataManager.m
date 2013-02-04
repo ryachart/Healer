@@ -9,7 +9,7 @@
 #import "PlayerDataManager.h"
 #import "Shop.h"
 #import "Spell.h"
-#import "Divinity.h"
+#import "Talents.h"
 #import "ShopItem.h"
 
 @interface PlayerDataManager ()

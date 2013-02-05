@@ -50,17 +50,16 @@
         
         [self addChild:background];
         
-        CGFloat itemNameFontSize = 28.0;
+        CGFloat itemNameFontSize = 24.0;
         CGFloat titleVerticalAdjustment = 0;
         
-        if (self.item.title.length >= 16) {
-            titleVerticalAdjustment = -6;
-            itemNameFontSize = 22.0;
-        }
+//        if (self.item.title.length >= 12) {
+//            titleVerticalAdjustment = -6;
+//        }
         
-        self.titleLabel = [CCLabelTTF labelWithString:itm.title dimensions:CGSizeMake(200, 50) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:itemNameFontSize];
+        self.titleLabel = [CCLabelTTF labelWithString:itm.title dimensions:CGSizeMake(200, 50) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:itemNameFontSize];
         [self.titleLabel setColor:ccWHITE];
-        [self.titleLabel setPosition:CGPointMake(190, 115 + titleVerticalAdjustment)];
+        [self.titleLabel setPosition:CGPointMake(184, 115 + titleVerticalAdjustment)];
         [self.titleLabel setHorizontalAlignment:UITextAlignmentLeft];
         [self.background addChild:titleLabel];
         
@@ -81,7 +80,7 @@
         self.buyButton = [CCMenu menuWithItems:[BasicButton basicButtonWithTarget:self andSelector:@selector(nodeSelected) andTitle:@"Learn"], nil];
         [self.buyButton setAnchorPoint:CGPointZero];
         [self.buyButton setScale:.5];
-        [self.buyButton setPosition:CGPointMake(330, 123)];
+        [self.buyButton setPosition:CGPointMake(332, 123)];
         [self.background addChild:self.buyButton];
         
         
@@ -89,7 +88,7 @@
         
         self.itemEnergyCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i Mana",self.item.purchasedSpell.energyCost] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
         
-        NSString *castTimeString = self.item.purchasedSpell.castTime == 0.0 ? @"Instant Cast" : [NSString stringWithFormat:@"Cast Time: %1.2f%@", self.item.purchasedSpell.castTime, @"s"];
+        NSString *castTimeString = self.item.purchasedSpell.castTime == 0.0 ? @"Instant Cast" : [NSString stringWithFormat:@"Cast: %1.2f%@", self.item.purchasedSpell.castTime, @"s"];
         
         self.itemCastTime = [CCLabelTTF labelWithString:castTimeString dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
         self.itemDescription = [CCLabelTTF labelWithString:self.item.purchasedSpell.spellDescription dimensions:CGSizeMake(380, 80) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:15.0];
@@ -103,9 +102,9 @@
         
         self.itemEnergyCost.position = CGPointMake(185, 70);
         self.itemCastTime.position = CGPointMake(185, 85);
-        self.itemCooldown.position = CGPointMake(283, 70);
+        self.itemCooldown.position = CGPointMake(270, 70);
         self.itemDescription.position = CGPointMake(200, 23);
-        self.itemSpellType.position = CGPointMake(283, 85);
+        self.itemSpellType.position = CGPointMake(270, 85);
         
         if (self.item.purchasedSpell.cooldown == 0.0) {
             [self.itemCooldown setVisible:NO];

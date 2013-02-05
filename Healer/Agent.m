@@ -8,7 +8,6 @@
 #import "Agent.h"
 
 @implementation Agent
-@synthesize logger;
 
 - (void)initializeForCombat {
     

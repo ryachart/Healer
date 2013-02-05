@@ -26,7 +26,6 @@
 #import "Raid.h"
 #import "CCNumberChangeAction.h"
 
-
 @interface PostBattleScene ()
 @property (nonatomic, readwrite) BOOL isMultiplayer;
 @property (nonatomic, readwrite) BOOL isVictory;
@@ -44,15 +43,6 @@
 @end
 
 @implementation PostBattleScene
-@synthesize matchVoiceChat, serverPlayerId;
-@synthesize isMultiplayer;
-@synthesize isVictory;
-@synthesize healingDoneLabel;
-@synthesize overhealingDoneLabel;
-@synthesize damageTakenLabel;
-@synthesize queueAgainMenuItem;
-@synthesize otherPlayerHasQueued;
-@synthesize localPlayerHasQueued;
 
 - (void)dealloc {
     if (_encounter && _encounter.bossKey) {
@@ -63,8 +53,8 @@
     [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/effect-sprites.plist"];
     [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/postbattle.plist"];
     [_match release];
-    [serverPlayerId release];
-    [matchVoiceChat release];
+    [_serverPlayerId release];
+    [_matchVoiceChat release];
     [_encounter release];
     [super dealloc];
 }
@@ -152,8 +142,6 @@
             [characterSprite setAnchorPoint:CGPointZero];
             [self addChild:characterSprite];
         }
-        
-
     
         NSString* doneLabelString = self.isMultiplayer ? @"Leave Group" : @"Continue";
         CCMenuItem *done = [BasicButton basicButtonWithTarget:self andSelector:@selector(done) andTitle:doneLabelString];
@@ -188,6 +176,13 @@
             [goldEarned setPosition:CGPointMake(36, 30)];
             [goldEarned setAnchorPoint:CGPointZero];
             [statsContainer addChild:goldEarned];
+        }
+        
+        if (!victory) {
+            CCLabelTTF *bossHealthRemaining = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Boss Health: %1.2f", self.encounter.boss.healthPercentage] dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+            [bossHealthRemaining setPosition:CGPointMake(54, 230)];
+            [bossHealthRemaining setAnchorPoint:CGPointZero];
+            [statsContainer addChild:bossHealthRemaining];
         }
         
         self.healingDoneLabel = [CCLabelTTF labelWithString:@"Healing Done: " dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];

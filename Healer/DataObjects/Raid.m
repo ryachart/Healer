@@ -15,11 +15,10 @@
 
 @implementation Raid
 
-@synthesize raidMemberBattleIDDictionary;
 -(void)dealloc{
     [_players release]; _players = nil;
     [_members release]; _members = nil;
-    [raidMemberBattleIDDictionary release]; raidMemberBattleIDDictionary = nil;
+    [_raidMemberBattleIDDictionary release]; _raidMemberBattleIDDictionary = nil;
     [super dealloc];
 }
 

@@ -11,20 +11,18 @@
 #import "Effect.h"
 
 @implementation HealableTarget
-@synthesize health, activeEffects=activeEffects, isFocused;
-@synthesize battleID, hasDied, healthAdjustmentModifiers;
 
 -(void)dealloc{
-    [battleID release]; battleID = nil;
-    [activeEffects release]; activeEffects = nil;
-    [healthAdjustmentModifiers release]; healthAdjustmentModifiers = nil;
+    [_battleID release]; _battleID = nil;
+    [_activeEffects release]; _activeEffects = nil;
+    [_healthAdjustmentModifiers release]; _healthAdjustmentModifiers = nil;
     [super dealloc];
 }
 
 -(id)init{
     if (self = [super init]){
         self.battleID = nil;
-        activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
+        _activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
     }
     return self;
 }
@@ -109,7 +107,7 @@
         return;
     }
     
-    NSInteger healthDelta = health - newHealth;
+    NSInteger healthDelta = _health - newHealth;
     if (healthDelta > 0) { //If we are taking damage FIXME
         NSInteger damage = healthDelta;
         damage *= self.damageTakenMultiplierAdjustment;
@@ -126,31 +124,31 @@
                 damage = 0;
             }
         }
-        newHealth = health - damage;
+        newHealth = _health - damage;
     }
 
 
-	for (HealthAdjustmentModifier* ham in healthAdjustmentModifiers){
-		[ham willChangeHealthFrom:&health toNewHealth:&newHealth];
+	for (HealthAdjustmentModifier* ham in self.healthAdjustmentModifiers){
+		[ham willChangeHealthFrom:&_health toNewHealth:&newHealth];
 	}
-	NSInteger prevHealth = health;
-	health = newHealth;
-	for (HealthAdjustmentModifier* ham in healthAdjustmentModifiers){
+	NSInteger prevHealth = _health;
+	_health = newHealth;
+	for (HealthAdjustmentModifier* ham in self.healthAdjustmentModifiers){
 		[ham didChangeHealthFrom:prevHealth toNewHealth:newHealth];
 	}
     
-	if (health < 0) health = 0;
-	if (health > self.maximumHealth) {
-        overHealing = health - self.maximumHealth;
-		health = self.maximumHealth;
+	if (_health < 0) _health = 0;
+	if (_health > self.maximumHealth) {
+        overHealing = _health - self.maximumHealth;
+		_health = self.maximumHealth;
 	}
-    if (prevHealth < health){
-        totalHealing = health - prevHealth;
+    if (prevHealth < _health){
+        totalHealing = _health - prevHealth;
     }
     if (healthDelta < 0) {
         [self didReceiveHealing:totalHealing andOverhealing:overHealing];
     }
-    if (health == 0){
+    if (_health == 0){
         self.hasDied = YES;
         [self.logger logEvent:[CombatEvent eventWithSource:self target:self value:nil andEventType:CombatEventTypeMemberDied]];
     }
@@ -179,9 +177,9 @@
 
 -(void)addEffect:(Effect*)theEffect
 {
-	if (activeEffects != nil){
+	if (self.activeEffects){
         BOOL didUpdateSimilarEffect = NO;
-		for (Effect *effectFA in activeEffects){
+		for (Effect *effectFA in self.activeEffects){
 			if ([effectFA isKindOfEffect:theEffect] && effectFA.owner == theEffect.owner && !effectFA.isIndependent){
                 effectFA.stacks++;
                 [effectFA reset];
@@ -195,18 +193,35 @@
                 [self addHealthAdjustmentModifier:(HealthAdjustmentModifier*)theEffect];
             }
             [theEffect setTarget:self];
-            [activeEffects addObject:theEffect];
+            [self.activeEffects addObject:theEffect];
         }
 	}
 }
 
 - (void)removeEffect:(Effect *)theEffect{
-    if (activeEffects != nil){
+    if (self.activeEffects){
         [theEffect setTarget:nil];
         if ([self.healthAdjustmentModifiers containsObject:theEffect]){
             [self.healthAdjustmentModifiers removeObject:theEffect];
         }
         [self.activeEffects removeObject:theEffect];
+    }
+}
+
+-(void)updateEffects:(Boss*)theBoss raid:(Raid*)theRaid player:(Player*)thePlayer time:(float)timeDelta{
+    NSMutableArray *effectsToRemove = [NSMutableArray arrayWithCapacity:5];
+	for (int i = 0; i < [self.activeEffects count]; i++){
+		Effect *effect = [self.activeEffects objectAtIndex:i];
+		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+		if ([effect isExpired]){
+			[effect expire];
+            [effectsToRemove addObject:effect];
+		}
+	}
+    
+    for (Effect *effect in effectsToRemove){
+        [self.healthAdjustmentModifiers removeObject:effect];
+        [self.activeEffects removeObject:effect];
     }
 }
 
@@ -224,16 +239,16 @@
 }
 
 -(void)addHealthAdjustmentModifier:(HealthAdjustmentModifier*)hamod{
-	if (healthAdjustmentModifiers == nil){
-		healthAdjustmentModifiers = [[NSMutableArray alloc] initWithCapacity:5];
+	if (self.healthAdjustmentModifiers == nil){
+		self.healthAdjustmentModifiers = [[[NSMutableArray alloc] initWithCapacity:5] autorelease];
 	}
 	
-	[healthAdjustmentModifiers addObject:hamod];
+	[self.healthAdjustmentModifiers addObject:hamod];
 }
 
 -(BOOL)isDead
 {
-	return health <= 0;
+	return self.health <= 0;
 }
 
 -(NSString*)sourceName{

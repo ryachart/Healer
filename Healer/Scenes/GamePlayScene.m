@@ -931,8 +931,6 @@
     }else{
         
     }
-    //The player's simulation must continue...This might not work
-    [self.player combatActions:self.boss theRaid:self.raid gameTime:deltaT];
     
     if (!self.gradientBorder.isFlashing) {
         if (self.player.healthPercentage <= .5) {
@@ -945,7 +943,7 @@
     if (self.isServer){
         for (int i = 1; i < self.players.count; i++){
             Player *clientPlayer = [self.players objectAtIndex:i];
-            [clientPlayer combatActions:self.boss theRaid:self.raid gameTime:deltaT];
+            [clientPlayer combatActions:self.boss raid:self.raid players:self.players gameTime:deltaT];
             if (isNetworkUpdate){
                 NSArray *playerToNotify = [NSArray arrayWithObject:clientPlayer.playerID];
                 [self.match sendData:[[clientPlayer asNetworkMessage] dataUsingEncoding:NSUTF8StringEncoding]  toPlayers:playerToNotify withDataMode:GKMatchSendDataReliable error:nil];
@@ -967,7 +965,7 @@
 	
     
 	//Determine if there will be another iteration of the gamestate
-    NSArray *raidMembers = [self.raid raidMembers];
+    NSArray *raidMembers = [self.raid livingMembers];
     NSInteger survivors = 0;
     for (RaidMember *member in raidMembers)
     {

@@ -10,17 +10,16 @@
 #import "CombatEvent.h"
 #import "Agent.h"
 #import "Effect.h"
+
 #define MAXIMUM_STATUS_EFFECTS 25
 @class HealthAdjustmentModifier;
 
-@interface HealableTarget : Agent {
-	NSInteger health; //All HealableTargets must have health
-}
+@interface HealableTarget : Agent
 @property (nonatomic, readwrite) NSInteger maximumHealth;
 @property (nonatomic, retain) NSMutableArray *healthAdjustmentModifiers;
 @property (nonatomic, retain) NSString* battleID;
 @property (nonatomic, readwrite) BOOL hasDied;
-@property (nonatomic, setter=setHealth:) NSInteger health;
+@property (nonatomic, readwrite) NSInteger health;
 @property (nonatomic, retain) NSMutableArray *activeEffects;
 @property (nonatomic, readwrite) BOOL isFocused;
 @property (nonatomic, readonly) float healthPercentage;
@@ -37,4 +36,5 @@
 - (void)removeEffectsWithTitle:(NSString *)effectTitle;
 - (void)addHealthAdjustmentModifier:(HealthAdjustmentModifier*)hamod;
 - (BOOL)hasEffectWithTitle:(NSString*)title;
+- (void)updateEffects:(Boss*)theBoss raid:(Raid*)theRaid player:(Player*)thePlayer time:(float)timeDelta;
 @end

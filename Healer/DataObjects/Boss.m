@@ -23,14 +23,12 @@
 @end
 
 @implementation Boss
-@synthesize title, logger, announcer, criticalChance, info, phase, duration, abilities;
-@synthesize queuedAbilitiesToAdd, shouldQueueAbilityAdds;
 
 -(void)dealloc{
-    [abilities release];
-    [info release];
-    [title release];
-    [queuedAbilitiesToAdd release];
+    [_abilities release];
+    [_info release];
+    [_title release];
+    [_queuedAbilitiesToAdd release];
     [_abilityDescriptors release];
     [_namePlateTitle release];
     [super dealloc];
@@ -135,9 +133,9 @@
 
 -(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses {
     if (self = [super init]){
-        health = hlth;
         self.maximumHealth = hlth;
-        title = @"";
+        self.health = hlth;
+        self.title = @"";
         self.criticalChance = 0.0;
         self.abilities = [NSMutableArray arrayWithCapacity:5];
         self.abilityDescriptors = [NSMutableArray arrayWithCapacity:5];
@@ -253,11 +251,6 @@
     [self updateEffects:self raid:theRaid player:player time:timeDelta];
 }
 
--(BOOL)isDead
-{
-	return health <= 0;
-}
-
 +(id)defaultBoss
 {
 	return nil;
@@ -303,7 +296,7 @@
 @end
 
 @implementation CorruptedTroll
-@synthesize enraging;
+
 +(id)defaultBoss{
     NSInteger health = 185000;
     NSInteger damage = 350;
@@ -316,10 +309,11 @@
     [corTroll setInfo:@"Three days ago a Raklorian Troll stumbled out from beyond the mountains and began ravaging the farmlands.  This was unusual behavior for a cave troll, but survivors noted that the troll seemed to be empowered by an evil magic."];
     
     GroundSmash *groundSmash = [[[GroundSmash alloc] init] autorelease];
-    [groundSmash setAbilityValue:110];
+    [groundSmash setAbilityValue:90];
     [groundSmash setTitle:@"troll-cave-in"];
     [groundSmash setCooldown:25.0];
-    [groundSmash setActivationTime:.5];
+    [groundSmash setActivationTime:.25];
+    [groundSmash setTimeApplied:20.0];
     corTroll.smash = groundSmash;
     [corTroll addAbility:corTroll.smash];
     
@@ -355,7 +349,7 @@
 }
 
 - (void)ownerDidBeginAbility:(Ability *)ability {
-    [self.announcer announce:@"The Troll smashes the ground ferociously."];
+    [self.announcer announce:@"The Troll raises its arms to smash the ground."];
 }
 
 -(void)startEnraging{
@@ -455,7 +449,6 @@
 
 
 @implementation MischievousImps
-@synthesize lastPotionThrow;
 +(id)defaultBoss {
     MischievousImps *boss = [[MischievousImps alloc] initWithHealth:225000 damage:0 targets:0 frequency:2.25 choosesMT:NO];
     [boss removeAbility:boss.autoAttack];
@@ -466,10 +459,6 @@
     [boss setTitle:@"Mischievious Imps"];
     [boss setInfo:@"As the dark mists further encroach upon the kingdom more strange creatures begin terrorizing the innocents.  Viscious imps have infiltrated the alchemical storehouses on the outskirts of Terun."];
     return [boss autorelease];
-}
-
--(void)dealloc{
-    [super dealloc];
 }
 
 -(void)throwPotionToTarget:(RaidMember *)target withDelay:(float)delay inRaid:(Raid*)theRaid {
@@ -613,7 +602,6 @@
 @end
 
 @implementation BefouledTreant
-@synthesize lastRootquake;
 +(id)defaultBoss {
     NSInteger bossDamage = 390;
     
@@ -683,7 +671,6 @@
 @end
 
 @implementation FungalRavagers
-@synthesize isEnraged, secondTargetAttack, thirdTargetAttack;
 +(id)defaultBoss {
     FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:560000 damage:141 targets:1 frequency:2.0 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
@@ -766,12 +753,9 @@
         [enragedEffect release];
     }
 }
-
 @end
 
-
 @implementation PlaguebringerColossus
-@synthesize lastSickeningTime, numBubblesPopped;
 +(id)defaultBoss {
     //427500
     PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:560000 damage:330 targets:1 frequency:2.5 choosesMT:YES ];
@@ -867,9 +851,8 @@
 @end
 
 @implementation Trulzar
-@synthesize lastPoisonTime, lastPotionTime;
 +(id)defaultBoss {
-    Trulzar *boss = [[Trulzar alloc] initWithHealth:2600000 damage:0 targets:0 frequency:100.0 choosesMT:NO ];
+    Trulzar *boss = [[Trulzar alloc] initWithHealth:2600000 damage:0 targets:0 frequency:100.0 choosesMT:NO];
     [boss setTitle:@"Trulzar the Maleficar"];
     [boss setNamePlateTitle:@"Trulzar"];
     [boss setInfo:@"Days before the dark mists came, Trulzar disappeared into the Peraxu forest with only a spell book.  This once loyal warlock is wanted for questioning regarding the strange events that have befallen the land.  You have been sent with a large warband to bring Trulzar to justice."];
@@ -901,9 +884,6 @@
     return self;
 }
 
--(void)dealloc{
-    [super dealloc];
-}
 -(void)applyPoisonToTarget:(RaidMember*)target{
     TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
     [self.announcer displayParticleSystemWithName:@"poison_cloud.plist" onTarget:target];
@@ -976,7 +956,6 @@
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    
     if (((int)percentage) == 7){
         [self.announcer announce:@"Trulzar cackles as the room fills with noxious poison."];
         [self.poisonNova setIsDisabled:YES];
@@ -1004,7 +983,6 @@
 @end
 
 @implementation DarkCouncil
-@synthesize lastPoisonballTime, rothVictim, lastDarkCloud;
 +(id)defaultBoss {
     DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:2450000 damage:0 targets:1 frequency:.75 choosesMT:NO ];
     [boss setTitle:@"Council of Dark Summoners"];
@@ -1014,7 +992,7 @@
 }
 
 -(void)dealloc{
-    [rothVictim release];
+    [_rothVictim release];
     [super dealloc];
 }
 
@@ -1104,17 +1082,13 @@
     
     if (self.phase == 3){
         //Serevon
-        [self setNamePlateTitle:@"Serevon"];
+        [self setNamePlateTitle:@"Galcyon"];
         self.lastDarkCloud += timeDelta;
         float tickTime = 18.0;
         if (self.lastDarkCloud > tickTime){
             [self summonDarkCloud:theRaid];
             self.lastDarkCloud = 0.0;
         }
-    }
-    
-    if (self.phase == 4){
-        [self setNamePlateTitle:@"Galcyon"];
     }
 
 }
@@ -1168,12 +1142,6 @@
         [serevonDesc release];
     }
     
-    if (percentage == 25.0){
-        [self clearExtraDescriptors];
-        //Galcyon, Lord of the Dark Council steps forward
-        self.phase = 4;
-    }
-    
     if (percentage == 23.0){
         for (RaidMember *member in raid.raidMembers){
             [self shootProjectileAtTarget:member withDelay:0.0];
@@ -1181,7 +1149,6 @@
     }
     
     if (percentage == 5.0){
-        [self.announcer announce:@"Galycon cries out as steel and magic burns through his flesh."];
         [self summonDarkCloud:raid];
         //Galcyon, Lord of the Dark Council does his last thing..
     }
@@ -1189,8 +1156,6 @@
 @end
 
 @implementation TwinChampions
-@synthesize firstFocusedAttack, secondFocusedAttack;
-@synthesize lastAxecution, lastGushingWound;
 +(id)defaultBoss {
     NSInteger damage = 190;
     float frequency = 1.30;
@@ -1359,9 +1324,8 @@
 @end
 
 @implementation Baraghast
-@synthesize remainingAbilities;
 - (void)dealloc {
-    [remainingAbilities release];
+    [_remainingAbilities release];
     [super dealloc];
 }
 
@@ -1498,7 +1462,6 @@
     [impaleAbility setAbilityValue:820];
     [impaleAbility release];
     
-    
     return [boss autorelease];
 }
 
@@ -1621,7 +1584,6 @@
         [self.tailLash setIsDisabled:YES];
         [self.boneThrowAbility setIsDisabled:NO];
         [self.boneThrowAbility setCooldown:5.0];
-        
     }
 
     if (percentage == 5.0){
@@ -1719,7 +1681,6 @@
 @end
 
 @implementation OverseerOfDelsarn
-
 - (void)dealloc {
     [_projectilesAbility release];
     [_demonAbilities release];
@@ -1964,7 +1925,6 @@
     [projectileAttack2 setFailureChance:.7];
     [boss addAbility:projectileAttack2];
     [projectileAttack2 release];
-    
     
     return [boss autorelease];
 }

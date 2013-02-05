@@ -48,7 +48,6 @@
 - (float)healthPercentage; //In Hundreds form
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid*)raid andPlayer:(Player*)player;
 
-
 - (void)configureBossForDifficultyLevel:(NSInteger)difficulty;
 
 #pragma Ability Methods

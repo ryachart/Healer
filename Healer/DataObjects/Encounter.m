@@ -21,13 +21,12 @@
 @end
 
 @implementation Encounter
-@synthesize raid, boss, requiredSpells, recommendedSpells;
 
 - (void)dealloc{
-    [raid release];
-    [boss release];
-    [requiredSpells release];
-    [recommendedSpells release];
+    [_raid release];
+    [_boss release];
+    [_requiredSpells release];
+    [_recommendedSpells release];
     [_combatLog release];
     [super dealloc];
 }

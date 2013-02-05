@@ -15,9 +15,7 @@
 	A RaidMember class can not stand on its own.
  */
 
-#import <Foundation/Foundation.h>
 #import "HealableTarget.h"
-#import "CombatEvent.h"
 #import "Announcer.h"
 
 @class Boss;
@@ -30,20 +28,15 @@ typedef enum {
     Melee
 } Positioning;
 
-@interface RaidMember : HealableTarget {
-	float damageFrequency; //All Raid members deal damage at some frequency
-	
-	//Combat Action Data
-	float lastAttack;
-	
-}
+@interface RaidMember : HealableTarget 
+@property (nonatomic, readwrite) float damageFrequency;
 @property (nonatomic, retain) NSString* title;
 @property (nonatomic, retain) NSString* info;
-@property (nonatomic,  readwrite) NSInteger damageDealt; //All RaidMembers deal some damage
-@property (readwrite) float lastAttack;
+@property (nonatomic, readwrite) NSInteger damageDealt; //All RaidMembers deal some damage
+@property (nonatomic, readwrite) float lastAttack;
 @property (nonatomic, readwrite) float dodgeChance;
-@property (readwrite) float criticalChance;
-@property (readonly) Positioning positioning;
+@property (nonatomic, readwrite) float criticalChance;
+@property (nonatomic, readonly) Positioning positioning;
 @property (nonatomic, assign) id<Announcer>announcer;
 
 - (float)dps;
@@ -69,9 +62,8 @@ typedef enum {
 @interface Archer : RaidMember 
 +(Archer*)defaultArcher;
 @end
-@interface Wizard : RaidMember{
-    float lastEnergyGrant;
-}
+@interface Wizard : RaidMember
+@property (nonatomic, readwrite) float lastEnergyGrant;
 @property (nonatomic, readwrite) BOOL energyGrantAnnounced;
 +(Wizard*)defaultWizard;
 @end

@@ -9,22 +9,17 @@
 #import "RaidMember.h"
 #import "GameObjects.h"
 #import "HealableTarget.h"
+#import "CombatEvent.h"
 
 @interface RaidMember ()
 -(void)performAttackIfAbleOnTarget:(Boss*)target;
 @end
 
 @implementation RaidMember
-@synthesize lastAttack;
-@synthesize damageDealt;
-@synthesize title;
-@synthesize dodgeChance;
-@synthesize info;
-@synthesize positioning;
 
 -(void)dealloc{
-    [title release];
-    [info release];
+    [_title release];
+    [_info release];
     [super dealloc];
 }
 
@@ -32,14 +27,14 @@
 {
     if (self = [super init]){
         self.maximumHealth = hlth;
-        health = hlth;
-        damageDealt = damage;
-        damageFrequency = dmgFreq;
+        self.health = hlth;
+        self.damageDealt = damage;
+        self.damageFrequency = dmgFreq;
         self.title = @"NOTITLE";
         self.info = @"NOINFO";
         self.dodgeChance = 0.0;
         self.criticalChance = .05;
-        positioning = position;
+        _positioning = position;
         self.lastAttack = (arc4random() % (int)(dmgFreq * 10)) / 10.0; //Seed with slightly random attacks
     }
 	return self;
@@ -47,7 +42,7 @@
 
 - (float)dodgeChance
 {
-    float base = dodgeChance;
+    float base = _dodgeChance;
     for (Effect *eff in self.activeEffects) {
         base += eff.dodgeChanceAdjustment;
     }
@@ -57,7 +52,7 @@
 - (void)healSelfForAmount:(NSInteger)amount {
     if (amount > 0){
         if (!self.hasDied && !self.isDead){
-            health = MIN(self.maximumHealth , health + amount);
+            self.health = MIN(self.maximumHealth , self.health + amount);
         }
     }
 }
@@ -74,8 +69,8 @@
 }
 
 -(void)performAttackIfAbleOnTarget:(Boss*)target{
-	if (lastAttack >= damageFrequency && !self.isDead){
-		lastAttack = 0.0;
+	if (_lastAttack >= _damageFrequency && !self.isDead){
+		_lastAttack = 0.0;
 		
 		[target setHealth:[target health] - (self.damageDealt * self.damageDoneMultiplier)];
         [self.announcer displayAttackFromRaidMember:self];
@@ -86,31 +81,13 @@
     
 }
 
--(void)updateEffects:(Boss*)theBoss raid:(Raid*)theRaid player:(Player*)thePlayer time:(float)timeDelta{
-    NSMutableArray *effectsToRemove = [NSMutableArray arrayWithCapacity:5];
-	for (int i = 0; i < [self.activeEffects count]; i++){
-		Effect *effect = [self.activeEffects objectAtIndex:i];
-		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
-		if ([effect isExpired]){
-			[effect expire];
-            [effectsToRemove addObject:effect];
-		}
-	}
-    
-    for (Effect *effect in effectsToRemove){
-        [self.healthAdjustmentModifiers removeObject:effect];
-        [self.activeEffects removeObject:effect];
-    }
-}
-
 -(float)dps{
-    return (float)damageDealt  / damageFrequency;
+    return (float)self.damageDealt  / _damageFrequency;
 }
-
 
 -(NSInteger)damageDealt{
-    int finalAmount = damageDealt;
-    int fuzzRange = (int)round(damageDealt * .05);
+    int finalAmount = _damageDealt;
+    int fuzzRange = (int)round(_damageDealt * .05);
     int fuzz = arc4random() % (fuzzRange + 1);
     
     finalAmount += fuzz * (arc4random() % 2 == 0 ? -1 : 1);
@@ -133,7 +110,7 @@
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid players:(NSArray*)players gameTime:(float)timeDelta
 {
     Player *thePlayer = [players objectAtIndex:0];
-    lastAttack += timeDelta;
+    self.lastAttack += timeDelta;
     [self performAttackIfAbleOnTarget:theBoss];
     [self updateEffects:theBoss raid:theRaid player:thePlayer time:timeDelta];
 	self.absorb = self.absorb; //Verify that our absorption amount is still valid.
@@ -147,6 +124,7 @@
     }
     return message;
 }
+
 -(void)updateWithNetworkMessage:(NSString*)message{
     NSArray* effectComponents = [message componentsSeparatedByString:@"#"];
     
@@ -275,7 +253,7 @@
         self.title = @"Wizard";
         self.dodgeChance = .07;
         self.info = @"Periodically grants you Mana";
-        lastEnergyGrant = arc4random() % 7; //Initialize to a random value so they arent all the same time
+        self.lastEnergyGrant = arc4random() % 7; //Initialize to a random value so they arent all the same time
     }
     return self;
 }
@@ -283,19 +261,19 @@
 -(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid players:(NSArray*)players gameTime:(float)timeDelta
 {
     [super combatActions:theBoss raid:theRaid players:players gameTime:timeDelta];
-    lastEnergyGrant += timeDelta;
+    self.lastEnergyGrant += timeDelta;
     
     NSTimeInterval tickTime = 10.0;
     NSTimeInterval orbTravelTime = 1.5;
     NSInteger energyGrant = 20;
     NSInteger criticalGrantChance = 5;
     
-    if (lastEnergyGrant > (tickTime - orbTravelTime) && !self.energyGrantAnnounced && !self.isDead) {
+    if (self.lastEnergyGrant > (tickTime - orbTravelTime) && !self.energyGrantAnnounced && !self.isDead) {
         [self.announcer displayEnergyGainFrom:self];
         self.energyGrantAnnounced = YES;
     }
     
-    if (lastEnergyGrant > tickTime) {
+    if (self.lastEnergyGrant > tickTime) {
         if (!self.isDead){
             for (Player *player in players){
                 if (arc4random() % 100 < criticalGrantChance) {
@@ -304,7 +282,7 @@
                 [player setEnergy:player.energy + energyGrant];
             }
         }
-        lastEnergyGrant = 0.0;
+        self.lastEnergyGrant = 0.0;
         self.energyGrantAnnounced = NO;
     }
     
@@ -326,8 +304,8 @@
 }
 
 -(void)performAttackIfAbleOnTarget:(Boss*)target{
-	if (lastAttack >= damageFrequency && !self.isDead){
-		lastAttack = 0.0;
+	if (self.lastAttack >= self.damageFrequency && !self.isDead){
+		self.lastAttack = 0.0;
         
         if (self.healthPercentage < .5){
             [self healSelfForAmount:50];
@@ -350,6 +328,5 @@
         [theBoss addEffect:damageImprovement];
         self.deathEffectApplied = YES;
     }
-    
 }
 @end

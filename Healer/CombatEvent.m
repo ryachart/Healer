@@ -12,7 +12,6 @@ NSString* const PlayerHealingDoneKey = @"com.healer.eventlog.healingdone";
 NSString* const PlayerOverHealingDoneKey = @"com.healer.eventlog.overhealingdone";
 
 @implementation CombatEvent
-@synthesize type = _type, value, source, target, timeStamp;
 -(id)initWithSource:(id<EventDataSource>)src target:(id<EventDataSource>)trgt value:(NSNumber*)val andEventType:(CombatEventType)typ{
     self = [super init];
     if (self){
@@ -67,10 +66,10 @@ NSString* const PlayerOverHealingDoneKey = @"com.healer.eventlog.overhealingdone
     return [NSString stringWithFormat:@"[%@][SRC:%@][TAR:%@][VAL:%@][TYPE:%@]",[self.timeStamp description] ,[self.source sourceName], [self.target targetName], [self.value description], [self nameForType:self.type]];
 }
 -(void)dealloc{
-    [source release]; source = nil;
-    [target release]; target = nil;
-    [value release]; value = nil;
-    [timeStamp release]; timeStamp = nil;
+    [_source release]; _source = nil;
+    [_target release]; _target = nil;
+    [_value release]; _value = nil;
+    [_timeStamp release]; _timeStamp = nil;
     [super dealloc];
 }
 

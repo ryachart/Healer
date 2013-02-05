@@ -22,12 +22,10 @@
 @end
 
 @implementation AddRemoveSpellLayer
-@synthesize unusedSpells, usedSpells;
-@synthesize delegate;
 
 - (void)dealloc {
-    [unusedSpells release];
-    [usedSpells release];
+    [_unusedSpells release];
+    [_usedSpells release];
     [_draggingSprite release];
     [_spellSlots release];
     [_ownedSpellSlots release];

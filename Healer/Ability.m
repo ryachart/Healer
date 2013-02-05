@@ -21,8 +21,6 @@
 @end
 
 @implementation Ability
-@synthesize failureChance, title, owner, abilityValue;
-@synthesize timeApplied, isDisabled;
 
 - (id)init {
     if (self = [super init]){
@@ -44,7 +42,7 @@
     return ab;
 }
 - (void)dealloc{
-    [title release];
+    [_title release];
     [_descriptor release];
     [_attackParticleEffectName release];
     [super dealloc];
@@ -258,11 +256,9 @@
 @end
 
 @implementation FocusedAttack
-@synthesize focusTarget;
-@synthesize enrageApplied;
 
 - (void)dealloc{
-    [focusTarget release];
+    [_focusTarget release];
     [super dealloc];
 }
 
@@ -425,20 +421,21 @@
 @implementation GroundSmash
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
 {
+    NSInteger tickDamage = -self.abilityValue;
+    NSInteger numberOfTicks = 3;
+    
+    numberOfTicks += arc4random() % 3;
+    
+    NSTimeInterval delayPerTick = 2.5;
+    float effectDuration = numberOfTicks * delayPerTick;
+    
     for (RaidMember *member in theRaid.livingMembers) {
-        NSInteger tickDamage = -self.abilityValue;
-        NSInteger numberOfTicks = 3;
-        
-        if (arc4random() % 2 == 1) {
-            numberOfTicks += arc4random() % 3;
-        }
         
         if ([member isKindOfClass:[Guardian class]]) {
             tickDamage *= .5;
         }
         
-        NSTimeInterval delayPerTick = 2.5;
-        float effectDuration = numberOfTicks * delayPerTick;
+        tickDamage = FUZZ(tickDamage, 25.0);
         
         RepeatedHealthEffect *caveInDoT = [[[RepeatedHealthEffect alloc] initWithDuration:effectDuration andEffectType:EffectTypeNegativeInvisible] autorelease];
         [caveInDoT setTitle:@"cave-in-damage"];
@@ -446,14 +443,13 @@
         [caveInDoT setNumOfTicks:numberOfTicks];
         [caveInDoT setOwner:self.owner];
         [member addEffect:caveInDoT];
-        
-        Boss *bossOwner = (Boss*)self.owner;
-        
-        for (int i = 0; i < numberOfTicks; i++) {
-            [bossOwner.announcer displayParticleSystemOnRaidWithName:@"ground_dust.plist" delay:(i+1)*delayPerTick offset:CGPointMake(0, -200)];
-            [bossOwner.announcer displayScreenShakeForDuration:.33 afterDelay:(i+1)*delayPerTick];
-        }
-        
+    }
+    
+    Boss *bossOwner = (Boss*)self.owner;
+    
+    for (int i = 0; i < numberOfTicks; i++) {
+        [bossOwner.announcer displayParticleSystemOnRaidWithName:@"ground_dust.plist" delay:(i+1)*delayPerTick offset:CGPointMake(0, -200)];
+        [bossOwner.announcer displayScreenShakeForDuration:.33 afterDelay:(i+1)*delayPerTick];
     }
 }
 @end
@@ -471,9 +467,8 @@
 @end
 
 @implementation BaraghastBreakOff
-@synthesize ownerAutoAttack;
 - (void)dealloc {
-    [ownerAutoAttack release];
+    [_ownerAutoAttack release];
     [super dealloc];
 }
 - (id)init {
@@ -554,7 +549,6 @@
 @end
 
 @implementation Debilitate 
-@synthesize numTargets;
 - (id)init {
     if (self = [super init]){
         AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
@@ -589,7 +583,6 @@
 @end
 
 @implementation Crush 
-@synthesize target;
 - (id)init {
     if (self = [super init]){
         AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
@@ -616,7 +609,7 @@
         [crushEffect setTitle:@"crush"];
         [crushEffect setSpriteName:@"crush.png"];
         [crushEffect setValue:-950];
-        [target addEffect:crushEffect];
+        [self.target addEffect:crushEffect];
         [crushEffect release];
     }
 }
@@ -800,7 +793,6 @@
 @end
 
 @implementation InvertedHealing
-@synthesize numTargets;
 - (id)copy {
     InvertedHealing *copy = [super copy];
     [copy setNumTargets:self.numTargets];
@@ -861,9 +853,8 @@
 @end
 
 @implementation GainAbility
-@synthesize abilityToGain;
 - (void)dealloc {
-    [abilityToGain release];
+    [_abilityToGain release];
     [super dealloc];
 }
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {

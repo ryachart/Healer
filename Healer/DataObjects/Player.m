@@ -23,19 +23,14 @@
 
 @implementation Player
 
-@synthesize activeSpells, energy, maximumEnergy, spellTarget, additionalTargets, statusText;
-@synthesize logger, spellsOnCooldown=_spellsOnCooldown, announcer, playerID, isLocalPlayer;
-@synthesize divinityConfig;
-@synthesize castTimeAdjustment;
-
 -(void)dealloc{
-    [activeSpells release]; activeSpells = nil;
+    [_activeSpells release]; _activeSpells = nil;
     [_spellBeingCast release]; _spellBeingCast = nil;
-    [statusText release]; statusText = nil;
-    [playerID release]; playerID = nil;
+    [_statusText release]; _statusText = nil;
+    [_playerID release]; _playerID = nil;
     [_spellsOnCooldown release]; _spellsOnCooldown = nil;
-    [additionalTargets release]; additionalTargets = nil;
-    [divinityConfig release]; divinityConfig = nil;
+    [_additionalTargets release]; _additionalTargets = nil;
+    [_divinityConfig release]; _divinityConfig = nil;
     [super dealloc];
 }
 
@@ -44,19 +39,17 @@
     if (self = [super init]){
         self.isLocalPlayer = YES;
         self.maximumHealth = hlth;
-        health = hlth;
-        energy = enrgy;
-        energyRegenPerSecond = energyRegen;
-        maximumEnergy = enrgy;
-        targetIsSelf = NO;
-        spellTarget = nil;
+        self.health = hlth;
+        _energy = enrgy;
+        _energyRegenPerSecond = energyRegen;
+        _maximumEnergy = enrgy;
+        self.spellTarget = nil;
         self.spellBeingCast = nil;
-        isCasting = NO;
-        lastEnergyRegen = 0.0f;
+        self.isCasting = NO;
+        self.lastEnergyRegen = 0.0f;
         self.statusText = @"";
-        position = 0;
-        maxChannelTime = 5;
-        castStart = 0.0f;
+        self.maxChannelTime = 5;
+        self.castStart = 0.0f;
         self.cooldownAdjustment = 1.0;
         self.castTimeAdjustment = 1.0;
         self.spellCriticalChance = .1; //10% Base chance to crit
@@ -115,9 +108,9 @@
 
 - (void)setEnergy:(float)newEnergy
 {
-    energy = newEnergy;
-    if (energy < 0) energy = 0;
-	if (energy > maximumEnergy) energy = maximumEnergy;
+    _energy = newEnergy;
+    if (_energy < 0) _energy = 0;
+	if (_energy > _maximumEnergy) _energy = _maximumEnergy;
 }
 
 - (BOOL)canRedemptionTrigger {
@@ -206,8 +199,8 @@
 }
 
 - (void)setDivinityConfig:(NSDictionary *)divCnfg {
-    [divinityConfig release];
-    divinityConfig = [divCnfg retain];
+    [_divinityConfig release];
+    _divinityConfig = [divCnfg retain];
     
     NSMutableArray *divinityEffectsToRemove = [NSMutableArray arrayWithCapacity:5];
     for (Effect *effect in self.activeEffects){
@@ -218,7 +211,7 @@
     for (Effect* effect in divinityEffectsToRemove){
         [self.activeEffects removeObject:effect];
     }
-    NSArray *newDivinityEffects = [Talents effectsForConfiguration:divinityConfig];
+    NSArray *newDivinityEffects = [Talents effectsForConfiguration:_divinityConfig];
     for (Effect *effect in newDivinityEffects){
         [self addEffect:effect];
     }
@@ -253,8 +246,8 @@
     for (Spell* spell in actSpells){
         [spell setOwner:self];
     }
-    [activeSpells release];
-    activeSpells = [actSpells retain];
+    [_activeSpells release];
+    _activeSpells = [actSpells retain];
 }
 
 - (void)configureForRecommendedSpells:(NSArray *)recommendSpells withLastUsedSpells:(NSArray *)lastUsedSpells {
@@ -313,25 +306,13 @@
 }
 
 -(void)updateEffects:(Boss*)theBoss raid:(Raid*)theRaid player:(Player*)thePlayer time:(float)timeDelta{
-    NSMutableArray *effectsToRemove = [NSMutableArray arrayWithCapacity:5];
-	for (int i = 0; i < self.activeEffects.count; i++){
-		Effect *effect = [self.activeEffects objectAtIndex:i];
-		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
-		if ([effect isExpired]){
-			[effect expire];
-            [effectsToRemove addObject:effect];
-		}
-	}
-    
-    for (Effect *effect in effectsToRemove){
-        [self.healthAdjustmentModifiers removeObject:effect];
-        [self.activeEffects removeObject:effect];
-    }
+    [super updateEffects:theBoss raid:theRaid player:thePlayer time:timeDelta];
     [self cacheCastTimeAdjustment];
 }
 
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+- (void)combatActions:(Boss *)theBoss raid:(Raid *)theRaid players:(NSArray *)players gameTime:(float)timeDelta
 {
+    [super combatActions:theBoss raid:theRaid players:players gameTime:timeDelta];
     if (!self.isRedemptionApplied){
         if ([self hasDivinityEffectWithTitle:@"redemption"]){
             NSArray *raid = [theRaid livingMembers];
@@ -391,9 +372,9 @@
         self.overhealingToDistribute = 0;
     }
     
-	if (isCasting){
-        castStart+= timeDelta;
-		if ([spellTarget isDead]){
+	if (self.isCasting){
+        self.castStart+= timeDelta;
+		if ([self.spellTarget isDead]){
             [self interrupt];
 		}
 		else if ([self remainingCastTime] <= 0){
@@ -405,19 +386,19 @@
             for (Effect *eff in self.activeEffects){
                 [eff targetDidCastSpell:self.spellBeingCast];
             }
-			spellTarget = nil;
+			self.spellTarget = nil;
 			self.spellBeingCast = nil;
             self.currentSpellCastTime = 0.0;
-			isCasting = NO;
-			castStart = 0.0f;
-			[additionalTargets release]; additionalTargets = nil;
+			self.isCasting = NO;
+			self.castStart = 0.0f;
+			[_additionalTargets release]; _additionalTargets = nil;
 		}
 		
 	}
 	
-    lastEnergyRegen+= timeDelta;
+    self.lastEnergyRegen+= timeDelta;
     float tickFactor = .1;
-    if (lastEnergyRegen >= 1.0 * tickFactor)
+    if (self.lastEnergyRegen >= 1.0 * tickFactor)
     {
         float energyRegenAdjustment = 1.0;
         
@@ -425,11 +406,9 @@
             energyRegenAdjustment += [eff energyRegenAdjustment];
         }
         
-        [self setEnergy:energy + (energyRegenPerSecond * energyRegenAdjustment * tickFactor) + [self channelingBonus]];
-        lastEnergyRegen = 0.0;
+        [self setEnergy:_energy + (_energyRegenPerSecond * energyRegenAdjustment * tickFactor) + [self channelingBonus]];
+        self.lastEnergyRegen = 0.0;
     }
-    
-    [self updateEffects:theBoss raid:theRaid player:self time:timeDelta];
     
     NSMutableArray *spellsOffCooldown = [NSMutableArray  arrayWithCapacity:4];
     for (Spell *spell in [self spellsOnCooldown]){
@@ -449,17 +428,17 @@
     if (self.isLocalPlayer){
         [self.spellBeingCast spellInterrupted];
     }
-    spellTarget = nil;
+    self.spellTarget = nil;
     self.spellBeingCast = nil;
-    isCasting = NO;
-    castStart = 0.0f;
+    self.isCasting = NO;
+    self.castStart = 0.0f;
     self.currentSpellCastTime = 0.0;
 }
 
 -(NSTimeInterval) remainingCastTime
 {
-	if (castStart != 0.0 && isCasting){
-		return self.currentSpellCastTime - castStart;
+	if (self.castStart != 0.0 && self.isCasting){
+		return self.currentSpellCastTime - self.castStart;
 	}
 	else {
 		return 0.0;
@@ -483,11 +462,11 @@
     if (self.isLocalPlayer){
         [self.spellBeingCast spellInterrupted];
     }
-	spellTarget = nil;
+	self.spellTarget = nil;
 	self.spellBeingCast = nil;
-	isCasting = NO;
-	castStart = 0.0;
-	additionalTargets = nil;
+	self.isCasting = NO;
+	self.castStart = 0.0;
+	self.additionalTargets = nil;
 }
 
 
@@ -516,25 +495,25 @@
     }
 	self.spellBeingCast = theSpell;
     self.currentSpellCastTime = theSpell.castTime * self.castTimeAdjustment;
-	spellTarget = primaryTarget;
-	castStart = 0.0001;
-	isCasting = YES;
+	self.spellTarget = primaryTarget;
+	self.castStart = 0.0001;
+	self.isCasting = YES;
 	
-    [additionalTargets release];
-	additionalTargets = [targets retain];
+    [_additionalTargets release];
+	_additionalTargets = [targets retain];
 	
 }
 
 -(int)channelingBonus{
 	
-	if ([self channelingTime] >= maxChannelTime){
+	if ([self channelingTime] >= self.maxChannelTime){
 		return 10;
 	}
-	else if ([self channelingTime] >= .5 * maxChannelTime){
+	else if ([self channelingTime] >= .5 * self.maxChannelTime){
 		return 6;
 		
 	}
-	else if ([self channelingTime] >= .25 * maxChannelTime){
+	else if ([self channelingTime] >= .25 * self.maxChannelTime){
 		return 3;
 	}
 	
@@ -542,7 +521,7 @@
 }
 
 -(void)startChanneling{
-	channelingStartTime = 0.0001;
+	self.channelingStartTime = 0.0001;
 	[self disableCastingWithReason:CastingDisabledReasonChanneling];
 	
 	[[AudioController sharedInstance] playTitle:CHANNELING_SPELL_TITLE looping:20];
@@ -550,15 +529,15 @@
 }
 
 -(void)stopChanneling{
-	channelingStartTime = 0.0;
+	self.channelingStartTime = 0.0;
 	[self enableCastingWithReason:CastingDisabledReasonChanneling];
 	
 	[[AudioController sharedInstance] stopTitle:CHANNELING_SPELL_TITLE];
 }
 
 -(NSTimeInterval)channelingTime{
-	if (channelingStartTime != 0.0){
-		return channelingStartTime;	
+	if (self.channelingStartTime != 0.0){
+		return self.channelingStartTime;
 	}
 	
 	return 0.0;
@@ -573,10 +552,8 @@
 }
 
 -(BOOL)isDead{
-	return health <= 0;
+	return self.health <= 0;
 }
-
-
 
 - (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical{
     NSInteger loggedAmount = amount;

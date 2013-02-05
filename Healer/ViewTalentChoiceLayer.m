@@ -42,7 +42,7 @@
 
 - (void)onEnterTransitionDidFinish {
     [super onEnterTransitionDidFinish];
-    [self runAction:[CCScaleTo actionWithDuration:.33 scale:1.0]];
+    [self runAction:[CCScaleTo actionWithDuration:.15 scale:1.0]];
 
 }
 
@@ -52,6 +52,6 @@
 }
 
 - (void)complete {
-    [self runAction:[CCSequence actionOne:[CCScaleTo actionWithDuration:.33 scale:0.0] two:[CCCallFunc actionWithTarget:self selector:@selector(notifyDelegateToDismiss)]]];
+    [self runAction:[CCSequence actionOne:[CCScaleTo actionWithDuration:.15 scale:0.0] two:[CCCallFunc actionWithTarget:self selector:@selector(notifyDelegateToDismiss)]]];
 }
 @end

@@ -161,7 +161,7 @@ typedef enum {
 @interface ShadowMinion : Ability
 @end
 
-@interface CaveIn : Ability
+@interface GroundSmash : Ability
 @end
 
 @interface RaidApplyEffect : Ability

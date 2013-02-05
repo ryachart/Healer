@@ -70,7 +70,7 @@
 @end
 
 @interface CorruptedTroll : Boss
-@property (nonatomic, assign) Ability *caveIn;
+@property (nonatomic, assign) Ability *smash;
 @property (readwrite) NSTimeInterval enraging;
 @end
 

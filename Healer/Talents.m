@@ -19,7 +19,7 @@ static NSDictionary *divinityInfo = nil;
 #if TARGET_IPHONE_SIMULATOR
     return YES;
 #endif
-    return [[PlayerDataManager localPlayer] totalRating] >= 25;
+    return [[PlayerDataManager localPlayer] totalRating] >= [Talents requiredRatingForTier:0];
 }
 
 + (NSArray*)divinityChoicesForTier:(NSInteger)tier {
@@ -112,15 +112,15 @@ static NSDictionary *divinityInfo = nil;
 + (NSInteger)requiredRatingForTier:(NSInteger)tier {
     switch (tier) {
         case 0:
-            return 25;
+            return 15;
         case 1:
-            return 35;
+            return 30;
         case 2:
-            return 50;
+            return 45;
         case 3:
-            return 75;
+            return 60;
         case 4:
-            return 85;
+            return 80;
     }
     return NSUIntegerMax; //Loooool
 }

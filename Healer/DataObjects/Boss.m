@@ -315,19 +315,19 @@
     [corTroll setTitle:@"Corrupted Troll"];
     [corTroll setInfo:@"Three days ago a Raklorian Troll stumbled out from beyond the mountains and began ravaging the farmlands.  This was unusual behavior for a cave troll, but survivors noted that the troll seemed to be empowered by an evil magic."];
     
-    CaveIn *caveIn = [[[CaveIn alloc] init] autorelease];
-    [caveIn setAbilityValue:75];
-    [caveIn setTitle:@"troll-cave-in"];
-    [caveIn setCooldown:25.0];
-    [caveIn setActivationTime:.5];
-    corTroll.caveIn = caveIn;
-    [corTroll addAbility:corTroll.caveIn];
+    GroundSmash *groundSmash = [[[GroundSmash alloc] init] autorelease];
+    [groundSmash setAbilityValue:75];
+    [groundSmash setTitle:@"troll-cave-in"];
+    [groundSmash setCooldown:25.0];
+    [groundSmash setActivationTime:.5];
+    corTroll.smash = groundSmash;
+    [corTroll addAbility:corTroll.smash];
     
-    AbilityDescriptor *caveInDesc = [[[AbilityDescriptor alloc] init] autorelease];
-    [caveInDesc setAbilityDescription:@"Occasionally, the Corrupted Troll will smash the roof causing rocks to fall onto your allies."];
-    [caveInDesc setIconName:@"unknown_ability.png"];
-    [caveInDesc setAbilityName:@"Cave In"];
-    [caveIn setDescriptor:caveInDesc];
+    AbilityDescriptor *groundSmashDesc = [[[AbilityDescriptor alloc] init] autorelease];
+    [groundSmashDesc setAbilityDescription:@"The Corrupted Troll will smash the ground repeatedly causing damage to all allies."];
+    [groundSmashDesc setIconName:@"unknown_ability.png"];
+    [groundSmashDesc setAbilityName:@"Ground Smash"];
+    [groundSmash setDescriptor:groundSmashDesc];
     
     AbilityDescriptor *frenzy = [[AbilityDescriptor alloc] init];
     [frenzy setAbilityDescription:@"Occasionally, the Corrupted Troll will attack his Focused target furiously dealing high damage."];
@@ -355,9 +355,7 @@
 }
 
 - (void)ownerDidBeginAbility:(Ability *)ability {
-    [self.announcer announce:@"The Troll smashes the cave ceiling"];
-    [self.announcer displayScreenShakeForDuration:6.5];
-    [self.announcer displayParticleSystemOverRaidWithName:@"falling_rocks.plist"];
+    [self.announcer announce:@"The Troll smashes the ground ferociously."];
 }
 
 -(void)startEnraging{

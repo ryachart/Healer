@@ -11,7 +11,7 @@
 	<key>surging-glory</key>
 	<string>Increases natural mana regeneration by 10%.</string>
 	<key>shining-aegis</key>
-	<string>Your heals reduce their target&apos;s damage taken by 7.5% for 10 seconds.</string>
+	<string>Your heals reduce the target&apos;s damage taken by 7.5% for 10 seconds.</string>
 	<key>after-light</key>
 	<string>Non-periodic healing shields the target for 10% of the healing done.</string>
 	<key>repel-the-darkness</key>

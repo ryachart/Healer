@@ -303,7 +303,7 @@
     if (self.focusTarget && !self.focusTarget.isDead){
         return self.focusTarget;
     }
-    return [super targetFromRaid:raid];
+    return [self mainTankFromRaid:raid];
 }
 
 - (void)setIsDisabled:(BOOL)newIsDisabled {
@@ -333,17 +333,21 @@
         [target addEffect:applyThis];
     }
     if (self.focusTarget.isDead){
-        self.focusTarget = target;
-        if (!self.enrageApplied){
+        self.focusTarget = [self targetFromRaid:theRaid];
+        if (!self.enrageApplied && ![self.focusTarget isKindOfClass:[Guardian class]]){
             self.abilityValue *= 3;
-            [[self bossOwner].announcer announce:[NSString stringWithFormat:@"%@ glows with power after defeating its focused target.", [self bossOwner].title]];
+            [[self bossOwner].announcer announce:[NSString stringWithFormat:@"%@ glows with power after defeating all of your Guardians", [self bossOwner].namePlateTitle]];
             
             AbilityDescriptor *glowingPower = [[[AbilityDescriptor alloc] init] autorelease];
-            [glowingPower setAbilityDescription:@"After defeating a Focused target, this enemy becomes unstoppable and will deal vastly increased damage."];
+            [glowingPower setAbilityDescription:@"After defeating all Guardians, this enemy becomes unstoppable and will deal vastly increased damage."];
             [glowingPower setAbilityName:@"Glowing with Power"];
             [glowingPower setIconName:@"unknown_ability.png"];
             [[self bossOwner] addAbilityDescriptor:glowingPower];
             self.enrageApplied = YES;
+        }
+    } else {
+        if ([self.focusTarget isKindOfClass:[Guardian class]]) {
+            [self.focusTarget setIsFocused:YES];
         }
     }
 }
@@ -418,7 +422,7 @@
 
 @end
 
-@implementation CaveIn
+@implementation GroundSmash
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
 {
     for (RaidMember *member in theRaid.livingMembers) {
@@ -433,12 +437,22 @@
             tickDamage *= .5;
         }
         
-        RepeatedHealthEffect *caveInDoT = [[[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegativeInvisible] autorelease];
+        NSTimeInterval delayPerTick = 2.5;
+        float effectDuration = numberOfTicks * delayPerTick;
+        
+        RepeatedHealthEffect *caveInDoT = [[[RepeatedHealthEffect alloc] initWithDuration:effectDuration andEffectType:EffectTypeNegativeInvisible] autorelease];
         [caveInDoT setTitle:@"cave-in-damage"];
         [caveInDoT setValuePerTick:tickDamage];
         [caveInDoT setNumOfTicks:numberOfTicks];
         [caveInDoT setOwner:self.owner];
         [member addEffect:caveInDoT];
+        
+        Boss *bossOwner = (Boss*)self.owner;
+        
+        for (int i = 0; i < numberOfTicks; i++) {
+            [bossOwner.announcer displayParticleSystemOnRaidWithName:@"ground_dust.plist" delay:(i+1)*delayPerTick offset:CGPointMake(0, -200)];
+            [bossOwner.announcer displayScreenShakeForDuration:.33 afterDelay:(i+1)*delayPerTick];
+        }
         
     }
 }

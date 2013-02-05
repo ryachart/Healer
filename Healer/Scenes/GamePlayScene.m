@@ -17,13 +17,13 @@
 #import "ParticleSystemCache.h"
 #import "Encounter.h"
 #import "HealableTarget.h"
-#import "PlayerHealthView.h"
 #import "PlayerStatusView.h"
 #import "PlayerCastBar.h"
 #import "BackgroundSprite.h"
 #import "NormalModeCompleteScene.h"
 #import "BasicButton.h"
 #import "CCLabelTTFShadow.h"
+#import "GradientBorderLayer.h"
 
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812
@@ -42,6 +42,7 @@
 @property (nonatomic, assign) CCLabelTTF *errAnnouncementLabel;
 @property (nonatomic, retain) GamePlayPauseLayer *pauseMenuLayer;
 @property (nonatomic, readwrite) NSInteger networkThrottle;
+@property (nonatomic, readwrite) GradientBorderLayer *gradientBorder;
 
 -(void)battleBegin;
 -(void)showPauseMenu;
@@ -127,6 +128,10 @@
                 [iPlayer initializeForCombat];
             }
         }
+        
+        self.gradientBorder = [[[GradientBorderLayer alloc] init] autorelease];
+        [self.gradientBorder setOpacity:0];
+        [self addChild:self.gradientBorder];
         
         paused = YES;
         [self.boss setLogger:self];
@@ -449,42 +454,6 @@
 	
 }
 
--(void)playerSelected:(PlayerHealthView *)hv
-{
-    return;
-	if ([[hv memberData] isDead]) return;
-	if ([selectedRaidMembers count] == 0){
-		[selectedRaidMembers addObject:hv];
-		[hv setColor:ccBLUE];
-	}
-	else if ([selectedRaidMembers objectAtIndex:0] == hv){
-		//Here we do nothing because the already selected object has been reselected
-	}
-	else if ([selectedRaidMembers objectAtIndex:0] != hv){
-		PlayerHealthView *currentTarget = [selectedRaidMembers objectAtIndex:0];
-		if ([currentTarget isTouched]){
-			[selectedRaidMembers addObject:hv];
-			[hv setColor:ccc3(255, 0, 255)];
-		}
-		else{
-			[currentTarget setColor:[hv defaultBackgroundColor]];
-			[selectedRaidMembers removeObjectAtIndex:0];
-			[selectedRaidMembers insertObject:hv atIndex:0];
-			[hv setColor:ccBLUE];
-		}
-		
-	}
-}
--(void)playerUnselected:(PlayerHealthView *)hv
-{
-    return;
-	if (hv != [selectedRaidMembers objectAtIndex:0]){
-		[selectedRaidMembers removeObject:hv];
-		[hv setColor:ccBLUE];
-	}
-	
-}
-
 -(void)spellButtonSelected:(PlayerSpellButton*)spell
 {
     if ([[spell spellData] cooldownRemaining] > 0.0){
@@ -589,13 +558,19 @@
     }
 }
 
--(void)displayParticleSystemOnRaidWithName:(NSString*)name forDuration:(float)duration{
+-(void)displayParticleSystemOnRaidWithName:(NSString*)name forDuration:(float)duration
+{
+    [self displayParticleSystemOnRaidWithName:name forDuration:duration offset:CGPointZero];
+}
+
+-(void)displayParticleSystemOnRaidWithName:(NSString*)name forDuration:(float)duration offset:(CGPoint)offset{
     if (self.isServer){
         NSString* networkMessage = [NSString stringWithFormat:@"STMON|%@", name];
         [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
     }
     CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
     CGPoint destination = ccpAdd([self.raidView position], ccp(self.raidView.contentSize.width / 2, self.raidView.contentSize.height /2));
+    destination = ccpAdd(destination, offset);
     if (duration != -1.0){
         [collisionEffect setDuration:duration];
     }
@@ -607,12 +582,17 @@
 
 - (void)displayParticleSystemOnRaidWithName:(NSString*)name delay:(float)delay
 {
+    [self displayParticleSystemOnRaidWithName:name delay:delay offset:CGPointZero];
+}
+
+- (void)displayParticleSystemOnRaidWithName:(NSString*)name delay:(float)delay offset:(CGPoint)offset
+{
     if (delay == 0.0) {
-        [self displayParticleSystemOnRaidWithName:name forDuration:0.0];
+        [self displayParticleSystemOnRaidWithName:name forDuration:0.0 offset:offset];
     } else {
         [self runAction:[CCSequence actionOne:[CCDelayTime actionWithDuration:delay] two:[CCCallBlockN actionWithBlock:^(CCNode *node){
             GamePlayScene *gps = (GamePlayScene *)node;
-            [gps displayParticleSystemOnRaidWithName:name forDuration:0.0];
+            [gps displayParticleSystemOnRaidWithName:name forDuration:0.0 offset:offset];
         }]]];
     }
 }
@@ -731,6 +711,13 @@
     [breathEffect setDuration:duration];
     [breathEffect setPosition:CGPointMake(800, 650)];
     [self addChild:breathEffect z:100 tag:PAUSEABLE_TAG];
+}
+
+- (void)displayCriticalPlayerDamage
+{
+    if (self.player.healthPercentage >= .25) {
+        [self.gradientBorder flash];
+    }
 }
 
 - (void)displaySprite:(NSString*)spriteName overRaidForDuration:(float)duration {
@@ -947,6 +934,14 @@
     }
     //The player's simulation must continue...This might not work
     [self.player combatActions:self.boss theRaid:self.raid gameTime:deltaT];
+    
+    if (!self.gradientBorder.isFlashing) {
+        if (self.player.healthPercentage <= .5) {
+            [self.gradientBorder setOpacity:255 - (int)(255 * self.player.healthPercentage)];
+        } else {
+            [self.gradientBorder setOpacity:0];
+        }
+    }
     
     if (self.isServer){
         for (int i = 1; i < self.players.count; i++){

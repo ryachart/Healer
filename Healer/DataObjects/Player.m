@@ -100,7 +100,14 @@
 
 - (void)setHealth:(NSInteger)newHealth
 {
+    NSInteger prehealth = self.health;
     [super setHealth:newHealth];
+    NSInteger healthDelta = prehealth - self.health;
+    
+    if (healthDelta > 0 && (float)healthDelta / (float)self.maximumHealth > .25) {
+        [self.announcer displayCriticalPlayerDamage];
+    }
+    
     if (self.isDead) {
         [self interrupt];
     }

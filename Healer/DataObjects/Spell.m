@@ -474,7 +474,7 @@
 
 +(id)defaultSpell{
 	Barrier *bulwark = [[Barrier alloc] initWithTitle:@"Barrier" healAmnt:0 energyCost:75 * kCostEfficiencyScale castTime:0.0 andCooldown:4.0];
-    NSString *desc = [NSString stringWithFormat:@"Shields the target absorbing moderate damage.  If the shield is fully consumed %i energy is restored to the Healer.", (int)(bulwark.energyCost * .66)];
+    NSString *desc = [NSString stringWithFormat:@"Shields the target absorbing moderate damage.  If the shield is fully consumed %i mana is restored to the Healer.", (int)(bulwark.energyCost * .66)];
 	[bulwark setDescription:desc];
     
     BarrierEffect* appliedEffect = [[[BarrierEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositive] autorelease];
@@ -639,7 +639,7 @@
 }
 + (id)defaultSpell{
     Respite *respite = [[Respite alloc] initWithTitle:@"Respite" healAmnt:0 energyCost:0 castTime:0.0 andCooldown:30.0];
-    [respite setDescription:@"Restores 105 Energy to the caster."];
+    [respite setDescription:@"Restores 105 Mana to the caster."];
     return [respite autorelease];
 }
 
@@ -709,7 +709,7 @@
 }
 + (id)defaultSpell {
     TouchOfHope *tol = [[TouchOfHope alloc] initWithTitle:@"Touch of Hope" healAmnt:300 energyCost:54 * kCostEfficiencyScale castTime:0.0 andCooldown:6.0];
-    NSString *desc = [NSString stringWithFormat:@"Heals your target for a small amount and more over 4 seconds.  Each time the periodic effect heals it restores %i energy to the Healer.", (int)(tol.energyCost * .1)];
+    NSString *desc = [NSString stringWithFormat:@"Heals your target instantly and periodically over 4 seconds.  Each time the periodic effect heals it restores %i mana to the Healer.", (int)(tol.energyCost * .1)];
     [tol setDescription:desc];
     return [tol autorelease];
 }

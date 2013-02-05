@@ -34,7 +34,6 @@
 		387E7B27145E1375006D9266 /* BossHealthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B0A145E1375006D9266 /* BossHealthView.m */; };
 		387E7B2E145E1375006D9266 /* PlayerCastBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B18145E1375006D9266 /* PlayerCastBar.m */; };
 		387E7B2F145E1375006D9266 /* PlayerStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B1A145E1375006D9266 /* PlayerStatusView.m */; };
-		387E7B30145E1375006D9266 /* PlayerHealthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B1C145E1375006D9266 /* PlayerHealthView.m */; };
 		387E7B31145E1375006D9266 /* RaidMemberHealthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B1E145E1375006D9266 /* RaidMemberHealthView.m */; };
 		387E7B32145E1375006D9266 /* RaidView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B20145E1375006D9266 /* RaidView.m */; };
 		387E7B4C145E1382006D9266 /* GamePlayScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B3F145E1382006D9266 /* GamePlayScene.m */; };
@@ -73,6 +72,7 @@
 		BF698675154CE45A0016F25E /* release_notes.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF698671154CE45A0016F25E /* release_notes.txt */; };
 		BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
 		BF730C4015ABC1BD00E09B81 /* MultiplayerQueueScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */; };
+		BF7660C216C0566600985F2E /* GradientBorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7660C116C0566600985F2E /* GradientBorderLayer.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
 		BF8249D71526D7C2000B554B /* RaidMemberPreBattleCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */; };
 		BF865F21159F8652007F5DBF /* healer@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF865F20159F8651007F5DBF /* healer@2x.png */; };
@@ -592,8 +592,6 @@
 		387E7B18145E1375006D9266 /* PlayerCastBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayerCastBar.m; path = Sprites/PlayerCastBar.m; sourceTree = "<group>"; };
 		387E7B19145E1375006D9266 /* PlayerStatusView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayerStatusView.h; path = Sprites/PlayerStatusView.h; sourceTree = "<group>"; };
 		387E7B1A145E1375006D9266 /* PlayerStatusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayerStatusView.m; path = Sprites/PlayerStatusView.m; sourceTree = "<group>"; };
-		387E7B1B145E1375006D9266 /* PlayerHealthView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayerHealthView.h; path = Sprites/PlayerHealthView.h; sourceTree = "<group>"; };
-		387E7B1C145E1375006D9266 /* PlayerHealthView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayerHealthView.m; path = Sprites/PlayerHealthView.m; sourceTree = "<group>"; };
 		387E7B1D145E1375006D9266 /* RaidMemberHealthView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RaidMemberHealthView.h; path = Sprites/RaidMemberHealthView.h; sourceTree = "<group>"; };
 		387E7B1E145E1375006D9266 /* RaidMemberHealthView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RaidMemberHealthView.m; path = Sprites/RaidMemberHealthView.m; sourceTree = "<group>"; };
 		387E7B1F145E1375006D9266 /* RaidView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RaidView.h; path = Sprites/RaidView.h; sourceTree = "<group>"; };
@@ -665,6 +663,8 @@
 		BF6CC5CF15022496000F1AFF /* PostBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostBattleScene.m; path = Scenes/PostBattleScene.m; sourceTree = "<group>"; };
 		BF730C3E15ABC1BD00E09B81 /* MultiplayerQueueScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiplayerQueueScene.h; sourceTree = "<group>"; };
 		BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiplayerQueueScene.m; sourceTree = "<group>"; };
+		BF7660C016C0566500985F2E /* GradientBorderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GradientBorderLayer.h; sourceTree = "<group>"; };
+		BF7660C116C0566600985F2E /* GradientBorderLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GradientBorderLayer.m; sourceTree = "<group>"; };
 		BF80763115214A04001EB2B3 /* PreBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreBattleScene.h; path = Scenes/PreBattleScene.h; sourceTree = "<group>"; };
 		BF80763215214A04001EB2B3 /* PreBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PreBattleScene.m; path = Scenes/PreBattleScene.m; sourceTree = "<group>"; };
 		BF80764C1522DACC001EB2B3 /* Announcer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Announcer.h; sourceTree = "<group>"; };
@@ -1068,8 +1068,6 @@
 				387E7B18145E1375006D9266 /* PlayerCastBar.m */,
 				387E7B19145E1375006D9266 /* PlayerStatusView.h */,
 				387E7B1A145E1375006D9266 /* PlayerStatusView.m */,
-				387E7B1B145E1375006D9266 /* PlayerHealthView.h */,
-				387E7B1C145E1375006D9266 /* PlayerHealthView.m */,
 				387E7B1D145E1375006D9266 /* RaidMemberHealthView.h */,
 				387E7B1E145E1375006D9266 /* RaidMemberHealthView.m */,
 				387E7B1F145E1375006D9266 /* RaidView.h */,
@@ -1088,6 +1086,8 @@
 				BF98B18915D37EAE00017EA4 /* AbilityDescriptionModalLayer.m */,
 				BF9DD8A81644A6DC007DAE39 /* BossActivationBar.h */,
 				BF9DD8A91644A6DC007DAE39 /* BossActivationBar.m */,
+				BF7660C016C0566500985F2E /* GradientBorderLayer.h */,
+				BF7660C116C0566600985F2E /* GradientBorderLayer.m */,
 			);
 			name = GamePlay;
 			sourceTree = "<group>";
@@ -1866,7 +1866,6 @@
 				387E7B27145E1375006D9266 /* BossHealthView.m in Sources */,
 				387E7B2E145E1375006D9266 /* PlayerCastBar.m in Sources */,
 				387E7B2F145E1375006D9266 /* PlayerStatusView.m in Sources */,
-				387E7B30145E1375006D9266 /* PlayerHealthView.m in Sources */,
 				387E7B31145E1375006D9266 /* RaidMemberHealthView.m in Sources */,
 				387E7B32145E1375006D9266 /* RaidView.m in Sources */,
 				387E7B4C145E1382006D9266 /* GamePlayScene.m in Sources */,
@@ -1926,6 +1925,7 @@
 				38B0BB28165779BC00D31540 /* ViewTalentChoiceLayer.m in Sources */,
 				BFFF9919168D7F52007AF447 /* PlayerDataManager.m in Sources */,
 				BF2D1C1C16968A14006DCA9A /* CCLabelTTFShadow.m in Sources */,
+				BF7660C216C0566600985F2E /* GradientBorderLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

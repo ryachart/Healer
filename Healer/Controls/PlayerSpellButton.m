@@ -106,7 +106,7 @@
         [self.cooldownCountLayer setContentSize:self.contentSize];
     }
     
-    if (self.player && self.player.energy < self.spellData.energyCost && !self.cooldownCountLayer.visible) {
+    if (self.player && (self.player.energy < self.spellData.energyCost || self.player.isDead) && !self.cooldownCountLayer.visible) {
         [self.oomLayer setVisible:YES];
     } else {
         [self.oomLayer setVisible:NO];

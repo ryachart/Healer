@@ -137,6 +137,7 @@
 
 -(void)quickPlaySelected
 {
+    [[PlayerDataManager localPlayer] unlockAll];
 	LevelSelectMapScene *qpS = [[LevelSelectMapScene new] autorelease];
 	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:qpS]];
 }

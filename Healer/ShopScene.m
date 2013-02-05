@@ -44,6 +44,9 @@
 
 - (void)dealloc {
     [_selectedCategorySprite release];
+    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/shop-flavor-1.plist"];
+    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/shop-flavor-2.plist"];
+    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/shop-sprites.plist"];
     [super dealloc];
 }
 

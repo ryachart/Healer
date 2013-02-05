@@ -24,7 +24,7 @@
 @implementation Player
 
 @synthesize activeSpells, energy, maximumEnergy, spellTarget, additionalTargets, statusText;
-@synthesize position, logger, spellsOnCooldown=_spellsOnCooldown, announcer, playerID, isLocalPlayer;
+@synthesize logger, spellsOnCooldown=_spellsOnCooldown, announcer, playerID, isLocalPlayer;
 @synthesize divinityConfig;
 @synthesize castTimeAdjustment;
 
@@ -255,6 +255,29 @@
     }
     [activeSpells release];
     activeSpells = [actSpells retain];
+}
+
+- (void)configureForRecommendedSpells:(NSArray *)recommendSpells withLastUsedSpells:(NSArray *)lastUsedSpells {
+    NSMutableArray *actSpells = [NSMutableArray arrayWithCapacity:4];
+    
+    if (lastUsedSpells && lastUsedSpells.count > 0){
+        [actSpells addObjectsFromArray:lastUsedSpells];
+    }else {
+        for (Spell *spell in recommendSpells){
+            if ([[PlayerDataManager localPlayer] hasSpell:spell]){
+                [actSpells addObject:[[spell class] defaultSpell]];
+            }
+        }
+    }
+    //Add other spells the player has
+    for (Spell *spell in [[PlayerDataManager localPlayer] allOwnedSpells]){
+        if (actSpells.count < 4){
+            if (![actSpells containsObject:spell]){
+                [actSpells addObject:[[spell class] defaultSpell]];
+            }
+        }
+    }
+    [self setActiveSpells:(NSArray*)actSpells];
 }
 
 - (NSString*)initialStateMessage{

@@ -63,16 +63,12 @@
 - (void)battle {
     NSInteger level = self.encCard.levelNum;
     Encounter *encounter = [Encounter encounterForLevel:level isMultiplayer:NO];
-    Player *basicPlayer = [[[Player alloc] initWithHealth:1400 energy:1000 energyRegen:10] autorelease];
-    [Encounter configurePlayer:basicPlayer forRecSpells:encounter.recommendedSpells];
+    Player *basicPlayer = [PlayerDataManager playerFromLocalPlayer];
+    [basicPlayer configureForRecommendedSpells:encounter.recommendedSpells withLastUsedSpells:[PlayerDataManager localPlayer].lastUsedSpells];
     
     if (encounter.boss && basicPlayer && encounter.raid){
-        
         PreBattleScene *pbs = [[[PreBattleScene alloc] initWithEncounter:encounter andPlayer:basicPlayer] autorelease];
         [pbs setLevelNumber:level];
-        if ([Talents isDivinityUnlocked]){
-            [basicPlayer setDivinityConfig:[[PlayerDataManager localPlayer] localDivinityConfig]];
-        }
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:pbs]];
     }
 }

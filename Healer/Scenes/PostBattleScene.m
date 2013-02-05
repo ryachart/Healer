@@ -375,6 +375,7 @@
 
 - (void)goToStore {
     ShopScene *ss = [[ShopScene new] autorelease];
+    [ss setReturnsToMap:YES];
     [ss setRequiresGreaterHealFtuePurchase:self.showsFirstLevelFTUE];
     [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:ss]];
 }

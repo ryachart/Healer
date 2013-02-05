@@ -913,7 +913,6 @@
         [self.boss combatActions:self.players theRaid:self.raid gameTime:deltaT];
         if ([playerMoveButton isMoving]){
             [self.player disableCastingWithReason:CastingDisabledReasonMoving];
-            [self.player setPosition:[self.player position]+1];
         }
         else {
             [self.player enableCastingWithReason:CastingDisabledReasonMoving];

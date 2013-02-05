@@ -507,30 +507,6 @@
     return [encToReturn autorelease];
 }
 
-+ (void)configurePlayer:(Player*)player forRecSpells:(NSArray*)spells {
-    NSMutableArray *activeSpells = [NSMutableArray arrayWithCapacity:4];
-    NSArray *lastUsedSpells = [[PlayerDataManager localPlayer] lastUsedSpells];
-    if (lastUsedSpells && lastUsedSpells.count > 0){
-        [activeSpells addObjectsFromArray:lastUsedSpells];
-    }else {
-        for (Spell *spell in spells){
-            if ([[PlayerDataManager localPlayer] hasSpell:spell]){
-                [activeSpells addObject:[[spell class] defaultSpell]];
-            }
-        }
-    }
-    //Add other spells the player has
-    for (Spell *spell in [[PlayerDataManager localPlayer] allOwnedSpells]){
-        if (activeSpells.count < 4){
-            if (![activeSpells containsObject:spell]){
-                [activeSpells addObject:[[spell class] defaultSpell]];
-            }
-        }
-    }
-    [player setActiveSpells:(NSArray*)activeSpells];
-    
-}
-
 + (NSInteger)goldRewardForSurvivalEncounterWithDuration:(NSTimeInterval)duration {
     if (duration < 120){
         return 0;

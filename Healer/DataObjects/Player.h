@@ -72,8 +72,7 @@ typedef int CastingDisabledReason;
 @property (nonatomic, retain) NSArray* additionalTargets;
 @property (assign) RaidMember* spellTarget;
 @property (nonatomic, retain) NSString *statusText;
-@property NSInteger position;
-@property NSInteger maximumEnergy;
+@property (nonatomic, readonly) NSInteger maximumEnergy;
 @property (nonatomic, readwrite) float castTimeAdjustment;
 @property (nonatomic, readwrite) float spellCostAdjustment;
 @property (nonatomic, readwrite) float spellCriticalChance;
@@ -113,6 +112,9 @@ typedef int CastingDisabledReason;
 - (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical;
 
 - (BOOL)hasDivinityEffectWithTitle:(NSString*)title;
+
+- (void)configureForRecommendedSpells:(NSArray*)recommendSpells withLastUsedSpells:(NSArray*)lastUsedSpells;
+
 //Multiplayer
 @property (nonatomic, retain) NSString* playerID;
 @property (nonatomic, readwrite) BOOL isLocalPlayer; //Turn off other sounds, this is sort of a buggy thing...;

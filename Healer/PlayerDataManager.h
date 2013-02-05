@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <Parse/Parse.h>
 #import "Shop.h"
+#import "Player.h"
 
 #define MAX_CHARACTERS 5
 
@@ -25,6 +26,8 @@ extern NSString* const PlayerGoldDidChangeNotification;
 @property (nonatomic, readonly) NSArray* allOwnedSpells;
 
 + (PlayerDataManager *)localPlayer;
+
++ (Player*)playerFromLocalPlayer;
 
 #pragma mark - Shop And Gold
 - (void)playerEarnsGold:(NSInteger)gold;

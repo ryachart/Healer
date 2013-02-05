@@ -17,6 +17,7 @@
 #import "BackgroundSprite.h"
 #import "MultiplayerQueueScene.h"
 #import "BasicButton.h"
+#import "PlayerDataManager.h"
 
 @interface MultiplayerSetupScene ()
 @property (nonatomic, retain) Raid *raid;
@@ -54,8 +55,9 @@
 
 - (id)initWithPreconfiguredMatch:(GKMatch*)preConMatch andServerID:(NSString*)serverID andLevelNumber:(NSInteger)levelNum{
     Encounter *encounter = [Encounter encounterForLevel:levelNum isMultiplayer:YES];
-    Player *player = [[Player alloc] initWithHealth:1400 energy:1000 energyRegen:10];
-    [Encounter configurePlayer:player forRecSpells:encounter.recommendedSpells];
+    Player *player = [PlayerDataManager playerFromLocalPlayer];
+    [player configureForRecommendedSpells:encounter.recommendedSpells withLastUsedSpells:[PlayerDataManager localPlayer].lastUsedSpells];
+    
     if (self = [super initWithEncounter:encounter andPlayer:player]){
         self.match = preConMatch;
         self.serverPlayerID = serverID;
@@ -65,7 +67,6 @@
             self.otherPlayers = [NSMutableDictionary  dictionaryWithCapacity:self.match.playerIDs.count];
         }
     }
-    [player release];
 
     return self;
 }

@@ -14,6 +14,7 @@
 #import "GoldCounterSprite.h"
 #import "ShopItemNode.h"
 #import "PlayerDataManager.h"
+#import "LevelSelectMapScene.h"
 
 #define BOOK_Z -20
 #define FLAVOR_Z -19
@@ -213,7 +214,12 @@
 }
 
 -(void)back{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
+    if (self.returnsToMap) {
+        LevelSelectMapScene *mapScene = [[[LevelSelectMapScene alloc] init] autorelease];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:mapScene]];
+    } else {
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
+    }
 }
 
 -(void)selectedItem:(ShopItemNode*)selectedNode

@@ -53,6 +53,15 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     return _localPlayer;
 }
 
++ (Player*)playerFromLocalPlayer
+{
+    Player *basicPlayer = [[[Player alloc] initWithHealth:1400 energy:1000 energyRegen:10] autorelease];
+    if ([Talents isDivinityUnlocked]){
+        [basicPlayer setDivinityConfig:[[PlayerDataManager localPlayer] localDivinityConfig]];
+    }
+    return basicPlayer;
+}
+
 - (NSString *)localPlayerSavePath
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);

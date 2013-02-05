@@ -10,4 +10,5 @@
 
 @interface ShopScene : CCScene
 @property (nonatomic, readwrite) BOOL requiresGreaterHealFtuePurchase;
+@property (nonatomic, readwrite) BOOL returnsToMap;
 @end

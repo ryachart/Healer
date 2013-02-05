@@ -316,7 +316,7 @@
     [corTroll setInfo:@"Three days ago a Raklorian Troll stumbled out from beyond the mountains and began ravaging the farmlands.  This was unusual behavior for a cave troll, but survivors noted that the troll seemed to be empowered by an evil magic."];
     
     GroundSmash *groundSmash = [[[GroundSmash alloc] init] autorelease];
-    [groundSmash setAbilityValue:75];
+    [groundSmash setAbilityValue:110];
     [groundSmash setTitle:@"troll-cave-in"];
     [groundSmash setCooldown:25.0];
     [groundSmash setActivationTime:.5];

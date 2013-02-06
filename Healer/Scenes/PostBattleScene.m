@@ -178,27 +178,29 @@
             [statsContainer addChild:goldEarned];
         }
         
+        NSInteger failureAdjustment = 0;
         if (!victory) {
-            CCLabelTTF *bossHealthRemaining = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Boss Health: %1.2f", self.encounter.boss.healthPercentage] dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
-            [bossHealthRemaining setPosition:CGPointMake(54, 230)];
+            CCLabelTTF *bossHealthRemaining = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Boss Health: %1.2f%%", self.encounter.boss.healthPercentage] dimensions:CGSizeMake(250, 100) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:36.0];
+            [bossHealthRemaining setPosition:CGPointMake(40, 190)];
             [bossHealthRemaining setAnchorPoint:CGPointZero];
             [statsContainer addChild:bossHealthRemaining];
+            failureAdjustment = -50;
         }
         
         self.healingDoneLabel = [CCLabelTTF labelWithString:@"Healing Done: " dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
-        [self.healingDoneLabel setPosition:CGPointMake(12, 150)];
+        [self.healingDoneLabel setPosition:CGPointMake(12, 150 + failureAdjustment)];
         [self.healingDoneLabel setAnchorPoint:CGPointZero];
         
         self.overhealingDoneLabel = [CCLabelTTF labelWithString:@"Overhealing: " dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
-        [self.overhealingDoneLabel setPosition:CGPointMake(12, 120)];
+        [self.overhealingDoneLabel setPosition:CGPointMake(12, 120 + failureAdjustment)];
         [self.overhealingDoneLabel setAnchorPoint:CGPointZero];
         
         self.damageTakenLabel = [CCLabelTTF labelWithString:@"Damage Taken: " dimensions:CGSizeMake(280, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
-        [self.damageTakenLabel setPosition:CGPointMake(14, 90)];
+        [self.damageTakenLabel setPosition:CGPointMake(14, 90 + failureAdjustment)];
         [self.damageTakenLabel setAnchorPoint:CGPointZero];
         
         CCLabelTTF *playersLostLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Allies Lost:  %i", numDead] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
-        [playersLostLabel setPosition:CGPointMake(12, 60)];
+        [playersLostLabel setPosition:CGPointMake(12, 60 + failureAdjustment)];
         [playersLostLabel setAnchorPoint:CGPointZero];
         
         [statsContainer addChild:self.healingDoneLabel];
@@ -209,7 +211,7 @@
         NSString *durationText = [@"Duration: " stringByAppendingString:[self timeStringForTimeInterval:fightDuration]];
         
         CCLabelTTF *durationLabel = [CCLabelTTF labelWithString:durationText dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
-        [durationLabel setPosition:CGPointMake(10, 180)];
+        [durationLabel setPosition:CGPointMake(10, 180 + failureAdjustment)];
         [durationLabel setAnchorPoint:CGPointZero];
         [statsContainer addChild:durationLabel];
         

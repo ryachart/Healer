@@ -124,6 +124,12 @@
     [super setColor:shadowColor];
 }
 
+- (void)setOpacity:(GLubyte)opacity
+{
+    [super setOpacity:opacity];
+    [self.superLabel setOpacity:opacity];
+}
+
 - (ccColor3B)shadowColor
 {
     return [super color];

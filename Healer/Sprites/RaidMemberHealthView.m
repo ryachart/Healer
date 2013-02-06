@@ -213,18 +213,18 @@
 
 -(void)displaySCT:(NSString*)sct asCritical:(BOOL)critical {
     CGFloat fontSize = 20;
-    NSString *fontName = @"Arial";
+    NSString *fontName = @"TrebuchetMS";
     float scale = 1.0;
-    CCSequence *sctAction = [CCSequence actions:[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+    CCSequence *sctAction = [CCSequence actions:[CCSpawn actions:[CCMoveBy actionWithDuration:1.5 position:CGPointMake(0, 75)], [CCFadeOut actionWithDuration:1.5],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
         [node removeFromParentAndCleanup:YES];
     }], nil];
 
     
     if (critical) {
         fontSize = 36;
-        fontName = @"Arial-BoldMT";
+        fontName = @"TrebuchetMS-Bold";
         scale = 0.0;
-        sctAction = [CCSequence actions:[CCScaleTo actionWithDuration:.15 scale:1.0], [CCDelayTime actionWithDuration:.25], [CCScaleTo actionWithDuration:.5 scale:.75],[CCSpawn actions:[CCMoveBy actionWithDuration:2.0 position:CGPointMake(0, 100)], [CCFadeOut actionWithDuration:2.0],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        sctAction = [CCSequence actions:[CCScaleTo actionWithDuration:.15 scale:1.0], [CCDelayTime actionWithDuration:.25], [CCScaleTo actionWithDuration:.5 scale:.75],[CCSpawn actions:[CCMoveBy actionWithDuration:1.5 position:CGPointMake(0, 75)], [CCFadeOut actionWithDuration:1.5],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node removeFromParentAndCleanup:YES];}], nil];
     }
     

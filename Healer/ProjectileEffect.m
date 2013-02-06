@@ -8,6 +8,7 @@
 #import "ProjectileEffect.h"
 #import "RaidMember.h"
 #import "Raid.h"
+
 @interface ProjectileEffect ()
 @property (nonatomic, retain) NSString *spriteName;
 @property (nonatomic, retain) RaidMember *target;
@@ -15,12 +16,11 @@
 @end
 
 @implementation ProjectileEffect
-@synthesize spriteName, target, collisionTime, delay, spriteColor, collisionParticleName, type;
 
 - (void)dealloc {
-    [collisionParticleName release];
-    [target release];
-    [spriteName release];
+    [_collisionParticleName release];
+    [_target release];
+    [_spriteName release];
     [super dealloc];
 }
 
@@ -37,7 +37,7 @@
 
 //PRTEFF|TARGET|SPRITE|COLPARTNAME|R|G|B|TIME|TYPE|isFailed
 -(NSString*)asNetworkMessage{
-    return [NSString stringWithFormat:@"PRJEFF|%@|%@|%@|%i|%i|%i|%f|%i|%i", target.battleID, spriteName, self.collisionParticleName, spriteColor.r, spriteColor.g, spriteColor.b, collisionTime + delay, type, self.isFailed];
+    return [NSString stringWithFormat:@"PRJEFF|%@|%@|%@|%i|%i|%i|%f|%i|%i", self.target.battleID, self.spriteName, self.collisionParticleName, self.spriteColor.r, self.spriteColor.g, self.spriteColor.b, self.collisionTime + self.delay, self.type, self.isFailed];
 }
 
 -(id)initWithNetworkMessage:(NSString*)message andRaid:(Raid*)raid{

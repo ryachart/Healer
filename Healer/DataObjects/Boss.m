@@ -1888,7 +1888,7 @@
 
 @implementation AvatarOfTorment1
 + (id)defaultBoss {
-    AvatarOfTorment1 *boss = [[AvatarOfTorment1 alloc] initWithHealth:2880000 damage:0 targets:0 frequency:0.0 choosesMT:NO ];
+    AvatarOfTorment1 *boss = [[AvatarOfTorment1 alloc] initWithHealth:2880000 damage:0 targets:0 frequency:0.0 choosesMT:NO];
     [boss setTitle:@"The Avatar of Torment"];
     [boss setNamePlateTitle:@"Torment"];
     [boss setInfo:@"From the dark heart of Baraghast's shattered corpse emerges a hideous and cackling demon of unfathomable power. Before you stands a massive creature spawned of pure hatred whose only purpose is torment."];
@@ -1907,16 +1907,15 @@
     [spDescriptor setAbilityDescription:@"Emprisons an ally's soul in unimaginable torment reducing them to just shy of death but preventing all damage done to them."];
     [boss addAbilityDescriptor:spDescriptor];
     
-    ProjectileAttack *projectileAttack = [[ProjectileAttack alloc] init];
+    ProjectileAttack *projectileAttack = [[[ProjectileAttack alloc] init] autorelease];
     [projectileAttack setSpriteName:@"purple_fireball.png"];
     [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack setAbilityValue:-250];
     [projectileAttack setCooldown:2.5];
     [projectileAttack setFailureChance:.35];
     [boss addAbility:projectileAttack];
-    [projectileAttack release];
     
-    ProjectileAttack *projectileAttack2 = [[ProjectileAttack alloc] init];
+    ProjectileAttack *projectileAttack2 = [[[ProjectileAttack alloc] init] autorelease];
     [projectileAttack2 setSpriteName:@"purple_fireball.png"];
     [projectileAttack2 setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack2 setAbilityValue:-500];
@@ -1924,7 +1923,6 @@
     [projectileAttack setTimeApplied:2.0];
     [projectileAttack2 setFailureChance:.7];
     [boss addAbility:projectileAttack2];
-    [projectileAttack2 release];
     
     return [boss autorelease];
 }
@@ -1965,7 +1963,7 @@
         [wot setTitle:@"wot"];
         [wot setCooldown:40.0];
         [wot setTimeApplied:0];
-        [wot setAbilityValue:100];
+        [wot setAbilityValue:80];
         [self addAbility:wot];
     }
     
@@ -1983,14 +1981,14 @@
         ProjectileAttack *projectileAttack = [[[ProjectileAttack alloc] init] autorelease];
         [projectileAttack setSpriteName:@"purple_fireball.png"];
         [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
-        [projectileAttack setAbilityValue:-300];
+        [projectileAttack setAbilityValue:-260];
         [projectileAttack setCooldown:1.2];
         [projectileAttack setFailureChance:.2];
         [gainAbility setAbilityToGain:projectileAttack];
         
         [self addAbility:projectileAttack];
         [projectileAttack fireAtRaid:raid];
-        [projectileAttack setAbilityValue:-100];
+        [projectileAttack setAbilityValue:-85];
         [projectileAttack setFailureChance:.7];
         [self removeAbility:projectileAttack];
         

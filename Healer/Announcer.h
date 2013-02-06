@@ -23,7 +23,7 @@
 - (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target withOffset:(CGPoint)offset delay:(NSTimeInterval)delay;
 - (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target;
 - (void)displayParticleSystemOverRaidWithName:(NSString*)name;
--(void)displayParticleSystemOnRaidWithName:(NSString*)name forDuration:(float)duration;
+- (void)displayParticleSystemOnRaidWithName:(NSString*)name forDuration:(float)duration;
 - (void)displayParticleSystemOnRaidWithName:(NSString*)name delay:(float)delay;
 - (void)displayParticleSystemOnRaidWithName:(NSString*)name forDuration:(float)duration offset:(CGPoint)offset;
 - (void)displayParticleSystemOnRaidWithName:(NSString*)name delay:(float)delay offset:(CGPoint)offset;

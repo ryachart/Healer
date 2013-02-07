@@ -14,5 +14,5 @@
 @property (nonatomic, readwrite) float initialOpacity; //0 to 255.  Defaults to 255
 @property (nonatomic, readwrite) float finalOpacity; //0 to 255.  Defaults to 0
 @property (nonatomic, readonly) BOOL isFlashing;
-- (void)flash;
+- (void)flash; //Does nothing if opacity is already 255
 @end

@@ -49,9 +49,13 @@
 
 - (void)flash
 {
+    if (self.opacity == 255) {
+        return;
+    }
     self.isFlashing = YES;
+    GLubyte initial_opacity = self.opacity;
     [self setOpacity:0];
-    [self runAction:[CCSequence actions:[CCFadeTo actionWithDuration:.1 opacity:255], [CCDelayTime actionWithDuration:.1], [CCFadeTo actionWithDuration:.1 opacity:0], [CCCallBlockN actionWithBlock:^(CCNode *node){
+    [self runAction:[CCSequence actions:[CCFadeTo actionWithDuration:.1 opacity:255], [CCDelayTime actionWithDuration:.1], [CCFadeTo actionWithDuration:.1 opacity:initial_opacity], [CCCallBlockN actionWithBlock:^(CCNode *node){
         GradientBorderLayer *gbl = (GradientBorderLayer*)node;
         [gbl setIsFlashing:NO];
     }], nil]];

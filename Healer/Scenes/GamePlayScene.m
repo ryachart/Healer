@@ -715,9 +715,7 @@
 
 - (void)displayCriticalPlayerDamage
 {
-    if (self.player.healthPercentage >= .25) {
-        [self.gradientBorder flash];
-    }
+    [self.gradientBorder flash];
 }
 
 - (void)displaySprite:(NSString*)spriteName overRaidForDuration:(float)duration {
@@ -899,6 +897,11 @@
     }
 }
 
+- (GLubyte)opacityForHealthPercentage:(float)percentage
+{
+    return MIN(255, MAX(0, (int)(255 * pow(1.0-self.player.healthPercentage, 2.5))));
+}
+
 -(void)gameEvent:(ccTime)deltaT
 {
     BOOL isNetworkUpdate = NO;
@@ -933,11 +936,7 @@
     }
     
     if (!self.gradientBorder.isFlashing) {
-        if (self.player.healthPercentage <= .5) {
-            [self.gradientBorder setOpacity:255 - (int)(255 * self.player.healthPercentage)];
-        } else {
-            [self.gradientBorder setOpacity:0];
-        }
+        [self.gradientBorder setOpacity:[self opacityForHealthPercentage:self.player.healthPercentage]];
     }
     
     if (self.isServer){

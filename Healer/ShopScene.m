@@ -113,6 +113,11 @@
 }
 
 - (void)configureCategoryButtons {
+    const NSInteger lockTag = 43972;
+    CGPoint lockPosition = CGPointMake(69, 50);
+    [self.advancedButton removeChildByTag:lockTag cleanup:YES];
+    [self.archivesButton removeChildByTag:lockTag cleanup:YES];
+    [self.vaultButton removeChildByTag:lockTag cleanup:YES];
     [self.advancedButton setOpacity:255];
     [self.advancedButton setIsEnabled:YES];
     [self.archivesButton setOpacity:255];
@@ -120,16 +125,26 @@
     [self.vaultButton setOpacity:255];
     [self.vaultButton setIsEnabled:YES];
     
+    CCSprite *lockSprite = nil;
     switch ([Shop highestCategoryUnlocked]) {
         case ShopCategoryEssentials:
+            lockSprite = [CCSprite spriteWithSpriteFrameName:@"lock.png"];
+            [lockSprite setPosition:lockPosition];
             [self.advancedButton setOpacity:125];
             [self.advancedButton setIsEnabled:NO];
+            [self.advancedButton addChild:lockSprite z:500 tag:lockTag];
         case ShopCategoryAdvanced:
+            lockSprite = [CCSprite spriteWithSpriteFrameName:@"lock.png"];
+            [lockSprite setPosition:lockPosition];
             [self.archivesButton setOpacity:125];
             [self.archivesButton setIsEnabled:NO];
+            [self.archivesButton addChild:lockSprite z:500 tag:lockTag];
         case ShopCategoryArchives:
+            lockSprite = [CCSprite spriteWithSpriteFrameName:@"lock.png"];
+            [lockSprite setPosition:lockPosition];
             [self.vaultButton setOpacity:125];
             [self.vaultButton setIsEnabled:NO];
+            [self.vaultButton addChild:lockSprite z:500 tag:lockTag];
         default:
             break;
     }

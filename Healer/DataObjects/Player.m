@@ -97,7 +97,7 @@
     [super setHealth:newHealth];
     NSInteger healthDelta = prehealth - self.health;
     
-    if (healthDelta > 0 && (float)healthDelta / (float)self.maximumHealth > .25) {
+    if (healthDelta > 0 && (float)healthDelta / (float)self.maximumHealth > .15) {
         [self.announcer displayCriticalPlayerDamage];
     }
     

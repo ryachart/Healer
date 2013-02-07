@@ -422,11 +422,11 @@
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
 {
     NSInteger tickDamage = -self.abilityValue;
-    NSInteger numberOfTicks = 3;
+    NSInteger numberOfTicks = 6;
     
-    numberOfTicks += arc4random() % 3;
+    numberOfTicks += arc4random() % 6;
     
-    NSTimeInterval delayPerTick = 2.5;
+    NSTimeInterval delayPerTick = .5;
     float effectDuration = numberOfTicks * delayPerTick;
     
     for (RaidMember *member in theRaid.livingMembers) {

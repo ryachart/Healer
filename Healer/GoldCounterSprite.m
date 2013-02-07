@@ -9,7 +9,7 @@
 #import "GoldCounterSprite.h"
 #import "Shop.h"
 #import "PlayerDataManager.h"
-
+#import "CCNumberChangeAction.h"
 
 @interface GoldCounterSprite ()
 @property (nonatomic, assign) CCLabelTTF *goldAmountLabel;
@@ -43,7 +43,11 @@
 - (void)updateGoldAnimated:(BOOL)animated toGold:(NSInteger)gold
 {
     if (animated) {
-        
+        [self.goldAmountLabel stopAllActions];
+        NSTimeInterval deltaTime = 2.0;
+        NSInteger currentGold = self.goldAmountLabel.string.integerValue;
+        CCNumberChangeAction *numberChange = [CCNumberChangeAction actionWithDuration:deltaTime fromNumber:currentGold toNumber:gold];
+        [self.goldAmountLabel runAction:numberChange];
     } else {
         NSString *labelText = [NSString stringWithFormat:@"%i", gold];
         self.goldAmountLabel.string = labelText;

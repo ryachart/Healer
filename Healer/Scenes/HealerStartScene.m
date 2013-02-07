@@ -64,11 +64,11 @@
         [self addChild:self.menu z:2];
         
         GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
-        [goldCounter setPosition:CGPointMake(900, 50)];
+        [goldCounter setPosition:CGPointMake(900, 45)];
         [self addChild:goldCounter];
         
         RatingCounterSprite *ratingCounter = [[[RatingCounterSprite alloc] init] autorelease];
-        [ratingCounter setPosition:CGPointMake(750, 50)];
+        [ratingCounter setPosition:CGPointMake(750, 45)];
         [self addChild:ratingCounter];
         
         CCSprite *logoSprite = [CCSprite spriteWithSpriteFrameName:@"home_logo.png"];

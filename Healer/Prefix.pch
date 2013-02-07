@@ -19,3 +19,5 @@
 #define STOP_EFFECT(effectInt) [[SimpleAudioController sharedEngine] stopEffect:effectInt]
 
 #define PLAY_BG_MUSIC(musicPath) [[SimpleAudioController sharedEngine] playBackgroundMusic:musicPath]
+
+#define BACK_BUTTON_POS CGPointMake(90, 725)

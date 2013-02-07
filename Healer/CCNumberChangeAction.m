@@ -36,7 +36,7 @@
     [super update:time];
     float percentElapsed = time;
     
-    NSInteger targetNumber = (self.finishNumber - self.startNumber) * percentElapsed;
+    NSInteger targetNumber = self.startNumber + (self.finishNumber - self.startNumber) * percentElapsed;
     
     CCLabelTTF *targetLabel = (CCLabelTTF *)self.target;
     [targetLabel setString:[NSString stringWithFormat:@"%@%i%@", self.prefix ? self.prefix : @"", targetNumber, self.suffix ? self.suffix : @""]];

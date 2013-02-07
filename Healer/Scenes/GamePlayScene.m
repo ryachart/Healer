@@ -25,6 +25,8 @@
 #import "CCLabelTTFShadow.h"
 #import "GradientBorderLayer.h"
 
+#define DEBUG_AUTO_WIN false
+
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812
 
@@ -63,7 +65,6 @@
 @synthesize match, isClient, isServer, players, networkThrottle, matchVoiceChat, serverPlayerID;
 
 - (void)dealloc {
-    
     [spellView1 release];
     [spellView2 release];
     [spellView3 release];
@@ -979,7 +980,7 @@
         {
             [self battleEndWithSuccess:NO];
         }
-        if ([self.boss isDead]){
+        if ([self.boss isDead] || (self.boss.health != self.boss.maximumHealth && DEBUG_AUTO_WIN)){
             [self battleEndWithSuccess:YES];
         }
     }

@@ -18,6 +18,8 @@
 #import "BasicButton.h"
 #import "Encounter.h"
 #import "ChallengeRatingStepper.h"
+#import "GoldCounterSprite.h"
+
 
 
 #define SPELL_ITEM_TAG 43234
@@ -99,8 +101,12 @@
         }
         
         CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
-        [backButton setPosition:CGPointMake(90, [CCDirector sharedDirector].winSize.height * .95)];
+        [backButton setPosition:BACK_BUTTON_POS];
         [self addChild:backButton];
+        
+        GoldCounterSprite *gcs = [[[GoldCounterSprite alloc] init] autorelease];
+        [gcs setPosition:CGPointMake(100, 38)];
+        [self addChild:gcs z:100];
         
         if (self.encounter.boss.info){
             CCLabelTTF *bossNameLabel = [CCLabelTTF labelWithString:self.encounter.boss.title dimensions:CGSizeMake(300, 200) hAlignment:UITextAlignmentCenter fontName:@"Cochin-BoldItalic" fontSize:32.0];

@@ -25,6 +25,7 @@
 #import "Encounter.h"
 #import "Raid.h"
 #import "CCNumberChangeAction.h"
+#import "GoldCounterSprite.h"
 
 @interface PostBattleScene ()
 @property (nonatomic, readwrite) BOOL isMultiplayer;
@@ -37,9 +38,10 @@
 @property (nonatomic, assign) CCLabelTTF *overhealingDoneLabel;
 @property (nonatomic, assign) CCLabelTTF *damageTakenLabel;
 @property (nonatomic, assign) CCMenuItem *queueAgainMenuItem;
+@property (nonatomic, assign) CCLabelTTF *goldLabel;
 @property (nonatomic, assign) CCLabelTTF *scoreLabel;
 @property (nonatomic, retain) Encounter *encounter;
-
+@property (nonatomic, assign) GoldCounterSprite *goldCounter;
 @end
 
 @implementation PostBattleScene
@@ -72,6 +74,11 @@
         NSInteger score = self.encounter.score;
         NSInteger numDead = self.encounter.raid.deadCount;
         NSTimeInterval fightDuration = duration;
+        
+        self.goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
+        [self.goldCounter setUpdatesAutomatically:NO];
+        [self.goldCounter setPosition:CGPointMake(882, 40)];
+        [self addChild:self.goldCounter z:100];
         
         self.showsFirstLevelFTUE = victory && enc.levelNumber == 1 && [[PlayerDataManager localPlayer] highestLevelCompleted] == 0;
         
@@ -172,10 +179,12 @@
         }
         
         if (reward > 0){
-            CCLabelTTF *goldEarned = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Gold Earned: %i", reward] fontName:@"TrebuchetMS-Bold" fontSize:32.0];
-            [goldEarned setPosition:CGPointMake(36, 30)];
-            [goldEarned setAnchorPoint:CGPointZero];
-            [statsContainer addChild:goldEarned];
+            self.goldLabel = [CCLabelTTF labelWithString:@"Gold Earned: 0" fontName:@"TrebuchetMS-Bold" fontSize:32.0];
+            [self.goldLabel setScale:5];
+            [self.goldLabel setOpacity:0];
+            [self.goldLabel setPosition:CGPointMake(36, 30)];
+            [self.goldLabel setAnchorPoint:CGPointZero];
+            [statsContainer addChild:self.goldLabel];
         }
         
         NSInteger failureAdjustment = 0;
@@ -284,10 +293,11 @@
     [numberChangeAction setPrefix:@"Overhealing: "];
     [self.overhealingDoneLabel runAction:numberChangeAction];
 
-    numberChangeAction = [CCNumberChangeAction actionWithDuration:5.0+(finalScore/10000.0) fromNumber:0 toNumber:finalScore];
+    NSTimeInterval finalScoreTime = 2.5+(finalScore/10000.0);
+    numberChangeAction = [CCNumberChangeAction actionWithDuration:finalScoreTime fromNumber:0 toNumber:finalScore];
     [numberChangeAction setPrefix:@"Score: "];
     [self.scoreLabel runAction:[CCSequence actionOne:numberChangeAction two:[CCCallFunc actionWithTarget:self selector:@selector(completeStatAnimations)]]];
-
+    
 
 }
 
@@ -297,7 +307,23 @@
         [newHighScore setPosition:CGPointMake(190, 354)];
         [self addChild:newHighScore];
         [newHighScore runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
+        
+        if (self.isVictory) {
+            CCNumberChangeAction *numberChangeAction = [CCNumberChangeAction actionWithDuration:2.5 fromNumber:0 toNumber:self.encounter.reward];
+            [numberChangeAction setPrefix:@"Gold Earned: "];
+            [self.goldLabel runAction:numberChangeAction];
+            
+            CCNumberChangeAction *countDown = [CCNumberChangeAction actionWithDuration:2.0 fromNumber:self.encounter.reward toNumber:0];
+            [countDown setPrefix:@"Gold Earned: "];
+            [self.goldLabel runAction:[CCSequence actions:[CCSpawn actions:[CCScaleTo actionWithDuration:.5 scale:1.0], [CCFadeTo actionWithDuration:.5 opacity:255], nil], numberChangeAction, [CCDelayTime  actionWithDuration:.5], [CCCallFunc actionWithTarget:self selector:@selector(finishGoldCountUp)], countDown,[CCFadeTo actionWithDuration:.5 opacity:0], [CCCallBlockN actionWithBlock:^(CCNode *node){ [node removeFromParentAndCleanup:YES];}], nil]];
+            
+        }
     }
+}
+
+- (void)finishGoldCountUp
+{
+    [self.goldCounter updateGoldAnimated:YES toGold:[PlayerDataManager localPlayer].gold];
 }
 
 - (void)onExit {

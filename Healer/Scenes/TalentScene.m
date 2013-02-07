@@ -43,7 +43,7 @@
         [self addChild:tierTable z:TIER_TABLE_Z];
         
         CCMenu *backMenu = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
-        [backMenu setPosition:CGPointMake(90, 710)];
+        [backMenu setPosition:BACK_BUTTON_POS];
         [self addChild:backMenu];
         
         CCLabelTTF *divinityLabel = [CCLabelTTF labelWithString:@"TALENTS" fontName:@"TeluguSangamMN-Bold" fontSize:64.0];

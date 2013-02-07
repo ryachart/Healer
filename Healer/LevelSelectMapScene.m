@@ -15,6 +15,7 @@
 #import "Player.h"
 #import "Talents.h"
 #import "PlayerDataManager.h"
+#import "GoldCounterSprite.h"
 
 @interface LevelSelectMapScene ()
 @property (nonatomic, assign) LevelSelectMapNode *mapScrollView;
@@ -40,7 +41,7 @@
         [self addChild:self.mapScrollView];
         
         CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
-        [backButton setPosition:CGPointMake(90, 725)];
+        [backButton setPosition:BACK_BUTTON_POS];
         [self addChild:backButton z:100];
     
         self.encCard = [[[EncounterCard alloc] initWithLevelNum:1] autorelease];
@@ -51,6 +52,10 @@
         CCMenu *battleMenu = [CCMenu menuWithItems:self.battleButton, nil];
         [battleMenu setPosition:CGPointMake(900, 40)];
         [self addChild:battleMenu z:5];
+        
+        GoldCounterSprite *gcs = [[[GoldCounterSprite alloc] init] autorelease];
+        [gcs setPosition:CGPointMake(100, 45)];
+        [self addChild:gcs z:100];
         
     }
     return self;

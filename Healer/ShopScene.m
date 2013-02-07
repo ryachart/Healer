@@ -71,7 +71,7 @@
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/shop-sprites.plist"];
         
         self.backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
-        [self.backButton setPosition:CGPointMake(90, 715)];
+        [self.backButton setPosition:BACK_BUTTON_POS];
         [self addChild:self.backButton];
                 
         GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];

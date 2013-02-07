@@ -15,7 +15,7 @@
 	<key>emitterType</key>
 	<real>0</real>
 	<key>finishColorAlpha</key>
-	<real>0.01999999955296516</real>
+	<real>0.04</real>
 	<key>finishColorBlue</key>
 	<real>0</real>
 	<key>finishColorGreen</key>
@@ -39,7 +39,7 @@
 	<key>gravityy</key>
 	<real>0</real>
 	<key>maxParticles</key>
-	<real>300</real>
+	<integer>500</integer>
 	<key>maxRadius</key>
 	<real>100</real>
 	<key>maxRadiusVariance</key>

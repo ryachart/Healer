@@ -19,7 +19,7 @@
 @property (nonatomic, assign) ClippingNode *healthBarClippingNode;
 @property (nonatomic, assign) CCSprite *healthBar;
 
-@property (nonatomic, assign) CCLabelTTF *healthLabel;
+@property (nonatomic, assign) CCLabelTTFShadow *healthLabel;
 @end
 
 
@@ -44,10 +44,12 @@
         [self addChild:background];
         
         CCLabelTTFShadow *manaLabel = [CCLabelTTFShadow labelWithString:@"Mana" fontName:@"TrebuchetMS-Bold" fontSize:18.0];
+        [manaLabel setShadowOffset:CGPointMake(-1, -1)];
         [manaLabel setPosition:CGPointMake(34, 18)];
         [self addChild:manaLabel z:100];
         
         self.energyLabel = [CCLabelTTFShadow labelWithString:@"1000" dimensions:self.contentSize hAlignment:kCCTextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:18.0];
+        [self.energyLabel setShadowOffset:CGPointMake(-1, -1)];
         [self.energyLabel setColor:ccc3(230, 230, 230)];
         self.energyLabel.position = CGPointMake(frame.size.width * .45, 3);
         [self addChild:self.energyLabel z:100];
@@ -75,10 +77,12 @@
         [self.healthBar setAnchorPoint:CGPointZero];
         
         CCLabelTTFShadow *healthWordLabel = [CCLabelTTFShadow labelWithString:@"Health" fontName:@"TrebuchetMS-Bold" fontSize:18.0];
+        [healthWordLabel setShadowOffset:CGPointMake(-1, -1)];
         [healthWordLabel setPosition:CGPointMake(40, 52)];
         [self addChild:healthWordLabel z:100];
         
         self.healthLabel = [CCLabelTTFShadow labelWithString:@"100%" dimensions:self.contentSize hAlignment:kCCTextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:18.0];
+        [self.healthLabel setShadowOffset:CGPointMake(-1,-1)];
         [self.healthLabel setColor:ccc3(230, 230, 230)];
         self.healthLabel.position = CGPointMake(frame.size.width * .45, 37);
         [self addChild:self.healthLabel z:100];

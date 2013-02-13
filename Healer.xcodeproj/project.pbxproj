@@ -50,6 +50,7 @@
 		BF0557A015268D0A006B4781 /* ProjectileEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF05579F15268D0A006B4781 /* ProjectileEffect.m */; };
 		BF0557B51526BC02006B4781 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = BF0557B41526BC02006B4781 /* assets */; };
 		BF0DCF64156C6DEE005E74C7 /* ShopItemExtendedNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0DCF63156C6DEE005E74C7 /* ShopItemExtendedNode.m */; };
+		BF1111D716C5C80700A16F2F /* BossCastBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BF1111D616C5C80600A16F2F /* BossCastBar.m */; };
 		BF21071C1527C272001B93D7 /* GamePlayPauseLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */; };
 		BF21071D1527E171001B93D7 /* HealerStartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B45145E1382006D9266 /* HealerStartScene.m */; };
 		BF21071F15291E5F001B93D7 /* emitters in Resources */ = {isa = PBXBuildFile; fileRef = BF21071E15291E5F001B93D7 /* emitters */; };
@@ -625,6 +626,8 @@
 		BF0557B41526BC02006B4781 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = SOURCE_ROOT; };
 		BF0DCF62156C6DEE005E74C7 /* ShopItemExtendedNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopItemExtendedNode.h; sourceTree = "<group>"; };
 		BF0DCF63156C6DEE005E74C7 /* ShopItemExtendedNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopItemExtendedNode.m; sourceTree = "<group>"; };
+		BF1111D516C5C80600A16F2F /* BossCastBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BossCastBar.h; sourceTree = "<group>"; };
+		BF1111D616C5C80600A16F2F /* BossCastBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BossCastBar.m; sourceTree = "<group>"; };
 		BF21071A1527C271001B93D7 /* GamePlayPauseLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlayPauseLayer.h; sourceTree = "<group>"; };
 		BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlayPauseLayer.m; sourceTree = "<group>"; };
 		BF21071E15291E5F001B93D7 /* emitters */ = {isa = PBXFileReference; lastKnownFileType = folder; path = emitters; sourceTree = SOURCE_ROOT; };
@@ -1088,6 +1091,8 @@
 				BF9DD8A91644A6DC007DAE39 /* BossActivationBar.m */,
 				BF7660C016C0566500985F2E /* GradientBorderLayer.h */,
 				BF7660C116C0566600985F2E /* GradientBorderLayer.m */,
+				BF1111D516C5C80600A16F2F /* BossCastBar.h */,
+				BF1111D616C5C80600A16F2F /* BossCastBar.m */,
 			);
 			name = GamePlay;
 			sourceTree = "<group>";
@@ -1392,7 +1397,7 @@
 		38024DA213C2564D003D36F2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = Apple;
 			};
 			buildConfigurationList = 38024DA513C2564D003D36F2 /* Build configuration list for PBXProject "Healer" */;
@@ -1926,6 +1931,7 @@
 				BFFF9919168D7F52007AF447 /* PlayerDataManager.m in Sources */,
 				BF2D1C1C16968A14006DCA9A /* CCLabelTTFShadow.m in Sources */,
 				BF7660C216C0566600985F2E /* GradientBorderLayer.m in Sources */,
+				BF1111D716C5C80700A16F2F /* BossCastBar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1936,6 +1942,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1947,6 +1957,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PROVISIONING_PROFILE = "";
@@ -1958,12 +1969,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
@@ -2048,12 +2064,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";

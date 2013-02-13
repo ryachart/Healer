@@ -1,34 +1,32 @@
 //
-//  PlayerCastBar.m
-//  RaidLeader
+//  BossCastBar.m
+//  Healer
 //
-//  Created by Ryan Hart on 4/21/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Created by Ryan Hart on 2/8/13.
+//  Copyright (c) 2013 Apple. All rights reserved.
 //
 
-#import "PlayerCastBar.h"
-#import "Spell.h"
+#import "BossCastBar.h"
+#import "Ability.h"
 #import "ClippingNode.h"
 #import "CCLabelTTFShadow.h"
+#import "Boss.h"
 
 #define CASTBAR_INSET_WIDTH 4
 #define CASTBAR_INSET_HEIGHT 5
 
-@interface PlayerCastBar ()
-@property (nonatomic, readwrite) BOOL castHasBegun;
+@interface BossCastBar ()
 @property (nonatomic, assign) ClippingNode *castBarClippingNode;
-@property (nonatomic, readwrite) float percentTimeRemaining;
+@property (nonatomic, assign) CCSprite *castBar;
 @end
 
-@implementation PlayerCastBar
+@implementation BossCastBar
 
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super init]) {
         // Initialization code
         self.position = frame.origin;
         self.contentSize = frame.size;
-		self.percentTimeRemaining = 0.0;
-        self.opacity = 0;
         
         CCSprite *background = [CCSprite spriteWithSpriteFrameName:@"cast_bar_back.png"];
         [background setAnchorPoint:CGPointZero];
@@ -37,14 +35,14 @@
         self.timeRemaining = [CCLabelTTFShadow labelWithString:@"" dimensions:self.contentSize hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [self.timeRemaining setAnchorPoint:CGPointZero];
         [self.timeRemaining setColor:ccc3(255, 255, 255)];
-        [self.timeRemaining setPosition:CGPointMake(-10, -50)];
+        [self.timeRemaining setPosition:CGPointMake(20, 12)];
         [self addChild:self.timeRemaining z:100];
         
         self.castBar = [CCSprite spriteWithSpriteFrameName:@"cast_bar_fill.png"];
-        [self.castBar setColor:ccGREEN];
+        [self.castBar setColor:ccORANGE];
         [self.castBar setPosition:CGPointMake(CASTBAR_INSET_WIDTH, CASTBAR_INSET_HEIGHT)];
         [self.castBar setAnchorPoint:CGPointZero];
-
+        
         self.castBarClippingNode = [ClippingNode node];
         [self.castBarClippingNode setAnchorPoint:CGPointZero];
         [self.castBarClippingNode setClippingRegion:CGRectMake(0,0,0,0)];
@@ -55,24 +53,21 @@
     return self;
 }
 
--(void)updateTimeRemaining:(NSTimeInterval)remaining ofMaxTime:(NSTimeInterval)maxTime forSpell:(Spell*)spell
+-(void)update
 {
-	if (remaining <= 0){
+    Ability *activeAbility = self.boss.visibleAbility;
+    
+	if (!activeAbility){
         const NSInteger fadeOutTag = 43234;
-        if (![self getActionByTag:fadeOutTag] && self.opacity > 0) {
+        if (![self getActionByTag:fadeOutTag]) {
             [self stopAllActions];
             CCFadeTo *fadeOut = [CCFadeTo actionWithDuration:1.0 opacity:0];
             [fadeOut setTag:fadeOutTag];
             [self runAction:fadeOut];
         }
 		[self.timeRemaining setString:@""];
-		self.percentTimeRemaining = 0.0;
         [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0, 0, 0)];
-        if (self.castHasBegun) {
-            self.castHasBegun = NO;
-        }
-	}
-	else {
+	} else {
         const NSInteger fadeInTag = 46433;
         if (![self getActionByTag:fadeInTag]) {
             [self stopAllActions];
@@ -80,12 +75,14 @@
             [fadeIn setTag:fadeInTag];
             [self runAction:fadeIn];
         }
-        if (!self.castHasBegun) {
-            self.castHasBegun = YES;
+        float timeRemaining = activeAbility.isChanneling ? activeAbility.channelTimeRemaining :activeAbility.remainingActivationTime;
+        float maxTimeRemaining = activeAbility.isChanneling ? activeAbility.maxChannelTime : activeAbility.activationTime;
+		float percentTimeRemaining =  timeRemaining / maxTimeRemaining;
+        if (activeAbility.isChanneling) {
+            percentTimeRemaining = 1.0 - percentTimeRemaining;
         }
-		self.percentTimeRemaining = remaining/maxTime; //4 - (1.0 - percentTimeRemaining) * self.castBar.contentSize.width
-        [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.castBar.contentSize.width + CASTBAR_INSET_WIDTH) * (1.0 - self.percentTimeRemaining), self.castBar.contentSize.height + CASTBAR_INSET_HEIGHT)];
-		[self.timeRemaining setString:[NSString stringWithFormat:@"%@: %1.2f", spell.title,  remaining]];
+        [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.castBar.contentSize.width + CASTBAR_INSET_WIDTH) * (1.0 - percentTimeRemaining), self.castBar.contentSize.height + CASTBAR_INSET_HEIGHT)];
+		[self.timeRemaining setString:[NSString stringWithFormat:@"%@: %1.2f", self.boss.visibleAbility.title,  timeRemaining]];
 	}
 }
 

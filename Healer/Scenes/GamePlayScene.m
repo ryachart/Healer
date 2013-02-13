@@ -39,8 +39,7 @@
 @property (nonatomic, readonly) Raid *raid;
 @property (nonatomic, readonly) Boss *boss;
 @property (nonatomic, readonly) Player *player;
-@property (nonatomic, assign) CCLabelTTF *announcementLabel;
-@property (nonatomic, assign) CCLabelTTF *announcementLabelShadow;
+@property (nonatomic, assign) CCLabelTTFShadow *announcementLabel;
 @property (nonatomic, assign) CCLabelTTF *errAnnouncementLabel;
 @property (nonatomic, retain) GamePlayPauseLayer *pauseMenuLayer;
 @property (nonatomic, readwrite) NSInteger networkThrottle;
@@ -154,15 +153,10 @@
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(312,40, 400, 50)] autorelease];
         self.playerEnergyView = [[[PlayerStatusView alloc] initWithFrame:CGRectMake(804, 485, 200, 50)] autorelease];
         
-        self.announcementLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
-        [self.announcementLabel setPosition:CGPointMake(512, 480)];
+        self.announcementLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
+        [self.announcementLabel setPosition:CGPointMake(512, 440)];
         [self.announcementLabel setColor:ccYELLOW];
         [self.announcementLabel setVisible:NO];
-        
-        self.announcementLabelShadow = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
-        [self.announcementLabelShadow setPosition:CGPointMake(511, 479)];
-        [self.announcementLabelShadow setColor:ccc3(25, 25, 25)];
-        [self.announcementLabelShadow setVisible:NO];
         
         self.errAnnouncementLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
         [self.errAnnouncementLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .62)];
@@ -173,7 +167,6 @@
         [self addChild:self.playerCastBar];
         [self addChild:self.playerEnergyView];
         [self addChild:self.announcementLabel z:100 tag:PAUSEABLE_TAG];
-        [self addChild:self.announcementLabelShadow z:99 tag:PAUSEABLE_TAG];
         [self addChild:self.errAnnouncementLabel z:98 tag:PAUSEABLE_TAG];
         //CACHE SOUNDS
         
@@ -330,26 +323,20 @@
 
 -(void)battleBegin{
     self.announcementLabel.visible = YES;
-    self.announcementLabelShadow.visible = YES;
     __block GamePlayScene *blockSelf = self;
     [blockSelf runAction:[CCSequence actions:
                           [CCCallBlock actionWithBlock:^(){
         [blockSelf.announcementLabel setString:@"Battle Begins in 3"];
-        [blockSelf.announcementLabelShadow setString:@"Battle Begins in 3"];
     }], 
                           [CCDelayTime actionWithDuration:1.0], 
                           [CCCallBlock actionWithBlock:^(){
         [blockSelf.announcementLabel setString:@"Battle Begins in 2"];
-        [blockSelf.announcementLabelShadow setString:@"Battle Begins in 2"];
     }], [CCDelayTime actionWithDuration:1.0],
                           [CCCallBlock actionWithBlock:^(){
         [blockSelf.announcementLabel setString:@"Battle Begins in 1"];
-        [blockSelf.announcementLabelShadow setString:@"Battle Begins in 1"];
     }], [CCDelayTime actionWithDuration:1.0], [CCCallBlock actionWithBlock:^{
         blockSelf.announcementLabel.visible = NO;
         blockSelf.announcementLabel.string = @"";
-        blockSelf.announcementLabelShadow.visible = NO;
-        blockSelf.announcementLabelShadow.string = @"";
         [blockSelf setPaused:NO];
     }], nil]];
 }
@@ -838,9 +825,6 @@
         [self.announcementLabel stopAllActions];
         [self.announcementLabel setString:@""];
         [self.announcementLabel setScale:1.0];
-        [self.announcementLabelShadow stopAllActions];
-        [self.announcementLabelShadow setString:@""];
-        [self.announcementLabelShadow setScale:1.0];
     }
     
     if (self.isServer){
@@ -849,14 +833,8 @@
     }
     
     [self.announcementLabel setVisible:YES];
-    [self.announcementLabelShadow setVisible:YES];
     [self.announcementLabel setString:announcement];
-    [self.announcementLabelShadow setString:announcement];
     [self.announcementLabel runAction:[CCSequence actions:[CCScaleTo actionWithDuration:.3 scale:1.5], [CCScaleTo actionWithDuration:.3 scale:1.0],[CCDelayTime actionWithDuration:3.0], [CCCallBlockN actionWithBlock:^(CCNode *node){
-        [node setVisible:NO];
-        [(CCLabelTTF*)node setString:@""];
-    }],nil]];
-    [self.announcementLabelShadow runAction:[CCSequence actions:[CCScaleTo actionWithDuration:.3 scale:1.5], [CCScaleTo actionWithDuration:.3 scale:1.0],[CCDelayTime actionWithDuration:3.0], [CCCallBlockN actionWithBlock:^(CCNode *node){
         [node setVisible:NO];
         [(CCLabelTTF*)node setString:@""];
     }],nil]];

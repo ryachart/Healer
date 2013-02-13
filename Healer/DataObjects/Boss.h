@@ -40,6 +40,8 @@
 @property (nonatomic, assign) Ability *autoAttack;
 @property (nonatomic, retain) NSString *namePlateTitle;
 
+@property (nonatomic, readonly) Ability *visibleAbility;
+@property (nonatomic, readonly) BOOL isBusy;
 + (id)defaultBoss;
 - (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses;
 
@@ -55,7 +57,7 @@
 - (void)removeAbility:(Ability*)ability;
 - (void)addAbilityDescriptor:(AbilityDescriptor*)descriptor;
 - (void)clearExtraDescriptors;
-- (Ability*)abilityWithTitle:(NSString*)ability;
+- (Ability*)abilityWithKey:(NSString*)ability;
 
 - (void)ownerWillExecuteAbility:(Ability*)ability;
 - (void)ownerDidExecuteAbility:(Ability*)ability;

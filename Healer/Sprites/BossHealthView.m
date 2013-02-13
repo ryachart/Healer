@@ -8,6 +8,7 @@
 
 #import "BossHealthView.h"
 #import "ClippingNode.h"
+#import "BossCastBar.h"
 
 #define HEALTH_INSET_WIDTH 6.0
 #define HEALTH_INSET_HEIGHT 45.0
@@ -17,17 +18,21 @@
 @property (nonatomic, readwrite) NSInteger lastHealth;
 @property (nonatomic, assign) CCSprite *portraitSprite;
 @property (nonatomic, assign) CCSprite *bossPlateSprite;
+@property (nonatomic, assign) BossCastBar *castBar;
 @end
 
 @implementation BossHealthView
-
-@synthesize bossNameLabel, healthLabel, bossData, lastHealth, bossHealthBack;
 
 - (id)initWithFrame:(CGRect)frame andBossKey:(NSString *)bossKey {
     if ((self = [super init])) {
         // Initialization code
         self.position = frame.origin;
         self.contentSize = frame.size;
+        
+        self.castBar = [[[BossCastBar alloc] initWithFrame:CGRectMake(48, -38, 0, 0)] autorelease];
+        self.castBar.scale = .70;
+        self.castBar.opacity = 0;
+        [self addChild:self.castBar z:100];
 
         self.portraitSprite = [CCSprite spriteWithSpriteFrameName:@"boss_portrait_back.png"];
         [self.portraitSprite setPosition:CGPointMake(736, 20)];
@@ -47,7 +52,7 @@
         [self.portraitSprite addChild:portrait];
         
         
-        lastHealth = 0;
+        self.lastHealth = 0;
         
         self.bossPlateSprite = [CCSprite spriteWithSpriteFrameName:@"boss_plate.png"];
         [self.bossPlateSprite setAnchorPoint:CGPointZero];
@@ -62,13 +67,10 @@
         [healthBar setAnchorPoint:ccp(0,0)];
         [healthBar setPosition:CGPointMake(HEALTH_INSET_WIDTH, HEALTH_INSET_HEIGHT)];
         [self.bossHealthBack addChild:healthBar z:1];
-    
         
         self.bossNameLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(280, 40) hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold" fontSize:32.0];
         self.bossNameLabel.position = CGPointMake(510, 14);
         [self.bossNameLabel setColor:ccc3(220, 220, 220)];
-        
-
         
         self.healthLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentRight fontName:@"Marion-Bold"  fontSize:32.0];
         [self.healthLabel setColor:ccc3(230, 230, 230)];
@@ -86,10 +88,10 @@
 
 -(void)setBossData:(Boss*)theBoss
 {
-	bossData = theBoss;
+	_bossData = theBoss;
 	
-	[self.bossNameLabel setString:[bossData namePlateTitle]];
-	lastHealth = theBoss.health;
+	[self.bossNameLabel setString:[_bossData namePlateTitle]];
+	self.lastHealth = theBoss.health;
     
     [self.abilityDescriptionsView removeFromParentAndCleanup:YES];
     self.abilityDescriptionsView = [[[BossAbilityDescriptionsView alloc] initWithBoss:self.bossData] autorelease];
@@ -97,15 +99,17 @@
     [self.abilityDescriptionsView setPosition:CGPointMake(-454, -360)];
     [self.abilityDescriptionsView setDelegate:self];
     [self addChild:self.abilityDescriptionsView];
+    
+    [self.castBar setBoss:theBoss];
 	
 }
 
 -(void)updateHealth
 {
-    if (bossData && bossData.health < lastHealth){
+    if (self.bossData && self.bossData.health < self.lastHealth){
         int startingFuzzX = arc4random() % 20 + self.bossHealthBack.clippingRegion.origin.x + self.bossHealthBack.clippingRegion.size.width ;
         int startingFuzzY = arc4random() % 20;
-        int heal = bossData.health - lastHealth;
+        int heal = self.bossData.health - self.lastHealth;
         
         CCLabelTTF *sctLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"%i", heal] fontName:@"Arial" fontSize:20];
         [sctLabel setColor:ccRED];
@@ -119,10 +123,10 @@
             [node removeFromParentAndCleanup:YES];}], nil]];
     }
     
-    lastHealth = bossData.health;
+    self.lastHealth = self.bossData.health;
 	NSString *healthText;
-	if (bossData.health >= 1){
-		healthText = [NSString stringWithFormat:@"%3.1f%%", (((float)bossData.health) / bossData.maximumHealth)*100];
+	if (self.bossData.health >= 1){
+		healthText = [NSString stringWithFormat:@"%3.1f%%", (((float)self.bossData.health) / self.bossData.maximumHealth)*100];
 	}
 	else {
 		healthText = @"Dead";
@@ -132,12 +136,13 @@
 		[self.healthLabel setString:healthText];
 	}
     
-    [self.bossNameLabel setString:[bossData namePlateTitle]];
+    [self.bossNameLabel setString:[self.bossData namePlateTitle]];
     
     double percentageOfHealth = ((float)[self.bossData health])/[self.bossData maximumHealth];
     [self.bossHealthBack setClippingRegion:CGRectMake(HEALTH_INSET_WIDTH-(self.bossHealthBack.clippingRegion.size.width * (1 - percentageOfHealth)), self.bossHealthBack.clippingRegion.origin.y, self.bossHealthBack.clippingRegion.size.width, self.bossHealthBack.clippingRegion.size.height)];
     
     [self.abilityDescriptionsView update];
+    [self.castBar update];
 }
 
 - (void)abilityDescriptionViewDidSelectAbility:(AbilityDescriptor *)descriptor {
@@ -169,8 +174,8 @@
 }
 
 - (void)dealloc {
-    [bossNameLabel release];
-    [healthLabel release];
+    [_bossNameLabel release];
+    [_healthLabel release];
     [super dealloc];
 }
 

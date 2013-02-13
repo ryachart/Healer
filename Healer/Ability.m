@@ -26,6 +26,7 @@
     if (self = [super init]){
         self.attackParticleEffectName = @"blood_spurt.plist";
         self.isActivating = NO;
+        self.iconName = @"unknown_ability.png";
     }
     return self;
 }
@@ -34,18 +35,51 @@
     Ability *ab = [[[self class] alloc] init];
     [ab setFailureChance:self.failureChance];
     [ab setCooldown:self.cooldown];
-    [ab setTitle:self.title];
+    [ab setKey:self.key];
     [ab setOwner:self.owner];
     [ab setAbilityValue:self.abilityValue];
-    [ab setDescriptor:self.descriptor];
     [ab setCooldownVariance:self.cooldownVariance];
+    [ab setChannelTimeRemaining:self.channelTimeRemaining];
+    [ab setTitle:self.title];
+    [ab setInfo:self.info];
+    [ab setIconName:self.iconName];
     return ab;
 }
 - (void)dealloc{
+    [_info release];
     [_title release];
-    [_descriptor release];
+    [_key release];
+    [_iconName release];
     [_attackParticleEffectName release];
     [super dealloc];
+}
+
+- (AbilityDescriptor *)descriptor
+{
+    if (self.title && self.info) {
+        AbilityDescriptor *ad = [[[AbilityDescriptor alloc] init] autorelease];
+        [ad setAbilityName:self.title];
+        [ad setAbilityDescription:self.info];
+        [ad setIconName:self.iconName];
+        return ad;
+    }
+    return nil;
+}
+
+- (BOOL)isChanneling
+{
+    return self.channelTimeRemaining > 0;
+}
+
+- (void)setChannelTimeRemaining:(float)channelTimeRemaining
+{
+    _channelTimeRemaining = MAX(0, channelTimeRemaining);
+}
+
+- (void)startChannel:(float)channel
+{
+    self.channelTimeRemaining = channel;
+    self.maxChannelTime = channel;
 }
 
 - (BOOL)checkFailed{
@@ -56,28 +90,30 @@
     return NO;
 }
 
-- (Boss*)bossOwner{
-    NSAssert([self.owner isKindOfClass:[Boss class]], @"boss owner is not a boss!");
-    return (Boss*)self.owner;
+- (NSTimeInterval)cooldown
+{
+    return self.activationTime + _cooldown;
 }
 
 
 - (void)combatActions:(Raid*)theRaid boss:(Boss*)theBoss players:(NSArray*)players gameTime:(float)timeDelta{
     self.timeApplied += timeDelta;
     if (self.cooldown != kAbilityRequiresTrigger && self.timeApplied >= self.cooldown){
-        if (!self.isDisabled){
-            [(Boss*)self.owner ownerWillExecuteAbility:self];
-            [self triggerAbilityForRaid:theRaid andPlayers:players];
-            [(Boss*)self.owner ownerDidExecuteAbility:self];
+        if (!self.owner.visibleAbility || self.owner.visibleAbility == self) {
+            if (!self.isDisabled){
+                [self.owner ownerWillExecuteAbility:self];
+                [self triggerAbilityForRaid:theRaid andPlayers:players];
+                [self.owner ownerDidExecuteAbility:self];
+            }
+            self.timeApplied = 0.0 + self.cooldown * self.cooldownVariance * (arc4random() % 1000 / 1000.0);
+            self.isActivating = NO;
         }
-        self.timeApplied = 0.0 + self.cooldown * self.cooldownVariance * (arc4random() % 1000 / 1000.0);
-        self.isActivating = NO;
     }
-    if (self.activationTime > 0 && !self.isActivating && self.cooldown - self.activationTime <= self.timeApplied) {
+    else if (self.activationTime > 0 && !self.isActivating && self.cooldown - self.activationTime <= self.timeApplied) {
         self.isActivating = YES;
-        [(Boss*)self.owner ownerDidBeginAbility:self];
+        [self.owner ownerDidBeginAbility:self];
     }
-    
+    self.channelTimeRemaining -= timeDelta;
 }
 
 - (NSTimeInterval)remainingActivationTime
@@ -129,7 +165,7 @@
     float multiplyModifier = self.owner.damageDoneMultiplier;
     int additiveModifier = 0;
     
-    float criticalChance = [self bossOwner].criticalChance;
+    float criticalChance = self.owner.criticalChance;
     if (criticalChance != 0.0 && arc4random() % 100 < (criticalChance * 100)){
         multiplyModifier += 1.5;
     }
@@ -148,7 +184,7 @@
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:thisDamage] andEventType:CombatEventTypeDamage]];
         [target setHealth:[target health] - thisDamage];
         if (thisDamage > 0){
-            [[self bossOwner].announcer displayParticleSystemWithName:self.attackParticleEffectName onTarget:target];
+            [self.owner.announcer displayParticleSystemWithName:self.attackParticleEffectName onTarget:target];
         }
         
     }else{
@@ -332,13 +368,13 @@
         self.focusTarget = [self targetFromRaid:theRaid];
         if (!self.enrageApplied && ![self.focusTarget isKindOfClass:[Guardian class]]){
             self.abilityValue *= 3;
-            [[self bossOwner].announcer announce:[NSString stringWithFormat:@"%@ glows with power after defeating all of your Guardians", [self bossOwner].namePlateTitle]];
+            [self.owner.announcer announce:[NSString stringWithFormat:@"%@ glows with power after defeating all of your Guardians", self.owner.namePlateTitle]];
             
             AbilityDescriptor *glowingPower = [[[AbilityDescriptor alloc] init] autorelease];
             [glowingPower setAbilityDescription:@"After defeating all Guardians, this enemy becomes unstoppable and will deal vastly increased damage."];
             [glowingPower setAbilityName:@"Glowing with Power"];
             [glowingPower setIconName:@"unknown_ability.png"];
-            [[self bossOwner] addAbilityDescriptor:glowingPower];
+            [self.owner addAbilityDescriptor:glowingPower];
             self.enrageApplied = YES;
         }
     } else {
@@ -385,7 +421,7 @@
     [fireballVisual setCollisionParticleName:self.explosionParticleName];
     [fireballVisual setIsFailed:didFail];
     fireballVisual.type = self.effectType;
-    [[(Boss*)self.owner announcer] displayProjectileEffect:fireballVisual];
+    [[self.owner announcer] displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     
     DelayedHealthEffect *fireball = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
@@ -430,27 +466,21 @@
     float effectDuration = numberOfTicks * delayPerTick;
     
     for (RaidMember *member in theRaid.livingMembers) {
-        
-        if ([member isKindOfClass:[Guardian class]]) {
-            tickDamage *= .5;
-        }
-        
         tickDamage = FUZZ(tickDamage, 25.0);
         
         RepeatedHealthEffect *caveInDoT = [[[RepeatedHealthEffect alloc] initWithDuration:effectDuration andEffectType:EffectTypeNegativeInvisible] autorelease];
-        [caveInDoT setTitle:@"cave-in-damage"];
+        [caveInDoT setTitle:@"channeled-raid-damage"];
         [caveInDoT setValuePerTick:tickDamage];
         [caveInDoT setNumOfTicks:numberOfTicks];
         [caveInDoT setOwner:self.owner];
         [member addEffect:caveInDoT];
     }
-    
-    Boss *bossOwner = (Boss*)self.owner;
-    
+        
     for (int i = 0; i < numberOfTicks; i++) {
-        [bossOwner.announcer displayParticleSystemOnRaidWithName:@"ground_dust.plist" delay:(i+1)*delayPerTick offset:CGPointMake(0, -200)];
-        [bossOwner.announcer displayScreenShakeForDuration:.33 afterDelay:(i+1)*delayPerTick];
+        [self.owner.announcer displayParticleSystemOnRaidWithName:@"ground_dust.plist" delay:(i+1)*delayPerTick offset:CGPointMake(0, -200)];
+        [self.owner.announcer displayScreenShakeForDuration:.33 afterDelay:(i+1)*delayPerTick];
     }
+    [self startChannel:numberOfTicks * delayPerTick];
 }
 @end
 
@@ -458,10 +488,10 @@
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players{
     Effect *damageBooster = [[Effect alloc] initWithDuration:99999 andEffectType:EffectTypePositiveInvisible];
-    [damageBooster setTarget:[self bossOwner]];
+    [damageBooster setTarget:self.owner];
     [damageBooster setOwner:self.owner];
     [damageBooster setDamageDoneMultiplierAdjustment:(self.abilityValue / 100.0)];
-    [[self bossOwner] addEffect:damageBooster];
+    [self.owner addEffect:damageBooster];
     [damageBooster release];
 }
 @end
@@ -473,12 +503,9 @@
 }
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"Baraghast ignores his focused target and attacks a random ally instead."];
-        [desc setIconName:@"unknown_ability.png"];
-        [desc setAbilityName:@"Disengage"];
-        [self setDescriptor:desc];
-        [desc release];
+        self.title = @"Disengage";
+        self.info = @"Baraghast ignores his focused target and attacks a random ally instead.";
+        self.iconName = @"unknown_ability.png";
     }
     return self;
 }
@@ -516,17 +543,14 @@
 @implementation BaraghastRoar
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"Interrupts spell casting, dispels all positive spell effects, and deals moderate damage to all allies."];
-        [desc setIconName:@"unknown_ability.png"];
-        [desc setAbilityName:@"Warlord's Roar"];
-        [self setDescriptor:desc];
-        [desc release];
+        self.info = @"Interrupts spell casting, dispels all positive spell effects, and deals moderate damage to all allies.";
+        self.iconName = @"unknown_ability.png";
+        self.title = @"Warlord's Roar";
     }
     return self;
 }
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
-    [[(Boss*)self.owner announcer] displayScreenShakeForDuration:.4];
+    [[self.owner announcer] displayScreenShakeForDuration:.4];
     for (Player *player in players) {
         if ([player spellBeingCast]){
             [[player spellBeingCast] applyTemporaryCooldown:2.0];
@@ -551,12 +575,8 @@
 @implementation Debilitate 
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"Deals moderate damage to affected targets and prevents them from dealing any damage until they are healed to full health."];
-        [desc setIconName:@"unknown_ability.png"];
-        [desc setAbilityName:@"Debilitate"];
-        [self setDescriptor:desc];
-        [desc release];
+        self.info = @"Deals moderate damage to affected targets and prevents them from dealing any damage until they are healed to full health.";
+        self.title = @"Debilitate";
     }
     return self;
 }
@@ -585,12 +605,8 @@
 @implementation Crush 
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"After 5 seconds a massive strike lands on the affected target dealing very high damage."];
-        [desc setIconName:@"unknown_ability.png"];
-        [desc setAbilityName:@"Crush"];
-        [self setDescriptor:desc];
-        [desc release];
+        self.info = @"After 5 seconds a massive strike lands on the affected target dealing very high damage.";
+        self.title = @"Crush";
     }
     return self;
 }
@@ -603,7 +619,7 @@
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     if (self.target && !self.target.isDead){
-        [[(Boss*)self.owner announcer] announce:[NSString stringWithFormat:@"%@ prepares to land a massive strike!", [(Boss*)self.owner title]]];
+        [[self.owner announcer] announce:[NSString stringWithFormat:@"%@ prepares to land a massive strike!", [self.owner title]]];
         DelayedHealthEffect *crushEffect = [[DelayedHealthEffect alloc] initWithDuration:5 andEffectType:EffectTypeNegative];
         [crushEffect setOwner:self.owner];
         [crushEffect setTitle:@"crush"];
@@ -618,19 +634,15 @@
 @implementation Deathwave
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"Deals extremely high damage to all living allies.  The damage is divided by the number of living allies."];
-        [desc setIconName:@"unknown_ability.png"];
-        [desc setAbilityName:@"Deathwave"];
-        [self setDescriptor:desc];
-        [desc release];
+        self.info = @"Deals extremely high damage to all living allies.  The damage is divided by the number of living allies.";
+        self.title = @"Deathwave";
         self.abilityValue = 10000;
     }
     return self;
 }
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
-    [[(Boss*)self.owner announcer] displayScreenShakeForDuration:1.0];
-    [[(Boss*)self.owner announcer] displayParticleSystemOnRaidWithName:@"death_ring.plist" forDuration:2.0];
+    [[self.owner announcer] displayScreenShakeForDuration:1.0];
+    [[self.owner announcer] displayParticleSystemOnRaidWithName:@"death_ring.plist" forDuration:2.0];
 
     NSInteger livingMemberCount = theRaid.livingMembers.count;
     for (RaidMember *member in theRaid.livingMembers){
@@ -772,18 +784,16 @@
 }
 
 - (void)addRandomAbility {
-    Boss *bossOwner = (Boss*)self.owner;
     NSArray *allAbilities = [RandomAbilityGenerator allAbilities];
     Ability *randomAbility =  [allAbilities objectAtIndex:arc4random() % allAbilities.count];
     [self.managedAbilities addObject:randomAbility];
-    [bossOwner addAbility:randomAbility];
+    [self.owner addAbility:randomAbility];
 }
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
-    Boss *bossOwner = (Boss*)self.owner;
     if (self.managedAbilities.count == self.maxAbilities){
         Ability *abilityToRemove = [self.managedAbilities objectAtIndex:(arc4random() % self.managedAbilities.count)];
-        [bossOwner removeAbility:abilityToRemove];
+        [self.owner removeAbility:abilityToRemove];
         [self.managedAbilities removeObject:abilityToRemove];
     }
     
@@ -801,12 +811,8 @@
 
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"Any healing done is instead converted into damage to the affected target."];
-        [desc setIconName:@"unknown_ability.png"];
-        [desc setAbilityName:@"Spiritual Inversion"];
-        [self setDescriptor:desc];
-        [desc release];
+        self.info = @"Any healing done is instead converted into damage to the affected target.";
+        self.title = @"Spiritual Inversion";
     }
     return self;
 }
@@ -829,12 +835,8 @@
 @implementation SoulBurn
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"Deals moderate damage over time to its target and any healing done to an affected target will burn 75 Mana from the Healer."];
-        [desc setIconName:@"unknown_ability.png"];
-        [desc setAbilityName:@"Soul Burn"];
-        [self setDescriptor:desc];
-        [desc release];
+        self.info = @"Deals moderate damage over time to its target and any healing done to an affected target will burn 75 Mana from the Healer.";
+        self.title = @"Soul Burn";
     }
     return self;
 }
@@ -859,7 +861,7 @@
 }
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     Ability *newAbility = [self.abilityToGain copy];
-    [(Boss*)self.owner addAbility:newAbility];
+    [self.owner addAbility:newAbility];
     [newAbility release];
 }
 @end
@@ -881,12 +883,9 @@
 @implementation Grip
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"A random player will be strangled by dark magic reducing healing done by 98% and dealing damage over time."];
-        [desc setIconName:@"grip_ability.png"];
-        [desc setAbilityName:@"Grip of Delsarn"];
-        [self setDescriptor:desc];
-        [desc release];
+        self.info = @"A random player will be strangled by dark magic reducing healing done by 98% and dealing damage over time.";
+        self.iconName = @"grip_ability.png";
+        self.title = @"Grip of Delsarn";
     }
     return self;
 }
@@ -913,12 +912,9 @@
 @implementation Impale
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"Periodically a random player will be dealt high damage and begin bleeding severely for several seconds."];
-        [desc setIconName:@"bleeding_ability.png"];
-        [desc setAbilityName:@"Impale"];
-        [self setDescriptor:desc];
-        [desc release];
+        self.info = @"Periodically a random player will be dealt high damage and begin bleeding severely for several seconds.";
+        self.iconName = @"bleeding_ability.png";
+        self.title = @"Impale";
     }
     return self;
 }
@@ -950,12 +946,8 @@
 
 - (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd {
     if (self = [super initWithDamage:dmg andCooldown:cd]){
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"The Gatekeeper has summoned Blood Drinkers to its side.  These vicious beasts will attack a Guardian and heal the Gatekeeper for a substantial amount of they are successful in vanquishing their target."];
-        [desc setIconName:@"unknown_ability.png"];
-        [desc setAbilityName:@"Blood Drinker"];
-        [self setDescriptor:desc];
-        [desc release];
+        self.info = @"The Gatekeeper has summoned Blood Drinkers to its side.  These vicious beasts will attack a Guardian and heal the Gatekeeper for a substantial amount of they are successful in vanquishing their target.";
+        self.title = @"Blood Drinker";
     }
     return self;
 }
@@ -968,9 +960,8 @@
     [self damageTarget:target];
     if (self.focusTarget == target && self.focusTarget.isDead){
         self.focusTarget = nil;
-        Boss *theBoss = (Boss*)self.owner;
-        [theBoss setHealth:theBoss.health + theBoss.maximumHealth * .1];
-        [theBoss.announcer announce:[NSString stringWithFormat:@"A Blood Drinker heals %@ upon defeating its foe.", theBoss.title]];
+        [self.owner setHealth:self.owner.health + self.owner.maximumHealth * .1];
+        [self.owner.announcer announce:[NSString stringWithFormat:@"A Blood Drinker heals %@ upon defeating its foe.", self.owner.title]];
     }
 }
 @end
@@ -1001,12 +992,9 @@
 
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *boneThrowDesc = [[AbilityDescriptor alloc] init];
-        [boneThrowDesc setAbilityDescription:@"Hurls a bone at a target dealing moderate damage and causing the target to be knocked to the ground.  Targets knocked to the ground will deal no damage until they are healed."];
-        [boneThrowDesc setIconName:@"bone_throw_ability.png"];
-        [boneThrowDesc setAbilityName:@"Bone Throw"];
-        [self setDescriptor:boneThrowDesc];
-        [boneThrowDesc release];
+        self.info = @"Hurls a bone at a target dealing moderate damage and causing the target to be knocked to the ground.  Targets knocked to the ground will deal no damage until they are healed.";
+        self.iconName = @"bone_throw_ability.png";
+        self.title = @"Bone Throw";
     }
     return self;
 }
@@ -1028,7 +1016,7 @@
     
     ProjectileEffect *boneVisual = [[ProjectileEffect alloc] initWithSpriteName:@"bone_throw.png" target:target andCollisionTime:throwDuration];
     [boneVisual setType:ProjectileEffectTypeThrow];
-    [[(Boss*)self.owner announcer] displayProjectileEffect:boneVisual];
+    [[self.owner announcer] displayProjectileEffect:boneVisual];
     [boneVisual release];
 }
 @end
@@ -1037,13 +1025,10 @@
 
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"Deals heavy fire damage to targets positioned close together."];
-        [desc setIconName:@"unknown_ability.png"];
-        [desc setAbilityName:@"Breath of Flame"];
-        [self setDescriptor:desc];
+        self.info = @"Deals heavy fire damage to targets positioned close together.";
+        self.iconName = @"unknown_ability.png";
+        self.title = @"Breath of Flame";
         self.targetPositioningType = Melee;
-        [desc release];
     }
     return self;
 }
@@ -1058,7 +1043,7 @@
 }
 
 - (void)willDamageTarget:(RaidMember *)target {
-    [[(Boss*)self.owner announcer] displayParticleSystemWithName:@"fire_explosion.plist" onTarget:target];
+    [[self.owner announcer] displayParticleSystemWithName:@"fire_explosion.plist" onTarget:target];
 }
 @end
 
@@ -1165,7 +1150,7 @@
     
     ProjectileEffect *projVisual = [[ProjectileEffect alloc] initWithSpriteName:[spriteNames objectAtIndex:boltTypeRoll] target:target andCollisionTime:colTime];
     [projVisual setCollisionParticleName:[collisionParticleNames objectAtIndex:boltTypeRoll]];
-    [[(Boss*)self.owner announcer] displayProjectileEffect:projVisual];
+    [[self.owner announcer] displayProjectileEffect:projVisual];
     [projVisual release];
 }
 @end
@@ -1173,11 +1158,10 @@
 @implementation BloodMinion
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"A vile creature made of flowing blood.  This creature reduces all healing done to allies by 25% and causes random allies to hemorrhage their lifeforce away."];
-        [desc setAbilityName:@"Minion of Blood"];
-        [desc setIconName:@"blood_minion_ability.png"];
-        self.descriptor = [desc autorelease];
+        
+        self.info = @"A vile creature made of flowing blood.  This creature reduces all healing done to allies by 25% and causes random allies to hemorrhage their lifeforce away.";
+        self.title = @"Minion of Blood";
+        self.iconName = @"blood_minion_ability.png";
     }
     return self;
 }
@@ -1210,11 +1194,10 @@
 - (id)init {
     if (self = [super init]) {
         self.attackParticleEffectName = @"fire_explosion.plist";
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"A soulless tormentor of living flame.  The heat from this creature burns all allies while it occasionally blasts enemies with a burst of immolation."];
-        [desc setAbilityName:@"Minion of Flame"];
-        [desc setIconName:@"fire_minion_ability.png"];
-        self.descriptor = [desc autorelease];
+        
+        self.info = @"A soulless tormentor of living flame.  The heat from this creature burns all allies while it occasionally blasts enemies with a burst of immolation.";
+        self.title = @"Minion of Flame";
+        self.iconName = @"fire_minion_ability.png";
     }
     return self;
 }
@@ -1240,11 +1223,9 @@
 
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"A viscious being of pure darkness.  This creature drains mana from Healers each time they cast a spell and casts a viscious curse on random allies."];
-        [desc setAbilityName:@"Minion of Shadow"];
-        [desc setIconName:@"shadow_minion_ability.png"];
-        self.descriptor = [desc autorelease];
+        self.info = @"A viscious being of pure darkness.  This creature drains mana from Healers each time they cast a spell and casts a viscious curse on random allies.";
+        self.title = @"Minion of Shadow";
+        self.iconName = @"shadow_minion_ability.png";
     }
     return self;
 }
@@ -1259,7 +1240,7 @@
     }
     
     RaidMember *lowestHealthMember = [theRaid lowestHealthMember];
-    [[(Boss*)self.owner announcer] displayParticleSystemWithName:@"shadow_burst.plist" onTarget:lowestHealthMember];
+    [[self.owner announcer] displayParticleSystemWithName:@"shadow_burst.plist" onTarget:lowestHealthMember];
     RepeatedHealthEffect *shadowCurse = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegative];
     [shadowCurse setTitle:@"shadow-blast"];
     [shadowCurse setSpriteName:@"shadow_curse.png"];
@@ -1293,11 +1274,9 @@
 @implementation OozeRaid
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *desc = [[AbilityDescriptor alloc] init];
-        [desc setAbilityDescription:@"As your allies hack their way through the filth beast they become covered in a disgusting slime.  If this slime builds to 5 stacks on any ally that ally will be consumed.  Whenever an ally receives healing from you the slime is removed."];
-        [desc setAbilityName:@"Engulfing Slime"];
-        [desc setIconName:@"engulfing_slime_ability.png"];
-        self.descriptor = [desc autorelease];
+        self.info = @"As your allies hack their way through the filth beast they become covered in a disgusting slime.  If this slime builds to 5 stacks on any ally that ally will be consumed.  Whenever an ally receives healing from you the slime is removed.";
+        self.title = @"Engulfing Slime";
+        self.iconName = @"engulfing_slime_ability.png";
     }
     return self;
 }
@@ -1336,11 +1315,9 @@
 @implementation GraspOfTheDamned
 - (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd {
     if (self = [super initWithDamage:dmg andCooldown:cd]){
-        AbilityDescriptor *graspOfTheDamnedDesc = [[[AbilityDescriptor alloc] init] autorelease];
-        [graspOfTheDamnedDesc setAbilityName:@"Grasp of the Damned"];
-        [graspOfTheDamnedDesc setAbilityDescription:@"Periodically a curse is applied to an ally that deals damage over time and will explode if the ally receives any healing"];
-        [self setDescriptor:graspOfTheDamnedDesc];
-        [self setTitle:@"grasp-of-the-damned"];
+        self.title = @"Grasp of the Damned";
+        self.info = @"Periodically a curse is applied to an ally that deals damage over time and will explode if the ally receives any healing";
+        [self setKey:@"grasp-of-the-damned"];
     }
     return self;
 }
@@ -1362,11 +1339,9 @@
 
 - (id)init{
     if (self = [super init]){
-        AbilityDescriptor *descriptor = [[[AbilityDescriptor alloc] init] autorelease];
-        [descriptor setIconName:@"soul_prison_ability.png"];
-        [descriptor setAbilityName:@"Soul Prison"];
-        [descriptor setAbilityDescription:@"Emprisons an ally's soul in unimaginable torment reducing them to just shy of death but preventing all damage done to them.  When the effect expires the soul prison attempts to finish its prisoner with a small amount of damage."];
-        [self setDescriptor:descriptor];
+        self.iconName = @"soul_prison_ability.png";
+        self.title = @"Soul Prison";
+        self.info = @"Emprisons an ally's soul in unimaginable torment reducing them to just shy of death but preventing all damage done to them.  When the effect expires the soul prison attempts to finish its prisoner with a small amount of damage.";
     }
     return self;
 }
@@ -1392,10 +1367,9 @@
             [target removeEffect:effect];
         }
         
-        Boss *bossOwner = (Boss*)self.owner;
         NSInteger targetHealth = target.health;
         [target setHealth:1];
-        [bossOwner.logger logEvent:[CombatEvent eventWithSource:bossOwner target:target value:[NSNumber numberWithInt:targetHealth-1] andEventType:CombatEventTypeDamage]];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:targetHealth-1] andEventType:CombatEventTypeDamage]];
         
         [spe setOwner:self.owner];
         [target addEffect:spe];
@@ -1408,18 +1382,15 @@
 
 - (id)init{
     if (self = [super init]){
-        AbilityDescriptor *descriptor = [[[AbilityDescriptor alloc] init] autorelease];
-        [descriptor setAbilityName:@"Disruption Cloud"];
-        [descriptor setAbilityDescription:@"A veil of noxious gas fills the realm causing spells to take 40% longer to cast and allies to take moderate damage."];
-        [self setDescriptor:descriptor];
+        self.title = @"Disruption Cloud";
+        self.info = @"A veil of noxious gas fills the realm causing spells to take 40% longer to cast and allies to take moderate damage.";
     }
     return self;
 }
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     NSTimeInterval duration = 5.0;
-    Boss *bossOwner = (Boss*)self.owner;
-    [bossOwner.announcer displayParticleSystemOnRaidWithName:@"red_mist.plist" forDuration:duration];
+    [self.owner.announcer displayParticleSystemOnRaidWithName:@"red_mist.plist" forDuration:duration];
     for (Player *player in players){
         Effect *disruptionCastTimeEffect = [[[Effect alloc] initWithDuration:duration andEffectType:EffectTypeNegative] autorelease];
         [disruptionCastTimeEffect setTitle:@"disruption-cast-time"];
@@ -1446,10 +1417,8 @@
 @implementation Confusion
 - (id)init {
     if (self = [super init]){
-        AbilityDescriptor *descriptor = [[[AbilityDescriptor alloc] init] autorelease];
-        [descriptor setAbilityName:@"Confusion"];
-        [descriptor setAbilityDescription:@"You will suffer periodic confusion causing some allies to become lost to your senses from a short period of time."];
-        [self setDescriptor:descriptor];
+        self.title = @"Confusion";
+        self.info = @"You will suffer periodic confusion causing some allies to become lost to your senses from a short period of time.";
     }
     return self;
 }
@@ -1476,10 +1445,8 @@
         [disorient setSpriteName:@"fallen-down.png"];
         self.appliedEffect = disorient;
         
-        AbilityDescriptor *abilityDescriptor = [[[AbilityDescriptor alloc] init] autorelease];
-        [abilityDescriptor setAbilityName:@"Disorienting Boulder"];
-        [abilityDescriptor setAbilityDescription:@"Throws a Boulder dealing moderate damage and causing the target to take 25% increased damage for a 8.0 seconds."];
-        self.descriptor = abilityDescriptor;
+        self.title = @"Disorienting Boulder";
+        self.info = @"Throws a Boulder dealing moderate damage and causing the target to take 25% increased damage for a 8.0 seconds.";
         
         self.cooldown = 15.0;
         self.abilityValue = 300;
@@ -1496,9 +1463,11 @@
 @implementation Cleave
 + (Cleave *)normalCleave {
     Cleave *cleave = [[[Cleave alloc] init] autorelease];
-    [cleave setTitle:@"cleave"];
+    [cleave setTitle:@"Cleave"];
+    [cleave setKey:@"cleave"];
+    [cleave setActivationTime:1.0];
     [cleave setAbilityValue:400];
-    [cleave setCooldown:12.5];
+    [cleave setCooldown:12.0];
     [cleave setFailureChance:.4];
     return cleave;
 }
@@ -1601,7 +1570,6 @@
 @implementation WaveOfTorment
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
 {
-    Boss *bossOwner = (Boss*)self.owner;
     NSMutableArray *groups = [NSMutableArray arrayWithCapacity:4];
     for (int i = 0; i < 4; i++) {
         NSMutableArray *group = [NSMutableArray arrayWithCapacity:5];
@@ -1616,11 +1584,11 @@
         NSMutableArray *groupToHurt = [groups objectAtIndex:arc4random() % groups.count];
         for (RaidMember *member in groupToHurt) {
             DelayedHealthEffect *wotEffect = [[[DelayedHealthEffect alloc] initWithDuration:0.01 + (delay * i) andEffectType:EffectTypeNegativeInvisible] autorelease];
-            [wotEffect setOwner:bossOwner];
+            [wotEffect setOwner:self.owner];
             [wotEffect setTitle:@"wave-of-torment-dmg"];
             [wotEffect setValue:-self.abilityValue * (1.1 * (i+1))];
             [member addEffect:wotEffect];
-            [bossOwner.announcer displayParticleSystemWithName:@"shadow_burst.plist" onTarget:member withOffset:CGPointZero delay:0.01 + (delay * i)];
+            [self.owner.announcer displayParticleSystemWithName:@"shadow_burst.plist" onTarget:member withOffset:CGPointZero delay:0.01 + (delay * i)];
         }
         [groups removeObject:groupToHurt];
     }
@@ -1630,7 +1598,7 @@
 
 @implementation StackingEnrage
 
-- (void)setOwner:(Agent *)owner
+- (void)setOwner:(Boss *)owner
 {
     [super setOwner:owner];
     
@@ -1643,5 +1611,24 @@
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
 {
     self.enrageEffect.damageDoneMultiplierAdjustment += (self.abilityValue / 100.0);
+}
+@end
+
+@implementation FlameBreath
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
+{
+    float effectDuration = 5.0;
+    NSInteger numberOfTicks = 5;
+    [self.owner.announcer displayBreathEffectOnRaidForDuration:effectDuration];
+    for (RaidMember *member in theRaid.livingMembers) {
+        RepeatedHealthEffect *flameBreathEffect = [[[RepeatedHealthEffect alloc] initWithDuration:effectDuration andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [flameBreathEffect setNumOfTicks:numberOfTicks];
+        [flameBreathEffect setValuePerTick:-(arc4random() % self.abilityValue/2 + self.abilityValue)];
+        [flameBreathEffect setOwner:self.owner];
+        [flameBreathEffect setTitle:@"flame-breath-eff"];
+        [member addEffect:flameBreathEffect];
+    }
+    
+    [self startChannel:effectDuration];
 }
 @end

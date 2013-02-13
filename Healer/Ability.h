@@ -20,14 +20,20 @@
 @property (nonatomic, readwrite) float failureChance;
 @property (nonatomic, readwrite) NSTimeInterval timeApplied;
 @property (nonatomic, readwrite) NSTimeInterval cooldown; //9999 denotes an ability that must be triggered
-@property (nonatomic, retain ) NSString *title;
-@property (nonatomic, assign) Agent *owner;
+@property (nonatomic, retain) NSString *title;
+@property (nonatomic, retain) NSString *info;
+@property (nonatomic, retain) NSString *key;
+@property (nonatomic, retain) NSString *iconName;
+@property (nonatomic, assign) Boss *owner;
 @property (nonatomic, readwrite) NSInteger abilityValue; //Damage or DoT value or Number of Targets - Depends on the ability
 @property (nonatomic, readwrite) BOOL isDisabled;
-@property (nonatomic, retain) AbilityDescriptor *descriptor;
+@property (nonatomic, readonly) AbilityDescriptor *descriptor;
 @property (nonatomic, retain) NSString *attackParticleEffectName; //Defaults to blood_spurt.plist
 @property (nonatomic, readwrite) NSInteger difficulty;
 @property (nonatomic, readwrite) float cooldownVariance;
+@property (nonatomic, readwrite) float channelTimeRemaining;
+@property (nonatomic, readwrite) float maxChannelTime;
+@property (nonatomic, readonly) BOOL isChanneling;
 
 //Activation Times
 @property (nonatomic, readwrite) BOOL isActivating;
@@ -40,6 +46,7 @@
 - (BOOL)checkFailed;
 
 - (void)willDamageTarget:(RaidMember*)target;
+- (void)startChannel:(float)channel;
 @end
 
 
@@ -208,4 +215,7 @@ typedef enum {
 
 @interface StackingEnrage : Ability
 @property (nonatomic, retain) Effect *enrageEffect;
+@end
+
+@interface FlameBreath : Ability
 @end

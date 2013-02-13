@@ -116,6 +116,7 @@
 
 - (void)setColor:(ccColor3B)color
 {
+    colorUnmodified_ = color;
     [self.superLabel setColor:color];
 }
 

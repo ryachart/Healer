@@ -163,10 +163,10 @@
 	return self;
 }
 
-- (Ability*)abilityWithTitle:(NSString*)abilityTitle
+- (Ability*)abilityWithKey:(NSString*)abilityTitle
 {
     for (Ability*ab in self.abilities) {
-        if ([ab.title isEqualToString:abilityTitle]) {
+        if ([ab.key isEqualToString:abilityTitle]) {
             return ab;
         }
     }
@@ -262,6 +262,26 @@
 -(NSString*)targetName{
     return self.title;
 }
+
+- (BOOL)isBusy
+{
+    return self.visibleAbility != nil;
+}
+
+- (Ability*)visibleAbility
+{
+    Ability *visibleAbility = nil;
+    for (Ability *ab in self.abilities) {
+        if (ab.isChanneling) {
+            visibleAbility = ab;
+            break;
+        } else if (ab.isActivating) {
+            visibleAbility = ab;
+            break;
+        }
+    }
+    return visibleAbility;
+}
 @end
 
 #pragma mark - Shipping Bosses (Merc Campaign)
@@ -310,18 +330,14 @@
     
     GroundSmash *groundSmash = [[[GroundSmash alloc] init] autorelease];
     [groundSmash setAbilityValue:54];
-    [groundSmash setTitle:@"troll-cave-in"];
+    [groundSmash setKey:@"troll-cave-in"];
     [groundSmash setCooldown:30.0];
-    [groundSmash setActivationTime:.25];
+    [groundSmash setActivationTime:1.0];
     [groundSmash setTimeApplied:20.0];
+    [groundSmash setTitle:@"Ground Smash"];
+    [groundSmash setInfo:@"The Corrupted Troll will smash the ground repeatedly causing damage to all allies."];
     corTroll.smash = groundSmash;
     [corTroll addAbility:corTroll.smash];
-    
-    AbilityDescriptor *groundSmashDesc = [[[AbilityDescriptor alloc] init] autorelease];
-    [groundSmashDesc setAbilityDescription:@"The Corrupted Troll will smash the ground repeatedly causing damage to all allies."];
-    [groundSmashDesc setIconName:@"unknown_ability.png"];
-    [groundSmashDesc setAbilityName:@"Ground Smash"];
-    [groundSmash setDescriptor:groundSmashDesc];
     
     AbilityDescriptor *frenzy = [[AbilityDescriptor alloc] init];
     [frenzy setAbilityDescription:@"Occasionally, the Corrupted Troll will attack his Focused target furiously dealing high damage."];
@@ -349,7 +365,6 @@
 }
 
 - (void)ownerDidBeginAbility:(Ability *)ability {
-    [self.announcer announce:@"The Troll raises its arms to smash the ground."];
 }
 
 -(void)startEnraging{
@@ -401,12 +416,19 @@
     [fireball release];
     
     drake.fireballAbility = [[[ProjectileAttack alloc] init] autorelease];
-    [drake.fireballAbility setTitle:@"fireball-ab"];
+    [drake.fireballAbility setKey:@"fireball-ab"];
     [(ProjectileAttack*)drake.fireballAbility setSpriteName:@"fireball.png"];
     [drake.fireballAbility setAbilityValue:fireballDamage];
     [drake.fireballAbility setFailureChance:fireballFailureChance];
     [drake.fireballAbility setCooldown:fireballCooldown];
     [drake addAbility:drake.fireballAbility];
+    
+    FlameBreath *fb = [[[FlameBreath alloc] init] autorelease];
+    [fb setTitle:@"Flame Breath"];
+    [fb setKey:@"flame-breath"];
+    [fb setAbilityValue:100];
+    [fb setCooldown:kAbilityRequiresTrigger];
+    [drake addAbility:fb];
     
     return [drake autorelease];
 }
@@ -431,18 +453,8 @@
     }
     
     if (percentage == 50.0 || percentage == 75.0 || percentage == 25.0){
-        
-        [self.fireballAbility setTimeApplied:-5.0]; //Turn off this ability for 5 seconds.
-        float effectDuration = 5.0;
-        [self.announcer displayBreathEffectOnRaidForDuration:effectDuration];
-        for (RaidMember *member in raid.livingMembers) {
-            RepeatedHealthEffect *flameBreathEffect = [[[RepeatedHealthEffect alloc] initWithDuration:effectDuration andEffectType:EffectTypeNegativeInvisible] autorelease];
-            [flameBreathEffect setNumOfTicks:5];
-            [flameBreathEffect setValuePerTick:-(arc4random() % 50 + 100)];
-            [flameBreathEffect setOwner:self];
-            [flameBreathEffect setTitle:@"flame-breath-eff"];
-            [member addEffect:flameBreathEffect];
-        }
+        //Trigger Flame Breath
+        [[self abilityWithKey:@"flame-breath"] triggerAbilityForRaid:raid andPlayers:[NSArray arrayWithObject:player]];
     }
 }
 @end
@@ -867,7 +879,7 @@
     [poison release];
     
     RaidDamagePulse *pulse = [[[RaidDamagePulse alloc] init] autorelease];
-    [pulse setTitle:@"poison-nova"];
+    [pulse setKey:@"poison-nova"];
     [pulse setAbilityValue:550];
     [pulse setNumTicks:4];
     [pulse setDuration:12.0];
@@ -1344,7 +1356,7 @@
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
     if (percentage == 99.0) {
         BaraghastRoar *roar = [[BaraghastRoar alloc] init];
-        [roar setTitle:@"baraghast-roar"];
+        [roar setKey:@"baraghast-roar"];
         [roar setCooldown:18.0];
         [self addAbility:roar];
         [roar release];
@@ -1353,7 +1365,7 @@
     if (percentage == 80.0) {
         [self.announcer announce:@"Baraghast glowers beyond the Guardian at the rest of your allies"];
         BaraghastBreakOff *breakOff = [[BaraghastBreakOff alloc] init];
-        [breakOff setTitle:@"break-off"];
+        [breakOff setKey:@"break-off"];
         [breakOff setCooldown:25];
         [breakOff setOwnerAutoAttack:(FocusedAttack*)self.autoAttack];
         
@@ -1364,7 +1376,7 @@
     if (percentage == 60.0) {
         [self.announcer announce:@"Baraghast fills with rage."];
         Crush *crushAbility = [[[Crush alloc] init] autorelease];
-        [crushAbility setTitle:@"crush"];
+        [crushAbility setKey:@"crush"];
         [crushAbility setCooldown:20];
         [crushAbility setTarget:[(FocusedAttack*)self.autoAttack focusTarget]];
         [self addAbility:crushAbility];
@@ -1373,7 +1385,7 @@
     if (percentage == 33.0) {
         [self.announcer announce:@"A Dark Energy Surges Beneath Baraghast..."];
         Deathwave *dwAbility = [[Deathwave alloc] init];
-        [dwAbility setTitle:@"deathwave"];
+        [dwAbility setKey:@"deathwave"];
         [dwAbility setCooldown:42.0];
         [self addAbility:dwAbility];
         [dwAbility release];
@@ -1382,7 +1394,7 @@
 }
 
 - (void)ownerDidExecuteAbility:(Ability*)ability {
-    if ([ability.title isEqualToString:@"deathwave"]){
+    if ([ability.key isEqualToString:@"deathwave"]){
         for (Ability *ab in self.abilities){
             [ab setTimeApplied:0];
         }
@@ -1417,6 +1429,8 @@
     
     GainAbility *gainShadowbolts = [[GainAbility alloc] init];
     [gainShadowbolts setCooldown:60];
+    [gainShadowbolts setInfo:@"Tyonath casts more shadow bolts the longer the fight goes on."];
+    [gainShadowbolts setTitle:@"Increasing Insanity"];
     [gainShadowbolts setAbilityToGain:fireballAbility];
     [seer addAbility:gainShadowbolts];
     [gainShadowbolts release];
@@ -1426,13 +1440,6 @@
     [horrifyingLaugh setCooldown:25];
     [seer addAbility:horrifyingLaugh];
     [horrifyingLaugh release];
-    
-    AbilityDescriptor *gsdesc = [[AbilityDescriptor alloc] init];
-    [gsdesc setAbilityDescription:@"Tyonath casts more shadow bolts the longer the fight goes on."];
-    [gsdesc setIconName:@"unknown_ability.png"];
-    [gsdesc setAbilityName:@"Increasing Insanity"];
-    [gainShadowbolts setDescriptor:gsdesc];
-    [gsdesc release];
     
     return [seer autorelease];
 }
@@ -1449,14 +1456,14 @@
     [boss addAbility:[Cleave normalCleave]];
     
     Grip *gripAbility = [[Grip alloc] init];
-    [gripAbility setTitle:@"grip-ability"];
+    [gripAbility setKey:@"grip-ability"];
     [gripAbility setCooldown:22];
     [gripAbility setAbilityValue:-140];
     [boss addAbility:gripAbility];
     [gripAbility release];
     
     Impale *impaleAbility = [[Impale alloc] init];
-    [impaleAbility setTitle:@"gatekeeper-impale"];
+    [impaleAbility setKey:@"gatekeeper-impale"];
     [impaleAbility setCooldown:16];
     [boss addAbility:impaleAbility];
     [impaleAbility setAbilityValue:820];
@@ -1485,12 +1492,12 @@
         [self.announcer announce:@"The Gatekeeper summons two Blood-Drinker Demons to his side."];
         //Blood drinkers
         BloodDrinker *ability = [[BloodDrinker alloc] initWithDamage:110 andCooldown:1.25];
-        [ability setTitle:@"gatekeeper-blooddrinker"];
+        [ability setKey:@"gatekeeper-blooddrinker"];
         [self addAbility:ability];
         [ability release];
         
         BloodDrinker *ability2 = [[BloodDrinker alloc] initWithDamage:110 andCooldown:1.25];
-        [ability2 setTitle:@"gatekeeper-blooddrinker"];
+        [ability2 setKey:@"gatekeeper-blooddrinker"];
         [self addAbility:ability2];
         [ability2 release];
     }
@@ -1498,7 +1505,7 @@
     if (percentage == 25.0) {
         [self.announcer announce:@"The Blood Drinkers are slain."];
         for (Ability *ability in self.abilities) {
-            if ([ability.title isEqualToString:@"gatekeeper-blooddrinker"]){
+            if ([ability.key isEqualToString:@"gatekeeper-blooddrinker"]){
                 [ability setIsDisabled:YES];
                 [[(BloodDrinker*)ability focusTarget] setIsFocused:NO];
             }
@@ -1638,6 +1645,9 @@
     [(Attack*)cob.crushingPunch setAppliedEffect:crushingPunchEffect];
     [crushingPunchEffect release];
     [cob.crushingPunch setFailureChance:.2];
+    [cob.crushingPunch setInfo:@"Periodically, this enemy unleashes a thundering strike on a random ally dealing high damage."];
+    [cob.crushingPunch setTitle:@"Crushing Punch"];
+    [cob.crushingPunch setIconName:@"crushing_punch_ability.png"];
     [cob addAbility:cob.crushingPunch];
     
     cob.boneQuake = [[[BoneQuake alloc] init] autorelease];
@@ -1650,13 +1660,6 @@
     [boneThrow setCooldown:14.0];
     [cob addAbility:boneThrow];
     [boneThrow release];
-    
-    AbilityDescriptor *crushingPunchDescriptor = [[AbilityDescriptor alloc] init];
-    [crushingPunchDescriptor setAbilityDescription:@"Periodically, this enemy unleashes a thundering strike on a random ally dealing high damage."];
-    [crushingPunchDescriptor setAbilityName:@"Crushing Punch"];
-    [crushingPunchDescriptor setIconName:@"crushing_punch_ability.png"];
-    [cob.crushingPunch setDescriptor:crushingPunchDescriptor];
-    [crushingPunchDescriptor release];
     
     
     return [cob autorelease];
@@ -1701,21 +1704,21 @@
     boss.demonAbilities = [NSMutableArray arrayWithCapacity:3];
     
     BloodMinion *bm = [[BloodMinion alloc] init];
-    [bm setTitle:@"blood-minion"];
+    [bm setKey:@"blood-minion"];
     [bm setCooldown:10.0];
     [bm setAbilityValue:90];
     [boss.demonAbilities addObject:bm];
     [bm release];
     
     FireMinion *fm = [[FireMinion alloc] init];
-    [fm setTitle:@"fire-minion"];
+    [fm setKey:@"fire-minion"];
     [fm setCooldown:15.0];
     [fm setAbilityValue:315];
     [boss.demonAbilities addObject:fm];
     [fm release];
     
     ShadowMinion *sm = [[ShadowMinion alloc] init];
-    [sm setTitle:@"shadow-minion"];
+    [sm setKey:@"shadow-minion"];
     [sm setCooldown:12.0];
     [sm setAbilityValue:153];
     [boss.demonAbilities addObject:sm];
@@ -1732,11 +1735,11 @@
     [self.demonAbilities removeObjectAtIndex:indexToAdd];
     
     NSString *minionTitle = nil;
-    if ([addedAbility.title isEqualToString:@"shadow-minion"]) {
+    if ([addedAbility.key isEqualToString:@"shadow-minion"]) {
         minionTitle = @"Minion of Shadow";
-    } else if ([addedAbility.title isEqualToString:@"fire-minion"]) {
+    } else if ([addedAbility.key isEqualToString:@"fire-minion"]) {
         minionTitle = @"Minion of Fire";
-    } else if ([addedAbility.title isEqualToString:@"blood-minion"]) {
+    } else if ([addedAbility.key isEqualToString:@"blood-minion"]) {
         minionTitle = @"Minion of Blood";
     }
     
@@ -1786,14 +1789,14 @@
     [boss.oozeAll setCooldown:24.0];
     [(OozeRaid*)boss.oozeAll setOriginalCooldown:24.0];
     [(OozeRaid*)boss.oozeAll setAppliedEffect:[EngulfingSlimeEffect defaultEffect]];
-    [boss.oozeAll setTitle:@"apply-ooze-all"];
+    [boss.oozeAll setKey:@"apply-ooze-all"];
 
     [boss addAbility:boss.oozeAll];
     
     OozeTwoTargets *oozeTwo = [[OozeTwoTargets alloc] init];
     [oozeTwo setAbilityValue:450];
     [oozeTwo setCooldown:17.0];
-    [oozeTwo setTitle:@"ooze-two"];
+    [oozeTwo setKey:@"ooze-two"];
     [boss addAbility:oozeTwo];
     [oozeTwo release];
     
@@ -1804,7 +1807,7 @@
 {
     [super setDifficulty:difficulty];
     
-    OozeTwoTargets *oozeTwo = (OozeTwoTargets*)[self abilityWithTitle:@"ooze-two"];
+    OozeTwoTargets *oozeTwo = (OozeTwoTargets*)[self abilityWithKey:@"ooze-two"];
     NSTimeInterval oozeTwoCD = oozeTwo.cooldown - difficulty;
     [oozeTwo setCooldown:oozeTwoCD];
 }
@@ -1832,12 +1835,12 @@
     
     BaraghastRoar *roar = [[[BaraghastRoar alloc] init] autorelease];
     [roar setCooldown:24.0];
-    [roar setTitle:@"baraghast-roar"];
+    [roar setKey:@"baraghast-roar"];
     [boss addAbility:roar];
     
     boss.deathwave = [[[Deathwave alloc] init] autorelease];
     [boss.deathwave  setCooldown:kAbilityRequiresTrigger];
-    [boss.deathwave  setTitle:@"deathwave"];
+    [boss.deathwave  setKey:@"deathwave"];
     [boss addAbility:boss.deathwave ];
     
     return [boss autorelease];
@@ -1894,7 +1897,7 @@
     [boss setInfo:@"From the dark heart of Baraghast's shattered corpse emerges a hideous and cackling demon of unfathomable power. Before you stands a massive creature spawned of pure hatred whose only purpose is torment."];
     
     DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
-    [dcAbility setTitle:@"dis-cloud"];
+    [dcAbility setKey:@"dis-cloud"];
     [dcAbility setCooldown:23.0];
     [dcAbility setAbilityValue:20];
     [dcAbility setTimeApplied:20.0];
@@ -1960,7 +1963,7 @@
     
     if (percentage == 70.0) {
         WaveOfTorment *wot = [[[WaveOfTorment alloc] init] autorelease];
-        [wot setTitle:@"wot"];
+        [wot setKey:@"wot"];
         [wot setCooldown:40.0];
         [wot setTimeApplied:0];
         [wot setAbilityValue:80];
@@ -1970,7 +1973,7 @@
     if (percentage == 40.0) {
         [self.announcer announce:@"The Avatar of Torment drains your mind"];
         [player setEnergy:0];
-        [[self abilityWithTitle:@"wot"] setTimeApplied:-20.0];
+        [[self abilityWithKey:@"wot"] setTimeApplied:-20.0];
     }
     
     if (percentage == 25.0) {
@@ -2006,7 +2009,7 @@
     [boss setInfo:@"Torment will not be vanquished so easily."];
     
     DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
-    [dcAbility setTitle:@"dis-cloud"];
+    [dcAbility setKey:@"dis-cloud"];
     [dcAbility setCooldown:23.0];
     [dcAbility setAbilityValue:26];
     [dcAbility setTimeApplied:20.0];
@@ -2050,7 +2053,7 @@
         WaveOfTorment *wot = [[[WaveOfTorment alloc] init] autorelease];
         [wot setCooldown:40.0];
         [wot setAbilityValue:80];
-        [wot setTitle:@"wot"];
+        [wot setKey:@"wot"];
         [self addAbility:wot];
         [wot triggerAbilityForRaid:raid andPlayers:[NSArray arrayWithObject:player]];
         if (percentage == 95.0) {
@@ -2064,7 +2067,7 @@
         Confusion *confusionAbility = [[[Confusion alloc] init] autorelease];
         [confusionAbility setCooldown:14.0];
         [confusionAbility setAbilityValue:7.0];
-        [confusionAbility setTitle:@"confusion"];
+        [confusionAbility setKey:@"confusion"];
         [self addAbility:confusionAbility];
         [confusionAbility setTimeApplied:10.0];
     }
@@ -2122,7 +2125,7 @@
     [soulDrainEffect setTitle:@"soul-drain-eff"];
     
     EnsureEffectActiveAbility *eeaa = [[[EnsureEffectActiveAbility alloc] init] autorelease];
-    [eeaa setTitle:@"soul-drain"];
+    [eeaa setKey:@"soul-drain"];
     [eeaa setEnsuredEffect:soulDrainEffect];
     [self addAbility:eeaa];
 }
@@ -2168,7 +2171,7 @@
             [member removeEffectsWithTitle:@"soul-drain"];
         }
         for (Ability *ability in self.abilities) {
-            if ([ability.title isEqualToString:@"soul-drain"]){
+            if ([ability.key isEqualToString:@"soul-drain"]){
                 [abilitiesToRemove addObject:ability];
             }
         }
@@ -2188,7 +2191,7 @@
         [focusedAttack setAppliedEffect:bleeding];
         [self addAbility:focusedAttack];
         
-        [[self abilityWithTitle:@"contagion"] setCooldown:6.0];
+        [[self abilityWithKey:@"contagion"] setCooldown:6.0];
     }
     
     if (percentage == 20.0) {
@@ -2196,7 +2199,7 @@
         Confusion *confusionAbility = [[[Confusion alloc] init] autorelease];
         [confusionAbility setCooldown:14.0];
         [confusionAbility setAbilityValue:8.0];
-        [confusionAbility setTitle:@"confusion"];
+        [confusionAbility setKey:@"confusion"];
         [self addAbility:confusionAbility];
         [confusionAbility setTimeApplied:10.0];
     }
@@ -2212,7 +2215,7 @@
 
 - (void)ownerDidExecuteAbility:(Ability *)ability
 {
-    if ([ability.title isEqualToString:@"shadow-nova"]){
+    if ([ability.key isEqualToString:@"shadow-nova"]){
         RaidDamagePulse *pulse = (RaidDamagePulse*)ability;
         NSTimeInterval tickTime = pulse.duration / pulse.numTicks;
         for (int i = 0; i < pulse.numTicks; i++) {
@@ -2245,7 +2248,7 @@
     RandomAbilityGenerator *rag = [[RandomAbilityGenerator alloc] init];
     [rag setCooldown:60];
     [rag setTimeApplied:55.0];
-    [rag setTitle:@"random-abilities"];
+    [rag setKey:@"random-abilities"];
     [endlessVoid addAbility:rag];
     [rag release];
     

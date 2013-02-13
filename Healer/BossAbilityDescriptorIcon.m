@@ -47,7 +47,7 @@
 }
 
 - (void)setAbility:(AbilityDescriptor *)newAbility {
-    if (_ability == newAbility) return;
+    if ([_ability.abilityName isEqualToString:newAbility.abilityName]) return;
     [_ability release];
     _ability = [newAbility retain];
     [self configureNode];

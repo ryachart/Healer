@@ -8,12 +8,9 @@
 
 #import <cocos2d.h>
 
-@class Spell;
-@interface PlayerCastBar : CCLayer <CCRGBAProtocol> {
-	double percentTimeRemaining;
-}
-@property (nonatomic, assign) CCLabelTTF *timeRemaining;
-@property (nonatomic, assign) CCLabelTTF *timeRemainingShadow;
+@class Spell, CCLabelTTFShadow;
+@interface PlayerCastBar : CCLayer <CCRGBAProtocol> 
+@property (nonatomic, assign) CCLabelTTFShadow *timeRemaining;
 @property (nonatomic, assign) CCSprite *castBar;
 
 -(id)initWithFrame:(CGRect)frame;

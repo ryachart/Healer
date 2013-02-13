@@ -20,7 +20,7 @@
 
 @interface BossHealthView : CCLayer <AbilityDescriptionViewDelegate>
 @property (nonatomic, assign) id <BossHealthViewDelegate> delegate;
-@property (nonatomic, assign, setter=setBossData:) Boss* bossData;
+@property (nonatomic, assign) Boss* bossData;
 @property (nonatomic, retain) CCLabelTTFShadow *bossNameLabel;
 @property (nonatomic, retain) CCLabelTTFShadow *healthLabel;
 @property (nonatomic, assign) BossAbilityDescriptionsView* abilityDescriptionsView;

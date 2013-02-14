@@ -275,9 +275,14 @@
         if (ab.isChanneling) {
             visibleAbility = ab;
             break;
-        } else if (ab.isActivating) {
-            visibleAbility = ab;
-            break;
+        }
+    }
+    if (!visibleAbility) {
+        for (Ability *ab in self.abilities) {
+            if (ab.isActivating) {
+                visibleAbility = ab;
+                break;
+            }
         }
     }
     return visibleAbility;
@@ -406,7 +411,7 @@
     
     NSInteger fireballDamage = 400;
     float fireballFailureChance = .05;
-    float fireballCooldown = 2.5;
+    float fireballCooldown = 1.0;
     
     AbilityDescriptor *fireball = [[AbilityDescriptor alloc] init];
     [fireball setAbilityDescription:@"The Drake hurls deadly Fireballs at your allies."];
@@ -416,6 +421,8 @@
     [fireball release];
     
     drake.fireballAbility = [[[ProjectileAttack alloc] init] autorelease];
+    drake.fireballAbility.title = @"Spit Fireball";
+    drake.fireballAbility.activationTime = 1.5;
     [drake.fireballAbility setKey:@"fireball-ab"];
     [(ProjectileAttack*)drake.fireballAbility setSpriteName:@"fireball.png"];
     [drake.fireballAbility setAbilityValue:fireballDamage];

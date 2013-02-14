@@ -107,6 +107,9 @@
             }
             self.timeApplied = 0.0 + self.cooldown * self.cooldownVariance * (arc4random() % 1000 / 1000.0);
             self.isActivating = NO;
+        } else {
+            NSLog(@"%@ is paused.", self.title);
+            self.timeApplied -= timeDelta;
         }
     }
     else if (self.activationTime > 0 && !self.isActivating && self.cooldown - self.activationTime <= self.timeApplied) {

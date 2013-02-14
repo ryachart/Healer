@@ -15,6 +15,22 @@ static NSArray *shopItems = nil;
 
 @implementation Shop
 
++ (NSArray *)costSortedItemsArray:(NSMutableArray *)itemsArray
+{
+    return [itemsArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2){
+        ShopItem *item1 = (ShopItem*)obj1;
+        ShopItem *item2 = (ShopItem*)obj2;
+        
+        if (item1.goldCost > item2.goldCost) {
+            return NSOrderedDescending;
+        } else if (item1.goldCost == item2.goldCost) {
+            return NSOrderedSame;
+        }
+        
+        return NSOrderedAscending;
+    }];
+}
+
 +(NSArray*)allShopItems{
     if (!shopItems){
         NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
@@ -80,7 +96,7 @@ static NSArray *shopItems = nil;
     [items addObject:[forkedHeal autorelease]];
 
 
-    return items;
+    return [Shop costSortedItemsArray:items];
 }
 
 + (NSArray*)advancedShopItems {
@@ -100,7 +116,7 @@ static NSArray *shopItems = nil;
     ShopItem *barrier = [[ShopItem alloc] initWithSpell:[Barrier defaultSpell]];
     [items addObject:[barrier autorelease]];
 
-    return items;
+    return [Shop costSortedItemsArray:items];
     
 }
 + (NSArray*)archivesShopItems {
@@ -124,8 +140,7 @@ static NSArray *shopItems = nil;
     ShopItem *sunburst = [[ShopItem alloc] initWithSpell:[Sunburst defaultSpell]];
     [items addObject:[sunburst autorelease]];
 
-    return items;
-    
+    return [Shop costSortedItemsArray:items];
 }
 + (NSArray*)vaultShopItems {
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
@@ -144,7 +159,9 @@ static NSArray *shopItems = nil;
 
     ShopItem *wardOfAncients = [[ShopItem alloc] initWithSpell:[WardOfAncients defaultSpell]];
     [items addObject:[wardOfAncients autorelease]];
-    return items;
+    return [Shop costSortedItemsArray:items];
     
 }
+
+
 @end

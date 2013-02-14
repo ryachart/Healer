@@ -18,6 +18,7 @@
 @interface BossCastBar ()
 @property (nonatomic, assign) ClippingNode *castBarClippingNode;
 @property (nonatomic, assign) CCSprite *castBar;
+@property (nonatomic, readwrite) BOOL isCastingAbilityChanneled;
 @end
 
 @implementation BossCastBar
@@ -53,6 +54,12 @@
     return self;
 }
 
+- (void)postFadeCleanup
+{
+    [self.timeRemaining setString:@""];
+    [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0, 0, 0)];
+}
+
 -(void)update
 {
     Ability *activeAbility = self.boss.visibleAbility;
@@ -61,12 +68,17 @@
         const NSInteger fadeOutTag = 43234;
         if (![self getActionByTag:fadeOutTag]) {
             [self stopAllActions];
-            CCFadeTo *fadeOut = [CCFadeTo actionWithDuration:1.0 opacity:0];
+            NSTimeInterval fadeTime = 1.0;
+            CCFadeTo *fadeOut = [CCFadeTo actionWithDuration:fadeTime opacity:0];
             [fadeOut setTag:fadeOutTag];
             [self runAction:fadeOut];
+            [self runAction:[CCSequence actionOne:[CCDelayTime actionWithDuration:fadeTime] two:[CCCallFunc actionWithTarget:self selector:@selector(postFadeCleanup)]]];
         }
-		[self.timeRemaining setString:@""];
-        [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0, 0, 0)];
+        if (!self.isCastingAbilityChanneled) {
+            [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.castBar.contentSize.width + CASTBAR_INSET_WIDTH), self.castBar.contentSize.height + CASTBAR_INSET_HEIGHT)];
+        }
+        self.isCastingAbilityChanneled = NO;
+        
 	} else {
         const NSInteger fadeInTag = 46433;
         if (![self getActionByTag:fadeInTag]) {
@@ -80,9 +92,10 @@
 		float percentTimeRemaining =  timeRemaining / maxTimeRemaining;
         if (activeAbility.isChanneling) {
             percentTimeRemaining = 1.0 - percentTimeRemaining;
+            self.isCastingAbilityChanneled = YES;
         }
         [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.castBar.contentSize.width + CASTBAR_INSET_WIDTH) * (1.0 - percentTimeRemaining), self.castBar.contentSize.height + CASTBAR_INSET_HEIGHT)];
-		[self.timeRemaining setString:[NSString stringWithFormat:@"%@: %1.2f", self.boss.visibleAbility.title,  timeRemaining]];
+		[self.timeRemaining setString:[NSString stringWithFormat:@"%@", self.boss.visibleAbility.title]];
 	}
 }
 

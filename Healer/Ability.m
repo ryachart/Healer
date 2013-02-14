@@ -98,8 +98,9 @@
 
 - (void)combatActions:(Raid*)theRaid boss:(Boss*)theBoss players:(NSArray*)players gameTime:(float)timeDelta{
     self.timeApplied += timeDelta;
-    if (self.cooldown != kAbilityRequiresTrigger && self.timeApplied >= self.cooldown){
-        if (!self.owner.visibleAbility || self.owner.visibleAbility == self) {
+    if (!self.owner.visibleAbility || self.owner.visibleAbility == self) {
+        if (self.cooldown != kAbilityRequiresTrigger && self.timeApplied >= self.cooldown){
+        
             if (!self.isDisabled){
                 [self.owner ownerWillExecuteAbility:self];
                 [self triggerAbilityForRaid:theRaid andPlayers:players];
@@ -107,14 +108,14 @@
             }
             self.timeApplied = 0.0 + self.cooldown * self.cooldownVariance * (arc4random() % 1000 / 1000.0);
             self.isActivating = NO;
-        } else {
-            NSLog(@"%@ is paused.", self.title);
-            self.timeApplied -= timeDelta;
+        } else  if (self.activationTime > 0 && !self.isActivating && self.cooldown - self.activationTime <= self.timeApplied) {
+            self.isActivating = YES;
+            [self.owner ownerDidBeginAbility:self];
         }
-    }
-    else if (self.activationTime > 0 && !self.isActivating && self.cooldown - self.activationTime <= self.timeApplied) {
-        self.isActivating = YES;
-        [self.owner ownerDidBeginAbility:self];
+    } else {
+        //This ability is on hold because another ability is activating
+        self.timeApplied = MIN(self.timeApplied,_cooldown);
+        self.channelTimeRemaining = 0; //Channeled abilities are interrupted if another ability is activating.
     }
     self.channelTimeRemaining -= timeDelta;
 }

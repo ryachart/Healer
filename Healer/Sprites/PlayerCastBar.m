@@ -15,12 +15,14 @@
 #define CASTBAR_INSET_HEIGHT 5
 
 @interface PlayerCastBar ()
-@property (nonatomic, readwrite) BOOL castHasBegun;
+@property (nonatomic, assign) Spell* castingSpell;
 @property (nonatomic, assign) ClippingNode *castBarClippingNode;
 @property (nonatomic, readwrite) float percentTimeRemaining;
+@property (nonatomic, readwrite) GLubyte opacity;
 @end
 
 @implementation PlayerCastBar
+@synthesize opacity=_opacity;
 
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super init]) {
@@ -28,7 +30,6 @@
         self.position = frame.origin;
         self.contentSize = frame.size;
 		self.percentTimeRemaining = 0.0;
-        self.opacity = 0;
         
         CCSprite *background = [CCSprite spriteWithSpriteFrameName:@"cast_bar_back.png"];
         [background setAnchorPoint:CGPointZero];
@@ -51,8 +52,15 @@
         [self.castBarClippingNode addChild:self.castBar];
         
         [self addChild:self.castBarClippingNode];
+        self.opacity = 0; //This needs to be initialized after we setup our children
     }
     return self;
+}
+
+- (void)postFadeCleanup
+{
+    [self.timeRemaining setString:@""];
+    [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0, 0, 0)];
 }
 
 -(void)updateTimeRemaining:(NSTimeInterval)remaining ofMaxTime:(NSTimeInterval)maxTime forSpell:(Spell*)spell
@@ -61,15 +69,17 @@
         const NSInteger fadeOutTag = 43234;
         if (![self getActionByTag:fadeOutTag] && self.opacity > 0) {
             [self stopAllActions];
-            CCFadeTo *fadeOut = [CCFadeTo actionWithDuration:1.0 opacity:0];
+            NSTimeInterval fadeTime = 1.0;
+            CCFadeTo *fadeOut = [CCFadeTo actionWithDuration:fadeTime opacity:0];
             [fadeOut setTag:fadeOutTag];
             [self runAction:fadeOut];
+            [self runAction:[CCSequence actionOne:[CCDelayTime actionWithDuration:fadeTime] two:[CCCallFunc actionWithTarget:self selector:@selector(postFadeCleanup)]]];
         }
-		[self.timeRemaining setString:@""];
 		self.percentTimeRemaining = 0.0;
-        [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0, 0, 0)];
-        if (self.castHasBegun) {
-            self.castHasBegun = NO;
+        if (self.castingSpell) {
+            self.timeRemaining.string = [NSString stringWithFormat:@"%@: 0:00", self.castingSpell.title];
+            [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.castBar.contentSize.width + CASTBAR_INSET_WIDTH), self.castBar.contentSize.height + CASTBAR_INSET_HEIGHT)];
+            self.castingSpell = nil;
         }
 	}
 	else {
@@ -80,9 +90,8 @@
             [fadeIn setTag:fadeInTag];
             [self runAction:fadeIn];
         }
-        if (!self.castHasBegun) {
-            self.castHasBegun = YES;
-        }
+        self.castingSpell = spell;
+        
 		self.percentTimeRemaining = remaining/maxTime; //4 - (1.0 - percentTimeRemaining) * self.castBar.contentSize.width
         [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.castBar.contentSize.width + CASTBAR_INSET_WIDTH) * (1.0 - self.percentTimeRemaining), self.castBar.contentSize.height + CASTBAR_INSET_HEIGHT)];
 		[self.timeRemaining setString:[NSString stringWithFormat:@"%@: %1.2f", spell.title,  remaining]];
@@ -101,12 +110,12 @@
     return ccBLACK;
 }
 
-- (void)setOpacity:(GLubyte)opacity
+- (void)setOpacity:(GLubyte)newOpacity
 {
     for (CCNode *child in self.children){
         if ([child conformsToProtocol:@protocol(CCRGBAProtocol)]) {
             id<CCRGBAProtocol> colorChild = (CCSprite*)child;
-            [colorChild setOpacity:opacity];
+            [colorChild setOpacity:newOpacity];
         }
     }
 }

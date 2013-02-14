@@ -136,7 +136,7 @@
             [self addChild:characterSprite];
             
             if (enc.levelNumber != 1) {
-                self.scoreLabel = [CCLabelTTF labelWithString:@"Score: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:36.0];
+                self.scoreLabel = [CCLabelTTFShadow labelWithString:@"Score: " dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:36.0];
                 [self.scoreLabel setPosition:CGPointMake(54, 230)];
                 [self.scoreLabel setAnchorPoint:CGPointZero];
             }
@@ -209,7 +209,7 @@
         [self.damageTakenLabel setPosition:CGPointMake(14, 90 + failureAdjustment)];
         [self.damageTakenLabel setAnchorPoint:CGPointZero];
         
-        CCLabelTTF *playersLostLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"Allies Lost:  %i", numDead] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        CCLabelTTFShadow *playersLostLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"Allies Lost:  %i", numDead] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [playersLostLabel setPosition:CGPointMake(12, 60 + failureAdjustment)];
         [playersLostLabel setAnchorPoint:CGPointZero];
         
@@ -308,17 +308,16 @@
         [newHighScore setPosition:CGPointMake(190, 354)];
         [self addChild:newHighScore];
         [newHighScore runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
+    }
+    if (self.isVictory) {
+        CCNumberChangeAction *numberChangeAction = [CCNumberChangeAction actionWithDuration:2.5 fromNumber:0 toNumber:self.encounter.reward];
+        [numberChangeAction setPrefix:@"Gold Earned: "];
+        [self.goldLabel runAction:numberChangeAction];
         
-        if (self.isVictory) {
-            CCNumberChangeAction *numberChangeAction = [CCNumberChangeAction actionWithDuration:2.5 fromNumber:0 toNumber:self.encounter.reward];
-            [numberChangeAction setPrefix:@"Gold Earned: "];
-            [self.goldLabel runAction:numberChangeAction];
-            
-            CCNumberChangeAction *countDown = [CCNumberChangeAction actionWithDuration:2.0 fromNumber:self.encounter.reward toNumber:0];
-            [countDown setPrefix:@"Gold Earned: "];
-            [self.goldLabel runAction:[CCSequence actions:[CCSpawn actions:[CCScaleTo actionWithDuration:.5 scale:1.0], [CCFadeTo actionWithDuration:.5 opacity:255], nil], numberChangeAction, [CCDelayTime  actionWithDuration:.5], [CCCallFunc actionWithTarget:self selector:@selector(finishGoldCountUp)], countDown,[CCFadeTo actionWithDuration:.5 opacity:0], [CCCallBlockN actionWithBlock:^(CCNode *node){ [node removeFromParentAndCleanup:YES];}], nil]];
-            
-        }
+        CCNumberChangeAction *countDown = [CCNumberChangeAction actionWithDuration:2.0 fromNumber:self.encounter.reward toNumber:0];
+        [countDown setPrefix:@"Gold Earned: "];
+        [self.goldLabel runAction:[CCSequence actions:[CCSpawn actions:[CCScaleTo actionWithDuration:.5 scale:1.0], [CCFadeTo actionWithDuration:.5 opacity:255], nil], numberChangeAction, [CCDelayTime  actionWithDuration:.5], [CCCallFunc actionWithTarget:self selector:@selector(finishGoldCountUp)], countDown,[CCFadeTo actionWithDuration:.5 opacity:0], [CCCallBlockN actionWithBlock:^(CCNode *node){ [node removeFromParentAndCleanup:YES];}], nil]];
+        
     }
 }
 

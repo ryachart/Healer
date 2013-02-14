@@ -434,6 +434,7 @@
     [fb setTitle:@"Flame Breath"];
     [fb setKey:@"flame-breath"];
     [fb setAbilityValue:100];
+    [fb setActivationTime:2.5];
     [fb setCooldown:kAbilityRequiresTrigger];
     [drake addAbility:fb];
     
@@ -455,13 +456,11 @@
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (percentage == 77.0 || percentage == 52.0 || percentage == 27.0){
-        [self.announcer announce:@"The Drake takes a deep breath..."];
-    }
     
     if (percentage == 50.0 || percentage == 75.0 || percentage == 25.0){
         //Trigger Flame Breath
-        [[self abilityWithKey:@"flame-breath"] triggerAbilityForRaid:raid andPlayers:[NSArray arrayWithObject:player]];
+        [self.announcer announce:@"The Drake takes a deep breath..."];
+        [[self abilityWithKey:@"flame-breath"] activateAbility];
     }
 }
 @end
@@ -475,119 +474,22 @@
     boss.autoAttack.failureChance = .25;
     [boss addAbility:boss.autoAttack];
     
+    RandomPotionToss *rpt = [[[RandomPotionToss alloc] init] autorelease];
+    [rpt setKey:@"potions"];
+    [rpt setTitle:@"Throw Vial"];
+    [rpt setCooldown:11.0];
+    [rpt setActivationTime:1.5];
+    [boss addAbility:rpt];
+    
     [boss setTitle:@"Mischievious Imps"];
     [boss setInfo:@"As the dark mists further encroach upon the kingdom more strange creatures begin terrorizing the innocents.  Viscious imps have infiltrated the alchemical storehouses on the outskirts of Terun."];
     return [boss autorelease];
 }
 
--(void)throwPotionToTarget:(RaidMember *)target withDelay:(float)delay inRaid:(Raid*)theRaid {
-    NSInteger possiblePotions = 3;
-    if (self.difficulty > 4) {
-        possiblePotions = 4;
-    }
-    
-    int potion = arc4random() % possiblePotions;
-    float colTime = (1.5 + delay);
-    
-    if (potion == 0){
-        //Liquid Fire
-        NSInteger impactDamage = -150;
-        NSInteger dotDamage = -200;
-        
-        DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
-        [bottleEffect setValue:impactDamage * self.damageDoneMultiplier];
-        [bottleEffect setIsIndependent:YES];
-        [bottleEffect setOwner:self];
-        [target addEffect:bottleEffect];
-        
-        RepeatedHealthEffect *burnDoT = [[[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative] autorelease];
-        [burnDoT setOwner:self];
-        [burnDoT setTitle:@"imp-burn-dot"];
-        [burnDoT setSpriteName:@"burning.png"];
-        [burnDoT setValuePerTick:dotDamage];
-        [burnDoT setNumOfTicks:4];
-        [bottleEffect setAppliedEffect:burnDoT];
-        
-        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
-        [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
-        [bottleVisual setType:ProjectileEffectTypeThrow];
-        [bottleVisual setCollisionParticleName:@"fire_explosion.plist"];
-        [self.announcer displayProjectileEffect:bottleVisual];
-        
-        
-    }else if (potion == 1) {
-        //Lightning In a Bottle
-        DelayedHealthEffect *bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
-        
-        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
-        [bottleVisual setSpriteColor:ccc3(0, 128, 128)];
-        [bottleVisual setType:ProjectileEffectTypeThrow];
-        [self.announcer displayProjectileEffect:bottleVisual];
-        [bottleEffect setIsIndependent:YES];
-        [bottleEffect setOwner:self];
-        NSInteger damage = FUZZ(-550, 10);
-        [bottleEffect setValue:damage];
-        [target addEffect:bottleEffect];
-    } else if (potion == 2) {
-        //Poison explosion
-        
-        NSInteger impactDamage = FUZZ(-100, 20);
-        
-        for (RaidMember *member in theRaid.livingMembers) {
-            DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
-            [bottleEffect setValue:impactDamage * self.damageDoneMultiplier];
-            [bottleEffect setIsIndependent:YES];
-            [bottleEffect setOwner:self];
-            [member addEffect:bottleEffect];
-        }
-        
-        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
-        [bottleVisual setSpriteColor:ccc3(0, 128, 128)];
-        [bottleVisual setType:ProjectileEffectTypeThrow];
-        [bottleVisual setCollisionParticleName:@"gas_explosion.plist"];
-        [self.announcer displayProjectileEffect:bottleVisual];
-        
-    } else if (potion == 3) {
-        //Angry Spirit
-        NSInteger impactDamage = -150;
-        NSInteger dotDamage = -200;
-        
-        DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
-        [bottleEffect setValue:impactDamage * self.damageDoneMultiplier];
-        [bottleEffect setIsIndependent:YES];
-        [bottleEffect setOwner:self];
-        [target addEffect:bottleEffect];
-        
-        WanderingSpiritEffect *wse = [[[WanderingSpiritEffect alloc] initWithDuration:14.0 andEffectType:EffectTypeNegative] autorelease];
-        [wse setAilmentType:AilmentCurse];
-        [wse setTitle:@"angry-spirit-effect"];
-        [wse setSpriteName:@"angry_spirit.png"];
-        [wse setValuePerTick:dotDamage];
-        [wse setNumOfTicks:8.0];
-        [bottleEffect setAppliedEffect:wse];
-        
-        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
-        [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
-        [bottleVisual setType:ProjectileEffectTypeThrow];
-        [self.announcer displayProjectileEffect:bottleVisual];
-    }
-    
-}
 
 - (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
 {
     [super combatActions:players theRaid:theRaid gameTime:timeDelta];
-    if (self.healthPercentage > 21.0){
-        self.lastPotionThrow+=timeDelta;
-        float tickTime = 12.0;
-        if (self.lastPotionThrow > tickTime){
-            [self throwPotionToTarget:[theRaid randomLivingMember] withDelay:0.0 inRaid:theRaid];
-            self.lastPotionThrow = 0.0;
-            int throwSound = arc4random() %2 + 1;
-            [[AudioController sharedInstance] playTitle:[NSString stringWithFormat:@"imp_throw%i", throwSound]];
-            
-        }
-    }
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
@@ -596,13 +498,12 @@
     }
     
     if (percentage == 50.0){
-        for (RaidMember *member in raid.raidMembers){
-            if (!member.isDead){
-                [self throwPotionToTarget:member withDelay:0.0 inRaid:raid];
-            }
-        }
+        [(RandomPotionToss*)[self abilityWithKey:@"potions"] triggerAbilityAtRaid:raid];
         [self.announcer announce:@"An imp angrily hurls the entire case of flasks at you!"];
-        [[AudioController sharedInstance] playTitle:[NSString stringWithFormat:@"imp_throw1"]];
+    }
+    
+    if (percentage == 20.0) {
+        [[self abilityWithKey:@"potions"] setIsDisabled:YES];
     }
     
     if (percentage == 15.0){
@@ -633,58 +534,48 @@
     Cleave *cleave = [Cleave normalCleave];
     [boss addAbility:cleave];
     
+    Earthquake *eq = [[[Earthquake alloc] init] autorelease];
+    [eq setTitle:@"Earthquake"];
+    [eq setKey:@"root-quake"];
+    [eq setCooldown:28.0];
+    [eq setActivationTime:2.0];
+    [eq setAbilityValue:35];
+    [boss addAbility:eq];
+    
+    RepeatedHealthEffect *lashDoT = [[[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative] autorelease];
+    [lashDoT setTitle:@"lash"];
+    [lashDoT setAilmentType:AilmentTrauma];
+    [lashDoT setValuePerTick:-36];
+    [lashDoT setNumOfTicks:5];
+    [lashDoT setSpriteName:@"bleeding.png"];
+    
+    RaidDamage *branchAttack = [[[RaidDamage alloc] init] autorelease];
+    [branchAttack setTitle:@"Viscious Branches"];
+    [branchAttack setKey:@"branch-attack"];
+    [branchAttack setCooldown:kAbilityRequiresTrigger];
+    [branchAttack setActivationTime:2.0];
+    [branchAttack setAbilityValue:208];
+    [branchAttack setAppliedEffect:lashDoT];
+    [boss addAbility:branchAttack];
     return [boss autorelease];
 }
 
 - (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
 {
     [super combatActions:players theRaid:theRaid gameTime:timeDelta];
-    
-    float tickTime = 30.0;
-    self.lastRootquake += timeDelta;
-    if (self.lastRootquake > tickTime){
-        [self performRootquakeOnRaid:theRaid];
-        self.lastRootquake = 0.0;
-    }
 }
 
--(void)performBranchAttackOnRaid:(Raid*)raid{
-    NSInteger branchInitialDamage = 208;
-    NSInteger branchDoTTick = -36;
-    
-    for (RaidMember *member in raid.raidMembers){
-        [member setHealth:member.health - branchInitialDamage * self.damageDoneMultiplier];
-        [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:branchInitialDamage * self.damageDoneMultiplier] andEventType:CombatEventTypeDamage]];
-        RepeatedHealthEffect *lashDoT = [[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative];
-        [lashDoT setOwner:self];
-        [lashDoT setTitle:@"lash"];
-        [lashDoT setAilmentType:AilmentTrauma];
-        [lashDoT setValuePerTick:branchDoTTick];
-        [lashDoT setNumOfTicks:5];
-        [lashDoT setSpriteName:@"bleeding.png"];
-        [member addEffect:[lashDoT autorelease]];
-    }
-}
-
--(void)performRootquakeOnRaid:(Raid*)raid{
-    [self.announcer announce:@"The Akarus' roots move the earth."];
-    [self.announcer displayScreenShakeForDuration:6.0];
-    for (RaidMember *member in raid.raidMembers){
-        RepeatedHealthEffect *rootquake = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegativeInvisible];
-        [rootquake setOwner:self];
-        [rootquake setValuePerTick:-40];
-        [rootquake setNumOfTicks:4];
-        [rootquake setTitle:@"rootquake"];
-        [member addEffect:[rootquake autorelease]];
+- (void)ownerDidBeginAbility:(Ability *)ability
+{
+    if ([ability.key isEqualToString:@"root-quake"]) {
+        [self.announcer announce:@"The Akarus' roots move the earth."];
     }
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (percentage == 97.0 || percentage == 75.0 || percentage == 51.0 || percentage == 30.0){
-        [self.announcer announce:@"The Akarus pulls its enormous branches back to lash out at your allies."];
-    }
     if (percentage == 96.0 || percentage == 74.0 || percentage == 50.0 || percentage == 29.0){
-        [self performBranchAttackOnRaid:raid];
+        [self.announcer announce:@"The Akarus pulls its enormous branches back to lash out at your allies."];
+        [[self abilityWithKey:@"branch-attack"] activateAbility];
     }
 }
 @end
@@ -886,6 +777,8 @@
     [poison release];
     
     RaidDamagePulse *pulse = [[[RaidDamagePulse alloc] init] autorelease];
+    [pulse setActivationTime:2.0];
+    [pulse setTitle:@"Poison Nova"];
     [pulse setKey:@"poison-nova"];
     [pulse setAbilityValue:550];
     [pulse setNumTicks:4];

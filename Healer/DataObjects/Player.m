@@ -97,8 +97,11 @@
     [super setHealth:newHealth];
     NSInteger healthDelta = prehealth - self.health;
     
-    if (healthDelta > 0 && (float)healthDelta / (float)self.maximumHealth > .15) {
-        [self.announcer displayCriticalPlayerDamage];
+    if (healthDelta > 0) {
+        //Do spell pushback here?
+        if ((float)healthDelta / (float)self.maximumHealth > .15) {
+            [self.announcer displayCriticalPlayerDamage];
+        }
     }
     
     if (self.isDead) {

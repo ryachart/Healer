@@ -99,8 +99,7 @@
 - (void)combatActions:(Raid*)theRaid boss:(Boss*)theBoss players:(NSArray*)players gameTime:(float)timeDelta{
     self.timeApplied += timeDelta;
     if (!self.owner.visibleAbility || self.owner.visibleAbility == self) {
-        if (self.cooldown != kAbilityRequiresTrigger && self.timeApplied >= self.cooldown){
-        
+        if ((_cooldown != kAbilityRequiresTrigger || self.isActivating) && self.timeApplied >= self.cooldown){
             if (!self.isDisabled){
                 [self.owner ownerWillExecuteAbility:self];
                 [self triggerAbilityForRaid:theRaid andPlayers:players];
@@ -108,9 +107,8 @@
             }
             self.timeApplied = 0.0 + self.cooldown * self.cooldownVariance * (arc4random() % 1000 / 1000.0);
             self.isActivating = NO;
-        } else  if (self.activationTime > 0 && !self.isActivating && self.cooldown - self.activationTime <= self.timeApplied) {
-            self.isActivating = YES;
-            [self.owner ownerDidBeginAbility:self];
+        } else if (self.activationTime > 0 && !self.isActivating && self.cooldown - self.activationTime <= self.timeApplied) {
+            [self activateAbility];
         }
     } else {
         //This ability is on hold because another ability is activating
@@ -118,6 +116,13 @@
         self.channelTimeRemaining = 0; //Channeled abilities are interrupted if another ability is activating.
     }
     self.channelTimeRemaining -= timeDelta;
+}
+
+- (void)activateAbility
+{
+    self.timeApplied = _cooldown;
+    self.isActivating = YES;
+    [self.owner ownerDidBeginAbility:self];
 }
 
 - (NSTimeInterval)remainingActivationTime
@@ -872,6 +877,12 @@
 
 @implementation RaidDamage
 
+- (void)dealloc
+{
+    [_appliedEffect release];
+    [super dealloc];
+}
+
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
     NSArray *livingMembers = theRaid.livingMembers;
     
@@ -880,6 +891,11 @@
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member  value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
         [member setHealth:member.health - damage];
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member  value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
+        if (self.appliedEffect){
+            Effect *applyThis = [[self.appliedEffect copy] autorelease];
+            [applyThis setOwner:self.owner];
+            [member addEffect:applyThis];
+        }
     }
 }
 @end
@@ -1546,6 +1562,7 @@
         [damage setValuePerTick:-(self.abilityValue/self.numTicks)];
         [member addEffect:damage];
     }
+    [self startChannel:self.duration];
 }
 
 @end
@@ -1634,5 +1651,134 @@
     }
     
     [self startChannel:effectDuration];
+}
+@end
+
+@implementation Earthquake
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
+{
+    NSInteger tickDamage = -self.abilityValue;
+    NSInteger numberOfTicks = 4;
+    NSTimeInterval effectDuration = 6.0;
+    numberOfTicks += arc4random() % 3;
+    
+    for (RaidMember *member in theRaid.raidMembers){
+        RepeatedHealthEffect *rootquake = [[RepeatedHealthEffect alloc] initWithDuration:effectDuration andEffectType:EffectTypeNegativeInvisible];
+        [rootquake setOwner:self.owner];
+        [rootquake setValuePerTick:tickDamage];
+        [rootquake setNumOfTicks:numberOfTicks];
+        [rootquake setTitle:@"rootquake"];
+        [member addEffect:[rootquake autorelease]];
+    }
+    
+    [self.owner.announcer displayScreenShakeForDuration:effectDuration afterDelay:0];
+    [self startChannel:effectDuration];
+}
+@end
+
+@implementation RandomPotionToss
+- (void)triggerForTarget:(RaidMember*)target inRaid:(Raid*)theRaid
+{
+    NSInteger possiblePotions = 3;
+    if (self.difficulty > 4) {
+        possiblePotions = 4;
+    }
+    int potion = arc4random() % possiblePotions;
+    float colTime = 1.5;
+    
+    if (potion == 0){
+        //Liquid Fire
+        NSInteger impactDamage = -150;
+        NSInteger dotDamage = -200;
+        
+        DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [bottleEffect setValue:impactDamage];
+        [bottleEffect setIsIndependent:YES];
+        [bottleEffect setOwner:self.owner];
+        [target addEffect:bottleEffect];
+        
+        RepeatedHealthEffect *burnDoT = [[[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative] autorelease];
+        [burnDoT setOwner:self.owner];
+        [burnDoT setTitle:@"imp-burn-dot"];
+        [burnDoT setSpriteName:@"burning.png"];
+        [burnDoT setValuePerTick:dotDamage];
+        [burnDoT setNumOfTicks:4];
+        [bottleEffect setAppliedEffect:burnDoT];
+        
+        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
+        [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
+        [bottleVisual setType:ProjectileEffectTypeThrow];
+        [bottleVisual setCollisionParticleName:@"fire_explosion.plist"];
+        [self.owner.announcer displayProjectileEffect:bottleVisual];
+        
+        
+    }else if (potion == 1) {
+        //Lightning In a Bottle
+        DelayedHealthEffect *bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
+        
+        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
+        [bottleVisual setSpriteColor:ccc3(0, 128, 128)];
+        [bottleVisual setType:ProjectileEffectTypeThrow];
+        [self.owner.announcer displayProjectileEffect:bottleVisual];
+        [bottleEffect setIsIndependent:YES];
+        [bottleEffect setOwner:self.owner];
+        NSInteger damage = FUZZ(-550, 10);
+        [bottleEffect setValue:damage];
+        [target addEffect:bottleEffect];
+    } else if (potion == 2) {
+        //Poison explosion
+        
+        NSInteger impactDamage = FUZZ(-100, 20);
+        
+        for (RaidMember *member in theRaid.livingMembers) {
+            DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
+            [bottleEffect setValue:impactDamage];
+            [bottleEffect setIsIndependent:YES];
+            [bottleEffect setOwner:self.owner];
+            [member addEffect:bottleEffect];
+        }
+        
+        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
+        [bottleVisual setSpriteColor:ccc3(0, 128, 128)];
+        [bottleVisual setType:ProjectileEffectTypeThrow];
+        [bottleVisual setCollisionParticleName:@"gas_explosion.plist"];
+        [self.owner.announcer displayProjectileEffect:bottleVisual];
+        
+    } else if (potion == 3) {
+        //Angry Spirit
+        NSInteger impactDamage = -150;
+        NSInteger dotDamage = -200;
+        
+        DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [bottleEffect setValue:impactDamage];
+        [bottleEffect setIsIndependent:YES];
+        [bottleEffect setOwner:self.owner];
+        [target addEffect:bottleEffect];
+        
+        WanderingSpiritEffect *wse = [[[WanderingSpiritEffect alloc] initWithDuration:14.0 andEffectType:EffectTypeNegative] autorelease];
+        [wse setAilmentType:AilmentCurse];
+        [wse setTitle:@"angry-spirit-effect"];
+        [wse setSpriteName:@"angry_spirit.png"];
+        [wse setValuePerTick:dotDamage];
+        [wse setNumOfTicks:8.0];
+        [bottleEffect setAppliedEffect:wse];
+        
+        ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime] autorelease];
+        [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
+        [bottleVisual setType:ProjectileEffectTypeThrow];
+        [self.owner.announcer displayProjectileEffect:bottleVisual];
+    }
+
+}
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
+{
+    [self triggerForTarget:theRaid.randomLivingMember inRaid:theRaid];
+}
+
+- (void)triggerAbilityAtRaid:(Raid*)raid
+{
+    for (RaidMember *member in raid.livingMembers) {
+        [self triggerForTarget:member inRaid:raid];
+    }
 }
 @end

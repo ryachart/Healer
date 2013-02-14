@@ -66,16 +66,17 @@
     
 	if (!activeAbility){
         const NSInteger fadeOutTag = 43234;
-        if (![self getActionByTag:fadeOutTag]) {
+        if (![self getActionByTag:fadeOutTag] && self.opacity > 0) {
             [self stopAllActions];
             NSTimeInterval fadeTime = 1.0;
             CCFadeTo *fadeOut = [CCFadeTo actionWithDuration:fadeTime opacity:0];
             [fadeOut setTag:fadeOutTag];
             [self runAction:fadeOut];
             [self runAction:[CCSequence actionOne:[CCDelayTime actionWithDuration:fadeTime] two:[CCCallFunc actionWithTarget:self selector:@selector(postFadeCleanup)]]];
-        }
-        if (!self.isCastingAbilityChanneled) {
-            [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.castBar.contentSize.width + CASTBAR_INSET_WIDTH), self.castBar.contentSize.height + CASTBAR_INSET_HEIGHT)];
+            
+            if (!self.isCastingAbilityChanneled) {
+                [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.castBar.contentSize.width + CASTBAR_INSET_WIDTH), self.castBar.contentSize.height + CASTBAR_INSET_HEIGHT)];
+            }
         }
         self.isCastingAbilityChanneled = NO;
         

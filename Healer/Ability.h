@@ -12,7 +12,7 @@
 #import "RaidMember.h"
 #import "ProjectileEffect.h"
 
-#define kAbilityRequiresTrigger 9999
+#define kAbilityRequiresTrigger 99999
 
 @class Raid, Player, Boss, Agent, HealableTarget, AbilityDescriptor, Effect;
 @interface Ability : NSObject
@@ -44,6 +44,7 @@
 - (void)combatActions:(Raid*)theRaid boss:(Boss*)theBoss players:(NSArray*)players gameTime:(float)timeDelta;
 - (void)triggerAbilityForRaid:(Raid*)theRaid andPlayers:(NSArray*)players;
 - (BOOL)checkFailed;
+- (void)activateAbility;
 
 - (void)willDamageTarget:(RaidMember*)target;
 - (void)startChannel:(float)channel;
@@ -135,7 +136,8 @@ typedef enum {
 @property (nonatomic, retain) Ability *abilityToGain;
 @end
 
-@interface RaidDamage : Ability 
+@interface RaidDamage : Ability
+@property (nonatomic, retain) Effect *appliedEffect;
 @end
 
 @interface Grip : Ability
@@ -218,4 +220,11 @@ typedef enum {
 @end
 
 @interface FlameBreath : Ability
+@end
+
+@interface Earthquake : Ability
+@end
+
+@interface RandomPotionToss : Ability
+- (void)triggerAbilityAtRaid:(Raid*)raid;
 @end

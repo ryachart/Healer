@@ -109,7 +109,6 @@
 @end
 
 @interface BefouledTreant : Boss
-@property (readwrite) NSTimeInterval lastRootquake;
 @end
 
 @interface TwinChampions : Boss

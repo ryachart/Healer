@@ -153,6 +153,9 @@
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(312,40, 400, 50)] autorelease];
         self.playerEnergyView = [[[PlayerStatusView alloc] initWithFrame:CGRectMake(804, 485, 200, 50)] autorelease];
         
+        self.playerMoveButton = [[[PlayerMoveButton alloc] initWithFrame:CGRectMake(-70, 0, 50, 50)] autorelease];
+        [self.playerCastBar addChild:self.playerMoveButton];
+        
         self.announcementLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
         [self.announcementLabel setPosition:CGPointMake(512, 440)];
         [self.announcementLabel setColor:ccYELLOW];
@@ -175,7 +178,7 @@
                 case 0:
                     self.spellView1 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(910, 370, 100, 100)] autorelease];
                     if (self.player.activeSpells.count > i) {
-                        [self.spellView1  setSpellData:[[self.player activeSpells] objectAtIndex:i]];
+                        [self.spellView1 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
                         [self.spellView1 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                         [self.spellView1 setPlayer:self.player];
                     }
@@ -851,6 +854,11 @@
     }],nil]];
 }
 
+-(void)announcePlayerInterrupted
+{
+    [self.playerCastBar displayInterruption];
+}
+
 -(void)logEvent:(CombatEvent *)event{
     [self.encounter.combatLog addObject:event];
     
@@ -902,7 +910,6 @@
     }
     
     if (self.isServer){
-        
         if (isNetworkUpdate){
             [match sendDataToAllPlayers:[[NSString stringWithFormat:@"BOSSHEALTH|%i", self.boss.health] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
             

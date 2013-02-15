@@ -43,6 +43,7 @@
 @property (nonatomic, assign) CCLabelTTFShadow *scoreLabel;
 @property (nonatomic, retain) Encounter *encounter;
 @property (nonatomic, assign) GoldCounterSprite *goldCounter;
+@property (nonatomic, readwrite) NSInteger reward;
 @end
 
 @implementation PostBattleScene
@@ -90,11 +91,14 @@
                 [[PlayerDataManager localPlayer] completeLevel:self.encounter.levelNumber];
             }
             reward = [self.encounter reward];
+            if (self.showsFirstLevelFTUE) {
+                reward = 25;
+            }
             
             oldRating = [[PlayerDataManager localPlayer] levelRatingForLevel:self.encounter.levelNumber];
             rating = self.encounter.difficulty;
             if (rating > oldRating && !self.isMultiplayer){
-                if (self.encounter.difficulty > 1) {
+                if (self.encounter.difficulty > 1 && self.encounter.levelNumber != 1) {
                     reward += 25; //Completing a new difficulty bonus, basically.
                 }
                 [[PlayerDataManager localPlayer] setLevelRating:rating forLevel:self.encounter.levelNumber];
@@ -228,6 +232,7 @@
 #if DEBUG
         [self.encounter saveCombatLog];
 #endif
+        self.reward = reward;
     }
     return self;
 }
@@ -297,7 +302,11 @@
     NSTimeInterval finalScoreTime = 2.5+(finalScore/10000.0);
     numberChangeAction = [CCNumberChangeAction actionWithDuration:finalScoreTime fromNumber:0 toNumber:finalScore];
     [numberChangeAction setPrefix:@"Score: "];
-    [self.scoreLabel runAction:[CCSequence actionOne:numberChangeAction two:[CCCallFunc actionWithTarget:self selector:@selector(completeStatAnimations)]]];
+    if (self.scoreLabel) {
+        [self.scoreLabel runAction:[CCSequence actionOne:numberChangeAction two:[CCCallFunc actionWithTarget:self selector:@selector(completeStatAnimations)]]];
+    } else {
+        [self completeStatAnimations];
+    }
     
 
 }
@@ -310,11 +319,11 @@
         [newHighScore runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
     }
     if (self.isVictory) {
-        CCNumberChangeAction *numberChangeAction = [CCNumberChangeAction actionWithDuration:2.5 fromNumber:0 toNumber:self.encounter.reward];
+        CCNumberChangeAction *numberChangeAction = [CCNumberChangeAction actionWithDuration:2.5 fromNumber:0 toNumber:self.reward];
         [numberChangeAction setPrefix:@"Gold Earned: "];
         [self.goldLabel runAction:numberChangeAction];
         
-        CCNumberChangeAction *countDown = [CCNumberChangeAction actionWithDuration:2.0 fromNumber:self.encounter.reward toNumber:0];
+        CCNumberChangeAction *countDown = [CCNumberChangeAction actionWithDuration:2.0 fromNumber:self.reward toNumber:0];
         [countDown setPrefix:@"Gold Earned: "];
         [self.goldLabel runAction:[CCSequence actions:[CCSpawn actions:[CCScaleTo actionWithDuration:.5 scale:1.0], [CCFadeTo actionWithDuration:.5 opacity:255], nil], numberChangeAction, [CCDelayTime  actionWithDuration:.5], [CCCallFunc actionWithTarget:self selector:@selector(finishGoldCountUp)], countDown,[CCFadeTo actionWithDuration:.5 opacity:0], [CCCallBlockN actionWithBlock:^(CCNode *node){ [node removeFromParentAndCleanup:YES];}], nil]];
         

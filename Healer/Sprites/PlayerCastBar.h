@@ -15,4 +15,5 @@
 
 -(id)initWithFrame:(CGRect)frame;
 -(void)updateTimeRemaining:(NSTimeInterval)remaining ofMaxTime:(NSTimeInterval)maxTime forSpell:(Spell*)spell;
+-(void)displayInterruption;
 @end

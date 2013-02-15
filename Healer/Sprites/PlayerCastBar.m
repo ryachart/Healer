@@ -19,6 +19,7 @@
 @property (nonatomic, assign) ClippingNode *castBarClippingNode;
 @property (nonatomic, readwrite) float percentTimeRemaining;
 @property (nonatomic, readwrite) GLubyte opacity;
+@property (nonatomic, readwrite) BOOL isInterrupted;
 @end
 
 @implementation PlayerCastBar
@@ -77,7 +78,9 @@
         }
 		self.percentTimeRemaining = 0.0;
         if (self.castingSpell) {
-            self.timeRemaining.string = [NSString stringWithFormat:@"%@: 0:00", self.castingSpell.title];
+            if (!self.isInterrupted) {
+                self.timeRemaining.string = [NSString stringWithFormat:@"%@: 0:00", self.castingSpell.title];
+            }
             [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.castBar.contentSize.width + CASTBAR_INSET_WIDTH), self.castBar.contentSize.height + CASTBAR_INSET_HEIGHT)];
             self.castingSpell = nil;
         }
@@ -90,12 +93,21 @@
             [fadeIn setTag:fadeInTag];
             [self runAction:fadeIn];
         }
+        self.isInterrupted = NO;
+        [self.castBar setColor:ccGREEN];
         self.castingSpell = spell;
         
 		self.percentTimeRemaining = remaining/maxTime; //4 - (1.0 - percentTimeRemaining) * self.castBar.contentSize.width
         [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.castBar.contentSize.width + CASTBAR_INSET_WIDTH) * (1.0 - self.percentTimeRemaining), self.castBar.contentSize.height + CASTBAR_INSET_HEIGHT)];
 		[self.timeRemaining setString:[NSString stringWithFormat:@"%@: %1.2f", spell.title,  remaining]];
 	}
+}
+
+-(void)displayInterruption
+{
+    [self.castBar setColor:ccRED];
+    self.timeRemaining.string = @"Interrupted!";
+    self.isInterrupted = YES;
 }
 
 #pragma mark - CCRBGAProtocol

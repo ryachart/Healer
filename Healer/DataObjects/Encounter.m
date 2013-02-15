@@ -45,6 +45,9 @@
 
 - (NSInteger)score
 {
+    if (self.levelNumber == 1) {
+        return 0; //No score for level 1
+    }
     NSInteger score = self.difficulty * (1400 * self.healingDone / self.damageTaken + 1400 * self.raid.livingMembers.count / self.raid.raidMembers.count) ;
     return score;
 }
@@ -438,7 +441,7 @@
     
     switch (levelNumber) {
         case 1:
-            return 0;
+            return -25;
         case 2:
         case 3:
         case 4:

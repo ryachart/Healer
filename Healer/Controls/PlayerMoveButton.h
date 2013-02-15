@@ -6,12 +6,10 @@
 //  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <cocos2d.h>
 
 
-@interface PlayerMoveButton : UIView {
-	BOOL isMoving;
-}
-@property BOOL isMoving;
-
+@interface PlayerMoveButton : CCLayer <CCRGBAProtocol>
+@property (nonatomic, readwrite) BOOL isMoving;
+- (id)initWithFrame:(CGRect)frame;
 @end

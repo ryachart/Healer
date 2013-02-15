@@ -13,6 +13,7 @@
 //Text Announcements
 - (void)announce:(NSString*)announcement;
 - (void)errorAnnounce:(NSString*)announcement;
+- (void)announcePlayerInterrupted;
 
 //Graphical Announcements
 - (void)displayScreenShakeForDuration:(float)duration;

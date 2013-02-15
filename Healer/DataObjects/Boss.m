@@ -317,7 +317,7 @@
 
 @implementation Ghoul
 +(id)defaultBoss{
-    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:10920 damage:200 targets:1 frequency:2.0 choosesMT:NO ];
+    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:25000 damage:300 targets:1 frequency:2.0 choosesMT:NO ];
     [ghoul setTitle:@"The Ghoul"];
     [ghoul setInfo:@"These are strange times in the once peaceful kingdom of Theronia.  A dark mist has set beyond the Eastern Mountains and corrupt creatures have begun attacking innocent villagers and travelers along the roads."];
     
@@ -332,14 +332,17 @@
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (percentage == 75.0){
         [self.announcer announce:@"A putrid limb falls from the ghoul..."];
+        self.autoAttack.abilityValue *= .9;
     }
     
     if (percentage == 50.0){
         [self.announcer announce:@"The ghoul begins to crumble."];
+        self.autoAttack.abilityValue *= .9;
     }
     
     if (percentage == 25.0){
         [self.announcer announce:@"The nearly lifeless ghoul shrieks in agony.."];
+        self.autoAttack.abilityValue *= .8;
     }
 }
 @end

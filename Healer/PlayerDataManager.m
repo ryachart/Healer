@@ -229,6 +229,9 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
 }
 
 - (NSInteger)levelRatingForLevel:(NSInteger)level {
+    if (level == 1) {
+        return 0; //You can't get rating from the tutorial level
+    }
     NSInteger rating = [[self.playerData objectForKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%d", level]] intValue];
     if (rating > 5) { //Gross Migration code
         rating /= 2;

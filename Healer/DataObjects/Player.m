@@ -428,14 +428,17 @@
 }
 
 - (void)interrupt{
-    if (self.isLocalPlayer){
-        [self.spellBeingCast spellInterrupted];
+    if (self.spellBeingCast) {
+        if (self.isLocalPlayer){
+            [self.spellBeingCast spellInterrupted];
+            [self.announcer announcePlayerInterrupted];
+        }
+        self.spellTarget = nil;
+        self.spellBeingCast = nil;
+        self.isCasting = NO;
+        self.castStart = 0.0f;
+        self.currentSpellCastTime = 0.0;
     }
-    self.spellTarget = nil;
-    self.spellBeingCast = nil;
-    self.isCasting = NO;
-    self.castStart = 0.0f;
-    self.currentSpellCastTime = 0.0;
 }
 
 -(NSTimeInterval) remainingCastTime
@@ -462,14 +465,7 @@
 }
 -(void)disableCastingWithReason:(CastingDisabledReason)reason{
 	castingDisabledReasons[reason] = YES;
-    if (self.isLocalPlayer){
-        [self.spellBeingCast spellInterrupted];
-    }
-	self.spellTarget = nil;
-	self.spellBeingCast = nil;
-	self.isCasting = NO;
-	self.castStart = 0.0;
-	self.additionalTargets = nil;
+    [self interrupt];
 }
 
 

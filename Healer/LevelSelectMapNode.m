@@ -67,9 +67,9 @@
     
     NSInteger startingLevel = 1;
     
-    if ([[PlayerDataManager localPlayer] highestLevelCompleted] > 0) {
-        startingLevel = 2;
-    }
+//    if ([[PlayerDataManager localPlayer] highestLevelCompleted] > 0) {
+//        startingLevel = 2;
+//    }
     
     for (int i = startingLevel; i <= NUM_ENCOUNTERS; i++){
 

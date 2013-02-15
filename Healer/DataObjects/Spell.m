@@ -496,7 +496,7 @@
 
 +(id)defaultSpell{
     Purify *purify = [[Purify alloc] initWithTitle:@"Purify" healAmnt:50 * kCostEfficiencyScale  energyCost:40 castTime:0.0 andCooldown:5.0];
-    [purify setDescription:@"Removes evil curses or poisons from your enemies.  If there are none to remove, Purify heals for a moderate amount."];
+    [purify setDescription:@"Removes evil curses or poisons from your allies.  If there are none to remove, Purify heals for a moderate amount."];
     return [purify autorelease];
 }
 -(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)theTime{

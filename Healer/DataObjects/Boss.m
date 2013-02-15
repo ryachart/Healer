@@ -76,6 +76,28 @@
     return [super damageDoneMultiplier] + [self challengeDamageDoneModifier];
 }
 
+- (NSInteger)maximumHealth {
+    float challengeMultiplier = 1.0;
+    
+    switch (self.difficulty) {
+        case 1:
+            challengeMultiplier = .6;
+            break;
+        case 2:
+            challengeMultiplier = .8;
+            break;
+        case 4:
+            challengeMultiplier = 1.15;
+            break;
+        case 5:
+            challengeMultiplier = 1.3;
+            break;
+    }
+    
+    return [super maximumHealth] * challengeMultiplier;
+    
+}
+
 - (void)configureBossForDifficultyLevel:(NSInteger)difficulty
 {
     self.difficulty = difficulty;
@@ -83,6 +105,8 @@
     for (Ability *ab in self.abilities) {
         [ab setDifficulty:self.difficulty];
     }
+
+    self.health = self.maximumHealth;
 }
 
 - (void)addAbilityDescriptor:(AbilityDescriptor*)descriptor {
@@ -272,14 +296,14 @@
 {
     Ability *visibleAbility = nil;
     for (Ability *ab in self.abilities) {
-        if (ab.isChanneling) {
+        if (ab.isChanneling && !ab.ignoresBusy) {
             visibleAbility = ab;
             break;
         }
     }
     if (!visibleAbility) {
         for (Ability *ab in self.abilities) {
-            if (ab.isActivating) {
+            if (ab.isActivating && !ab.ignoresBusy) {
                 visibleAbility = ab;
                 break;
             }
@@ -486,12 +510,6 @@
     return [boss autorelease];
 }
 
-
-- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
-{
-    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
-}
-
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (percentage == 99.0){
         [self.announcer announce:@"An imp grabs a bundle of vials off of a nearby desk."];
@@ -510,8 +528,15 @@
         [self.announcer announce:@"The imps begin attacking angrily!"];
         self.autoAttack.isDisabled = YES;
         
+        Ability *attackAngrily = [[[Ability alloc] init] autorelease];
+        [attackAngrily setTitle:@"Frenzied Attacking"];
+        [attackAngrily setCooldown:kAbilityRequiresTrigger];
+        [self addAbility:attackAngrily];
+        [attackAngrily startChannel:9999];
+        
         for (RaidMember *member in raid.livingMembers) {
             FocusedAttack *attack = [[[FocusedAttack alloc] initWithDamage:self.autoAttack.abilityValue * .75 andCooldown:self.autoAttack.cooldown] autorelease];
+            attack.ignoresBusy = YES;
             [attack setFailureChance:self.autoAttack.failureChance];
             [attack setFocusTarget:member];
             [member setIsFocused:YES];
@@ -529,7 +554,6 @@
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Befouled Akarus"];
     [boss setInfo:@"The Akarus, an ancient tree that has long rested in the Peraxu Forest, has become tainted with the foul energy of the dark mists. This once great tree must be ended for good."];
-    
     
     Cleave *cleave = [Cleave normalCleave];
     [boss addAbility:cleave];
@@ -558,11 +582,6 @@
     [branchAttack setAppliedEffect:lashDoT];
     [boss addAbility:branchAttack];
     return [boss autorelease];
-}
-
-- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
-{
-    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
 }
 
 - (void)ownerDidBeginAbility:(Ability *)ability
@@ -673,13 +692,6 @@
     [boss setTitle:@"Plaguebringer Colossus"];
     [boss setInfo:@"As the Akarus is finally consumed its branches begin to quiver and shake.  As the ground rumbles beneath its might, you and your allies witness a hideous transformation.  What once was a peaceful treant has now become an abomination.  Only truly foul magics could have caused this."];
     
-    AbilityDescriptor *sickenDesc = [[AbilityDescriptor alloc] init];
-    [sickenDesc setAbilityDescription:@"The Colossus will sicken targets causing them to take damage until they are healed to full health."];
-    [sickenDesc setIconName:@"unknown_ability.png"];
-    [sickenDesc setAbilityName:@"Strange Sickness"];
-    [boss addAbilityDescriptor:sickenDesc];
-    [sickenDesc release];
-    
     AbilityDescriptor *pusExploDesc = [[AbilityDescriptor alloc] init];
     [pusExploDesc setAbilityDescription:@"When your allies deal enough damage to the Plaguebringer Colossus to break off a section of its body the section explodes vile toxin dealing high damage to your raid."];
     [pusExploDesc setIconName:@"unknown_ability.png"];
@@ -689,26 +701,15 @@
     
     [boss addAbility:[Cleave normalCleave]];
     
+    PlaguebringerSicken *sicken = [[[PlaguebringerSicken alloc] init] autorelease];
+    [sicken setInfo:@"The Colossus will sicken targets causing them to take damage until they are healed to full health."];
+    [sicken setKey:@"sicken"];
+    [sicken setTitle:@"Sicken"];
+    [sicken setActivationTime:2.5];
+    [sicken setAbilityValue:100];
+    [sicken setCooldown:13.0];
+    [boss addAbility:sicken];
     return [boss autorelease];
-}
-
--(void)sickenTarget:(RaidMember *)target{
-    ExpiresAtFullHealthRHE *infectedWound = [[ExpiresAtFullHealthRHE alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative];
-    [infectedWound setOwner:self];
-    [infectedWound setTitle:@"pbc-infected-wound"];
-    [infectedWound setAilmentType:AilmentTrauma];
-    [infectedWound setValuePerTick:-100];
-    [infectedWound setNumOfTicks:15];
-    [infectedWound setSpriteName:@"bleeding.png"];
-    if (target.health > target.maximumHealth * .58){
-        // Spike the health for funsies!
-        NSInteger preHealth = target.health;
-        [target setHealth:target.health * .58];
-        [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:preHealth - target.health] andEventType:CombatEventTypeDamage]];
-    }
-    [target addEffect:infectedWound];
-    [infectedWound release];
-    
 }
 
 -(void)burstPussBubbleOnRaid:(Raid*)theRaid{
@@ -738,20 +739,6 @@
     }
 }
 
-- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
-{
-    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
-    
-    self.lastSickeningTime += timeDelta;
-    float tickTime =  15.0;
-    if (self.lastSickeningTime > tickTime){
-        for ( int i = 0; i < 2; i++){
-            [self sickenTarget:theRaid.randomLivingMember];
-        }
-        self.lastSickeningTime = 0.0;
-    }
-}
-
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (((int)percentage) % 20 == 0 && percentage != 100){
         [self burstPussBubbleOnRaid:raid];
@@ -776,6 +763,34 @@
     [boss addAbilityDescriptor:poison];
     [poison release];
     
+    TrulzarPoison *poisonEffect = [[[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative] autorelease];
+    [poisonEffect setAilmentType:AilmentPoison];
+    [poisonEffect setSpriteName:@"poison.png"];
+    [poisonEffect setValuePerTick:-120];
+    [poisonEffect setNumOfTicks:30];
+    [poisonEffect setTitle:@"trulzar-poison1"];
+    
+    Attack *poisonAttack = [[[Attack alloc] initWithDamage:100 andCooldown:10] autorelease];
+    [poisonAttack setAttackParticleEffectName:@"poison_cloud.plist"];
+    [poisonAttack setKey:@"poison-attack"];
+    [poisonAttack setTitle:@"Inject Poison"];
+    [poisonAttack setCooldown:9.0];
+    [poisonAttack setActivationTime:2.0];
+    [poisonAttack setAppliedEffect:poisonEffect];
+    [boss addAbility:poisonAttack];
+    
+    ProjectileAttack *potionThrow = [[[ProjectileAttack alloc] init] autorelease];
+    [potionThrow setTitle:@"Toxic Vial"];
+    [potionThrow setKey:@"potion-throw"];
+    [potionThrow setCooldown:8.0];
+    [potionThrow setSpriteName:@"potion.png"];
+    [potionThrow setActivationTime:1.0];
+    [potionThrow setExplosionParticleName:@"poison_cloud.plist"];
+    [potionThrow setEffectType:ProjectileEffectTypeThrow];
+    [potionThrow setAbilityValue:450];
+    [potionThrow setProjectileColor:ccGREEN];
+    [boss addAbility:potionThrow];
+    
     RaidDamagePulse *pulse = [[[RaidDamagePulse alloc] init] autorelease];
     [pulse setActivationTime:2.0];
     [pulse setTitle:@"Poison Nova"];
@@ -788,29 +803,6 @@
     [boss addAbility:pulse];
     boss.poisonNova = pulse;
     return [boss autorelease];
-}
-
--(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses {
-    if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq choosesMT:chooses ]){
-    }
-    return self;
-}
-
--(void)applyPoisonToTarget:(RaidMember*)target{
-    TrulzarPoison *poisonEffect = [[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative];
-    [self.announcer displayParticleSystemWithName:@"poison_cloud.plist" onTarget:target];
-    [poisonEffect setOwner:self];
-    [poisonEffect setAilmentType:AilmentPoison];
-    [poisonEffect setSpriteName:@"poison.png"];
-    [poisonEffect setValuePerTick:-120];
-    [poisonEffect setNumOfTicks:30];
-    [poisonEffect setTitle:@"trulzar-poison1"];
-    [target addEffect:poisonEffect];
-    
-    NSInteger upfrontDamage = (arc4random() % 200) * self.damageDoneMultiplier;
-    [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:upfrontDamage] andEventType:CombatEventTypeDamage]];
-    [target setHealth:target.health - upfrontDamage];
-    [poisonEffect release];
 }
 
 -(void)applyWeakPoisonToTarget:(RaidMember*)target{
@@ -826,56 +818,15 @@
     [poisonEffect release];
 }
 
--(void)throwPotionToTarget:(RaidMember *)target withDelay:(float)delay{
-    float colTime = (1.5 + delay);
-    
-    //Lightning In a Bottle
-    DelayedHealthEffect *bottleEffect = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
-    
-    ProjectileEffect *bottleVisual = [[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target andCollisionTime:colTime];
-    [bottleVisual setType:ProjectileEffectTypeThrow];
-    [bottleVisual setSpriteColor:ccc3(0, 255, 0)];
-    [self.announcer displayProjectileEffect:bottleVisual];
-    [bottleVisual release];
-    [bottleEffect setIsIndependent:YES];
-    [bottleEffect setOwner:self];
-    [bottleEffect setValue:-450];
-    [target addEffect:bottleEffect];
-    [bottleEffect release];    
-}
-
-- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
-{
-    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
-    self.lastPoisonTime += timeDelta;
-    self.lastPotionTime += timeDelta;
-    
-    float tickTime = 10;
-    if (self.lastPoisonTime > tickTime){ 
-        if (self.healthPercentage > 10.0){
-            [self.announcer announce:@"Trulzar fills an ally with poison."];
-            [[AudioController sharedInstance] playTitle:@"trulzar_laugh"];
-            [self applyPoisonToTarget:[theRaid randomLivingMember]];
-            self.lastPoisonTime = 0;
-        }
-    }
-    
-    float potionTickTime = self.isMultiplayer ? 5 : 8;
-    if (self.lastPotionTime > potionTickTime){
-        [self throwPotionToTarget:[theRaid randomLivingMember] withDelay:0.0];
-        self.lastPotionTime = 0.0;
-    }
-}
-
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (((int)percentage) == 7){
         [self.announcer announce:@"Trulzar cackles as the room fills with noxious poison."];
+        [self.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0.0];
         [self.poisonNova setIsDisabled:YES];
-        [[AudioController sharedInstance] playTitle:@"trulzar_death"];
-        for (RaidMember *member in raid.raidMembers){
+        [[self abilityWithKey:@"poison-attack"] setIsDisabled:YES];
+        for (RaidMember *member in raid.livingMembers){
             [self applyWeakPoisonToTarget:member];
         }
-        
     }
 }
 
@@ -889,6 +840,9 @@
         }
         
     }
+    if ([ability.key isEqualToString:@"poison-attack"]) {
+        [self.announcer announce:@"Trulzar fills an ally with poison."];
+    }
     
 }
 
@@ -900,168 +854,89 @@
     [boss setTitle:@"Council of Dark Summoners"];
     [boss setNamePlateTitle:@"Teritha"];
     [boss setInfo:@"A contract in blood lay signed and sealed in Trulzar's belongings.  He had been summoned by a council of dark summoners to participate in an arcane ritual for some horrible purpose.  You and your allies have followed the sanguine invitation to a dark chamber beneath the Vargothian Swamps."];
+    
+    RaidDamageOnDispelStackingRHE *poison = [[[RaidDamageOnDispelStackingRHE alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegative] autorelease];
+    [poison setTitle:@"roth_poison"];
+    [poison setSpriteName:@"poison.png"];
+    [poison setAilmentType:AilmentPoison];
+    [poison setNumOfTicks:20];
+    [poison setMaxStacks:50];
+    [poison setValuePerTick:-35];
+    [poison setDispelDamageValue:-200];
+    
+    EnsureEffectActiveAbility *eeaa = [[[EnsureEffectActiveAbility alloc] init] autorelease];
+    [eeaa setIsChanneled:YES];
+    [eeaa setIsDisabled:YES];
+    [eeaa setKey:@"explosive-toxin"];
+    [eeaa setTitle:@"Explosive Toxin"];
+    [eeaa setInfo:@"Teritha fills an ally with an unstable toxin that deals increasing damage to a single target and explodes when the toxin is removed with Purify."];
+    [eeaa setEnsuredEffect:poison];
+    [boss addAbility:eeaa];
+    
+    CouncilPoison *poisonDoT = [[[CouncilPoison alloc] initWithDuration:6 andEffectType:EffectTypeNegative] autorelease];
+    [poisonDoT setTitle:@"council-ball-dot"];
+    [poisonDoT setSpriteName:@"poison.png"];
+    [poisonDoT setValuePerTick:-40];
+    [poisonDoT setNumOfTicks:3];
+    [poisonDoT setAilmentType:AilmentPoison];
+    
+    ProjectileAttack *grimgonBolts = [[[ProjectileAttack alloc] init] autorelease];
+    [grimgonBolts setKey:@"grimgon-bolts"];
+    [grimgonBolts setCooldown:7.5];
+    [grimgonBolts setAttacksPerTrigger:2];
+    [grimgonBolts setActivationTime:1.5];
+    [grimgonBolts setIsDisabled:YES];
+    [grimgonBolts setExplosionParticleName:@"poison_cloud.plist"];
+    [grimgonBolts setSpriteName:@"green_fireball.png"];
+    [grimgonBolts setAbilityValue:325];
+    [grimgonBolts setAppliedEffect:poisonDoT];
+    [grimgonBolts setInfo:@"Vile green bolts that cause the targets to have healing done to them reduced by 50%."];
+    [grimgonBolts setTitle:@"Bolts of Malediction"];
+    [boss addAbility:grimgonBolts];
+    
+    DarkCloud *dc = [[[DarkCloud alloc] init] autorelease];
+    [dc setIsDisabled:YES];
+    [dc setKey:@"dark-cloud"];
+    [dc setCooldown:18.0];
+    [dc setActivationTime:1.5];
+    [dc setTitle:@"Choking Cloud"];
+    [dc setInfo:@"Galcyon summons a dark cloud over all of your allies that deals more damage to lower health allies and weakens healing magic."];
+    [boss addAbility:dc];
     return [boss autorelease];
-}
-
--(void)dealloc{
-    [_rothVictim release];
-    [super dealloc];
-}
-
--(RaidMember*)chooseVictimInRaid:(Raid*)raid{
-    RaidMember *victim = nil;
-    int safety = 0;
-    while (!victim){
-        RaidMember *member = [raid randomLivingMember];
-        if ([member isKindOfClass:[Archer class]]){
-            continue;
-        }
-        victim = member;  
-        safety++;
-        if (safety > 25){
-            break;
-        }
-    }
-    return victim;
-}
-
--(void)summonDarkCloud:(Raid*)raid{
-    for (RaidMember *member in raid.raidMembers){
-        DarkCloudEffect *dcEffect = [[DarkCloudEffect alloc] initWithDuration:5 andEffectType:EffectTypeNegativeInvisible];
-        [dcEffect setOwner:self];
-        [dcEffect setValuePerTick:-30];
-        [dcEffect setNumOfTicks:3];
-        [member addEffect:dcEffect];
-        [dcEffect release];
-    }
-    [self.announcer displayParticleSystemOnRaidWithName:@"purple_mist.plist" forDuration:-1.0];
-}
-
--(void)shootProjectileAtTarget:(RaidMember*)target withDelay:(float)delay{
-    float colTime = (1.5 + delay);
-    CouncilPoisonball *fireball = [[CouncilPoisonball alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
-    
-    ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:@"green_fireball.png" target:target andCollisionTime:colTime];
-    [fireballVisual setCollisionParticleName:@"poison_cloud.plist"];
-    [self.announcer displayProjectileEffect:fireballVisual];
-    [fireballVisual release];
-    [fireball setIsIndependent:YES];
-    [fireball setOwner:self];
-    [fireball setValue:-(arc4random() % 100 + 300)];
-    [target addEffect:fireball];
-    [fireball release];
-}
-
-- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
-{
-    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
-    if (self.phase == 1){
-        //Roth
-        BOOL hasPoison = NO;
-        for (Effect* effect in self.rothVictim.activeEffects){
-            if ([effect.title isEqualToString:@"roth_poison"]){
-                hasPoison = YES;
-                break;
-            }
-        }
-        if (!hasPoison || self.rothVictim.isDead){
-            self.rothVictim = [self chooseVictimInRaid:theRaid];
-            RaidDamageOnDispelStackingRHE *poison = [[RaidDamageOnDispelStackingRHE alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegative];
-            [poison setOwner:self];
-            [poison setTitle:@"roth_poison"];
-            [poison setSpriteName:@"poison.png"];
-            [poison setAilmentType:AilmentPoison];
-            [poison setNumOfTicks:20];
-            [poison setMaxStacks:50];
-            [poison setValuePerTick:-35];
-            [poison setDispelDamageValue:-200];
-            [self.rothVictim addEffect:[poison autorelease]];
-        }
-    }
-    
-    if (self.phase == 2){
-        //Grimgon
-        [self setNamePlateTitle:@"Grimgon"];
-        self.lastPoisonballTime += timeDelta;
-        float tickTime = self.isMultiplayer ? 7.5 : 9;
-        if (self.lastPoisonballTime > tickTime){ 
-            for (int i = 0; i < 2; i++){
-                [self shootProjectileAtTarget:[theRaid randomLivingMember] withDelay:i * 1];
-            }
-            self.lastPoisonballTime = 0;
-        }
-    }
-    
-    if (self.phase == 3){
-        //Serevon
-        [self setNamePlateTitle:@"Galcyon"];
-        self.lastDarkCloud += timeDelta;
-        float tickTime = 18.0;
-        if (self.lastDarkCloud > tickTime){
-            [self summonDarkCloud:theRaid];
-            self.lastDarkCloud = 0.0;
-        }
-    }
-
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (percentage == 99.0){
-        self.autoAttack.abilityValue = 0;
-        [self.announcer announce:@"The room fills with demonic laughter."];
-    }
-    if (percentage == 97.0){
-        //Roth of the Shadows steps forward
-        self.phase = 1;
         [self.announcer announce:@"Teritha, The Toxin Mage steps forward."];
-        AbilityDescriptor *rothDesc = [[AbilityDescriptor alloc] init];
-        [rothDesc setAbilityDescription:@"Teritha channels a curse on an ally dealing increasing damage over time.  When this curse is dispelled it will explode dealing moderate damage to all of your allies."];
-        [rothDesc setIconName:@"unknown_ability.png"];
-        [rothDesc setAbilityName:@"Curse of Detonation"];
-        [self addAbilityDescriptor:rothDesc];
-        [rothDesc release];
+        [[self abilityWithKey:@"explosive-toxin"] setIsDisabled:NO];
     }
     
     if (percentage == 75.0){
         [self clearExtraDescriptors];
         //Roth dies
-        [self.announcer announce:@"Teritha falls to her knees.  Grimgon, The Darkener takes her place."];
-        self.phase = 2;
-    }
-    if (percentage == 74.0){
-        AbilityDescriptor *grimgonDesc = [[AbilityDescriptor alloc] init];
-        [grimgonDesc setAbilityDescription:@"Grimgon fires vile green bolts at his enemies dealing damage and causing the targets to have healing done to them reduced by 50%."];
-        [grimgonDesc setIconName:@"unknown_ability.png"];
-        [grimgonDesc setAbilityName:@"Poisonball"];
-        [self addAbilityDescriptor:grimgonDesc];
-        [grimgonDesc release];
+        [self.announcer announce:@"Teritha falls to her knees defeated.  Grimgon, The Darkener takes her place."];
+        [[self abilityWithKey:@"explosive-toxin"] setIsDisabled:YES];
+        //Grimgon
+        [[self abilityWithKey:@"grimgon-bolts"] setIsDisabled:NO];
+        [self setNamePlateTitle:@"Grimgon"];
     }
     
     if (percentage == 50.0){
         [self clearExtraDescriptors];
-        [self.announcer announce:@"Grimgon fades to nothing.  Galcyon, Overlord of Darkness pushes away his corpse and raises his wand."];
+        [self.announcer announce:@"Grimgon collapses and dies.  Galcyon, Overlord of Darkness pushes away his corpse and begins casting dark magic."];
         //Serevon, Anguish Mage steps forward
-        self.phase = 3;
         self.autoAttack.abilityValue = 270;
         self.autoAttack.failureChance = .25;
-    }
-    if (percentage == 49.0){
-        AbilityDescriptor *serevonDesc = [[AbilityDescriptor alloc] init];
-        [serevonDesc setAbilityDescription:@"Periodically, Galcyon summons a dark cloud over all of your allies that deals more damage to lower health allies and weakens healing magic."];
-        [serevonDesc setIconName:@"unknown_ability.png"];
-        [serevonDesc setAbilityName:@"Choking Cloud"];
-        [self addAbilityDescriptor:serevonDesc];
-        [serevonDesc release];
+        [self setNamePlateTitle:@"Galcyon"];
+        [[self abilityWithKey:@"dark-cloud"] setIsDisabled:NO];
     }
     
     if (percentage == 23.0){
-        for (RaidMember *member in raid.raidMembers){
-            [self shootProjectileAtTarget:member withDelay:0.0];
-        }
+        [(ProjectileAttack*)[self abilityWithKey:@"grimgon-bolts"] fireAtRaid:raid];
     }
     
     if (percentage == 5.0){
-        [self summonDarkCloud:raid];
+        //WHAT DO HERE
         //Galcyon, Lord of the Dark Council does his last thing..
     }
 }
@@ -1087,116 +962,65 @@
     
     [boss addAbility:[Cleave normalCleave]];
     
-    AbilityDescriptor *axecutionDesc = [[AbilityDescriptor alloc] init];
-    [axecutionDesc setAbilityDescription:@"The Twin Champions will periodically choose a target for execution.  This target will be instantly slain if not above 50% health when the effect expires."];
-    [axecutionDesc setIconName:@"unknown_ability.png"];
-    [axecutionDesc setAbilityName:@"Execution"];
-    [boss addAbilityDescriptor:axecutionDesc];
-    [axecutionDesc release];
+    RaidDamageSweep *rds = [[[RaidDamageSweep alloc] init] autorelease];
+    [rds setAbilityValue:250];
+    [rds setTitle:@"Sweeping Death"];
+    [rds setKey:@"axe-sweep"];
+    [rds setCooldown:kAbilityRequiresTrigger];
+    [boss addAbility:rds];
+    
+    IntensifyingRepeatedHealthEffect *gushingWoundEffect = [[[IntensifyingRepeatedHealthEffect alloc] initWithDuration:9.0 andEffectType:EffectTypeNegative] autorelease];
+    [gushingWoundEffect setSpriteName:@"bleeding.png"];
+    [gushingWoundEffect setAilmentType:AilmentTrauma];
+    [gushingWoundEffect setIncreasePerTick:.5];
+    [gushingWoundEffect setValuePerTick:-230];
+    [gushingWoundEffect setNumOfTicks:3];
+    [gushingWoundEffect setTitle:@"gushingwound"];
+    
+    ProjectileAttack *gushingWound = [[[ProjectileAttack alloc] init] autorelease];
+    [gushingWound setIgnoresGuardians:YES];
+    [gushingWound setKey:@"gushing-wound"];
+    [gushingWound setExplosionParticleName:@"blood_spurt.plist"];
+    [gushingWound setTitle:@"Deadly Throw"];
+    [gushingWound setCooldown:17.0];
+    [gushingWound setActivationTime:1.5];
+    [gushingWound setEffectType:ProjectileEffectTypeThrow];
+    [gushingWound setSpriteName:@"axe.png"];
+    [gushingWound setAppliedEffect:gushingWoundEffect];
+    [gushingWound setAbilityValue:250];
+    [boss addAbility:gushingWound];
+    
+    ExecutionEffect *executionEffect = [[[ExecutionEffect alloc] initWithDuration:3.75 andEffectType:EffectTypeNegative] autorelease];
+    [executionEffect setValue:-2000];
+    [executionEffect setSpriteName:@"execution.png"];
+    [executionEffect setEffectivePercentage:.5];
+    [executionEffect setAilmentType:AilmentTrauma];
+    
+    Attack *executionAttack = [[[Attack alloc] init] autorelease];
+    [executionAttack setInfo:@"The Twin Champions will  choose a target for execution.  This target will be instantly slain if not above 50% health when the deathblow lands."];
+    [executionAttack setTitle:@"Execution"];
+    [executionAttack setRequiresDamageToApplyEffect:NO];
+    [executionAttack setIgnoresGuardians:YES];
+    [executionAttack setKey:@"execution"];
+    [executionAttack setCooldown:30];
+    [executionAttack setFailureChance:0];
+    [executionAttack setAppliedEffect:executionEffect];
     
     return [boss autorelease];
 }
 
 -(void)axeSweepThroughRaid:(Raid*)theRaid{
-    self.lastAxecution  = -7.0;
     self.firstFocusedAttack.timeApplied = -7.0;
     self.secondFocusedAttack.timeApplied = -7.0;
-    self.lastGushingWound = -7.0; 
     //Set all the other abilities to be on a long cooldown...
-    
-    [self.announcer announce:@"The Champions Break off from the Guardians and sweep through your allies"];
-    NSInteger deadCount = [theRaid deadCount];
-    for (int i = 0; i < theRaid.raidMembers.count/2; i++){
-        NSInteger index = theRaid.raidMembers.count - i - 1;
-
-        RaidMember *member = [theRaid.raidMembers objectAtIndex:index];
-        RaidMember *member2 = [theRaid.raidMembers objectAtIndex:i];
-        
-        NSInteger axeSweepDamage = FUZZ(250, 40);
-        
-        DelayedHealthEffect *axeSweepEffect = [[DelayedHealthEffect alloc] initWithDuration:i * .5 andEffectType:EffectTypeNegativeInvisible];
-        [axeSweepEffect setOwner:self];
-        [axeSweepEffect setTitle:@"axesweep"];
-        [axeSweepEffect setValue:-axeSweepDamage * (1 + ((float)deadCount/(float)theRaid.raidMembers.count))];
-        [axeSweepEffect setFailureChance:.1];     
-        DelayedHealthEffect *axeSweep2 = [axeSweepEffect copy];
-        [member addEffect:axeSweepEffect];
-        [member2 addEffect:axeSweep2];
-        
-        [axeSweepEffect release];
-        [axeSweep2 release];
-        
-    }
+    [[self abilityWithKey:@"axe-sweep"] triggerAbilityForRaid:theRaid andPlayers:[NSArray array]];
+    [self.announcer announce:@"The Champions break off and sweep through your allies"];
 }
 
--(void)performAxecutionOnRaid:(Raid*)theRaid{
-    RaidMember *target = nil;
-    
-    int safety = 0;
-    while (!target || target.isFocused){
-        target = [theRaid randomLivingMember];
-        safety++;
-        if (safety > 25){
-            break;
-        }
-    }
-    [self.announcer announce:@"An Ally Has been chosen for Execution..."];
-    NSInteger currentHealth = target.health;
-    NSInteger healthLimit = target.maximumHealth * .4;
-    if (currentHealth > healthLimit) {
-        [target setHealth:healthLimit];
-        if (currentHealth > healthLimit) {
-            [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:(currentHealth - healthLimit)] andEventType:CombatEventTypeDamage]];
-        }
-    }
-    ExecutionEffect *effect = [[ExecutionEffect alloc] initWithDuration:3.75 andEffectType:EffectTypeNegative];
-    [effect setOwner:self];
-    [effect setValue:-2000];
-    [effect setSpriteName:@"execution.png"];
-    [effect setEffectivePercentage:.5];
-    [effect setAilmentType:AilmentTrauma];
-    
-    [target addEffect:effect];
-    [effect release];
-}
-
--(void)performGushingWoundOnRaid:(Raid*)theRaid{
-    for (int i = 0; i < 1; i++){
-        RaidMember *target = nil;
-        
-        int safety = 0;
-        while (!target || target.isFocused){
-            target = [theRaid randomLivingMember];
-            safety++;
-            if (safety > 25){
-                break;
-            }
-        }
-        
-        DelayedHealthEffect *axeThrownEffect = [[DelayedHealthEffect alloc] initWithDuration:1.5 andEffectType:EffectTypeNegativeInvisible];
-        [axeThrownEffect setOwner:self];
-        [axeThrownEffect setValue:-250];
-        [axeThrownEffect setIsIndependent:YES];
-        
-        IntensifyingRepeatedHealthEffect *gushingWoundEffect = [[IntensifyingRepeatedHealthEffect alloc] initWithDuration:9.0 andEffectType:EffectTypeNegative];
-        [gushingWoundEffect setSpriteName:@"bleeding.png"];
-        [gushingWoundEffect setAilmentType:AilmentTrauma];
-        [gushingWoundEffect setIncreasePerTick:.5];
-        [gushingWoundEffect setValuePerTick:-230];
-        [gushingWoundEffect setNumOfTicks:3];
-        [gushingWoundEffect setOwner:self];
-        [gushingWoundEffect setTitle:@"gushingwound"];
-        
-        [axeThrownEffect setAppliedEffect:gushingWoundEffect];
-        
-        [target addEffect:axeThrownEffect];
-        
-        ProjectileEffect *axeVisual = [[ProjectileEffect alloc] initWithSpriteName:@"axe.png" target:target andCollisionTime:1.5];
-        [axeVisual setType:ProjectileEffectTypeThrow];
-        [self.announcer displayProjectileEffect:axeVisual];
-        [axeVisual release];
-        [gushingWoundEffect release];
-        [axeThrownEffect release];
+- (void)ownerDidExecuteAbility:(Ability *)ability
+{
+    if ([ability.key isEqualToString:@"execution"]){
+        [self.announcer announce:@"An ally has been chosen for execution!"];
     }
 }
 
@@ -1204,27 +1028,6 @@
     RaidMember *tempSwap = self.secondFocusedAttack.focusTarget;
     self.secondFocusedAttack.focusTarget = self.firstFocusedAttack.focusTarget;
     self.firstFocusedAttack.focusTarget = tempSwap;
-}
-
-- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
-{
-    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
-    
-    self.lastAxecution += timeDelta;
-    self.lastGushingWound += timeDelta;
-    
-    float axecutionTickTime = 30.0;
-    float gushingWoundTickTime = 18.0;
-    
-    if (self.lastAxecution >= axecutionTickTime){
-        [self performAxecutionOnRaid:theRaid];
-        self.lastAxecution = 0.0;
-    }
-    
-    if (self.lastGushingWound >= gushingWoundTickTime){
-        [self performGushingWoundOnRaid:theRaid];
-        self.lastGushingWound = 0.0;
-    }
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
@@ -1246,7 +1049,7 @@
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
     [boss setNamePlateTitle:@"Baraghast"];
-    [boss setInfo:@"As his champions fell, the dark warlord emerged from deep in the encampment.  Disgusted with the failure of his champions, he confronts you and your allies himself."];
+    [boss setInfo:@"As his champions fell the dark warlord emerged from deep in the encampment.  Disgusted with the failure of his champions he confronts you and your allies himself."];
     
     [boss addAbility:[Cleave normalCleave]];
     
@@ -1255,26 +1058,23 @@
 
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
     if (percentage == 99.0) {
-        BaraghastRoar *roar = [[BaraghastRoar alloc] init];
+        BaraghastRoar *roar = [[[BaraghastRoar alloc] init] autorelease];
         [roar setKey:@"baraghast-roar"];
-        [roar setCooldown:18.0];
+        [roar setCooldown:17.5];
         [self addAbility:roar];
-        [roar release];
     }
     
     if (percentage == 80.0) {
-        [self.announcer announce:@"Baraghast glowers beyond the Guardian at the rest of your allies"];
-        BaraghastBreakOff *breakOff = [[BaraghastBreakOff alloc] init];
+        [self.announcer announce:@"Baraghast looks through your ranks for the weakest ally."];
+        BaraghastBreakOff *breakOff = [[[BaraghastBreakOff alloc] init] autorelease];
         [breakOff setKey:@"break-off"];
         [breakOff setCooldown:25];
         [breakOff setOwnerAutoAttack:(FocusedAttack*)self.autoAttack];
-        
         [self addAbility:breakOff];
-        [breakOff release];
     }
     
     if (percentage == 60.0) {
-        [self.announcer announce:@"Baraghast fills with rage."];
+        [self.announcer announce:@"Baraghast fills with empowering rage."];
         Crush *crushAbility = [[[Crush alloc] init] autorelease];
         [crushAbility setKey:@"crush"];
         [crushAbility setCooldown:20];
@@ -1283,17 +1083,16 @@
     }
     
     if (percentage == 33.0) {
-        [self.announcer announce:@"A Dark Energy Surges Beneath Baraghast..."];
-        Deathwave *dwAbility = [[Deathwave alloc] init];
+        [self.announcer announce:@"A Dark Energy Surges Beneath Baraghast."];
+        Deathwave *dwAbility = [[[Deathwave alloc] init] autorelease];
         [dwAbility setKey:@"deathwave"];
         [dwAbility setCooldown:42.0];
         [self addAbility:dwAbility];
-        [dwAbility release];
     }
 
 }
 
-- (void)ownerDidExecuteAbility:(Ability*)ability {
+- (void)ownerDidBeginAbility:(Ability *)ability {
     if ([ability.key isEqualToString:@"deathwave"]){
         for (Ability *ab in self.abilities){
             [ab setTimeApplied:0];
@@ -1309,37 +1108,36 @@
     [seer setNamePlateTitle:@"Tyonath"];
     [seer setInfo:@"Seer Tyonath was tormented and tortured after his capture by the Dark Horde. He guards the secrets to Baraghast's origin in a horrific chamber beneath the encampment."];
     
-    ProjectileAttack *fireballAbility = [[ProjectileAttack alloc] init];
+    ProjectileAttack *fireballAbility = [[[ProjectileAttack alloc] init] autorelease];
     [fireballAbility setSpriteName:@"purple_fireball.png"];
     [fireballAbility setAbilityValue:-120];
     [fireballAbility setCooldown:4];
     [seer addAbility:fireballAbility];
-    [fireballAbility release];
     
-    InvertedHealing *invHeal = [[InvertedHealing alloc] init];
+    InvertedHealing *invHeal = [[[InvertedHealing alloc] init] autorelease];
     [invHeal setNumTargets:3];
-    [invHeal setCooldown:6.0];
+    [invHeal setCooldown:5.0];
+    [invHeal setActivationTime:1.5];
     [seer addAbility:invHeal];
-    [invHeal release];
     
-    SoulBurn *sb = [[SoulBurn alloc] init];
-    [sb setCooldown:16.0];
+    SoulBurn *sb = [[[SoulBurn alloc] init] autorelease];
+    [sb setActivationTime:2.0];
+    [sb setCooldown:14.0];
     [seer addAbility:sb];
-    [sb release];
     
-    GainAbility *gainShadowbolts = [[GainAbility alloc] init];
+    GainAbility *gainShadowbolts = [[[GainAbility alloc] init] autorelease];
     [gainShadowbolts setCooldown:60];
     [gainShadowbolts setInfo:@"Tyonath casts more shadow bolts the longer the fight goes on."];
     [gainShadowbolts setTitle:@"Increasing Insanity"];
     [gainShadowbolts setAbilityToGain:fireballAbility];
     [seer addAbility:gainShadowbolts];
-    [gainShadowbolts release];
     
-    RaidDamage *horrifyingLaugh = [[RaidDamage alloc] init];
+    RaidDamage *horrifyingLaugh = [[[RaidDamage alloc] init] autorelease];
+    [horrifyingLaugh setActivationTime:1.5];
+    [horrifyingLaugh setTitle:@"Horrifying Laugh"];
     [horrifyingLaugh setAbilityValue:125];
     [horrifyingLaugh setCooldown:25];
     [seer addAbility:horrifyingLaugh];
-    [horrifyingLaugh release];
     
     return [seer autorelease];
 }
@@ -1355,51 +1153,58 @@
     
     [boss addAbility:[Cleave normalCleave]];
     
-    Grip *gripAbility = [[Grip alloc] init];
+    Grip *gripAbility = [[[Grip alloc] init] autorelease];
     [gripAbility setKey:@"grip-ability"];
+    [gripAbility setActivationTime:1.5];
     [gripAbility setCooldown:22];
     [gripAbility setAbilityValue:-140];
     [boss addAbility:gripAbility];
-    [gripAbility release];
     
-    Impale *impaleAbility = [[Impale alloc] init];
+    Impale *impaleAbility = [[[Impale alloc] init] autorelease];
     [impaleAbility setKey:@"gatekeeper-impale"];
+    [impaleAbility setActivationTime:1.5];
     [impaleAbility setCooldown:16];
     [boss addAbility:impaleAbility];
     [impaleAbility setAbilityValue:820];
-    [impaleAbility release];
     
     return [boss autorelease];
 }
 
+- (void)ownerDidExecuteAbility:(Ability *)ability
+{
+    if ([ability.key isEqualToString:@"open-the-gates"]) {
+        [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:20];
+    }
+}
+
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
     if (percentage == 75.0){
-        //Pestilence
-        [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:20];
-        NSArray *livingMembers = [raid livingMembers];
-        for (RaidMember *member in livingMembers){
-            RepeatedHealthEffect *pestilenceDot = [[RepeatedHealthEffect alloc] initWithDuration:20 andEffectType:EffectTypeNegativeInvisible];
-            [pestilenceDot setValuePerTick:-40];
-            [pestilenceDot setOwner:self];
-            [pestilenceDot setNumOfTicks:10];
-            [pestilenceDot setTitle:@"gatekeeper-pestilence"];
-            [member addEffect:pestilenceDot];
-            [pestilenceDot release];
-        }
+        NSTimeInterval openingTime = 5.0;
+        RepeatedHealthEffect *pestilenceDot = [[[RepeatedHealthEffect alloc] initWithDuration:20 andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [pestilenceDot setValuePerTick:-40];
+        [pestilenceDot setNumOfTicks:10];
+        [pestilenceDot setTitle:@"gatekeeper-pestilence"];
+        
+        RaidApplyEffect *openTheGates = [[[RaidApplyEffect alloc] init] autorelease];
+        [openTheGates setKey:@"open-the-gates"];
+        [openTheGates setTitle:@"Open The Gates"];
+        [openTheGates setCooldown:kAbilityRequiresTrigger];
+        [openTheGates setActivationTime:openingTime];
+        [openTheGates setAppliedEffect:pestilenceDot];
+        [self addAbility:openTheGates];
+        [openTheGates activateAbility];
     }
     
     if (percentage == 50.0) {
         [self.announcer announce:@"The Gatekeeper summons two Blood-Drinker Demons to his side."];
         //Blood drinkers
-        BloodDrinker *ability = [[BloodDrinker alloc] initWithDamage:110 andCooldown:1.25];
+        BloodDrinker *ability = [[[BloodDrinker alloc] initWithDamage:110 andCooldown:1.25] autorelease];
         [ability setKey:@"gatekeeper-blooddrinker"];
         [self addAbility:ability];
-        [ability release];
         
-        BloodDrinker *ability2 = [[BloodDrinker alloc] initWithDamage:110 andCooldown:1.25];
+        BloodDrinker *ability2 = [[[BloodDrinker alloc] initWithDamage:110 andCooldown:1.25] autorelease];
         [ability2 setKey:@"gatekeeper-blooddrinker"];
         [self addAbility:ability2];
-        [ability2 release];
     }
     
     if (percentage == 25.0) {
@@ -1413,8 +1218,11 @@
     }
     if (percentage == 23.0) {
         //Drink in death +10% damage for each ally slain so far.
-        [self.announcer announce:@"The Gatekeeper grows strong for each slain ally"];
         NSInteger dead = [raid deadCount];
+        if (dead > 0) {
+            [self.announcer announce:@"The Gatekeeper grows stronger for each slain ally"];
+        }
+        dead++;
         for (int i = 0; i < dead; i++){
             Effect *enrageEffect = [[Effect alloc] initWithDuration:600 andEffectType:EffectTypePositiveInvisible];
             [enrageEffect setIsIndependent:YES];
@@ -1423,6 +1231,7 @@
             [enrageEffect setDamageDoneMultiplierAdjustment:.2];
             [self addEffect:[enrageEffect autorelease]];
         }
+        
     }
 }
 @end
@@ -1441,7 +1250,8 @@
     [boss setTitle:@"Skeletal Dragon"];
     
     boss.boneThrowAbility = [[[BoneThrow alloc] init] autorelease];
-    [boss.boneThrowAbility  setCooldown:5.0];
+    [boss.boneThrowAbility setActivationTime:1.5];
+    [boss.boneThrowAbility  setCooldown:3.5];
     [boss addAbility:boss.boneThrowAbility];
     
     RepeatedHealthEffect *burningEffect = [[[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative] autorelease];
@@ -1452,6 +1262,7 @@
     
     boss.sweepingFlame = [[[AlternatingFlame alloc] init] autorelease];
     [(AlternatingFlame*)boss.sweepingFlame setAppliedEffect:burningEffect];
+    [boss.sweepingFlame setActivationTime:1.0];
     [boss.sweepingFlame setCooldown:9.0];
     [boss.sweepingFlame setAbilityValue:400];
     [(AlternatingFlame*)boss.sweepingFlame setNumTargets:5];
@@ -1463,6 +1274,8 @@
     [boss.tankDamage setFailureChance:.73];
     
     boss.tailLash = [[[RaidDamage alloc] init] autorelease];
+    [boss.tailLash setActivationTime:1.5];
+    [boss.tailLash setTitle:@"Tail Lash"];
     [boss.tailLash setAbilityValue:320];
     [boss.tailLash setCooldown:24.0];
     [boss.tailLash setFailureChance:.25];
@@ -1552,14 +1365,15 @@
     
     cob.boneQuake = [[[BoneQuake alloc] init] autorelease];
     [cob.boneQuake setAbilityValue:120];
-    [cob.boneQuake setCooldown:30.0];
+    [cob.boneQuake setActivationTime:1.5];
+    [cob.boneQuake setCooldown:28.5];
     [cob addAbility:cob.boneQuake];
     
-    BoneThrow *boneThrow = [[BoneThrow alloc] init];
+    BoneThrow *boneThrow = [[[BoneThrow alloc] init] autorelease];
+    [boneThrow setActivationTime:1.5];
     [boneThrow setAbilityValue:240];
     [boneThrow setCooldown:14.0];
     [cob addAbility:boneThrow];
-    [boneThrow release];
     
     
     return [cob autorelease];
@@ -1597,8 +1411,10 @@
     [boss setInfo:@"After defeating the most powerful and terrible creatures in Delsarn the Overseer of this treacherous realm confronts you himself."];
     
     boss.projectilesAbility = [[[OverseerProjectiles alloc] init] autorelease];
+    [boss.projectilesAbility setTitle:@"Bolt of Despair"];
+    [boss.projectilesAbility setActivationTime:1.25];
     [boss.projectilesAbility setAbilityValue:514];
-    [boss.projectilesAbility setCooldown:1.5];
+    [boss.projectilesAbility setCooldown:2.5];
     [boss addAbility:boss.projectilesAbility];
     
     boss.demonAbilities = [NSMutableArray arrayWithCapacity:3];
@@ -1666,7 +1482,7 @@
     if (percentage == 15.0){
         [self.announcer announce:@"The Overseer laughs maniacally and raises his staff again."];
         self.projectilesAbility.abilityValue = 432.0;
-        self.projectilesAbility.cooldown = 3.75;
+        self.projectilesAbility.cooldown = 4.0;
         self.projectilesAbility.isDisabled = NO;
     }
 }
@@ -1684,21 +1500,29 @@
     [boss setTitle:@"The Unspeakable"];
     [boss setInfo:@"As you peel back the blood-sealed door to the inner sanctum of the Delsari citadel you find a horrific room filled with a disgusting mass of bones and rotten corpses.  The room itself seems to be ... alive."];
     
+    AbilityDescriptor *slimeDescriptor = [[[AbilityDescriptor alloc] init] autorelease];
+    [slimeDescriptor setAbilityDescription:@"As your allies hack their way through the filth beast they become covered in a disgusting slime.  If this slime builds to 5 stacks on any ally that ally will be consumed.  Whenever an ally receives healing from you the slime is removed."];
+    [slimeDescriptor setAbilityName:@"Engulfing Slime"];
+    [boss addAbilityDescriptor:slimeDescriptor];
+    
     boss.oozeAll = [[[OozeRaid alloc] init] autorelease];
-    [boss.oozeAll setTimeApplied:19.0];
-    [boss.oozeAll setCooldown:24.0];
+    [boss.oozeAll setTitle:@"Surging Slime"];
+    [boss.oozeAll setActivationTime:2.0];
+    [boss.oozeAll setTimeApplied:17.0];
+    [boss.oozeAll setCooldown:22.0];
     [(OozeRaid*)boss.oozeAll setOriginalCooldown:24.0];
     [(OozeRaid*)boss.oozeAll setAppliedEffect:[EngulfingSlimeEffect defaultEffect]];
     [boss.oozeAll setKey:@"apply-ooze-all"];
 
     [boss addAbility:boss.oozeAll];
     
-    OozeTwoTargets *oozeTwo = [[OozeTwoTargets alloc] init];
+    OozeTwoTargets *oozeTwo = [[[OozeTwoTargets alloc] init] autorelease];
+    [oozeTwo setTitle:@"Tendrils of Slime"];
+    [oozeTwo setActivationTime:1.0];
     [oozeTwo setAbilityValue:450];
     [oozeTwo setCooldown:17.0];
     [oozeTwo setKey:@"ooze-two"];
     [boss addAbility:oozeTwo];
-    [oozeTwo release];
     
     return [boss autorelease];
 }
@@ -1813,7 +1637,7 @@
     ProjectileAttack *projectileAttack = [[[ProjectileAttack alloc] init] autorelease];
     [projectileAttack setSpriteName:@"purple_fireball.png"];
     [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
-    [projectileAttack setAbilityValue:-250];
+    [projectileAttack setAbilityValue:-200];
     [projectileAttack setCooldown:2.5];
     [projectileAttack setFailureChance:.35];
     [boss addAbility:projectileAttack];
@@ -1821,7 +1645,7 @@
     ProjectileAttack *projectileAttack2 = [[[ProjectileAttack alloc] init] autorelease];
     [projectileAttack2 setSpriteName:@"purple_fireball.png"];
     [projectileAttack2 setExplosionParticleName:@"shadow_burst.plist"];
-    [projectileAttack2 setAbilityValue:-500];
+    [projectileAttack2 setAbilityValue:-400];
     [projectileAttack2 setCooldown:2.5];
     [projectileAttack setTimeApplied:2.0];
     [projectileAttack2 setFailureChance:.7];
@@ -1864,9 +1688,10 @@
     if (percentage == 70.0) {
         WaveOfTorment *wot = [[[WaveOfTorment alloc] init] autorelease];
         [wot setKey:@"wot"];
+        [wot setTitle:@"Waves of Torment"];
         [wot setCooldown:40.0];
         [wot setTimeApplied:0];
-        [wot setAbilityValue:80];
+        [wot setAbilityValue:72];
         [self addAbility:wot];
     }
     
@@ -1884,14 +1709,14 @@
         ProjectileAttack *projectileAttack = [[[ProjectileAttack alloc] init] autorelease];
         [projectileAttack setSpriteName:@"purple_fireball.png"];
         [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
-        [projectileAttack setAbilityValue:-260];
+        [projectileAttack setAbilityValue:-230];
         [projectileAttack setCooldown:1.2];
         [projectileAttack setFailureChance:.2];
         [gainAbility setAbilityToGain:projectileAttack];
         
         [self addAbility:projectileAttack];
         [projectileAttack fireAtRaid:raid];
-        [projectileAttack setAbilityValue:-85];
+        [projectileAttack setAbilityValue:-65];
         [projectileAttack setFailureChance:.7];
         [self removeAbility:projectileAttack];
         
@@ -1954,6 +1779,7 @@
         [wot setCooldown:40.0];
         [wot setAbilityValue:80];
         [wot setKey:@"wot"];
+        [wot setTitle:@"Waves of Torment"];
         [self addAbility:wot];
         [wot triggerAbilityForRaid:raid andPlayers:[NSArray arrayWithObject:player]];
         if (percentage == 95.0) {
@@ -2026,6 +1852,7 @@
     
     EnsureEffectActiveAbility *eeaa = [[[EnsureEffectActiveAbility alloc] init] autorelease];
     [eeaa setKey:@"soul-drain"];
+    [eeaa setTitle:@"Soul Drain"];
     [eeaa setEnsuredEffect:soulDrainEffect];
     [self addAbility:eeaa];
 }

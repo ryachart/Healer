@@ -552,6 +552,13 @@
 @end
 
 @implementation RaidDamageOnDispelStackingRHE
+- (id)copy
+{
+    RaidDamageOnDispelStackingRHE *copy = [super copy];
+    [copy setDispelDamageValue:self.dispelDamageValue];
+    return copy;
+}
+
 -(void)effectWillBeDispelled:(Raid *)raid player:(Player *)player{
     for (RaidMember*member in raid.raidMembers){
         [member setHealth:member.health + (self.dispelDamageValue * self.owner.damageDoneMultiplier)];
@@ -594,6 +601,33 @@
     ExecutionEffect * copy = [super copy];
     [copy setEffectivePercentage:self.effectivePercentage];
     return copy;
+}
+
+- (void)dealApplicationDamage
+{
+    NSInteger currentHealth = self.target.health;
+    NSInteger healthLimit = self.target.maximumHealth * .4;
+    if (currentHealth > healthLimit) {
+        [self.target setHealth:healthLimit];
+        if (currentHealth > healthLimit) {
+            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:(currentHealth - healthLimit)] andEventType:CombatEventTypeDamage]];
+        }
+    }
+    self.hasDealtApplicationDamage = YES;
+}
+
+- (void)reset
+{
+    [super reset];
+    self.hasDealtApplicationDamage = NO;
+}
+
+- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta
+{
+    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+    if (!self.hasDealtApplicationDamage) {
+        [self dealApplicationDamage];
+    }
 }
 
 -(void)expire{

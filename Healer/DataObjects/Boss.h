@@ -86,14 +86,10 @@
 @end
 
 @interface DarkCouncil : Boss
-@property (nonatomic, retain) RaidMember *rothVictim;
-@property (readwrite) NSTimeInterval lastPoisonballTime;
-@property (readwrite) NSTimeInterval lastDarkCloud;
 @end
 
 @interface PlaguebringerColossus: Boss
 @property (readwrite) NSInteger numBubblesPopped;
-@property (readwrite) NSTimeInterval lastSickeningTime;
 @end
 
 @class FocusedAttack;
@@ -114,8 +110,6 @@
 @interface TwinChampions : Boss
 @property (nonatomic, assign) FocusedAttack *firstFocusedAttack;
 @property (nonatomic, assign) FocusedAttack *secondFocusedAttack;
-@property (nonatomic, readwrite) NSTimeInterval lastAxecution;
-@property (nonatomic, readwrite) NSTimeInterval lastGushingWound;
 @end
 
 @interface Baraghast : Boss

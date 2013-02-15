@@ -34,6 +34,7 @@
 @property (nonatomic, readwrite) float channelTimeRemaining;
 @property (nonatomic, readwrite) float maxChannelTime;
 @property (nonatomic, readonly) BOOL isChanneling;
+@property (nonatomic, readwrite) BOOL ignoresBusy; //This ability will trigger even when the owner is busy.
 
 //Activation Times
 @property (nonatomic, readwrite) BOOL isActivating;
@@ -52,6 +53,7 @@
 
 
 @interface Attack : Ability
+@property (nonatomic, readwrite) BOOL ignoresGuardians;
 @property (nonatomic, retain) Effect *appliedEffect;
 @property (nonatomic, readwrite) BOOL requiresDamageToApplyEffect;
 - (RaidMember *)targetFromRaid:(Raid*)raid;
@@ -72,10 +74,13 @@
 @end
 
 @interface ProjectileAttack : Ability
+@property (nonatomic, readwrite) BOOL ignoresGuardians;
+@property (nonatomic, readwrite) NSInteger attacksPerTrigger; //Defaults to 1
 @property (nonatomic, retain) Effect *appliedEffect;
 @property (nonatomic, retain) NSString* spriteName;
 @property (nonatomic, retain) NSString* explosionParticleName;
 @property (nonatomic, readwrite) ProjectileEffectType effectType;
+@property (nonatomic, readwrite) ccColor3B projectileColor;
 - (void)fireAtRaid:(Raid*)raid;
 
 @end
@@ -210,6 +215,7 @@ typedef enum {
 @interface EnsureEffectActiveAbility : Ability
 @property (nonatomic, retain) RaidMember *victim;
 @property (nonatomic, retain) Effect *ensuredEffect;
+@property (nonatomic, readwrite) BOOL isChanneled;
 @end
 
 @interface WaveOfTorment : Ability
@@ -227,4 +233,13 @@ typedef enum {
 
 @interface RandomPotionToss : Ability
 - (void)triggerAbilityAtRaid:(Raid*)raid;
+@end
+
+@interface PlaguebringerSicken : Ability
+@end
+
+@interface DarkCloud : Ability
+@end
+
+@interface RaidDamageSweep : Ability
 @end

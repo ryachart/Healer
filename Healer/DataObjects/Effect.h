@@ -38,10 +38,10 @@ typedef enum {
 	BOOL isExpired;
 }
 @property (nonatomic, retain) NSString* spriteName;
-@property (nonatomic, retain) NSString* title; //Should be unique
+@property (nonatomic, retain) NSString* title; //Should be unique, I want to call this key...
 @property (nonatomic, readwrite) AilmentType ailmentType;
 @property (nonatomic, assign) Agent *owner;
-@property NSTimeInterval duration;
+@property (nonatomic, readwrite) NSTimeInterval duration;
 @property (nonatomic, readwrite) NSInteger stacks;
 @property (readwrite) NSInteger maxStacks;
 @property (readwrite) float timeApplied;
@@ -158,6 +158,7 @@ typedef enum {
 
 @interface ExecutionEffect : DelayedHealthEffect
 @property (nonatomic, readwrite) float effectivePercentage;
+@property (nonatomic, readwrite) BOOL hasDealtApplicationDamage;
 @end
 
 @interface IntensifyingRepeatedHealthEffect : RepeatedHealthEffect

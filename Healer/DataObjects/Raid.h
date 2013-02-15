@@ -21,11 +21,11 @@
 - (void)addRaidMember:(RaidMember*)member;
 - (NSArray*)livingMembers;
 - (NSInteger)deadCount;
-
 - (NSArray *)livingMembersWithPositioning:(Positioning)pos;
 
 - (RaidMember*)lowestHealthMember;
 - (RaidMember*)randomLivingMember;
+- (RaidMember*)randomNonGuardianLivingMember;
 - (RaidMember*)randomLivingMemberWithPositioning:(Positioning)pos;
 - (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos;
 - (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos excludingTargets:(NSArray*)targets;

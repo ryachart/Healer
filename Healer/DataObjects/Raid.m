@@ -205,4 +205,17 @@
     return targets;
 }
 
+- (RaidMember*)randomNonGuardianLivingMember
+{
+    int safety = 0;
+    RaidMember *randomMember = nil;
+    while (!randomMember && safety < 25) {
+        randomMember = [self randomLivingMember];
+        if ([randomMember isKindOfClass:[Guardian class]]) {
+            randomMember = nil;
+        }
+    }
+    return randomMember;
+}
+
 @end

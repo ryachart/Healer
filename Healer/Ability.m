@@ -98,7 +98,7 @@
 
 - (void)combatActions:(Raid*)theRaid boss:(Boss*)theBoss players:(NSArray*)players gameTime:(float)timeDelta{
     self.timeApplied += timeDelta;
-    if (!self.owner.visibleAbility || self.owner.visibleAbility == self) {
+    if (!self.owner.visibleAbility || self.owner.visibleAbility == self || self.ignoresBusy) {
         if ((_cooldown != kAbilityRequiresTrigger || self.isActivating) && self.timeApplied >= self.cooldown){
             if (!self.isDisabled){
                 [self.owner ownerWillExecuteAbility:self];
@@ -227,7 +227,7 @@
 }
 
 - (RaidMember*)targetFromRaid:(Raid*)raid{
-    return [raid randomLivingMember];
+    return self.ignoresGuardians ? raid.randomNonGuardianLivingMember : [raid randomLivingMember];
 }
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players{
@@ -401,6 +401,8 @@
     if (self = [super init]){
         self.explosionParticleName = @"fire_explosion.plist";
         self.cooldownVariance = .1;
+        self.projectileColor = ccWHITE;
+        self.attacksPerTrigger = 1;
     }
     return self;
 }
@@ -418,6 +420,8 @@
     [fbCopy setExplosionParticleName:self.explosionParticleName];
     [fbCopy setAppliedEffect:self.appliedEffect];
     [fbCopy setEffectType:self.effectType];
+    [fbCopy setAttacksPerTrigger:self.attacksPerTrigger];
+    [fbCopy setProjectileColor:self.projectileColor];
     return fbCopy;
 }
 
@@ -429,6 +433,7 @@
     ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:self.spriteName target:target andCollisionTime:colTime];
     [fireballVisual setCollisionParticleName:self.explosionParticleName];
     [fireballVisual setIsFailed:didFail];
+    [fireballVisual setSpriteColor:self.projectileColor];
     fireballVisual.type = self.effectType;
     [[self.owner announcer] displayProjectileEffect:fireballVisual];
     [fireballVisual release];
@@ -449,8 +454,10 @@
 }
 
 - (void) triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players {
-    RaidMember *target = [theRaid randomLivingMember];
-    [self fireAtTarget:target];
+    for (int i = 0; i < self.attacksPerTrigger; i++) {
+        RaidMember *target = self.ignoresGuardians ? theRaid.randomNonGuardianLivingMember : [theRaid randomLivingMember];
+        [self fireAtTarget:target];
+    }
 
 }
 
@@ -555,6 +562,7 @@
         self.info = @"Interrupts spell casting, dispels all positive spell effects, and deals moderate damage to all allies.";
         self.iconName = @"unknown_ability.png";
         self.title = @"Warlord's Roar";
+        [self setActivationTime:1.0];
     }
     return self;
 }
@@ -646,6 +654,8 @@
         self.info = @"Deals extremely high damage to all living allies.  The damage is divided by the number of living allies.";
         self.title = @"Deathwave";
         self.abilityValue = 10000;
+        [self setActivationTime:3.5];
+
     }
     return self;
 }
@@ -1073,8 +1083,10 @@
     [super triggerAbilityForRaid:theRaid andPlayers:players];
     NSArray *members = theRaid.livingMembers;
     
+    NSTimeInterval quakeTime = 3.0;
+    
     for (RaidMember *member in members) {
-        RepeatedHealthEffect *bonequakeDot = [[RepeatedHealthEffect alloc] initWithDuration:3.0 andEffectType:EffectTypeNegative];
+        RepeatedHealthEffect *bonequakeDot = [[RepeatedHealthEffect alloc] initWithDuration:quakeTime andEffectType:EffectTypeNegative];
         [bonequakeDot setNumOfTicks:3];
         [bonequakeDot setValuePerTick:-(arc4random() % 50 + 10)];
         [bonequakeDot setTitle:@"bonequake-dot"];
@@ -1083,14 +1095,12 @@
         [member addEffect:bonequakeDot];
         [bonequakeDot release];
     }
+    [self startChannel:quakeTime];
     
 }
 @end
 
 @implementation OverseerProjectiles
-- (void)dealloc {
-    [super dealloc];
-}
 
 - (id)init {
     if (self = [super init]){
@@ -1294,8 +1304,6 @@
 @implementation OozeRaid
 - (id)init {
     if (self = [super init]){
-        self.info = @"As your allies hack their way through the filth beast they become covered in a disgusting slime.  If this slime builds to 5 stacks on any ally that ally will be consumed.  Whenever an ally receives healing from you the slime is removed.";
-        self.title = @"Engulfing Slime";
         self.iconName = @"engulfing_slime_ability.png";
     }
     return self;
@@ -1328,6 +1336,9 @@
             [delayedSlime release];
         }
     }
+    
+    NSTimeInterval totalDelay = 0.25 + (numApplications - 1) * 1.5;
+    [self startChannel:totalDelay];
     
 }
 @end
@@ -1429,7 +1440,7 @@
         [disruptionEffect setNumOfTicks:duration / 1];
         [member addEffect:disruptionEffect];
     }
-    
+    [self startChannel:duration];
 }
 
 @end
@@ -1570,6 +1581,7 @@
 @implementation EnsureEffectActiveAbility
 - (void)combatActions:(Raid *)theRaid boss:(Boss *)theBoss players:(NSArray *)players gameTime:(float)timeDelta
 {
+    [super combatActions:theRaid boss:theBoss players:players gameTime:timeDelta];
     if (!self.isDisabled) {
         BOOL hasEffect = NO;
         for (Effect* effect in self.victim.activeEffects){
@@ -1583,6 +1595,13 @@
             Effect *eff = [self.ensuredEffect copy];
             [eff setOwner:self.owner];
             [self.victim addEffect:[eff autorelease]];
+            if (self.isChanneled) {
+                [self startChannel:30.0];
+            }
+        }
+    } else {
+        if (self.isChanneled) {
+            self.channelTimeRemaining = 0.0;
         }
     }
 }
@@ -1613,7 +1632,7 @@
         }
         [groups removeObject:groupToHurt];
     }
-
+    [self startChannel:delay * 4];
 }
 @end
 
@@ -1781,4 +1800,73 @@
         [self triggerForTarget:member inRaid:raid];
     }
 }
+@end
+
+@implementation PlaguebringerSicken
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
+{
+    for (int i = 0; i < 2; i++) {
+        RaidMember *target = theRaid.randomLivingMember;
+        ExpiresAtFullHealthRHE *infectedWound = [[[ExpiresAtFullHealthRHE alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative] autorelease];
+        [infectedWound setOwner:self.owner];
+        [infectedWound setTitle:@"pbc-infected-wound"];
+        [infectedWound setAilmentType:AilmentTrauma];
+        [infectedWound setValuePerTick:-self.abilityValue];
+        [infectedWound setNumOfTicks:15];
+        [infectedWound setSpriteName:@"bleeding.png"];
+        if (target.health > target.maximumHealth * .58){
+            // Spike the health for funsies!
+            NSInteger preHealth = target.health;
+            [target setHealth:target.health * .58];
+            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:preHealth - target.health] andEventType:CombatEventTypeDamage]];
+        }
+        [target addEffect:infectedWound];
+    }
+}
+@end
+
+@implementation DarkCloud
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
+{
+    for (RaidMember *member in theRaid.raidMembers){
+        DarkCloudEffect *dcEffect = [[DarkCloudEffect alloc] initWithDuration:5 andEffectType:EffectTypeNegativeInvisible];
+        [dcEffect setOwner:self.owner];
+        [dcEffect setValuePerTick:-30];
+        [dcEffect setNumOfTicks:3];
+        [member addEffect:dcEffect];
+        [dcEffect release];
+    }
+    [self.owner.announcer displayParticleSystemOnRaidWithName:@"purple_mist.plist" forDuration:-1.0];
+    [self startChannel:5];
+}
+@end
+
+@implementation RaidDamageSweep
+- (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players
+{
+    NSInteger deadCount = [theRaid deadCount];
+    for (int i = 0; i < theRaid.raidMembers.count/2; i++){
+        NSInteger index = theRaid.raidMembers.count - i - 1;
+        
+        RaidMember *member = [theRaid.raidMembers objectAtIndex:index];
+        RaidMember *member2 = [theRaid.raidMembers objectAtIndex:i];
+        
+        NSInteger axeSweepDamage = FUZZ(self.abilityValue, 40);
+        
+        DelayedHealthEffect *axeSweepEffect = [[[DelayedHealthEffect alloc] initWithDuration:i * .5 andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [axeSweepEffect setOwner:self.owner];
+        [axeSweepEffect setTitle:@"raid-d-sweep"];
+        [axeSweepEffect setValue:-axeSweepDamage * (1 + ((float)deadCount/(float)theRaid.raidMembers.count))];
+        [axeSweepEffect setFailureChance:.1];
+        DelayedHealthEffect *axeSweep2 = [[axeSweepEffect copy] autorelease];
+        if (![member isDead]) {
+            [member addEffect:axeSweepEffect];
+        }
+        if (![member isDead]) {
+            [member2 addEffect:axeSweep2];
+        }
+    }
+    [self startChannel:7.5];
+}
+
 @end

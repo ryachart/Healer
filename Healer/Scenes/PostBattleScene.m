@@ -19,7 +19,6 @@
 #import "TestFlight.h"
 #import "Talents.h"
 #import "TalentScene.h"
-#import "AudioController.h"
 #import "HealerStartScene.h"
 #import "BasicButton.h"
 #import "Encounter.h"
@@ -333,12 +332,6 @@
 - (void)finishGoldCountUp
 {
     [self.goldCounter updateGoldAnimated:YES toGold:[PlayerDataManager localPlayer].gold];
-}
-
-- (void)onExit {
-    [[AudioController sharedInstance] stopAll];
-    [[AudioController sharedInstance] playTitle:@"title" looping:10];
-    [super onExit];
 }
 
 -(void)setMatch:(GKMatch *)mtch{

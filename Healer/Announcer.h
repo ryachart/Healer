@@ -15,6 +15,10 @@
 - (void)errorAnnounce:(NSString*)announcement;
 - (void)announcePlayerInterrupted;
 
+//Audio Announcements
+- (void)playAudioForTitle:(NSString *)title;
+- (void)stopAudioForTitle:(NSString *)title;
+
 //Graphical Announcements
 - (void)displayScreenShakeForDuration:(float)duration;
 - (void)displayScreenShakeForDuration:(float)duration afterDelay:(float)delay;

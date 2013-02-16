@@ -24,6 +24,9 @@
 #import "BasicButton.h"
 #import "CCLabelTTFShadow.h"
 #import "GradientBorderLayer.h"
+#import "SimpleAudioEngine.h"
+#import "CocosDenshion.h"
+#import "CDAudioManager.h"
 
 #define DEBUG_AUTO_WIN false
 
@@ -44,6 +47,7 @@
 @property (nonatomic, retain) GamePlayPauseLayer *pauseMenuLayer;
 @property (nonatomic, readwrite) NSInteger networkThrottle;
 @property (nonatomic, readwrite) GradientBorderLayer *gradientBorder;
+@property (nonatomic, retain) NSMutableDictionary *playingSoundsDict;
 
 -(void)battleBegin;
 -(void)showPauseMenu;
@@ -81,7 +85,7 @@
     [selectedRaidMembers release];
     [_encounter release];
     [pauseMenuLayer release];
-    
+    [_playingSoundsDict release];
     [super dealloc];
 }
 
@@ -109,6 +113,7 @@
     if (self = [super init]){
         self.encounter = enc;
         self.players = plyers;
+        self.playingSoundsDict = [NSMutableDictionary dictionaryWithCapacity:10];
         
         [self.encounter encounterWillBegin];
         
@@ -178,7 +183,9 @@
                 case 0:
                     self.spellView1 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(910, 370, 100, 100)] autorelease];
                     if (self.player.activeSpells.count > i) {
-                        [self.spellView1 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
+                        Spell *spell = [[self.player activeSpells] objectAtIndex:i];
+                        [self preloadSpellAudio:spell];
+                        [self.spellView1 setSpellData:spell];
                         [self.spellView1 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                         [self.spellView1 setPlayer:self.player];
                     }
@@ -187,7 +194,9 @@
                 case 1:
                     self.spellView2 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(910, 265, 100, 100)] autorelease];
                     if (self.player.activeSpells.count > i) {
-                        [self.spellView2 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
+                        Spell *spell = [[self.player activeSpells] objectAtIndex:i];
+                        [self preloadSpellAudio:spell];
+                        [self.spellView2 setSpellData:spell];
                         [self.spellView2 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                         [self.spellView2 setPlayer:self.player];
                     }
@@ -196,7 +205,9 @@
                 case 2:
                     self.spellView3 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(910, 160, 100, 100)] autorelease];
                     if (self.player.activeSpells.count > i) {
-                        [self.spellView3 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
+                        Spell *spell = [[self.player activeSpells] objectAtIndex:i];
+                        [self preloadSpellAudio:spell];
+                        [self.spellView3 setSpellData:spell];
                         [self.spellView3 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                         [self.spellView3 setPlayer:self.player];
                     }
@@ -205,7 +216,9 @@
                 case 3:
                     self.spellView4 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(910, 55, 100, 100)] autorelease];
                     if (self.player.activeSpells.count > i) {
-                        [self.spellView4 setSpellData:[[self.player activeSpells] objectAtIndex:i]];
+                        Spell *spell = [[self.player activeSpells] objectAtIndex:i];
+                        [self preloadSpellAudio:spell];
+                        [self.spellView4 setSpellData:spell];
                         [self.spellView4 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                         [self.spellView4 setPlayer:self.player];
                     }
@@ -857,6 +870,41 @@
 -(void)announcePlayerInterrupted
 {
     [self.playerCastBar displayInterruption];
+}
+
+#pragma mark - Audio
+
+- (void)preloadAudioWithTitle:(NSString *)title {
+    NSString *audioPath = [@"sounds" stringByAppendingPathComponent:title];
+    [[SimpleAudioEngine sharedEngine] preloadEffect:audioPath];
+}
+
+- (void)unloadAudioWithTitle:(NSString *)title {
+    
+}
+
+- (void)preloadSpellAudio:(Spell*)spell
+{
+    [self preloadAudioWithTitle:spell.beginCastingAudioTitle];
+    [self preloadAudioWithTitle:spell.endCastingAudioTitle];
+    [self preloadAudioWithTitle:spell.interruptedAudioTitle];
+}
+
+- (void)playAudioForTitle:(NSString *)title
+{
+    NSString *audioPath = [@"sounds" stringByAppendingPathComponent:title];
+    ALuint sound = [[SimpleAudioEngine sharedEngine] playEffect:audioPath];
+    [self.playingSoundsDict setObject:[NSNumber numberWithUnsignedInt:sound] forKey:title];
+}
+
+- (void)stopAudioForTitle:(NSString *)title
+{
+    NSNumber *number = [self.playingSoundsDict objectForKey:title];
+    if (number) {
+        ALuint sound = [number unsignedIntValue];
+        [[SimpleAudioEngine sharedEngine] stopEffect:sound];
+        [self.playingSoundsDict removeObjectForKey:title];
+    }
 }
 
 -(void)logEvent:(CombatEvent *)event{

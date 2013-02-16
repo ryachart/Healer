@@ -7,7 +7,6 @@
 //
 
 #import "GameObjects.h"
-#import	"AudioController.h"
 #import "CombatEvent.h"
 #import "Agent.h"
 #import "Announcer.h"
@@ -24,7 +23,7 @@
 
 @implementation Spell
 
-@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, spellAudioData, cooldownRemaining, cooldown, spellID, appliedEffect, owner, info, tempCooldown;
+@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, cooldownRemaining, cooldown, spellID, appliedEffect, owner, info, tempCooldown;
 
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd
 {
@@ -36,15 +35,16 @@
         self.tempCooldown = 0.0;
         self.cooldown = cd;
         isMultitouch = NO;
-        spellAudioData = [[SpellAudioData alloc] init];
         percentagesPerTarget = nil;
         self.spellID = NSStringFromClass([self class]);
+        self.beginCastingAudioTitle = @"heal_begin.wav";
+        self.endCastingAudioTitle = @"heal_finish.wav";
+        self.interruptedAudioTitle = @"interrupted.wav";
     }
 	return self;
 }
 
 -(void)dealloc{
-    [spellAudioData release]; spellAudioData = nil;
     [title release]; title = nil;
     [percentagesPerTarget release];percentagesPerTarget = nil;
     [spellID release]; spellID = nil;
@@ -273,30 +273,17 @@
     }
 }
 -(void)spellBeganCasting{
-	AudioController * ac = [AudioController sharedInstance];
-	if ([spellAudioData beginTitle] != nil){
-		[ac playTitle:[spellAudioData beginTitle]];
-	}
+    [self.owner.announcer playAudioForTitle:self.beginCastingAudioTitle];
 }
 
 -(void)spellEndedCasting{
-	AudioController *ac = [AudioController sharedInstance];
-	if ([spellAudioData beginTitle] != nil){
-		[ac stopTitle:[spellAudioData beginTitle]];
-	}
-	if ([spellAudioData finishedTitle] != nil){
-		[ac playTitle:[spellAudioData finishedTitle]];
-	}
+    [self.owner.announcer stopAudioForTitle:self.beginCastingAudioTitle];
+    [self.owner.announcer playAudioForTitle:self.endCastingAudioTitle];
 }
 
 -(void)spellInterrupted{
-	AudioController *ac = [AudioController sharedInstance];
-	if ([spellAudioData beginTitle] != nil){
-		[ac stopTitle:[spellAudioData beginTitle]];
-	}
-	if ([spellAudioData interruptedTitle] != nil){
-		[ac playTitle:[spellAudioData interruptedTitle]];
-	}
+    [self.owner.announcer stopAudioForTitle:self.beginCastingAudioTitle];
+    [self.owner.announcer playAudioForTitle:self.interruptedAudioTitle];
 }
 @end
 
@@ -425,6 +412,7 @@
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
         self.spellType = SpellTypePeriodic;
+        self.endCastingAudioTitle = @"regrow_finish.wav";
     }
     return self;
 }

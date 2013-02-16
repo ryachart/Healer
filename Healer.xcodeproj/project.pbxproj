@@ -37,8 +37,6 @@
 		387E7B31145E1375006D9266 /* RaidMemberHealthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B1E145E1375006D9266 /* RaidMemberHealthView.m */; };
 		387E7B32145E1375006D9266 /* RaidView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B20145E1375006D9266 /* RaidView.m */; };
 		387E7B4C145E1382006D9266 /* GamePlayScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B3F145E1382006D9266 /* GamePlayScene.m */; };
-		387E7B55145E16B1006D9266 /* AudioController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B52145E16B1006D9266 /* AudioController.m */; };
-		387E7B56145E16B1006D9266 /* SpellAudioData.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B54145E16B1006D9266 /* SpellAudioData.m */; };
 		387E7B59145E1701006D9266 /* Boss.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B58145E1701006D9266 /* Boss.m */; };
 		387E7B63145E177B006D9266 /* PlayerMoveButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B5F145E177B006D9266 /* PlayerMoveButton.m */; };
 		387E7B64145E177B006D9266 /* PlayerSpellButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B61145E177B006D9266 /* PlayerSpellButton.m */; };
@@ -88,6 +86,8 @@
 		BF98B18615D3577A00017EA4 /* BossAbilityDescriptorIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18515D3577A00017EA4 /* BossAbilityDescriptorIcon.m */; };
 		BF98B18A15D37EAE00017EA4 /* AbilityDescriptionModalLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18915D37EAE00017EA4 /* AbilityDescriptionModalLayer.m */; };
 		BF9DD8AA1644A6DC007DAE39 /* BossActivationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BF9DD8A91644A6DC007DAE39 /* BossActivationBar.m */; };
+		BFA2F13C16CEFEBF00E639A9 /* libCocosDenshion.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB76160ED1FF00BAF83A /* libCocosDenshion.a */; };
+		BFA2F13D16CF02AE00E639A9 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = BFB99F1A15257F6D007EE559 /* sounds */; };
 		BFA5463B15AA097800F9B167 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5463A15AA097800F9B167 /* Parse.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		BFA5464315AA0C3600F9B167 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464215AA0C3600F9B167 /* Security.framework */; };
 		BFA5464515AA0C9D00F9B167 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */; };
@@ -102,7 +102,6 @@
 		BFB46411154A268900503E30 /* Shop.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46410154A268900503E30 /* Shop.m */; };
 		BFB46414154A26A100503E30 /* ShopItem.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46413154A26A100503E30 /* ShopItem.m */; };
 		BFB6A74D161540E10071EAB9 /* ModalDialogLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB6A74C161540E10071EAB9 /* ModalDialogLayer.m */; };
-		BFB99F1B15257F6D007EE559 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = BFB99F1A15257F6D007EE559 /* Sounds */; };
 		BFC1022F153F90BA00884677 /* Agent.m in Sources */ = {isa = PBXBuildFile; fileRef = BFC1022E153F90BA00884677 /* Agent.m */; };
 		BFD106F7163A282D002318CE /* LevelSelectMapScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106F6163A282D002318CE /* LevelSelectMapScene.m */; };
 		BFD106FB163A2956002318CE /* LevelSelectMapNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106FA163A2956002318CE /* LevelSelectMapNode.m */; };
@@ -601,10 +600,6 @@
 		387E7B3F145E1382006D9266 /* GamePlayScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GamePlayScene.m; path = Scenes/GamePlayScene.m; sourceTree = "<group>"; };
 		387E7B44145E1382006D9266 /* HealerStartScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HealerStartScene.h; path = Scenes/HealerStartScene.h; sourceTree = "<group>"; };
 		387E7B45145E1382006D9266 /* HealerStartScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HealerStartScene.m; path = Scenes/HealerStartScene.m; sourceTree = "<group>"; };
-		387E7B51145E16B1006D9266 /* AudioController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioController.h; path = "Audio Engine/AudioController.h"; sourceTree = "<group>"; };
-		387E7B52145E16B1006D9266 /* AudioController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AudioController.m; path = "Audio Engine/AudioController.m"; sourceTree = "<group>"; };
-		387E7B53145E16B1006D9266 /* SpellAudioData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpellAudioData.h; path = "Audio Engine/SpellAudioData.h"; sourceTree = "<group>"; };
-		387E7B54145E16B1006D9266 /* SpellAudioData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpellAudioData.m; path = "Audio Engine/SpellAudioData.m"; sourceTree = "<group>"; };
 		387E7B57145E1701006D9266 /* Boss.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Boss.h; path = DataObjects/Boss.h; sourceTree = "<group>"; };
 		387E7B58145E1701006D9266 /* Boss.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Boss.m; path = DataObjects/Boss.m; sourceTree = "<group>"; };
 		387E7B5E145E177B006D9266 /* PlayerMoveButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayerMoveButton.h; path = Controls/PlayerMoveButton.h; sourceTree = "<group>"; };
@@ -716,7 +711,7 @@
 		BFB46413154A26A100503E30 /* ShopItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopItem.m; sourceTree = "<group>"; };
 		BFB6A74B161540E10071EAB9 /* ModalDialogLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModalDialogLayer.h; sourceTree = "<group>"; };
 		BFB6A74C161540E10071EAB9 /* ModalDialogLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModalDialogLayer.m; sourceTree = "<group>"; };
-		BFB99F1A15257F6D007EE559 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = SOURCE_ROOT; };
+		BFB99F1A15257F6D007EE559 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = SOURCE_ROOT; };
 		BFC1022D153F90BA00884677 /* Agent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Agent.h; sourceTree = "<group>"; };
 		BFC1022E153F90BA00884677 /* Agent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Agent.m; sourceTree = "<group>"; };
 		BFD106F5163A282D002318CE /* LevelSelectMapScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelSelectMapScene.h; sourceTree = "<group>"; };
@@ -745,6 +740,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFA2F13C16CEFEBF00E639A9 /* libCocosDenshion.a in Frameworks */,
 				385B41AC1632771F00710700 /* AdSupport.framework in Frameworks */,
 				385B41AA163276F900710700 /* libsqlite3.0.dylib in Frameworks */,
 				385B41A8163276E500710700 /* Accounts.framework in Frameworks */,
@@ -1012,11 +1008,7 @@
 		387E7AE9145E0F8F006D9266 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
-				BFB99F1A15257F6D007EE559 /* Sounds */,
-				387E7B51145E16B1006D9266 /* AudioController.h */,
-				387E7B52145E16B1006D9266 /* AudioController.m */,
-				387E7B53145E16B1006D9266 /* SpellAudioData.h */,
-				387E7B54145E16B1006D9266 /* SpellAudioData.m */,
+				BFB99F1A15257F6D007EE559 /* sounds */,
 			);
 			name = Audio;
 			sourceTree = "<group>";
@@ -1834,8 +1826,8 @@
 			files = (
 				38024DC413C2564D003D36F2 /* fps_images.png in Resources */,
 				38024DD313C2564D003D36F2 /* iTunesArtwork in Resources */,
-				BFB99F1B15257F6D007EE559 /* Sounds in Resources */,
 				BF0557B51526BC02006B4781 /* assets in Resources */,
+				BFA2F13D16CF02AE00E639A9 /* sounds in Resources */,
 				BF21071F15291E5F001B93D7 /* emitters in Resources */,
 				38F1B45C15CA30D8008B2D99 /* backgrounds in Resources */,
 				BF698674154CE45A0016F25E /* README.txt in Resources */,
@@ -1874,8 +1866,6 @@
 				387E7B31145E1375006D9266 /* RaidMemberHealthView.m in Sources */,
 				387E7B32145E1375006D9266 /* RaidView.m in Sources */,
 				387E7B4C145E1382006D9266 /* GamePlayScene.m in Sources */,
-				387E7B55145E16B1006D9266 /* AudioController.m in Sources */,
-				387E7B56145E16B1006D9266 /* SpellAudioData.m in Sources */,
 				387E7B59145E1701006D9266 /* Boss.m in Sources */,
 				387E7B63145E177B006D9266 /* PlayerMoveButton.m in Sources */,
 				387E7B64145E177B006D9266 /* PlayerSpellButton.m in Sources */,

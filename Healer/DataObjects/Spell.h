@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SpellAudioData.h"
 
 @class Boss;
 @class Raid;
@@ -45,7 +44,6 @@ typedef enum {
 @property (nonatomic, copy) NSArray *percentagesPerTarget;
 @property (retain, getter=description) NSString *description;
 @property (nonatomic, readonly) NSString* info;
-@property (retain, readonly) SpellAudioData *spellAudioData;
 @property (nonatomic, readwrite) float cooldownRemaining;
 @property (nonatomic, readwrite) float cooldown;
 @property (nonatomic, retain) Effect* appliedEffect;
@@ -53,6 +51,10 @@ typedef enum {
 
 @property (nonatomic, readonly) NSString* spellTypeDescription;
 @property (nonatomic, readwrite) SpellType spellType;
+
+@property (nonatomic, retain) NSString *beginCastingAudioTitle;
+@property (nonatomic, retain) NSString *endCastingAudioTitle;
+@property (nonatomic, retain) NSString *interruptedAudioTitle;
 
 - (NSString*)spriteFrameName;
 - (NSString*)spellDescription;

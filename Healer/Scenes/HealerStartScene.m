@@ -15,7 +15,6 @@
 #import "Talents.h"
 #import "TalentScene.h"
 #import "BasicButton.h"
-#import "AudioController.h"
 #import "MultiplayerQueueScene.h"
 #import "GoldCounterSprite.h"
 #import "LevelSelectMapScene.h"
@@ -131,7 +130,6 @@
 
 - (void)onEnterTransitionDidFinish {
     [super onEnterTransitionDidFinish];
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
 }
 
 

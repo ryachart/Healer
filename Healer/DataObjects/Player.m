@@ -8,7 +8,6 @@
 
 #import "Player.h"
 #import "GameObjects.h"
-#import "AudioController.h"
 #import <GameKit/GameKit.h>
 #import "Talents.h"
 #import "CombatEvent.h"
@@ -484,7 +483,6 @@
 	if (energyDiff < 0) {
         if (self.isLocalPlayer){
             [self.announcer errorAnnounce:@"Not enough mana"];
-            [[AudioController sharedInstance] playTitle:OUT_OF_MANA_TITLE];
         }
 		return;
 	}
@@ -522,16 +520,11 @@
 -(void)startChanneling{
 	self.channelingStartTime = 0.0001;
 	[self disableCastingWithReason:CastingDisabledReasonChanneling];
-	
-	[[AudioController sharedInstance] playTitle:CHANNELING_SPELL_TITLE looping:20];
-	
 }
 
 -(void)stopChanneling{
 	self.channelingStartTime = 0.0;
 	[self enableCastingWithReason:CastingDisabledReasonChanneling];
-	
-	[[AudioController sharedInstance] stopTitle:CHANNELING_SPELL_TITLE];
 }
 
 -(NSTimeInterval)channelingTime{

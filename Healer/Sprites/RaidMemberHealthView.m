@@ -71,7 +71,7 @@
         self.healthBarMask.position = CGPointMake(0, 0);
         [self.healthBarMask setColor:ccGREEN];
         
-        [self.healthBarClippingNode setPosition:CGPointMake(0, 8)];
+        [self.healthBarClippingNode setPosition:CGPointMake(0, 9)];
         [self.healthBarClippingNode setContentSize:self.healthBarMask.contentSize];
         [self.healthBarClippingNode setAnchorPoint:CGPointZero];
         [self.healthBarClippingNode setClippingRegion:CGRectMake(0, 0, self.healthBarMask.contentSize.width, self.healthBarMask.contentSize.height)];
@@ -101,8 +101,10 @@
         [self.isFocusedLabel setColor:ccc3(220, 0, 0)];
         [self.isFocusedLabel setShadowOffset:CGPointMake(-1, -1)];
         
-		self.healthLabel =  [CCLabelTTF labelWithString:@"" fontName:@"TrebuchetMS-Bold" fontSize:12.0f];
+		self.healthLabel =  [CCLabelTTFShadow labelWithString:@"" fontName:@"TrebuchetMS-Bold" fontSize:12.0f];
         [self.healthLabel setColor:ccBLACK];
+        [self.healthLabel setShadowOffset:CGPointMake(-1, -1)];
+        [self.healthLabel setShadowColor:ccc3(220, 220, 220)];
         [self.healthLabel setPosition:CGPointMake(frame.size.width * .71, frame.size.height * .5)];
         [self.healthLabel setContentSize:CGSizeMake(frame.size.width * .5, frame.size.height * .25)];
         

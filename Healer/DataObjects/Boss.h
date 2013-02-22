@@ -18,12 +18,8 @@
 @class Effect;
 @class Ability;
 @class AbilityDescriptor;
-/*A collection of data regarding a boss.
-  To make special bosses, subclass boss and override
-  combatActions.
- */
+
 @interface Boss : HealableTarget {	
-	//Combat Action Data
     BOOL healthThresholdCrossed[101];
 }
 @property (nonatomic, readwrite) BOOL isMultiplayer;
@@ -45,7 +41,7 @@
 + (id)defaultBoss;
 - (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses;
 
-- (void)combatActions:(NSArray*)player theRaid:(Raid*)theRaid gameTime:(float)timeDelta;
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 
 - (float)healthPercentage; //In Hundreds form
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid*)raid andPlayer:(Player*)player;

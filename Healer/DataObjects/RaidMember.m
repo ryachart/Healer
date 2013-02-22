@@ -107,12 +107,12 @@
     return arc4random() % 100 <= (100 * self.dodgeChance);
 }
 
--(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid players:(NSArray*)players gameTime:(float)timeDelta
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 {
-    Player *thePlayer = [players objectAtIndex:0];
     self.lastAttack += timeDelta;
+    Boss *theBoss = (Boss*)[enemies objectAtIndex:0];
     [self performAttackIfAbleOnTarget:theBoss];
-    [self updateEffects:theBoss raid:theRaid player:thePlayer time:timeDelta];
+    [self updateEffects:enemies raid:raid players:players time:timeDelta];
 	self.absorb = self.absorb; //Verify that our absorption amount is still valid.
 }
 
@@ -228,10 +228,11 @@
     return self;
 }
 
-- (void)combatActions:(Boss *)theBoss raid:(Raid *)theRaid players:(NSArray *)players gameTime:(float)timeDelta{
-    [super combatActions:theBoss raid:theRaid players:players gameTime:timeDelta];
+- (void)combatUpdateForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta {
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     
     if (self.isDead && !self.deathEffectApplied) {
+        Boss *theBoss = (Boss*)[enemies objectAtIndex:0];
         Effect *damageImprovement = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
         [damageImprovement setOwner:self];
         [damageImprovement setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.battleID]];
@@ -258,9 +259,9 @@
     return self;
 }
 
--(void) combatActions:(Boss*)theBoss raid:(Raid*)theRaid players:(NSArray*)players gameTime:(float)timeDelta
+- (void)combatUpdateForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
 {
-    [super combatActions:theBoss raid:theRaid players:players gameTime:timeDelta];
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     self.lastEnergyGrant += timeDelta;
     
     NSTimeInterval tickTime = 10.0;
@@ -317,10 +318,11 @@
 	}
 }
 
-- (void)combatActions:(Boss *)theBoss raid:(Raid *)theRaid players:(NSArray *)players gameTime:(float)timeDelta{
-    [super combatActions:theBoss raid:theRaid players:players gameTime:timeDelta];
+- (void)combatUpdateForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta {
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     
     if (self.isDead && !self.deathEffectApplied) {
+        Boss *theBoss = (Boss*)[enemies objectAtIndex:0];
         Effect *damageImprovement = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
         [damageImprovement setOwner:self];
         [damageImprovement setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.battleID]];

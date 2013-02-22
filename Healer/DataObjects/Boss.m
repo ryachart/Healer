@@ -196,23 +196,6 @@
     return nil;
 }
 
--(void)updateEffects:(Boss*)theBoss raid:(Raid*)theRaid player:(Player*)thePlayer time:(float)timeDelta{
-    NSMutableArray *effectsToRemove = [NSMutableArray arrayWithCapacity:5];
-	for (int i = 0; i < [self.activeEffects count]; i++){
-		Effect *effect = [self.activeEffects objectAtIndex:i];
-		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
-		if ([effect isExpired]){
-			[effect expire];
-            [effectsToRemove addObject:effect];
-		}
-	}
-    
-    for (Effect *effect in effectsToRemove){
-        [self.healthAdjustmentModifiers removeObject:effect];
-        [self.activeEffects removeObject:effect];
-    }
-}
-
 -(NSString*)networkID{
     return [NSString stringWithFormat:@"B-%@", self.title];
 }
@@ -227,7 +210,7 @@
     //The main entry point for health based triggers
 }
 
-- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     Player *player = [players objectAtIndex:0]; //The first player is the local player
     float healthPercentage = ((float)self.health/(float)self.maximumHealth) * 100;
@@ -239,7 +222,7 @@
         if (roundedPercentage < 100 && roundedPercentage > 0){
             for (int i = 100; i >= roundedPercentage; i--){
                 if (!healthThresholdCrossed[i]){
-                    [self healthPercentageReached:i withRaid:theRaid andPlayer:player];
+                    [self healthPercentageReached:i withRaid:raid andPlayer:player];
                     healthThresholdCrossed[i] = YES;;
                 }
             }
@@ -266,12 +249,12 @@
     
     self.shouldQueueAbilityAdds = YES;
     for (Ability *ability in self.abilities){
-        [ability combatActions:theRaid boss:self players:players gameTime:timeDelta];
+        [ability combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     }
     self.shouldQueueAbilityAdds = NO;
     [self dequeueAbilityAdds];
     
-    [self updateEffects:self raid:theRaid player:player time:timeDelta];
+    [self updateEffects:enemies raid:raid players:players time:timeDelta];
 }
 
 +(id)defaultBoss
@@ -416,9 +399,9 @@
     }
 }
 
-- (void)combatActions:(NSArray*)players theRaid:(Raid*)theRaid gameTime:(float)timeDelta
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
-    [super combatActions:players theRaid:theRaid gameTime:timeDelta];
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     
     if (self.enraging > 0){
         self.enraging += timeDelta;
@@ -1382,8 +1365,8 @@
     
 }
 
-- (void)combatActions:(NSArray *)player theRaid:(Raid *)theRaid gameTime:(float)timeDelta {
-    [super combatActions:player theRaid:theRaid gameTime:timeDelta];
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     if (self.crushingPunch.timeApplied + 3.0 >= self.crushingPunch.cooldown){
         self.hasShownCrushingPunchThisCooldown = YES;
     }

@@ -43,10 +43,7 @@ typedef enum {
 - (id)initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position;
 - (BOOL)raidMemberShouldDodgeAttack:(float)modifer;
 - (void)didPerformCriticalStrikeForAmount:(NSInteger)amount;
-//This function is overriden by each subtype of RaidMember.
-//It allows a RaidMember to be asked to take any combatActions while the games goes on.
-//It also allows a RaidMember to deal damage.
-- (void)combatActions:(Boss*)theBoss raid:(Raid*)theRaid players:(NSArray*)players gameTime:(float)timeDelta;
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 
 - (NSString*)asNetworkMessage;
 - (void)updateWithNetworkMessage:(NSString*)message;

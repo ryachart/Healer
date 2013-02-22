@@ -208,11 +208,11 @@
     }
 }
 
--(void)updateEffects:(Boss*)theBoss raid:(Raid*)theRaid player:(Player*)thePlayer time:(float)timeDelta{
+- (void)updateEffects:(NSArray*)enemies raid:(Raid*)theRaid players:(NSArray*)players time:(float)timeDelta {
     NSMutableArray *effectsToRemove = [NSMutableArray arrayWithCapacity:5];
 	for (int i = 0; i < [self.activeEffects count]; i++){
 		Effect *effect = [self.activeEffects objectAtIndex:i];
-		[effect combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+        [effect combatUpdateForPlayers:players enemies:enemies theRaid:theRaid gameTime:timeDelta];
 		if ([effect isExpired]){
 			[effect expire];
             [effectsToRemove addObject:effect];

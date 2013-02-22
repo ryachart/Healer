@@ -117,21 +117,23 @@
     
 }
 
--(void)solveOwnershipResolutionForBoss:(Boss*)boss andRaid:(Raid*)raid andPlayer:(Player*)player{
+-(void)solveOwnershipResolutionForEnemies:(NSArray*)enemies andRaid:(Raid*)raid andPlayers:(NSArray*)players{
     if (self.needsOwnershipResolution && self.ownerNetworkID){
-        
-        //For this network hack we only care if it's me or not me.
-        if ([player.networkID isEqualToString:self.ownerNetworkID]){
-            self.owner = player;
+        for (Player *player in players) {
+            //For this network hack we only care if it's me or not me.
+            if ([player.networkID isEqualToString:self.ownerNetworkID]){
+                self.owner = player;
+                break;
+            }
         }
         self.needsOwnershipResolution = NO;
         self.ownerNetworkID = nil;
     }
 }
 
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
-    [self solveOwnershipResolutionForBoss:theBoss andRaid:theRaid andPlayer:thePlayer];
+    [self solveOwnershipResolutionForEnemies:enemies andRaid:raid andPlayers:players];
 	if (!isExpired && duration != -1)
 	{
         self.timeApplied += timeDelta;
@@ -240,9 +242,9 @@
     lastTick = 0.0;
     self.numHasTicked = 0.0;
 }
--(void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
-    [self solveOwnershipResolutionForBoss:theBoss andRaid:theRaid andPlayer:thePlayer];
+    [self solveOwnershipResolutionForEnemies:enemies andRaid:raid andPlayers:players];
 	if (!isExpired && duration != -1)
 	{
         self.timeApplied += timeDelta;
@@ -329,9 +331,9 @@
     self.hasAppliedAbsorb = NO;
 }
 
-- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     if (!self.hasAppliedAbsorb) {
         Player *owningPlayer = (Player *)self.owner;
         if (arc4random() % 1000 <= owningPlayer.spellCriticalChance * 1000) {
@@ -359,9 +361,9 @@
 @end
 
 @implementation BarrierEffect
-- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     if (self.isExpired) {
         Player *owningPlayer = (Player*)self.owner;
         [owningPlayer setEnergy:owningPlayer.energy + [(Spell*)[Barrier defaultSpell] energyCost] * .66];
@@ -389,8 +391,8 @@
     return copy;
 }
 
--(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta{
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     if (self.triggerCooldown < self.effectCooldown){
         self.triggerCooldown += timeDelta;
     }
@@ -542,8 +544,8 @@
 
 @implementation  ExpiresAtFullHealthRHE
 
--(void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta{
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     if (self.target.health > self.target.maximumHealth * .98){
         self.isExpired = YES;
     }
@@ -621,9 +623,9 @@
     self.hasDealtApplicationDamage = NO;
 }
 
-- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     if (!self.hasDealtApplicationDamage) {
         [self dealApplicationDamage];
     }
@@ -651,9 +653,9 @@
 @end
 
 @implementation WanderingSpiritEffect
-- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta{
-    self.raid = theRaid;
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
+    self.raid = raid;
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
 }
 
 - (void)reset{
@@ -716,11 +718,13 @@
 
 @implementation SoulBurnEffect 
 @synthesize energyToBurn, needsToBurnEnergy;
-- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta {
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     
     if (self.needsToBurnEnergy){
-        [thePlayer setEnergy:thePlayer.energy - self.energyToBurn];
+        for (Player *thePlayer in players) {
+            [thePlayer setEnergy:thePlayer.energy - self.energyToBurn];
+        }
         self.needsToBurnEnergy = NO;
     }
 }
@@ -780,11 +784,11 @@
     return -1.0;
 }
 
-- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta {
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     if (self.target.healthPercentage > self.getUpThreshold){
         self.isExpired = YES;
     }
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
 }
 @end
 
@@ -891,19 +895,19 @@
     [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:(target.maximumHealth * .25)] andEventType:CombatEventTypeHeal]];
 }
 
-- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta{
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     
     self.raidWidePulseCooldown += timeDelta;
     self.healingSpellCooldown += timeDelta;
     
     if (self.raidWidePulseCooldown >= 1.5){
-        [self healRaidWithPulse:theRaid];
+        [self healRaidWithPulse:raid];
         self.raidWidePulseCooldown = 0;
     }
     
     if (self.healingSpellCooldown >= 2.5){
-        [self healNeededTargetInRaid:theRaid];
+        [self healNeededTargetInRaid:raid];
         self.healingSpellCooldown = 0;
     }
     
@@ -913,10 +917,10 @@
 
 @implementation GraspOfTheDamnedEffect
 
-- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta {
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     if (self.needsDetonation && !self.isExpired){
-        NSArray *aliveMembers = [theRaid livingMembers];
+        NSArray *aliveMembers = [raid livingMembers];
         NSInteger damageDealt = 350 * (self.owner.damageDoneMultiplier);
         for (RaidMember *member in aliveMembers){
             [member setHealth:member.health - damageDealt];
@@ -1018,14 +1022,15 @@
 @end
 
 @implementation ContagiousEffect
-- (void)combatActions:(Boss *)theBoss theRaid:(Raid *)theRaid thePlayer:(Player *)thePlayer gameTime:(float)timeDelta
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     float thresholdValue = .95;
     if (self.target.healthPercentage >= thresholdValue) {
+        Boss *theBoss = (Boss*)[enemies objectAtIndex:0];
         for (int i = 0; i < 3; i++) {
             ContagiousEffect *spreadEffect = [self.copy autorelease];
             [spreadEffect setValuePerTick:spreadEffect.valuePerTick * 1.05];
-            RaidMember *randomTarget = [theRaid randomLivingMember];
+            RaidMember *randomTarget = [raid randomLivingMember];
             if (randomTarget.healthPercentage >= thresholdValue) {
                 [randomTarget setAbsorb:0];
                 NSInteger preHealth = randomTarget.health;
@@ -1037,7 +1042,7 @@
         }
         self.isExpired = YES;
     }
-    [super combatActions:theBoss theRaid:theRaid thePlayer:thePlayer gameTime:timeDelta];
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
 }
 @end
 

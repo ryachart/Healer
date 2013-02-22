@@ -42,7 +42,8 @@
 @property (nonatomic, readwrite) float remainingActivationPercentage;
 @property (nonatomic, readwrite) NSTimeInterval activationTime; //How long the cast time to warn the user
 
-- (void)combatActions:(Raid*)theRaid boss:(Boss*)theBoss players:(NSArray*)players gameTime:(float)timeDelta;
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
+
 - (void)triggerAbilityForRaid:(Raid*)theRaid andPlayers:(NSArray*)players;
 - (BOOL)checkFailed;
 - (void)activateAbility;

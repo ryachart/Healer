@@ -100,7 +100,7 @@
 
 - (Boss*)boss
 {
-    return self.encounter.boss;
+    return (Boss*)[self.encounter.enemies objectAtIndex:0];
 }
 
 - (id)initWithEncounter:(Encounter*)enc player:(Player*)plyre
@@ -892,7 +892,23 @@
 
 - (void)playAudioForTitle:(NSString *)title
 {
-    NSString *audioPath = [@"sounds" stringByAppendingPathComponent:title];
+    [self playAudioForTitle:title randomTitles:0 afterDelay:0];
+}
+
+- (void)playAudioForTitle:(NSString *)title afterDelay:(NSTimeInterval)delay
+{
+    [self playAudioForTitle:title randomTitles:0 afterDelay:delay];
+}
+
+- (void)playAudioForTitle:(NSString *)title randomTitles:(NSInteger)numRandoms afterDelay:(NSTimeInterval)delay
+{
+    NSString *finalTitle = title;
+    if (numRandoms > 0) {
+        NSArray *components = [title componentsSeparatedByString:@"."];
+        finalTitle = [NSString stringWithFormat:@"%@%i.%@", [components objectAtIndex:0], arc4random() % numRandoms + 1, [components objectAtIndex:1]];
+    }
+    
+    NSString *audioPath = [@"sounds" stringByAppendingPathComponent:finalTitle];
     ALuint sound = [[SimpleAudioEngine sharedEngine] playEffect:audioPath];
     [self.playingSoundsDict setObject:[NSNumber numberWithUnsignedInt:sound] forKey:title];
 }
@@ -948,7 +964,7 @@
     if (self.isServer || (!self.isServer && !self.isClient)){
         //Only perform the simulation if we are not the server
         //Data Events
-        [self.boss combatActions:self.players theRaid:self.raid gameTime:deltaT];
+        [self.boss combatUpdateForPlayers:self.players enemies:self.encounter.enemies theRaid:self.encounter.raid gameTime:deltaT];
         if ([playerMoveButton isMoving]){
             [self.player disableCastingWithReason:CastingDisabledReasonMoving];
         }
@@ -976,7 +992,7 @@
     if (self.isServer){
         for (int i = 1; i < self.players.count; i++){
             Player *clientPlayer = [self.players objectAtIndex:i];
-            [clientPlayer combatActions:self.boss raid:self.raid players:self.players gameTime:deltaT];
+            [clientPlayer combatUpdateForPlayers:self.players enemies:self.encounter.enemies theRaid:self.encounter.raid gameTime:deltaT];
             if (isNetworkUpdate){
                 NSArray *playerToNotify = [NSArray arrayWithObject:clientPlayer.playerID];
                 [self.match sendData:[[clientPlayer asNetworkMessage] dataUsingEncoding:NSUTF8StringEncoding]  toPlayers:playerToNotify withDataMode:GKMatchSendDataReliable error:nil];
@@ -1002,7 +1018,7 @@
     NSInteger survivors = 0;
     for (RaidMember *member in raidMembers)
     {
-        [member combatActions:self.boss raid:self.raid players:self.players gameTime:deltaT];
+        [member combatUpdateForPlayers:self.players enemies:self.encounter.enemies theRaid:self.encounter.raid gameTime:deltaT];
         if (![member isDead]){
             survivors++;
         }

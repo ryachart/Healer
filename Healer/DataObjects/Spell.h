@@ -60,7 +60,7 @@ typedef enum {
 - (NSString*)spellDescription;
 - (BOOL)isInstant;
 - (void)setTargets:(NSInteger)numOfTargets withPercentagesPerTarget:(NSArray*)percentages;
-- (void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)theTime;
+- (void)spellFinishedCastingForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 - (void)updateCooldowns:(float)theTime;
 - (void)spellBeganCasting;
 - (void)spellEndedCasting;
@@ -70,8 +70,8 @@ typedef enum {
 
 //Subclass overrides
 - (void)checkDivinity;
-- (void)willHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount;
-- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withBoss:(Boss*)boss andPlayers:(NSArray*)players forAmount:(NSInteger)amount;
+- (void)willHealTarget:(RaidMember*)target inRaid:(Raid*)raid withEnemies:(NSArray*)enemies andPlayers:(NSArray*)players forAmount:(NSInteger)amount;
+- (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withEnemies:(NSArray*)enemies andPlayers:(NSArray*)players forAmount:(NSInteger)amount;
 @end
 
 

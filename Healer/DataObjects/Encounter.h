@@ -15,7 +15,8 @@
 #define ENDLESS_VOID_ENCOUNTER_NUMBER 992342
 @interface Encounter : NSObject
 @property (nonatomic, retain) Raid *raid;
-@property (nonatomic, retain) Boss *boss;
+@property (nonatomic, readonly) Boss *boss;
+@property (nonatomic, retain) NSArray *enemies;
 @property (nonatomic, retain) NSArray *requiredSpells;
 @property (nonatomic, retain) NSArray *recommendedSpells;
 @property (nonatomic, readonly) NSInteger levelNumber;

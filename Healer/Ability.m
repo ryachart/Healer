@@ -96,13 +96,13 @@
 }
 
 
-- (void)combatActions:(Raid*)theRaid boss:(Boss*)theBoss players:(NSArray*)players gameTime:(float)timeDelta{
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     self.timeApplied += timeDelta;
     if (!self.owner.visibleAbility || self.owner.visibleAbility == self || self.ignoresBusy) {
         if ((_cooldown != kAbilityRequiresTrigger || self.isActivating) && self.timeApplied >= self.cooldown){
             if (!self.isDisabled){
                 [self.owner ownerWillExecuteAbility:self];
-                [self triggerAbilityForRaid:theRaid andPlayers:players];
+                [self triggerAbilityForRaid:raid andPlayers:players];
                 [self.owner ownerDidExecuteAbility:self];
             }
             self.timeApplied = 0.0 + self.cooldown * self.cooldownVariance * (arc4random() % 1000 / 1000.0);
@@ -354,12 +354,12 @@
     }
 }
 
-- (void)combatActions:(Raid *)theRaid boss:(Boss *)theBoss players:(NSArray *)players gameTime:(float)timeDelta{
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     if (!self.focusTarget){
-        self.focusTarget = [self mainTankFromRaid:theRaid];
+        self.focusTarget = [self mainTankFromRaid:raid];
         [self.focusTarget setIsFocused:YES];
     }
-    [super combatActions:theRaid boss:theBoss players:players gameTime:timeDelta];
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
 }
 - (void)triggerAbilityForRaid:(Raid *)theRaid andPlayers:(NSArray *)players{
     if ([self checkFailed]){
@@ -1494,7 +1494,8 @@
 @implementation Cleave
 + (Cleave *)normalCleave {
     Cleave *cleave = [[[Cleave alloc] init] autorelease];
-    [cleave setTitle:@"Cleave"];
+    [cleave setTitle:@"Wide Swing"];
+    [cleave setInfo:@"Attacks with a chance to deal high damage to all melee range enemies."];
     [cleave setKey:@"cleave"];
     [cleave setActivationTime:1.0];
     [cleave setAbilityValue:400];
@@ -1579,9 +1580,9 @@
 @end
 
 @implementation EnsureEffectActiveAbility
-- (void)combatActions:(Raid *)theRaid boss:(Boss *)theBoss players:(NSArray *)players gameTime:(float)timeDelta
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 {
-    [super combatActions:theRaid boss:theBoss players:players gameTime:timeDelta];
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     if (!self.isDisabled) {
         BOOL hasEffect = NO;
         for (Effect* effect in self.victim.activeEffects){
@@ -1591,7 +1592,7 @@
             }
         }
         if (!hasEffect || self.victim.isDead){
-            self.victim = [theRaid randomLivingMember];
+            self.victim = [raid randomLivingMember];
             Effect *eff = [self.ensuredEffect copy];
             [eff setOwner:self.owner];
             [self.victim addEffect:[eff autorelease]];

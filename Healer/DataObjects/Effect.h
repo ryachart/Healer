@@ -75,7 +75,7 @@ typedef enum {
 @property BOOL isExpired;
 - (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type;
 
-- (void)combatActions:(Boss*)theBoss theRaid:(Raid*)theRaid thePlayer:(Player*)thePlayer gameTime:(float)timeDelta;
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 - (void)expire;
 - (void)effectWillBeDispelled:(Raid*)raid player:(Player*)player;
 - (void)targetDidCastSpell:(Spell*)spell;
@@ -150,7 +150,6 @@ typedef enum {
 
 @interface ExpiresAtFullHealthRHE: RepeatedHealthEffect
 @end
-
 
 @interface DarkCloudEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
 @property (nonatomic, readwrite) NSInteger baseValue;

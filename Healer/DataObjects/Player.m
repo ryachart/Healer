@@ -307,18 +307,17 @@
     }
 }
 
--(void)updateEffects:(Boss*)theBoss raid:(Raid*)theRaid player:(Player*)thePlayer time:(float)timeDelta{
-    [super updateEffects:theBoss raid:theRaid player:thePlayer time:timeDelta];
+- (void)updateEffects:(NSArray *)enemies raid:(Raid *)theRaid players:(NSArray *)players time:(float)timeDelta {
+    [super updateEffects:enemies raid:theRaid players:players time:timeDelta];
     [self cacheCastTimeAdjustment];
 }
 
-- (void)combatActions:(Boss *)theBoss raid:(Raid *)theRaid players:(NSArray *)players gameTime:(float)timeDelta
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 {
-    [super combatActions:theBoss raid:theRaid players:players gameTime:timeDelta];
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     if (!self.isRedemptionApplied){
         if ([self hasDivinityEffectWithTitle:@"redemption"]){
-            NSArray *raid = [theRaid livingMembers];
-            for (RaidMember *member in raid){
+            for (RaidMember *member in raid.livingMembers){
                 RedemptionEffect *redemp = [[RedemptionEffect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible];
                 [redemp setRedemptionDelegate:self];
                 [redemp setOwner:self];
@@ -332,7 +331,7 @@
     
     if ([self hasDivinityEffectWithTitle:@"godstouch"]) {
         if (!self.isGodstouchApplied) {
-            for (RaidMember *member in theRaid.livingMembers) {
+            for (RaidMember *member in raid.livingMembers) {
                 Effect *godsTouchEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
                 [godsTouchEffect setOwner:self];
                 [godsTouchEffect setTitle:@"godstouch-shield"];
@@ -344,7 +343,7 @@
         self.godstouchTimeApplied += timeDelta;
         if (self.godstouchTimeApplied >= 1.0) {
             self.godstouchTimeApplied = 0.0;
-            for (RaidMember *member in theRaid.livingMembers) {
+            for (RaidMember *member in raid.livingMembers) {
                 [member setAbsorb:member.absorb + 5];
             }
         }
@@ -360,7 +359,7 @@
     
     if (self.overhealingToDistribute > 150) {
         //For the divinity choice that distributes overhealing
-        NSArray *targets = [theRaid lowestHealthTargets:5 withRequiredTarget:nil];
+        NSArray *targets = [raid lowestHealthTargets:5 withRequiredTarget:nil];
         NSInteger perTarget = MAX(2,self.overhealingToDistribute / 5);
         for (RaidMember *member in targets) {
             NSInteger memberCurrentHealth = member.health;
@@ -384,7 +383,7 @@
             if (self.isLocalPlayer){
                 [self.spellBeingCast spellEndedCasting];
             }
-			[self.spellBeingCast combatActions:theBoss theRaid:theRaid thePlayer:self gameTime:timeDelta];
+			[self.spellBeingCast spellFinishedCastingForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
             for (Effect *eff in self.activeEffects){
                 [eff targetDidCastSpell:self.spellBeingCast];
             }

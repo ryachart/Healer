@@ -17,6 +17,8 @@
 
 //Audio Announcements
 - (void)playAudioForTitle:(NSString *)title;
+- (void)playAudioForTitle:(NSString *)title afterDelay:(NSTimeInterval)delay;
+- (void)playAudioForTitle:(NSString *)title randomTitles:(NSInteger)numRandoms afterDelay:(NSTimeInterval)delay;
 - (void)stopAudioForTitle:(NSString *)title;
 
 //Graphical Announcements

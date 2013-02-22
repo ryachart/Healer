@@ -24,7 +24,7 @@
 
 - (void)dealloc{
     [_raid release];
-    [_boss release];
+    [_enemies release];
     [_requiredSpells release];
     [_recommendedSpells release];
     [_combatLog release];
@@ -34,13 +34,18 @@
 -(id)initWithRaid:(Raid*)rd andBoss:(Boss*)bs andSpells:(NSArray*)sps{
     if (self = [super init]){
         self.raid = rd;
-        self.boss = bs;
+        self.enemies = [NSArray arrayWithObject:bs];
         self.recommendedSpells  = sps;
         self.difficulty = 2;
         
         self.combatLog = [NSMutableArray arrayWithCapacity:500];
     }
     return self;
+}
+
+- (Boss *)boss
+{
+    return (Boss*)[self.enemies objectAtIndex:0];
 }
 
 - (NSInteger)score
@@ -96,7 +101,9 @@
 
 - (void)encounterWillBegin
 {
-    [self.boss configureBossForDifficultyLevel:self.difficulty];
+    for (Boss *boss in self.enemies) {
+        [boss configureBossForDifficultyLevel:self.difficulty];
+    }
 }
 
 - (NSInteger)reward

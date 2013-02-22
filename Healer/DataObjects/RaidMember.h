@@ -18,7 +18,7 @@
 #import "HealableTarget.h"
 #import "Announcer.h"
 
-@class Boss;
+@class Enemy;
 @class Raid;
 @class Player;
 

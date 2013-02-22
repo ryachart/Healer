@@ -852,12 +852,12 @@
     [super tick];
     if (self.stacks >= 5 && !self.target.isDead){
         self.target.health = 0;
-        [[(Boss*)self.owner announcer] announce:@"This Unspeakable grows stronger by consuming your ally."];
+        [[(Enemy*)self.owner announcer] announce:@"This Unspeakable grows stronger by consuming your ally."];
         Effect *damageBoost = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositive] autorelease];
         [damageBoost setDamageDoneMultiplierAdjustment:.075];
         [damageBoost setMaxStacks:20];
         [damageBoost setTitle:@"unspeak-consume"];
-        [(Boss*)self.owner addEffect:damageBoost];
+        [(Enemy*)self.owner addEffect:damageBoost];
     }
 }
 @end
@@ -928,8 +928,8 @@
         }
         self.needsDetonation = NO;
         self.isExpired = YES;
-        [[(Boss*)self.owner announcer] displayParticleSystemWithName:@"fire_explosion.plist" onTarget:(RaidMember*)self.target];
-        [[(Boss*)self.owner announcer] displayScreenShakeForDuration:1.0];
+        [[(Enemy*)self.owner announcer] displayParticleSystemWithName:@"fire_explosion.plist" onTarget:(RaidMember*)self.target];
+        [[(Enemy*)self.owner announcer] displayScreenShakeForDuration:1.0];
     }
 }
 - (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
@@ -1026,7 +1026,7 @@
 {
     float thresholdValue = .95;
     if (self.target.healthPercentage >= thresholdValue) {
-        Boss *theBoss = (Boss*)[enemies objectAtIndex:0];
+        Enemy *theBoss = (Enemy*)[enemies objectAtIndex:0];
         for (int i = 0; i < 3; i++) {
             ContagiousEffect *spreadEffect = [self.copy autorelease];
             [spreadEffect setValuePerTick:spreadEffect.valuePerTick * 1.05];

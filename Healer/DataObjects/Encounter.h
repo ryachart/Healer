@@ -9,13 +9,13 @@
 #import <Foundation/Foundation.h>
 
 @class Raid;
-@class Boss;
+@class Enemy;
 @class Player;
 
 #define ENDLESS_VOID_ENCOUNTER_NUMBER 992342
 @interface Encounter : NSObject
 @property (nonatomic, retain) Raid *raid;
-@property (nonatomic, readonly) Boss *boss;
+@property (nonatomic, readonly) Enemy *boss;
 @property (nonatomic, retain) NSArray *enemies;
 @property (nonatomic, retain) NSArray *requiredSpells;
 @property (nonatomic, retain) NSArray *recommendedSpells;
@@ -33,7 +33,7 @@
 //Data Loading
 @property (nonatomic, retain) NSString *bossKey;
 
-- (id)initWithRaid:(Raid*)raid andBoss:(Boss*)boss andSpells:(NSArray*)spells;
+- (id)initWithRaid:(Raid*)raid andBoss:(Enemy*)boss andSpells:(NSArray*)spells;
 - (void)encounterWillBegin;
 
 - (void)saveCombatLog;

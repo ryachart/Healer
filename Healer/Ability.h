@@ -14,7 +14,7 @@
 
 #define kAbilityRequiresTrigger 99999
 
-@class Raid, Player, Boss, Agent, HealableTarget, AbilityDescriptor, Effect;
+@class Raid, Player, Enemy, Agent, HealableTarget, AbilityDescriptor, Effect;
 @interface Ability : NSObject
 
 @property (nonatomic, readwrite) float failureChance;
@@ -24,7 +24,7 @@
 @property (nonatomic, retain) NSString *info;
 @property (nonatomic, retain) NSString *key;
 @property (nonatomic, retain) NSString *iconName;
-@property (nonatomic, assign) Boss *owner;
+@property (nonatomic, assign) Enemy *owner;
 @property (nonatomic, readwrite) NSInteger abilityValue; //Damage or DoT value or Number of Targets - Depends on the ability
 @property (nonatomic, readwrite) BOOL isDisabled;
 @property (nonatomic, readonly) AbilityDescriptor *descriptor;

@@ -86,7 +86,7 @@
 
 
 
--(void)setBossData:(Boss*)theBoss
+-(void)setBossData:(Enemy*)theBoss
 {
 	_bossData = theBoss;
 	
@@ -96,7 +96,7 @@
     [self.abilityDescriptionsView removeFromParentAndCleanup:YES];
     self.abilityDescriptionsView = [[[BossAbilityDescriptionsView alloc] initWithBoss:self.bossData] autorelease];
     [self.abilityDescriptionsView setAnchorPoint:CGPointZero];
-    [self.abilityDescriptionsView setPosition:CGPointMake(-454, -360)];
+    [self.abilityDescriptionsView setPosition:CGPointMake(-398, -304)];
     [self.abilityDescriptionsView setDelegate:self];
     [self addChild:self.abilityDescriptionsView];
     

@@ -20,12 +20,12 @@
 
 @interface BossHealthView : CCLayer <AbilityDescriptionViewDelegate>
 @property (nonatomic, assign) id <BossHealthViewDelegate> delegate;
-@property (nonatomic, assign) Boss* bossData;
+@property (nonatomic, assign) Enemy* bossData;
 @property (nonatomic, retain) CCLabelTTFShadow *bossNameLabel;
 @property (nonatomic, retain) CCLabelTTFShadow *healthLabel;
 @property (nonatomic, assign) BossAbilityDescriptionsView* abilityDescriptionsView;
 
-- (void)setBossData:(Boss*)theBoss;
+- (void)setBossData:(Enemy*)theBoss;
 - (id)initWithFrame:(CGRect)frame andBossKey:(NSString *)bossKey;
 - (void)updateHealth;
 - (void)endBattleWithSuccess:(BOOL)success;

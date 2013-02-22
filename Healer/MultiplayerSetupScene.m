@@ -8,7 +8,7 @@
 #import "MultiplayerSetupScene.h"
 #import "Raid.h"
 #import "Player.h"
-#import "Boss.h"
+#import "Enemy.h"
 #import "Spell.h"
 #import "Encounter.h"
 #import "GamePlayScene.h"
@@ -21,7 +21,7 @@
 
 @interface MultiplayerSetupScene ()
 @property (nonatomic, retain) Raid *raid;
-@property (nonatomic, retain) Boss *boss;
+@property (nonatomic, retain) Enemy *boss;
 @property (nonatomic, assign) CCMenu *menu;
 @property (nonatomic, assign) CCMenu *encounterSelectMenu;
 @property (nonatomic, assign) CCMenuItemLabel *beginButton;

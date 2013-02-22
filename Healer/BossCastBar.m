@@ -10,7 +10,7 @@
 #import "Ability.h"
 #import "ClippingNode.h"
 #import "CCLabelTTFShadow.h"
-#import "Boss.h"
+#import "Enemy.h"
 
 #define CASTBAR_INSET_WIDTH 4
 #define CASTBAR_INSET_HEIGHT 5

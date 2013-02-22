@@ -7,7 +7,7 @@
 //
 
 #import "BossAbilityDescriptionsView.h"
-#import "Boss.h"
+#import "Enemy.h"
 #import "BossAbilityDescriptorIcon.h"
 
 
@@ -23,7 +23,7 @@
     [super dealloc];
 }
 
-- (id)initWithBoss:(Boss*)newBoss {
+- (id)initWithBoss:(Enemy*)newBoss {
     if (self = [super init]){
         self.boss = newBoss;
         self.descriptorIcons = [NSMutableArray arrayWithCapacity:MAX_SHOWN];

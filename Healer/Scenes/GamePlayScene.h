@@ -14,7 +14,7 @@
 #import "GamePlayPauseLayer.h"
 #import <GameKit/GameKit.h>
 #import "BossHealthView.h"
-#import "AbilityDescriptionModalLayer.h"
+#import "IconDescriptionModalLayer.h"
 
 
 @class PlayerSpellButton;
@@ -27,7 +27,7 @@
 @class Encounter;
 
 /* This is the screen we see while involved in a raid */
-@interface GamePlayScene : CCScene <EventLogger, Announcer, GamePlayFTUELayerDelegate, PauseLayerDelegate, GKMatchDelegate, BossHealthViewDelegate, AbilityDescriptorModalDelegate> {
+@interface GamePlayScene : CCScene <EventLogger, Announcer, GamePlayFTUELayerDelegate, PauseLayerDelegate, GKMatchDelegate, BossHealthViewDelegate, IconDescriptorModalDelegate> {
 	NSMutableArray *selectedRaidMembers;
 }
 //Interface Elements

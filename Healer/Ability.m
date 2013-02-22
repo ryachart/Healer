@@ -11,7 +11,7 @@
 #import "Agent.h"
 #import "HealableTarget.h"
 #import "Player.h"
-#import "Boss.h"
+#import "Enemy.h"
 #import "Effect.h"
 #import "Spell.h"
 #import "CombatEvent.h"
@@ -1639,7 +1639,7 @@
 
 @implementation StackingEnrage
 
-- (void)setOwner:(Boss *)owner
+- (void)setOwner:(Enemy *)owner
 {
     [super setOwner:owner];
     

@@ -12,11 +12,8 @@
 #import "Shop.h"
 #import "GoldCounterSprite.h"
 #import "BackgroundSprite.h"
-#import "ModalDialogLayer.h"
 #import "PlayerDataManager.h"
 #import "RatingCounterSprite.h"
-
-
 
 #define TIER_TABLE_Z 100
 #define CHARGED_BAR_Z 50

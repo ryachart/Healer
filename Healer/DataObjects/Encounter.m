@@ -10,7 +10,7 @@
 #import "Player.h"
 #import "Raid.h"
 #import "RaidMember.h"
-#import "Boss.h"
+#import "Enemy.h"
 #import "Spell.h"
 #import "Shop.h"
 #import "PlayerDataManager.h"
@@ -31,7 +31,7 @@
     [super dealloc];
 }
 
--(id)initWithRaid:(Raid*)rd andBoss:(Boss*)bs andSpells:(NSArray*)sps{
+-(id)initWithRaid:(Raid*)rd andBoss:(Enemy*)bs andSpells:(NSArray*)sps{
     if (self = [super init]){
         self.raid = rd;
         self.enemies = [NSArray arrayWithObject:bs];
@@ -43,9 +43,9 @@
     return self;
 }
 
-- (Boss *)boss
+- (Enemy *)boss
 {
-    return (Boss*)[self.enemies objectAtIndex:0];
+    return (Enemy*)[self.enemies objectAtIndex:0];
 }
 
 - (NSInteger)score
@@ -61,7 +61,7 @@
 {
     int totalDamageTaken = 0;
     for (CombatEvent *event in self.combatLog){
-        if ((event.type == CombatEventTypeDamage || event.type == CombatEventTypeShielding) && [[event source] isKindOfClass:[Boss class]]){
+        if ((event.type == CombatEventTypeDamage || event.type == CombatEventTypeShielding) && [[event source] isKindOfClass:[Enemy class]]){
             NSInteger dmgVal = [[event value] intValue];
             totalDamageTaken +=  abs(dmgVal);
         }
@@ -101,7 +101,7 @@
 
 - (void)encounterWillBegin
 {
-    for (Boss *boss in self.enemies) {
+    for (Enemy *boss in self.enemies) {
         [boss configureBossForDifficultyLevel:self.difficulty];
     }
 }
@@ -145,7 +145,7 @@
 
 + (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer{
     Raid *basicRaid = [[[Raid alloc] init] autorelease];
-    Boss *basicBoss = nil;
+    Enemy *basicBoss = nil;
     NSMutableArray *spells = nil;
     
     NSInteger numArcher = 0;
@@ -488,7 +488,7 @@
 
 + (Encounter*)survivalEncounterIsMultiplayer:(BOOL)multiplayer{
     Raid *basicRaid = [[[Raid alloc] init] autorelease];
-    Boss *basicBoss = [TheEndlessVoid defaultBoss];
+    Enemy *basicBoss = [TheEndlessVoid defaultBoss];
     NSArray *spells = [NSArray arrayWithObjects:[Heal  defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];; 
     
     for (int i = 0; i < 4; i++){

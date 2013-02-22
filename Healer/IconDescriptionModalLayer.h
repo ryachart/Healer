@@ -10,14 +10,15 @@
 
 @class AbilityDescriptor;
 
-@protocol AbilityDescriptorModalDelegate <NSObject>
+@protocol IconDescriptorModalDelegate <NSObject>
 
 - (void)abilityDescriptorModaldidComplete:(id)modal;
 
 @end
 
-@interface AbilityDescriptionModalLayer : CCLayerColor
-@property (nonatomic, assign) id <AbilityDescriptorModalDelegate> delegate;
+@interface IconDescriptionModalLayer : CCLayer
+@property (nonatomic, assign) id <IconDescriptorModalDelegate> delegate;
 - (id)initWithAbilityDescriptor:(AbilityDescriptor*)descriptor;
+- (id)initWithIconName:(NSString *)iconName title:(NSString *)title andDescription:(NSString *)description;
 @end
 

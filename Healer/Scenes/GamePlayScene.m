@@ -40,7 +40,7 @@
 @property (nonatomic, readwrite) BOOL paused;
 @property (nonatomic, retain) Encounter *encounter;
 @property (nonatomic, readonly) Raid *raid;
-@property (nonatomic, readonly) Boss *boss;
+@property (nonatomic, readonly) Enemy *boss;
 @property (nonatomic, readonly) Player *player;
 @property (nonatomic, assign) CCLabelTTFShadow *announcementLabel;
 @property (nonatomic, assign) CCLabelTTF *errAnnouncementLabel;
@@ -98,9 +98,9 @@
     return self.encounter.raid;
 }
 
-- (Boss*)boss
+- (Enemy*)boss
 {
-    return (Boss*)[self.encounter.enemies objectAtIndex:0];
+    return (Enemy*)[self.encounter.enemies objectAtIndex:0];
 }
 
 - (id)initWithEncounter:(Encounter*)enc player:(Player*)plyre
@@ -518,14 +518,17 @@
         [self setPaused:YES];
     }
     
-    AbilityDescriptionModalLayer *modalLayer = [[AbilityDescriptionModalLayer alloc] initWithAbilityDescriptor:ability];
+    IconDescriptionModalLayer *modalLayer = [[[IconDescriptionModalLayer alloc] initWithAbilityDescriptor:ability] autorelease];
     [modalLayer setDelegate:self];
     [self addChild:modalLayer z:9999];
-    [modalLayer release];
+    
+    CCLabelTTFShadow *pausedTitle = [CCLabelTTFShadow labelWithString:@"Paused" fontName:@"TrebuchetMS-Bold" fontSize:64.0];
+    [pausedTitle setPosition:CGPointMake(512, 570)];
+    [modalLayer addChild:pausedTitle];
 }
 
 - (void)abilityDescriptorModaldidComplete:(id)modal {
-    AbilityDescriptionModalLayer *layer = (AbilityDescriptionModalLayer*)modal;
+    IconDescriptionModalLayer *layer = (IconDescriptionModalLayer*)modal;
     [layer removeFromParentAndCleanup:YES];
     if (self.isServer || self.isClient){
         

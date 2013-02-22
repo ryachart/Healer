@@ -9,7 +9,7 @@
 #import "LevelSelectMapScene.h"
 #import "MultiplayerSetupScene.h"
 #import "CombatEvent.h"
-#import "Boss.h"
+#import "Enemy.h"
 #import "Encounter.h"
 #import "PlayerDataManager.h"
 #import <UIKit/UIKit.h>
@@ -273,7 +273,7 @@
             
             int totalDamageTaken = 0;
             for (CombatEvent *event in self.encounter.combatLog){
-                if (event.type == CombatEventTypeDamage && [[event source] isKindOfClass:[Boss class]]){
+                if (event.type == CombatEventTypeDamage && [[event source] isKindOfClass:[Enemy class]]){
                     NSInteger dmgVal = [[event value] intValue];
                     totalDamageTaken +=  abs(dmgVal);            
                 }

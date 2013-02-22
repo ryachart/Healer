@@ -12,7 +12,7 @@
 #import "CombatEvent.h"
 
 @interface RaidMember ()
--(void)performAttackIfAbleOnTarget:(Boss*)target;
+-(void)performAttackIfAbleOnTarget:(Enemy*)target;
 @end
 
 @implementation RaidMember
@@ -68,7 +68,7 @@
     return self.sourceName;
 }
 
--(void)performAttackIfAbleOnTarget:(Boss*)target{
+-(void)performAttackIfAbleOnTarget:(Enemy*)target{
 	if (_lastAttack >= _damageFrequency && !self.isDead){
 		_lastAttack = 0.0;
 		
@@ -110,7 +110,7 @@
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 {
     self.lastAttack += timeDelta;
-    Boss *theBoss = (Boss*)[enemies objectAtIndex:0];
+    Enemy *theBoss = (Enemy*)[enemies objectAtIndex:0];
     [self performAttackIfAbleOnTarget:theBoss];
     [self updateEffects:enemies raid:raid players:players time:timeDelta];
 	self.absorb = self.absorb; //Verify that our absorption amount is still valid.
@@ -232,7 +232,7 @@
     [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     
     if (self.isDead && !self.deathEffectApplied) {
-        Boss *theBoss = (Boss*)[enemies objectAtIndex:0];
+        Enemy *theBoss = (Enemy*)[enemies objectAtIndex:0];
         Effect *damageImprovement = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
         [damageImprovement setOwner:self];
         [damageImprovement setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.battleID]];
@@ -304,7 +304,7 @@
     return self;
 }
 
--(void)performAttackIfAbleOnTarget:(Boss*)target{
+-(void)performAttackIfAbleOnTarget:(Enemy*)target{
 	if (self.lastAttack >= self.damageFrequency && !self.isDead){
 		self.lastAttack = 0.0;
         
@@ -322,7 +322,7 @@
     [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     
     if (self.isDead && !self.deathEffectApplied) {
-        Boss *theBoss = (Boss*)[enemies objectAtIndex:0];
+        Enemy *theBoss = (Enemy*)[enemies objectAtIndex:0];
         Effect *damageImprovement = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
         [damageImprovement setOwner:self];
         [damageImprovement setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.battleID]];

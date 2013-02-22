@@ -28,7 +28,7 @@ typedef int CastingDisabledReason;
 #define CHANNELING_SPELL_TITLE @"PlayerChanneling"
 #define OUT_OF_MANA_TITLE @"OutOfMana"
 
-@class Boss;
+@class Enemy;
 @class Raid;
 @class Spell;
 @class Effect;

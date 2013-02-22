@@ -10,7 +10,7 @@
 
 #define MAX_SHOWN 5
 
-@class Boss, AbilityDescriptor;
+@class Enemy, AbilityDescriptor;
 
 @protocol AbilityDescriptionViewDelegate <NSObject>
 
@@ -19,10 +19,10 @@
 @end
 
 @interface BossAbilityDescriptionsView : CCNode <CCRGBAProtocol>
-@property (nonatomic, assign) Boss *boss;
+@property (nonatomic, assign) Enemy *boss;
 @property (nonatomic, assign) id<AbilityDescriptionViewDelegate> delegate;
 
-- (id)initWithBoss:(Boss*)boss;
+- (id)initWithBoss:(Enemy*)boss;
 
 - (void)update;
 

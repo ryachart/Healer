@@ -36,7 +36,9 @@
 - (void)configureNode {
     [self.menu removeFromParentAndCleanup:YES];
     CCSprite *normalSprite = [CCSprite spriteWithSpriteFrameName:self.ability.iconName];
+    normalSprite.scale = .25;
     CCSprite *selectedSprite = [CCSprite spriteWithSpriteFrameName:self.ability.iconName];
+    selectedSprite.scale = .25;
     [selectedSprite setColor:ccc3(122, 122, 122)];
     
     self.iconSpriteMenuItem = [CCMenuItemSprite itemWithNormalSprite:normalSprite selectedSprite:selectedSprite target:self.target selector:self.selector];

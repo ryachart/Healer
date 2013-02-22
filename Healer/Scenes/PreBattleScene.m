@@ -7,7 +7,7 @@
 
 #import "PreBattleScene.h"
 #import "Player.h"
-#import "Boss.h"
+#import "Enemy.h"
 #import "Raid.h"
 #import "Spell.h"
 #import "GamePlayScene.h"

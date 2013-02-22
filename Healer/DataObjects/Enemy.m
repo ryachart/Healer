@@ -6,7 +6,7 @@
 //  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
 
-#import "Boss.h"
+#import "Enemy.h"
 #import "GameObjects.h"
 #import "RaidMember.h"
 #import "ProjectileEffect.h"
@@ -14,14 +14,14 @@
 #import "AbilityDescriptor.h"
 #import "Effect.h"
 
-@interface Boss ()
+@interface Enemy ()
 @property (nonatomic, readwrite) float challengeDamageDoneModifier;
 @property (nonatomic, readwrite) BOOL hasAppliedChallengeEffects;
 @property (nonatomic, retain) NSMutableArray *queuedAbilitiesToAdd;
 @property (nonatomic, readwrite) BOOL shouldQueueAbilityAdds;
 @end
 
-@implementation Boss
+@implementation Enemy
 
 -(void)dealloc{
     [_abilities release];

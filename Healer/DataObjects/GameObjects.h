@@ -10,7 +10,7 @@
 #import "Player.h"
 #import "Spell.h"
 #import "Raid.h"
-#import "Boss.h"
+#import "Enemy.h"
 #import "HealableTarget.h"
 #import "Effect.h"
 

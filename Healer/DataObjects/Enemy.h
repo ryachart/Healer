@@ -19,7 +19,7 @@
 @class Ability;
 @class AbilityDescriptor;
 
-@interface Boss : HealableTarget {	
+@interface Enemy : HealableTarget {	
     BOOL healthThresholdCrossed[101];
 }
 @property (nonatomic, readwrite) BOOL isMultiplayer;
@@ -63,97 +63,97 @@
 
 
 #pragma mark - Shipping Bosses
-@interface Ghoul : Boss
+@interface Ghoul : Enemy
 @end
 
-@interface CorruptedTroll : Boss
+@interface CorruptedTroll : Enemy
 @property (nonatomic, assign) Ability *smash;
 @property (readwrite) NSTimeInterval enraging;
 @end
 
-@interface Drake : Boss
+@interface Drake : Enemy
 @property (nonatomic, readwrite, assign) Ability *fireballAbility;
 @end
 
-@interface Trulzar : Boss
+@interface Trulzar : Enemy
 @property (nonatomic, assign) Ability *poisonNova;
 @property (readwrite) NSTimeInterval lastPoisonTime;
 @property (readwrite) NSTimeInterval lastPotionTime;
 @end
 
-@interface DarkCouncil : Boss
+@interface DarkCouncil : Enemy
 @end
 
-@interface PlaguebringerColossus: Boss
+@interface PlaguebringerColossus: Enemy
 @property (readwrite) NSInteger numBubblesPopped;
 @end
 
 @class FocusedAttack;
-@interface FungalRavagers : Boss
+@interface FungalRavagers : Enemy
 @property (readwrite) BOOL isEnraged;
 @property (nonatomic, assign) FocusedAttack *secondTargetAttack;
 @property (nonatomic, assign) FocusedAttack *thirdTargetAttack;
 
 @end
 
-@interface MischievousImps: Boss
+@interface MischievousImps: Enemy
 @property (readwrite) NSTimeInterval lastPotionThrow;
 @end
 
-@interface BefouledTreant : Boss
+@interface BefouledTreant : Enemy
 @end
 
-@interface TwinChampions : Boss
+@interface TwinChampions : Enemy
 @property (nonatomic, assign) FocusedAttack *firstFocusedAttack;
 @property (nonatomic, assign) FocusedAttack *secondFocusedAttack;
 @end
 
-@interface Baraghast : Boss
+@interface Baraghast : Enemy
 @property (nonatomic, retain) NSMutableArray *remainingAbilities;
 @end
 
-@interface CrazedSeer : Boss
+@interface CrazedSeer : Enemy
 @end
 
-@interface GatekeeperDelsarn : Boss
+@interface GatekeeperDelsarn : Enemy
 @end
 
-@interface SkeletalDragon: Boss
+@interface SkeletalDragon: Enemy
 @property (nonatomic, retain) Ability *boneThrowAbility;
 @property (nonatomic, retain) Ability *sweepingFlame;
 @property (nonatomic, retain) Ability *tailLash;
 @property (nonatomic, retain) FocusedAttack *tankDamage;
 @end
 
-@interface ColossusOfBone : Boss
+@interface ColossusOfBone : Enemy
 @property (nonatomic, readwrite) BOOL hasShownCrushingPunchThisCooldown;
 @property (nonatomic, retain) Ability *boneQuake;
 @property (nonatomic, retain) Ability *crushingPunch;
 @end
 
-@interface OverseerOfDelsarn : Boss
+@interface OverseerOfDelsarn : Enemy
 @property (nonatomic, retain) Ability *projectilesAbility;
 @property (nonatomic, retain) NSMutableArray *demonAbilities;
 @end
 
-@interface TheUnspeakable : Boss
+@interface TheUnspeakable : Enemy
 @property (nonatomic, retain) Ability *oozeAll;
 @end
 
-@interface BaraghastReborn : Boss
+@interface BaraghastReborn : Enemy
 @property (nonatomic, retain) Ability *deathwave;
 @end
 
-@interface AvatarOfTorment1 : Boss
+@interface AvatarOfTorment1 : Enemy
 @end
 
-@interface AvatarOfTorment2 : Boss
+@interface AvatarOfTorment2 : Enemy
 @end
 
-@interface SoulOfTorment : Boss
+@interface SoulOfTorment : Enemy
 @end
 
-@interface TheEndlessVoid : Boss
+@interface TheEndlessVoid : Enemy
 @end
 
 

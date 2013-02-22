@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class Boss;
+@class Enemy;
 @class Raid;
 @class Player;
 @class HealableTarget;

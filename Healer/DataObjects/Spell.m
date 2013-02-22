@@ -19,23 +19,22 @@
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *spellID;
 @property (nonatomic, readwrite) NSTimeInterval tempCooldown;
+@property (nonatomic, readwrite) NSInteger energyCost;
 @end
 
 @implementation Spell
-
-@synthesize title, healingAmount, energyCost, castTime, percentagesPerTarget, targets, description, cooldownRemaining, cooldown, spellID, appliedEffect, owner, info, tempCooldown;
 
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd
 {
     if (self = [super init]){
         self.title = ttle;
-        healingAmount = healAmnt;
-        energyCost = nrgyCost;
-        castTime = time;
+        self.healingAmount = healAmnt;
+        self.energyCost = nrgyCost;
+        self.castTime = time;
         self.tempCooldown = 0.0;
         self.cooldown = cd;
-        isMultitouch = NO;
-        percentagesPerTarget = nil;
+        self.isMultitouch = NO;
+        self.percentagesPerTarget = nil;
         self.spellID = NSStringFromClass([self class]);
         self.beginCastingAudioTitle = @"heal_begin.wav";
         self.endCastingAudioTitle = @"heal_finish.wav";
@@ -45,17 +44,17 @@
 }
 
 -(void)dealloc{
-    [title release]; title = nil;
-    [percentagesPerTarget release];percentagesPerTarget = nil;
-    [spellID release]; spellID = nil;
-    [description release]; description = nil;
-    [appliedEffect release]; appliedEffect = nil;
+    [_title release]; _title = nil;
+    [_percentagesPerTarget release];_percentagesPerTarget = nil;
+    [_spellID release]; _spellID = nil;
+    [_description release]; _description = nil;
+    [_appliedEffect release]; _appliedEffect = nil;
     [super dealloc];
     
 }
 
 - (NSInteger)energyCost {
-    NSInteger baseEnergyCost = energyCost;
+    NSInteger baseEnergyCost = _energyCost;
     if (!self.owner){
         return baseEnergyCost;
     }
@@ -96,14 +95,14 @@
     if (self.tempCooldown != 0.0){
         return self.tempCooldown;
     }
-    return cooldown;
+    return _cooldown;
 }
 
 - (float)castTime {
     if (!self.owner){
-        return castTime;
+        return _castTime;
     }
-    float finalCastTime = castTime * [self.owner castTimeAdjustmentForSpell:self];
+    float finalCastTime = _castTime * [self.owner castTimeAdjustmentForSpell:self];
     return finalCastTime;
 }
 
@@ -132,17 +131,17 @@
 }
 
 - (NSString*)info{
-    return [NSString stringWithFormat:@"Mana Cost : %i \n %@", energyCost, description];
+    return [NSString stringWithFormat:@"Mana Cost : %i \n %@", _energyCost, _description];
 }
 
 -(NSString*)spellDescription{
-	return description;
+	return _description;
 	
 }
 
 -(NSInteger)healingAmount{
-    int finalAmount = healingAmount;
-    int fuzzRange = (int)round(healingAmount * .05);
+    int finalAmount = _healingAmount;
+    int fuzzRange = (int)round(_healingAmount * .05);
     int fuzz = arc4random() % (fuzzRange + 1);
     
     finalAmount += fuzz * (arc4random() % 2 == 0 ? -1 : 1);
@@ -151,7 +150,7 @@
 
 -(BOOL)isInstant
 {
-	return castTime == 0.0;
+	return _castTime == 0.0;
 }
 
 -(BOOL)hasCastSounds
@@ -162,13 +161,13 @@
 -(void)setTargets:(NSInteger)numOfTargets withPercentagesPerTarget:(NSArray*)percentages
 {
 	if (numOfTargets <= 1){
-		targets = 1;
-		isMultitouch = NO;
+		_targets = 1;
+		self.isMultitouch = NO;
 	}
 	else if (numOfTargets > 1){
-		targets = numOfTargets;
-		percentagesPerTarget = [percentages retain];
-		isMultitouch = YES;
+		_targets = numOfTargets;
+		_percentagesPerTarget = [percentages retain];
+		self.isMultitouch = YES;
 	}
 	
 }
@@ -954,7 +953,7 @@
 	chargeEnd = nil;
 	
 	if (timeDelta >= 1){
-		additionalHealing = healingAmount * 1.5;
+		additionalHealing = self.healingAmount * 1.5;
 	}
 	
 	[[self.owner spellTarget] setHealth:[[self.owner spellTarget] health] + [self healingAmount] + additionalHealing];

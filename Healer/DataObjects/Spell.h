@@ -23,14 +23,7 @@ typedef enum {
     SpellTypeEmpowering
 } SpellType;
 
-@interface Spell : NSObject {
-	float castTime;
-	NSInteger targets;
-	NSInteger healingAmount;
-	NSInteger energyCost;
-	NSArray *percentagesPerTarget;
-	BOOL isMultitouch;
-}
+@interface Spell : NSObject
 
 -(id)initWithTitle:(NSString*)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd;
 +(id)defaultSpell;
@@ -48,6 +41,7 @@ typedef enum {
 @property (nonatomic, readwrite) float cooldown;
 @property (nonatomic, retain) Effect* appliedEffect;
 @property (nonatomic, readwrite) BOOL isExclusiveEffectTarget;
+@property (nonatomic, readwrite) BOOL isMultitouch;
 
 @property (nonatomic, readonly) NSString* spellTypeDescription;
 @property (nonatomic, readwrite) SpellType spellType;

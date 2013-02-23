@@ -193,7 +193,13 @@
         
         NSInteger failureAdjustment = 0;
         if (!victory) {
-            CCLabelTTFShadow *bossHealthRemaining = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"Boss Health: %1.2f%%", self.encounter.boss.healthPercentage] dimensions:CGSizeMake(250, 100) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:36.0];
+            float healthPerc = 0;
+            for (Enemy *enemy in self.encounter.enemies) {
+                healthPerc += enemy.healthPercentage;
+            }
+            healthPerc /= self.encounter.enemies.count;
+            
+            CCLabelTTFShadow *bossHealthRemaining = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"Boss Health: %1.2f%%", healthPerc] dimensions:CGSizeMake(250, 100) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:36.0];
             [bossHealthRemaining setPosition:CGPointMake(40, 190)];
             [bossHealthRemaining setAnchorPoint:CGPointZero];
             [statsContainer addChild:bossHealthRemaining];

@@ -108,10 +108,10 @@
         [gcs setPosition:CGPointMake(100, 38)];
         [self addChild:gcs z:100];
         
-        if (self.encounter.boss.info){
-            CCLabelTTF *bossNameLabel = [CCLabelTTF labelWithString:self.encounter.boss.title dimensions:CGSizeMake(300, 200) hAlignment:UITextAlignmentCenter fontName:@"Cochin-BoldItalic" fontSize:32.0];
+        if (self.encounter.info){
+            CCLabelTTF *bossNameLabel = [CCLabelTTF labelWithString:self.encounter.title dimensions:CGSizeMake(300, 200) hAlignment:UITextAlignmentCenter fontName:@"Cochin-BoldItalic" fontSize:32.0];
             [bossNameLabel setPosition:CGPointMake(200, 520)];
-            CCLabelTTF *bossLabel = [CCLabelTTF labelWithString:self.encounter.boss.info dimensions:CGSizeMake(300, 500) hAlignment:UITextAlignmentLeft fontName:@"Cochin-BoldItalic" fontSize:20.0];
+            CCLabelTTF *bossLabel = [CCLabelTTF labelWithString:self.encounter.info dimensions:CGSizeMake(300, 500) hAlignment:UITextAlignmentLeft fontName:@"Cochin-BoldItalic" fontSize:20.0];
             
             [bossLabel setColor:ccc3(88, 54, 22)];
             [bossNameLabel setColor:ccc3(88, 54, 22)];

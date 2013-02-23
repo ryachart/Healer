@@ -27,10 +27,9 @@
 @class Encounter;
 
 /* This is the screen we see while involved in a raid */
-@interface GamePlayScene : CCScene <EventLogger, Announcer, GamePlayFTUELayerDelegate, PauseLayerDelegate, GKMatchDelegate, BossHealthViewDelegate, IconDescriptorModalDelegate> {
-	NSMutableArray *selectedRaidMembers;
-}
+@interface GamePlayScene : CCScene <EventLogger, Announcer, GamePlayFTUELayerDelegate, PauseLayerDelegate, GKMatchDelegate, BossHealthViewDelegate, IconDescriptorModalDelegate>
 //Interface Elements
+@property (nonatomic, retain) NSMutableArray *selectedRaidMembers;
 @property (nonatomic, retain) PlayerSpellButton *spellView1;
 @property (nonatomic, retain) PlayerSpellButton *spellView2;
 @property (nonatomic, retain) PlayerSpellButton *spellView3;

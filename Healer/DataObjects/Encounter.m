@@ -25,27 +25,24 @@
 - (void)dealloc{
     [_raid release];
     [_enemies release];
+    [_info release];
+    [_title release];
     [_requiredSpells release];
     [_recommendedSpells release];
     [_combatLog release];
     [super dealloc];
 }
 
--(id)initWithRaid:(Raid*)rd andBoss:(Enemy*)bs andSpells:(NSArray*)sps{
+- (id)initWithRaid:(Raid *)raid enemies:(NSArray *)enemies andSpells:(NSArray *)spells{
     if (self = [super init]){
-        self.raid = rd;
-        self.enemies = [NSArray arrayWithObject:bs];
-        self.recommendedSpells  = sps;
+        self.raid = raid;
+        self.enemies = enemies;
+        self.recommendedSpells  = spells;
         self.difficulty = 2;
         
         self.combatLog = [NSMutableArray arrayWithCapacity:500];
     }
     return self;
-}
-
-- (Enemy *)boss
-{
-    return (Enemy*)[self.enemies objectAtIndex:0];
 }
 
 - (NSInteger)score
@@ -145,7 +142,7 @@
 
 + (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer{
     Raid *basicRaid = [[[Raid alloc] init] autorelease];
-    Enemy *basicBoss = nil;
+    NSMutableArray *enemies = [NSMutableArray arrayWithCapacity:3];
     NSMutableArray *spells = nil;
     
     NSInteger numArcher = 0;
@@ -156,16 +153,20 @@
     NSInteger numBerserker = 0;
     
     NSString *bossKey = nil;
+    NSString *info = nil;
+    NSString *title = nil;
     
     if (level == 1){
-        basicBoss = [Ghoul defaultBoss];
+        [enemies addObject:[Ghoul defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], nil];
         numChampion = 2;
         bossKey = @"ghoul";
+        info = @"These are strange times in the once peaceful kingdom of Theronia.  A dark mist has set beyond the Eastern Mountains and corrupt creatures have begun attacking innocent villagers and travelers along the roads.";
+        title = @"The Ghoul";
     }
     
     if (level == 2){
-        basicBoss = [CorruptedTroll defaultBoss];
+        [enemies addObject:[CorruptedTroll defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
         
         numWizard = 1;
@@ -173,30 +174,38 @@
         numChampion = 1;
         numGuardian = 1;
         bossKey = @"troll";
+        info = @"Three days ago a Raklorian Troll stumbled out from beyond the mountains and began ravaging the farmlands.  This was unusual behavior for a cave troll, but survivors noted that the troll seemed to be empowered by an evil magic.";
+        title = @"Corrupted Troll";
     }
     
     if (level == 3){
-        basicBoss = [Drake defaultBoss];
+        [enemies addObject:[Drake defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell],[GreaterHeal defaultSpell], nil];
         numWizard = 1;
         numArcher = 1;
         numChampion = 1;
         numGuardian = 1;
         bossKey = @"drake";
+        
+        info = @"A Drake of Soldorn has not been seen in Theronia for ages, but the foul creature has been burning down cottages and farms as well as killing countless innocents.  You and your allies have cornered the drake and forced a confrontation.";
+        title = @"Tainted Drake";
     }
     
     if (level == 4){
-        basicBoss = [MischievousImps defaultBoss];
+        [enemies addObject:[MischievousImps defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
         numWizard = 1;
         numArcher = 1;
         numChampion = 1;
         numGuardian = 1;
         bossKey = @"imps";
+        
+        info = @"As the dark mists further encroach upon the kingdom more strange creatures begin terrorizing the innocents.  Viscious imps have infiltrated the alchemical storehouses on the outskirts of Terun.";
+        title = @"Mischievious Imps";
     }
     
     if (level == 5){
-        basicBoss = [BefouledTreant defaultBoss];
+        [enemies addObject:[BefouledTreant defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell],[ForkedHeal defaultSpell], nil];
         
         numWizard = 2;
@@ -205,10 +214,13 @@
         numChampion = 2;
         numGuardian = 1;
         bossKey = @"treant";
+        
+        info = @"The Akarus, an ancient tree that has long rested in the Peraxu Forest, has become tainted with the foul energy of the dark mists. This once great tree must be ended for good.";
+        title = @"Befouled Akarus";
     }
     
     if (level == 6){
-        basicBoss = [FungalRavagers defaultBoss];
+        [enemies addObject:[FungalRavagers defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [LightEternal defaultSpell], [Regrow defaultSpell], nil];
         
         numArcher = 2;
@@ -217,10 +229,13 @@
         numChampion = 1;
         numGuardian = 3;
         bossKey = @"fungalravagers";
+        
+        info = @"As the dark mist consumes the Akarus ferocious beasts are birthed from its roots.  The ravagers immediately attack you and your allies.";
+        title = @"Fungal Ravagers";
     }
     
     if (level == 7){
-        basicBoss = [PlaguebringerColossus defaultBoss];
+        [enemies addObject:[PlaguebringerColossus defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [ForkedHeal defaultSpell], [Regrow defaultSpell], nil];
         
         numArcher = 2;
@@ -229,10 +244,13 @@
         numChampion = 2;
         numGuardian = 1;
         bossKey = @"plaguebringer";
+        
+        info = @"As the Akarus is finally consumed its branches begin to quiver and shake.  As the ground rumbles beneath its might, you and your allies witness a hideous transformation.  What once was a peaceful treant has now become an abomination.  Only truly foul magics could have caused this.";
+        title = @"Plaguebringer Colossus";
     }
     
     if (level == 8){
-        basicBoss = [Trulzar defaultBoss];
+        [enemies addObject:[Trulzar defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Purify defaultSpell], [Regrow defaultSpell], nil];
     
         numWizard = 3;
@@ -242,10 +260,13 @@
         numChampion = 4;
         numGuardian = 1;
         bossKey = @"trulzar";
+        
+        info = @"Days before the dark mists came, Trulzar disappeared into the Peraxu forest with only a spell book.  This once loyal warlock is wanted for questioning regarding the strange events that have befallen the land.  You have been sent with a large warband to bring Trulzar to justice.";
+        title = @"Trulzar the Maleficar";
     }
     
     if (level == 9){
-        basicBoss = [DarkCouncil defaultBoss];
+        [enemies addObject:[DarkCouncil defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [Purify defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         numWizard = 3;
         numArcher = 2;
@@ -254,10 +275,12 @@
         numChampion = 4;
         numGuardian = 1;
         bossKey = @"council";
+        info = @"A contract in blood lay signed and sealed in Trulzar's belongings.  He had been summoned by a council of dark summoners to participate in an arcane ritual for some horrible purpose.  You and your allies have followed the sanguine invitation to a dark chamber beneath the Vargothian Swamps.";
+        title = @"Council of Dark Summoners";
     }
     
     if (level == 10){
-        basicBoss = [TwinChampions defaultBoss];
+        [enemies addObject:[TwinChampions defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal  defaultSpell], [GreaterHeal defaultSpell] , [Barrier defaultSpell], [HealingBurst defaultSpell], nil];
         
         numWizard = 3;
@@ -267,10 +290,12 @@
         numChampion = 4;
         numGuardian = 2;
         bossKey = @"twinchampions";
+        info = @"You have crossed the eastern mountains through a path filled with ghouls, demons, and other terrible creatures.  Blood stained and battle worn, you and your allies have come across an encampment guarded by two skeletal champions.";
+        title = @"Twin Champions of Baraghast";
     }
     
     if (level == 11){
-        basicBoss = [Baraghast defaultBoss];
+        [enemies addObject:[Baraghast defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numWizard = 3;
@@ -280,10 +305,13 @@
         numChampion = 4;
         numGuardian = 1;
         bossKey = @"baraghast";
+        
+        info = @"As his champions fell the dark warlord emerged from deep in the encampment.  Disgusted with the failure of his champions he confronts you and your allies himself.";
+        title = @"Baraghast, Warlord of the Damned";
     }
     
     if (level == 12){
-        basicBoss = [CrazedSeer defaultBoss];
+        [enemies addObject:[CrazedSeer defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numWizard = 3;
@@ -293,10 +321,13 @@
         numChampion = 4;
         numGuardian = 1;
         bossKey = @"tyonath";
+        
+        info = @"Seer Tyonath was tormented and tortured after his capture by the Dark Horde. He guards the secrets to Baraghast's origin in a horrific chamber beneath the encampment.";
+        title = @"Crazed Seer Tyonath";
     }
     
     if (level == 13){
-        basicBoss = [GatekeeperDelsarn defaultBoss];
+        [enemies addObject:[GatekeeperDelsarn defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numWizard = 3;
@@ -306,10 +337,13 @@
         numChampion = 3;
         numGuardian = 3; //Blooddrinkers
         bossKey = @"gatekeeper";
+        
+        info = @"Still deeper beneath the encampment you have discovered a portal to Delsarn.  No mortal has ever set foot in this ancient realm of evil and unless you and your allies can dispatch the gatekeeper no mortal ever will.";
+        title = @"Gatekeeper of Delsarn";
     }
     
     if (level == 14){
-        basicBoss = [SkeletalDragon defaultBoss];
+        [enemies addObject:[SkeletalDragon defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numWizard = 3;
@@ -319,10 +353,14 @@
         numChampion = 3;
         numGuardian = 1;
         bossKey = @"skeletaldragon";
+        
+        info = @"After slaying countless Delsari minor demons, your party has encountered a towering Skeletal Dragon.";
+        title = @"Skeletal Dragon";
+        
     }
     
     if (level == 15){
-        basicBoss = [ColossusOfBone defaultBoss];
+        [enemies addObject:[ColossusOfBone defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numArcher = 4;
@@ -332,10 +370,12 @@
         numChampion = 3;
         numGuardian = 1;
         bossKey = @"colossusbone";
+        info = @"As the skeletal dragon falls and crashes to the ground you feel a rumbling in the distance.  Before you and your allies can even recover from the encounter with the skeletal dragon you are besieged by a monstrosity.";
+        title = @"Colossus of Bone";
     }
     
     if (level == 16){
-        basicBoss = [OverseerOfDelsarn defaultBoss];
+        [enemies addObject:[OverseerOfDelsarn defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal  defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numArcher = 4;
@@ -345,10 +385,13 @@
         numChampion = 3;
         numGuardian = 1;
         bossKey = @"overseer";
+        
+        info = @"After defeating the most powerful and terrible creatures in Delsarn the Overseer of this treacherous realm confronts you himself.";
+        title = @"Overseer of Delsarn";
     }
     
     if (level == 17){
-        basicBoss = [TheUnspeakable defaultBoss];
+        [enemies addObject:[TheUnspeakable defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numArcher = 4;
@@ -358,10 +401,13 @@
         numChampion = 3;
         numGuardian = 1;
         bossKey = @"unspeakable";
+        
+        info = @"As you peel back the blood-sealed door to the inner sanctum of the Delsari citadel you find a horrific room filled with a disgusting mass of bones and rotten corpses.  The room itself seems to be ... alive.";
+        title = @"The Unspeakable";
     }
     
     if (level == 18){
-        basicBoss = [BaraghastReborn defaultBoss];
+        [enemies addObject:[BaraghastReborn defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         numWizard = 3;
         numWarlock = 4;
@@ -370,10 +416,13 @@
         numChampion = 3;
         numGuardian = 1;
         bossKey = @"baraghastreborn";
+        
+        info = @"Before you stands the destroyed but risen warchief Baraghast.  His horrible visage once again sows fear in the hearts of all of your allies.  His undead ferocity swells with the ancient and evil power of Delsarn.";
+        title = @"Baraghast Reborn";
     }
     
     if (level == 19){
-        basicBoss = [AvatarOfTorment1 defaultBoss];
+        [enemies addObject:[AvatarOfTorment1 defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numWizard = 3;
@@ -383,10 +432,13 @@
         numChampion = 3;
         numGuardian = 1;
         bossKey = @"avataroftorment";
+        
+        info = @"From the dark heart of Baraghast's shattered corpse emerges a hideous and cackling demon of unfathomable power. Before you stands a massive creature spawned of pure hatred whose only purpose is torment.";
+        title = @"The Avatar of Torment";
     }
     
     if (level == 20){
-        basicBoss = [AvatarOfTorment2 defaultBoss];
+        [enemies addObject:[AvatarOfTorment2 defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numWizard = 3;
@@ -396,10 +448,13 @@
         numChampion = 3;
         numGuardian = 1;
         bossKey = @"avataroftorment";
+        
+        info = @"Torment will not be vanquished so easily.";
+        title = @"The Avatar of Torment";
     }
     
     if (level == 21){
-        basicBoss = [SoulOfTorment defaultBoss];
+        [enemies addObject:[SoulOfTorment defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numWizard = 3;
@@ -409,9 +464,12 @@
         numChampion = 3;
         numGuardian = 1;
         bossKey = @"souloftorment";
+        
+        info = @"Its body shattered and broken--the last gasp of this terrible creature conspires to unleash its most unspeakable power.  Your allies are bleeding and broken and your souls are exhausted by the strain of endless battle, but the final evil must be vanquished...";
+        title = @"The Soul of Torment";
     }
     
-    if (!basicBoss){
+    if (enemies.count == 0){
         //If passed in an invalid level number and werent able to generate a boss...
         return nil;
     }
@@ -435,8 +493,12 @@
         [basicRaid addRaidMember:[Guardian defaultGuardian]];
     }
     
-    basicBoss.isMultiplayer = multiplayer;
-    Encounter *encToReturn = [[Encounter alloc] initWithRaid:basicRaid andBoss:basicBoss andSpells:spells];
+    for (Enemy *enemy in enemies) {
+        enemy.isMultiplayer = multiplayer;
+    }
+    Encounter *encToReturn = [[Encounter alloc] initWithRaid:basicRaid enemies:enemies andSpells:spells];
+    [encToReturn setInfo:info];
+    [encToReturn setTitle:title];
     [encToReturn setLevelNumber:level];
     [encToReturn setBossKey:bossKey];
     return [encToReturn autorelease];
@@ -511,7 +573,7 @@
     }
     
     basicBoss.isMultiplayer = multiplayer;
-    Encounter *encToReturn = [[Encounter alloc] initWithRaid:basicRaid andBoss:basicBoss andSpells:spells];
+    Encounter *encToReturn = [[Encounter alloc] initWithRaid:basicRaid enemies:[NSArray arrayWithObject:basicBoss] andSpells:spells];
     [encToReturn setLevelNumber:ENDLESS_VOID_ENCOUNTER_NUMBER];
     return [encToReturn autorelease];
 }

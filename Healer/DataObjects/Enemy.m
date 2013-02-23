@@ -25,7 +25,6 @@
 
 -(void)dealloc{
     [_abilities release];
-    [_info release];
     [_title release];
     [_queuedAbilitiesToAdd release];
     [_abilityDescriptors release];
@@ -228,7 +227,6 @@
             }
         }
     }
-    self.duration += timeDelta;
     
     if (!self.hasAppliedChallengeEffects) {
         if (self.difficulty > 3) {
@@ -300,8 +298,7 @@
 @implementation Ghoul
 +(id)defaultBoss{
     Ghoul *ghoul = [[Ghoul alloc] initWithHealth:25000 damage:300 targets:1 frequency:2.0 choosesMT:NO ];
-    [ghoul setTitle:@"The Ghoul"];
-    [ghoul setInfo:@"These are strange times in the once peaceful kingdom of Theronia.  A dark mist has set beyond the Eastern Mountains and corrupt creatures have begun attacking innocent villagers and travelers along the roads."];
+    [ghoul setTitle:@"Ghoul"];
     
     AbilityDescriptor *ad = [[[AbilityDescriptor alloc] init] autorelease];
     [ad setAbilityName:@"Undead Attacks"];
@@ -340,7 +337,6 @@
     corTroll.autoAttack.failureChance = .1;
     
     [corTroll setTitle:@"Corrupted Troll"];
-    [corTroll setInfo:@"Three days ago a Raklorian Troll stumbled out from beyond the mountains and began ravaging the farmlands.  This was unusual behavior for a cave troll, but survivors noted that the troll seemed to be empowered by an evil magic."];
     
     GroundSmash *groundSmash = [[[GroundSmash alloc] init] autorelease];
     [groundSmash setAbilityValue:54];
@@ -416,7 +412,6 @@
 +(id)defaultBoss {
     Drake *drake = [[Drake alloc] initWithHealth:185000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [drake setTitle:@"Tainted Drake"];
-    [drake setInfo:@"A Drake of Soldorn has not been seen in Theronia for ages, but the foul creature has been burning down cottages and farms as well as killing countless innocents.  You and your allies have cornered the drake and forced a confrontation."];
     
     NSInteger fireballDamage = 400;
     float fireballFailureChance = .05;
@@ -491,7 +486,6 @@
     [boss addAbility:rpt];
     
     [boss setTitle:@"Mischievious Imps"];
-    [boss setInfo:@"As the dark mists further encroach upon the kingdom more strange creatures begin terrorizing the innocents.  Viscious imps have infiltrated the alchemical storehouses on the outskirts of Terun."];
     return [boss autorelease];
 }
 
@@ -538,7 +532,6 @@
     BefouledTreant *boss = [[BefouledTreant alloc] initWithHealth:560000 damage:bossDamage targets:1 frequency:3.0 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Befouled Akarus"];
-    [boss setInfo:@"The Akarus, an ancient tree that has long rested in the Peraxu Forest, has become tainted with the foul energy of the dark mists. This once great tree must be ended for good."];
     
     Cleave *cleave = [Cleave normalCleave];
     [boss addAbility:cleave];
@@ -589,7 +582,6 @@
     FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:560000 damage:141 targets:1 frequency:2.0 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Fungal Ravagers"];
-    [boss setInfo:@"As the dark mist consumes the Akarus ferocious beasts are birthed from its roots.  The ravagers immediately attack you and your allies."];
     [boss setCriticalChance:.5];
     
     FocusedAttack *secondFocusedAttack = [[FocusedAttack alloc] initWithDamage:162 andCooldown:2.6];
@@ -675,7 +667,6 @@
     PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:560000 damage:330 targets:1 frequency:2.5 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Plaguebringer Colossus"];
-    [boss setInfo:@"As the Akarus is finally consumed its branches begin to quiver and shake.  As the ground rumbles beneath its might, you and your allies witness a hideous transformation.  What once was a peaceful treant has now become an abomination.  Only truly foul magics could have caused this."];
     
     AbilityDescriptor *pusExploDesc = [[AbilityDescriptor alloc] init];
     [pusExploDesc setAbilityDescription:@"When your allies deal enough damage to the Plaguebringer Colossus to break off a section of its body the section explodes vile toxin dealing high damage to your raid."];
@@ -737,7 +728,6 @@
     Trulzar *boss = [[Trulzar alloc] initWithHealth:2600000 damage:0 targets:0 frequency:100.0 choosesMT:NO];
     [boss setTitle:@"Trulzar the Maleficar"];
     [boss setNamePlateTitle:@"Trulzar"];
-    [boss setInfo:@"Days before the dark mists came, Trulzar disappeared into the Peraxu forest with only a spell book.  This once loyal warlock is wanted for questioning regarding the strange events that have befallen the land.  You have been sent with a large warband to bring Trulzar to justice."];
     
     boss.lastPotionTime = 6.0;
     
@@ -838,7 +828,6 @@
     DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:2450000 damage:0 targets:1 frequency:.75 choosesMT:NO ];
     [boss setTitle:@"Council of Dark Summoners"];
     [boss setNamePlateTitle:@"Teritha"];
-    [boss setInfo:@"A contract in blood lay signed and sealed in Trulzar's belongings.  He had been summoned by a council of dark summoners to participate in an arcane ritual for some horrible purpose.  You and your allies have followed the sanguine invitation to a dark chamber beneath the Vargothian Swamps."];
     
     RaidDamageOnDispelStackingRHE *poison = [[[RaidDamageOnDispelStackingRHE alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegative] autorelease];
     [poison setTitle:@"roth_poison"];
@@ -943,7 +932,6 @@
     
     [boss setTitle:@"Twin Champions of Baraghast"];
     [boss setNamePlateTitle:@"Twin Champions"];
-    [boss setInfo:@"You have crossed the eastern mountains through a path filled with ghouls, demons, and other terrible creatures.  Blood stained and battle worn, you and your allies have come across an encampment guarded by two skeletal champions."];
     
     [boss addAbility:[Cleave normalCleave]];
     
@@ -1034,7 +1022,6 @@
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
     [boss setNamePlateTitle:@"Baraghast"];
-    [boss setInfo:@"As his champions fell the dark warlord emerged from deep in the encampment.  Disgusted with the failure of his champions he confronts you and your allies himself."];
     
     [boss addAbility:[Cleave normalCleave]];
     
@@ -1091,7 +1078,6 @@
     CrazedSeer *seer = [[CrazedSeer alloc] initWithHealth:2720000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [seer setTitle:@"Crazed Seer Tyonath"];
     [seer setNamePlateTitle:@"Tyonath"];
-    [seer setInfo:@"Seer Tyonath was tormented and tortured after his capture by the Dark Horde. He guards the secrets to Baraghast's origin in a horrific chamber beneath the encampment."];
     
     ProjectileAttack *fireballAbility = [[[ProjectileAttack alloc] init] autorelease];
     [fireballAbility setSpriteName:@"purple_fireball.png"];
@@ -1132,7 +1118,6 @@
 + (id)defaultBoss {
     GatekeeperDelsarn *boss = [[GatekeeperDelsarn alloc] initWithHealth:2030000 damage:500 targets:1 frequency:2.1 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
-    [boss setInfo:@"Still deeper beneath the encampment you have discovered a portal to Delsarn.  No mortal has ever set foot in this ancient realm of evil and unless you and your allies can dispatch the gatekeeper no mortal ever will."];
     [boss setTitle:@"Gatekeeper of Delsarn"];
     [boss setNamePlateTitle:@"The Gatekeeper"];
     
@@ -1231,7 +1216,6 @@
 }
 + (id)defaultBoss {
     SkeletalDragon *boss = [[SkeletalDragon alloc] initWithHealth:2190000 damage:0 targets:0 frequency:100 choosesMT:NO ];
-    [boss setInfo:@"After slaying countless minor demons upon entering Delsarn your party has encountered a towering Skeletal Dragon."];
     [boss setTitle:@"Skeletal Dragon"];
     
     boss.boneThrowAbility = [[[BoneThrow alloc] init] autorelease];
@@ -1327,7 +1311,6 @@
 + (id)defaultBoss {
     ColossusOfBone *cob = [[ColossusOfBone alloc] initWithHealth:1710000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [cob setTitle:@"Colossus of Bone"];
-    [cob setInfo:@"As the skeletal dragon falls and crashes to the ground you feel a rumbling in the distance.  Before you and your allies can even recover from the encounter with the skeletal dragon you are besieged by a monstrosity."];
     
     FocusedAttack *tankAttack = [[FocusedAttack alloc] initWithDamage:620 andCooldown:2.15];
     [tankAttack setFailureChance:.4];
@@ -1393,7 +1376,6 @@
     OverseerOfDelsarn *boss = [[OverseerOfDelsarn alloc] initWithHealth:2580000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [boss setTitle:@"Overseer of Delsarn"];
     [boss setNamePlateTitle:@"The Overseer"];
-    [boss setInfo:@"After defeating the most powerful and terrible creatures in Delsarn the Overseer of this treacherous realm confronts you himself."];
     
     boss.projectilesAbility = [[[OverseerProjectiles alloc] init] autorelease];
     [boss.projectilesAbility setTitle:@"Bolt of Despair"];
@@ -1483,7 +1465,6 @@
     TheUnspeakable *boss = [[TheUnspeakable alloc] initWithHealth:2900000 damage:0 targets:0 frequency:10.0 choosesMT:NO ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"The Unspeakable"];
-    [boss setInfo:@"As you peel back the blood-sealed door to the inner sanctum of the Delsari citadel you find a horrific room filled with a disgusting mass of bones and rotten corpses.  The room itself seems to be ... alive."];
     
     AbilityDescriptor *slimeDescriptor = [[[AbilityDescriptor alloc] init] autorelease];
     [slimeDescriptor setAbilityDescription:@"As your allies hack their way through the filth beast they become covered in a disgusting slime.  If this slime builds to 5 stacks on any ally that ally will be consumed.  Whenever an ally receives healing from you the slime is removed."];
@@ -1538,7 +1519,6 @@
     BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:3400000 damage:270 targets:1 frequency:2.25 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast Reborn"];
-    [boss setInfo:@"Before you stands the destroyed but risen warchief Baraghast.  His horrible visage once again sows fear in the hearts of all of your allies.  His undead ferocity swells with the ancient and evil power of Delsarn."];
     
     [boss addAbility:[Cleave normalCleave]];
     
@@ -1603,7 +1583,6 @@
     AvatarOfTorment1 *boss = [[AvatarOfTorment1 alloc] initWithHealth:2880000 damage:0 targets:0 frequency:0.0 choosesMT:NO];
     [boss setTitle:@"The Avatar of Torment"];
     [boss setNamePlateTitle:@"Torment"];
-    [boss setInfo:@"From the dark heart of Baraghast's shattered corpse emerges a hideous and cackling demon of unfathomable power. Before you stands a massive creature spawned of pure hatred whose only purpose is torment."];
     
     DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
     [dcAbility setKey:@"dis-cloud"];
@@ -1716,7 +1695,6 @@
     AvatarOfTorment2 *boss = [[AvatarOfTorment2 alloc] initWithHealth:1320000 damage:0 targets:0 frequency:0.0 choosesMT:NO ];
     [boss setTitle:@"The Avatar of Torment"];
     [boss setNamePlateTitle:@"Torment"];
-    [boss setInfo:@"Torment will not be vanquished so easily."];
     
     DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
     [dcAbility setKey:@"dis-cloud"];
@@ -1800,7 +1778,6 @@
     
     [boss setTitle:@"The Soul of Torment"];
     [boss setNamePlateTitle:@"Torment"];
-    [boss setInfo:@"Its body shattered and broken--the last gasp of this terrible creature conspires to unleash its most unspeakable power.  Your allies are bleeding and broken and your souls are exhausted by the strain of endless battle, but the final evil must be vanquished..."];
     
     Attack *attack = [[[Attack alloc] initWithDamage:120 andCooldown:20] autorelease];
     ContagiousEffect *contagious = [[[ContagiousEffect alloc] initWithDuration:10.0 andEffectType:EffectTypeNegative] autorelease];
@@ -1948,7 +1925,6 @@
 +(id)defaultBoss {
     TheEndlessVoid *endlessVoid = [[TheEndlessVoid alloc] initWithHealth:99999999 damage:400 targets:4 frequency:2.0 choosesMT:NO ];
     [endlessVoid setTitle:@"The Endless Void"];
-    [endlessVoid setInfo:@"An immortal foe that can not be vanquished.  Withstand as long as you can."];
     endlessVoid.autoAttack.failureChance = .25;
     
     StackingDamage *damageStacker = [[StackingDamage alloc] init];

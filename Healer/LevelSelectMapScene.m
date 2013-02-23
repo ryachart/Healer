@@ -71,7 +71,7 @@
     Player *basicPlayer = [PlayerDataManager playerFromLocalPlayer];
     [basicPlayer configureForRecommendedSpells:encounter.recommendedSpells withLastUsedSpells:[PlayerDataManager localPlayer].lastUsedSpells];
     
-    if (encounter.boss && basicPlayer && encounter.raid){
+    if (encounter.enemies.count > 0 && basicPlayer && encounter.raid){
         PreBattleScene *pbs = [[[PreBattleScene alloc] initWithEncounter:encounter andPlayer:basicPlayer] autorelease];
         [pbs setLevelNumber:level];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:pbs]];

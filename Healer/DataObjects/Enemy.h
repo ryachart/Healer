@@ -24,17 +24,16 @@
 }
 @property (nonatomic, readwrite) BOOL isMultiplayer;
 @property (nonatomic, readwrite) NSInteger difficulty;
-@property (nonatomic, retain) NSString * info;
 @property (nonatomic, assign) id <Announcer> announcer;
 @property (nonatomic, readwrite) float criticalChance;
-@property (nonatomic, retain) NSString* title;
 @property (nonatomic, assign) id<EventLogger> logger;
 @property (nonatomic, readwrite) NSInteger phase;
-@property (nonatomic, readwrite) NSTimeInterval duration;
 @property (nonatomic, retain) NSMutableArray *abilities;
 @property (nonatomic, retain) NSArray *abilityDescriptors;
 @property (nonatomic, assign) Ability *autoAttack;
+@property (nonatomic, retain) NSString* title;
 @property (nonatomic, retain) NSString *namePlateTitle;
+@property (nonatomic, retain) NSString *spriteName;
 
 @property (nonatomic, readonly) Ability *visibleAbility;
 @property (nonatomic, readonly) BOOL isBusy;

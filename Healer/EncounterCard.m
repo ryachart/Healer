@@ -53,8 +53,8 @@
 - (void)reloadCard {
     Encounter *enc = [Encounter encounterForLevel:self.levelNum isMultiplayer:NO];
     
-    NSString *encTitle = enc.boss.title;
-    NSString *encDesc = enc.boss.info;
+    NSString *encTitle = enc.title;
+    NSString *encDesc = enc.info;
     
     NSInteger score = [[PlayerDataManager localPlayer] scoreForLevel:self.levelNum];
     self.scoreLabel.visible = (self.levelNum != 1 && score > 0);

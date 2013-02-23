@@ -40,7 +40,6 @@
 @property (nonatomic, readwrite) BOOL paused;
 @property (nonatomic, retain) Encounter *encounter;
 @property (nonatomic, readonly) Raid *raid;
-@property (nonatomic, readonly) Enemy *boss;
 @property (nonatomic, readonly) Player *player;
 @property (nonatomic, assign) CCLabelTTFShadow *announcementLabel;
 @property (nonatomic, assign) CCLabelTTF *errAnnouncementLabel;
@@ -48,43 +47,28 @@
 @property (nonatomic, readwrite) NSInteger networkThrottle;
 @property (nonatomic, readwrite) GradientBorderLayer *gradientBorder;
 @property (nonatomic, retain) NSMutableDictionary *playingSoundsDict;
-
--(void)battleBegin;
--(void)showPauseMenu;
-
--(void)handleProjectileEffectMessage:(NSString*)message;
--(void)handleSpellBeginMessage:(NSString*)message fromPlayer:(NSString*)playerID;
 @end
 
 @implementation GamePlayScene
-@synthesize raidView;
-@synthesize spellView1, spellView2, spellView3, spellView4;
-@synthesize bossHealthView, playerEnergyView, playerMoveButton, playerCastBar;
-@synthesize alertStatus;
-@synthesize announcementLabel;
-@synthesize errAnnouncementLabel;
-@synthesize paused;
-@synthesize pauseMenuLayer;
-@synthesize match, isClient, isServer, players, networkThrottle, matchVoiceChat, serverPlayerID;
 
 - (void)dealloc {
-    [spellView1 release];
-    [spellView2 release];
-    [spellView3 release];
-    [spellView4 release];
-    [raidView release];
-    [bossHealthView release];
-    [playerEnergyView release];
-    [playerMoveButton release];
-    [playerCastBar release];
-    [alertStatus release];
-    [serverPlayerID release];
-    [match release];
-    [matchVoiceChat release];
-    [players release];
-    [selectedRaidMembers release];
+    [_spellView1 release];
+    [_spellView2 release];
+    [_spellView3 release];
+    [_spellView4 release];
+    [_raidView release];
+    [_bossHealthView release];
+    [_playerEnergyView release];
+    [_playerMoveButton release];
+    [_playerCastBar release];
+    [_alertStatus release];
+    [_serverPlayerID release];
+    [_match release];
+    [_matchVoiceChat release];
+    [_players release];
+    [_selectedRaidMembers release];
     [_encounter release];
-    [pauseMenuLayer release];
+    [_pauseMenuLayer release];
     [_playingSoundsDict release];
     [super dealloc];
 }
@@ -96,11 +80,6 @@
 - (Raid*)raid
 {
     return self.encounter.raid;
-}
-
-- (Enemy*)boss
-{
-    return (Enemy*)[self.encounter.enemies objectAtIndex:0];
 }
 
 - (id)initWithEncounter:(Encounter*)enc player:(Player*)plyre
@@ -138,9 +117,11 @@
         [self.gradientBorder setOpacity:0];
         [self addChild:self.gradientBorder];
         
-        paused = YES;
-        [self.boss setLogger:self];
-        [self.boss setAnnouncer:self];
+        _paused = YES;
+        for (Enemy *enemy in self.encounter.enemies) {
+            [enemy setLogger:self];
+            [enemy setAnnouncer:self];
+        }
         [self.player setLogger:self];
         [self.player setAnnouncer:self];
         [self.player initializeForCombat];
@@ -233,19 +214,19 @@
             [self.raid addPlayer:player];
         }
         
-        [raidView spawnRects];
+        [self.raidView spawnRects];
         NSArray *raidMembers = [self.raid raidMembers];
-        selectedRaidMembers = [[NSMutableArray alloc] initWithCapacity:5];
+        self.selectedRaidMembers = [[[NSMutableArray alloc] initWithCapacity:5] autorelease];
         for (RaidMember *member in raidMembers)
         {
             [member setLogger:self];
             [member setAnnouncer:self];
-            RaidMemberHealthView *rmhv = [[[RaidMemberHealthView alloc] initWithFrame:[raidView vendNextUsableRect]] autorelease];
+            RaidMemberHealthView *rmhv = [[[RaidMemberHealthView alloc] initWithFrame:[self.raidView vendNextUsableRect]] autorelease];
             [rmhv setMemberData:member];
             [rmhv setInteractionDelegate:(RaidMemberHealthViewDelegate*)self];
-            [raidView addRaidMemberHealthView:rmhv];
+            [self.raidView addRaidMemberHealthView:rmhv];
         }
-        [bossHealthView setBossData:self.boss];
+        [self.bossHealthView setBossData:[self.encounter.enemies objectAtIndex:0]];
         
         //The timer has to be scheduled after all the init is done!
         BasicButton *menuButtonItem = [BasicButton basicButtonWithTarget:self andSelector:@selector(showPauseMenu) andTitle:@"Pause"];
@@ -264,10 +245,10 @@
     if (self.paused == newPaused)
         return;
     
-    paused = newPaused;
+    _paused = newPaused;
     
     if (self.isClient || self.isServer){
-        if (paused == YES){
+        if (_paused == YES){
             return; //Cant pause multiplayerg
         }
     }
@@ -360,7 +341,7 @@
 -(void)battleEndWithSuccess:(BOOL)success{    
     if (success && !(self.isServer || self.isClient) && [NormalModeCompleteScene needsNormalModeCompleteSceneForLevelNumber:self.encounter.levelNumber]){
         //If we just beat the final boss for the first time, show the normal mode complete Scene
-        NormalModeCompleteScene *nmcs = [[[NormalModeCompleteScene alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:NO andDuration:self.boss.duration] autorelease];
+        NormalModeCompleteScene *nmcs = [[[NormalModeCompleteScene alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:NO andDuration:self.encounter.duration] autorelease];
         [self setPaused:YES];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:nmcs]];
         return;
@@ -410,7 +391,7 @@
 }
 
 - (void)transitionToPostBattleWithSuccess:(BOOL)success {
-    PostBattleScene *pbs = [[[PostBattleScene alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer andDuration:self.boss.duration] autorelease];
+    PostBattleScene *pbs = [[[PostBattleScene alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer andDuration:self.encounter.duration] autorelease];
     if (self.isServer || self.isClient){
         [pbs setServerPlayerId:self.serverPlayerID];
         [pbs setMatch:self.match];
@@ -425,23 +406,23 @@
 -(void)thisMemberSelected:(RaidMemberHealthView*)hv
 {
 	if ([[hv memberData] isDead]) return;
-	if ([selectedRaidMembers count] == 0){
-		[selectedRaidMembers addObject:hv];
+	if ([self.selectedRaidMembers count] == 0){
+		[self.selectedRaidMembers addObject:hv];
 		[hv setSelectionState:RaidViewSelectionStateSelected];
 	}
-	else if ([selectedRaidMembers objectAtIndex:0] == hv){
+	else if ([self.selectedRaidMembers objectAtIndex:0] == hv){
 		//Here we do nothing because the already selected object has been reselected
 	}
-	else if ([selectedRaidMembers objectAtIndex:0] != hv){
-		RaidMemberHealthView *currentTarget = [selectedRaidMembers objectAtIndex:0];
+	else if ([self.selectedRaidMembers objectAtIndex:0] != hv){
+		RaidMemberHealthView *currentTarget = [self.selectedRaidMembers objectAtIndex:0];
 		if ([currentTarget isTouched]){
-			[selectedRaidMembers addObject:hv];
+			[self.selectedRaidMembers addObject:hv];
 			[hv setSelectionState:RaidViewSelectionStateAltSelected];
 		}
 		else{
             [currentTarget setSelectionState:RaidViewSelectionStateNone];
-			[selectedRaidMembers removeObjectAtIndex:0];
-			[selectedRaidMembers insertObject:hv atIndex:0];
+			[self.selectedRaidMembers removeObjectAtIndex:0];
+			[self.selectedRaidMembers insertObject:hv atIndex:0];
             [hv setSelectionState:RaidViewSelectionStateSelected];
 		}
 		
@@ -451,8 +432,8 @@
 -(void)thisMemberUnselected:(RaidMemberHealthView*)hv
 {
     if ([[hv memberData] isDead]) return;
-	if (hv != [selectedRaidMembers objectAtIndex:0]){
-		[selectedRaidMembers removeObject:hv];
+	if (hv != [self.selectedRaidMembers objectAtIndex:0]){
+		[self.selectedRaidMembers removeObject:hv];
         [hv setSelectionState:RaidViewSelectionStateNone];
 	}
 	
@@ -464,9 +445,9 @@
         return;
     }
     
-	if ([selectedRaidMembers count] > 0 && [selectedRaidMembers objectAtIndex:0] != nil){
-		NSMutableArray *targets = [NSMutableArray arrayWithCapacity:[selectedRaidMembers count]];
-		for (RaidMemberHealthView *healthView in selectedRaidMembers){
+	if ([self.selectedRaidMembers count] > 0 && [self.selectedRaidMembers objectAtIndex:0] != nil){
+		NSMutableArray *targets = [NSMutableArray arrayWithCapacity:[self.selectedRaidMembers count]];
+		for (RaidMemberHealthView *healthView in self.selectedRaidMembers){
 			[targets addObject:[healthView memberData]];
 		}
         
@@ -483,7 +464,7 @@
                 for (RaidMember *target in targets){
                     [message appendFormat:@"|%@", target.battleID];
                 }
-                [match sendDataToAllPlayers:[message dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+                [self.match sendDataToAllPlayers:[message dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
             }
 		}
 	}
@@ -493,9 +474,9 @@
     if ([[spell spellData] cooldownRemaining] > 0.0){
         return;
     }
-	if ([selectedRaidMembers count] > 0 && [selectedRaidMembers objectAtIndex:0] != nil){
-		NSMutableArray *targets = [NSMutableArray arrayWithCapacity:[selectedRaidMembers count]];
-		for (RaidMemberHealthView *healthView in selectedRaidMembers){
+	if ([self.selectedRaidMembers count] > 0 && [self.selectedRaidMembers objectAtIndex:0] != nil){
+		NSMutableArray *targets = [NSMutableArray arrayWithCapacity:[self.selectedRaidMembers count]];
+		for (RaidMemberHealthView *healthView in self.selectedRaidMembers){
 			[targets addObject:[healthView memberData]];
 		}
 	
@@ -959,6 +940,7 @@
 -(void)gameEvent:(ccTime)deltaT
 {
     BOOL isNetworkUpdate = NO;
+    self.encounter.duration += deltaT;
     self.networkThrottle ++;
     if (self.networkThrottle >= NETWORK_THROTTLE){
         isNetworkUpdate = YES;
@@ -967,8 +949,11 @@
     if (self.isServer || (!self.isServer && !self.isClient)){
         //Only perform the simulation if we are not the server
         //Data Events
-        [self.boss combatUpdateForPlayers:self.players enemies:self.encounter.enemies theRaid:self.encounter.raid gameTime:deltaT];
-        if ([playerMoveButton isMoving]){
+        
+        for (Enemy *enemy in self.encounter.enemies) {
+            [enemy combatUpdateForPlayers:self.players enemies:self.encounter.enemies theRaid:self.encounter.raid gameTime:deltaT];
+        }
+        if ([self.playerMoveButton isMoving]){
             [self.player disableCastingWithReason:CastingDisabledReasonMoving];
         }
         else {
@@ -978,10 +963,11 @@
     
     if (self.isServer){
         if (isNetworkUpdate){
-            [match sendDataToAllPlayers:[[NSString stringWithFormat:@"BOSSHEALTH|%i", self.boss.health] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+            //TODO: Need to handle multiple enemies over the network
+//            [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"BOSSHEALTH|%i", self.boss.health] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
             
             for (RaidMember *member in self.raid.raidMembers){
-                [match sendDataToAllPlayers:[[member asNetworkMessage] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+                [self.match sendDataToAllPlayers:[[member asNetworkMessage] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
             }
         }
     }else{
@@ -1005,11 +991,11 @@
     }
     
 	//Update UI
-	[raidView updateRaidHealthWithPlayer:self.player andTimeDelta:deltaT];
-	[bossHealthView updateHealth];
-	[playerCastBar updateTimeRemaining:[self.player remainingCastTime] ofMaxTime:[[self.player spellBeingCast] castTime] forSpell:[self.player spellBeingCast]];
-	[playerEnergyView updateWithPlayer:self.player];
-	[alertStatus setString:[self.player statusText]];
+	[self.raidView updateRaidHealthWithPlayer:self.player andTimeDelta:deltaT];
+	[self.bossHealthView updateHealth];
+	[self.playerCastBar updateTimeRemaining:[self.player remainingCastTime] ofMaxTime:[[self.player spellBeingCast] castTime] forSpell:[self.player spellBeingCast]];
+	[self.playerEnergyView updateWithPlayer:self.player];
+	[self.alertStatus setString:[self.player statusText]];
 	[self.spellView1 updateUI];
 	[self.spellView2 updateUI];
 	[self.spellView3 updateUI];
@@ -1019,6 +1005,9 @@
 	//Determine if there will be another iteration of the gamestate
     NSArray *raidMembers = [self.raid livingMembers];
     NSInteger survivors = 0;
+    
+    BOOL areAllEnemiesDefeated = YES;
+    
     for (RaidMember *member in raidMembers)
     {
         [member combatUpdateForPlayers:self.players enemies:self.encounter.enemies theRaid:self.encounter.raid gameTime:deltaT];
@@ -1027,12 +1016,17 @@
         }
         
     }
+    
+    for (Enemy *enemy in self.encounter.enemies) {
+        areAllEnemiesDefeated &= enemy.isDead;
+    }
+    
     if (!self.isClient){
         if (survivors == 0)
         {
             [self battleEndWithSuccess:NO];
         }
-        if ([self.boss isDead] || (self.boss.health != self.boss.maximumHealth && DEBUG_AUTO_WIN)){
+        if (areAllEnemiesDefeated || DEBUG_AUTO_WIN){
             [self battleEndWithSuccess:YES];
         }
     }
@@ -1056,13 +1050,13 @@
 }
 
 -(void)setIsClient:(BOOL)isCli forServerPlayerId:(NSString *)srverPid{
-    isClient = isCli;
+    _isClient = isCli;
     self.serverPlayerID = srverPid;
 }
 
 // The match received data sent from the player.
 - (void)match:(GKMatch *)theMatch didReceiveData:(NSData *)data fromPlayer:(NSString *)playerID {    
-    if (match != theMatch) return;
+    if (self.match != theMatch) return;
     
     NSString* message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
@@ -1072,7 +1066,7 @@
             [self battleEndWithSuccess:[[message substringToIndex:10] boolValue]];
         }
         if ([message hasPrefix:@"BOSSHEALTH|"]){
-            self.boss.health = [[message substringFromIndex:11] intValue];
+//            self.boss.health = [[message substringFromIndex:11] intValue];
         }
         
         if ([message hasPrefix:@"PLYR"]){
@@ -1182,7 +1176,7 @@
 
 // The player state changed (eg. connected or disconnected)
 - (void)match:(GKMatch *)theMatch player:(NSString *)playerID didChangeState:(GKPlayerConnectionState)state {   
-    if (match != theMatch) return;
+    if (self.match != theMatch) return;
     
     switch (state) {
         case GKPlayerStateConnected: 
@@ -1202,7 +1196,7 @@
 // The match was unable to connect with the player due to an error.
 - (void)match:(GKMatch *)theMatch connectionWithPlayerFailed:(NSString *)playerID withError:(NSError *)error {
     
-    if (match != theMatch) return;
+    if (self.match != theMatch) return;
     
     NSLog(@"Failed to connect to player with error: %@", error.localizedDescription);
     //[delegate matchEnded];
@@ -1211,7 +1205,7 @@
 // The match was unable to be established with any players due to an error.
 - (void)match:(GKMatch *)theMatch didFailWithError:(NSError *)error {
     
-    if (match != theMatch) return;
+    if (self.match != theMatch) return;
     
     NSLog(@"Match failed with error: %@", error.localizedDescription);
 }

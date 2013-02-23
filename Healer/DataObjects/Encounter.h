@@ -15,13 +15,15 @@
 #define ENDLESS_VOID_ENCOUNTER_NUMBER 992342
 @interface Encounter : NSObject
 @property (nonatomic, retain) Raid *raid;
-@property (nonatomic, readonly) Enemy *boss;
 @property (nonatomic, retain) NSArray *enemies;
 @property (nonatomic, retain) NSArray *requiredSpells;
 @property (nonatomic, retain) NSArray *recommendedSpells;
 @property (nonatomic, readonly) NSInteger levelNumber;
 @property (nonatomic, readwrite) NSInteger difficulty;
 @property (nonatomic, retain) NSMutableArray *combatLog;
+@property (nonatomic, retain) NSString *info;
+@property (nonatomic, retain) NSString *title;
+@property (nonatomic, readwrite) NSTimeInterval duration;
 
 //PostBattle
 @property (nonatomic, readonly) NSInteger reward;
@@ -33,7 +35,7 @@
 //Data Loading
 @property (nonatomic, retain) NSString *bossKey;
 
-- (id)initWithRaid:(Raid*)raid andBoss:(Enemy*)boss andSpells:(NSArray*)spells;
+- (id)initWithRaid:(Raid*)raid enemies:(NSArray*)enemies andSpells:(NSArray*)spells;
 - (void)encounterWillBegin;
 
 - (void)saveCombatLog;

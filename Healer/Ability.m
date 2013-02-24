@@ -1595,6 +1595,7 @@
             self.victim = [raid randomLivingMember];
             Effect *eff = [self.ensuredEffect copy];
             [eff setOwner:self.owner];
+            [eff setSpriteName:self.iconName];
             [self.victim addEffect:[eff autorelease]];
             if (self.isChanneled) {
                 [self startChannel:30.0];

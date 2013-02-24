@@ -670,7 +670,7 @@
     
     AbilityDescriptor *pusExploDesc = [[AbilityDescriptor alloc] init];
     [pusExploDesc setAbilityDescription:@"When your allies deal enough damage to the Plaguebringer Colossus to break off a section of its body the section explodes vile toxin dealing high damage to your raid."];
-    [pusExploDesc setIconName:@"unknown_ability.png"];
+    [pusExploDesc setIconName:@"pus_burst.png"];
     [pusExploDesc setAbilityName:@"Limb Bomb"];
     [boss addAbilityDescriptor:pusExploDesc];
     [pusExploDesc release];
@@ -709,7 +709,7 @@
             [singleTickDot setNumOfTicks:2];
             [singleTickDot setAilmentType:AilmentPoison];
             [singleTickDot setValuePerTick:-(arc4random() % 150 + 200)];
-            [singleTickDot setSpriteName:@"poison.png"];
+            [singleTickDot setSpriteName:@"pus_burst.png"];
             [member addEffect:singleTickDot];
             [singleTickDot release];
         }
@@ -832,7 +832,6 @@
     
     RaidDamageOnDispelStackingRHE *poison = [[[RaidDamageOnDispelStackingRHE alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegative] autorelease];
     [poison setTitle:@"roth_poison"];
-    [poison setSpriteName:@"poison.png"];
     [poison setAilmentType:AilmentPoison];
     [poison setNumOfTicks:20];
     [poison setMaxStacks:50];
@@ -844,6 +843,7 @@
     [eeaa setIsDisabled:YES];
     [eeaa setKey:@"explosive-toxin"];
     [eeaa setTitle:@"Explosive Toxin"];
+    [eeaa setIconName:@"explosive_toxin.png"];
     [eeaa setInfo:@"Teritha fills an ally with an unstable toxin that deals increasing damage to a single target and explodes when the toxin is removed with Purify."];
     [eeaa setEnsuredEffect:poison];
     [boss addAbility:eeaa];

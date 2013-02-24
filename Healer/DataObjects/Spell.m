@@ -466,7 +466,7 @@
     
     BarrierEffect* appliedEffect = [[[BarrierEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositive] autorelease];
     [appliedEffect setTitle:@"barrier-eff"];
-    [appliedEffect setSpriteName:@"blessed_armor.png"];
+    [appliedEffect setSpriteName:bulwark.spriteFrameName];
     [bulwark setAppliedEffect:appliedEffect];
 	return [bulwark autorelease];
 }
@@ -531,7 +531,7 @@
     [rhe setEffectCooldown:2.0];
     [rhe setMaxStacks:1];
     [rhe setVisibilityPriority:49];
-    [rhe setSpriteName:@"regrow.png"];
+    [rhe setSpriteName:orbs.spriteFrameName];
     [rhe setAmountPerReaction:350];
     [orbs setAppliedEffect:rhe];
     [rhe     release];
@@ -555,7 +555,7 @@
     SwirlingLightEffect *sle = [[SwirlingLightEffect alloc] initWithDuration:10 andEffectType:EffectTypePositive];
     [sle setMaxStacks:3];
     [sle setVisibilityPriority:50];
-    [sle setSpriteName:@"swirling_light.png"];
+    [sle setSpriteName:swirl.spriteFrameName];
     [sle setTitle:@"swirling-light-effect"];
     [sle setNumOfTicks:15];
     [sle setValuePerTick:25];
@@ -649,7 +649,7 @@
     WanderingSpirit *ws = [[WanderingSpirit alloc] initWithTitle:@"Wandering Spirit" healAmnt:0 energyCost:90 * kCostEfficiencyScale  castTime:0.0 andCooldown:15.0];
     WanderingSpiritEffect *wse = [[WanderingSpiritEffect alloc] initWithDuration:14.0 andEffectType:EffectTypePositive];
     [wse setTitle:@"wandering-spirit-effect"];
-    [wse setSpriteName:@"wandering_spirit.png"];
+    [wse setSpriteName:ws.spriteFrameName];
     [wse setValuePerTick:240];
     [wse setNumOfTicks:8.0];
     [ws setAppliedEffect:wse];
@@ -706,7 +706,7 @@
     
     TouchOfHopeEffect *tolEffect = [[TouchOfHopeEffect alloc] initWithDuration:4.0 andEffectType:EffectTypePositive];
     [tolEffect setTitle:@"toh-effect"];
-    [tolEffect setSpriteName:@"touch_of_hope.png"];
+    [tolEffect setSpriteName:self.spriteFrameName];
     [tolEffect setValuePerTick:70];
     [tolEffect setNumOfTicks:4];
     [tolEffect setOwner:self.owner];
@@ -760,7 +760,7 @@
     
     IntensifyingRepeatedHealthEffect *fadingLightEffect = [[IntensifyingRepeatedHealthEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositive];
     [fadingLightEffect setTitle:@"fading-light-effect"];
-    [fadingLightEffect setSpriteName:@"fading_light.png"];
+    [fadingLightEffect setSpriteName:fl.spriteFrameName];
     [fadingLightEffect setNumOfTicks:8];
     [fadingLightEffect setIncreasePerTick:-0.25];
     [fadingLightEffect setValuePerTick:400];
@@ -799,7 +799,7 @@
         
         RepeatedHealthEffect *sunburstEffect = [[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
         [sunburstEffect setTitle:@"sunburst-hot"];
-        [sunburstEffect setSpriteName:@"sunburst.png"];
+        [sunburstEffect setSpriteName:self.spriteFrameName];
         [sunburstEffect setNumOfTicks:5];
         [sunburstEffect setValuePerTick:20];
         [sunburstEffect setOwner:self.owner];
@@ -877,7 +877,7 @@
     
     [defaultSpell setDescription:@"Reduces damage done to a target by 25% for 5 seconds.  When the effect ends it heals for a moderate amount."];
     DelayedHealthEffect *bae = [[DelayedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
-    [bae setSpriteName:@"blessed_armor.png"];
+    [bae setSpriteName:defaultSpell.spriteFrameName];
     [bae setTitle:@"blessed-armor-eff"];
     [bae setValue:500];
     [bae setDamageTakenMultiplierAdjustment:-.25];

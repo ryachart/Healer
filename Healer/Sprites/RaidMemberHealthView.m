@@ -29,15 +29,10 @@
 @property (nonatomic, assign) ClippingNode *absorptionClippingNode;
 @property (nonatomic, assign) CCSprite *absorptionMask;
 
-@property (nonatomic, assign) ClippingNode *pEffectClippingNode;
-@property (nonatomic, assign) CCSprite *pEffectDurationBack;
-@property (nonatomic, assign) ClippingNode *nEffectClippingNode;
-@property (nonatomic, assign) CCSprite *nEffectDurationBack;
-
 @property (nonatomic, readwrite) NSInteger lastHealth;
 
-@property (nonatomic, assign) CCLabelTTF *negativeEffectCountLabel;
-@property (nonatomic, assign) CCLabelTTF *positiveEffectCountLabel;
+@property (nonatomic, assign) CCLabelBMFont *negativeEffectCountLabel;
+@property (nonatomic, assign) CCLabelBMFont *positiveEffectCountLabel;
 
 @property (nonatomic, assign) BOOL newNegativeSpriteIsAnimating;
 @property (nonatomic, readwrite) NSInteger lastNegativeEffectsCount;
@@ -93,11 +88,11 @@
         self.absorptionClippingNode = [ClippingNode node];
         self.absorptionMask = [CCSprite spriteWithSpriteFrameName:@"raidframe_fill.png"];
         [self.absorptionMask setAnchorPoint:CGPointZero];
-        [self.absorptionMask setColor:ccc3(0, 100, 200)];
+        [self.absorptionMask setColor:ccc3(0, 70, 140)];
         [self.absorptionMask setOpacity:155];
         [self.absorptionClippingNode setScale:frameScale];
         
-        [self.absorptionClippingNode setPosition:CGPointMake(0, 0)];
+        [self.absorptionClippingNode setPosition:CGPointMake(FILL_INSET_WIDTH, FILL_INSET_HEIGHT)];
         [self.absorptionClippingNode setContentSize:self.absorptionMask.contentSize];
         [self.absorptionClippingNode setAnchorPoint:CGPointZero];
         [self.absorptionClippingNode setClippingRegion:CGRectMake(0, 0, self.absorptionMask.contentSize.width, 0)];
@@ -115,19 +110,28 @@
         [self.healthLabel setShadowColor:ccc3(220, 220, 220)];
         [self.healthLabel setPosition:CGPointMake(frameScale * self.raidFrameTexture.contentSize.width/2, frameScale *self.raidFrameTexture.contentSize.height / 2)];
         
-        self.negativeEffectCountLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(40, 40) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:16.0];
-        [self.negativeEffectCountLabel setPosition:CGPointMake(frameScale * 28, frameScale * 40)];
+        self.negativeEffectCountLabel = [CCLabelBMFont labelWithString:@"" fntFile:@"fonts/trebuchet-stroke-32.fnt" width:80.0f alignment:kCCTextAlignmentCenter];
+        self.negativeEffectCountLabel.scale = .26;
+        [self.negativeEffectCountLabel setPosition:CGPointMake(86, 34)];
         [self addChild:self.negativeEffectCountLabel z:10];
         
-        self.positiveEffectCountLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(40, 40) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:16.0];
-        [self.positiveEffectCountLabel setPosition:CGPointMake(frameScale * 30, frameScale * 5)];
+        self.positiveEffectCountLabel = [CCLabelBMFont labelWithString:@"" fntFile:@"fonts/trebuchet-stroke-32.fnt" width:80.0f alignment:kCCTextAlignmentCenter];
+        self.positiveEffectCountLabel.scale = .26;
+        [self.positiveEffectCountLabel setPosition:CGPointMake(13, 34)];
         [self addChild:self.positiveEffectCountLabel z:10];
     
         [self addChild:self.healthLabel z:9];
         [self addChild:self.isFocusedLabel z:11];
-		_interactionDelegate = nil;
+        
+        self.priorityNegativeEffectSprite = [CCSprite node];
+        [self.priorityNegativeEffectSprite setPosition:CGPointMake(86, 13)];
+        self.priorityNegativeEffectSprite.scale = .16;
+        [self addChild:self.priorityNegativeEffectSprite z:10];
 		
-		_isTouched = NO;
+        self.priorityPositiveEffectSprite = [CCSprite node];
+        [self.priorityPositiveEffectSprite setPosition:CGPointMake(13, 13.5)];
+        self.priorityPositiveEffectSprite.scale = .25;
+        [self addChild:self.priorityPositiveEffectSprite z:10];
     }
     return self;
 }
@@ -212,7 +216,8 @@
 }
 
 - (void)animateNewNegativeSprite {
-    [self.priorityNegativeEffectSprite runAction:[CCSequence actions:[CCScaleTo actionWithDuration:.4 scale:1.6], [CCScaleTo actionWithDuration:.4 scale:1.0], nil]];
+    float currentScale = self.priorityNegativeEffectSprite.scale;
+    [self.priorityNegativeEffectSprite runAction:[CCSequence actions:[CCScaleTo actionWithDuration:.4 scale:currentScale * 1.6], [CCScaleTo actionWithDuration:.4 scale:currentScale], nil]];
 }
 
 #define BLINK_ACTION_TAG 32432
@@ -316,8 +321,6 @@
 
 	}
 	else {
-        [self.nEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.nEffectDurationBack.contentSize.width, 0)];
-        [self.pEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.pEffectDurationBack.contentSize.width, 0)];
 		healthText = @"Dead";
         self.healthLabel.color = ccRED;
         self.healthLabel.shadowColor = ccBLACK;
@@ -341,34 +344,16 @@
 	}
     
     if (positiveEffect && positiveEffect.spriteName && !self.member.isDead){
-        if (!self.priorityPositiveEffectSprite){
-            self.priorityPositiveEffectSprite = [CCSprite spriteWithSpriteFrameName:positiveEffect.spriteName];
-            [self.priorityPositiveEffectSprite setPosition:CGPointMake(26, 26)];
-            [self addChild:self.priorityPositiveEffectSprite z:5];
-        }else{
-            [self.priorityPositiveEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:positiveEffect.spriteName]];
-        }
-        
-        [self.pEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.pEffectDurationBack.contentSize.width, self.pEffectDurationBack.contentSize.height * (1- (positiveEffect.timeApplied/positiveEffect.duration)))];
-        
+        [self.priorityPositiveEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:positiveEffect.spriteName]];
         [self.priorityPositiveEffectSprite setVisible:YES];
     }else{
-        [self.pEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.pEffectDurationBack.contentSize.width, 0)];
         [self.priorityPositiveEffectSprite setVisible:NO];
     }
     
     if (negativeEffect && negativeEffect.spriteName && !self.member.isDead){
-        if (!self.priorityNegativeEffectSprite){
-            self.priorityNegativeEffectSprite = [CCSprite spriteWithSpriteFrameName:negativeEffect.spriteName];
-            [self.priorityNegativeEffectSprite setPosition:CGPointMake(26, 58)];
-            [self addChild:self.priorityNegativeEffectSprite z:5];
-        }else{
-            [self.priorityNegativeEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:negativeEffect.spriteName]];
-        }
-        [self.nEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.nEffectDurationBack.contentSize.width, self.nEffectDurationBack.contentSize.height * (1- (negativeEffect.timeApplied/negativeEffect.duration)))];
+        [self.priorityNegativeEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:negativeEffect.spriteName]];
         [self.priorityNegativeEffectSprite setVisible:YES];
     } else{
-        [self.nEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.nEffectDurationBack.contentSize.width, 0)];
         [self.priorityNegativeEffectSprite setVisible:NO];
     }
     

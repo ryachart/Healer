@@ -58,7 +58,7 @@
     [_spellView4 release];
     [_raidView release];
     [_bossHealthView release];
-    [_playerEnergyView release];
+    [_playerStatusView release];
     [_playerMoveButton release];
     [_playerCastBar release];
     [_alertStatus release];
@@ -102,7 +102,12 @@
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/effect-sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/postbattle.plist"];
         
-        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:[Encounter backgroundPathForEncounter:self.encounter.levelNumber]] autorelease]];
+        
+        BackgroundSprite *bg = [[[BackgroundSprite alloc] initWithJPEGAssetName:[Encounter backgroundPathForEncounter:self.encounter.levelNumber]] autorelease];
+        [bg setPosition:CGPointMake(0, 408)];
+        [self addChild:bg];
+        
+        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"battle_back_main"] autorelease]];
 
         if (self.players.count > 1) {
             for (int i = 1; i < self.players.count; i++){
@@ -129,17 +134,18 @@
         self.players = [NSArray arrayWithObject:self.player];
         
         self.raidView = [[[RaidView alloc] init] autorelease];
-        [self.raidView setPosition:CGPointMake(50, 150)];
-        [self.raidView setContentSize:CGSizeMake(500, 400)];
+        [self.raidView setPosition:CGPointMake(260, 10)];
+        [self.raidView setContentSize:CGSizeMake(500, 320)];
         [self addChild:self.raidView z:RAID_Z];
         
-        self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(180, 646, 884, 80) andBossKey:self.encounter.bossKey] autorelease];
-        [self.bossHealthView setDelegate:self];
+//        self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(180, 646, 884, 80) andBossKey:self.encounter.bossKey] autorelease];
+//        [self.bossHealthView setDelegate:self];
         
-        self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(312,40, 400, 50)] autorelease];
-        self.playerEnergyView = [[[PlayerStatusView alloc] initWithFrame:CGRectMake(804, 485, 200, 50)] autorelease];
+        self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(322,350, 400, 50)] autorelease];
+        self.playerStatusView = [[[PlayerStatusView alloc] initWithFrame:CGRectMake(30, 100, 200, 50)] autorelease];
         
-        self.playerMoveButton = [[[PlayerMoveButton alloc] initWithFrame:CGRectMake(-70, 0, 50, 50)] autorelease];
+        self.playerMoveButton = [[[PlayerMoveButton alloc] init] autorelease];
+        [self.playerMoveButton setPosition:CGPointMake(-280, -310)];
         [self.playerCastBar addChild:self.playerMoveButton];
         
         self.announcementLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
@@ -152,9 +158,9 @@
         [self.errAnnouncementLabel setColor:ccRED];
         [self.errAnnouncementLabel setVisible:NO];
         
-        [self addChild:self.bossHealthView z:RAID_Z+1];
+        //[self addChild:self.bossHealthView z:RAID_Z+1];
         [self addChild:self.playerCastBar];
-        [self addChild:self.playerEnergyView];
+        [self addChild:self.playerStatusView];
         [self addChild:self.announcementLabel z:100 tag:PAUSEABLE_TAG];
         [self addChild:self.errAnnouncementLabel z:98 tag:PAUSEABLE_TAG];
         //CACHE SOUNDS
@@ -162,7 +168,8 @@
         for (int i = 0; i < 4; i++){
             switch (i) {
                 case 0:
-                    self.spellView1 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(910, 370, 100, 100)] autorelease];
+                    self.spellView1 = [[[PlayerSpellButton alloc] init] autorelease];
+                    [self.spellView1 setPosition:CGPointMake(910, 295)];
                     if (self.player.activeSpells.count > i) {
                         Spell *spell = [[self.player activeSpells] objectAtIndex:i];
                         [self preloadSpellAudio:spell];
@@ -173,7 +180,8 @@
                     [self addChild:self.spellView1];
                     break;
                 case 1:
-                    self.spellView2 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(910, 265, 100, 100)] autorelease];
+                    self.spellView2 = [[[PlayerSpellButton alloc] init] autorelease];
+                    [self.spellView2 setPosition:CGPointMake(910, 200)];
                     if (self.player.activeSpells.count > i) {
                         Spell *spell = [[self.player activeSpells] objectAtIndex:i];
                         [self preloadSpellAudio:spell];
@@ -184,7 +192,8 @@
                     [self addChild:self.spellView2];
                     break;
                 case 2:
-                    self.spellView3 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(910, 160, 100, 100)] autorelease];
+                    self.spellView3 = [[[PlayerSpellButton alloc] init] autorelease];
+                    [self.spellView3 setPosition:CGPointMake(910, 105)];
                     if (self.player.activeSpells.count > i) {
                         Spell *spell = [[self.player activeSpells] objectAtIndex:i];
                         [self preloadSpellAudio:spell];
@@ -195,7 +204,8 @@
                     [self addChild:self.spellView3];
                     break;
                 case 3:
-                    self.spellView4 = [[[PlayerSpellButton alloc] initWithFrame:CGRectMake(910, 55, 100, 100)] autorelease];
+                    self.spellView4 = [[[PlayerSpellButton alloc] init] autorelease];
+                    [self.spellView4 setPosition:CGPointMake(910, 10)];
                     if (self.player.activeSpells.count > i) {
                         Spell *spell = [[self.player activeSpells] objectAtIndex:i];
                         [self preloadSpellAudio:spell];
@@ -214,15 +224,14 @@
             [self.raid addPlayer:player];
         }
         
-        [self.raidView spawnRects];
         NSArray *raidMembers = [self.raid raidMembers];
         self.selectedRaidMembers = [[[NSMutableArray alloc] initWithCapacity:5] autorelease];
         for (RaidMember *member in raidMembers)
         {
             [member setLogger:self];
             [member setAnnouncer:self];
-            RaidMemberHealthView *rmhv = [[[RaidMemberHealthView alloc] initWithFrame:[self.raidView vendNextUsableRect]] autorelease];
-            [rmhv setMemberData:member];
+            RaidMemberHealthView *rmhv = [[[RaidMemberHealthView alloc] initWithFrame:[self.raidView nextUsableRect]] autorelease];
+            [rmhv setMember:member];
             [rmhv setInteractionDelegate:(RaidMemberHealthViewDelegate*)self];
             [self.raidView addRaidMemberHealthView:rmhv];
         }
@@ -380,7 +389,7 @@
     [self.spellView4 runAction:[CCFadeOut actionWithDuration:fadeTime]];
     
     [self.playerCastBar runAction:[CCFadeOut actionWithDuration:fadeTime]];
-    [self.playerEnergyView runAction:[CCFadeOut actionWithDuration:fadeTime]];
+    [self.playerStatusView runAction:[CCFadeOut actionWithDuration:fadeTime]];
     
     [self.raidView endBattleWithSuccess:success];
     [self.bossHealthView endBattleWithSuccess:success];
@@ -405,7 +414,7 @@
 
 -(void)thisMemberSelected:(RaidMemberHealthView*)hv
 {
-	if ([[hv memberData] isDead]) return;
+	if ([[hv member] isDead]) return;
 	if ([self.selectedRaidMembers count] == 0){
 		[self.selectedRaidMembers addObject:hv];
 		[hv setSelectionState:RaidViewSelectionStateSelected];
@@ -431,7 +440,7 @@
 
 -(void)thisMemberUnselected:(RaidMemberHealthView*)hv
 {
-    if ([[hv memberData] isDead]) return;
+    if ([[hv member] isDead]) return;
 	if (hv != [self.selectedRaidMembers objectAtIndex:0]){
 		[self.selectedRaidMembers removeObject:hv];
         [hv setSelectionState:RaidViewSelectionStateNone];
@@ -448,7 +457,7 @@
 	if ([self.selectedRaidMembers count] > 0 && [self.selectedRaidMembers objectAtIndex:0] != nil){
 		NSMutableArray *targets = [NSMutableArray arrayWithCapacity:[self.selectedRaidMembers count]];
 		for (RaidMemberHealthView *healthView in self.selectedRaidMembers){
-			[targets addObject:[healthView memberData]];
+			[targets addObject:[healthView member]];
 		}
         
 		if ([[spell spellData] conformsToProtocol:@protocol(Chargable)]){
@@ -477,7 +486,7 @@
 	if ([self.selectedRaidMembers count] > 0 && [self.selectedRaidMembers objectAtIndex:0] != nil){
 		NSMutableArray *targets = [NSMutableArray arrayWithCapacity:[self.selectedRaidMembers count]];
 		for (RaidMemberHealthView *healthView in self.selectedRaidMembers){
-			[targets addObject:[healthView memberData]];
+			[targets addObject:[healthView member]];
 		}
 	
 		if ([[spell spellData] conformsToProtocol:@protocol(Chargable)]){
@@ -603,7 +612,7 @@
     [energyBall setScale:.5];
     [energyBall setPosition:[self.raidView frameCenterForMember:member]];
     [self addChild:energyBall z:0 tag:PAUSEABLE_TAG];
-    [energyBall runAction:[CCSequence actions:[CCJumpTo actionWithDuration:1.5 position:self.playerEnergyView.position height:100 jumps:1],[CCScaleTo actionWithDuration:.33 scale:0.0], [CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
+    [energyBall runAction:[CCSequence actions:[CCJumpTo actionWithDuration:1.5 position:self.playerStatusView.position height:100 jumps:1],[CCScaleTo actionWithDuration:.33 scale:0.0], [CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
 }
 
 - (void)displayArcherAttackFromRaidMember:(RaidMember *)member{
@@ -994,7 +1003,7 @@
 	[self.raidView updateRaidHealthWithPlayer:self.player andTimeDelta:deltaT];
 	[self.bossHealthView updateHealth];
 	[self.playerCastBar updateTimeRemaining:[self.player remainingCastTime] ofMaxTime:[[self.player spellBeingCast] castTime] forSpell:[self.player spellBeingCast]];
-	[self.playerEnergyView updateWithPlayer:self.player];
+	[self.playerStatusView updateWithPlayer:self.player];
 	[self.alertStatus setString:[self.player statusText]];
 	[self.spellView1 updateUI];
 	[self.spellView2 updateUI];
@@ -1026,7 +1035,8 @@
         {
             [self battleEndWithSuccess:NO];
         }
-        if (areAllEnemiesDefeated || DEBUG_AUTO_WIN){
+        Enemy *boss = [self.encounter.enemies objectAtIndex:0];
+        if (areAllEnemiesDefeated || (DEBUG_AUTO_WIN && boss.health != boss.maximumHealth)){
             [self battleEndWithSuccess:YES];
         }
     }

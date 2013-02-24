@@ -680,6 +680,7 @@
     PlaguebringerSicken *sicken = [[[PlaguebringerSicken alloc] init] autorelease];
     [sicken setInfo:@"The Colossus will sicken targets causing them to take damage until they are healed to full health."];
     [sicken setKey:@"sicken"];
+    [sicken setIconName:@"infected_wound.png"];
     [sicken setTitle:@"Sicken"];
     [sicken setActivationTime:2.5];
     [sicken setAbilityValue:100];

@@ -20,12 +20,11 @@ typedef enum {
 @class RaidMemberHealthViewDelegate;
 
 @interface RaidMemberHealthView : CCLayer <CCRGBAProtocol>
-@property (nonatomic, assign, setter=setMemberData:) HealableTarget* memberData;
+@property (nonatomic, assign) RaidMember* member;
 @property (nonatomic, retain) CCLabelTTFShadow *healthLabel;
 @property (nonatomic, assign) RaidMemberHealthViewDelegate *interactionDelegate;
 @property (nonatomic) BOOL isTouched;
 @property (nonatomic, readwrite) RaidViewSelectionState selectionState;
--(void)setMemberData:(HealableTarget*)rdMember;
 
 -(void)updateHealthForInterval:(ccTime)time;
 -(id)initWithFrame:(CGRect)frame;

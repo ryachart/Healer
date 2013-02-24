@@ -8,6 +8,7 @@
 
 #import "PlayerSpellButton.h"
 #import "Player.h"
+#import "CCLabelTTFShadow.h"
 
 
 @interface PlayerSpellButton ()
@@ -15,38 +16,48 @@
 @property (nonatomic, assign) CCLayerColor *oomLayer;
 @property (nonatomic, assign) CCSprite *spellIconSprite;
 @property (nonatomic, assign) CCSprite *pressedSprite;
+@property (nonatomic, assign) CCLabelTTFShadow *spellTitle;
 @end
 
 @implementation PlayerSpellButton
 
-- (id)initWithFrame:(CGRect)frame{
+- (id)init{
     if (self = [super init]) {
-        self.position = frame.origin;
-        self.contentSize = frame.size;
         self.isTouchEnabled = YES;
         // Initialization code
         
+        float frameScale = .9;
+        
         CCSprite *iconSlotBorder = [CCSprite spriteWithSpriteFrameName:@"spell_icon_back.png"];
         [iconSlotBorder setAnchorPoint:CGPointZero];
+        [iconSlotBorder setScale:frameScale];
         [self addChild:iconSlotBorder];
+        
+        self.contentSize = iconSlotBorder.contentSize;
         
         self.spellIconSprite = [CCSprite node];
         [self.spellIconSprite setAnchorPoint:CGPointZero];
+        [self.spellIconSprite setScale:.9];
         [self addChild:self.spellIconSprite];
         
         self.pressedSprite = [CCSprite spriteWithSpriteFrameName:@"spell-down-mask.png"];
         [self.pressedSprite setAnchorPoint:CGPointZero];
         [self.pressedSprite setVisible:NO];
+        [self.pressedSprite setScale:.9];
         [self addChild:self.pressedSprite];
         
         self.cooldownCountLayer = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 175)];
-        [self.cooldownCountLayer setContentSize:frame.size];
+        [self.cooldownCountLayer setAnchorPoint:CGPointZero];
+        [self.cooldownCountLayer setContentSize:self.contentSize];
         [self.cooldownCountLayer setVisible:NO];
+        [self.cooldownCountLayer setScale:.9];
         [self addChild:self.cooldownCountLayer z:10];
         
         self.oomLayer = [CCLayerColor layerWithColor:ccc4(255, 0, 0, 120)];
-        [self.oomLayer setContentSize:CGSizeMake(self.contentSize.width, self.contentSize.height)];
+        [self.oomLayer setAnchorPoint:CGPointZero];
+        [self.oomLayer setContentSize:self.contentSize];
         [self.oomLayer setVisible:NO];
+        [self.oomLayer setScale:.9];
         [self addChild:self.oomLayer z:11];        
     }
     return self;
@@ -55,22 +66,18 @@
 - (void)configureLabels
 {
     [self.spellTitle removeFromParentAndCleanup:YES];
-    [self.spellTitleShadow removeFromParentAndCleanup:YES];
     
     CGFloat fontSize = 18.0f;
     CGFloat contentSizeDivisor = 4.5;
     if ([self.spellData title].length > 8) {
         contentSizeDivisor = 2.0;
     }
-    self.spellTitle = [[[CCLabelTTF alloc] initWithString:[self.spellData title] dimensions:CGSizeMake(self.contentSize.width, self.contentSize.height / contentSizeDivisor) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Bold" fontSize:fontSize] autorelease];
-    [self.spellTitle setPosition:CGPointMake(50, 15)];
+    self.spellTitle = [[[CCLabelTTFShadow alloc] initWithString:[self.spellData title] dimensions:CGSizeMake(self.contentSize.width, self.contentSize.height / contentSizeDivisor) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Bold" fontSize:fontSize] autorelease];
+    [self.spellTitle setShadowColor:ccc3(200, 200, 200)];
+    [self.spellTitle setPosition:CGPointMake(50 * .9, 15 * .9)];
+    [self.spellTitle setShadowOffset:CGPointMake(-1, -1)];
     [self.spellTitle setColor:ccc3(25, 25, 25)];
     [self addChild:self.spellTitle z:9];
-    
-    self.spellTitleShadow = [[[CCLabelTTF alloc] initWithString:[self.spellData title] dimensions:CGSizeMake(self.contentSize.width, self.contentSize.height / contentSizeDivisor) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Bold" fontSize:fontSize] autorelease];
-    [self.spellTitleShadow setPosition:CGPointMake(49, 14)];
-    [self.spellTitleShadow setColor:ccc3(200, 200, 200)];
-    [self addChild:self.spellTitleShadow z:8];
     
 }
 

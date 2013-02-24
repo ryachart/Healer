@@ -38,6 +38,7 @@ typedef enum {
 @property (nonatomic, readwrite) float criticalChance;
 @property (nonatomic, readonly) Positioning positioning;
 @property (nonatomic, assign) id<Announcer>announcer;
+@property (nonatomic, readwrite) ccColor3B classColor;
 
 - (float)dps;
 - (id)initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position;

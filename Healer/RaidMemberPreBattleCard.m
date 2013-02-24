@@ -15,9 +15,8 @@
 
 
 @implementation RaidMemberPreBattleCard
-@synthesize count, raidMember;
 - (void)dealloc {
-    [raidMember release];
+    [_raidMember release];
     [super dealloc];
 }
 
@@ -38,20 +37,20 @@
         [classNameLabel setPosition:ccp(78, 48)];
         [self addChild:classNameLabel];
         
-        CCLabelTTF *healthLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i HP", raidMember.maximumHealth] dimensions:CGSizeMake(120, 25) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0f];
+        CCLabelTTF *healthLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i HP", self.raidMember.maximumHealth] dimensions:CGSizeMake(120, 25) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0f];
         [healthLabel setPosition:ccp(98, 28)];
         [self addChild:healthLabel];
         
-        CCLabelTTF *DPSLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i DPS", (int)raidMember.dps] dimensions:CGSizeMake(120, 25) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
+        CCLabelTTF *DPSLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i DPS", (int)self.raidMember.dps] dimensions:CGSizeMake(120, 25) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
         [DPSLabel setPosition:ccp(98, 12)];
         [self addChild:DPSLabel];
         
         NSString* classIconSpriteFrameName = [NSString stringWithFormat:@"class_icon_%@.png", [member title].lowercaseString];
         CCSprite *classIcon = [CCSprite spriteWithSpriteFrameName:classIconSpriteFrameName];
-        [classIcon setPosition:ccp(-12, 54)];
+        [classIcon setPosition:ccp(18, 34)];
         [self addChild:classIcon];
         
-        CCLabelTTF *countLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"x%i", count] dimensions:CGSizeMake(50, 50) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:16.0f];
+        CCLabelTTF *countLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"x%i", self.count] dimensions:CGSizeMake(50, 50) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:16.0f];
         [countLabel setPosition:ccp(206, 38)];
         [self addChild:countLabel];
     }

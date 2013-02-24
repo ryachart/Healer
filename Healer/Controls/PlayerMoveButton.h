@@ -11,5 +11,5 @@
 
 @interface PlayerMoveButton : CCLayer <CCRGBAProtocol>
 @property (nonatomic, readwrite) BOOL isMoving;
-- (id)initWithFrame:(CGRect)frame;
+
 @end

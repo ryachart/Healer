@@ -1814,7 +1814,7 @@
         [infectedWound setAilmentType:AilmentTrauma];
         [infectedWound setValuePerTick:-self.abilityValue];
         [infectedWound setNumOfTicks:15];
-        [infectedWound setSpriteName:@"bleeding.png"];
+        [infectedWound setSpriteName:self.iconName];
         if (target.health > target.maximumHealth * .58){
             // Spike the health for funsies!
             NSInteger preHealth = target.health;

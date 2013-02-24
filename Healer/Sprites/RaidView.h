@@ -16,9 +16,7 @@
  */
 
 @class RaidMemberHealthView;
-@interface RaidView : CCLayer {
-	NSInteger nextRectToUse;
-}
+@interface RaidView : CCLayer
 @property (nonatomic, retain) NSMutableArray *rectsToUse;
 @property (nonatomic, retain) NSMutableArray *raidViews;
 
@@ -28,8 +26,7 @@
 -(CGPoint)frameCenterForMember:(RaidMember*)raidMember;
 -(RaidMemberHealthView*)healthViewForMember:(RaidMember*)raidMember;
 -(CGPoint)randomMissedProjectileDestination;
--(void)spawnRects;
--(CGRect)vendNextUsableRect;
+-(CGRect)nextUsableRect;
 
 -(void)updateRaidHealthWithPlayer:(Player*)player andTimeDelta:(ccTime)delta;
 

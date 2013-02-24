@@ -10,6 +10,9 @@
 #import "ClippingNode.h"
 
 #define HEALTH_BAR_BORDER 6
+#define FRAME_SCALE .6
+#define FILL_INSET_WIDTH 2 * FRAME_SCALE
+#define FILL_INSET_HEIGHT 2 * FRAME_SCALE
 
 @interface RaidMemberHealthView ()
 @property (nonatomic, assign) CCLabelTTFShadow *isFocusedLabel;
@@ -21,7 +24,7 @@
 @property (nonatomic, assign) CCSprite *raidFrameTexture;
 @property (nonatomic, assign) CCSprite *healthBarMask;
 @property (nonatomic, assign) CCSprite *selectionSprite;
-@property (nonatomic, assign) CCSprite *classIconSprite;
+@property (nonatomic, assign) CCSprite *classIcon;
 
 @property (nonatomic, assign) ClippingNode *absorptionClippingNode;
 @property (nonatomic, assign) CCSprite *absorptionMask;
@@ -32,7 +35,6 @@
 @property (nonatomic, assign) CCSprite *nEffectDurationBack;
 
 @property (nonatomic, readwrite) NSInteger lastHealth;
-@property (nonatomic, assign) CCSprite *shieldBubble;
 
 @property (nonatomic, assign) CCLabelTTF *negativeEffectCountLabel;
 @property (nonatomic, assign) CCLabelTTF *positiveEffectCountLabel;
@@ -60,18 +62,28 @@
         
         self.lastHealth = 0;
         
-        self.selectionSprite = [CCSprite spriteWithSpriteFrameName:@"raid_frame_selection.png"];
+        float frameScale = FRAME_SCALE;
+        
+        self.raidFrameTexture = [CCSprite spriteWithSpriteFrameName:@"raidframe_back.png"];
+        [self.raidFrameTexture setAnchorPoint:CGPointZero];
+        [self addChild:self.raidFrameTexture];
+        [self.raidFrameTexture setScale:frameScale];
+        
+        self.selectionSprite = [CCSprite spriteWithSpriteFrameName:@"raidframe_selected.png"];
         self.selectionSprite.anchorPoint = CGPointZero;
-        [self addChild:self.selectionSprite];
+        [self addChild:self.selectionSprite z:8];
         self.selectionSprite.visible = NO;
+        [self.selectionSprite setScale:frameScale];
+        [self.selectionSprite setPosition:CGPointMake(FILL_INSET_WIDTH, FILL_INSET_HEIGHT)];
         
         self.healthBarClippingNode = [ClippingNode node];
-        self.healthBarMask = [CCSprite spriteWithSpriteFrameName:@"raid_frame_bar_mask.png"];
+        self.healthBarMask = [CCSprite spriteWithSpriteFrameName:@"raidframe_fill.png"];
         [self.healthBarMask setAnchorPoint:CGPointZero];
         self.healthBarMask.position = CGPointMake(0, 0);
         [self.healthBarMask setColor:ccGREEN];
-        
-        [self.healthBarClippingNode setPosition:CGPointMake(0, 9)];
+        [self.healthBarClippingNode setScale:frameScale];
+
+        [self.healthBarClippingNode setPosition:CGPointMake(FILL_INSET_WIDTH, FILL_INSET_HEIGHT)];
         [self.healthBarClippingNode setContentSize:self.healthBarMask.contentSize];
         [self.healthBarClippingNode setAnchorPoint:CGPointZero];
         [self.healthBarClippingNode setClippingRegion:CGRectMake(0, 0, self.healthBarMask.contentSize.width, self.healthBarMask.contentSize.height)];
@@ -79,70 +91,40 @@
         [self addChild:self.healthBarClippingNode];
         
         self.absorptionClippingNode = [ClippingNode node];
-        self.absorptionMask = [CCSprite spriteWithSpriteFrameName:@"raid_frame_bar_mask.png"];
+        self.absorptionMask = [CCSprite spriteWithSpriteFrameName:@"raidframe_fill.png"];
         [self.absorptionMask setAnchorPoint:CGPointZero];
-        self.absorptionMask.position = CGPointMake(0, -self.absorptionMask.contentSize.height);
         [self.absorptionMask setColor:ccc3(0, 100, 200)];
         [self.absorptionMask setOpacity:155];
+        [self.absorptionClippingNode setScale:frameScale];
         
-        [self.absorptionClippingNode setPosition:CGPointMake(0, 8)];
+        [self.absorptionClippingNode setPosition:CGPointMake(0, 0)];
         [self.absorptionClippingNode setContentSize:self.absorptionMask.contentSize];
         [self.absorptionClippingNode setAnchorPoint:CGPointZero];
-        [self.absorptionClippingNode setClippingRegion:CGRectMake(0, 0, self.absorptionMask.contentSize.width, self.absorptionMask.contentSize.height)];
+        [self.absorptionClippingNode setClippingRegion:CGRectMake(0, 0, self.absorptionMask.contentSize.width, 0)];
         [self.absorptionClippingNode addChild:self.absorptionMask];
         [self addChild:self.absorptionClippingNode];
         
-        self.raidFrameTexture = [CCSprite spriteWithSpriteFrameName:@"raid_frame.png"];
-        [self.raidFrameTexture setAnchorPoint:CGPointZero];
-        [self addChild:self.raidFrameTexture z:5];
-        
-        self.isFocusedLabel = [CCLabelTTFShadow labelWithString:@"" fontName:@"Marion-Bold" fontSize:15.0];
-        [self.isFocusedLabel setPosition:CGPointMake(50, 64)];
+        self.isFocusedLabel = [CCLabelTTFShadow labelWithString:@"" fontName:@"Marion-Bold" fontSize:18.0f];
+        [self.isFocusedLabel setPosition:CGPointMake(frameScale *self.raidFrameTexture.contentSize.width / 2, frameScale *self.raidFrameTexture.contentSize.height - 14.0)];
         [self.isFocusedLabel setColor:ccc3(220, 0, 0)];
         [self.isFocusedLabel setShadowOffset:CGPointMake(-1, -1)];
         
-		self.healthLabel =  [CCLabelTTFShadow labelWithString:@"" fontName:@"TrebuchetMS-Bold" fontSize:12.0f];
+		self.healthLabel =  [CCLabelTTFShadow labelWithString:@"" fontName:@"TrebuchetMS-Bold" fontSize:16.0f];
         [self.healthLabel setColor:ccBLACK];
-        [self.healthLabel setShadowOffset:CGPointMake(-1, -1)];
+        [self.healthLabel setShadowOffset:CGPointMake(-.8, -.8)];
         [self.healthLabel setShadowColor:ccc3(220, 220, 220)];
-        [self.healthLabel setPosition:CGPointMake(frame.size.width * .71, frame.size.height * .5)];
-        [self.healthLabel setContentSize:CGSizeMake(frame.size.width * .5, frame.size.height * .25)];
+        [self.healthLabel setPosition:CGPointMake(frameScale * self.raidFrameTexture.contentSize.width/2, frameScale *self.raidFrameTexture.contentSize.height / 2)];
         
-        self.pEffectClippingNode = [ClippingNode node];
-        self.pEffectDurationBack = [CCSprite spriteWithSpriteFrameName:@"effect_bottom_mask.png"];
-        [self.pEffectDurationBack setOpacity:70];
-        [self.pEffectDurationBack setColor:ccGREEN];
-        self.pEffectDurationBack.anchorPoint = CGPointMake(0, 0);
-        self.pEffectClippingNode.clippingRegion = CGRectMake(0,0,self.pEffectDurationBack.contentSize.width, 0);
-        [self.pEffectClippingNode setPosition:CGPointMake(8, 9)];
-        [self.pEffectClippingNode addChild:self.pEffectDurationBack];
-        [self addChild:self.pEffectClippingNode z:5];
-        
-        self.nEffectClippingNode = [ClippingNode node];
-        self.nEffectDurationBack = [CCSprite spriteWithSpriteFrameName:@"effect_top_mask.png"];
-        [self.nEffectDurationBack setOpacity:70];
-        [self.nEffectDurationBack setColor:ccRED];
-        self.nEffectDurationBack.anchorPoint = CGPointMake(0, 0);
-        self.nEffectClippingNode.clippingRegion = CGRectMake(0,0,self.nEffectDurationBack.contentSize.width, 0);
-        [self.nEffectClippingNode setPosition:CGPointMake(8, 44)];
-        [self.nEffectClippingNode addChild:self.nEffectDurationBack];
-        [self addChild:self.nEffectClippingNode z:5];
-        
-        self.negativeEffectCountLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(40, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
-        [self.negativeEffectCountLabel setPosition:CGPointMake(28, 40)];
+        self.negativeEffectCountLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(40, 40) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:16.0];
+        [self.negativeEffectCountLabel setPosition:CGPointMake(frameScale * 28, frameScale * 40)];
         [self addChild:self.negativeEffectCountLabel z:10];
         
-        self.positiveEffectCountLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(40, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:16.0];
-        [self.positiveEffectCountLabel setPosition:CGPointMake(30, 5)];
+        self.positiveEffectCountLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(40, 40) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:16.0];
+        [self.positiveEffectCountLabel setPosition:CGPointMake(frameScale * 30, frameScale * 5)];
         [self addChild:self.positiveEffectCountLabel z:10];
-        
-        self.shieldBubble = [CCSprite spriteWithSpriteFrameName:@"shield_bubble.png"];
-        [self.shieldBubble setVisible:NO];
-        [self.shieldBubble setPosition:ccp(frame.size.width * .5,frame.size.height * .5)];
     
         [self addChild:self.healthLabel z:9];
         [self addChild:self.isFocusedLabel z:11];
-        [self addChild:self.shieldBubble z:100]; //Above all else!
 		_interactionDelegate = nil;
 		
 		_isTouched = NO;
@@ -150,53 +132,41 @@
     return self;
 }
 
--(void)setShieldedOn:(BOOL)isOn{
-    return;
-    if (isOn && !self.shieldBubble.visible){
-        self.shieldBubble.scale = 0.0;
-        self.shieldBubble.visible = YES;
-        [self.shieldBubble setOpacity:255];
-        [self.shieldBubble stopAllActions];
-        [self.shieldBubble runAction:[CCSequence actions:[CCEaseBackOut actionWithAction:[CCScaleTo actionWithDuration:.33 scale:1.0]], nil]];
-        //Present
-    }else if (self.shieldBubble.visible && !isOn){
-        //Dismiss
-        [self.shieldBubble setVisible:NO];
-    }
-}
-
 -(ccColor3B)colorForPercentage:(float)percentage{
     if (percentage > .800){
-        return ccGREEN;
+        return ccc3(0, 225, 0);
     }
     
     if (percentage > .600){
-        return ccYELLOW;
+        return ccc3(225, 225, 0);
     }
     
     if (percentage > .300){
-        return ccORANGE;
+        return ccc3(225, 115, 0);
     }
     
     if (percentage > 0.0){
-        return ccc3(255, 75, 0);
+        return ccc3(210, 50, 0);
     }
     return ccRED;
 }
 
--(void)setMemberData:(RaidMember*)rdMember
+- (CCSprite *)classIcon
 {
-	_memberData = rdMember;
-	self.lastHealth = _memberData.health;
-    
-    NSString* classIconSpriteFrameName = [NSString stringWithFormat:@"class_icon_%@.png", [rdMember title].lowercaseString];
-    if (!self.classIconSprite){
-        self.classIconSprite = [CCSprite spriteWithSpriteFrameName:classIconSpriteFrameName];
-        [self.classIconSprite setPosition:CGPointMake(52, 40)];
-        [self addChild:self.classIconSprite z:15];
-    } else{
-        [self.classIconSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:classIconSpriteFrameName]];
+    if (!_classIcon){
+        NSString* classIconSpriteFrameName = [NSString stringWithFormat:@"class_icon_%@.png", [self.member title].lowercaseString];
+        _classIcon = [CCSprite spriteWithSpriteFrameName:classIconSpriteFrameName];
     }
+    return _classIcon;
+}
+
+- (void)setMember:(RaidMember *)rdMember
+{
+	_member = rdMember;
+	self.lastHealth = _member.health;
+    
+    [self.classIcon setPosition:CGPointMake(self.contentSize.width / 2, 8)];
+    [self addChild:self.classIcon z:9];
 }
 
 -(void)onEnter{
@@ -248,19 +218,13 @@
 #define BLINK_ACTION_TAG 32432
 -(void)updateHealthForInterval:(ccTime)timeDelta
 {
-    NSInteger healthDelta = abs(self.memberData.health - self.lastHealth);
-    float deltaPercentage = healthDelta / (float)self.memberData.maximumHealth;
+    NSInteger healthDelta = abs(self.member.health - self.lastHealth);
     
     switch (self.selectionState) {
         case RaidViewSelectionStateNone:
             self.selectionSprite.visible = NO;
             break;
         case RaidViewSelectionStateSelected:
-            [self.selectionSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"raid_frame_selection.png"]];
-            self.selectionSprite.visible = YES;
-            break;
-        case RaidViewSelectionStateAltSelected:
-            [self.selectionSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"raid_frame_alt_selection.png"]];
             self.selectionSprite.visible = YES;
             break;
         default:
@@ -271,10 +235,10 @@
         self.alertTextCooldown -= timeDelta;
     }
     
-    if (self.alertTextCooldown <= 0.0 && self.memberData && self.memberData.health < self.lastHealth){
-        int damage = self.lastHealth - self.memberData.health;
+    if (self.alertTextCooldown <= 0.0 && self.member && self.member.health < self.lastHealth){
+        int damage = self.lastHealth - self.member.health;
         
-        if ((float)damage / self.memberData.maximumHealth >= .33){
+        if ((float)damage / self.member.maximumHealth >= .33){
             NSString* sctString = nil;
             NSInteger roll = arc4random() % 5;
             switch (roll) {
@@ -300,8 +264,8 @@
             self.alertTextCooldown += 2.0;
         }
         
-        if ((float)self.memberData.health / self.memberData.maximumHealth <= .25){
-            if (self.memberData.health != 0){
+        if ((float)self.member.health / self.member.maximumHealth <= .25){
+            if (self.member.health != 0){
                 NSInteger roll = arc4random() % 4;
                 NSString *sctString = nil;
                 switch (roll) {
@@ -328,7 +292,7 @@
         }
     }
     
-    if (self.memberData.isFocused && !self.memberData.isDead){
+    if (self.member.isFocused && !self.member.isDead){
         if (![self.isFocusedLabel.string isEqualToString:@"FOCUSED"]) {
             [self.isFocusedLabel runAction:[CCSequence actionOne:[CCScaleTo actionWithDuration:.5 scale:1.2] two:[CCScaleTo actionWithDuration:.5 scale:1.0]]];
         }
@@ -336,33 +300,34 @@
     }else{
         [self.isFocusedLabel setString:@""];
     }
-    self.lastHealth = self.memberData.health;
+    self.lastHealth = self.member.health;
 	NSString *healthText;
-	if (self.memberData.health >= 1){
-        float totalTime = .33;
-		healthText = [NSString stringWithFormat:@"%3.0f%%", (((float)self.memberData.health) / self.memberData.maximumHealth)*100];
+	if (self.member.health >= 1){
+		healthText = [NSString stringWithFormat:@"%3.0f%%", (((float)self.member.health) / self.member.maximumHealth)*100];
         if (healthDelta != 0) {
             [self.healthBarMask stopAllActions];
-            [self.healthBarMask runAction:[CCMoveTo actionWithDuration:totalTime * deltaPercentage position:CGPointMake(0, -(self.healthBarMask.contentSize.height) * (1 - self.memberData.healthPercentage))]];
+            [self.healthBarClippingNode setClippingRegion:CGRectMake(0, 0,self.healthBarMask.contentSize.width , self.healthBarMask.contentSize.height * self.member.healthPercentage)];
         }
-        ccColor3B colorForPerc = [self colorForPercentage:(((float)self.memberData.health) / self.memberData.maximumHealth)];
+        ccColor3B colorForPerc = [self colorForPercentage:(((float)self.member.health) / self.member.maximumHealth)];
         [self.healthBarMask setColor:colorForPerc];
         
-        float absorbPercentage = self.memberData.absorb / (float)self.memberData.maximumHealth;
-        self.absorptionMask.position = CGPointMake(0, -(self.absorptionMask.contentSize.height) * (1 - absorbPercentage));
+        float absorbPercentage = self.member.absorb / (float)self.member.maximumHealth;
+        [self.absorptionClippingNode setClippingRegion:CGRectMake(0, 0,self.healthBarMask.contentSize.width , self.healthBarMask.contentSize.height * absorbPercentage)];
 
 	}
 	else {
         [self.nEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.nEffectDurationBack.contentSize.width, 0)];
         [self.pEffectClippingNode setClippingRegion:CGRectMake(0, 0, self.pEffectDurationBack.contentSize.width, 0)];
 		healthText = @"Dead";
-        [self.raidFrameTexture setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"raid_frame_dead.png"]];
+        self.healthLabel.color = ccRED;
+        self.healthLabel.shadowColor = ccBLACK;
+        [self.healthBarClippingNode setClippingRegion:CGRectMake(0, 0,self.healthBarMask.contentSize.width , 0)];
 	}
 	
     Effect *negativeEffect = nil;
     Effect *positiveEffect = nil;
     
-	for (Effect *eff in self.memberData.activeEffects){
+	for (Effect *eff in self.member.activeEffects){
         if ([eff effectType] == EffectTypePositive){
             if (!positiveEffect || eff.visibilityPriority > positiveEffect.visibilityPriority) {
                 positiveEffect = eff;
@@ -375,7 +340,7 @@
         }
 	}
     
-    if (positiveEffect && positiveEffect.spriteName && !self.memberData.isDead){
+    if (positiveEffect && positiveEffect.spriteName && !self.member.isDead){
         if (!self.priorityPositiveEffectSprite){
             self.priorityPositiveEffectSprite = [CCSprite spriteWithSpriteFrameName:positiveEffect.spriteName];
             [self.priorityPositiveEffectSprite setPosition:CGPointMake(26, 26)];
@@ -392,7 +357,7 @@
         [self.priorityPositiveEffectSprite setVisible:NO];
     }
     
-    if (negativeEffect && negativeEffect.spriteName && !self.memberData.isDead){
+    if (negativeEffect && negativeEffect.spriteName && !self.member.isDead){
         if (!self.priorityNegativeEffectSprite){
             self.priorityNegativeEffectSprite = [CCSprite spriteWithSpriteFrameName:negativeEffect.spriteName];
             [self.priorityNegativeEffectSprite setPosition:CGPointMake(26, 58)];
@@ -407,7 +372,7 @@
         [self.priorityNegativeEffectSprite setVisible:NO];
     }
     
-    NSInteger positiveEffectCount = [self.memberData effectCountOfType:EffectTypePositive];
+    NSInteger positiveEffectCount = [self.member effectCountOfType:EffectTypePositive];
     if (positiveEffectCount > 1){
         self.positiveEffectCountLabel.string = [NSString stringWithFormat:@"%i", positiveEffectCount];
     }else {
@@ -415,7 +380,7 @@
     }
     
     
-    NSInteger negativeEffectCount = [self.memberData effectCountOfType:EffectTypeNegative];
+    NSInteger negativeEffectCount = [self.member effectCountOfType:EffectTypeNegative];
     if (negativeEffectCount > 1){
         self.negativeEffectCountLabel.string = [NSString stringWithFormat:@"%i", negativeEffectCount];
     }else {
@@ -463,7 +428,7 @@
 }
 
 - (void)triggerConfusion {
-    if (!self.confusionTriggered && self.selectionState != RaidViewSelectionStateSelected && !self.memberData.isDead){
+    if (!self.confusionTriggered && self.selectionState != RaidViewSelectionStateSelected && !self.member.isDead){
         self.confusionTriggered = YES;
         
         float transitionDuration = 1.25;

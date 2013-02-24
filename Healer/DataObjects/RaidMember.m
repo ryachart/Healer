@@ -23,6 +23,11 @@
     [super dealloc];
 }
 
+- (ccColor3B)classColor
+{
+    return ccWHITE;
+}
+
 -(id)initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position
 {
     if (self = [super init]){
@@ -155,6 +160,11 @@
 @end
 
 @implementation  Guardian
+- (ccColor3B)classColor
+{
+    return ccc3(255,207,91);
+}
+
 +(Guardian*)defaultGuardian{
     return [[[Guardian alloc] init] autorelease];
 }
@@ -181,6 +191,11 @@
 
 
 @implementation Berserker
+- (ccColor3B)classColor
+{
+    return ccc3(255,70,70);
+}
+
 +(Berserker*)defaultBerserker{
     return [[[Berserker alloc] init] autorelease];
 }
@@ -200,6 +215,10 @@
 @end
 
 @implementation  Archer
+- (ccColor3B)classColor
+{
+    return ccc3(29,167,18);
+}
 +(Archer*)defaultArcher{
     return [[[Archer alloc] init] autorelease];
 }
@@ -215,9 +234,15 @@
 @end
 
 @implementation Champion
+- (ccColor3B)classColor
+{
+    return ccc3(240,255,0);
+}
+
 +(Champion*)defaultChampion{
     return [[[Champion alloc] init] autorelease];
 }
+
 -(id)init{
     if (self = [super initWithHealth:1246 damageDealt:664 andDmgFrequency:2.5 andPositioning:Melee]){
         self.title = @"Champion";
@@ -288,13 +313,23 @@
     }
     
 }
+- (ccColor3B)classColor
+{
+    return ccc3(0,96,255);
+}
 @end
 
 @implementation Warlock
 +(Warlock*)defaultWarlock{
     return [[[Warlock alloc] init] autorelease];
 }
--(id)init{
+
+- (ccColor3B)classColor
+{
+    return ccc3(161,33,220);
+}
+
+- (id)init{
     if (self = [super initWithHealth:1142 damageDealt:521 andDmgFrequency:2.0 andPositioning:Ranged]){
         self.title = @"Warlock";
         self.info = @"Reduces enemy damage by 5%";

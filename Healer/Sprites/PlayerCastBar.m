@@ -32,17 +32,17 @@
         self.contentSize = frame.size;
 		self.percentTimeRemaining = 0.0;
         
-        CCSprite *background = [CCSprite spriteWithSpriteFrameName:@"cast_bar_back.png"];
+        CCSprite *background = [CCSprite spriteWithSpriteFrameName:@"bar_back_long.png"];
         [background setAnchorPoint:CGPointZero];
         [self addChild:background];
         
-        self.timeRemaining = [CCLabelTTFShadow labelWithString:@"" dimensions:self.contentSize hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        self.timeRemaining = [CCLabelTTFShadow labelWithString:@"" dimensions:background.contentSize hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [self.timeRemaining setAnchorPoint:CGPointZero];
         [self.timeRemaining setColor:ccc3(255, 255, 255)];
-        [self.timeRemaining setPosition:CGPointMake(-10, -50)];
+        [self.timeRemaining setPosition:CGPointMake(0, 0)];
         [self addChild:self.timeRemaining z:100];
         
-        self.castBar = [CCSprite spriteWithSpriteFrameName:@"cast_bar_fill.png"];
+        self.castBar = [CCSprite spriteWithSpriteFrameName:@"bar_fill_long.png"];
         [self.castBar setColor:ccGREEN];
         [self.castBar setPosition:CGPointMake(CASTBAR_INSET_WIDTH, CASTBAR_INSET_HEIGHT)];
         [self.castBar setAnchorPoint:CGPointZero];

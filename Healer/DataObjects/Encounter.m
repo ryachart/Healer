@@ -589,7 +589,7 @@
 
 + (NSString *)backgroundPathForEncounter:(NSInteger)encounter
 {
-    NSString *background = @"default-battle-bg";
+    NSString *background = @"kingdom-bg";
     switch (encounter) {
         case 0:
         case 1:

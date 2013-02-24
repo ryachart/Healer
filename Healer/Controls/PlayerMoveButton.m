@@ -18,17 +18,25 @@
     [super dealloc];
 }
 
-- (id)initWithFrame:(CGRect)frame {
+- (id)init {
     if (self = [super init]) {
-        // Initialization code
-        self.position = frame.origin;
-        self.contentSize = frame.size;
 		self.isMoving = NO;
         self.isTouchEnabled = YES;
         
-        self.buttonSprite = [CCSprite spriteWithSpriteFrameName:@"cast_cancel.png"];
+        
+        self.buttonSprite = [CCSprite spriteWithSpriteFrameName:@"button_home.png"];
         [self.buttonSprite setAnchorPoint:CGPointZero];
+        [self.buttonSprite setScale:.8];
         [self addChild:self.buttonSprite];
+        
+        self.contentSize = self.buttonSprite.contentSize;
+        
+        CCLabelTTF *cancelCast = [CCLabelTTF labelWithString:@"CANCEL CAST" fontName:@"Futura" fontSize:28.0];
+        [cancelCast setColor:ccc3(240, 181, 123)];
+        [cancelCast setContentSize:self.buttonSprite.contentSize];
+        [cancelCast setPosition:CGPointMake(102, 40)];
+        [cancelCast setScale:.8];
+        [self addChild:cancelCast];
         
         self.opacity = 0;
         
@@ -46,12 +54,19 @@
     CGPoint convertedToNodeSpacePoint = [self convertToNodeSpace:touchLocation];
     if (CGRectContainsPoint(layerRect, convertedToNodeSpacePoint)) {
         self.isMoving = YES;
+            [self.buttonSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"button_home_pressed.png"]];
     }
 }
 
 - (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     self.isMoving = NO;
+    [self.buttonSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"button_home.png"]];
+}
+
+- (void)ccTouchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [self.buttonSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"button_home.png"]];
 }
 
 

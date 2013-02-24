@@ -421,7 +421,7 @@
     [regrow setDescription:@"Heals for a moderate amount over 12 seconds."];
     
     RepeatedHealthEffect *hotEffect = [[RepeatedHealthEffect alloc] initWithDuration:12.0 andEffectType:EffectTypePositive];
-    [hotEffect setSpriteName:@"regrow.png"];
+    [hotEffect setSpriteName:regrow.spriteFrameName];
     [hotEffect setTitle:@"regrow-effect"];
     [hotEffect setNumOfTicks:4];
     [hotEffect setValuePerTick:165];

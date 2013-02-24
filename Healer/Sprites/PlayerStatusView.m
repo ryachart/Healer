@@ -39,7 +39,7 @@
         self.isTouchEnabled = YES;
         isTouched = NO;
         
-        CCSprite *background = [CCSprite spriteWithSpriteFrameName:@"energy_bar_back.png"];
+        CCSprite *background = [CCSprite spriteWithSpriteFrameName:@"bar_back_small.png"];
         [background setAnchorPoint:CGPointZero];
         [self addChild:background];
         
@@ -54,7 +54,7 @@
         self.energyLabel.position = CGPointMake(frame.size.width * .45, 3);
         [self addChild:self.energyLabel z:100];
         
-        self.energyBar = [CCSprite spriteWithSpriteFrameName:@"bar_fill.png"];
+        self.energyBar = [CCSprite spriteWithSpriteFrameName:@"bar_fill_small.png"];
         [self.energyBar setColor:ccc3(0, 0, 255)];
         [self.energyBar setPosition:CGPointMake(ENERGYBAR_INSET_WIDTH, ENERGYBAR_INSET_HEIGHT)];
         [self.energyBar setAnchorPoint:CGPointZero];
@@ -66,12 +66,12 @@
         
         [self addChild:self.energyBarClippingNode];
         
-        CCSprite *healthBack = [CCSprite spriteWithSpriteFrameName:@"energy_bar_back.png"];
+        CCSprite *healthBack = [CCSprite spriteWithSpriteFrameName:@"bar_back_small.png"];
         [healthBack setPosition:CGPointMake(0, 34)];
         [healthBack setAnchorPoint:CGPointZero];
         [self addChild:healthBack];
         
-        self.healthBar = [CCSprite spriteWithSpriteFrameName:@"bar_fill.png"];
+        self.healthBar = [CCSprite spriteWithSpriteFrameName:@"bar_fill_small.png"];
         [self.healthBar setColor:ccc3(0, 255, 0)];
         [self.healthBar setPosition:CGPointMake(ENERGYBAR_INSET_WIDTH, ENERGYBAR_INSET_HEIGHT)];
         [self.healthBar setAnchorPoint:CGPointZero];

@@ -10,4 +10,9 @@
 
 @implementation GameRect
 
+- (NSString *)description
+{
+    return NSStringFromCGRect(self.frame);
+}
+
 @end

@@ -112,6 +112,7 @@
 		BFD8EF4C160F9F1C00BAF83A /* LaunchScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD8EF4B160F9F1C00BAF83A /* LaunchScene.m */; };
 		BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */; };
 		BFE3408B152D57A5008E84F1 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE3408A152D57A5008E84F1 /* GameKit.framework */; };
+		BFE66EDF16D9749800B9FBEE /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = BFE66EDE16D9749800B9FBEE /* fonts */; };
 		BFF4198C15A27CF700BC0453 /* divinity.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFF4198B15A27CF700BC0453 /* divinity.plist */; };
 		BFFB58E6152D69C7005B760E /* MultiplayerSetupScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */; };
 		BFFF9919168D7F52007AF447 /* PlayerDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BFFF9918168D7F52007AF447 /* PlayerDataManager.m */; };
@@ -722,6 +723,7 @@
 		BFD8EF4B160F9F1C00BAF83A /* LaunchScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LaunchScene.m; path = Scenes/LaunchScene.m; sourceTree = "<group>"; };
 		BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape@2x~ipad.png"; sourceTree = SOURCE_ROOT; };
 		BFE3408A152D57A5008E84F1 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
+		BFE66EDE16D9749800B9FBEE /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = SOURCE_ROOT; };
 		BFF4198B15A27CF700BC0453 /* divinity.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = divinity.plist; sourceTree = "<group>"; };
 		BFFB58E4152D69C7005B760E /* MultiplayerSetupScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiplayerSetupScene.h; sourceTree = "<group>"; };
 		BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiplayerSetupScene.m; sourceTree = "<group>"; };
@@ -828,6 +830,7 @@
 		38024DC013C2564D003D36F2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BFE66EDE16D9749800B9FBEE /* fonts */,
 				BFD240CC16AC8E09007010D0 /* bosses */,
 				BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */,
 				BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */,
@@ -1830,6 +1833,7 @@
 				BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */,
 				BF4CD1CA1642D61600EB2336 /* DebugViewController.xib in Resources */,
 				BFD240CD16AC8E09007010D0 /* bosses in Resources */,
+				BFE66EDF16D9749800B9FBEE /* fonts in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

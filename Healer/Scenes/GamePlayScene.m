@@ -141,11 +141,15 @@
 //        self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(180, 646, 884, 80) andBossKey:self.encounter.bossKey] autorelease];
 //        [self.bossHealthView setDelegate:self];
         
+        CCSprite *playerView = [CCSprite spriteWithSpriteFrameName:@"healer-portrait.png"];
+        [playerView setPosition:CGPointMake(130, 180)];
+        [self addChild:playerView];
+        
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(322,350, 400, 50)] autorelease];
-        self.playerStatusView = [[[PlayerStatusView alloc] initWithFrame:CGRectMake(30, 100, 200, 50)] autorelease];
+        self.playerStatusView = [[[PlayerStatusView alloc] initWithFrame:CGRectMake(30, 90, 200, 50)] autorelease];
         
         self.playerMoveButton = [[[PlayerMoveButton alloc] init] autorelease];
-        [self.playerMoveButton setPosition:CGPointMake(-280, -310)];
+        [self.playerMoveButton setPosition:CGPointMake(-280, -324)];
         [self.playerCastBar addChild:self.playerMoveButton];
         
         self.announcementLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
@@ -238,10 +242,11 @@
         [self.bossHealthView setBossData:[self.encounter.enemies objectAtIndex:0]];
         
         //The timer has to be scheduled after all the init is done!
-        BasicButton *menuButtonItem = [BasicButton basicButtonWithTarget:self andSelector:@selector(showPauseMenu) andTitle:@"Pause"];
-        [menuButtonItem setScale:.6];
-        CCMenu *menuButton = [CCMenu menuWithItems:menuButtonItem, nil];
-        [menuButton setPosition:CGPointMake(86, [CCDirector sharedDirector].winSize.height * .9325)];
+        CCSprite *pause = [CCSprite spriteWithSpriteFrameName:@"pause-button.png"];
+        CCSprite *pauseDown = [CCSprite spriteWithSpriteFrameName:@"pause-down.png"];
+        CCMenuItemSprite *pauseButton = [CCMenuItemSprite itemWithNormalSprite:pause selectedSprite:pauseDown target:self selector:@selector(showPauseMenu)];
+        CCMenu *menuButton = [CCMenu menuWithItems:pauseButton, nil];
+        [menuButton setPosition:CGPointMake(50, [CCDirector sharedDirector].winSize.height * .9325)];
         [self addChild:menuButton];
         
         self.networkThrottle = 0;

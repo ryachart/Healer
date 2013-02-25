@@ -12,7 +12,7 @@
 #import "CCLabelTTFShadow.h"
 
 #define CASTBAR_INSET_WIDTH 4
-#define CASTBAR_INSET_HEIGHT 5
+#define CASTBAR_INSET_HEIGHT 4
 
 @interface PlayerCastBar ()
 @property (nonatomic, assign) Spell* castingSpell;
@@ -97,9 +97,9 @@
         [self.castBar setColor:ccGREEN];
         self.castingSpell = spell;
         
-		self.percentTimeRemaining = remaining/maxTime; //4 - (1.0 - percentTimeRemaining) * self.castBar.contentSize.width
+		self.percentTimeRemaining = remaining/maxTime;
         [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.castBar.contentSize.width + CASTBAR_INSET_WIDTH) * (1.0 - self.percentTimeRemaining), self.castBar.contentSize.height + CASTBAR_INSET_HEIGHT)];
-		[self.timeRemaining setString:[NSString stringWithFormat:@"%@: %1.2f", spell.title,  remaining]];
+		[self.timeRemaining setString:[NSString stringWithFormat:@"%@ %1.2f", spell.title,  remaining]];
 	}
 }
 

@@ -26,19 +26,19 @@ typedef enum {
 @property (nonatomic) BOOL isTouched;
 @property (nonatomic, readwrite) RaidViewSelectionState selectionState;
 
--(void)updateHealthForInterval:(ccTime)time;
--(id)initWithFrame:(CGRect)frame;
+- (void)updateHealthForInterval:(ccTime)time;
+- (id)initWithFrame:(CGRect)frame;
 
--(void)displaySCT:(NSString*)sct;
--(void)displaySCT:(NSString*)sct asCritical:(BOOL)critical;
+- (void)displaySCT:(NSString*)sct;
+- (void)displaySCT:(NSString*)sct asCritical:(BOOL)critical;
 - (void)triggerConfusion;
 
 @end
 
 @protocol RaidMemberHealthViewDelegate
 
--(void)thisMemberSelected:(RaidMemberHealthView*)hv;
--(void)thisMemberUnselected:(RaidMemberHealthView*)hv;
+- (void)thisMemberSelected:(RaidMemberHealthView*)hv;
+- (void)thisMemberUnselected:(RaidMemberHealthView*)hv;
 
 @end
 

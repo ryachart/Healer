@@ -8,6 +8,8 @@
 
 #import "RaidMemberHealthView.h"
 #import "ClippingNode.h"
+#import "CCProgressTimer.h"
+
 
 #define HEALTH_BAR_BORDER 6
 #define FRAME_SCALE .6
@@ -31,13 +33,16 @@
 
 @property (nonatomic, readwrite) NSInteger lastHealth;
 
-@property (nonatomic, assign) CCLabelBMFont *negativeEffectCountLabel;
-@property (nonatomic, assign) CCLabelBMFont *positiveEffectCountLabel;
+@property (nonatomic, assign) CCLabelTTFShadow *negativeEffectCountLabel;
+@property (nonatomic, assign) CCLabelTTFShadow *positiveEffectCountLabel;
 
 @property (nonatomic, assign) BOOL newNegativeSpriteIsAnimating;
 @property (nonatomic, readwrite) NSInteger lastNegativeEffectsCount;
 
 @property (nonatomic, readwrite) BOOL confusionTriggered;
+
+@property (nonatomic, assign) CCProgressTimer *positiveEffectProgress;
+@property (nonatomic, assign) CCProgressTimer *negativeEffectProgress;
 
 @property (nonatomic, readwrite) NSTimeInterval alertTextCooldown;
 @end
@@ -110,13 +115,13 @@
         [self.healthLabel setShadowColor:ccc3(220, 220, 220)];
         [self.healthLabel setPosition:CGPointMake(frameScale * self.raidFrameTexture.contentSize.width/2, frameScale *self.raidFrameTexture.contentSize.height / 2)];
         
-        self.negativeEffectCountLabel = [CCLabelBMFont labelWithString:@"" fntFile:@"fonts/trebuchet-stroke-32.fnt" width:80.0f alignment:kCCTextAlignmentCenter];
-        self.negativeEffectCountLabel.scale = .26;
+        self.negativeEffectCountLabel = [CCLabelTTFShadow labelWithString:@"" fontName:@"TrebuchetMS" fontSize:16.0f];
+        [self.negativeEffectCountLabel setShadowOffset:CGPointMake(-1, -1)];
         [self.negativeEffectCountLabel setPosition:CGPointMake(86, 34)];
         [self addChild:self.negativeEffectCountLabel z:10];
         
-        self.positiveEffectCountLabel = [CCLabelBMFont labelWithString:@"" fntFile:@"fonts/trebuchet-stroke-32.fnt" width:80.0f alignment:kCCTextAlignmentCenter];
-        self.positiveEffectCountLabel.scale = .26;
+        self.positiveEffectCountLabel = [CCLabelTTFShadow labelWithString:@"" fontName:@"TrebuchetMS" fontSize:16.0f];
+        [self.positiveEffectCountLabel setShadowOffset:CGPointMake(-1, -1)];
         [self.positiveEffectCountLabel setPosition:CGPointMake(13, 34)];
         [self addChild:self.positiveEffectCountLabel z:10];
     
@@ -132,25 +137,39 @@
         [self.priorityPositiveEffectSprite setPosition:CGPointMake(13, 13.5)];
         self.priorityPositiveEffectSprite.scale = .25;
         [self addChild:self.priorityPositiveEffectSprite z:10];
+        
+        self.positiveEffectProgress = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"spell-icon-mask.png"]];
+        self.positiveEffectProgress.opacity = 122;
+        [self.positiveEffectProgress setScale:.25];
+        [self.positiveEffectProgress setPosition:CGPointMake(13, 13.5)];
+        [self addChild:self.positiveEffectProgress z:11];
+        
+        self.negativeEffectProgress = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"spell-icon-mask.png"]];
+        self.negativeEffectProgress.opacity = 122;
+        [self.negativeEffectProgress setScale:.25];
+        [self.negativeEffectProgress setPosition:CGPointMake(86, 13.5)];
+        [self addChild:self.negativeEffectProgress z:11];
+        
+        
     }
     return self;
 }
 
 -(ccColor3B)colorForPercentage:(float)percentage{
     if (percentage > .800){
-        return ccc3(0, 225, 0);
+        return ccc3(0, 210, 0);
     }
     
     if (percentage > .600){
-        return ccc3(225, 225, 0);
+        return ccc3(210, 210, 0);
     }
     
     if (percentage > .300){
-        return ccc3(225, 115, 0);
+        return ccc3(210, 105, 0);
     }
     
     if (percentage > 0.0){
-        return ccc3(210, 50, 0);
+        return ccc3(195, 50, 0);
     }
     return ccRED;
 }
@@ -346,15 +365,19 @@
     if (positiveEffect && positiveEffect.spriteName && !self.member.isDead){
         [self.priorityPositiveEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:positiveEffect.spriteName]];
         [self.priorityPositiveEffectSprite setVisible:YES];
-    }else{
+        self.positiveEffectProgress.percentage = 100 * positiveEffect.timeApplied / positiveEffect.duration;
+    } else {
         [self.priorityPositiveEffectSprite setVisible:NO];
+        self.positiveEffectProgress.percentage = 0.0;
     }
     
     if (negativeEffect && negativeEffect.spriteName && !self.member.isDead){
         [self.priorityNegativeEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:negativeEffect.spriteName]];
         [self.priorityNegativeEffectSprite setVisible:YES];
+        self.negativeEffectProgress.percentage = 100 * negativeEffect.timeApplied / negativeEffect.duration;
     } else{
         [self.priorityNegativeEffectSprite setVisible:NO];
+        self.negativeEffectProgress.percentage = 0.0;
     }
     
     NSInteger positiveEffectCount = [self.member effectCountOfType:EffectTypePositive];

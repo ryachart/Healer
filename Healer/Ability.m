@@ -390,7 +390,7 @@
         self.focusTarget = [self targetFromRaid:theRaid];
         if (!self.enrageApplied && ![self.focusTarget isKindOfClass:[Guardian class]]){
             self.abilityValue *= 3;
-            [self.owner.announcer announce:[NSString stringWithFormat:@"%@ glows with power after defeating all of your Guardians", self.owner.namePlateTitle]];
+            [self.owner.announcer announce:[NSString stringWithFormat:@"%@ rampages through your allies freely.", self.owner.namePlateTitle]];
             
             AbilityDescriptor *glowingPower = [[[AbilityDescriptor alloc] init] autorelease];
             [glowingPower setAbilityDescription:@"After defeating all Guardians, this enemy becomes unstoppable and will deal vastly increased damage."];
@@ -1298,8 +1298,12 @@
     }
     for (RaidMember *member in theRaid.livingMembers){
         Effect *appliedEffect = [[self.appliedEffect copy] autorelease];
+        [appliedEffect setSpriteName:self.iconName];
         [appliedEffect setOwner:self.owner];
         [member addEffect:appliedEffect];
+        if (self.attackParticleEffectName) {
+            [self.owner.announcer displayParticleSystemWithName:self.attackParticleEffectName onTarget:member];
+        }
     }
 }
 @end
@@ -1810,7 +1814,7 @@
 {
     for (int i = 0; i < 2; i++) {
         RaidMember *target = theRaid.randomLivingMember;
-        ExpiresAtThresholdRepeatedHealthEffect *infectedWound = [[[ExpiresAtThresholdRepeatedHealthEffect alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative] autorelease];
+        ExpireThresholdRepeatedHealthEffect *infectedWound = [[[ExpireThresholdRepeatedHealthEffect alloc] initWithDuration:30.0 andEffectType:EffectTypeNegative] autorelease];
         [infectedWound setOwner:self.owner];
         [infectedWound setTitle:@"pbc-infected-wound"];
         [infectedWound setAilmentType:AilmentTrauma];

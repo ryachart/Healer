@@ -24,6 +24,7 @@
 @interface Enemy : HealableTarget {	
     BOOL healthThresholdCrossed[101];
 }
+@property (nonatomic, readwrite) BOOL inactive;
 @property (nonatomic, readwrite) BOOL isMultiplayer;
 @property (nonatomic, readwrite) NSInteger difficulty;
 @property (nonatomic, readwrite) float criticalChance;
@@ -81,6 +82,15 @@
 @property (nonatomic, assign) Ability *poisonNova;
 @property (readwrite) NSTimeInterval lastPoisonTime;
 @property (readwrite) NSTimeInterval lastPotionTime;
+@end
+
+@interface Teritha : Enemy
+@end
+
+@interface Grimgon : Enemy
+@end
+
+@interface Galcyon : Enemy
 @end
 
 @interface DarkCouncil : Enemy

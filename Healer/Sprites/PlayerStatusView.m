@@ -29,7 +29,6 @@
 		self.percentEnergy = 0.0;
         self.percentChanneled = 0.0;
         
-        self.position = frame.origin;
         self.isTouchEnabled = YES;
         self.isTouched = NO;
         

@@ -150,7 +150,7 @@ typedef enum {
 @interface CouncilPoisonball : DelayedHealthEffect 
 @end
 
-@interface ExpiresAtThresholdRepeatedHealthEffect: RepeatedHealthEffect <HealthAdjustmentModifier>
+@interface ExpireThresholdRepeatedHealthEffect: RepeatedHealthEffect <HealthAdjustmentModifier>
 @property (nonatomic, readwrite) float threshold;
 @end
 
@@ -175,7 +175,7 @@ typedef enum {
 @property (nonatomic, retain) Ability *reenableAbility;
 @end
 
-@interface DebilitateEffect : ExpiresAtThresholdRepeatedHealthEffect 
+@interface DebilitateEffect : ExpireThresholdRepeatedHealthEffect 
 @end
 
 @interface InvertedHealingEffect : Effect <HealthAdjustmentModifier>
@@ -248,4 +248,8 @@ typedef enum {
 
 @interface RaidDamageOnDispelStackingRHE : StackingRepeatedHealthEffect
 @property (nonatomic, readwrite) NSInteger dispelDamageValue;
+@end
+
+@interface WrackingPainEffect : RepeatedHealthEffect
+@property (nonatomic, readwrite) float threshold;
 @end

@@ -246,29 +246,14 @@
         }
     }
     
-    if (!self.hasAppliedChallengeEffects) {
-        if (self.difficulty > 3) {
-            for (Player *plyer in players) {
-                Effect *healingReductionChallengeEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypeNegativeInvisible] autorelease];
-                float mod = 0;//-.10;
-                if (self.difficulty == 5) {
-                    mod = 0;//-.15;
-                }
-                [healingReductionChallengeEffect setTitle:@"hr-red-challengeeff"];
-                [healingReductionChallengeEffect setOwner:self];
-                [healingReductionChallengeEffect setHealingDoneMultiplierAdjustment:mod];
-                [plyer addEffect:healingReductionChallengeEffect];
-            }
+    if (!self.inactive) {
+        self.shouldQueueAbilityAdds = YES;
+        for (Ability *ability in self.abilities){
+            [ability combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
         }
-        self.hasAppliedChallengeEffects = YES;
+        self.shouldQueueAbilityAdds = NO;
+        [self dequeueAbilityAdds];
     }
-    
-    self.shouldQueueAbilityAdds = YES;
-    for (Ability *ability in self.abilities){
-        [ability combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
-    }
-    self.shouldQueueAbilityAdds = NO;
-    [self dequeueAbilityAdds];
     
     [self updateEffects:enemies raid:raid players:players time:timeDelta];
 }
@@ -828,97 +813,142 @@
 
 @end
 
-@implementation DarkCouncil
-+(id)defaultBoss {
-    DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:2450000 damage:0 targets:1 frequency:.75 choosesMT:NO ];
-    [boss setTitle:@"Council of Dark Summoners"];
-    [boss setNamePlateTitle:@"Teritha"];
-    [boss setSpriteName:@"council_battle_portrait.png"];
-    
-    RaidDamageOnDispelStackingRHE *poison = [[[RaidDamageOnDispelStackingRHE alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegative] autorelease];
-    [poison setTitle:@"roth_poison"];
-    [poison setAilmentType:AilmentPoison];
-    [poison setNumOfTicks:20];
-    [poison setMaxStacks:50];
-    [poison setValuePerTick:-35];
-    [poison setDispelDamageValue:-200];
-    
-    EnsureEffectActiveAbility *eeaa = [[[EnsureEffectActiveAbility alloc] init] autorelease];
-    [eeaa setIsChanneled:YES];
-    [eeaa setIsDisabled:YES];
-    [eeaa setKey:@"explosive-toxin"];
-    [eeaa setTitle:@"Explosive Toxin"];
-    [eeaa setIconName:@"explosive_toxin.png"];
-    [eeaa setInfo:@"Teritha fills an ally with an unstable toxin that deals increasing damage to a single target and explodes when the toxin is removed with Purify."];
-    [eeaa setEnsuredEffect:poison];
-    [boss addAbility:eeaa];
-    
-    CouncilPoison *poisonDoT = [[[CouncilPoison alloc] initWithDuration:6 andEffectType:EffectTypeNegative] autorelease];
-    [poisonDoT setTitle:@"council-ball-dot"];
-    [poisonDoT setSpriteName:@"poison.png"];
-    [poisonDoT setValuePerTick:-40];
-    [poisonDoT setNumOfTicks:3];
-    [poisonDoT setAilmentType:AilmentPoison];
-    
-    ProjectileAttack *grimgonBolts = [[[ProjectileAttack alloc] init] autorelease];
-    [grimgonBolts setKey:@"grimgon-bolts"];
-    [grimgonBolts setCooldown:7.5];
-    [grimgonBolts setAttacksPerTrigger:2];
-    [grimgonBolts setActivationTime:1.5];
-    [grimgonBolts setIsDisabled:YES];
-    [grimgonBolts setExplosionParticleName:@"poison_cloud.plist"];
-    [grimgonBolts setSpriteName:@"green_fireball.png"];
-    [grimgonBolts setAbilityValue:325];
-    [grimgonBolts setAppliedEffect:poisonDoT];
-    [grimgonBolts setInfo:@"Vile green bolts that cause the targets to have healing done to them reduced by 50%."];
-    [grimgonBolts setTitle:@"Bolts of Malediction"];
-    [boss addAbility:grimgonBolts];
-    
-    DarkCloud *dc = [[[DarkCloud alloc] init] autorelease];
-    [dc setIsDisabled:YES];
-    [dc setKey:@"dark-cloud"];
-    [dc setCooldown:18.0];
-    [dc setActivationTime:1.5];
-    [dc setTitle:@"Choking Cloud"];
-    [dc setInfo:@"Galcyon summons a dark cloud over all of your allies that deals more damage to lower health allies and weakens healing magic."];
-    [boss addAbility:dc];
-    return [boss autorelease];
+@implementation Galcyon
+
+- (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses
+{
+    if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq choosesMT:chooses]) {
+        RaidDamageOnDispelStackingRHE *poison = [[[RaidDamageOnDispelStackingRHE alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegative] autorelease];
+        [poison setTitle:@"roth_poison"];
+        [poison setAilmentType:AilmentPoison];
+        [poison setNumOfTicks:20];
+        [poison setMaxStacks:50];
+        [poison setValuePerTick:-35];
+        [poison setDispelDamageValue:-200];
+        
+        EnsureEffectActiveAbility *eeaa = [[[EnsureEffectActiveAbility alloc] init] autorelease];
+        [eeaa setIsChanneled:YES];
+        [eeaa setKey:@"explosive-toxin"];
+        [eeaa setTitle:@"Explosive Toxin"];
+        [eeaa setIconName:@"poison.png"];
+        [eeaa setInfo:@"Galcyon fills an ally with an unstable toxin that deals increasing damage to a single target and explodes when the toxin is removed with Purify."];
+        [eeaa setEnsuredEffect:poison];
+        [self addAbility:eeaa];
+        
+        self.spriteName = @"council_battle_portrait.png";
+    }
+    return self;
 }
 
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (percentage == 99.0){
-        [self.announcer announce:@"Teritha, The Toxin Mage steps forward."];
-        [[self abilityWithKey:@"explosive-toxin"] setIsDisabled:NO];
+@end
+
+@implementation Grimgon
+
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+    if (percentage == 99.0) {
+        self.inactive = NO;
+        [self.announcer announce:@"Grimgon chuckles at Galcyon's failure and steps forward."];
+    }
+}
+
+- (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses
+{
+    if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq choosesMT:chooses]) {
+        CouncilPoison *poisonDoT = [[[CouncilPoison alloc] initWithDuration:6 andEffectType:EffectTypeNegative] autorelease];
+        [poisonDoT setTitle:@"council-ball-dot"];
+        [poisonDoT setSpriteName:@"poison.png"];
+        [poisonDoT setValuePerTick:-40];
+        [poisonDoT setNumOfTicks:3];
+        [poisonDoT setAilmentType:AilmentPoison];
+        
+        ProjectileAttack *grimgonBolts = [[[ProjectileAttack alloc] init] autorelease];
+        [grimgonBolts setKey:@"grimgon-bolts"];
+        [grimgonBolts setCooldown:7.5];
+        [grimgonBolts setTimeApplied:5.0];
+        [grimgonBolts setAttacksPerTrigger:2];
+        [grimgonBolts setActivationTime:1.5];
+        [grimgonBolts setExplosionParticleName:@"poison_cloud.plist"];
+        [grimgonBolts setSpriteName:@"green_fireball.png"];
+        [grimgonBolts setAbilityValue:325];
+        [grimgonBolts setAppliedEffect:poisonDoT];
+        [grimgonBolts setInfo:@"Vile poison bolts that cause the targets to have healing done to them reduced by 50%."];
+        [grimgonBolts setTitle:@"Bolts of Malediction"];
+        [self addAbility:grimgonBolts];
+        
+        DarkCloud *dc = [[[DarkCloud alloc] init] autorelease];
+        [dc setKey:@"dark-cloud"];
+        [dc setIconName:@"choking_cloud.png"];
+        [dc setCooldown:18.0];
+        [dc setActivationTime:1.5];
+        [dc setTitle:@"Choking Cloud"];
+        [dc setInfo:@"Grimgon summons a dark cloud over all of your allies that deals more damage to lower health allies and weakens healing magic."];
+        [self addAbility:dc];
+        
+        self.spriteName = @"council2_battle_portrait.png";
+    }
+    return self;
+}
+
+@end
+
+@implementation Teritha
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+    if (percentage == 99.0) {
+        self.inactive = NO;
+        [self.announcer announce:@"Teritha shouts, \"These pitiful fools are worthless.  I will finish you myself!\""];
     }
     
-    if (percentage == 75.0){
-        [self clearExtraDescriptors];
-        //Roth dies
-        [self.announcer announce:@"Teritha falls to her knees defeated.  Grimgon, The Darkener takes her place."];
-        [[self abilityWithKey:@"explosive-toxin"] setIsDisabled:YES];
-        //Grimgon
-        [[self abilityWithKey:@"grimgon-bolts"] setIsDisabled:NO];
-        [self setNamePlateTitle:@"Grimgon"];
+    if (percentage == 50.0) {
+        [self.announcer announce:@"Such Insolent Creatures! Embrace your demise!"];
+        ProjectileAttack *bolts = (ProjectileAttack*)[self abilityWithKey:@"teritha-bolts"];
+        [bolts setTimeApplied:0];
+        [bolts triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
+        [bolts setAttacksPerTrigger:5];
     }
     
-    if (percentage == 50.0){
-        [self clearExtraDescriptors];
-        [self.announcer announce:@"Grimgon collapses and dies.  Galcyon, Overlord of Darkness pushes away his corpse and begins casting dark magic."];
-        //Serevon, Anguish Mage steps forward
-        self.autoAttack.abilityValue = 270;
-        self.autoAttack.failureChance = .25;
-        [self setNamePlateTitle:@"Galcyon"];
-        [[self abilityWithKey:@"dark-cloud"] setIsDisabled:NO];
+    if (percentage == 25.0) {
+        [self.announcer announce:@"I am darkness.  I AM YOUR DOOM!"];
+        ProjectileAttack *bolts = (ProjectileAttack*)[self abilityWithKey:@"teritha-bolts"];
+        [bolts setTimeApplied:0];
+        [bolts triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
+        [bolts setAttacksPerTrigger:6];
     }
-    
-    if (percentage == 23.0){
-        [(ProjectileAttack*)[self abilityWithKey:@"grimgon-bolts"] fireAtRaid:raid];
+}
+
+- (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses
+{
+    if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq choosesMT:chooses]) {
+        self.spriteName = @"council3_battle_portrait.png";
+        
+        WrackingPainEffect *wpe = [[[WrackingPainEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+        [wpe setValuePerTick:-100];
+        [wpe setAilmentType:AilmentCurse];
+        
+        RaidApplyEffect *wrackingPain = [[[RaidApplyEffect alloc] init] autorelease];
+        [wrackingPain setKey:@"wracking-pain"];
+        [wrackingPain setTitle:@"Wracking Pain"];
+        [wrackingPain setAttackParticleEffectName:@"shadow_burst.plist"];
+        [wrackingPain setIconName:@"curse.png"];
+        [wrackingPain setInfo:@"Teritha covers your allies in a malicious curse that deals damage until their health is reduced to 50% or less."];
+        [wrackingPain setCooldown:60.0];
+        [wrackingPain setTimeApplied:58.0];
+        [wrackingPain setActivationTime:2.0];
+        [wrackingPain setAppliedEffect:wpe];
+        [self addAbility:wrackingPain];
+        
+        ProjectileAttack *bolts = [[[ProjectileAttack alloc] init] autorelease];
+        [bolts setKey:@"teritha-bolts"];
+        [bolts setCooldown:7.5];
+        [bolts setTimeApplied:0.0];
+        [bolts setAttacksPerTrigger:3];
+        [bolts setActivationTime:1.5];
+        [bolts setExplosionParticleName:@"shadow_burst.plist"];
+        [bolts setSpriteName:@"purple_fireball.png"];
+        [bolts setAbilityValue:225];
+        [bolts setTitle:@"Bolts of Darkness"];
+        [self addAbility:bolts];
     }
-    
-    if (percentage == 5.0){
-        //WHAT DO HERE
-        //Galcyon, Lord of the Dark Council does his last thing..
-    }
+    return self;
 }
 @end
 

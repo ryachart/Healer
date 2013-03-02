@@ -546,7 +546,7 @@
 
 @end
 
-@implementation  ExpiresAtThresholdRepeatedHealthEffect
+@implementation  ExpireThresholdRepeatedHealthEffect
 
 - (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
 {
@@ -558,7 +558,7 @@
 
 - (id)copy
 {
-    ExpiresAtThresholdRepeatedHealthEffect *copy = [super copy];
+    ExpireThresholdRepeatedHealthEffect *copy = [super copy];
     [copy setThreshold:self.threshold];
     return copy;
 }
@@ -1090,4 +1090,31 @@
 		self.isExpired = YES;
 	}
 }
+@end
+
+@implementation WrackingPainEffect
+
+- (id)copy
+{
+    WrackingPainEffect *copy = [super copy];
+    [copy setThreshold:self.threshold];
+    return copy;
+}
+
+- (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
+{
+    if (self = [super initWithDuration:dur andEffectType:type]) {
+        self.threshold = .5;
+    }
+    return self;
+}
+
+- (void)tick
+{
+    [super tick];
+    if (self.target.healthPercentage <= self.threshold) {
+        self.isExpired = YES;
+    }
+}
+
 @end

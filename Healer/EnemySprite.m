@@ -47,8 +47,19 @@
         [self.abilitiesView setDelegate:self];
         [self addChild:self.abilitiesView];
         
+        
+        [self checkInactive];
     }
     return self;
+}
+
+- (void)checkInactive
+{
+    if (self.enemy.inactive) {
+        [self setColor:ccc3(80, 80, 80)];
+    } else {
+        [self setColor:ccc3(255, 255, 255)];
+    }
 }
 
 - (void)update
@@ -56,6 +67,7 @@
     [self.castBar update];
     [self.healthBar update];
     [self.abilitiesView update];
+    [self checkInactive];
     
     if ([self.enemy isDead]) {
         NSInteger fadeOutTag = 43892;

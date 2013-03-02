@@ -653,23 +653,27 @@
 }
 
 - (void)displayBerserkerAttackFromRaidMember:(RaidMember *)member onTarget:(Enemy*)target{
-    return;
-    CCSprite *axeSprite = [CCSprite spriteWithSpriteFrameName:@"axe_berserker.png"];
-    [axeSprite setScale:.75];
-    [axeSprite setPosition:CGPointMake(820 + arc4random() % 40 - 20, 600 + arc4random() % 40 - 20)];
-    [self addChild:axeSprite z:RAID_Z - 1 tag:PAUSEABLE_TAG];
+    CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:@"pow.plist"];
+    CGPoint destination = [self.enemiesLayer spriteCenterForEnemy:target];
     
-    [axeSprite runAction:[CCSequence actions:[CCRotateBy actionWithDuration:.33 angle:- 45.0 - (arc4random() % 20)], [CCEaseBackIn actionWithAction:[CCRotateBy actionWithDuration:.33 angle:90.0 - (arc4random() % 20)]],[CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
+    void (^completionBlock)(void) = ^{
+        [collisionEffect setPosition:destination];
+        [collisionEffect setAutoRemoveOnFinish:YES];
+        [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
+    };
+    completionBlock();
 }
 
 - (void)displayChampionAttackFromRaidMember:(RaidMember *)member onTarget:(Enemy*)target{
-    return;
-    CCSprite *swordSprite = [CCSprite spriteWithSpriteFrameName:@"sword_champion.png"];
-    [swordSprite setScale:.75];
-    [swordSprite setPosition:CGPointMake(820 + arc4random() % 40 - 20, 600 + arc4random() % 40 - 20)];
-    [self addChild:swordSprite z:RAID_Z - 1 tag:PAUSEABLE_TAG];
+    CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:@"pow.plist"];
+    CGPoint destination = [self.enemiesLayer spriteCenterForEnemy:target];
     
-    [swordSprite runAction:[CCSequence actions:[CCRotateBy actionWithDuration:.15 angle:- 30.0 - (arc4random() % 10)], [CCEaseBackIn actionWithAction:[CCRotateBy actionWithDuration:.45 angle:170.0 - (arc4random() % 20)]],[CCDelayTime actionWithDuration:.25], [CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
+    void (^completionBlock)(void) = ^{
+        [collisionEffect setPosition:destination];
+        [collisionEffect setAutoRemoveOnFinish:YES];
+        [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
+    };
+    completionBlock();
 }
 
 - (void)displayAttackFromRaidMember:(RaidMember*)member onTarget:(Enemy*)target

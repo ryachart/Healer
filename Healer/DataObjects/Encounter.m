@@ -295,8 +295,21 @@
     }
     
     if (level == 9){
-        [enemies addObject:[DarkCouncil defaultBoss]];
-        spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [Purify defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
+        Teritha *teritha = [[[Teritha alloc] initWithHealth:1000000 damage:0 targets:0 frequency:0 choosesMT:NO] autorelease];
+        [teritha setInactive:YES];
+        [teritha setThreatPriority:1];
+        
+        Grimgon *grimgon = [[[Grimgon alloc] initWithHealth:600000 damage:0 targets:0 frequency:0 choosesMT:NO] autorelease];
+        [grimgon setInactive:YES];
+        [grimgon setThreatPriority:2];
+        
+        Galcyon *galcyon = [[[Galcyon alloc] initWithHealth:600000 damage:0 targets:0 frequency:0 choosesMT:NO] autorelease];
+        [galcyon setThreatPriority:3];
+        
+        [enemies addObject:teritha];
+        [enemies addObject:grimgon];
+        [enemies addObject:galcyon];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [Purify defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         numWizard = 3;
         numArcher = 2;
         numWarlock = 4;

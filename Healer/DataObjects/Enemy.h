@@ -12,6 +12,8 @@
 #import "HealableTarget.h"
 #import "PlayerDataManager.h"
 
+#define kThreatPriorityDead -9999
+
 @class Player;
 @class Raid;
 @class RaidMember;
@@ -24,7 +26,6 @@
 }
 @property (nonatomic, readwrite) BOOL isMultiplayer;
 @property (nonatomic, readwrite) NSInteger difficulty;
-@property (nonatomic, assign) id <Announcer> announcer;
 @property (nonatomic, readwrite) float criticalChance;
 @property (nonatomic, assign) id<EventLogger> logger;
 @property (nonatomic, readwrite) NSInteger phase;
@@ -34,8 +35,10 @@
 @property (nonatomic, retain) NSString* title;
 @property (nonatomic, retain) NSString *namePlateTitle;
 @property (nonatomic, retain) NSString *spriteName;
+@property (nonatomic, readwrite) NSInteger threatPriority;
 
 @property (nonatomic, readonly) Ability *visibleAbility;
+@property (nonatomic, readonly) RaidMember *target;
 @property (nonatomic, readonly) BOOL isBusy;
 + (id)defaultBoss;
 - (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses;
@@ -155,4 +158,7 @@
 @interface TheEndlessVoid : Enemy
 @end
 
+@interface FungalRavager : Enemy
+
+@end
 

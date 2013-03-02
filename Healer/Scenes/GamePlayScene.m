@@ -27,6 +27,7 @@
 #import "SimpleAudioEngine.h"
 #import "CocosDenshion.h"
 #import "CDAudioManager.h"
+#import "EnemiesLayer.h"
 
 #define DEBUG_AUTO_WIN false
 
@@ -47,6 +48,7 @@
 @property (nonatomic, readwrite) NSInteger networkThrottle;
 @property (nonatomic, readwrite) GradientBorderLayer *gradientBorder;
 @property (nonatomic, retain) NSMutableDictionary *playingSoundsDict;
+@property (nonatomic, assign) EnemiesLayer *enemiesLayer;
 @end
 
 @implementation GamePlayScene
@@ -138,15 +140,17 @@
         [self.raidView setContentSize:CGSizeMake(500, 320)];
         [self addChild:self.raidView z:RAID_Z];
         
-//        self.bossHealthView = [[[BossHealthView alloc] initWithFrame:CGRectMake(180, 646, 884, 80) andBossKey:self.encounter.bossKey] autorelease];
-//        [self.bossHealthView setDelegate:self];
+        self.enemiesLayer = [[[EnemiesLayer alloc] initWithEnemies:self.encounter.enemies] autorelease];
+        [self.enemiesLayer setDelegate:self];
+        [self.enemiesLayer setPosition:CGPointMake(0, 408)];
+        [self addChild:self.enemiesLayer];
         
         CCSprite *playerView = [CCSprite spriteWithSpriteFrameName:@"healer-portrait.png"];
         [playerView setPosition:CGPointMake(130, 180)];
         [self addChild:playerView];
         
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(322,350, 400, 50)] autorelease];
-        self.playerStatusView = [[[PlayerStatusView alloc] initWithFrame:CGRectMake(30, 90, 200, 50)] autorelease];
+        self.playerStatusView = [[[PlayerStatusView alloc] initWithFrame:CGRectMake(130, 100, 200, 50)] autorelease];
         
         self.playerMoveButton = [[[PlayerMoveButton alloc] init] autorelease];
         [self.playerMoveButton setPosition:CGPointMake(-280, -324)];
@@ -316,13 +320,11 @@
 -(void)onEnterTransitionDidFinish{
     [super onEnterTransitionDidFinish];
     if (self.encounter.levelNumber == 1){
-        [self gameEvent:0.0]; //Bump the UI
         GamePlayFTUELayer *gpfl = [[[GamePlayFTUELayer alloc] init] autorelease];
         [gpfl setDelegate:self];
         [self addChild:gpfl z:1000];
         [gpfl showWelcome];
     }else{
-        [self gameEvent:0.0]; //Bump the UI
         [self battleBegin];
     }
 }
@@ -503,7 +505,10 @@
 	}
 }
 
-- (void)bossHealthViewShouldDisplayAbility:(AbilityDescriptor *)ability {
+#pragma mark - Ability Descriptor Behaviors
+
+- (void)abilityDescriptionViewDidSelectAbility:(AbilityDescriptor *)descriptor
+{
     if (self.paused){
         return;
     }
@@ -513,7 +518,7 @@
         [self setPaused:YES];
     }
     
-    IconDescriptionModalLayer *modalLayer = [[[IconDescriptionModalLayer alloc] initWithAbilityDescriptor:ability] autorelease];
+    IconDescriptionModalLayer *modalLayer = [[[IconDescriptionModalLayer alloc] initWithAbilityDescriptor:descriptor] autorelease];
     [modalLayer setDelegate:self];
     [self addChild:modalLayer z:9999];
     
@@ -620,31 +625,34 @@
     [energyBall runAction:[CCSequence actions:[CCJumpTo actionWithDuration:1.5 position:self.playerStatusView.position height:100 jumps:1],[CCScaleTo actionWithDuration:.33 scale:0.0], [CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
 }
 
-- (void)displayArcherAttackFromRaidMember:(RaidMember *)member{
+- (void)displayArcherAttackFromRaidMember:(RaidMember *)member onTarget:(Enemy*)target{
     CCSprite *arrowSprite = [CCSprite spriteWithSpriteFrameName:@"arrow_archer.png"];
     [arrowSprite setScale:.5];
+    CGPoint enemyPosition = [self.enemiesLayer spriteCenterForEnemy:target];
     CGPoint position = [self.raidView frameCenterForMember:member];
-    CGFloat rotation = [self rotationFromPoint:position toPoint:CGPointMake(900, 700)] + 90.0;
+    CGFloat rotation = [self rotationFromPoint:position toPoint:enemyPosition] + 90.0;
     [arrowSprite setPosition:position];
     [arrowSprite setRotation:rotation];
     [self addChild:arrowSprite z:RAID_Z-1 tag:PAUSEABLE_TAG];
     
-    [arrowSprite runAction:[CCSequence actions:[CCJumpTo actionWithDuration:.66 position:CGPointMake(900, 700) height:25 jumps:1],[CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
+    [arrowSprite runAction:[CCSequence actions:[CCJumpTo actionWithDuration:.66 position:enemyPosition height:25 jumps:1],[CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
 }
 
-- (void)displayWarlockAttackFromRaidMember:(RaidMember *)member{
+- (void)displayWarlockAttackFromRaidMember:(RaidMember *)member onTarget:(Enemy*)target{
     CCSprite *arrowSprite = [CCSprite spriteWithSpriteFrameName:@"green_fireball.png"];
     [arrowSprite setScale:.5];
+    CGPoint enemyPosition = [self.enemiesLayer spriteCenterForEnemy:target];
     CGPoint position = [self.raidView frameCenterForMember:member];
-    CGFloat rotation = [self rotationFromPoint:position toPoint:CGPointMake(900, 700)] + 270.0;
+    CGFloat rotation = [self rotationFromPoint:position toPoint:enemyPosition] + 270.0;
     [arrowSprite setPosition:position];
     [arrowSprite setRotation:rotation];
     [self addChild:arrowSprite z:RAID_Z-1 tag:PAUSEABLE_TAG];
     
-    [arrowSprite runAction:[CCSequence actions:[CCMoveTo actionWithDuration:1.25 position:CGPointMake(900, 700)],[CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
+    [arrowSprite runAction:[CCSequence actions:[CCMoveTo actionWithDuration:1.25 position:enemyPosition],[CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
 }
 
-- (void)displayBerserkerAttackFromRaidMember:(RaidMember *)member{
+- (void)displayBerserkerAttackFromRaidMember:(RaidMember *)member onTarget:(Enemy*)target{
+    return;
     CCSprite *axeSprite = [CCSprite spriteWithSpriteFrameName:@"axe_berserker.png"];
     [axeSprite setScale:.75];
     [axeSprite setPosition:CGPointMake(820 + arc4random() % 40 - 20, 600 + arc4random() % 40 - 20)];
@@ -653,7 +661,8 @@
     [axeSprite runAction:[CCSequence actions:[CCRotateBy actionWithDuration:.33 angle:- 45.0 - (arc4random() % 20)], [CCEaseBackIn actionWithAction:[CCRotateBy actionWithDuration:.33 angle:90.0 - (arc4random() % 20)]],[CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
 }
 
-- (void)displayChampionAttackFromRaidMember:(RaidMember *)member{
+- (void)displayChampionAttackFromRaidMember:(RaidMember *)member onTarget:(Enemy*)target{
+    return;
     CCSprite *swordSprite = [CCSprite spriteWithSpriteFrameName:@"sword_champion.png"];
     [swordSprite setScale:.75];
     [swordSprite setPosition:CGPointMake(820 + arc4random() % 40 - 20, 600 + arc4random() % 40 - 20)];
@@ -662,16 +671,16 @@
     [swordSprite runAction:[CCSequence actions:[CCRotateBy actionWithDuration:.15 angle:- 30.0 - (arc4random() % 10)], [CCEaseBackIn actionWithAction:[CCRotateBy actionWithDuration:.45 angle:170.0 - (arc4random() % 20)]],[CCDelayTime actionWithDuration:.25], [CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
 }
 
-- (void)displayAttackFromRaidMember:(RaidMember*)member
+- (void)displayAttackFromRaidMember:(RaidMember*)member onTarget:(Enemy*)target
 {
     if ([member isMemberOfClass:[Archer class]]) {
-        [self displayArcherAttackFromRaidMember:member];
+        [self displayArcherAttackFromRaidMember:member onTarget:target];
     } else if ([member isMemberOfClass:[Champion class]]) {
-        [self displayChampionAttackFromRaidMember:member];
+        [self displayChampionAttackFromRaidMember:member onTarget:target];
     } else if ([member isMemberOfClass:[Warlock class]]) {
-        [self displayWarlockAttackFromRaidMember:member];
+        [self displayWarlockAttackFromRaidMember:member onTarget:target];
     } else if ([member isMemberOfClass:[Berserker class]]) {
-        [self displayBerserkerAttackFromRaidMember:member];
+        [self displayBerserkerAttackFromRaidMember:member onTarget:target];
     }
 }
 
@@ -711,7 +720,7 @@
     }
     CCParticleSystemQuad *breathEffect = [[ParticleSystemCache sharedCache] systemForKey:@"flame_breath"];
     [breathEffect setDuration:duration];
-    [breathEffect setPosition:CGPointMake(800, 650)];
+    [breathEffect setPosition:CGPointMake(512, 700)];
     [self addChild:breathEffect z:100 tag:PAUSEABLE_TAG];
 }
 
@@ -745,14 +754,19 @@
 }
 
 -(void)displayProjectileEffect:(ProjectileEffect*)effect{
-    [self displayProjectileEffect:effect fromOrigin:CGPointMake(800, 650)];
+    CGPoint origin = CGPointZero;
+    
+    if ([effect.sourceAgent isKindOfClass:[Enemy class]]) {
+        origin = [self.enemiesLayer spriteCenterForEnemy:(Enemy*)effect.sourceAgent];
+    }
+    [self displayProjectileEffect:effect fromOrigin:origin];
 }
 
 - (void)displayProjectileEffect:(ProjectileEffect*)effect fromOrigin:(CGPoint)origin
 {
     switch (effect.type) {
         case ProjectileEffectTypeThrow:
-            [self displayThrowEffect:effect];
+            [self displayThrowEffect:effect fromOrigin:origin];
             break;
         default:
             [self displayNormalProjectileEffect:effect fromOrigin:origin];
@@ -798,14 +812,13 @@
 
 }
 
-- (void)displayThrowEffect:(ProjectileEffect *)effect{
+- (void)displayThrowEffect:(ProjectileEffect *)effect fromOrigin:(CGPoint)origin{
     if (self.isServer){
         effect.type = ProjectileEffectTypeThrow;
         [self.match sendDataToAllPlayers:[effect.asNetworkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
     }
     CCSprite *projectileSprite = [CCSprite spriteWithSpriteFrameName:effect.spriteName];;
 
-    CGPoint originLocation = CGPointMake(650, 600);
     CGPoint destination = [self.raidView frameCenterForMember:effect.target];
     
     CCParticleSystemQuad  *collisionEffect = nil;
@@ -816,11 +829,11 @@
     if (projectileSprite){
         [projectileSprite setAnchorPoint:CGPointMake(.5, .5)];
         [projectileSprite setVisible:NO];
-        [projectileSprite setPosition:originLocation];
-        [projectileSprite setRotation:CC_RADIANS_TO_DEGREES([self rotationFromPoint:originLocation toPoint:destination]) + 180.0];
+        [projectileSprite setPosition:origin];
+        [projectileSprite setRotation:CC_RADIANS_TO_DEGREES([self rotationFromPoint:origin toPoint:destination]) + 180.0];
         [projectileSprite setColor:effect.spriteColor];
         [self addChild:projectileSprite z:RAID_Z+1 tag:PAUSEABLE_TAG];
-        ccBezierConfig bezierConfig = {destination,ccp(destination.x ,originLocation.y), ccp(destination.x,originLocation.y) };
+        ccBezierConfig bezierConfig = {destination,ccp(destination.x ,origin.y), ccp(destination.x,origin.y) };
         [projectileSprite runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:.3 angle:360.0]]];
         [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}],[CCSpawn actions:[CCBezierTo actionWithDuration:effect.collisionTime bezier:bezierConfig],nil],[CCSpawn actions:[CCCallBlockN actionWithBlock:^(CCNode *node){
             if (collisionEffect){
@@ -956,6 +969,7 @@
     BOOL isNetworkUpdate = NO;
     self.encounter.duration += deltaT;
     self.networkThrottle ++;
+    NSMutableArray *focusTargets = [NSMutableArray arrayWithCapacity:self.encounter.enemies.count];
     if (self.networkThrottle >= NETWORK_THROTTLE){
         isNetworkUpdate = YES;
         self.networkThrottle = 0;
@@ -966,6 +980,9 @@
         
         for (Enemy *enemy in self.encounter.enemies) {
             [enemy combatUpdateForPlayers:self.players enemies:self.encounter.enemies theRaid:self.encounter.raid gameTime:deltaT];
+            if (enemy.target) {
+                [focusTargets addObject:enemy.target];
+            }
         }
         if ([self.playerMoveButton isMoving]){
             [self.player disableCastingWithReason:CastingDisabledReasonMoving];
@@ -1014,6 +1031,7 @@
 	[self.spellView2 updateUI];
 	[self.spellView3 updateUI];
 	[self.spellView4 updateUI];
+    [self.enemiesLayer update];
 	
     
 	//Determine if there will be another iteration of the gamestate
@@ -1024,11 +1042,11 @@
     
     for (RaidMember *member in raidMembers)
     {
+        [member setIsFocused:[focusTargets containsObject:member]];
         [member combatUpdateForPlayers:self.players enemies:self.encounter.enemies theRaid:self.encounter.raid gameTime:deltaT];
         if (![member isDead]){
             survivors++;
         }
-        
     }
     
     for (Enemy *enemy in self.encounter.enemies) {
@@ -1141,7 +1159,7 @@
 }
 
 -(void)handleProjectileEffectMessage:(NSString*)message{
-    ProjectileEffect *effect = [[[ProjectileEffect alloc] initWithNetworkMessage:message andRaid:self.raid] autorelease];
+    ProjectileEffect *effect = [[[ProjectileEffect alloc] initWithNetworkMessage:message raid:self.raid enemies:self.encounter.enemies] autorelease];
     [self displayProjectileEffect:effect];
 }
 

@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "ProjectileEffect.h"
 
-@class RaidMember;
+@class RaidMember, Enemy;
 @protocol Announcer <NSObject>
 //Text Announcements
 - (void)announce:(NSString*)announcement;
@@ -38,7 +38,7 @@
 - (void)displayBreathEffectOnRaidForDuration:(float)duration;
 
 - (void)displayEnergyGainFrom:(RaidMember*)member;
-- (void)displayAttackFromRaidMember:(RaidMember*)member;
+- (void)displayAttackFromRaidMember:(RaidMember*)member onTarget:(Enemy*)target;
 
 - (void)displayCriticalPlayerDamage;
 @end

@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "GameObjects.h"
 #import "cocos2d.h"
-#import "BossAbilityDescriptionsView.h"
+#import "EnemyAbilityDescriptionsView.h"
 #import "CCLabelTTFShadow.h"
 
 @protocol BossHealthViewDelegate <NSObject>
@@ -23,7 +23,7 @@
 @property (nonatomic, assign) Enemy* bossData;
 @property (nonatomic, retain) CCLabelTTFShadow *bossNameLabel;
 @property (nonatomic, retain) CCLabelTTFShadow *healthLabel;
-@property (nonatomic, assign) BossAbilityDescriptionsView* abilityDescriptionsView;
+@property (nonatomic, assign) EnemyAbilityDescriptionsView* abilityDescriptionsView;
 
 - (void)setBossData:(Enemy*)theBoss;
 - (id)initWithFrame:(CGRect)frame andBossKey:(NSString *)bossKey;

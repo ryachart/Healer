@@ -61,6 +61,7 @@ typedef enum {
 @property (nonatomic, readwrite) float criticalChanceAdjustment;
 @property (nonatomic, readwrite) float cooldownMultiplierAdjustment;
 @property (nonatomic, readwrite) float dodgeChanceAdjustment;
+@property (nonatomic, readonly) BOOL causesFocus;
 @property (readwrite) BOOL isIndependent; //Max Stacks doesnt apply and other effects are never the same as this effect
 @property (nonatomic, readwrite) BOOL considerDodgeForDamage;
 @property (nonatomic, readwrite) NSInteger visibilityPriority;
@@ -133,6 +134,7 @@ typedef enum {
 @interface DelayedHealthEffect : Effect
 @property NSInteger value;
 @property (nonatomic, retain) Effect *appliedEffect;
+@property (nonatomic, retain) NSString *completionParticleName;
 @end
 
 @interface TouchOfHopeEffect : RepeatedHealthEffect
@@ -148,7 +150,8 @@ typedef enum {
 @interface CouncilPoisonball : DelayedHealthEffect 
 @end
 
-@interface ExpiresAtFullHealthRHE: RepeatedHealthEffect
+@interface ExpiresAtThresholdRepeatedHealthEffect: RepeatedHealthEffect <HealthAdjustmentModifier>
+@property (nonatomic, readwrite) float threshold;
 @end
 
 @interface DarkCloudEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
@@ -172,7 +175,7 @@ typedef enum {
 @property (nonatomic, retain) Ability *reenableAbility;
 @end
 
-@interface DebilitateEffect : ExpiresAtFullHealthRHE 
+@interface DebilitateEffect : ExpiresAtThresholdRepeatedHealthEffect 
 @end
 
 @interface InvertedHealingEffect : Effect <HealthAdjustmentModifier>

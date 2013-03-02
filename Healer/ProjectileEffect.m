@@ -8,6 +8,7 @@
 #import "ProjectileEffect.h"
 #import "RaidMember.h"
 #import "Raid.h"
+#import "Enemy.h"
 
 @interface ProjectileEffect ()
 @property (nonatomic, retain) NSString *spriteName;
@@ -24,23 +25,24 @@
     [super dealloc];
 }
 
--(id)initWithSpriteName:(NSString*)sprtName target:(RaidMember*)trgt andCollisionTime:(NSTimeInterval)colTime{
+-(id)initWithSpriteName:(NSString*)spriteName target:(RaidMember*)target collisionTime:(NSTimeInterval)colTime sourceAgent:(Agent*)source {
     if (self=[super init]){
-        self.spriteName = sprtName;
-        self.target = trgt;
+        self.spriteName = spriteName;
+        self.target = target;
         self.collisionTime = colTime;
         self.spriteColor = ccWHITE;
         self.isFailed = NO;
+        self.sourceAgent = source;
     }
     return self;
 }
 
 //PRTEFF|TARGET|SPRITE|COLPARTNAME|R|G|B|TIME|TYPE|isFailed
 -(NSString*)asNetworkMessage{
-    return [NSString stringWithFormat:@"PRJEFF|%@|%@|%@|%i|%i|%i|%f|%i|%i", self.target.battleID, self.spriteName, self.collisionParticleName, self.spriteColor.r, self.spriteColor.g, self.spriteColor.b, self.collisionTime + self.delay, self.type, self.isFailed];
+    return [NSString stringWithFormat:@"PRJEFF|%@|%@|%@|%i|%i|%i|%f|%i|%i|%@", self.target.battleID, self.spriteName, self.collisionParticleName, self.spriteColor.r, self.spriteColor.g, self.spriteColor.b, self.collisionTime + self.delay, self.type, self.isFailed, self.sourceAgent.networkID];
 }
 
--(id)initWithNetworkMessage:(NSString*)message andRaid:(Raid*)raid{
+-(id)initWithNetworkMessage:(NSString*)message raid:(Raid*)raid enemies:(NSArray *)enemies{
     if (self=[super init]){
         NSArray *components = [message componentsSeparatedByString:@"|"];
         
@@ -54,6 +56,13 @@
         self.collisionTime = [[components objectAtIndex:7] floatValue];
         self.type = [[components objectAtIndex:8] intValue];
         self.isFailed = [[components objectAtIndex:9] boolValue];
+        
+        for (Agent *agent in [enemies arrayByAddingObjectsFromArray:raid.members   ]) {
+            if ([agent.networkID isEqualToString:[components objectAtIndex:10]]) {
+                self.sourceAgent = agent;
+                break;
+            }
+        }
     }
     return self;
 }

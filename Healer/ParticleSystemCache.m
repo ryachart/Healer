@@ -38,7 +38,7 @@ static ParticleSystemCache *_sharedCache = nil;
     }
     CCParticleSystemQuad *system = [[[CCParticleSystemQuad alloc] initWithDictionary:systemInfo] autorelease];
 #if TARGET_IPHONE_SIMULATOR
-    [system setTotalParticles:system.totalParticles * .25];
+    [system setTotalParticles:MAX(1,system.totalParticles * .25)];
 #endif
     return system;
 }

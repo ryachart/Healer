@@ -52,6 +52,14 @@
     return _namePlateTitle;
 }
 
+- (NSInteger)threatPriority
+{
+    if (self.isDead) {
+        return kThreatPriorityDead;
+    }
+    return _threatPriority;
+}
+
 - (float)challengeDamageDoneModifier
 {
     switch (self.difficulty) {
@@ -94,6 +102,25 @@
     
     return [super maximumHealth] * challengeMultiplier;
     
+}
+
+- (RaidMember*)target
+{
+    if (self.isDead) {
+        return nil;
+    }
+    RaidMember *tar = nil;
+    for (Ability *abil in self.abilities) {
+        if ([abil isKindOfClass:[FocusedAttack class]]){
+            FocusedAttack *attack = (FocusedAttack*)abil;
+            tar = attack.focusTarget;
+        }
+        if ([abil isKindOfClass:[SustainedAttack class]]) {
+            SustainedAttack *attack = (SustainedAttack *)abil;
+            tar = attack.focusTarget  ;
+        }
+    }
+    return tar;
 }
 
 - (void)configureBossForDifficultyLevel:(NSInteger)difficulty
@@ -212,19 +239,10 @@
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     Player *player = [players objectAtIndex:0]; //The first player is the local player
-    float healthPercentage = ((float)self.health/(float)self.maximumHealth) * 100;
-    int roundedPercentage = (int)round(healthPercentage);
-    int integerOnlyPercentage = (int)healthPercentage;
-    if ((healthPercentage - .5) < integerOnlyPercentage){
-        //This isnt there yet. We only want it to fire if we rounded up!
-    }else{
-        if (roundedPercentage < 100 && roundedPercentage > 0){
-            for (int i = 100; i >= roundedPercentage; i--){
-                if (!healthThresholdCrossed[i]){
-                    [self healthPercentageReached:i withRaid:raid andPlayer:player];
-                    healthThresholdCrossed[i] = YES;;
-                }
-            }
+    for (int i = 100; i >= (int)self.healthPercentage; i--){
+        if (!healthThresholdCrossed[i] && self.healthPercentage <= (float)i){
+            [self healthPercentageReached:i withRaid:raid andPlayer:player];
+            healthThresholdCrossed[i] = YES;
         }
     }
     
@@ -299,6 +317,7 @@
 +(id)defaultBoss{
     Ghoul *ghoul = [[Ghoul alloc] initWithHealth:25000 damage:300 targets:1 frequency:2.0 choosesMT:NO ];
     [ghoul setTitle:@"Ghoul"];
+    [ghoul setSpriteName:@"ghoul_battle_portrait.png"];
     
     AbilityDescriptor *ad = [[[AbilityDescriptor alloc] init] autorelease];
     [ad setAbilityName:@"Undead Attacks"];
@@ -335,8 +354,11 @@
     
     CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:health damage:damage targets:1 frequency:freq choosesMT:YES ];
     corTroll.autoAttack.failureChance = .1;
+    [corTroll setSpriteName:@"troll_battle_portrait.png"];
     
     [corTroll setTitle:@"Corrupted Troll"];
+    
+    [corTroll addAbility:[Cleave normalCleave]];
     
     GroundSmash *groundSmash = [[[GroundSmash alloc] init] autorelease];
     [groundSmash setAbilityValue:54];
@@ -349,21 +371,23 @@
     corTroll.smash = groundSmash;
     [corTroll addAbility:corTroll.smash];
     
-    AbilityDescriptor *frenzy = [[AbilityDescriptor alloc] init];
-    [frenzy setAbilityDescription:@"Occasionally, the Corrupted Troll will attack his Focused target furiously dealing high damage."];
-    [frenzy setIconName:@"unknown_ability.png"];
-    [frenzy setAbilityName:@"Frenzy"];
-    [corTroll addAbilityDescriptor:frenzy];
-    [frenzy release];
+    ChannelledEnemyAttackAdjustment *frenzy = [[[ChannelledEnemyAttackAdjustment alloc] init] autorelease];
+    [frenzy setCooldown:kAbilityRequiresTrigger];
+    [frenzy setKey:@"frenzy"];
+    [frenzy setTitle:@"Frenzy"];
+    [frenzy setInfo:@"Occasionally, the Corrupted Troll will attack his Focused target furiously dealing high damage."];
+    [frenzy setAttackSpeedMultiplier:.25];
+    [frenzy setDamageMultiplier:.5];
+    [frenzy setDuration:9.0];
+    [corTroll addAbility:frenzy];
+    
     
     return  [corTroll autorelease];
 }
 
 - (void)configureBossForDifficultyLevel:(NSInteger)difficulty {
     [super configureBossForDifficultyLevel:difficulty];
-    
-    [self addAbility:[Cleave normalCleave]];
-    
+        
     if (difficulty >= 4) {
         self.autoAttack.abilityValue = 500;
         self.autoAttack.failureChance = .25;
@@ -375,35 +399,14 @@
 }
 
 - (void)ownerDidBeginAbility:(Ability *)ability {
-}
-
--(void)startEnraging{
-    [self.announcer announce:@"The Troll swings his club furiously at his focused target!"];
-    self.enraging += 1.0;
-    self.autoAttack.cooldown = 1.5;
-}
-
--(void)stopEnraging{
-    [self.announcer announce:@"The Troll is Exhausted!"];
-    self.enraging = 0.0;
-    self.autoAttack.cooldown = 2.25;
+    if ([ability.key isEqualToString:@"frenzy"]) {
+        [self.announcer announce:@"The Troll swings his club furiously at his focused target!"];
+    }
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (percentage == 75.0 || percentage == 50.0 || percentage == 25.0 || percentage == 10.0){
-        [self startEnraging];
-    }
-}
-
-- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
-{
-    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
-    
-    if (self.enraging > 0){
-        self.enraging += timeDelta;
-        if (self.enraging > 10.0){
-            [self stopEnraging];
-        }
+        [[self abilityWithKey:@"frenzy"] activateAbility];
     }
 }
 @end
@@ -412,6 +415,7 @@
 +(id)defaultBoss {
     Drake *drake = [[Drake alloc] initWithHealth:185000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [drake setTitle:@"Tainted Drake"];
+    [drake setSpriteName:@"drake_battle_portrait.png"];
     
     NSInteger fireballDamage = 400;
     float fireballFailureChance = .05;
@@ -472,11 +476,8 @@
 
 @implementation MischievousImps
 +(id)defaultBoss {
-    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:225000 damage:0 targets:0 frequency:2.25 choosesMT:NO];
-    [boss removeAbility:boss.autoAttack];
-    boss.autoAttack = [[[SustainedAttack alloc] initWithDamage:340 andCooldown:2.25] autorelease];
-    boss.autoAttack.failureChance = .25;
-    [boss addAbility:boss.autoAttack];
+    MischievousImps *boss = [[MischievousImps alloc] initWithHealth:112500 damage:0 targets:0 frequency:2.25 choosesMT:NO];
+    [boss setSpriteName:@"imps_battle_portrait.png"];
     
     RandomPotionToss *rpt = [[[RandomPotionToss alloc] init] autorelease];
     [rpt setKey:@"potions"];
@@ -491,20 +492,17 @@
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (percentage == 99.0){
-        [self.announcer announce:@"An imp grabs a bundle of vials off of a nearby desk."];
-    }
-    
-    if (percentage == 50.0){
-        [(RandomPotionToss*)[self abilityWithKey:@"potions"] triggerAbilityAtRaid:raid];
+        RandomPotionToss *potionAbility = (RandomPotionToss*)[self abilityWithKey:@"potions"];
+        [potionAbility triggerAbilityAtRaid:raid];
         [self.announcer announce:@"An imp angrily hurls the entire case of flasks at you!"];
+        
+        [potionAbility setActivationTime:potionAbility.activationTime / 2];
+        [potionAbility setCooldown:potionAbility.cooldown / 2];
     }
     
-    if (percentage == 20.0) {
+    if (percentage == 25.0){
         [[self abilityWithKey:@"potions"] setIsDisabled:YES];
-    }
-    
-    if (percentage == 15.0){
-        [self.announcer announce:@"The imps begin attacking angrily!"];
+        [self.announcer announce:@"The imp begins attacking angrily!"];
         self.autoAttack.isDisabled = YES;
         
         Ability *attackAngrily = [[[Ability alloc] init] autorelease];
@@ -513,14 +511,10 @@
         [self addAbility:attackAngrily];
         [attackAngrily startChannel:9999];
         
-        for (RaidMember *member in raid.livingMembers) {
-            FocusedAttack *attack = [[[FocusedAttack alloc] initWithDamage:self.autoAttack.abilityValue * .75 andCooldown:self.autoAttack.cooldown] autorelease];
-            attack.ignoresBusy = YES;
-            [attack setFailureChance:self.autoAttack.failureChance];
-            [attack setFocusTarget:member];
-            [member setIsFocused:YES];
-            [self addAbility:attack];
-        }
+        SustainedAttack *attack = [[[SustainedAttack alloc] initWithDamage:250 andCooldown:.85] autorelease];
+        attack.ignoresBusy = YES;
+        [attack setFailureChance:.15];
+        [self addAbility:attack];
     }
 }
 @end
@@ -532,6 +526,7 @@
     BefouledTreant *boss = [[BefouledTreant alloc] initWithHealth:560000 damage:bossDamage targets:1 frequency:3.0 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Befouled Akarus"];
+    [boss setSpriteName:@"treant_battle_portrait.png"];
     
     Cleave *cleave = [Cleave normalCleave];
     [boss addAbility:cleave];
@@ -579,30 +574,64 @@
 
 @implementation FungalRavagers
 +(id)defaultBoss {
-    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:560000 damage:141 targets:1 frequency:2.0 choosesMT:YES ];
+    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:187000 damage:141 targets:1 frequency:2.0 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Fungal Ravagers"];
     [boss setCriticalChance:.5];
     
-    FocusedAttack *secondFocusedAttack = [[FocusedAttack alloc] initWithDamage:162 andCooldown:2.6];
-    secondFocusedAttack.failureChance = .25;
-    [boss addAbility:secondFocusedAttack];
-    [boss setSecondTargetAttack:secondFocusedAttack];
-    [secondFocusedAttack release];
-    FocusedAttack *thirdFocusedAttack = [[FocusedAttack alloc] initWithDamage:193 andCooldown:3.2];
-    thirdFocusedAttack.failureChance = .25;
-    [boss addAbility:thirdFocusedAttack];
-    [boss setThirdTargetAttack:thirdFocusedAttack];
-    [thirdFocusedAttack release];
+    [boss setSpriteName:@"fungalravagers_battle_portrait.png"];
     
     AbilityDescriptor *vileExploDesc = [[AbilityDescriptor alloc] init];
-    [vileExploDesc setAbilityDescription:@"When a Fungal Ravager dies, it explodes coating random targets in toxic venom."];
-    [vileExploDesc setIconName:@"unknown_ability.png"];
-    [vileExploDesc setAbilityName:@"Vile Explosion"];
+    [vileExploDesc setAbilityDescription:@"The Fungal Ravager is surrounded by a toxic mist dealing constant damage to all enemies."];
+    [vileExploDesc setIconName:@"poison2.png"];
+    [vileExploDesc setAbilityName:@"Toxic Mist"];
     [boss addAbilityDescriptor:vileExploDesc];
     [vileExploDesc release];
     
     return [boss autorelease];
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    
+    if (percentage == 100.0){
+        [self.announcer announce:@"A putrid green mist fills the area..."];
+        [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:-1.0];
+        for (RaidMember *member in raid.raidMembers){
+            RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegativeInvisible];
+            [rhe setOwner:self];
+            [rhe setTitle:@"fungal-ravager-mist"];
+            [rhe setValuePerTick:-(arc4random() % 10 + 5)];
+            [member addEffect:rhe];
+            [rhe release];
+        }
+    }
+    
+    if (percentage == 99.0){
+        [self.announcer announce:@"The final Ravager glows with rage."];
+        Effect *enragedEffect = [[Effect alloc] initWithDuration:300 andEffectType:EffectTypePositiveInvisible];
+        [enragedEffect setIsIndependent:YES];
+        [enragedEffect setTarget:self];
+        [enragedEffect setOwner:self];
+        [enragedEffect setDamageDoneMultiplierAdjustment:1.25];
+        [self addEffect:enragedEffect];
+        [enragedEffect release];
+    }
+}
+@end
+
+@implementation FungalRavager
+
+- (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses
+{
+    if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq choosesMT:chooses]) {
+        AbilityDescriptor *vileExploDesc = [[AbilityDescriptor alloc] init];
+        [vileExploDesc setAbilityDescription:@"When a Fungal Ravager dies it explodes coating random targets in burning slime."];
+        [vileExploDesc setIconName:@"pus_burst.png"];
+        [vileExploDesc setAbilityName:@"Vile Explosion"];
+        [self addAbilityDescriptor:vileExploDesc];
+        [vileExploDesc release];
+    }
+    return self;
 }
 
 -(void)ravagerDiedFocusing:(RaidMember*)focus andRaid:(Raid*)raid{
@@ -625,40 +654,13 @@
     }
 }
 
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    
-    if (percentage == 96.0){
-        [self.announcer announce:@"A putrid green mist fills the area..."];
-        [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:-1.0];
-        for (RaidMember *member in raid.raidMembers){
-            RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegativeInvisible];
-            [rhe setOwner:self];
-            [rhe setTitle:@"fungal-ravager-mist"];
-            [rhe setValuePerTick:-(arc4random() % 10 + 5)];
-            [member addEffect:rhe];
-            [rhe release];
-        }
-    }
-    if (percentage == 66.0){
-        [self ravagerDiedFocusing:self.thirdTargetAttack.focusTarget andRaid:raid];
-        [self removeAbility:self.thirdTargetAttack];
-    }
-    if (percentage == 33.0){
-        [self ravagerDiedFocusing:self.secondTargetAttack.focusTarget andRaid:raid];
-        [self removeAbility:self.secondTargetAttack];
-    }
-    
-    if (percentage == 30.0){
-        [self.announcer announce:@"The last remaining Ravager glows with rage."];
-        Effect *enragedEffect = [[Effect alloc] initWithDuration:300 andEffectType:EffectTypePositiveInvisible];
-        [enragedEffect setIsIndependent:YES];
-        [enragedEffect setTarget:self];
-        [enragedEffect setOwner:self];
-        [enragedEffect setDamageDoneMultiplierAdjustment:1.25];
-        [self addEffect:enragedEffect];
-        [enragedEffect release];
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
+{
+    if (percentage == 1.0) {
+        [self ravagerDiedFocusing:[(FocusedAttack*)self.autoAttack focusTarget] andRaid:raid];
     }
 }
+
 @end
 
 @implementation PlaguebringerColossus
@@ -667,6 +669,7 @@
     PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:560000 damage:330 targets:1 frequency:2.5 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Plaguebringer Colossus"];
+    [boss setSpriteName:@"plaguebringer_battle_portrait.png"];
     
     AbilityDescriptor *pusExploDesc = [[AbilityDescriptor alloc] init];
     [pusExploDesc setAbilityDescription:@"When your allies deal enough damage to the Plaguebringer Colossus to break off a section of its body the section explodes vile toxin dealing high damage to your raid."];
@@ -680,7 +683,7 @@
     PlaguebringerSicken *sicken = [[[PlaguebringerSicken alloc] init] autorelease];
     [sicken setInfo:@"The Colossus will sicken targets causing them to take damage until they are healed to full health."];
     [sicken setKey:@"sicken"];
-    [sicken setIconName:@"infected_wound.png"];
+    [sicken setIconName:@"bleeding.png"];
     [sicken setTitle:@"Sicken"];
     [sicken setActivationTime:2.5];
     [sicken setAbilityValue:100];
@@ -729,6 +732,7 @@
     Trulzar *boss = [[Trulzar alloc] initWithHealth:2600000 damage:0 targets:0 frequency:100.0 choosesMT:NO];
     [boss setTitle:@"Trulzar the Maleficar"];
     [boss setNamePlateTitle:@"Trulzar"];
+    [boss setSpriteName:@"trulzar_battle_portrait.png"];
     
     boss.lastPotionTime = 6.0;
     
@@ -829,6 +833,7 @@
     DarkCouncil *boss = [[DarkCouncil alloc] initWithHealth:2450000 damage:0 targets:1 frequency:.75 choosesMT:NO ];
     [boss setTitle:@"Council of Dark Summoners"];
     [boss setNamePlateTitle:@"Teritha"];
+    [boss setSpriteName:@"council_battle_portrait.png"];
     
     RaidDamageOnDispelStackingRHE *poison = [[[RaidDamageOnDispelStackingRHE alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegative] autorelease];
     [poison setTitle:@"roth_poison"];
@@ -924,6 +929,7 @@
     TwinChampions *boss = [[TwinChampions alloc] initWithHealth:2550000 damage:damage targets:1 frequency:frequency choosesMT:YES];
     [boss setFirstFocusedAttack:[[boss abilities] objectAtIndex:0]];
     boss.autoAttack.failureChance = .25;
+    [boss setSpriteName:@"twinchampions_battle_portrait.png"];
     
     FocusedAttack *secondFA = [[FocusedAttack alloc] initWithDamage:damage * 4 andCooldown:frequency * 5];
     secondFA.failureChance = .25;
@@ -987,7 +993,7 @@
     self.firstFocusedAttack.timeApplied = -7.0;
     self.secondFocusedAttack.timeApplied = -7.0;
     //Set all the other abilities to be on a long cooldown...
-    [[self abilityWithKey:@"axe-sweep"] triggerAbilityForRaid:theRaid andPlayers:[NSArray array]];
+    [[self abilityWithKey:@"axe-sweep"] triggerAbilityForRaid:theRaid players:[NSArray array] enemies:[NSArray array]];
     [self.announcer announce:@"The Champions break off and sweep through your allies"];
 }
 
@@ -1023,6 +1029,7 @@
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
     [boss setNamePlateTitle:@"Baraghast"];
+    [boss setSpriteName:@"baraghast_battle_portrait.png"];
     
     [boss addAbility:[Cleave normalCleave]];
     
@@ -1062,7 +1069,6 @@
         [dwAbility setCooldown:42.0];
         [self addAbility:dwAbility];
     }
-
 }
 
 - (void)ownerDidBeginAbility:(Ability *)ability {
@@ -1570,10 +1576,10 @@
     
     if (self.difficulty <= 3) {
         if (percentage == 99.0 || percentage == 75.0 || percentage == 50.0 || percentage == 25.0){
-            [self.deathwave triggerAbilityForRaid:raid andPlayers:[NSArray arrayWithObject:player]];
+            [self.deathwave triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
         }
     } else if (percentage == 99.0 || percentage == 80.0 || percentage == 60.0 || percentage == 40.0 || percentage == 20.0){
-        [self.deathwave triggerAbilityForRaid:raid andPlayers:[NSArray arrayWithObject:player]];
+        [self.deathwave triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
     }
     
 }
@@ -1745,7 +1751,7 @@
         [wot setKey:@"wot"];
         [wot setTitle:@"Waves of Torment"];
         [self addAbility:wot];
-        [wot triggerAbilityForRaid:raid andPlayers:[NSArray arrayWithObject:player]];
+        [wot triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
         if (percentage == 95.0) {
             [self removeAbility:wot]; //Dont add 2 copies of this ability for the second trigger
         } else {
@@ -1768,7 +1774,7 @@
         [se setAbilityValue:10];
         [se setCooldown:10];
         [self addAbility:se];
-        [se triggerAbilityForRaid:raid andPlayers:[NSArray arrayWithObject:player]];
+        [se triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
     }
 }
 @end

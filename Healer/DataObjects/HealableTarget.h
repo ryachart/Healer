@@ -21,7 +21,6 @@
 @property (nonatomic, readwrite) BOOL hasDied;
 @property (nonatomic, readwrite) NSInteger health;
 @property (nonatomic, retain) NSMutableArray *activeEffects;
-@property (nonatomic, readwrite) BOOL isFocused;
 @property (nonatomic, readonly) float healthPercentage;
 @property (nonatomic, readonly) NSInteger maximumAbsorbtion;
 @property (nonatomic, readwrite) NSInteger absorb;

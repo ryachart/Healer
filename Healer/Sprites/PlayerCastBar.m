@@ -16,6 +16,7 @@
 
 @interface PlayerCastBar ()
 @property (nonatomic, assign) Spell* castingSpell;
+@property (nonatomic, assign) CCSprite *spellIcon;
 @property (nonatomic, assign) ClippingNode *castBarClippingNode;
 @property (nonatomic, readwrite) float percentTimeRemaining;
 @property (nonatomic, readwrite) GLubyte opacity;
@@ -23,7 +24,6 @@
 @end
 
 @implementation PlayerCastBar
-@synthesize opacity=_opacity;
 
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super init]) {
@@ -53,6 +53,12 @@
         [self.castBarClippingNode addChild:self.castBar];
         
         [self addChild:self.castBarClippingNode];
+        
+        self.spellIcon = [CCSprite node];
+        self.spellIcon.position = CGPointMake(17, 17);
+        self.spellIcon.scale = .28;
+        [self addChild:self.spellIcon];
+        
         self.opacity = 0; //This needs to be initialized after we setup our children
     }
     return self;
@@ -86,6 +92,8 @@
         }
 	}
 	else {
+        self.spellIcon.displayFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:spell.spriteFrameName];
+        
         const NSInteger fadeInTag = 46433;
         if (![self getActionByTag:fadeInTag]) {
             [self stopAllActions];

@@ -422,6 +422,7 @@
 @implementation  DelayedHealthEffect
 - (void)dealloc{
     [_appliedEffect release];
+    [_completionParticleName release];
     [super dealloc];
 }
 - (id)copy{
@@ -468,6 +469,9 @@
                 [applyThis setOwner:self.owner];
                 [self.target addEffect:applyThis];
                 self.appliedEffect = nil;
+            }
+            if (self.completionParticleName) {
+                [self.owner.announcer displayParticleSystemWithName:self.completionParticleName onTarget:(RaidMember*)self.target];
             }
         }
     }
@@ -542,12 +546,35 @@
 
 @end
 
-@implementation  ExpiresAtFullHealthRHE
+@implementation  ExpiresAtThresholdRepeatedHealthEffect
 
-- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
-    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
-    if (self.target.health > self.target.maximumHealth * .98){
-        self.isExpired = YES;
+- (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
+{
+    if (self = [super initWithDuration:dur andEffectType:type]) {
+        self.threshold = 1.0;
+    }
+    return self;
+}
+
+- (id)copy
+{
+    ExpiresAtThresholdRepeatedHealthEffect *copy = [super copy];
+    [copy setThreshold:self.threshold];
+    return copy;
+}
+
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth
+{
+    
+}
+
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth
+{
+    if (currentHealth < newHealth) {
+        //A heal occured
+        if (self.target.health > self.target.maximumHealth * self.threshold){
+            self.isExpired = YES;
+        }
     }
 }
 @end

@@ -15,6 +15,7 @@
 #import "Shop.h"
 #import "PlayerDataManager.h"
 #import "CombatEvent.h"
+#import "Ability.h"
 
 @interface Encounter ()
 @property (nonatomic, readwrite) NSInteger levelNumber;
@@ -167,6 +168,7 @@
     
     if (level == 2){
         [enemies addObject:[CorruptedTroll defaultBoss]];
+        
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
         
         numWizard = 1;
@@ -192,7 +194,18 @@
     }
     
     if (level == 4){
-        [enemies addObject:[MischievousImps defaultBoss]];
+        MischievousImps *boss = [MischievousImps defaultBoss];
+        [enemies addObject:boss];
+        Enemy *imp2 = [[[Enemy alloc] initWithHealth:boss.health damage:0 targets:1 frequency:1.25 choosesMT:NO] autorelease];
+        [imp2 setThreatPriority:1];
+        [imp2 setSpriteName:@"imps2_battle_portrait.png"];
+        [imp2 setTitle:@"Imp"];
+        [imp2 removeAbility:boss.autoAttack];
+        imp2.autoAttack = [[[SustainedAttack alloc] initWithDamage:340 andCooldown:2.25] autorelease];
+        imp2.autoAttack.failureChance = .25;
+        [imp2 addAbility:imp2.autoAttack];
+        [enemies addObject:imp2];
+        
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], nil];
         numWizard = 1;
         numArcher = 1;
@@ -220,7 +233,23 @@
     }
     
     if (level == 6){
-        [enemies addObject:[FungalRavagers defaultBoss]];
+        FungalRavagers *boss = [FungalRavagers defaultBoss];
+        [enemies addObject:boss];
+        
+        FungalRavager *boss2 = [[[FungalRavager alloc] initWithHealth:boss.health damage:162 targets:1 frequency:2.6 choosesMT:YES] autorelease];
+        boss2.autoAttack.failureChance = .25;
+        boss2.threatPriority = 1;
+        
+        FungalRavager *boss3 = [[[FungalRavager alloc] initWithHealth:boss.health damage:193 targets:1 frequency:3.2 choosesMT:YES] autorelease];
+        boss3.autoAttack.failureChance = .25;
+        boss3.threatPriority = 2;
+        
+        [enemies addObject:boss2];
+        [enemies addObject:boss3];
+        
+        [boss2 setSpriteName:@"fungalravagers2_battle_portrait.png"];
+        [boss3 setSpriteName:@"fungalravagers3_battle_portrait.png"];
+        
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [LightEternal defaultSpell], [Regrow defaultSpell], nil];
         
         numArcher = 2;
@@ -591,17 +620,18 @@
 {
     NSString *background = @"kingdom-bg";
     switch (encounter) {
-        case 0:
         case 1:
+            break;
         case 2:
         case 3:
+            background = @"cave-bg";
+            break;
         case 4:
             background = @"kingdom-bg";
             break;
         case 5:
         case 6:
         case 7:
-            background = @"field-bg";
             break;
     }
     return background;

@@ -45,7 +45,7 @@
 
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 
-- (void)triggerAbilityForRaid:(Raid*)theRaid andPlayers:(NSArray*)players;
+- (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies;
 - (BOOL)checkFailed;
 - (void)activateAbility;
 
@@ -68,7 +68,7 @@
 @end
 
 @interface SustainedAttack : Attack
-@property (nonatomic, retain) RaidMember *currentTarget;
+@property (nonatomic, retain) RaidMember *focusTarget;
 @property (nonatomic, readwrite) NSInteger currentAttacksRemaining;
 @end
 
@@ -244,4 +244,10 @@ typedef enum {
 @end
 
 @interface RaidDamageSweep : Ability
+@end
+
+@interface ChannelledEnemyAttackAdjustment : Ability
+@property (nonatomic, readwrite) float damageMultiplier;
+@property (nonatomic, readwrite) float attackSpeedMultiplier;
+@property (nonatomic, readwrite) NSTimeInterval duration;
 @end

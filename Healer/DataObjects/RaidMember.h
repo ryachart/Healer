@@ -28,7 +28,8 @@ typedef enum {
     Melee
 } Positioning;
 
-@interface RaidMember : HealableTarget 
+@interface RaidMember : HealableTarget
+@property (nonatomic, readwrite) BOOL isFocused;
 @property (nonatomic, readwrite) float damageFrequency;
 @property (nonatomic, retain) NSString* title;
 @property (nonatomic, retain) NSString* info;
@@ -37,7 +38,6 @@ typedef enum {
 @property (nonatomic, readwrite) float dodgeChance;
 @property (nonatomic, readwrite) float criticalChance;
 @property (nonatomic, readonly) Positioning positioning;
-@property (nonatomic, assign) id<Announcer>announcer;
 @property (nonatomic, readwrite) ccColor3B classColor;
 
 - (float)dps;

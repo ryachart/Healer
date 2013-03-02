@@ -8,7 +8,7 @@
 
 #import "BossHealthView.h"
 #import "ClippingNode.h"
-#import "BossCastBar.h"
+#import "EnemyCastBar.h"
 
 #define HEALTH_INSET_WIDTH 6.0
 #define HEALTH_INSET_HEIGHT 45.0
@@ -18,7 +18,7 @@
 @property (nonatomic, readwrite) NSInteger lastHealth;
 @property (nonatomic, assign) CCSprite *portraitSprite;
 @property (nonatomic, assign) CCSprite *bossPlateSprite;
-@property (nonatomic, assign) BossCastBar *castBar;
+@property (nonatomic, assign) EnemyCastBar *castBar;
 @end
 
 @implementation BossHealthView
@@ -29,7 +29,7 @@
         self.position = frame.origin;
         self.contentSize = frame.size;
         
-        self.castBar = [[[BossCastBar alloc] initWithFrame:CGRectMake(48, -38, 0, 0)] autorelease];
+        self.castBar = [[[EnemyCastBar alloc] init] autorelease];
         self.castBar.scale = .70;
         self.castBar.opacity = 0;
         [self addChild:self.castBar z:100];
@@ -94,13 +94,13 @@
 	self.lastHealth = theBoss.health;
     
     [self.abilityDescriptionsView removeFromParentAndCleanup:YES];
-    self.abilityDescriptionsView = [[[BossAbilityDescriptionsView alloc] initWithBoss:self.bossData] autorelease];
+    self.abilityDescriptionsView = [[[EnemyAbilityDescriptionsView alloc] initWithBoss:self.bossData] autorelease];
     [self.abilityDescriptionsView setAnchorPoint:CGPointZero];
     [self.abilityDescriptionsView setPosition:CGPointMake(-398, -304)];
     [self.abilityDescriptionsView setDelegate:self];
     [self addChild:self.abilityDescriptionsView];
     
-    [self.castBar setBoss:theBoss];
+    [self.castBar setEnemy:theBoss];
 	
 }
 

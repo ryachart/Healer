@@ -7,8 +7,6 @@
 //
 
 #import "RaidMemberHealthView.h"
-#import "ClippingNode.h"
-#import "CCProgressTimer.h"
 
 
 #define HEALTH_BAR_BORDER 6
@@ -22,14 +20,12 @@
 @property (nonatomic, assign) CCSprite *priorityPositiveEffectSprite;
 @property (nonatomic, assign) CCSprite *priorityNegativeEffectSprite;
 
-@property (nonatomic, assign) ClippingNode *healthBarClippingNode;
+@property (nonatomic, assign) CCProgressTimer *healthBar;
 @property (nonatomic, assign) CCSprite *raidFrameTexture;
-@property (nonatomic, assign) CCSprite *healthBarMask;
 @property (nonatomic, assign) CCSprite *selectionSprite;
 @property (nonatomic, assign) CCSprite *classIcon;
 
-@property (nonatomic, assign) ClippingNode *absorptionClippingNode;
-@property (nonatomic, assign) CCSprite *absorptionMask;
+@property (nonatomic, assign) CCProgressTimer *absorptionBar;
 
 @property (nonatomic, readwrite) NSInteger lastHealth;
 
@@ -76,40 +72,34 @@
         [self.selectionSprite setScale:frameScale];
         [self.selectionSprite setPosition:CGPointMake(FILL_INSET_WIDTH, FILL_INSET_HEIGHT)];
         
-        self.healthBarClippingNode = [ClippingNode node];
-        self.healthBarMask = [CCSprite spriteWithSpriteFrameName:@"raidframe_fill.png"];
-        [self.healthBarMask setAnchorPoint:CGPointZero];
-        self.healthBarMask.position = CGPointMake(0, 0);
-        [self.healthBarMask setColor:ccGREEN];
-        [self.healthBarClippingNode setScale:frameScale];
-
-        [self.healthBarClippingNode setPosition:CGPointMake(FILL_INSET_WIDTH, FILL_INSET_HEIGHT)];
-        [self.healthBarClippingNode setContentSize:self.healthBarMask.contentSize];
-        [self.healthBarClippingNode setAnchorPoint:CGPointZero];
-        [self.healthBarClippingNode setClippingRegion:CGRectMake(0, 0, self.healthBarMask.contentSize.width, self.healthBarMask.contentSize.height)];
-        [self.healthBarClippingNode addChild:self.healthBarMask];
-        [self addChild:self.healthBarClippingNode];
+        self.healthBar = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"raidframe_fill.png"]];
+        [self.healthBar setAnchorPoint:CGPointZero];
+        self.healthBar.position = CGPointMake(1.33, 1);
+        [self.healthBar setColor:ccGREEN];
+        [self.healthBar setScale:frameScale];
+        self.healthBar.midpoint = CGPointMake(.5, 0);
+        self.healthBar.barChangeRate = CGPointMake(0, 1.0);
+        self.healthBar.type = kCCProgressTimerTypeBar;
+        [self addChild:self.healthBar z:1];
+        self.healthBar.percentage = 100.0;
         
-        self.absorptionClippingNode = [ClippingNode node];
-        self.absorptionMask = [CCSprite spriteWithSpriteFrameName:@"raidframe_fill.png"];
-        [self.absorptionMask setAnchorPoint:CGPointZero];
-        [self.absorptionMask setColor:ccc3(0, 70, 140)];
-        [self.absorptionMask setOpacity:155];
-        [self.absorptionClippingNode setScale:frameScale];
-        
-        [self.absorptionClippingNode setPosition:CGPointMake(FILL_INSET_WIDTH, FILL_INSET_HEIGHT)];
-        [self.absorptionClippingNode setContentSize:self.absorptionMask.contentSize];
-        [self.absorptionClippingNode setAnchorPoint:CGPointZero];
-        [self.absorptionClippingNode setClippingRegion:CGRectMake(0, 0, self.absorptionMask.contentSize.width, 0)];
-        [self.absorptionClippingNode addChild:self.absorptionMask];
-        [self addChild:self.absorptionClippingNode];
+        self.absorptionBar = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"raidframe_fill.png"]];
+        [self.absorptionBar setAnchorPoint:CGPointZero];
+        [self.absorptionBar setColor:ccc3(0, 70, 140)];
+        [self.absorptionBar setOpacity:155];
+        self.absorptionBar.position = CGPointMake(1.33, 1);
+        [self.absorptionBar setScale:frameScale];
+        self.absorptionBar.midpoint = CGPointMake(.5, 0);
+        self.absorptionBar.barChangeRate = CGPointMake(0, 1.0);
+        self.absorptionBar.type = kCCProgressTimerTypeBar;
+        [self addChild:self.absorptionBar z:2];
         
         self.isFocusedLabel = [CCLabelTTFShadow labelWithString:@"" fontName:@"Marion-Bold" fontSize:18.0f];
         [self.isFocusedLabel setPosition:CGPointMake(frameScale *self.raidFrameTexture.contentSize.width / 2, frameScale *self.raidFrameTexture.contentSize.height - 14.0)];
         [self.isFocusedLabel setColor:ccc3(220, 0, 0)];
         [self.isFocusedLabel setShadowOffset:CGPointMake(-1, -1)];
         
-		self.healthLabel =  [CCLabelTTFShadow labelWithString:@"" fontName:@"TrebuchetMS-Bold" fontSize:16.0f];
+		self.healthLabel =  [CCLabelTTFShadow labelWithString:@"100%" fontName:@"TrebuchetMS-Bold" fontSize:16.0f];
         [self.healthLabel setColor:ccBLACK];
         [self.healthLabel setShadowOffset:CGPointMake(-.8, -.8)];
         [self.healthLabel setShadowColor:ccc3(220, 220, 220)];
@@ -129,8 +119,8 @@
         [self addChild:self.isFocusedLabel z:11];
         
         self.priorityNegativeEffectSprite = [CCSprite node];
-        [self.priorityNegativeEffectSprite setPosition:CGPointMake(86, 13)];
-        self.priorityNegativeEffectSprite.scale = .16;
+        [self.priorityNegativeEffectSprite setPosition:CGPointMake(86, 13.5)];
+        self.priorityNegativeEffectSprite.scale = .25;
         [self addChild:self.priorityNegativeEffectSprite z:10];
 		
         self.priorityPositiveEffectSprite = [CCSprite node];
@@ -147,10 +137,8 @@
         self.negativeEffectProgress = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"spell-icon-mask.png"]];
         self.negativeEffectProgress.opacity = 122;
         [self.negativeEffectProgress setScale:.25];
-        [self.negativeEffectProgress setPosition:CGPointMake(86, 13.5)];
+        [self.negativeEffectProgress setPosition:CGPointMake(86, 13)];
         [self addChild:self.negativeEffectProgress z:11];
-        
-        
     }
     return self;
 }
@@ -214,15 +202,15 @@
         [node removeFromParentAndCleanup:YES];
     }], nil];
 
-    
     if (critical) {
         fontSize = 36;
         fontName = @"TrebuchetMS-Bold";
         scale = 0.0;
         sctAction = [CCSequence actions:[CCScaleTo actionWithDuration:.15 scale:1.0], [CCDelayTime actionWithDuration:.25], [CCScaleTo actionWithDuration:.5 scale:.75],[CCSpawn actions:[CCMoveBy actionWithDuration:1.5 position:CGPointMake(0, 75)], [CCFadeOut actionWithDuration:1.5],nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
-            [node removeFromParentAndCleanup:YES];}], nil];
+            [node removeFromParentAndCleanup:YES];
+        
+        }], nil];
     }
-    
     
     CCLabelTTFShadow *sctLabel = [CCLabelTTFShadow labelWithString:sct fontName:fontName fontSize:fontSize];
     [sctLabel setColor:ccGREEN];
@@ -243,6 +231,7 @@
 -(void)updateHealthForInterval:(ccTime)timeDelta
 {
     NSInteger healthDelta = abs(self.member.health - self.lastHealth);
+    float lastHealthPercentage = self.lastHealth / (float)self.member.maximumHealth;
     
     switch (self.selectionState) {
         case RaidViewSelectionStateNone:
@@ -329,21 +318,21 @@
 	if (self.member.health >= 1){
 		healthText = [NSString stringWithFormat:@"%3.0f%%", (((float)self.member.health) / self.member.maximumHealth)*100];
         if (healthDelta != 0) {
-            [self.healthBarMask stopAllActions];
-            [self.healthBarClippingNode setClippingRegion:CGRectMake(0, 0,self.healthBarMask.contentSize.width , self.healthBarMask.contentSize.height * self.member.healthPercentage)];
+            [self.healthBar stopAllActions];
+            [self.healthBar runAction:[CCProgressFromTo actionWithDuration:.33 from:lastHealthPercentage * 100 to:self.member.healthPercentage * 100]];
         }
         ccColor3B colorForPerc = [self colorForPercentage:(((float)self.member.health) / self.member.maximumHealth)];
-        [self.healthBarMask setColor:colorForPerc];
+        [self.healthBar setColor:colorForPerc];
         
         float absorbPercentage = self.member.absorb / (float)self.member.maximumHealth;
-        [self.absorptionClippingNode setClippingRegion:CGRectMake(0, 0,self.healthBarMask.contentSize.width , self.healthBarMask.contentSize.height * absorbPercentage)];
-
+        [self.absorptionBar setPercentage:absorbPercentage * 100];
 	}
 	else {
 		healthText = @"Dead";
         self.healthLabel.color = ccRED;
         self.healthLabel.shadowColor = ccBLACK;
-        [self.healthBarClippingNode setClippingRegion:CGRectMake(0, 0,self.healthBarMask.contentSize.width , 0)];
+        [self.healthBar runAction:[CCProgressFromTo actionWithDuration:.33 from:lastHealthPercentage * 100 to:0]];
+        [self.absorptionBar setPercentage:0];
 	}
 	
     Effect *negativeEffect = nil;
@@ -387,7 +376,6 @@
         self.positiveEffectCountLabel.string = @"";
     }
     
-    
     NSInteger negativeEffectCount = [self.member effectCountOfType:EffectTypeNegative];
     if (negativeEffectCount > 1){
         self.negativeEffectCountLabel.string = [NSString stringWithFormat:@"%i", negativeEffectCount];
@@ -403,7 +391,6 @@
 		[self.healthLabel setString:healthText];
 	}
 }
-
 
 -(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {

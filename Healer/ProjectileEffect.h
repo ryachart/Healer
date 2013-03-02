@@ -10,6 +10,8 @@
 
 @class RaidMember;
 @class Raid;
+@class Agent;
+
 typedef enum {
     ProjectileEffectTypeNormal, 
     ProjectileEffectTypeThrow,
@@ -17,6 +19,7 @@ typedef enum {
 
 @interface ProjectileEffect : NSObject
 @property (nonatomic, readwrite) ProjectileEffectType type;
+@property (nonatomic, assign) Agent *sourceAgent;
 @property (nonatomic, retain) NSString* collisionParticleName;
 @property (nonatomic, readonly, retain) NSString *spriteName;
 @property (nonatomic, readonly, retain) RaidMember *target;
@@ -25,8 +28,8 @@ typedef enum {
 @property (nonatomic, readwrite) NSTimeInterval delay;
 @property (nonatomic, readwrite) BOOL isFailed;
 
--(id)initWithSpriteName:(NSString*)spriteName target:(RaidMember*)target andCollisionTime:(NSTimeInterval)colTime;
--(id)initWithNetworkMessage:(NSString*)message andRaid:(Raid*)raid;
+-(id)initWithSpriteName:(NSString*)spriteName target:(RaidMember*)target collisionTime:(NSTimeInterval)colTime sourceAgent:(Agent*)source;
+-(id)initWithNetworkMessage:(NSString*)message raid:(Raid*)raid enemies:(NSArray*)enemies;
 //PRTEFF|TARGET|SPRITE|R|G|B|TIME|TYPE
 -(NSString*)asNetworkMessage;
 @end

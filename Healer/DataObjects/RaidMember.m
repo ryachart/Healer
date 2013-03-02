@@ -78,7 +78,7 @@
 		_lastAttack = 0.0;
 		
 		[target setHealth:[target health] - (self.damageDealt * self.damageDoneMultiplier)];
-        [self.announcer displayAttackFromRaidMember:self];
+        [self.announcer displayAttackFromRaidMember:self onTarget:target];
 	}
 }
 
@@ -112,10 +112,21 @@
     return arc4random() % 100 <= (100 * self.dodgeChance);
 }
 
+- (Enemy *)highestPriorityEnemy:(NSArray *)enemies
+{
+    Enemy *highestPriority = [enemies objectAtIndex:0];
+    for (int i = 1; i < enemies.count; i++) {
+        if ([[enemies objectAtIndex:i] threatPriority] > highestPriority.threatPriority) {
+            highestPriority = [enemies objectAtIndex:i];
+        }
+    }
+    return highestPriority;
+}
+
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 {
     self.lastAttack += timeDelta;
-    Enemy *theBoss = (Enemy*)[enemies objectAtIndex:0];
+    Enemy *theBoss = [self highestPriorityEnemy:enemies];
     [self performAttackIfAbleOnTarget:theBoss];
     [self updateEffects:enemies raid:raid players:players time:timeDelta];
 	self.absorb = self.absorb; //Verify that our absorption amount is still valid.
@@ -347,7 +358,7 @@
             [self healSelfForAmount:50];
         } else {
             [target setHealth:[target health] - (self.damageDealt * self.damageDoneMultiplier)];
-            [self.announcer displayAttackFromRaidMember:self];
+            [self.announcer displayAttackFromRaidMember:self onTarget:target];
         }
 		
 	}

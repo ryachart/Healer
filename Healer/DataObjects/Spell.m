@@ -848,7 +848,7 @@
             [self didHealTarget:starTarget inRaid:raid withEnemies:enemies andPlayers:players forAmount:0];
             [self.owner playerDidHealFor:0 onTarget:starTarget fromSpell:self withOverhealing:0 asCritical:NO];
         }
-        ProjectileEffect *starProjectile = [[ProjectileEffect alloc] initWithSpriteName:@"star.png" target:starTarget andCollisionTime:healDelay];
+        ProjectileEffect *starProjectile = [[ProjectileEffect alloc] initWithSpriteName:@"star.png" target:starTarget collisionTime:healDelay sourceAgent:self.owner];
         [starProjectile setCollisionParticleName:@"star_explosion.plist"];
         [starProjectile setDelay:preDelay];
         [self.owner.announcer displayProjectileEffect:starProjectile fromOrigin:CGPointMake(400 - (arc4random() % 300 - 150), 800)];

@@ -150,7 +150,8 @@
         [self addChild:playerView];
         
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(322,350, 400, 50)] autorelease];
-        self.playerStatusView = [[[PlayerStatusView alloc] initWithFrame:CGRectMake(130, 100, 200, 50)] autorelease];
+        self.playerStatusView = [[[PlayerStatusView alloc] init] autorelease];
+        [self.playerStatusView setPosition:CGPointMake(130, 100)];
         
         self.playerMoveButton = [[[PlayerMoveButton alloc] init] autorelease];
         [self.playerMoveButton setPosition:CGPointMake(-280, -324)];

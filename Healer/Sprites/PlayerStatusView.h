@@ -16,7 +16,7 @@
 @property (nonatomic, readwrite) float percentEnergy;
 @property (nonatomic, assign) ChannelingDelegate *channelDelegate;
 @property (nonatomic, readwrite) double percentChanneled;
-- (id)initWithFrame:(CGRect)frame;
+
 - (void)updateWithPlayer:(Player*)player;
 @end
 

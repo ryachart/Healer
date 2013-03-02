@@ -21,10 +21,9 @@
 @property (nonatomic, readwrite) BOOL isTouched;
 @end
 
-
 @implementation PlayerStatusView
 
-- (id)initWithFrame:(CGRect)frame {
+- (id)init {
     if ((self = [super init])) {
         // Initialization code
 		self.percentEnergy = 0.0;

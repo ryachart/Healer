@@ -61,7 +61,7 @@ typedef enum {
 @property (nonatomic, readwrite) float criticalChanceAdjustment;
 @property (nonatomic, readwrite) float cooldownMultiplierAdjustment;
 @property (nonatomic, readwrite) float dodgeChanceAdjustment;
-@property (nonatomic, readonly) BOOL causesFocus;
+@property (nonatomic, readwrite) BOOL causesStun;
 @property (readwrite) BOOL isIndependent; //Max Stacks doesnt apply and other effects are never the same as this effect
 @property (nonatomic, readwrite) BOOL considerDodgeForDamage;
 @property (nonatomic, readwrite) NSInteger visibilityPriority;

@@ -250,6 +250,7 @@
     if (self.appliedEffect && (preHealth > target.health || !self.requiresDamageToApplyEffect) ){
         //Only apply the effect if we actually did damaww ge.
         Effect *applyThis = [self.appliedEffect copy];
+        [applyThis setSpriteName:self.iconName];
         [applyThis setOwner:self.owner];
         [target addEffect:applyThis];
         [applyThis release];
@@ -451,6 +452,7 @@
     if (didFail){
         [fireball setFailureChance:100];
     }
+    [self.appliedEffect setSpriteName:self.iconName];
     [fireball setOwner:self.owner];
     [fireball setIsIndependent:YES];
     [fireball setAppliedEffect:self.appliedEffect];
@@ -467,7 +469,6 @@
         RaidMember *target = self.ignoresGuardians ? theRaid.randomNonGuardianLivingMember : [theRaid randomLivingMember];
         [self fireAtTarget:target];
     }
-
 }
 
 - (void)fireAtRaid:(Raid*)raid
@@ -633,6 +634,7 @@
     if (self = [super init]){
         self.info = @"After 5 seconds a massive strike lands on the affected target dealing very high damage.";
         self.title = @"Crush";
+        self.iconName = @"unstoppable.png";
     }
     return self;
 }
@@ -662,6 +664,7 @@
     if (self = [super init]){
         self.info = @"Deals extremely high damage to all living allies.  The damage is divided by the number of living allies.";
         self.title = @"Deathwave";
+        self.iconName = @"choking_cloud.png";
         self.abilityValue = 10000;
         [self setActivationTime:3.5];
 
@@ -841,6 +844,7 @@
     if (self = [super init]){
         self.info = @"Any healing done is instead converted into damage to the affected target.";
         self.title = @"Spiritual Inversion";
+        self.iconName = @"curse.png";
     }
     return self;
 }
@@ -865,6 +869,7 @@
     if (self = [super init]){
         self.info = @"Deals moderate damage over time to its target and any healing done to an affected target will burn 75 Mana from the Healer.";
         self.title = @"Soul Burn";
+        self.iconName = @"blood_curse.png";
     }
     return self;
 }
@@ -924,6 +929,7 @@
     if (self = [super init]){
         self.info = @"A random player will be strangled by dark magic reducing healing done by 98% and dealing damage over time.";
         self.title = @"Grip of Delsarn";
+        self.iconName = @"curse.png";
     }
     return self;
 }
@@ -1064,6 +1070,7 @@
     if (self = [super init]){
         self.info = @"Deals heavy fire damage to targets positioned close together.";
         self.title = @"Breath of Flame";
+        self.iconName = @"burning.png";
         self.targetPositioningType = Melee;
     }
     return self;
@@ -1155,7 +1162,7 @@
             [boltEffect setTitle:@"shadowbolt"];
             appliedEffect = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegative];
             [appliedEffect setTitle:@"shadowbolt-dot"];
-            [appliedEffect setSpriteName:@"curse.png"];
+            [appliedEffect setSpriteName:@"angry_spirit.png"];
             [(RepeatedHealthEffect*)appliedEffect setNumOfTicks:6];
             [(RepeatedHealthEffect*)appliedEffect setValuePerTick:-damage * .15];
             [appliedEffect setOwner:self.owner];
@@ -1182,7 +1189,6 @@
     }
     [target addEffect:boltEffect];
     [boltEffect release];
-
     
     ProjectileEffect *projVisual = [[ProjectileEffect alloc] initWithSpriteName:[spriteNames objectAtIndex:boltTypeRoll] target:target collisionTime:colTime sourceAgent:self.owner];
     [projVisual setCollisionParticleName:[collisionParticleNames objectAtIndex:boltTypeRoll]];
@@ -1195,8 +1201,9 @@
 - (id)init {
     if (self = [super init]){
         
-        self.info = @"A vile creature made of flowing blood.  This creature reduces all healing done to allies by 25% and causes random allies to hemorrhage their lifeforce away.";
-        self.title = @"Minion of Blood";
+        self.info = @"This aura reduces all healing done to allies by 25% and causes random allies to hemorrhage their lifeforce away.";
+        self.title = @"Aura of Blood";
+        self.iconName = @"bleeding.png";
     }
     return self;
 }
@@ -1212,7 +1219,7 @@
         
         if (arc4random() % 100 < 20){
             RepeatedHealthEffect *bleed = [[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative];
-            [bleed setSpriteName:@"bleeding.png"];
+            [bleed setSpriteName:self.iconName];
             [bleed setValuePerTick:-self.abilityValue];
             [bleed setNumOfTicks:5];
             [bleed setOwner:self.owner];
@@ -1230,8 +1237,9 @@
     if (self = [super init]) {
         self.attackParticleEffectName = @"fire_explosion.plist";
         
-        self.info = @"A soulless tormentor of living flame.  The heat from this creature burns all allies while it occasionally blasts enemies with a burst of immolation.";
-        self.title = @"Minion of Flame";
+        self.info = @"The heat from this aura burns all allies and occasionally blasts enemies with a burst of immolation.";
+        self.title = @"Aura of Flame";
+        self.iconName = @"burning.png";
     }
     return self;
 }
@@ -1257,8 +1265,9 @@
 
 - (id)init {
     if (self = [super init]){
-        self.info = @"A viscious being of pure darkness.  This creature drains mana from Healers each time they cast a spell and casts a viscious curse on random allies.";
-        self.title = @"Minion of Shadow";
+        self.info = @"This aura drains mana from Healers each time they cast a spell and spawns a viscious curse on random allies.";
+        self.title = @"Aura of Shadow";
+        self.iconName = @"curse.png";
     }
     return self;
 }
@@ -1276,7 +1285,7 @@
     [[self.owner announcer] displayParticleSystemWithName:@"shadow_burst.plist" onTarget:lowestHealthMember];
     RepeatedHealthEffect *shadowCurse = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegative];
     [shadowCurse setTitle:@"shadow-blast"];
-    [shadowCurse setSpriteName:@"curse.png"];
+    [shadowCurse setSpriteName:self.iconName];
     [shadowCurse setNumOfTicks:7];
     [shadowCurse setValuePerTick:-self.abilityValue];
     [shadowCurse setOwner:self.owner];
@@ -1420,6 +1429,7 @@
     if (self = [super init]){
         self.title = @"Disruption Cloud";
         self.info = @"A veil of noxious gas fills the realm causing spells to take 40% longer to cast and allies to take moderate damage.";
+        self.iconName = @"choking_cloud.png";
     }
     return self;
 }
@@ -1869,9 +1879,11 @@
         DelayedHealthEffect *axeSweep2 = [[axeSweepEffect copy] autorelease];
         if (![member isDead]) {
             [member addEffect:axeSweepEffect];
+            [self.owner.announcer displayParticleSystemWithName:@"pow.plist" onTarget:member withOffset:CGPointZero delay:i * .5];
         }
-        if (![member isDead]) {
+        if (![member2 isDead]) {
             [member2 addEffect:axeSweep2];
+            [self.owner.announcer displayParticleSystemWithName:@"pow.plist" onTarget:member2 withOffset:CGPointZero delay:i * .5];
         }
     }
     [self startChannel:7.5];
@@ -1910,6 +1922,59 @@
         }
         
         [self startChannel:self.duration];
+    }
+}
+@end
+
+@implementation ConstrictingVines
+- (id)init {
+    if (self = [super init]){
+        self.title = @"Constricting Vines";
+        self.info = @"You and all of your allies are wrapped in constricting vines causing damage and removing your ability to act.";
+    }
+    return self;
+}
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    for (RaidMember *member in theRaid.livingMembers) {
+        RepeatedHealthEffect *constriction = [[[RepeatedHealthEffect alloc] initWithDuration:self.stunDuration andEffectType:EffectTypeNegative] autorelease];
+        [constriction setSpriteName:self.iconName];
+        [constriction setValuePerTick:-self.abilityValue];
+        [constriction setNumOfTicks:(int)self.stunDuration];
+        [constriction setCausesStun:YES];
+        [constriction setTitle:@"constriction"];
+        [constriction setOwner:self.owner];
+        [member addEffect:constriction];
+    }
+    
+    [self startChannel:self.stunDuration];
+}
+@end
+
+@implementation ShatterArmor
+- (id)init
+{
+    if (self = [super init]){
+        self.title = @"Shatter Armor";
+        self.iconName = @"Shatters the targets armor increasing its damage taken by 100%.";
+        self.iconName = @"unstoppable.png";
+    }
+    return self;
+}
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    Effect *shatteredArmor = [[[Effect alloc] initWithDuration:10.0 andEffectType:EffectTypeNegative] autorelease];
+    [shatteredArmor setSpriteName:self.iconName];
+    [shatteredArmor setTitle:@"shatter-armor"];
+    [shatteredArmor setDamageTakenMultiplierAdjustment:1];
+    [shatteredArmor setOwner:self.owner];
+    [shatteredArmor setAilmentType:AilmentTrauma];
+    
+    for (RaidMember *member in theRaid.livingMembers) {
+        if (member.isFocused) {
+            [member addEffect:shatteredArmor];
+            break;
+        }
     }
 }
 @end

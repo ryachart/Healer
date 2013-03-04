@@ -13,6 +13,7 @@
 #import "PlayerDataManager.h"
 
 #define kThreatPriorityDead -9999
+#define kThreatPriorityRandom -9998
 
 @class Player;
 @class Raid;
@@ -100,12 +101,7 @@
 @property (readwrite) NSInteger numBubblesPopped;
 @end
 
-@class FocusedAttack;
-@interface FungalRavagers : Enemy
-@property (readwrite) BOOL isEnraged;
-@property (nonatomic, assign) FocusedAttack *secondTargetAttack;
-@property (nonatomic, assign) FocusedAttack *thirdTargetAttack;
-
+@interface FinalRavager : Enemy
 @end
 
 @interface MischievousImps: Enemy
@@ -115,9 +111,12 @@
 @interface BefouledTreant : Enemy
 @end
 
-@interface TwinChampions : Enemy
-@property (nonatomic, assign) FocusedAttack *firstFocusedAttack;
-@property (nonatomic, assign) FocusedAttack *secondFocusedAttack;
+@interface Sarroth : Enemy
+
+@end
+
+@interface Vorroth : Enemy
+
 @end
 
 @interface Baraghast : Enemy
@@ -130,6 +129,7 @@
 @interface GatekeeperDelsarn : Enemy
 @end
 
+@class FocusedAttack;
 @interface SkeletalDragon: Enemy
 @property (nonatomic, retain) Ability *boneThrowAbility;
 @property (nonatomic, retain) Ability *sweepingFlame;

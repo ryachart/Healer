@@ -39,12 +39,16 @@ typedef enum {
 @property (nonatomic, readwrite) float criticalChance;
 @property (nonatomic, readonly) Positioning positioning;
 @property (nonatomic, readwrite) ccColor3B classColor;
+@property (nonatomic, readwrite) BOOL isStunned;
+@property (nonatomic, readwrite) float stunDuration;
 
 - (float)dps;
 - (id)initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position;
 - (BOOL)raidMemberShouldDodgeAttack:(float)modifer;
 - (void)didPerformCriticalStrikeForAmount:(NSInteger)amount;
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
+- (void)performAttackIfAbleOnTarget:(Enemy*)target;
+- (Enemy *)highestPriorityEnemy:(NSArray *)enemies;
 
 - (NSString*)asNetworkMessage;
 - (void)updateWithNetworkMessage:(NSString*)message;

@@ -150,6 +150,7 @@
         [self addChild:playerView];
         
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(322,350, 400, 50)] autorelease];
+        [self.playerCastBar setPlayer:self.player];
         self.playerStatusView = [[[PlayerStatusView alloc] init] autorelease];
         [self.playerStatusView setPosition:CGPointMake(130, 100)];
         
@@ -321,10 +322,11 @@
 -(void)onEnterTransitionDidFinish{
     [super onEnterTransitionDidFinish];
     if (self.encounter.levelNumber == 1){
-        GamePlayFTUELayer *gpfl = [[[GamePlayFTUELayer alloc] init] autorelease];
-        [gpfl setDelegate:self];
-        [self addChild:gpfl z:1000];
-        [gpfl showWelcome];
+//        GamePlayFTUELayer *gpfl = [[[GamePlayFTUELayer alloc] init] autorelease];
+//        [gpfl setDelegate:self];
+//        [self addChild:gpfl z:1000];
+//        [gpfl showWelcome];
+        [self battleBegin];
     }else{
         [self battleBegin];
     }
@@ -676,6 +678,20 @@
     completionBlock();
 }
 
+- (void)displayHealerAttackFromRaidMember:(RaidMember *)member onTarget:(Enemy*)target
+{
+    CCSprite *arrowSprite = [CCSprite spriteWithSpriteFrameName:@"light_bolt.png"];
+    [arrowSprite setScale:.5];
+    CGPoint enemyPosition = [self.enemiesLayer spriteCenterForEnemy:target];
+    CGPoint position = [self.raidView frameCenterForMember:member];
+    CGFloat rotation = [self rotationFromPoint:position toPoint:enemyPosition] + 270.0;
+    [arrowSprite setPosition:position];
+    [arrowSprite setRotation:rotation];
+    [self addChild:arrowSprite z:RAID_Z-1 tag:PAUSEABLE_TAG];
+    
+    [arrowSprite runAction:[CCSequence actions:[CCMoveTo actionWithDuration:1.25 position:enemyPosition],[CCCallBlockN actionWithBlock:^(CCNode *node){[node removeFromParentAndCleanup:YES];}], nil]];
+}
+
 - (void)displayAttackFromRaidMember:(RaidMember*)member onTarget:(Enemy*)target
 {
     if ([member isMemberOfClass:[Archer class]]) {
@@ -686,6 +702,8 @@
         [self displayWarlockAttackFromRaidMember:member onTarget:target];
     } else if ([member isMemberOfClass:[Berserker class]]) {
         [self displayBerserkerAttackFromRaidMember:member onTarget:target];
+    } else if ([member isMemberOfClass:[Player class]]) {
+        [self displayHealerAttackFromRaidMember:member onTarget:target];
     }
 }
 
@@ -1029,7 +1047,7 @@
 	//Update UI
 	[self.raidView updateRaidHealthWithPlayer:self.player andTimeDelta:deltaT];
 	[self.bossHealthView updateHealth];
-	[self.playerCastBar updateTimeRemaining:[self.player remainingCastTime] ofMaxTime:[[self.player spellBeingCast] castTime] forSpell:[self.player spellBeingCast]];
+	[self.playerCastBar update];
 	[self.playerStatusView updateWithPlayer:self.player];
 	[self.alertStatus setString:[self.player statusText]];
 	[self.spellView1 updateUI];

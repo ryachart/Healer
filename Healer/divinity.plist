@@ -11,15 +11,15 @@
 	<key>surging-glory</key>
 	<string>Increases natural mana regeneration by 10%.</string>
 	<key>shining-aegis</key>
-	<string>Your heals reduce the target&apos;s damage taken by 7.5% for 10 seconds.</string>
+	<string>Your spells reduce the target&apos;s damage taken by 25% for 1 second.</string>
 	<key>after-light</key>
 	<string>Non-periodic healing shields the target for 10% of the healing done.</string>
 	<key>repel-the-darkness</key>
-	<string>Your heals increase the target&apos;s damage dealt by 25% for 10 seconds.</string>
+	<string>Your spells fire a bolt of light at an enemy target dealing high damage.</string>
 	<key>ancient-knowledge</key>
 	<string>50% of Overhealing is distributed to injured allies.</string>
 	<key>purity-of-soul</key>
-	<string>Spell critical hits decrease your next 2 spell casts by 50% and reduce spell cooldowns by 10%.</string>
+	<string>10% of your healing done is granted to you.</string>
 	<key>searing-power</key>
 	<string>Your healing spells increase the maximum health of the target by 10% for 1 minute.</string>
 	<key>sunlight</key>

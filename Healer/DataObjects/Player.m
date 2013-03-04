@@ -53,7 +53,7 @@
         self.castTimeAdjustment = 1.0;
         self.spellCriticalChance = .1; //10% Base chance to crit
         self.criticalBonusMultiplier = 1.5; //50% more on a crit
-        
+        self.damageDealt = 1000;
         _spellsOnCooldown = [[NSMutableSet setWithCapacity:4] retain];
         
         for (int i = 0; i < CastingDisabledReasonTotal; i++){
@@ -307,6 +307,13 @@
     }
 }
 
+- (void)performAttackIfAbleOnTarget:(Enemy *)target
+{
+    if (self.shouldAttack) {
+        [super performAttackIfAbleOnTarget:target];
+    }
+}
+
 - (void)updateEffects:(NSArray *)enemies raid:(Raid *)theRaid players:(NSArray *)players time:(float)timeDelta {
     [super updateEffects:enemies raid:theRaid players:players time:timeDelta];
     [self cacheCastTimeAdjustment];
@@ -315,6 +322,11 @@
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 {
     [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
+    
+    if (self.isStunned && self.isCasting) {
+        [self interrupt];
+    }
+    
     if (!self.isRedemptionApplied){
         if ([self hasDivinityEffectWithTitle:@"redemption"]){
             for (RaidMember *member in raid.livingMembers){
@@ -371,6 +383,11 @@
             }
         }
         self.overhealingToDistribute = 0;
+    }
+    
+    if (self.shouldAttack) {
+        [self performAttackIfAbleOnTarget:[self highestPriorityEnemy:enemies]];
+        self.shouldAttack = NO;
     }
     
 	if (self.isCasting){
@@ -573,28 +590,20 @@
     }
     
     if ([self hasDivinityEffectWithTitle:@"shining-aegis"]){
-        Effect *armorEffect = [[[Effect alloc] initWithDuration:10 andEffectType:EffectTypePositiveInvisible] autorelease];
+        Effect *armorEffect = [[[Effect alloc] initWithDuration:1 andEffectType:EffectTypePositive] autorelease];
         [armorEffect setOwner:self];
+        [armorEffect setSpriteName:@"shining-aegis-effect-icon.png"];
         [armorEffect setTitle:@"shining-aegis-armor-eff"];
-        [armorEffect setDamageTakenMultiplierAdjustment:-.075];
+        [armorEffect setDamageTakenMultiplierAdjustment:-.25];
         [target addEffect:armorEffect];
     }
     
     if ([self hasDivinityEffectWithTitle:@"purity-of-soul"]){
-        if (critical) {
-            [self.announcer announce:@"The purity of your soul glows brightly"];
-            ExpiresAfterSpellCastsEffect *critHaste = [[[ExpiresAfterSpellCastsEffect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
-            [critHaste setCastTimeAdjustment:.5];
-            [critHaste setNumCastsRemaining:3]; //Why three? This current spell is going to count, unfortunately.
-            [critHaste setOwner:self];
-            [critHaste setTitle:@"pos-crit-haste"];
-            [critHaste setIgnoresInstantSpells:YES];
-            [self addEffect:critHaste];
-            
-            for (Spell *spell in self.spellsOnCooldown) {
-                [spell setCooldownRemaining:spell.cooldownRemaining - spell.cooldown * .1];
-            }
-        }
+        NSInteger selfHealing = loggedAmount * .1;
+        NSInteger preHealth = self.health;
+        self.health += selfHealing;
+        NSInteger healthGained = self.health - preHealth;
+        loggedAmount += healthGained;
     }
     
     if ([self hasDivinityEffectWithTitle:@"ancient-knowledge"]){
@@ -610,11 +619,7 @@
     }
     
     if ([self hasDivinityEffectWithTitle:@"repel-the-darkness"]){
-        Effect *repelTheDarknessEffect = [[[Effect alloc] initWithDuration:10.0 andEffectType:EffectTypePositiveInvisible] autorelease];
-        [repelTheDarknessEffect setDamageDoneMultiplierAdjustment:.25];
-        [repelTheDarknessEffect setOwner:self];
-        [repelTheDarknessEffect setTitle:@"repel-damage"];
-        [target addEffect:repelTheDarknessEffect];
+        self.shouldAttack = YES;
     }
     
     if ([self hasDivinityEffectWithTitle:@"torrent-of-faith"]){

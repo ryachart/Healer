@@ -8,8 +8,8 @@
 
 #import "PlayerCastBar.h"
 #import "Spell.h"
-#import "ClippingNode.h"
 #import "CCLabelTTFShadow.h"
+#import "Player.h"
 
 #define CASTBAR_INSET_WIDTH 4
 #define CASTBAR_INSET_HEIGHT 4
@@ -17,10 +17,10 @@
 @interface PlayerCastBar ()
 @property (nonatomic, assign) Spell* castingSpell;
 @property (nonatomic, assign) CCSprite *spellIcon;
-@property (nonatomic, assign) ClippingNode *castBarClippingNode;
-@property (nonatomic, readwrite) float percentTimeRemaining;
+@property (nonatomic, assign) CCProgressTimer *castBar;
 @property (nonatomic, readwrite) GLubyte opacity;
 @property (nonatomic, readwrite) BOOL isInterrupted;
+@property (nonatomic, readwrite) float stunMax;
 @end
 
 @implementation PlayerCastBar
@@ -30,7 +30,6 @@
         // Initialization code
         self.position = frame.origin;
         self.contentSize = frame.size;
-		self.percentTimeRemaining = 0.0;
         
         CCSprite *background = [CCSprite spriteWithSpriteFrameName:@"bar_back_long.png"];
         [background setAnchorPoint:CGPointZero];
@@ -42,17 +41,14 @@
         [self.timeRemaining setPosition:CGPointMake(0, 0)];
         [self addChild:self.timeRemaining z:100];
         
-        self.castBar = [CCSprite spriteWithSpriteFrameName:@"bar_fill_long.png"];
+        self.castBar = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"bar_fill_long.png"]];
         [self.castBar setColor:ccGREEN];
         [self.castBar setPosition:CGPointMake(CASTBAR_INSET_WIDTH, CASTBAR_INSET_HEIGHT)];
         [self.castBar setAnchorPoint:CGPointZero];
-
-        self.castBarClippingNode = [ClippingNode node];
-        [self.castBarClippingNode setAnchorPoint:CGPointZero];
-        [self.castBarClippingNode setClippingRegion:CGRectMake(0,0,0,0)];
-        [self.castBarClippingNode addChild:self.castBar];
-        
-        [self addChild:self.castBarClippingNode];
+        self.castBar.midpoint = CGPointMake(0, .5);
+        self.castBar.barChangeRate = CGPointMake(1.0, 0);
+        self.castBar.type = kCCProgressTimerTypeBar;
+        [self addChild:self.castBar];
         
         self.spellIcon = [CCSprite node];
         self.spellIcon.position = CGPointMake(17, 17);
@@ -67,12 +63,14 @@
 - (void)postFadeCleanup
 {
     [self.timeRemaining setString:@""];
-    [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0, 0, 0)];
+    [self.castBar setPercentage:0.0];
 }
 
--(void)updateTimeRemaining:(NSTimeInterval)remaining ofMaxTime:(NSTimeInterval)maxTime forSpell:(Spell*)spell
+-(void)update
 {
-	if (remaining <= 0){
+    Spell *spell = self.player.spellBeingCast;
+    
+	if ((!spell || self.player.remainingCastTime <= 0) && !self.player.isStunned){
         const NSInteger fadeOutTag = 43234;
         if (![self getActionByTag:fadeOutTag] && self.opacity > 0) {
             [self stopAllActions];
@@ -82,32 +80,42 @@
             [self runAction:fadeOut];
             [self runAction:[CCSequence actionOne:[CCDelayTime actionWithDuration:fadeTime] two:[CCCallFunc actionWithTarget:self selector:@selector(postFadeCleanup)]]];
         }
-		self.percentTimeRemaining = 0.0;
         if (self.castingSpell) {
             if (!self.isInterrupted) {
                 self.timeRemaining.string = [NSString stringWithFormat:@"%@: 0:00", self.castingSpell.title];
             }
-            [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.castBar.contentSize.width + CASTBAR_INSET_WIDTH), self.castBar.contentSize.height + CASTBAR_INSET_HEIGHT)];
+            [self.castBar setPercentage:100.0f];
             self.castingSpell = nil;
         }
 	}
 	else {
-        self.spellIcon.displayFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:spell.spriteFrameName];
-        
-        const NSInteger fadeInTag = 46433;
-        if (![self getActionByTag:fadeInTag]) {
-            [self stopAllActions];
-            CCFadeTo *fadeIn = [CCFadeTo actionWithDuration:.25 opacity:255];
-            [fadeIn setTag:fadeInTag];
-            [self runAction:fadeIn];
+        if (self.player.isStunned) {
+            float stunDur = self.player.stunDuration;
+            if (stunDur > self.stunMax) {
+                self.stunMax = stunDur;
+            }
+            [self.timeRemaining setString:[NSString stringWithFormat:@"Stunned! %1.2f", self.player.stunDuration]];
+            self.castBar.color = ccRED;
+            self.castBar.percentage = 100 * (stunDur/self.stunMax);
+        } else {
+            self.stunMax = 0;
+            self.spellIcon.displayFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:spell.spriteFrameName];
+            
+            const NSInteger fadeInTag = 46433;
+            if (![self getActionByTag:fadeInTag]) {
+                [self stopAllActions];
+                CCFadeTo *fadeIn = [CCFadeTo actionWithDuration:.25 opacity:255];
+                [fadeIn setTag:fadeInTag];
+                [self runAction:fadeIn];
+            }
+            self.isInterrupted = NO;
+            [self.castBar setColor:ccGREEN];
+            self.castingSpell = spell;
+            
+            float percentTimeRemaining = self.player.remainingCastTime/self.player.spellBeingCast.castTime;
+            [self.castBar setPercentage:100 * (1.0 - percentTimeRemaining)];
+            [self.timeRemaining setString:[NSString stringWithFormat:@"%@ %1.2f", spell.title,  self.player.remainingCastTime]];
         }
-        self.isInterrupted = NO;
-        [self.castBar setColor:ccGREEN];
-        self.castingSpell = spell;
-        
-		self.percentTimeRemaining = remaining/maxTime;
-        [self.castBarClippingNode setClippingRegion:CGRectMake(0, 0,(self.castBar.contentSize.width + CASTBAR_INSET_WIDTH) * (1.0 - self.percentTimeRemaining), self.castBar.contentSize.height + CASTBAR_INSET_HEIGHT)];
-		[self.timeRemaining setString:[NSString stringWithFormat:@"%@ %1.2f", spell.title,  remaining]];
 	}
 }
 

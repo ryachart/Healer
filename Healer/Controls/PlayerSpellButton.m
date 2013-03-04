@@ -12,7 +12,7 @@
 
 
 @interface PlayerSpellButton ()
-@property (nonatomic, assign) CCLayerColor *cooldownCountLayer;
+@property (nonatomic, assign) CCProgressTimer *cooldownCountLayer;
 @property (nonatomic, assign) CCLayerColor *oomLayer;
 @property (nonatomic, assign) CCSprite *spellIconSprite;
 @property (nonatomic, assign) CCSprite *pressedSprite;
@@ -46,14 +46,18 @@
         [self.pressedSprite setScale:.9];
         [self addChild:self.pressedSprite];
         
-        self.cooldownCountLayer = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 175)];
+        self.cooldownCountLayer = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"spell-icon-mask.png"]];
+        [self.cooldownCountLayer setColor:ccBLACK];
+        [self.cooldownCountLayer setOpacity:122];
         [self.cooldownCountLayer setAnchorPoint:CGPointZero];
         [self.cooldownCountLayer setContentSize:self.contentSize];
         [self.cooldownCountLayer setVisible:NO];
         [self.cooldownCountLayer setScale:.9];
         [self addChild:self.cooldownCountLayer z:10];
         
-        self.oomLayer = [CCLayerColor layerWithColor:ccc4(255, 0, 0, 120)];
+        self.oomLayer = [CCSprite spriteWithSpriteFrameName:@"spell-icon-mask.png"];
+        [self.oomLayer setColor:ccRED];
+        [self.oomLayer setOpacity:122];
         [self.oomLayer setAnchorPoint:CGPointZero];
         [self.oomLayer setContentSize:self.contentSize];
         [self.oomLayer setVisible:NO];
@@ -103,13 +107,13 @@
 	}
     if ([self.spellData cooldownRemaining] > 0){
         [self.cooldownCountLayer setVisible:YES];
-        [self.cooldownCountLayer setContentSize:CGSizeMake(self.cooldownCountLayer.contentSize.width, self.contentSize.height * ([self.spellData cooldownRemaining]/[self.spellData cooldown]))];
+        [self.cooldownCountLayer setPercentage:([self.spellData cooldownRemaining]/[self.spellData cooldown])* 100];
     }else if ([self.cooldownCountLayer visible]){
         [self.cooldownCountLayer setVisible:NO];
-        [self.cooldownCountLayer setContentSize:self.contentSize];
+        [self.cooldownCountLayer setPercentage:0.0];
     }
     
-    if (self.player && (self.player.energy < self.spellData.energyCost || self.player.isDead) && !self.cooldownCountLayer.visible) {
+    if (self.player && (self.player.energy < self.spellData.energyCost || self.player.isDead || self.player.isStunned) && !self.cooldownCountLayer.visible) {
         [self.oomLayer setVisible:YES];
     } else {
         [self.oomLayer setVisible:NO];

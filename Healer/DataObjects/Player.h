@@ -18,8 +18,7 @@
 enum CastingDisabledReason {
 	CastingDisabledReasonMoving = 0,
 	CastingDisabledReasonChanneling = 1,
-    CastingDisabledReasonStunned = 2,
-	CastingDisabledReasonTotal = 3
+	CastingDisabledReasonTotal = 2
 };
 
 typedef int CastingDisabledReason;
@@ -59,6 +58,7 @@ typedef int CastingDisabledReason;
 @property (nonatomic, readwrite) NSInteger overhealingToDistribute;
 @property (nonatomic, readwrite) BOOL isCasting;
 @property (nonatomic, readwrite) float castStart;
+@property (nonatomic, readwrite) BOOL shouldAttack;
 
 //Temporal Combat Data
 @property (nonatomic, readwrite) float lastEnergyRegen;

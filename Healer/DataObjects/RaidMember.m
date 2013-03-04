@@ -74,12 +74,27 @@
 }
 
 -(void)performAttackIfAbleOnTarget:(Enemy*)target{
-	if (_lastAttack >= _damageFrequency && !self.isDead){
+	if (_lastAttack >= _damageFrequency && !self.isDead && !self.isStunned){
 		_lastAttack = 0.0;
 		
 		[target setHealth:[target health] - (self.damageDealt * self.damageDoneMultiplier)];
         [self.announcer displayAttackFromRaidMember:self onTarget:target];
 	}
+}
+
+- (BOOL)isStunned
+{
+    return self.stunDuration > 0;
+}
+
+- (float)stunDuration
+{
+    for (Effect *eff in self.activeEffects) {
+        if (eff.causesStun) {
+            return eff.duration - eff.timeApplied;
+        }
+    }
+    return 0.0;
 }
 
 - (void)didPerformCriticalStrikeForAmount:(NSInteger)amount{
@@ -114,11 +129,20 @@
 
 - (Enemy *)highestPriorityEnemy:(NSArray *)enemies
 {
+    NSMutableArray *randomPriorities = [NSMutableArray arrayWithCapacity:enemies.count];
     Enemy *highestPriority = [enemies objectAtIndex:0];
-    for (int i = 1; i < enemies.count; i++) {
-        if ([[enemies objectAtIndex:i] threatPriority] > highestPriority.threatPriority) {
+    for (int i = 0; i < enemies.count; i++) {
+        Enemy *thisEnemy = [enemies objectAtIndex:i];
+        if ([thisEnemy threatPriority] > highestPriority.threatPriority) {
             highestPriority = [enemies objectAtIndex:i];
         }
+        if (thisEnemy.threatPriority == kThreatPriorityRandom) {
+            [randomPriorities addObject:thisEnemy];
+        }
+    }
+    
+    if (randomPriorities.count > 1) {
+        return [randomPriorities objectAtIndex:arc4random() % randomPriorities.count];
     }
     return highestPriority;
 }

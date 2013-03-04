@@ -233,7 +233,7 @@
     }
     
     if (level == 6){
-        FungalRavagers *boss = [FungalRavagers defaultBoss];
+        FinalRavager *boss = [FinalRavager defaultBoss];
         [enemies addObject:boss];
         
         FungalRavager *boss2 = [[[FungalRavager alloc] initWithHealth:boss.health damage:162 targets:1 frequency:2.6 choosesMT:YES] autorelease];
@@ -322,7 +322,16 @@
     }
     
     if (level == 10){
-        [enemies addObject:[TwinChampions defaultBoss]];
+        Vorroth *vorroth = [[[Vorroth alloc] initWithHealth:1250000 damage:190 targets:1 frequency:1.3 choosesMT:YES] autorelease];
+        vorroth.autoAttack.failureChance = .25;
+        Sarroth *sarroth = [[[Sarroth alloc] initWithHealth:1250000 damage:760 targets:1 frequency:6.5 choosesMT:YES] autorelease];
+        sarroth.autoAttack.failureChance = .25;
+        
+        vorroth.threatPriority = kThreatPriorityRandom;
+        sarroth.threatPriority = kThreatPriorityRandom;
+        
+        [enemies addObject:vorroth];
+        [enemies addObject:sarroth];
         spells = [NSArray arrayWithObjects:[Heal  defaultSpell], [GreaterHeal defaultSpell] , [Barrier defaultSpell], [HealingBurst defaultSpell], nil];
         
         numWizard = 3;
@@ -583,7 +592,7 @@
             gold = 125;
             break;
         case 21:
-            return 1;
+            return 150;
             break;
     }
     

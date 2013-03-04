@@ -75,7 +75,7 @@
         self.healthBar = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"raidframe_fill.png"]];
         [self.healthBar setAnchorPoint:CGPointZero];
         self.healthBar.position = CGPointMake(1.33, 1);
-        [self.healthBar setColor:ccGREEN];
+        [self.healthBar setColor:[self colorForPercentage:1]];
         [self.healthBar setScale:frameScale];
         self.healthBar.midpoint = CGPointMake(.5, 0);
         self.healthBar.barChangeRate = CGPointMake(0, 1.0);
@@ -129,12 +129,14 @@
         [self addChild:self.priorityPositiveEffectSprite z:10];
         
         self.positiveEffectProgress = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"spell-icon-mask.png"]];
+        [self.positiveEffectProgress setColor:ccBLACK];
         self.positiveEffectProgress.opacity = 122;
         [self.positiveEffectProgress setScale:.25];
         [self.positiveEffectProgress setPosition:CGPointMake(13, 13.5)];
         [self addChild:self.positiveEffectProgress z:11];
         
         self.negativeEffectProgress = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"spell-icon-mask.png"]];
+        [self.negativeEffectProgress setColor:ccBLACK];
         self.negativeEffectProgress.opacity = 122;
         [self.negativeEffectProgress setScale:.25];
         [self.negativeEffectProgress setPosition:CGPointMake(86, 13)];

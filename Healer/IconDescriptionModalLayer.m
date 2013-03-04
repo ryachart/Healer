@@ -34,7 +34,7 @@
         BasicButton *doneButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(shouldDismiss) andTitle:@"Done"];
         [doneButton setScale:.75];
         CCMenu *menu = [CCMenu menuWithItems:doneButton, nil];
-        [menu setPosition:CGPointMake(356, 194)];
+        [menu setPosition:CGPointMake(356, 190)];
         [self.alertDialogBackground addChild:menu];
         
         CCLabelTTFShadow *nameLabel = [CCLabelTTFShadow labelWithString:title dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2, self.alertDialogBackground.contentSize.height / 4) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];

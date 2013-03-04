@@ -416,6 +416,7 @@
     drake.fireballAbility = [[[ProjectileAttack alloc] init] autorelease];
     drake.fireballAbility.title = @"Spit Fireball";
     drake.fireballAbility.activationTime = 1.5;
+    [drake.fireballAbility setIconName:@"burning.png"];
     [drake.fireballAbility setKey:@"fireball-ab"];
     [(ProjectileAttack*)drake.fireballAbility setSpriteName:@"fireball.png"];
     [drake.fireballAbility setAbilityValue:fireballDamage];
@@ -445,6 +446,8 @@
         [improvedDamageEffect setMaxStacks:3];
         [improvedDamageEffect setDamageTakenMultiplierAdjustment:.2];
         [(ProjectileAttack*)self.fireballAbility setAppliedEffect:improvedDamageEffect];
+        
+        [self.fireballAbility setInfo:@"The drake spits fireballs that also cause the target's armor to be ignited increasing damage taken from further fireballs by 20% per stack."];
     }
 }
 
@@ -505,6 +508,22 @@
 @end
 
 @implementation BefouledTreant
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty {
+    [super configureBossForDifficultyLevel:difficulty];
+    
+    if (difficulty > 4) {
+        ConstrictingVines *vines = [[[ConstrictingVines alloc] init] autorelease];
+        [vines setAbilityValue:80];
+        [vines setStunDuration:4.0];
+        [vines setKey:@"vines"];
+        [vines setTimeApplied:40];
+        [vines setCooldown:55.0];
+        [vines setCooldownVariance:.2];
+        [self addAbility:vines];
+    }
+}
+
 +(id)defaultBoss {
     NSInteger bossDamage = 390;
     
@@ -557,9 +576,9 @@
 }
 @end
 
-@implementation FungalRavagers
+@implementation FinalRavager
 +(id)defaultBoss {
-    FungalRavagers *boss = [[FungalRavagers alloc] initWithHealth:187000 damage:141 targets:1 frequency:2.0 choosesMT:YES ];
+    FinalRavager *boss = [[FinalRavager alloc] initWithHealth:187000 damage:141 targets:1 frequency:2.0 choosesMT:YES ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"Fungal Ravagers"];
     [boss setCriticalChance:.5];
@@ -593,6 +612,11 @@
     
     if (percentage == 99.0){
         [self.announcer announce:@"The final Ravager glows with rage."];
+        AbilityDescriptor *rage = [[[AbilityDescriptor alloc] init] autorelease];
+        [rage setAbilityDescription:@"The Fungal Ravager is enraged."];
+        [rage setIconName:@"ravager_remaining.png"];
+        [rage setAbilityName:@"Rage"];
+        [self addAbilityDescriptor:rage];
         Effect *enragedEffect = [[Effect alloc] initWithDuration:300 andEffectType:EffectTypePositiveInvisible];
         [enragedEffect setIsIndependent:YES];
         [enragedEffect setTarget:self];
@@ -901,16 +925,16 @@
     if (percentage == 50.0) {
         [self.announcer announce:@"Such Insolent Creatures! Embrace your demise!"];
         ProjectileAttack *bolts = (ProjectileAttack*)[self abilityWithKey:@"teritha-bolts"];
-        [bolts setTimeApplied:0];
-        [bolts triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
+        [bolts setTimeApplied:-5.0];
+        [bolts fireAtRaid:raid];
         [bolts setAttacksPerTrigger:5];
     }
     
     if (percentage == 25.0) {
         [self.announcer announce:@"I am darkness.  I AM YOUR DOOM!"];
         ProjectileAttack *bolts = (ProjectileAttack*)[self abilityWithKey:@"teritha-bolts"];
-        [bolts setTimeApplied:0];
-        [bolts triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
+        [bolts setTimeApplied:-5.0];
+        [bolts fireAtRaid:raid];
         [bolts setAttacksPerTrigger:6];
     }
 }
@@ -952,79 +976,87 @@
 }
 @end
 
-@implementation TwinChampions
-+(id)defaultBoss {
-    NSInteger damage = 190;
-    float frequency = 1.30;
-    TwinChampions *boss = [[TwinChampions alloc] initWithHealth:2550000 damage:damage targets:1 frequency:frequency choosesMT:YES];
-    [boss setFirstFocusedAttack:[[boss abilities] objectAtIndex:0]];
-    boss.autoAttack.failureChance = .25;
-    [boss setSpriteName:@"twinchampions_battle_portrait.png"];
-    
-    FocusedAttack *secondFA = [[FocusedAttack alloc] initWithDamage:damage * 4 andCooldown:frequency * 5];
-    secondFA.failureChance = .25;
-    [boss setSecondFocusedAttack:secondFA];
-    [boss addAbility:secondFA];
-    [secondFA release];
-    
-    [boss setTitle:@"Twin Champions of Baraghast"];
-    [boss setNamePlateTitle:@"Twin Champions"];
-    
-    [boss addAbility:[Cleave normalCleave]];
-    
-    RaidDamageSweep *rds = [[[RaidDamageSweep alloc] init] autorelease];
-    [rds setAbilityValue:250];
-    [rds setTitle:@"Sweeping Death"];
-    [rds setKey:@"axe-sweep"];
-    [rds setCooldown:kAbilityRequiresTrigger];
-    [boss addAbility:rds];
-    
-    IntensifyingRepeatedHealthEffect *gushingWoundEffect = [[[IntensifyingRepeatedHealthEffect alloc] initWithDuration:9.0 andEffectType:EffectTypeNegative] autorelease];
-    [gushingWoundEffect setSpriteName:@"bleeding.png"];
-    [gushingWoundEffect setAilmentType:AilmentTrauma];
-    [gushingWoundEffect setIncreasePerTick:.5];
-    [gushingWoundEffect setValuePerTick:-230];
-    [gushingWoundEffect setNumOfTicks:3];
-    [gushingWoundEffect setTitle:@"gushingwound"];
-    
-    ProjectileAttack *gushingWound = [[[ProjectileAttack alloc] init] autorelease];
-    [gushingWound setIgnoresGuardians:YES];
-    [gushingWound setKey:@"gushing-wound"];
-    [gushingWound setExplosionParticleName:@"blood_spurt.plist"];
-    [gushingWound setTitle:@"Deadly Throw"];
-    [gushingWound setCooldown:17.0];
-    [gushingWound setActivationTime:1.5];
-    [gushingWound setEffectType:ProjectileEffectTypeThrow];
-    [gushingWound setSpriteName:@"axe.png"];
-    [gushingWound setAppliedEffect:gushingWoundEffect];
-    [gushingWound setAbilityValue:250];
-    [boss addAbility:gushingWound];
-    
-    ExecutionEffect *executionEffect = [[[ExecutionEffect alloc] initWithDuration:3.75 andEffectType:EffectTypeNegative] autorelease];
-    [executionEffect setValue:-2000];
-    [executionEffect setSpriteName:@"execution.png"];
-    [executionEffect setEffectivePercentage:.5];
-    [executionEffect setAilmentType:AilmentTrauma];
-    
-    Attack *executionAttack = [[[Attack alloc] init] autorelease];
-    [executionAttack setInfo:@"The Twin Champions will  choose a target for execution.  This target will be instantly slain if not above 50% health when the deathblow lands."];
-    [executionAttack setTitle:@"Execution"];
-    [executionAttack setRequiresDamageToApplyEffect:NO];
-    [executionAttack setIgnoresGuardians:YES];
-    [executionAttack setKey:@"execution"];
-    [executionAttack setCooldown:30];
-    [executionAttack setFailureChance:0];
-    [executionAttack setAppliedEffect:executionEffect];
-    
-    return [boss autorelease];
-}
+@implementation Sarroth
 
 -(void)axeSweepThroughRaid:(Raid*)theRaid{
-    self.firstFocusedAttack.timeApplied = -7.0;
-    self.secondFocusedAttack.timeApplied = -7.0;
+    self.autoAttack.timeApplied = -7.0;
     //Set all the other abilities to be on a long cooldown...
     [[self abilityWithKey:@"axe-sweep"] triggerAbilityForRaid:theRaid players:[NSArray array] enemies:[NSArray array]];
-    [self.announcer announce:@"The Champions break off and sweep through your allies"];
+    [self.announcer announce:@"Sarroth sweeps through your allies with spinning blades"];
+}
+
+-(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    if (percentage == 80.0 || percentage == 60.0 || percentage == 40.0 || percentage == 20.0){
+        [self axeSweepThroughRaid:raid];
+    }
+}
+
+- (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses
+{
+    if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq choosesMT:chooses]) {
+        self.spriteName = @"twinchampions_battle_portrait.png";
+        
+        RaidDamageSweep *rds = [[[RaidDamageSweep alloc] init] autorelease];
+        [rds setAbilityValue:250];
+        [rds setTitle:@"Sweeping Death"];
+        [rds setKey:@"axe-sweep"];
+        [rds setCooldown:kAbilityRequiresTrigger];
+        [self addAbility:rds];
+        
+        IntensifyingRepeatedHealthEffect *gushingWoundEffect = [[[IntensifyingRepeatedHealthEffect alloc] initWithDuration:9.0 andEffectType:EffectTypeNegative] autorelease];
+        [gushingWoundEffect setSpriteName:@"bleeding.png"];
+        [gushingWoundEffect setAilmentType:AilmentTrauma];
+        [gushingWoundEffect setIncreasePerTick:.5];
+        [gushingWoundEffect setValuePerTick:-230];
+        [gushingWoundEffect setNumOfTicks:3];
+        [gushingWoundEffect setTitle:@"gushingwound"];
+        
+        ProjectileAttack *gushingWound = [[[ProjectileAttack alloc] init] autorelease];
+        [gushingWound setIgnoresGuardians:YES];
+        [gushingWound setKey:@"gushing-wound"];
+        [gushingWound setExplosionParticleName:@"blood_spurt.plist"];
+        [gushingWound setTitle:@"Deadly Throw"];
+        [gushingWound setCooldown:17.0];
+        [gushingWound setActivationTime:1.5];
+        [gushingWound setEffectType:ProjectileEffectTypeThrow];
+        [gushingWound setIconName:@"gushing_wound.png"];
+        [gushingWound setSpriteName:@"sword_champion.png"];
+        [gushingWound setAppliedEffect:gushingWoundEffect];
+        [gushingWound setAbilityValue:250];
+        [self addAbility:gushingWound];
+    }
+    return self;
+}
+@end
+
+@implementation Vorroth
+
+- (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses
+{
+    if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq choosesMT:chooses]) {
+        self.spriteName = @"twinchampions2_battle_portrait.png";
+        
+        [self addAbility:[Cleave normalCleave]];
+        
+        ExecutionEffect *executionEffect = [[[ExecutionEffect alloc] initWithDuration:3.75 andEffectType:EffectTypeNegative] autorelease];
+        [executionEffect setValue:-2000];
+        [executionEffect setSpriteName:@"execution.png"];
+        [executionEffect setEffectivePercentage:.5];
+        [executionEffect setAilmentType:AilmentTrauma];
+        
+        Attack *executionAttack = [[[Attack alloc] init] autorelease];
+        [executionAttack setInfo:@"The Twin Champions will  choose a target for execution.  This target will be instantly slain if not above 50% health when the deathblow lands."];
+        [executionAttack setTitle:@"Execution"];
+        [executionAttack setIconName:@"temper.png"];
+        [executionAttack setRequiresDamageToApplyEffect:NO];
+        [executionAttack setIgnoresGuardians:YES];
+        [executionAttack setKey:@"execution"];
+        [executionAttack setCooldown:30];
+        [executionAttack setFailureChance:0];
+        [executionAttack setAppliedEffect:executionEffect];
+        [self addAbility:executionAttack];
+    }
+    return self;
 }
 
 - (void)ownerDidExecuteAbility:(Ability *)ability
@@ -1034,18 +1066,6 @@
     }
 }
 
--(void)swapTanks{
-    RaidMember *tempSwap = self.secondFocusedAttack.focusTarget;
-    self.secondFocusedAttack.focusTarget = self.firstFocusedAttack.focusTarget;
-    self.firstFocusedAttack.focusTarget = tempSwap;
-}
-
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (percentage == 80.0 || percentage == 60.0 || percentage == 40.0 || percentage == 20.0){
-        [self axeSweepThroughRaid:raid];
-        [self swapTanks];
-    }
-}
 @end
 
 @implementation Baraghast
@@ -1096,6 +1116,7 @@
         [self.announcer announce:@"A Dark Energy Surges Beneath Baraghast."];
         Deathwave *dwAbility = [[[Deathwave alloc] init] autorelease];
         [dwAbility setKey:@"deathwave"];
+        [dwAbility setTimeApplied:35.0];
         [dwAbility setCooldown:42.0];
         [self addAbility:dwAbility];
     }
@@ -1104,7 +1125,9 @@
 - (void)ownerDidBeginAbility:(Ability *)ability {
     if ([ability.key isEqualToString:@"deathwave"]){
         for (Ability *ab in self.abilities){
-            [ab setTimeApplied:0];
+            if (ab != ability){
+                [ab setTimeApplied:0];
+            }
         }
     }
 }
@@ -1137,6 +1160,7 @@
     [gainShadowbolts setCooldown:60];
     [gainShadowbolts setInfo:@"Tyonath casts more shadow bolts the longer the fight goes on."];
     [gainShadowbolts setTitle:@"Increasing Insanity"];
+    [gainShadowbolts setIconName:@"increasing_insanity.png"];
     [gainShadowbolts setAbilityToGain:fireballAbility];
     [seer addAbility:gainShadowbolts];
     
@@ -1257,13 +1281,12 @@
     
     boss.boneThrowAbility = [[[BoneThrow alloc] init] autorelease];
     [boss.boneThrowAbility setActivationTime:1.5];
-    [boss.boneThrowAbility  setCooldown:3.5];
+    [boss.boneThrowAbility setCooldown:3.5];
     [boss addAbility:boss.boneThrowAbility];
     
     RepeatedHealthEffect *burningEffect = [[[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative] autorelease];
     [burningEffect setValuePerTick:-25];
     [burningEffect setNumOfTicks:5];
-    [burningEffect setSpriteName:@"burning.png"];
     [burningEffect setTitle:@"alternating-flame-burn"];
     
     boss.sweepingFlame = [[[AlternatingFlame alloc] init] autorelease];
@@ -1365,7 +1388,7 @@
     [cob.crushingPunch setFailureChance:.2];
     [cob.crushingPunch setInfo:@"Periodically, this enemy unleashes a thundering strike on a random ally dealing high damage."];
     [cob.crushingPunch setTitle:@"Crushing Punch"];
-    [cob.crushingPunch setIconName:@"crushing_punch_ability.png"];
+    [cob.crushingPunch setIconName:@"unstoppable.png"];
     [cob addAbility:cob.crushingPunch];
     
     cob.boneQuake = [[[BoneQuake alloc] init] autorelease];
@@ -1380,9 +1403,7 @@
     [boneThrow setCooldown:14.0];
     [cob addAbility:boneThrow];
     
-    
     return [cob autorelease];
-    
 }
 
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
@@ -1565,9 +1586,15 @@
     [boss addAbility:roar];
     
     boss.deathwave = [[[Deathwave alloc] init] autorelease];
-    [boss.deathwave  setCooldown:kAbilityRequiresTrigger];
-    [boss.deathwave  setKey:@"deathwave"];
+    [boss.deathwave setCooldown:kAbilityRequiresTrigger];
+    [boss.deathwave setKey:@"deathwave"];
     [boss addAbility:boss.deathwave ];
+    
+    ShatterArmor *shatter = [[[ShatterArmor alloc] init] autorelease];
+    [shatter setKey:@"shatter"];
+    [shatter setCooldown:36.0];
+    [shatter setCooldownVariance:.33];
+    [boss addAbility:shatter];
     
     return [boss autorelease];
 }
@@ -1596,8 +1623,10 @@
 - (void)ownerDidExecuteAbility:(Ability *)ability {
     if (ability == self.deathwave){
         [self.announcer displayScreenShakeForDuration:1.5];
-        for (Ability *ability in self.abilities){
-            [ability setTimeApplied:0.0];
+        for (Ability *ab in self.abilities){
+            if (ability != ab) {
+                [ab setTimeApplied:0.0];
+            }
         }
     }
 }
@@ -1630,7 +1659,7 @@
     [dcAbility release];
     
     AbilityDescriptor *spDescriptor = [[[AbilityDescriptor alloc] init] autorelease];
-    [spDescriptor setIconName:@"soul_prison_ability.png"];
+    [spDescriptor setIconName:@"temper.png"];
     [spDescriptor setAbilityName:@"Soul Prison"];
     [spDescriptor setAbilityDescription:@"Emprisons an ally's soul in unimaginable torment reducing them to just shy of death but preventing all damage done to them."];
     [boss addAbilityDescriptor:spDescriptor];
@@ -1818,20 +1847,16 @@
     
     Attack *attack = [[[Attack alloc] initWithDamage:120 andCooldown:20] autorelease];
     ContagiousEffect *contagious = [[[ContagiousEffect alloc] initWithDuration:10.0 andEffectType:EffectTypeNegative] autorelease];
-    [contagious setSpriteName:@"poison.png"];
     [contagious setTitle:@"contagion"];
     [contagious setNumOfTicks:10];
     [contagious setValuePerTick:-50];
     [contagious setAilmentType:AilmentPoison];
+    [attack setIconName:@"poison.png"];
+    [attack setTitle:@"Contagious Toxin"];
+    [attack setInfo:@"The Soul of Torment poisons a target causing them to take damage periodically.  If the target's health is healed too much this effect will spread to up to 3 additional allies."];
     [attack setAppliedEffect:contagious];
     [attack setRequiresDamageToApplyEffect:YES];
     [boss addAbility:attack];
-    
-    AbilityDescriptor *contagiousDesc = [[[AbilityDescriptor alloc] init] autorelease];
-    [contagiousDesc setAbilityDescription:@"The Soul of Torment poisons a target causing them to take damage periodically.  If the target's health is healed too much this effect will spread to up to 3 additional allies."];
-    [contagiousDesc setAbilityName:@"Contagious Toxin"];
-    [contagiousDesc setIconName:@"unknown_ability.png"];
-    [boss addAbilityDescriptor:contagiousDesc];
     
     [boss gainSoulDrain];
     
@@ -1844,14 +1869,15 @@
 
     StackingRHEDispelsOnHeal *soulDrainEffect = [[[StackingRHEDispelsOnHeal alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
     [soulDrainEffect setMaxStacks:25];
-    [soulDrainEffect setValuePerTick:-20];
+    [soulDrainEffect setValuePerTick:-14];
     [soulDrainEffect setNumOfTicks:10];
-    [soulDrainEffect setSpriteName:@"shadow_curse.png"];
+    [soulDrainEffect setSpriteName:@"curse.png"];
     [soulDrainEffect setTitle:@"soul-drain-eff"];
     
     EnsureEffectActiveAbility *eeaa = [[[EnsureEffectActiveAbility alloc] init] autorelease];
     [eeaa setKey:@"soul-drain"];
     [eeaa setTitle:@"Soul Drain"];
+    [eeaa setIconName:@"curse.png"];
     [eeaa setEnsuredEffect:soulDrainEffect];
     [self addAbility:eeaa];
 }
@@ -1866,12 +1892,10 @@
         [damage setNumOfTicks:8];
         [damage setOwner:self];
         [damage setTitle:@"gather-souls"];
-        [damage setValuePerTick:-100];
+        [damage setValuePerTick:-75];
         [member addEffect:damage];
     }
-    
 }
-
 
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
 {
@@ -1908,7 +1932,7 @@
         FocusedAttack *focusedAttack = [[[FocusedAttack alloc] initWithDamage:550 andCooldown:2.25] autorelease];
         [focusedAttack setFailureChance:.4];
         RepeatedHealthEffect *bleeding = [[[RepeatedHealthEffect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
-        [bleeding setSpriteName:@"bleeding.png"];
+        [focusedAttack setIconName:@"bleeding.png"];
         [bleeding setTitle:@"soul-bleed"];
         [bleeding setDodgeChanceAdjustment:.1];
         [bleeding setMaxStacks:5];

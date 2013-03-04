@@ -110,6 +110,7 @@
     copied.dodgeChanceAdjustment = _dodgeChanceAdjustment;
     copied.stacks = self.stacks;
     copied.visibilityPriority = self.visibilityPriority;
+    copied.causesStun = self.causesStun;
     return copied;
 }
 
@@ -185,7 +186,7 @@
 
 //EFF|TARGET|TITLE|DURATION|TYPE|SPRITENAME|OWNER|HDM|DDM|Ind
 -(NSString*)asNetworkMessage{
-    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@|%f|%f|%i|%f|%f|%i|%i|%i", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner, healingDoneMultiplierAdjustment, damageDoneMultiplierAdjustment, self.isIndependent, castTimeAdjustment, _cooldownMultiplierAdjustment, _maximumAbsorbtionAdjustment, self.stacks, self.visibilityPriority];
+    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@|%f|%f|%i|%f|%f|%i|%i|%i|%i", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner, healingDoneMultiplierAdjustment, damageDoneMultiplierAdjustment, self.isIndependent, castTimeAdjustment, _cooldownMultiplierAdjustment, _maximumAbsorbtionAdjustment, self.stacks, self.visibilityPriority, self.causesStun];
     
     return message;
 }
@@ -204,6 +205,7 @@
         self.maximumAbsorbtionAdjustment = [[messageComponents objectAtIndex:12] intValue];
         self.stacks = [[messageComponents objectAtIndex:13] intValue];
         self.visibilityPriority = [[messageComponents objectAtIndex:14] intValue];
+        self.causesStun = [[messageComponents objectAtIndex:15] boolValue];
     }
     return self;
 }
@@ -853,7 +855,7 @@
     [ese setTitle:@"e-slime-eff"];
     [ese setValuePerTick:-10];
     [ese setNumOfTicks:50];
-    [ese setSpriteName:@"engulfing_slime.png"];
+    [ese setSpriteName:@"poison.png"];
     [ese setMaxStacks:5];
     [ese setAilmentType:AilmentPoison];
     
@@ -975,7 +977,7 @@
     if (self = [super initWithDuration:dur andEffectType:type]){
         self.damageTakenMultiplierAdjustment = -1.0;
         self.title = @"soul-prison-eff";
-        self.spriteName = @"soul_prison.png";
+        self.spriteName = @"temper.png";
     }
     return self;
 }

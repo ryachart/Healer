@@ -6,14 +6,14 @@
 //  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
 
-#import <cocos2d.h>
+#import "cocos2d.h"
 
-@class Spell, CCLabelTTFShadow;
+@class CCLabelTTFShadow, Player;
 @interface PlayerCastBar : CCLayer <CCRGBAProtocol> 
 @property (nonatomic, assign) CCLabelTTFShadow *timeRemaining;
-@property (nonatomic, assign) CCSprite *castBar;
+@property (nonatomic, assign) Player *player;
 
 -(id)initWithFrame:(CGRect)frame;
--(void)updateTimeRemaining:(NSTimeInterval)remaining ofMaxTime:(NSTimeInterval)maxTime forSpell:(Spell*)spell;
+-(void)update;
 -(void)displayInterruption;
 @end

@@ -251,3 +251,10 @@ typedef enum {
 @property (nonatomic, readwrite) float attackSpeedMultiplier;
 @property (nonatomic, readwrite) NSTimeInterval duration;
 @end
+
+@interface ConstrictingVines : Ability
+@property (nonatomic, readwrite) float stunDuration;
+@end
+
+@interface ShatterArmor : Ability
+@end

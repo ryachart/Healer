@@ -48,11 +48,11 @@
         //Just some hardcodes...
         switch (index) {
             case 0:
-                return CGPointMake(512, 200);
+                return CGPointMake(512, 180);
             case 1:
-                return CGPointMake(190, 200);
+                return CGPointMake(190, 180);
             case 2:
-                return CGPointMake(836, 200);
+                return CGPointMake(836, 180);
         }
     }
     

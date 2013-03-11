@@ -34,19 +34,18 @@
         
         self.castBar = [[[EnemyCastBar alloc] init] autorelease];
         [self.castBar setEnemy:enemy];
-        [self.castBar setPosition:CGPointMake(center.x, -16)];
+        [self.castBar setPosition:CGPointMake(center.x, 6)];
         [self addChild:self.castBar];
         
         self.healthBar = [[[EnemyHealthBar alloc] init] autorelease];
         [self.healthBar setEnemy:enemy];
-        [self.healthBar setPosition:CGPointMake(center.x, 20)];
+        [self.healthBar setPosition:CGPointMake(center.x, 40)];
         [self addChild:self.healthBar];
         
         self.abilitiesView = [[[EnemyAbilityDescriptionsView alloc] initWithBoss:self.enemy] autorelease];
-        [self.abilitiesView setPosition:CGPointMake(center.x - 100, 88)];
+        [self.abilitiesView setPosition:CGPointMake(center.x - 100, 108)];
         [self.abilitiesView setDelegate:self];
         [self addChild:self.abilitiesView];
-        
         
         [self checkInactive];
     }

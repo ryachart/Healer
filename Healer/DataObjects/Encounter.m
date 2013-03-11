@@ -655,6 +655,12 @@
         case 6:
         case 7:
             break;
+        case 8:
+        case 9:
+            background = @"throne-bg";
+            break;
+        case 10:
+            break;
     }
     return background;
 }

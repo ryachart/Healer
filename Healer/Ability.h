@@ -35,6 +35,7 @@
 @property (nonatomic, readwrite) float maxChannelTime;
 @property (nonatomic, readonly) BOOL isChanneling;
 @property (nonatomic, readwrite) BOOL ignoresBusy; //This ability will trigger even when the owner is busy.
+@property (nonatomic, readwrite) float dodgeChanceAdjustment;
 
 //Activation Times
 @property (nonatomic, readwrite) BOOL isActivating;
@@ -257,4 +258,9 @@ typedef enum {
 @end
 
 @interface ShatterArmor : Ability
+@end
+
+@interface BrokenWill : Ability
+@property (nonatomic, retain) RaidMember *target;
+@property (nonatomic, retain) SustainedAttack *additionalAttack;
 @end

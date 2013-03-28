@@ -215,8 +215,8 @@
         [self.itemsTable setIsScrollingEnabled:NO];
         [[self.backButton.children objectAtIndex:0] setIsEnabled:NO];
         
-        self.ftueArrow = [CCSprite spriteWithSpriteFrameName:@"ftue-arrow.png"];
-        [self.ftueArrow setPosition:CGPointMake(884, 660)];
+        self.ftueArrow = [CCSprite spriteWithSpriteFrameName:@"ftue_arrow.png"];
+        [self.ftueArrow setPosition:CGPointMake(884, 500)];
         [self.ftueArrow runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCEaseBackOut actionWithAction:[CCMoveBy actionWithDuration:.5 position:CGPointMake(0, 40)]],[CCMoveBy actionWithDuration:.33 position:CGPointMake(0, -40)], nil]]];
         [self addChild:self.ftueArrow];
         

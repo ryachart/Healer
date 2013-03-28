@@ -160,9 +160,12 @@
     if (level == 1){
         [enemies addObject:[Ghoul defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], nil];
-        numChampion = 2;
+        numWizard = 1;
+        numArcher = 1;
+        numChampion = 1;
+        numGuardian = 1;
         bossKey = @"ghoul";
-        info = @"These are strange times in the once peaceful kingdom of Theronia.  A dark mist has set beyond the Eastern Mountains and corrupt creatures have begun attacking innocent villagers and travelers along the roads.";
+        info = @"These are strange times in the once peaceful kingdom of Theronia.  An eerie peace has finally been broken by a strange risen creature  attacking villagers in the farm lands.";
         title = @"The Ghoul";
     }
     
@@ -176,7 +179,7 @@
         numChampion = 1;
         numGuardian = 1;
         bossKey = @"troll";
-        info = @"Three days ago a Raklorian Troll stumbled out from beyond the mountains and began ravaging the farmlands.  This was unusual behavior for a cave troll, but survivors noted that the troll seemed to be empowered by an evil magic.";
+        info = @"Three days ago, mining operations were disrupted when a Raklorian Troll was awakened in a cave below the mines.";
         title = @"Corrupted Troll";
     }
     
@@ -189,7 +192,7 @@
         numGuardian = 1;
         bossKey = @"drake";
         
-        info = @"A Drake of Soldorn has not been seen in Theronia for ages, but the foul creature has been burning down cottages and farms as well as killing countless innocents.  You and your allies have cornered the drake and forced a confrontation.";
+        info = @"A Drake of Soldorn has not been seen in Theronia for ages, but in this forgotten cave below the mines an ancient creature stirs.";
         title = @"Tainted Drake";
     }
     
@@ -212,8 +215,7 @@
         numChampion = 1;
         numGuardian = 1;
         bossKey = @"imps";
-        
-        info = @"As the dark mists further encroach upon the kingdom more strange creatures begin terrorizing the innocents.  Viscious imps have infiltrated the alchemical storehouses on the outskirts of Terun.";
+        info = @"One week afer discovering the strange cave beneath the mines, a dark mist began to spread across the kingdom and more strange creatures began terrorizing the innocents.  Viscious imps have infiltrated the alchemical storehouses on the outskirts of Terun.";
         title = @"Mischievious Imps";
     }
     
@@ -228,7 +230,7 @@
         numGuardian = 1;
         bossKey = @"treant";
         
-        info = @"The Akarus, an ancient tree that has long rested in the Peraxu Forest, has become tainted with the foul energy of the dark mists. This once great tree must be ended for good.";
+        info = @"The Akarus, an ancient tree that has long rested in the Peraxu Forest, has become tainted by the dark mists. This once great tree must be ended for good.";
         title = @"Befouled Akarus";
     }
     
@@ -259,7 +261,7 @@
         numGuardian = 3;
         bossKey = @"fungalravagers";
         
-        info = @"As the dark mist consumes the Akarus ferocious beasts are birthed from its roots.  The ravagers immediately attack you and your allies.";
+        info = @"As the dark mist consumes the Akarus, ferocious beasts are birthed from its roots.  The ravagers immediately attack you and your allies.";
         title = @"Fungal Ravagers";
     }
     
@@ -382,11 +384,11 @@
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numWizard = 3;
-        numArcher = 3;
+        numArcher = 4;
         numWarlock = 4;
-        numBerserker = 3;
+        numBerserker = 4;
         numChampion = 3;
-        numGuardian = 3; //Blooddrinkers
+        numGuardian = 1; //Blooddrinkers
         bossKey = @"gatekeeper";
         
         info = @"Still deeper beneath the encampment you have discovered a portal to Delsarn.  No mortal has ever set foot in this ancient realm of evil and unless you and your allies can dispatch the gatekeeper no mortal ever will.";
@@ -643,24 +645,56 @@
     NSString *background = @"kingdom-bg";
     switch (encounter) {
         case 1:
+            background = @"kingdom-bg";
             break;
         case 2:
         case 3:
-            background = @"cave-bg";
+            background = @"cave-lava-bg";
             break;
         case 4:
-            background = @"kingdom-bg";
+            background = @"forest-day-ipad-hd";
             break;
         case 5:
         case 6:
-        case 7:
+            background = @"forest-night-ipad-hd";
             break;
+        case 7:
         case 8:
+            background = @"darkroom-bg";
+            break;
         case 9:
+        case 10:
             background = @"throne-bg";
             break;
-        case 10:
+        case 11:
+        case 12:
+            background = @"darkroom-bg";
             break;
+        case 13:
+            background = @"portal-bg";
+            break;
+        case 14:
+        case 15:
+            background = @"cave-poison-bg";
+            break;
+        case 16:
+            background = @"city";
+            break;
+        case 17:
+            background = @"cave-poison-bg";
+            break;
+        case 18:
+            background = @"city";
+            break;
+        case 19:
+        case 20:
+        case 21:
+            background = @"tormentrealm";
+            break;
+        default:
+            background = @"cave-poison-bg";
+            break;
+            
     }
     return background;
 }

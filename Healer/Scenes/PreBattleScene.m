@@ -20,8 +20,6 @@
 #import "ChallengeRatingStepper.h"
 #import "GoldCounterSprite.h"
 
-
-
 #define SPELL_ITEM_TAG 43234
 
 @interface PreBattleScene ()
@@ -29,20 +27,14 @@
 @property (nonatomic, readwrite) BOOL changingSpells;
 @property (nonatomic, retain) NSMutableArray *spellInfoNodes;
 @property (nonatomic, assign) ChallengeRatingStepper *challengeStepper;
-
-
--(void)back;
--(void)changeSpells;
--(void)configureSpells;
-
+@property (nonatomic, assign) CCMenu *backButton;
+@property (nonatomic, assign) CCMenu *changeButton;
 @end
 
 @implementation PreBattleScene
-@synthesize maxPlayers, levelNumber, spellInfoNodes;
-@synthesize changingSpells;
 
 - (void)dealloc {
-    [spellInfoNodes release];
+    [_spellInfoNodes release];
     [_player release];
     [_encounter release];
     [super dealloc];
@@ -50,6 +42,7 @@
 - (id)initWithEncounter:(Encounter*)enc andPlayer:(Player*)player {
     if (self = [super init]){
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"pre-battle"] autorelease]];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/postbattle.plist"];
         
         self.encounter = enc;
         self.player = player;
@@ -63,15 +56,26 @@
         
         [self addChild:doneButton];
         
+         CCLabelTTF *alliesLabel = [CCLabelTTF labelWithString:@"Allies" dimensions:CGSizeMake(300, 200) hAlignment:UITextAlignmentCenter fontName:@"Cochin-BoldItalic" fontSize:64.0];
+        [alliesLabel setPosition:CGPointMake(480, 580)];
+        [alliesLabel setColor:ccc3(88, 54, 22)];
+        [self addChild:alliesLabel];
+        
+        CCLabelTTF *spellsLabel = [CCLabelTTF labelWithString:@"Spells" dimensions:CGSizeMake(300, 200) hAlignment:UITextAlignmentCenter fontName:@"Cochin-BoldItalic" fontSize:64.0];
+        [spellsLabel setPosition:CGPointMake(730, 580)];
+        [spellsLabel setColor:ccc3(88, 54, 22)];
+        [self addChild:spellsLabel];
+        
         if ([PlayerDataManager localPlayer].allOwnedSpells.count > 1) {
             BasicButton *changeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(changeSpells) andTitle:@"Change"];
             [changeButton setScale:.6];
-            CCMenu *changeButtonMenu = [CCMenu menuWithItems:changeButton, nil];
-            [changeButtonMenu setPosition:CGPointMake(908, 632)];
-            [self addChild:changeButtonMenu z:2];
+            self.changeButton = [CCMenu menuWithItems:changeButton, nil];
+            [self.changeButton setPosition:CGPointMake(908, 632)];
+            [self addChild:self.changeButton z:2];
         }
         
-        [self configureSpells];
+        int noInactives[] = {0,0,0,0};
+        [self configureSpellsWithInactiveIndexes:noInactives];
         
         NSMutableDictionary *raidMemberTypes = [NSMutableDictionary dictionaryWithCapacity:5];
         
@@ -100,9 +104,9 @@
             i++;
         }
         
-        CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
-        [backButton setPosition:BACK_BUTTON_POS];
-        [self addChild:backButton];
+        self.backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
+        [self.backButton setPosition:BACK_BUTTON_POS];
+        [self addChild:self.backButton];
         
         GoldCounterSprite *gcs = [[[GoldCounterSprite alloc] init] autorelease];
         [gcs setPosition:CGPointMake(100, 38)];
@@ -143,23 +147,28 @@
     return self;
 }
 
--(void)configureSpells{
+-(void)configureSpellsWithInactiveIndexes:(int *)inactives {
     for (SpellInfoNode *node in self.spellInfoNodes){
         [node removeFromParentAndCleanup:YES];
     }
     
     [self.spellInfoNodes removeAllObjects];
     
-    int i = 0;
-    for (Spell *activeSpell in self.player.activeSpells){
-        SpellInfoNode *spellInfoNode = [[SpellInfoNode alloc] initWithSpell:activeSpell];
-        [spellInfoNode setPosition:CGPointMake(708, 554 - (95 * i))];
-        [self.spellInfoNodes addObject:spellInfoNode];
-        [self addChild:spellInfoNode];
-        [spellInfoNode release];
-        i++;
-    }
-
+    int spellsUsedIndex = 0;
+    for (int i = 0; i < 4; i++) {
+            SpellInfoNode *spellInfoNode = nil;
+            if (inactives[i] == 1 || spellsUsedIndex >= self.player.activeSpells.count) {
+                spellInfoNode = [[SpellInfoNode alloc] initAsEmpty];
+            } else {
+                Spell *activeSpell = [self.player.activeSpells objectAtIndex:spellsUsedIndex];
+                spellInfoNode = [[SpellInfoNode alloc] initWithSpell:activeSpell];
+                spellsUsedIndex++;
+            }
+            [spellInfoNode setPosition:CGPointMake(808, 554 - (95 * i))];
+            [self.spellInfoNodes addObject:spellInfoNode];
+            [self addChild:spellInfoNode];
+            [spellInfoNode release];
+        }
 }
 
 -(void)back{
@@ -181,19 +190,24 @@
 -(void)changeSpells{
     if (!self.changingSpells){
         self.changingSpells = YES;
+        [self.changeButton setVisible:NO];
         AddRemoveSpellLayer *arsl = [[AddRemoveSpellLayer alloc] initWithCurrentSpells:self.player.activeSpells];
-        [arsl setDelegate:self];
-        [arsl setOpacity:0];
-        [arsl setScale:0.0];
+        [arsl setDelegate:self];;
         [self addChild:arsl z:100];
-        [arsl runAction:[CCSpawn actionOne:[CCFadeIn actionWithDuration:.33] two:[CCScaleTo actionWithDuration:.33 scale:1.0]]];
     }
 }
 
--(void)spellSwitchDidCompleteWithActiveSpells:(NSArray *)actives{
+- (void)spellSwitchDidChangeToActiveSpells:(NSArray *)actives andInactiveIndexes:(int *)inactives
+{
     self.player.activeSpells = actives;
-    [self configureSpells];
+    [self configureSpellsWithInactiveIndexes:inactives];
+}
+
+-(void)spellSwitchDidCompleteWithActiveSpells:(NSArray *)actives andInactiveIndexes:(int *)inactives {
+    int noInactives[] = {0,0,0,0};
+    [self configureSpellsWithInactiveIndexes:noInactives];
     self.changingSpells = NO;
+    [self.changeButton setVisible:YES];
 }
 
 @end

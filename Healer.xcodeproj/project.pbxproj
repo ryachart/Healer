@@ -99,6 +99,7 @@
 		BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */; };
 		BFAFA3F415F43C650052FCA5 /* GoldCounterSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */; };
 		BFAFA3F915F54BBD0052FCA5 /* TalentTierCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F815F54BBD0052FCA5 /* TalentTierCard.m */; };
+		BFB2C40116FA5B3F004C1AB1 /* PostBattleLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB2C40016FA5B3F004C1AB1 /* PostBattleLayer.m */; };
 		BFB46407154A25DD00503E30 /* ShopScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46406154A25DD00503E30 /* ShopScene.m */; };
 		BFB4640C154A262800503E30 /* ShopItemNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB4640B154A262800503E30 /* ShopItemNode.m */; };
 		BFB46411154A268900503E30 /* Shop.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46410154A268900503E30 /* Shop.m */; };
@@ -707,6 +708,8 @@
 		BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoldCounterSprite.m; sourceTree = "<group>"; };
 		BFAFA3F715F54BBD0052FCA5 /* TalentTierCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TalentTierCard.h; sourceTree = "<group>"; };
 		BFAFA3F815F54BBD0052FCA5 /* TalentTierCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TalentTierCard.m; sourceTree = "<group>"; };
+		BFB2C3FF16FA5B3F004C1AB1 /* PostBattleLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostBattleLayer.h; sourceTree = "<group>"; };
+		BFB2C40016FA5B3F004C1AB1 /* PostBattleLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostBattleLayer.m; sourceTree = "<group>"; };
 		BFB46405154A25DD00503E30 /* ShopScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopScene.h; sourceTree = "<group>"; };
 		BFB46406154A25DD00503E30 /* ShopScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopScene.m; sourceTree = "<group>"; };
 		BFB4640A154A262800503E30 /* ShopItemNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopItemNode.h; sourceTree = "<group>"; };
@@ -1080,6 +1083,8 @@
 				BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */,
 				BF98B18815D37EAE00017EA4 /* IconDescriptionModalLayer.h */,
 				BF98B18915D37EAE00017EA4 /* IconDescriptionModalLayer.m */,
+				BFB2C3FF16FA5B3F004C1AB1 /* PostBattleLayer.h */,
+				BFB2C40016FA5B3F004C1AB1 /* PostBattleLayer.m */,
 			);
 			name = GamePlay;
 			sourceTree = "<group>";
@@ -1956,6 +1961,7 @@
 				BFA44C1916DC23CE00F20C8A /* EnemiesLayer.m in Sources */,
 				BFA44C1C16DC241500F20C8A /* EnemySprite.m in Sources */,
 				BFA44C1F16DC34FF00F20C8A /* EnemyHealthBar.m in Sources */,
+				BFB2C40116FA5B3F004C1AB1 /* PostBattleLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

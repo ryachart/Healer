@@ -193,7 +193,7 @@
 
 - (void)damageTarget:(RaidMember *)target forDamage:(NSInteger)damage
 {
-    if (![target raidMemberShouldDodgeAttack:0.0]){
+    if (![target raidMemberShouldDodgeAttack:self.dodgeChanceAdjustment]){
         [self willDamageTarget:target];
         int thisDamage = damage;
         
@@ -359,6 +359,12 @@
         return self.focusTarget;
     }
     return [self mainTankFromRaid:raid];
+}
+
+- (void)setIsDisabled:(BOOL)isDisabled
+{
+    [super setIsDisabled:isDisabled];
+    self.focusTarget = nil;
 }
 
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
@@ -1956,7 +1962,7 @@
 {
     if (self = [super init]){
         self.title = @"Shatter Armor";
-        self.iconName = @"Shatters the targets armor increasing its damage taken by 100%.";
+        self.info = @"Shatters the targets armor dealing high damage and increasing its damage taken by 50% for 10 seconds.";
         self.iconName = @"unstoppable.png";
     }
     return self;
@@ -1966,14 +1972,84 @@
     Effect *shatteredArmor = [[[Effect alloc] initWithDuration:10.0 andEffectType:EffectTypeNegative] autorelease];
     [shatteredArmor setSpriteName:self.iconName];
     [shatteredArmor setTitle:@"shatter-armor"];
-    [shatteredArmor setDamageTakenMultiplierAdjustment:1];
+    [shatteredArmor setDamageTakenMultiplierAdjustment:.5];
     [shatteredArmor setOwner:self.owner];
     [shatteredArmor setAilmentType:AilmentTrauma];
     
     for (RaidMember *member in theRaid.livingMembers) {
         if (member.isFocused) {
+            [self damageTarget:member];
             [member addEffect:shatteredArmor];
             break;
+        }
+    }
+}
+@end
+
+@implementation BrokenWill
+- (void)dealloc
+{
+    [_target release];
+    [_additionalAttack release];
+    [super dealloc];
+}
+
+- (id)init
+{
+    if (self = [super init]) {
+        self.iconName = @"red_curse.png";
+        self.info = @"Breaks the will of the target causing them to be stunned and receive 65% less healing until healed to full health.  While lacking will the target is immune to damage.";
+        self.title = @"Broken Will";
+        self.dodgeChanceAdjustment = -100.0;
+        self.abilityValue = 500;
+        self.activationTime = 1.5;
+        self.cooldown = 60;
+    }
+    return self;
+}
+- (void)combatUpdateForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
+{
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
+    
+    if (self.owner && self.target) {
+        
+        if (([self.target hasEffectWithTitle:@"brokenwill"] && self.target.healthPercentage > .98) || self.target.isDead) {
+            [self.target removeEffectsWithTitle:@"brokenwill"];
+            self.owner.autoAttack.isDisabled = NO;
+            self.target = nil;
+            [self.owner removeAbility:self.additionalAttack];
+            self.additionalAttack = nil;
+        }
+    }
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    if (self.owner) {
+        if ([self.owner.autoAttack isKindOfClass:[FocusedAttack class]]) {
+            FocusedAttack *ownersAttack = (FocusedAttack*)self.owner.autoAttack;
+            self.target = ownersAttack.focusTarget;
+            ownersAttack.isDisabled = YES;
+            
+            if (self.target.health <= self.abilityValue) {
+                [self damageTarget:self.target];
+            } else {
+                [self damageTarget:self.target forDamage:(self.target.health - self.target.health * .2)];
+            }
+            
+            self.additionalAttack = [[[SustainedAttack alloc] initWithDamage:ownersAttack.abilityValue andCooldown:ownersAttack.cooldown] autorelease];
+            [self.additionalAttack setKey:@"broken-will-attack"];
+            [self.owner addAbility:self.additionalAttack];
+            
+            HealingDoneAdjustmentEffect *brokenWill = [[[HealingDoneAdjustmentEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+            [brokenWill setCausesStun:YES];
+            [brokenWill setPercentageHealingReceived:.35];
+            [brokenWill setDamageTakenMultiplierAdjustment:-1.0];
+            [brokenWill setSpriteName:@"red_curse.png"];
+            [brokenWill setOwner:self.owner];
+            [brokenWill setTitle:@"brokenwill"];
+            [self.target addEffect:brokenWill];
+            
         }
     }
 }

@@ -28,6 +28,10 @@
         self.ability = newAbility;
         self.target = newTarget;
         self.selector = newSelector;
+        self.scale = .5;
+        CCSprite *backing = [CCSprite spriteWithSpriteFrameName:@"spell_icon_back.png"];
+        [self addChild:backing];
+        
         [self configureNode];
     }
     return self;
@@ -36,9 +40,7 @@
 - (void)configureNode {
     [self.menu removeFromParentAndCleanup:YES];
     CCSprite *normalSprite = [CCSprite spriteWithSpriteFrameName:self.ability.iconName];
-    normalSprite.scale = .5;
     CCSprite *selectedSprite = [CCSprite spriteWithSpriteFrameName:self.ability.iconName];
-    selectedSprite.scale = .5;
     [selectedSprite setColor:ccc3(122, 122, 122)];
     
     self.iconSpriteMenuItem = [CCMenuItemSprite itemWithNormalSprite:normalSprite selectedSprite:selectedSprite target:self.target selector:self.selector];

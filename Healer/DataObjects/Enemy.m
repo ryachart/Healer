@@ -18,7 +18,8 @@
 @property (nonatomic, readwrite) float challengeDamageDoneModifier;
 @property (nonatomic, readwrite) BOOL hasAppliedChallengeEffects;
 @property (nonatomic, retain) NSMutableArray *queuedAbilitiesToAdd;
-@property (nonatomic, readwrite) BOOL shouldQueueAbilityAdds;
+@property (nonatomic, retain) NSMutableArray *queuedAbilitiesToRemove;
+@property (nonatomic, readwrite) BOOL shouldQueueAbilityChanges;
 @end
 
 @implementation Enemy
@@ -27,6 +28,7 @@
     [_abilities release];
     [_title release];
     [_queuedAbilitiesToAdd release];
+    [_queuedAbilitiesToRemove release];
     [_abilityDescriptors release];
     [_namePlateTitle release];
     [super dealloc];
@@ -166,8 +168,17 @@
     }
 }
 
+- (void)dequeueAbilityRemoves {
+    if (self.queuedAbilitiesToRemove.count > 0){
+        for (Ability *ability in self.queuedAbilitiesToRemove){
+            [self removeAbility:ability];
+        }
+        [self.queuedAbilitiesToRemove removeAllObjects];
+    }
+}
+
 - (void)addAbility:(Ability*)ab{
-    if (self.shouldQueueAbilityAdds){
+    if (self.shouldQueueAbilityChanges){
         [self.queuedAbilitiesToAdd addObject:ab];
         return;
     }
@@ -177,6 +188,10 @@
 }
 
 - (void)removeAbility:(Ability*)ab{
+    if (self.shouldQueueAbilityChanges) {
+        [self.queuedAbilitiesToRemove addObject:ab];
+        return;
+    }
     [self.abilities removeObject:ab];
 }
 
@@ -208,6 +223,7 @@
             }
         }
         self.queuedAbilitiesToAdd = [NSMutableArray arrayWithCapacity:1];
+        self.queuedAbilitiesToRemove = [NSMutableArray arrayWithCapacity:1];
     }
 	return self;
 }
@@ -247,12 +263,13 @@
     }
     
     if (!self.inactive) {
-        self.shouldQueueAbilityAdds = YES;
+        self.shouldQueueAbilityChanges = YES;
         for (Ability *ability in self.abilities){
             [ability combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
         }
-        self.shouldQueueAbilityAdds = NO;
+        self.shouldQueueAbilityChanges = NO;
         [self dequeueAbilityAdds];
+        [self dequeueAbilityRemoves];
     }
     
     [self updateEffects:enemies raid:raid players:players time:timeDelta];
@@ -279,14 +296,14 @@
 {
     Ability *visibleAbility = nil;
     for (Ability *ab in self.abilities) {
-        if (ab.isChanneling && !ab.ignoresBusy) {
+        if (ab.isChanneling && !ab.ignoresBusy && !ab.isDisabled) {
             visibleAbility = ab;
             break;
         }
     }
     if (!visibleAbility) {
         for (Ability *ab in self.abilities) {
-            if (ab.isActivating && !ab.ignoresBusy) {
+            if (ab.isActivating && !ab.ignoresBusy && !ab.isDisabled) {
                 visibleAbility = ab;
                 break;
             }
@@ -296,19 +313,15 @@
 }
 @end
 
-#pragma mark - Shipping Bosses (Merc Campaign)
+#pragma mark - Shipping Bosses
 
 @implementation Ghoul
 +(id)defaultBoss{
-    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:25000 damage:300 targets:1 frequency:2.0 choosesMT:NO ];
+    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:100000
+                                          damage:300 targets:1 frequency:2.0 choosesMT:NO ];
     [ghoul setTitle:@"Ghoul"];
     [ghoul setSpriteName:@"ghoul_battle_portrait.png"];
     
-    AbilityDescriptor *ad = [[[AbilityDescriptor alloc] init] autorelease];
-    [ad setAbilityName:@"Undead Attacks"];
-    [ad setAbilityDescription:@"The Ghoul attacks its enemies randomly."];
-    [ad setIconName:@"unknown_ability.png"];
-    [ghoul addAbilityDescriptor:ad];
     return [ghoul autorelease];
 }
 
@@ -1138,6 +1151,7 @@
     CrazedSeer *seer = [[CrazedSeer alloc] initWithHealth:2720000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [seer setTitle:@"Crazed Seer Tyonath"];
     [seer setNamePlateTitle:@"Tyonath"];
+    [seer setSpriteName:@"tyonath_battle_portrait.png"];
     
     ProjectileAttack *fireballAbility = [[[ProjectileAttack alloc] init] autorelease];
     [fireballAbility setSpriteName:@"purple_fireball.png"];
@@ -1177,28 +1191,34 @@
 
 @implementation GatekeeperDelsarn
 + (id)defaultBoss {
-    GatekeeperDelsarn *boss = [[GatekeeperDelsarn alloc] initWithHealth:2030000 damage:500 targets:1 frequency:2.1 choosesMT:YES ];
+    GatekeeperDelsarn *boss = [[GatekeeperDelsarn alloc] initWithHealth:4630000 damage:500 targets:1 frequency:2.1 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Gatekeeper of Delsarn"];
     [boss setNamePlateTitle:@"The Gatekeeper"];
+    [boss setSpriteName:@"gatekeeper_battle_portrait.png"];
     
     [boss addAbility:[Cleave normalCleave]];
     
+    [boss addGripImpale];
+    
+    return [boss autorelease];
+}
+
+- (void)addGripImpale
+{
     Grip *gripAbility = [[[Grip alloc] init] autorelease];
     [gripAbility setKey:@"grip-ability"];
     [gripAbility setActivationTime:1.5];
     [gripAbility setCooldown:22];
     [gripAbility setAbilityValue:-140];
-    [boss addAbility:gripAbility];
+    [self addAbility:gripAbility];
     
     Impale *impaleAbility = [[[Impale alloc] init] autorelease];
     [impaleAbility setKey:@"gatekeeper-impale"];
     [impaleAbility setActivationTime:1.5];
     [impaleAbility setCooldown:16];
-    [boss addAbility:impaleAbility];
+    [self addAbility:impaleAbility];
     [impaleAbility setAbilityValue:820];
-    
-    return [boss autorelease];
 }
 
 - (void)ownerDidExecuteAbility:(Ability *)ability
@@ -1209,7 +1229,10 @@
 }
 
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
-    if (percentage == 75.0){
+    if (percentage == 80.0){
+        [self removeAbility:[self abilityWithKey:@"grip-ability"]];
+        [self removeAbility:[self abilityWithKey:@"gatekeeper-impale"]];
+        
         NSTimeInterval openingTime = 5.0;
         RepeatedHealthEffect *pestilenceDot = [[[RepeatedHealthEffect alloc] initWithDuration:20 andEffectType:EffectTypeNegativeInvisible] autorelease];
         [pestilenceDot setValuePerTick:-40];
@@ -1218,36 +1241,46 @@
         
         RaidApplyEffect *openTheGates = [[[RaidApplyEffect alloc] init] autorelease];
         [openTheGates setKey:@"open-the-gates"];
-        [openTheGates setTitle:@"Open The Gates"];
+        [openTheGates setTitle:@"Powers from Beyond"];
         [openTheGates setCooldown:kAbilityRequiresTrigger];
         [openTheGates setActivationTime:openingTime];
         [openTheGates setAppliedEffect:pestilenceDot];
         [self addAbility:openTheGates];
         [openTheGates activateAbility];
-    }
-    
-    if (percentage == 50.0) {
-        [self.announcer announce:@"The Gatekeeper summons two Blood-Drinker Demons to his side."];
-        //Blood drinkers
-        BloodDrinker *ability = [[[BloodDrinker alloc] initWithDamage:110 andCooldown:1.25] autorelease];
-        [ability setKey:@"gatekeeper-blooddrinker"];
-        [self addAbility:ability];
         
-        BloodDrinker *ability2 = [[[BloodDrinker alloc] initWithDamage:110 andCooldown:1.25] autorelease];
-        [ability2 setKey:@"gatekeeper-blooddrinker"];
-        [self addAbility:ability2];
+        StackingEnrage *growingHatred = [[[StackingEnrage alloc] init] autorelease];
+        [growingHatred setKey:@"growing-hatred"];
+        [growingHatred setAbilityValue:1];
+        [growingHatred setCooldown:4.0];
+        [growingHatred setTitle:@"Growing Hatred"];
+        [growingHatred setIconName:@"temper.png"];
+        [growingHatred setInfo:@"The Gatekeeper deals more damage the longer the fight lasts."];
+        [growingHatred setActivationTime:1.0];
+        [self addAbility:growingHatred];
+        
+        ExpireThresholdRepeatedHealthEffect *burningInsanity = [[[ExpireThresholdRepeatedHealthEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+        [burningInsanity setTitle:@"Burning Insanity"];
+        [burningInsanity setDamageDoneMultiplierAdjustment:1.0];
+        [burningInsanity setValuePerTick:-10];
+        [burningInsanity setMaxStacks:5];
+        [burningInsanity setThreshold:.5];
+        
+        RaidApplyEffect *insaneRaid = [[[RaidApplyEffect alloc] init] autorelease];
+        [insaneRaid setKey:@"insane-raid"];
+        [insaneRaid setTitle:@"Burning Insanity"];
+        [insaneRaid setIconName:@"burning_insanity.png"];
+        [insaneRaid setInfo:@"Causes effected targets to deal double damage, but deals damage over time.  The effect is removed when the target is healed above 50% health."];
+        [insaneRaid setCooldown:25.0];
+        [insaneRaid setActivationTime:2.0];
+        [insaneRaid setAppliedEffect:burningInsanity];
+        [self addAbility:insaneRaid];
+        
     }
     
-    if (percentage == 25.0) {
-        [self.announcer announce:@"The Blood Drinkers are slain."];
-        for (Ability *ability in self.abilities) {
-            if ([ability.key isEqualToString:@"gatekeeper-blooddrinker"]){
-                [ability setIsDisabled:YES];
-                [[(BloodDrinker*)ability focusTarget] setIsFocused:NO];
-            }
-        }
-    }
-    if (percentage == 23.0) {
+    if (percentage == 15.0) {
+        [self removeAbility:[self abilityWithKey:@"insane-raid"]];
+        [self removeAbility:[self abilityWithKey:@"growing-hatred"]];
+        [self addGripImpale];
         //Drink in death +10% damage for each ally slain so far.
         NSInteger dead = [raid deadCount];
         if (dead > 0) {
@@ -1278,6 +1311,7 @@
 + (id)defaultBoss {
     SkeletalDragon *boss = [[SkeletalDragon alloc] initWithHealth:2190000 damage:0 targets:0 frequency:100 choosesMT:NO ];
     [boss setTitle:@"Skeletal Dragon"];
+    [boss setSpriteName:@"skeletaldragon_battle_portrait.png"];
     
     boss.boneThrowAbility = [[[BoneThrow alloc] init] autorelease];
     [boss.boneThrowAbility setActivationTime:1.5];
@@ -1371,6 +1405,7 @@
 + (id)defaultBoss {
     ColossusOfBone *cob = [[ColossusOfBone alloc] initWithHealth:1710000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [cob setTitle:@"Colossus of Bone"];
+    [cob setSpriteName:@"colossusbone_battle_portrait.png"];
     
     FocusedAttack *tankAttack = [[FocusedAttack alloc] initWithDamage:620 andCooldown:2.15];
     [tankAttack setFailureChance:.4];
@@ -1434,6 +1469,7 @@
     OverseerOfDelsarn *boss = [[OverseerOfDelsarn alloc] initWithHealth:2580000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [boss setTitle:@"Overseer of Delsarn"];
     [boss setNamePlateTitle:@"The Overseer"];
+    [boss setSpriteName:@"overseer_battle_portrait.png"];
     
     boss.projectilesAbility = [[[OverseerProjectiles alloc] init] autorelease];
     [boss.projectilesAbility setTitle:@"Bolt of Despair"];
@@ -1477,15 +1513,15 @@
     
     NSString *minionTitle = nil;
     if ([addedAbility.key isEqualToString:@"shadow-minion"]) {
-        minionTitle = @"Minion of Shadow";
+        minionTitle = @"Aura of Shadow";
     } else if ([addedAbility.key isEqualToString:@"fire-minion"]) {
-        minionTitle = @"Minion of Fire";
+        minionTitle = @"Aura of Fire";
     } else if ([addedAbility.key isEqualToString:@"blood-minion"]) {
-        minionTitle = @"Minion of Blood";
+        minionTitle = @"Aura of Blood";
     }
     
     if (minionTitle) {
-        [self.announcer announce:[NSString stringWithFormat:@"The Overseer brings forth a %@", minionTitle]];
+        [self.announcer announce:[NSString stringWithFormat:@"The Overseer conjures  an %@", minionTitle]];
     }
 }
 
@@ -1523,6 +1559,7 @@
     TheUnspeakable *boss = [[TheUnspeakable alloc] initWithHealth:2900000 damage:0 targets:0 frequency:10.0 choosesMT:NO ];
     boss.autoAttack.failureChance = .25;
     [boss setTitle:@"The Unspeakable"];
+    [boss setSpriteName:@"unspeakable_battle_portrait.png"];
     
     AbilityDescriptor *slimeDescriptor = [[[AbilityDescriptor alloc] init] autorelease];
     [slimeDescriptor setAbilityDescription:@"As your allies hack their way through the filth beast they become covered in a disgusting slime.  If this slime builds to 5 stacks on any ally that ally will be consumed.  Whenever an ally receives healing from you the slime is removed."];
@@ -1574,9 +1611,10 @@
     [super dealloc];
 }
 + (id)defaultBoss {
-    BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:3400000 damage:270 targets:1 frequency:2.25 choosesMT:YES ];
+    BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:4389000 damage:270 targets:1 frequency:2.25 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast Reborn"];
+    [boss setSpriteName:@"baraghastreborn_battle_portrait.png"];
     
     [boss addAbility:[Cleave normalCleave]];
     
@@ -1593,6 +1631,8 @@
     ShatterArmor *shatter = [[[ShatterArmor alloc] init] autorelease];
     [shatter setKey:@"shatter"];
     [shatter setCooldown:36.0];
+    [shatter setAbilityValue:1200];
+    [shatter setActivationTime:2.0];
     [shatter setCooldownVariance:.33];
     [boss addAbility:shatter];
     
@@ -1633,12 +1673,44 @@
 
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     
-    if (self.difficulty <= 3) {
-        if (percentage == 99.0 || percentage == 75.0 || percentage == 50.0 || percentage == 25.0){
-            [self.deathwave triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
-        }
-    } else if (percentage == 99.0 || percentage == 80.0 || percentage == 60.0 || percentage == 40.0 || percentage == 20.0){
+    if (percentage == 99.0 || percentage == 85.0 || percentage == 70.0 || percentage == 15.0){
         [self.deathwave triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
+    }
+    
+    if (percentage == 98.0) {
+        [self.announcer announce:@"You will all die screaming!"];
+    }
+    
+    if (percentage == 61.0) {
+        
+    }
+    
+    if (percentage == 60.0) {
+        [self.announcer announce:@"Baraghast's weapons begin dripping blood."];
+        [[self abilityWithKey:@"shatter"] setIsDisabled:YES];
+        self.deathwave.isDisabled = YES;
+        
+        BrokenWill *brokenWill = [[[BrokenWill alloc] init] autorelease];
+        [brokenWill setKey:@"broken-will"];
+        [brokenWill setTimeApplied:brokenWill.cooldown * .80];
+        [self addAbility:brokenWill];
+        
+        //Stuns the tank until healed to full.  While stunned, Baraghast will attack
+        //other raid members randomly.
+        //Tanks healing is greatly reduced
+        
+    }
+    
+    if (percentage == 15.0) {
+        [self removeAbility:[self abilityWithKey:@"broken-will"]];
+        BaraghastRoar *roar = (BaraghastRoar*)[self abilityWithKey:@"baraghast-roar"];
+        [roar setCooldown:roar.cooldown * .5];
+        StackingEnrage *se = [[[StackingEnrage alloc] init] autorelease];
+        [se setAbilityValue:5];
+        [se setCooldown:roar.cooldown];
+        [self addAbility:se];
+        [se triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
+        //Gains increasing damage dealt every 6 seconds and roars more often
     }
     
 }
@@ -1649,6 +1721,7 @@
     AvatarOfTorment1 *boss = [[AvatarOfTorment1 alloc] initWithHealth:2880000 damage:0 targets:0 frequency:0.0 choosesMT:NO];
     [boss setTitle:@"The Avatar of Torment"];
     [boss setNamePlateTitle:@"Torment"];
+    [boss setSpriteName:@"avataroftorment_battle_portrait.png"];
     
     DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
     [dcAbility setKey:@"dis-cloud"];
@@ -1761,6 +1834,7 @@
     AvatarOfTorment2 *boss = [[AvatarOfTorment2 alloc] initWithHealth:1320000 damage:0 targets:0 frequency:0.0 choosesMT:NO ];
     [boss setTitle:@"The Avatar of Torment"];
     [boss setNamePlateTitle:@"Torment"];
+    [boss setSpriteName:@"avataroftorment_battle_portrait.png"];
     
     DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
     [dcAbility setKey:@"dis-cloud"];

@@ -15,6 +15,10 @@
 @synthesize goldCost, shopSprite, shopDescription, key, spell, title;
 +(NSInteger)costForSpell:(NSString*)spell{
     
+    if ([spell isEqualToString:@"Heal"]) {
+        return 0;
+    }
+    
     if ([spell isEqualToString:@"Greater Heal"]){
         return 25;
     }
@@ -43,39 +47,39 @@
     
     
     if ([spell isEqualToString:@"Blessed Armor"]){
-        return 800;
-    }
-    if ([spell isEqualToString:@"Light Eternal"]){
-        return 1000;
-    }
-    if ([spell isEqualToString:@"Fading Light"]) {
         return 600;
     }
+    if ([spell isEqualToString:@"Light Eternal"]){
+        return 800;
+    }
+    if ([spell isEqualToString:@"Fading Light"]) {
+        return 400;
+    }
     if ([spell isEqualToString:@"Sunburst"]){
-        return 1000;
+        return 800;
     }
     if ([spell isEqualToString:@"Swirling Light"]){
-        return 800;
+        return 600;
     }
     if ([spell isEqualToString:@"Orbs of Light"]){
-        return 800;
+        return 600;
     }
     
     
     if ([spell isEqualToString:@"Respite"]){
-        return 1500;
+        return 1000;
     }
     if ([spell isEqualToString:@"Ward of Ancients"]){
-        return 1500;
+        return 1000;
     }
     if ([spell isEqualToString:@"Soaring Spirit"]){
-        return 1500;
+        return 1000;
     }
     if ([spell isEqualToString:@"Attunement"]){
-        return 1500;
+        return 1000;
     }
     if ([spell isEqualToString:@"Wandering Spirit"]){
-        return 1500;
+        return 1000;
     }
 
     return 10000;

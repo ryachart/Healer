@@ -86,6 +86,9 @@ static NSArray *shopItems = nil;
 + (NSArray*)essentialsShopItems {
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
 
+    ShopItem *heal = [[ShopItem alloc] initWithSpell:[Heal defaultSpell]];
+    [items addObject:[heal autorelease]];
+    
     ShopItem *greaterHeal = [[ShopItem alloc] initWithSpell:[GreaterHeal defaultSpell]];
     [items addObject:[greaterHeal autorelease]];
 

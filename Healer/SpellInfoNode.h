@@ -9,6 +9,7 @@
 
 @class Spell;
 
-@interface SpellInfoNode : CCNode
--(id)initWithSpell:(Spell*)spell;
+@interface SpellInfoNode : CCSprite
+- (id)initWithSpell:(Spell*)spell;
+- (id)initAsEmpty;
 @end

@@ -154,11 +154,6 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     if (self = [super init]) {   
         
         self.playerData = [NSMutableDictionary dictionaryWithContentsOfFile:[self localPlayerSavePath]];
-        if (!self.playerData) {
-            //Remove this code before you ship lol
-            [self attemptMigrationFromUserDefaults];
-            [self saveLocalPlayer];
-        }
         
         if (!self.playerData) {
             self.playerData = [NSMutableDictionary dictionary];
@@ -372,7 +367,7 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
 }
 
 -(BOOL)hasShopItem:(ShopItem*)item{
-    return [[self.playerData objectForKey:[item key]] boolValue];
+    return [item.key isEqualToString:@"Heal"] || [[self.playerData objectForKey:[item key]] boolValue];
 }
 
 -(BOOL)hasSpell:(Spell*)spell{
@@ -407,7 +402,6 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     NSMutableArray *allSpells = [NSMutableArray arrayWithCapacity:20];
     NSArray *allShopItems = [Shop allShopItems];
     NSArray *purchasedItems = [self purchasedItems];
-    [allSpells addObject:[Heal defaultSpell]];
     for (ShopItem *item in allShopItems){
         if ([purchasedItems containsObject:item]){
             [allSpells addObject:[[[item purchasedSpell] class] defaultSpell]];

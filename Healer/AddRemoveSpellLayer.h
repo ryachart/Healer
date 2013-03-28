@@ -11,11 +11,12 @@
 
 @protocol SpellSwitchDelegate <NSObject>
 
--(void)spellSwitchDidCompleteWithActiveSpells:(NSArray*)actives;
+- (void)spellSwitchDidChangeToActiveSpells:(NSArray *)actives andInactiveIndexes:(int[])inactives;
+- (void)spellSwitchDidCompleteWithActiveSpells:(NSArray*)actives andInactiveIndexes:(int[])inactives;
 
 @end
 
-@interface AddRemoveSpellLayer : CCLayerColor <SlotDelegate>
+@interface AddRemoveSpellLayer : CCLayer <SlotDelegate>
 @property (nonatomic, assign) id<SpellSwitchDelegate> delegate;
 -(id)initWithCurrentSpells:(NSArray*)spells;
 

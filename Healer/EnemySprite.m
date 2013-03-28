@@ -43,7 +43,7 @@
         [self addChild:self.healthBar];
         
         self.abilitiesView = [[[EnemyAbilityDescriptionsView alloc] initWithBoss:self.enemy] autorelease];
-        [self.abilitiesView setPosition:CGPointMake(center.x - 100, 108)];
+        [self.abilitiesView setPosition:CGPointMake(center.x - 128, 84)];
         [self.abilitiesView setDelegate:self];
         [self addChild:self.abilitiesView];
         

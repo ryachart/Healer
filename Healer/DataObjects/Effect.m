@@ -47,7 +47,7 @@
 }
 
 - (float)castTimeAdjustment {
-    return damageDoneMultiplierAdjustment * self.stacks;
+    return castTimeAdjustment * self.stacks;
 }
 
 - (float)spellCostAdjustment {

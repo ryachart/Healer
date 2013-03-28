@@ -21,7 +21,7 @@
 }
 
 -(id)initWithFrame:(CGRect)frame count:(NSInteger)cnt andRaidMember:(RaidMember *)member{
-    if (self = [super init]){
+    if (self = [super initWithSpriteFrameName:@"roster_bg.png"]){
         self.raidMember = member;
         self.count = cnt;
         self.contentSize = frame.size;
@@ -47,7 +47,7 @@
         
         NSString* classIconSpriteFrameName = [NSString stringWithFormat:@"class_icon_%@.png", [member title].lowercaseString];
         CCSprite *classIcon = [CCSprite spriteWithSpriteFrameName:classIconSpriteFrameName];
-        [classIcon setPosition:ccp(18, 34)];
+        [classIcon setPosition:ccp(20, 34)];
         [self addChild:classIcon];
         
         CCLabelTTF *countLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"x%i", self.count] dimensions:CGSizeMake(50, 50) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:16.0f];

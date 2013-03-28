@@ -16,7 +16,7 @@
 @implementation GamePlayFTUELayer
 -(id)init{
     if (self = [super initWithColor:ccc4(0, 0, 0, 100)]){
-        self.ftueArrow = [CCSprite spriteWithSpriteFrameName:@"ftue-arrow.png"];
+        self.ftueArrow = [CCSprite spriteWithSpriteFrameName:@"ftue_arrow.png"];
         [self.ftueArrow setVisible:NO];
         [self addChild:self.ftueArrow];
         

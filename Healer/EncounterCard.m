@@ -25,7 +25,7 @@
     if (self = [super init]) {
         _levelNum = levelNum;
         
-        self.background = [CCSprite spriteWithSpriteFrameName:@"encounter-card-bg.png"];
+        self.background = [CCSprite spriteWithSpriteFrameName:@"encounter_card_bg.png"];
         [self.background setColor:ccBLACK];
         [self addChild:self.background];
         

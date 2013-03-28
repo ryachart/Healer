@@ -73,7 +73,7 @@
     if (!self.isAccessible) return;
     if (isSelected) {
         if (!self.selectedRing) {
-            self.selectedRing = [CCSprite spriteWithSpriteFrameName:@"sel-ring.png"];
+            self.selectedRing = [CCSprite spriteWithSpriteFrameName:@"sel_ring.png"];
             [self addChild:self.selectedRing z:-5];
             [self.selectedRing runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCSpawn actions:[CCFadeOut actionWithDuration:1.5],[CCScaleTo actionWithDuration:1.5 scale:3.0], nil],[CCCallBlockN actionWithBlock:^(CCNode *node){ [node setScale:1.0];}], nil]]];
         }

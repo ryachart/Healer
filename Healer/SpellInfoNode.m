@@ -21,12 +21,12 @@
 
 @implementation SpellInfoNode
 -(id)initWithSpell:(Spell*)spell{
-    if (self = [super init]){
+    if (self = [super initWithSpriteFrameName:@"spell_info_node_bg.png"]){
         CGFloat itemNameFontSize = 20.0;
         
         self.titleLabel = [CCLabelTTF labelWithString:spell.title dimensions:CGSizeMake(180, 40) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:itemNameFontSize];
         [self.titleLabel setColor:ccWHITE];
-        [self.titleLabel setPosition:CGPointMake(130, 14)];
+        [self.titleLabel setPosition:CGPointMake(180, 65)];
         [self.titleLabel setHorizontalAlignment:UITextAlignmentLeft];
         [self addChild:self.titleLabel];
         
@@ -39,7 +39,7 @@
         if (spellSpriteFrame){
             [self.spellIcon setDisplayFrame:spellSpriteFrame];
         }
-        [self.spellIcon setPosition:CGPointMake(-2, -5)];
+        [self.spellIcon setPosition:CGPointMake(48, 45)];
         [self.spellIcon setScale:.75];
         [spellIconBack setPosition:self.spellIcon.position];
         [spellIconBack setScale:self.spellIcon.scale];
@@ -56,22 +56,29 @@
         
         self.itemSpellType = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%@", spell.spellTypeDescription] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
         
-        self.itemEnergyCost.position = CGPointMake(185, 70);
-        self.itemCastTime.position = CGPointMake(185, 85);
-        self.itemCooldown.position = CGPointMake(283, 70);
-        self.itemDescription.position = CGPointMake(140, -26);
-        self.itemSpellType.position = CGPointMake(283, 85);
+        self.itemEnergyCost.position = CGPointMake(235, 120);
+        self.itemCastTime.position = CGPointMake(235, 135);
+        self.itemCooldown.position = CGPointMake(334, 120);
+        self.itemDescription.position = CGPointMake(190, 22);
+        self.itemSpellType.position = CGPointMake(334, 135);
         
         if (spell.cooldown == 0.0) {
             [self.itemCooldown setVisible:NO];
         }
         
-//        [self addChild:self.itemEnergyCost];
-//        [self addChild:self.itemCooldown];
-//        [self addChild:self.itemCastTime];
         [self addChild:self.itemDescription];
-//        [self addChild:self.itemSpellType];
         
+    }
+    return self;
+}
+
+- (id)initAsEmpty
+{
+    if (self = [super initWithSpriteFrameName:@"spell_info_node_bg.png"]){
+        CCSprite *spellIconBack = [CCSprite spriteWithSpriteFrameName:@"spell_icon_back.png"];
+        [spellIconBack setPosition:CGPointMake(48, 45)];
+        [spellIconBack setScale:.75];
+        [self addChild:spellIconBack];
     }
     return self;
 }

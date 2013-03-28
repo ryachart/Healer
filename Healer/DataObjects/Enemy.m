@@ -1240,6 +1240,7 @@
         [pestilenceDot setTitle:@"gatekeeper-pestilence"];
         
         RaidApplyEffect *openTheGates = [[[RaidApplyEffect alloc] init] autorelease];
+        [openTheGates setAttackParticleEffectName:nil];
         [openTheGates setKey:@"open-the-gates"];
         [openTheGates setTitle:@"Powers from Beyond"];
         [openTheGates setCooldown:kAbilityRequiresTrigger];

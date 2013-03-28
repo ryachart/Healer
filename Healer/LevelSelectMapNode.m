@@ -40,7 +40,11 @@
         [map2 setPosition:CGPointMake(1024, 0)];
         [self addChild:map2];
         
-        CGSize mapSize = CGSizeMake(2048, 768);
+        BackgroundSprite *map3 = [[[BackgroundSprite alloc] initWithJPEGAssetName:@"map-level-3"] autorelease];
+        [map3 setPosition:CGPointMake(2048, 0)];
+        [self addChild:map3];
+        
+        CGSize mapSize = CGSizeMake(3072, 768);
         CCLayerColor *layerWithColor = [CCLayerColor layerWithColor:ccc4(200, 137, 83, 255)];
         [layerWithColor setContentSize:CGSizeMake(mapSize.width * 2, mapSize.height)];
         [self addChild:layerWithColor z:-100];
@@ -116,21 +120,47 @@
 {
     switch (levelNum) {
         case 1:
-            return CGPointMake(590, 635);
+            return CGPointMake(738, 614);
         case 2:
-            return CGPointMake(300, 516);
+            return CGPointMake(705, 490);
         case 3:
-            return CGPointMake(150, 480);
+            return CGPointMake(646, 368);
         case 4:
-            return CGPointMake(222, 330);
+            return CGPointMake(752, 266);
         case 5:
-            return CGPointMake(500, 250);
+            return CGPointMake(900, 192);
         case 6:
-            return CGPointMake(660, 270);
+            return CGPointMake(988, 124);
         case 7:
-            return CGPointMake(784, 300);
-//        case 8:
-//            return CGPointMake(1024 + 120, 680); //The fuck? These appear on the 2nd page
+            return CGPointMake(1096, 90);
+        case 8:
+            return CGPointMake(1232, 92);
+        case 9:
+            return CGPointMake(1310, 170);
+        case 10:
+            return CGPointMake(1396, 246);
+        case 11:
+            return CGPointMake(1500, 290);
+        case 12:
+            return CGPointMake(1554, 184);
+        case 13:
+            return CGPointMake(1606, 80);
+        case 14:
+            return CGPointMake(1850, 200);
+        case 15:
+            return CGPointMake(1992, 154);
+        case 16:
+            return CGPointMake(2132, 154);
+        case 17:
+            return CGPointMake(2276, 154);
+        case 18:
+            return CGPointMake(2356, 264);
+        case 19:
+            return CGPointMake(2406, 480);
+        case 20:
+            return CGPointMake(2430, 580);
+        case 21:
+            return CGPointMake(2468, 664);
         default:
             break;
     }

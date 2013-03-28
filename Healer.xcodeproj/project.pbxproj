@@ -47,6 +47,7 @@
 		BF0022BE163EE94C00384882 /* EncounterCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0022BD163EE94C00384882 /* EncounterCard.m */; };
 		BF0557A015268D0A006B4781 /* ProjectileEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF05579F15268D0A006B4781 /* ProjectileEffect.m */; };
 		BF0557B51526BC02006B4781 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = BF0557B41526BC02006B4781 /* assets */; };
+		BF068CA61704F0BC00000C7F /* WidthScalingBackgroundSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF068CA51704F0BC00000C7F /* WidthScalingBackgroundSprite.m */; };
 		BF0DCF64156C6DEE005E74C7 /* ShopItemExtendedNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0DCF63156C6DEE005E74C7 /* ShopItemExtendedNode.m */; };
 		BF1111D716C5C80700A16F2F /* EnemyCastBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BF1111D616C5C80600A16F2F /* EnemyCastBar.m */; };
 		BF21071C1527C272001B93D7 /* GamePlayPauseLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */; };
@@ -622,6 +623,8 @@
 		BF05579F15268D0A006B4781 /* ProjectileEffect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectileEffect.m; sourceTree = "<group>"; };
 		BF0557AC1526BBA6006B4781 /* build-spritesheet.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "build-spritesheet.sh"; path = "scripts/build-spritesheet.sh"; sourceTree = SOURCE_ROOT; };
 		BF0557B41526BC02006B4781 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = SOURCE_ROOT; };
+		BF068CA41704F0BC00000C7F /* WidthScalingBackgroundSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WidthScalingBackgroundSprite.h; sourceTree = "<group>"; };
+		BF068CA51704F0BC00000C7F /* WidthScalingBackgroundSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WidthScalingBackgroundSprite.m; sourceTree = "<group>"; };
 		BF0DCF62156C6DEE005E74C7 /* ShopItemExtendedNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopItemExtendedNode.h; sourceTree = "<group>"; };
 		BF0DCF63156C6DEE005E74C7 /* ShopItemExtendedNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopItemExtendedNode.m; sourceTree = "<group>"; };
 		BF1111D516C5C80600A16F2F /* EnemyCastBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnemyCastBar.h; sourceTree = "<group>"; };
@@ -1167,6 +1170,8 @@
 				BF69866B154C7B5F0016F25E /* BackgroundSprite.m */,
 				BF2D1C1A16968A14006DCA9A /* CCLabelTTFShadow.h */,
 				BF2D1C1B16968A14006DCA9A /* CCLabelTTFShadow.m */,
+				BF068CA41704F0BC00000C7F /* WidthScalingBackgroundSprite.h */,
+				BF068CA51704F0BC00000C7F /* WidthScalingBackgroundSprite.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1962,6 +1967,7 @@
 				BFA44C1C16DC241500F20C8A /* EnemySprite.m in Sources */,
 				BFA44C1F16DC34FF00F20C8A /* EnemyHealthBar.m in Sources */,
 				BFB2C40116FA5B3F004C1AB1 /* PostBattleLayer.m in Sources */,
+				BF068CA61704F0BC00000C7F /* WidthScalingBackgroundSprite.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

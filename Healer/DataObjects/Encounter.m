@@ -503,7 +503,7 @@
         bossKey = @"avataroftorment";
         
         info = @"Torment will not be vanquished so easily.";
-        title = @"The Avatar of Torment";
+        title = @"The Avatar of Torment II";
     }
     
     if (level == 21){

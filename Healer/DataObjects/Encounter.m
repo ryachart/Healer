@@ -652,13 +652,15 @@
             background = @"cave-lava-bg";
             break;
         case 4:
-            background = @"forest-day-ipad-hd";
+            background = @"kingdom-bg";
             break;
         case 5:
-        case 6:
-            background = @"forest-night-ipad-hd";
+            background = @"forest-day";
             break;
+        case 6:
         case 7:
+            background = @"forest-night";
+            break;
         case 8:
             background = @"darkroom-bg";
             break;

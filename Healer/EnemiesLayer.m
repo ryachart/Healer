@@ -101,6 +101,17 @@
     }
 }
 
+- (void)endBattle
+{
+    for (EnemySprite *enemy in self.enemySprites) {
+        if (enemy.enemy.isDead) {
+            [enemy removeFromScene];
+        } else {
+            enemy.abilitiesView.visible = NO;
+        }
+    }
+}
+
 - (void)abilityDescriptionViewDidSelectAbility:(AbilityDescriptor *)descriptor
 {
     [self.delegate abilityDescriptionViewDidSelectAbility:descriptor];

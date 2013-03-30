@@ -81,6 +81,25 @@
     return self;
 }
 
+-(ccColor3B)colorForPercentage:(float)percentage{
+    if (percentage > .800){
+        return ccc3(0, 210, 0);
+    }
+    
+    if (percentage > .600){
+        return ccc3(210, 210, 0);
+    }
+    
+    if (percentage > .300){
+        return ccc3(210, 105, 0);
+    }
+    
+    if (percentage > 0.0){
+        return ccc3(195, 50, 0);
+    }
+    return ccRED;
+}
+
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
 	[self.channelDelegate beginChanneling];
 }
@@ -97,6 +116,7 @@
     self.percentEnergy = player.energy/player.maximumEnergy;
     
     [self.healthBar setPercentage:player.healthPercentage * 100];
+    [self.healthBar setColor:[self colorForPercentage:player.healthPercentage]];
     [self.energyBar setPercentage:self.percentEnergy * 100];
 }
 

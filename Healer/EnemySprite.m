@@ -14,7 +14,6 @@
 @interface EnemySprite ()
 @property (nonatomic, assign) EnemyCastBar *castBar;
 @property (nonatomic, assign) EnemyHealthBar *healthBar;
-@property (nonatomic, assign) EnemyAbilityDescriptionsView *abilitiesView;
 @end
 
 @implementation EnemySprite
@@ -76,6 +75,11 @@
             [self runAction:[CCSequence actionOne:fade two:[CCCallFunc actionWithTarget:self selector:@selector(finishDyingFade)]]];
         }
     }
+}
+
+- (void)removeFromScene
+{
+    self.visible = NO;
 }
 
 - (void)finishDyingFade

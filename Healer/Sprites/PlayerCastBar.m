@@ -112,7 +112,7 @@
             [self.castBar setColor:ccGREEN];
             self.castingSpell = spell;
             
-            float percentTimeRemaining = self.player.remainingCastTime/self.player.spellBeingCast.castTime;
+            float percentTimeRemaining = self.player.remainingCastTime/(self.player.spellBeingCast.castTime * self.player.castTimeAdjustment) ;
             [self.castBar setPercentage:100 * (1.0 - percentTimeRemaining)];
             [self.timeRemaining setString:[NSString stringWithFormat:@"%@ %1.2f", spell.title,  self.player.remainingCastTime]];
         }

@@ -19,4 +19,6 @@
 - (CGPoint)spriteCenterForEnemy:(Enemy*)enemy;
 
 - (void)update;
+
+- (void)endBattle;
 @end

@@ -247,6 +247,10 @@
                 self.requiresGreaterHealFtuePurchase = NO;
                 [[self.backButton.children objectAtIndex:0] setIsEnabled:YES];
                 [self.itemsTable setIsScrollingEnabled:YES];
+                if ([PlayerDataManager localPlayer].ftueState == FTUEStateBattle1Finished) {
+                    self.returnsToMap = YES;
+                    [PlayerDataManager localPlayer].ftueState = FTUEStateGreaterHealPurchased;
+                }
             }
     }
 }

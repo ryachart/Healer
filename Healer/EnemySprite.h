@@ -13,6 +13,9 @@
 @interface EnemySprite : CCSprite <AbilityDescriptionViewDelegate>
 @property (nonatomic, assign) Enemy *enemy;
 @property (nonatomic, assign) id<AbilityDescriptionViewDelegate> delegate;
+@property (nonatomic, assign) EnemyAbilityDescriptionsView *abilitiesView;
 - (id)initWithEnemy:(Enemy*)enemy;
 - (void)update;
+
+- (void)removeFromScene;
 @end

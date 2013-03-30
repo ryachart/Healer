@@ -28,6 +28,8 @@
 #import "CocosDenshion.h"
 #import "CDAudioManager.h"
 #import "EnemiesLayer.h"
+#import "ShopScene.h"
+#import "LevelSelectMapScene.h"
 
 #define DEBUG_AUTO_WIN false
 
@@ -49,6 +51,8 @@
 @property (nonatomic, readwrite) GradientBorderLayer *gradientBorder;
 @property (nonatomic, retain) NSMutableDictionary *playingSoundsDict;
 @property (nonatomic, assign) EnemiesLayer *enemiesLayer;
+@property (nonatomic, assign) GamePlayFTUELayer *ftueLayer;
+@property (nonatomic, assign) CCMenu *pauseButton;
 @end
 
 @implementation GamePlayScene
@@ -168,7 +172,6 @@
         [self.errAnnouncementLabel setColor:ccRED];
         [self.errAnnouncementLabel setVisible:NO];
         
-        //[self addChild:self.bossHealthView z:RAID_Z+1];
         [self addChild:self.playerCastBar];
         [self addChild:self.playerStatusView];
         [self addChild:self.announcementLabel z:100 tag:PAUSEABLE_TAG];
@@ -250,12 +253,20 @@
         //The timer has to be scheduled after all the init is done!
         CCSprite *pause = [CCSprite spriteWithSpriteFrameName:@"pause-button.png"];
         CCSprite *pauseDown = [CCSprite spriteWithSpriteFrameName:@"pause-down.png"];
-        CCMenuItemSprite *pauseButton = [CCMenuItemSprite itemWithNormalSprite:pause selectedSprite:pauseDown target:self selector:@selector(showPauseMenu)];
-        CCMenu *menuButton = [CCMenu menuWithItems:pauseButton, nil];
-        [menuButton setPosition:CGPointMake(50, [CCDirector sharedDirector].winSize.height * .9325)];
-        [self addChild:menuButton];
+        CCMenuItemSprite *pauseButtonItem = [CCMenuItemSprite itemWithNormalSprite:pause selectedSprite:pauseDown target:self selector:@selector(showPauseMenu)];
+        self.pauseButton = [CCMenu menuWithItems:pauseButtonItem, nil];
+        [self.pauseButton setPosition:CGPointMake(50, [CCDirector sharedDirector].winSize.height * .9325)];
+        [self addChild:self.pauseButton];
         
         self.networkThrottle = 0;
+        
+        if (self.encounter.levelNumber == 1 && [PlayerDataManager localPlayer].ftueState < FTUEStateBattle1Finished) {
+            [PlayerDataManager localPlayer].ftueState = FTUEStateFresh;
+            //Reset the FTUE state so we do the whole Ftue if the battle isn't finished
+            self.ftueLayer = [[[GamePlayFTUELayer alloc] init] autorelease];
+            [self.ftueLayer setDelegate:self];
+            [self addChild:self.ftueLayer z:1000];
+        }
 	}
     return self;
 }
@@ -321,15 +332,7 @@
 
 -(void)onEnterTransitionDidFinish{
     [super onEnterTransitionDidFinish];
-    if (self.encounter.levelNumber == 1){
-//        GamePlayFTUELayer *gpfl = [[[GamePlayFTUELayer alloc] init] autorelease];
-//        [gpfl setDelegate:self];
-//        [self addChild:gpfl z:1000];
-//        [gpfl showWelcome];
-        [self battleBegin];
-    }else{
-        [self battleBegin];
-    }
+    [self battleBegin];
 }
 
 -(void)ftueLayerDidComplete:(CCNode*)ftueLayer{
@@ -357,77 +360,74 @@
     }], nil]];
 }
 
--(void)battleEndWithSuccess:(BOOL)success{    
-    if (success && !(self.isServer || self.isClient) && [NormalModeCompleteScene needsNormalModeCompleteSceneForLevelNumber:self.encounter.levelNumber]){
-        //If we just beat the final boss for the first time, show the normal mode complete Scene
-        NormalModeCompleteScene *nmcs = [[[NormalModeCompleteScene alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:NO andDuration:self.encounter.duration] autorelease];
-        [self setPaused:YES];
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:nmcs]];
-        return;
+#pragma mark - Battle Completion
+- (void)postBattleLayerDidTransitionToScene:(PostBattleLayerDestination)destination
+{
+    if (destination == PostBattleLayerDestinationMap) {
+        LevelSelectMapScene *qps = [[[LevelSelectMapScene alloc] init] autorelease];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:qps]];
     }
-
+    
+    if (destination == PostBattleLayerDestinationShop) {
+        ShopScene *shopScene = [[[ShopScene alloc] init] autorelease];
+        if ([PlayerDataManager localPlayer].ftueState == FTUEStateBattle1Finished)
+        {
+            [shopScene setRequiresGreaterHealFtuePurchase:YES];
+        }
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:shopScene]];
+    }
+}
+-(void)battleEndWithSuccess:(BOOL)success{    
+//    if (success && !(self.isServer || self.isClient) && [NormalModeCompleteScene needsNormalModeCompleteSceneForLevelNumber:self.encounter.levelNumber]){
+//        //If we just beat the final boss for the first time, show the normal mode complete Scene
+//        NormalModeCompleteScene *nmcs = [[[NormalModeCompleteScene alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:NO andDuration:self.encounter.duration] autorelease];
+//        [self setPaused:YES];
+//        [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:nmcs]];
+//        return;
+//    }
+    for (CCNode *node in self.children) {
+        if (node.tag == PAUSEABLE_TAG) {
+            [node setVisible:NO];
+        }
+    }
+    
+    if ([PlayerDataManager localPlayer].ftueState == FTUEStateAbilityIconSelected) {
+        [PlayerDataManager localPlayer].ftueState = FTUEStateBattle1Finished;
+    }
+    
+    [self.playerCastBar runAction:[CCFadeTo actionWithDuration:.5 opacity:0]];
+    [self.enemiesLayer endBattle];
+    [self.pauseButton setEnabled:NO];
+    [self.pauseButton runAction:[CCFadeTo actionWithDuration:.5 opacity:0]];
     [self setPaused:YES];
     if (self.isServer){
         [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"BATTLEEND|%i|", success] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
     }
     
-    //UNTIL I FINISH THIS EXPERIENCE
     [self transitionToPostBattleWithSuccess:success];
-    return;
-
-    ccTime totalTime = 8.0;
-    ccTime fadeTime = 2.0;
-    
-    for (CCNode *child in self.children) {
-        if (child.tag == PAUSEABLE_TAG) {
-            if ([child conformsToProtocol:@protocol(CCRGBAProtocol)]) {
-                [child resumeSchedulerAndActions];
-                [child runAction:[CCFadeOut actionWithDuration:fadeTime]];
-            } else {
-                [child setVisible:NO];
-            }
-        }
-    }
-    
-    [self.spellView1 setIsTouchEnabled:NO];
-    [self.spellView1 runAction:[CCFadeOut actionWithDuration:fadeTime]];
-    [self.spellView2 setIsTouchEnabled:NO];
-    [self.spellView2 runAction:[CCFadeOut actionWithDuration:fadeTime]];
-    [self.spellView3 setIsTouchEnabled:NO];
-    [self.spellView3 runAction:[CCFadeOut actionWithDuration:fadeTime]];
-    [self.spellView4 setIsTouchEnabled:NO];
-    [self.spellView4 runAction:[CCFadeOut actionWithDuration:fadeTime]];
-    
-    [self.playerCastBar runAction:[CCFadeOut actionWithDuration:fadeTime]];
-    [self.playerStatusView runAction:[CCFadeOut actionWithDuration:fadeTime]];
-    
-    [self.raidView endBattleWithSuccess:success];
-    [self.bossHealthView endBattleWithSuccess:success];
-    
-    [self runAction:[CCSequence actions:[CCDelayTime actionWithDuration:totalTime], [CCCallBlockN actionWithBlock:^(CCNode *node){
-        [(GamePlayScene*)node transitionToPostBattleWithSuccess:success];
-    }], nil]];
 }
 
 - (void)transitionToPostBattleWithSuccess:(BOOL)success {
-    PostBattleScene *pbs = [[[PostBattleScene alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer andDuration:self.encounter.duration] autorelease];
+    PostBattleLayer *pbl = [[[PostBattleLayer alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer andDuration:self.encounter.duration] autorelease];
+    pbl.delegate = self;
     if (self.isServer || self.isClient){
-        [pbs setServerPlayerId:self.serverPlayerID];
-        [pbs setMatch:self.match];
-        [pbs setMatchVoiceChat:self.matchVoiceChat];
+        [pbl setServerPlayerId:self.serverPlayerID];
+        [pbl setMatch:self.match];
+        [pbl setMatchVoiceChat:self.matchVoiceChat];
     }
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:pbs]];
-
+    [self addChild:pbl z:500];
 }
 
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
+#pragma mark - Control Input
 
 -(void)thisMemberSelected:(RaidMemberHealthView*)hv
 {
 	if ([[hv member] isDead]) return;
+    if ([PlayerDataManager localPlayer].ftueState == FTUEStateTargetSelected) return;
 	if ([self.selectedRaidMembers count] == 0){
 		[self.selectedRaidMembers addObject:hv];
 		[hv setSelectionState:RaidViewSelectionStateSelected];
+        [self checkForFtueSelectionForHealthView:hv];
 	}
 	else if ([self.selectedRaidMembers objectAtIndex:0] == hv){
 		//Here we do nothing because the already selected object has been reselected
@@ -443,9 +443,20 @@
 			[self.selectedRaidMembers removeObjectAtIndex:0];
 			[self.selectedRaidMembers insertObject:hv atIndex:0];
             [hv setSelectionState:RaidViewSelectionStateSelected];
+            [self checkForFtueSelectionForHealthView:hv];
 		}
 		
 	}
+}
+
+- (void)checkForFtueSelectionForHealthView:(RaidMemberHealthView*)hv
+{
+    if ([PlayerDataManager localPlayer].ftueState < FTUEStateTargetSelected  && hv.member.health != hv.member.maximumHealth) {
+        [PlayerDataManager localPlayer].ftueState = FTUEStateTargetSelected;
+        [hv updateHealthForInterval:0];
+        [self.ftueLayer clear];
+        [self.ftueLayer waitForHeal];
+    }
 }
 
 -(void)thisMemberUnselected:(RaidMemberHealthView*)hv
@@ -477,6 +488,11 @@
 		}
 		else{
             [self.player beginCasting:[spell spellData] withTargets:targets];
+            if ([PlayerDataManager localPlayer].ftueState == FTUEStateTargetSelected) {
+                [PlayerDataManager localPlayer].ftueState = FTUEStateTargetHealed;
+                [self.ftueLayer clear];
+                self.paused = NO;
+            }
             if (self.isClient){
                 NSMutableString *message = [NSMutableString string];
                 [message appendFormat:@"BGNSPELL|%@", [[spell spellData] spellID]];
@@ -512,7 +528,11 @@
 
 - (void)abilityDescriptionViewDidSelectAbility:(AbilityDescriptor *)descriptor
 {
-    if (self.paused){
+    if ([PlayerDataManager localPlayer].ftueState == FTUEStateTargetHealed) {
+        [PlayerDataManager localPlayer].ftueState = FTUEStateAbilityIconSelected;
+        [self.ftueLayer clear];
+    }
+    else if (self.paused){
         return;
     }
     
@@ -870,6 +890,31 @@
     }
 }
 
+- (void)announceFtuePlagueStrike
+{
+    if ([PlayerDataManager localPlayer].ftueState < FTUEStateAbilityIconSelected) {
+        self.paused = YES;
+        [self.ftueLayer waitForSelectionOfAbilityIcon];
+    }
+}
+
+- (void)announceFtueAttack
+{
+    if ([PlayerDataManager localPlayer].ftueState < FTUEStateTargetSelected) {
+        self.paused = YES;
+        
+        RaidMember *hitMember = nil;
+        for (RaidMember *member in self.raid.livingMembers) {
+            if (member.health != member.maximumHealth) {
+                hitMember = member;
+                break;
+            }
+        }
+        
+        [self.ftueLayer waitForSelectionOnTargetAtFrame:[self.raidView frameCenterForMember:hitMember]];
+    }
+}
+
 -(void)announce:(NSString *)announcement{
     if (![self.announcementLabel.string isEqualToString:@""]){
         [self.announcementLabel stopAllActions];
@@ -986,6 +1031,8 @@
 {
     return MIN(255, MAX(0, (int)(255 * pow(1.0-self.player.healthPercentage, 2.5))));
 }
+
+#pragma mark - Game Loop
 
 -(void)gameEvent:(ccTime)deltaT
 {

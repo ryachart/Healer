@@ -15,12 +15,13 @@
 
 @implementation GamePlayFTUELayer
 -(id)init{
-    if (self = [super initWithColor:ccc4(0, 0, 0, 100)]){
+    if (self = [super initWithColor:ccc4(0, 0, 0, 0)]){
         self.ftueArrow = [CCSprite spriteWithSpriteFrameName:@"ftue_arrow.png"];
-        [self.ftueArrow setVisible:NO];
+        [self.ftueArrow setOpacity:0];
         [self addChild:self.ftueArrow];
         
         self.informationLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
+        [self.informationLabel setOpacity:0];
         [self.informationLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .62)];
         [self.informationLabel setColor:ccYELLOW];
         [self addChild:self.informationLabel z: 100];
@@ -29,6 +30,48 @@
     return self;
 }
 
+- (void)clear
+{
+    [self.ftueArrow runAction:[CCFadeTo actionWithDuration:.5 opacity:0]];
+    [self.informationLabel runAction:[CCFadeTo actionWithDuration:.5 opacity:0]];
+    
+}
+
+- (void)waitForSelectionOnTargetAtFrame:(CGPoint)frameLoc
+{
+    [self.informationLabel setString:@"One of your allies has taken damage!"];
+    [self.informationLabel runAction:[CCFadeIn actionWithDuration:1.0]];
+    [self.ftueArrow setPosition:ccpAdd(frameLoc, CGPointMake(0, 120))];
+    [self.ftueArrow runAction:[CCFadeIn actionWithDuration:.33]];
+    
+    self.ftueArrow.rotation = 0.0;
+    [self.ftueArrow runAction:[CCFadeIn actionWithDuration:.33]];
+    [self.ftueArrow runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCEaseBackOut actionWithAction:[CCMoveBy actionWithDuration:.5 position:CGPointMake(0, -40)]],[CCMoveBy actionWithDuration:.33 position:CGPointMake(0, 40)], nil]]];
+}
+
+- (void)waitForSelectionOfAbilityIcon
+{
+    [self.informationLabel setString:@"The Ghoul is using an ability!"];
+    [self.informationLabel runAction:[CCFadeIn actionWithDuration:1.0]];
+    [self.ftueArrow setPosition:CGPointMake(382, 450)];
+    self.ftueArrow.rotation = 180.0f;
+    [self.ftueArrow stopAllActions];
+    [self.ftueArrow runAction:[CCFadeIn actionWithDuration:.33]];
+    [self.ftueArrow runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCEaseBackOut actionWithAction:[CCMoveBy actionWithDuration:.5 position:CGPointMake(0, -40)]],[CCMoveBy actionWithDuration:.33 position:CGPointMake(0, 40)], nil]]];
+}
+
+- (void)waitForHeal
+{
+    [self.informationLabel setString:@"Tap Heal to cast this spell"];
+    [self.informationLabel runAction:[CCFadeIn actionWithDuration:1.0]];
+    [self.ftueArrow setPosition:CGPointMake(870, 345)];
+    self.ftueArrow.rotation = 270.0f;
+    [self.ftueArrow stopAllActions];
+    [self.ftueArrow runAction:[CCFadeIn actionWithDuration:.33]];
+    [self.ftueArrow runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCEaseBackOut actionWithAction:[CCMoveBy actionWithDuration:.5 position:CGPointMake(-40, 0)]],[CCMoveBy actionWithDuration:.33 position:CGPointMake(40, 0)], nil]]];
+}
+
+#pragma mark - Old Ftue
 -(void)complete{
     [self.delegate ftueLayerDidComplete:self];
 }

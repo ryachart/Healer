@@ -13,6 +13,15 @@
 
 #define MAX_CHARACTERS 5
 
+typedef enum {
+    FTUEStateFresh = 1,
+    FTUEStateTargetSelected,
+    FTUEStateTargetHealed,
+    FTUEStateAbilityIconSelected,
+    FTUEStateBattle1Finished,
+    FTUEStateGreaterHealPurchased
+} FTUEState;
+
 extern NSString* const PlayerHighestLevelAttempted;
 extern NSString* const PlayerHighestLevelCompleted;
 extern NSString* const PlayerRemoteObjectIdKey;
@@ -24,6 +33,7 @@ extern NSString* const PlayerGoldDidChangeNotification;
 @interface PlayerDataManager : NSObject
 @property (nonatomic, readonly) NSInteger gold;
 @property (nonatomic, readonly) NSArray* allOwnedSpells;
+@property (nonatomic, readwrite) FTUEState ftueState;
 
 + (PlayerDataManager *)localPlayer;
 

@@ -16,6 +16,13 @@
 @interface GamePlayFTUELayer : CCLayerColor
 @property (nonatomic, assign) id delegate;
 
+- (void)clear;
+
+- (void)waitForSelectionOnTargetAtFrame:(CGPoint)frameLoc;
+- (void)waitForHeal;
+- (void)waitForSelectionOfAbilityIcon;
+
+//Old FTUE
 -(void)showWelcome;
 -(void)showPlayerInformation;
 -(void)showSpellInformation;

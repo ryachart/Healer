@@ -78,7 +78,6 @@
 
 - (void)onExitTransitionDidStart {
     [super onExitTransitionDidStart];
-    [self.mapScrollView setContentOffset:CGPointZero];
 }
 
 -(void)back

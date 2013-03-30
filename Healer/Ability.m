@@ -1243,7 +1243,7 @@
     if (self = [super init]) {
         self.attackParticleEffectName = @"fire_explosion.plist";
         
-        self.info = @"The heat from this aura burns all allies and occasionally blasts enemies with a burst of immolation.";
+        self.info = @"The heat from this aura burns all enemies and occasionally blasts them with a burst of immolation.";
         self.title = @"Aura of Flame";
         self.iconName = @"burning.png";
     }
@@ -1271,7 +1271,7 @@
 
 - (id)init {
     if (self = [super init]){
-        self.info = @"This aura drains mana from Healers each time they cast a spell and spawns a viscious curse on random allies.";
+        self.info = @"This aura drains mana from Healers each time they cast a spell and spawns a viscious curse on random enemies.";
         self.title = @"Aura of Shadow";
         self.iconName = @"curse.png";
     }
@@ -1368,7 +1368,7 @@
 - (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd {
     if (self = [super initWithDamage:dmg andCooldown:cd]){
         self.title = @"Grasp of the Damned";
-        self.info = @"Periodically a curse is applied to an ally that deals damage over time and will explode if the ally receives any healing";
+        self.info = @"Periodically a curse is applied to an enemy that deals damage over time and will explode if the enemy receives any healing.";
         [self setKey:@"grasp-of-the-damned"];
     }
     return self;

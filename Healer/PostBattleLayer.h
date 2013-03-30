@@ -11,9 +11,23 @@
 
 @class Encounter;
 
+typedef enum {
+    PostBattleLayerDestinationMap,
+    PostBattleLayerDestinationShop,
+    PostBattleLayerDestinationTalents
+} PostBattleLayerDestination;
+
+@protocol PostBattleLayerDelegate
+
+- (void)postBattleLayerDidTransitionToScene:(PostBattleLayerDestination)destination;
+
+@end
+
 @interface PostBattleLayer : CCLayerColor
 
 - (id)initWithVictory:(BOOL)victory encounter:(Encounter*)enc andIsMultiplayer:(BOOL)isMult andDuration:(NSTimeInterval)duration;
+
+@property (nonatomic, assign) id <PostBattleLayerDelegate> delegate;
 
 @property (nonatomic, retain) GKMatch* match;
 @property (nonatomic, retain) NSString* serverPlayerId;

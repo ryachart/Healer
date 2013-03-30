@@ -317,12 +317,42 @@
 
 @implementation Ghoul
 +(id)defaultBoss{
-    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:100000
+    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:150000
                                           damage:300 targets:1 frequency:2.0 choosesMT:NO ];
     [ghoul setTitle:@"Ghoul"];
     [ghoul setSpriteName:@"ghoul_battle_portrait.png"];
     
+    ghoul.autoAttack.dodgeChanceAdjustment = -100.0;
+    
+    RepeatedHealthEffect *plagueDot = [[[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative] autorelease];
+    [plagueDot setTitle:@"plague-dot"];
+    [plagueDot setValuePerTick:-100];
+    [plagueDot setNumOfTicks:4];
+    
+    Attack *plagueStrike = [[[Attack alloc] initWithDamage:100 andCooldown:30.0] autorelease];
+    [plagueStrike setActivationTime:2.5];
+    [plagueStrike setKey:@"plague-strike"];
+    [plagueStrike setTitle:@"Plague Strike"];
+    [plagueStrike setIconName:@"plague.png"];
+    [plagueStrike setAppliedEffect:plagueDot];
+    [plagueStrike setInfo:@"The Ghoul strikes a random enemy with a sickening attack causing them to be diseased for 12 seconds."];
+    [ghoul addAbility:plagueStrike];
+    
     return [ghoul autorelease];
+}
+
+- (void)ownerDidBeginAbility:(Ability *)ability
+{
+    if ([ability.key isEqualToString:@"plague-strike"]) {
+        [self.announcer announceFtuePlagueStrike];
+    }
+}
+
+- (void)ownerDidExecuteAbility:(Ability *)ability
+{
+    if (ability == self.autoAttack) {
+        [self.announcer announceFtueAttack];
+    }
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
@@ -418,13 +448,6 @@
     NSInteger fireballDamage = 400;
     float fireballFailureChance = .05;
     float fireballCooldown = 1.0;
-    
-    AbilityDescriptor *fireball = [[AbilityDescriptor alloc] init];
-    [fireball setAbilityDescription:@"The Drake hurls deadly Fireballs at your allies."];
-    [fireball setIconName:@"unknown_ability.png"];
-    [fireball setAbilityName:@"Spit Fireball"];
-    [drake addAbilityDescriptor:fireball];
-    [fireball release];
     
     drake.fireballAbility = [[[ProjectileAttack alloc] init] autorelease];
     drake.fireballAbility.title = @"Spit Fireball";

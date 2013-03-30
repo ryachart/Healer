@@ -10,6 +10,11 @@
 
 @class RaidMember, Enemy;
 @protocol Announcer <NSObject>
+
+//Ftue Events
+- (void)announceFtueAttack;
+- (void)announceFtuePlagueStrike;
+
 //Text Announcements
 - (void)announce:(NSString*)announcement;
 - (void)errorAnnounce:(NSString*)announcement;

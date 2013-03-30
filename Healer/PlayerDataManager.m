@@ -35,6 +35,7 @@ NSString* const DivinityConfig = @"com.healer.divinityConfig";
 NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
 NSString* const PlayerLastSelectedLevelKey = @"com.healer.plsl";
 NSString* const ContentKeys = @"com.healer.contentKeys";
+NSString* const PlayerFTUEState = @"com.healer.ftueState";
 
 //Content Keys
 NSString* const DelsarnContentKey = @"com.healer.content1Key";
@@ -151,12 +152,13 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
 
 - (id)initAsLocalPlayer
 {
-    if (self = [super init]) {   
+    if (self = [super init]) {
         
         self.playerData = [NSMutableDictionary dictionaryWithContentsOfFile:[self localPlayerSavePath]];
         
         if (!self.playerData) {
             self.playerData = [NSMutableDictionary dictionary];
+            self.ftueState = FTUEStateFresh;
             [self saveLocalPlayer];
         }
     }
@@ -175,6 +177,16 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
         saving_queue = dispatch_queue_create("com.healer.saving-dispatch-queue", 0);
     }
     return saving_queue;
+}
+
+- (void)setFtueState:(FTUEState)ftueState
+{
+    [self.playerData setObject:[NSNumber numberWithInt:ftueState] forKey:PlayerFTUEState];
+}
+
+- (FTUEState)ftueState
+{
+    return [[self.playerData objectForKey:PlayerFTUEState] intValue];
 }
 
 - (NSMutableArray *)difficultyLevels

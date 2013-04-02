@@ -161,6 +161,10 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
             self.ftueState = FTUEStateFresh;
             [self saveLocalPlayer];
         }
+        
+        if (self.ftueState < FTUEStateGreaterHealPurchased && [self hasSpell:[GreaterHeal defaultSpell]]) {
+            self.ftueState = FTUEStateGreaterHealPurchased;
+        }
     }
     return self;
 }

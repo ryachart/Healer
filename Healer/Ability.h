@@ -264,3 +264,6 @@ typedef enum {
 @property (nonatomic, retain) RaidMember *target;
 @property (nonatomic, retain) SustainedAttack *additionalAttack;
 @end
+
+@interface TailLash : RaidDamage
+@end

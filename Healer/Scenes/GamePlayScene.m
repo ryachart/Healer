@@ -662,7 +662,11 @@
 }
 
 - (void)displayWarlockAttackFromRaidMember:(RaidMember *)member onTarget:(Enemy*)target{
-    CCSprite *arrowSprite = [CCSprite spriteWithSpriteFrameName:@"green_fireball.png"];
+    CCSprite *arrowSprite = [CCSprite spriteWithSpriteFrameName:@"poisonbolt_1.png"];
+    ProjectileEffect *eff = [[[ProjectileEffect alloc] initWithSpriteName:@"poisonbolt.png" target:nil collisionTime:0 sourceAgent:member] autorelease];
+    eff.frameCount = [self frameCountForSpriteName:eff.spriteName];
+    CCAnimation *spriteAnimation = [self animationFromProjectileEffect:eff];
+    [arrowSprite runAction:[CCRepeatForever actionWithAction:[CCAnimate actionWithAnimation:spriteAnimation]]];
     [arrowSprite setScale:.5];
     CGPoint enemyPosition = [self.enemiesLayer spriteCenterForEnemy:target];
     CGPoint position = [self.raidView frameCenterForMember:member];
@@ -817,16 +821,72 @@
     }
 }
 
+- (NSInteger)frameCountForSpriteName:(NSString *)spriteName
+{
+    if ([spriteName isEqualToString:@"fireball.png"]) {
+        return 12;
+    }
+    if ([spriteName isEqualToString:@"shadowbolt.png"]) {
+        return 12;
+    }
+    if ([spriteName isEqualToString:@"poisonbolt.png"]) {
+        return 12;
+    }
+    if ([spriteName isEqualToString:@"bloodbolt.png"]) {
+        return 12;
+    }
+    return 0;
+}
+
+- (CCAnimation *)animationFromProjectileEffect:(ProjectileEffect *)effect
+{
+    NSArray *components = [effect.spriteName componentsSeparatedByString:@"."];
+    NSString *extension = @"";
+    if (components.count > 1) {
+        extension = [components objectAtIndex:1];
+    }
+    NSString *spriteBaseName = [components objectAtIndex:0];
+    
+    NSMutableArray *spriteFramesInAnimation = [NSMutableArray arrayWithCapacity:effect.frameCount];
+    
+    for (int i = 0; i < effect.frameCount; i++) {
+        NSString *frameName = [NSString stringWithFormat:@"%@_%i.%@", spriteBaseName, i+1 ,extension];
+        CCSpriteFrame * frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:frameName];
+        [spriteFramesInAnimation addObject:frame];
+    }
+    
+    CCAnimation *spriteAnimation = [CCAnimation animationWithSpriteFrames:spriteFramesInAnimation delay:1.0/60.0f];
+    spriteAnimation.restoreOriginalFrame = NO;
+    
+    return spriteAnimation;
+}
+
 - (void)displayNormalProjectileEffect:(ProjectileEffect *)effect fromOrigin:(CGPoint)origin {
+    
     if (self.isServer){
         effect.type = ProjectileEffectTypeNormal;
         [self.match sendDataToAllPlayers:[effect.asNetworkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
     }
     
-    CCSprite *projectileSprite = [CCSprite spriteWithSpriteFrameName:effect.spriteName];;
+    CCSpriteFrame *spriteFrame = nil;
+    effect.frameCount = [self frameCountForSpriteName:effect.spriteName];
+    CCAnimation *spriteAnimation = nil;
+    if (effect.frameCount > 0) {
+        spriteAnimation = [self animationFromProjectileEffect:effect];
+        spriteFrame = [[spriteAnimation.frames objectAtIndex:0] spriteFrame];
+    } else {
+        spriteFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:effect.spriteName];
+    }
+    
+    CCSprite *projectileSprite = [CCSprite spriteWithSpriteFrame:spriteFrame];
+    
+    if (spriteAnimation) {
+        CCRepeatForever *repeater = [CCRepeatForever actionWithAction:[CCAnimate actionWithAnimation:spriteAnimation]];
+        [projectileSprite runAction:repeater];
+    }
     
     CGPoint originLocation = origin;
-    CGPoint destination = [self.raidView frameCenterForMember:effect.target];
+    CGPoint destination = [self.raidView frameCenterForMember:(RaidMember*)effect.target];
     
     if (effect.isFailed){
         destination = [self.raidView randomMissedProjectileDestination];
@@ -848,7 +908,7 @@
                 [collisionEffect setAutoRemoveOnFinish:YES];
                 [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
             }
-        }],[CCScaleTo actionWithDuration:.33 scale:2.0], [CCFadeOut actionWithDuration:.33], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
+        }], [CCFadeOut actionWithDuration:.05], nil], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node removeFromParentAndCleanup:YES];
         }], nil]];
     }
@@ -862,7 +922,7 @@
     }
     CCSprite *projectileSprite = [CCSprite spriteWithSpriteFrameName:effect.spriteName];;
 
-    CGPoint destination = [self.raidView frameCenterForMember:effect.target];
+    CGPoint destination = [self.raidView frameCenterForMember:(RaidMember*)effect.target];
     
     CCParticleSystemQuad  *collisionEffect = nil;
     if (effect.collisionParticleName && !effect.isFailed){
@@ -1129,8 +1189,10 @@
             [self battleEndWithSuccess:NO];
         }
         Enemy *boss = [self.encounter.enemies objectAtIndex:0];
-        if (areAllEnemiesDefeated || (DEBUG_AUTO_WIN && boss.health != boss.maximumHealth)){
+        BOOL forcedSuccess = (DEBUG_AUTO_WIN && boss.health != boss.maximumHealth);
+        if (areAllEnemiesDefeated || forcedSuccess){
             [self battleEndWithSuccess:YES];
+            
         }
     }
 }

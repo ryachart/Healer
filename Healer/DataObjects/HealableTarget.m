@@ -158,6 +158,11 @@
     }
 }
 
+- (void)passiveHealForAmount:(NSInteger)amount
+{
+    _health = MAX(0,MIN(self.maximumHealth,_health + amount));
+}
+
 - (void)didReceiveHealing:(NSInteger)amount andOverhealing:(NSInteger)overAmount{
     
 }

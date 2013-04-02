@@ -101,7 +101,7 @@ static NSDictionary *divinityInfo = nil;
             }
             
             if ([tierChoiceKey isEqualToString:@"blessed-power"]){
-                [divEff setCastTimeAdjustment:-0.1];
+                [divEff setCastTimeAdjustment:0.1];
                 [divEff setCooldownMultiplierAdjustment:-0.1];
             }
         }

@@ -106,7 +106,7 @@
             [self.scoreLabel setAnchorPoint:CGPointZero];
         }
         
-        NSString* doneLabelString = self.isMultiplayer ? @"Leave Group" : @"Continue";
+        NSString* doneLabelString = self.isMultiplayer ? @"Leave Group" : @"Adventure";
         CCMenuItem *done = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneMap) andTitle:doneLabelString];
         CCMenuItem *academy = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneAcademy) andTitle:@"Academy"];
         CCMenu *menu = [CCMenu menuWithItems:academy, nil];
@@ -189,13 +189,13 @@
     if (self.isMultiplayer) {
         if ([self.serverPlayerId isEqualToString:[GKLocalPlayer localPlayer].playerID]){
             //We are the server.  Lets figure out the stats!
-            NSDictionary *localStats = [CombatEvent statsForPlayer:[GKLocalPlayer localPlayer].playerID fromLog:self.encounter.combatLog];
-            NSDictionary *remoteStats = [CombatEvent statsForPlayer:[self.match.playerIDs objectAtIndex:0] fromLog:self.encounter.combatLog];
-            int localTotalHealingDone = [[localStats objectForKey:PlayerHealingDoneKey] intValue];
-            int localOverheal = [[localStats objectForKey:PlayerOverHealingDoneKey] intValue];
-            
-            int remoteTotalHealingDone = [[remoteStats objectForKey:PlayerHealingDoneKey] intValue];
-            int remoteOverheal = [[remoteStats objectForKey:PlayerOverHealingDoneKey] intValue];
+//            NSDictionary *localStats = [CombatEvent statsForPlayer:[GKLocalPlayer localPlayer].playerID fromLog:self.encounter.combatLog];
+//            NSDictionary *remoteStats = [CombatEvent statsForPlayer:[self.match.playerIDs objectAtIndex:0] fromLog:self.encounter.combatLog];
+//            int localTotalHealingDone = [[localStats objectForKey:PlayerHealingDoneKey] intValue];
+//            int localOverheal = [[localStats objectForKey:PlayerOverHealingDoneKey] intValue];
+//            
+//            int remoteTotalHealingDone = [[remoteStats objectForKey:PlayerHealingDoneKey] intValue];
+//            int remoteOverheal = [[remoteStats objectForKey:PlayerOverHealingDoneKey] intValue];
             
             int totalDamageTaken = 0;
             for (CombatEvent *event in self.encounter.combatLog){

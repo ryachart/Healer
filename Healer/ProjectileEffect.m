@@ -12,7 +12,7 @@
 
 @interface ProjectileEffect ()
 @property (nonatomic, retain) NSString *spriteName;
-@property (nonatomic, retain) RaidMember *target;
+@property (nonatomic, retain) Agent *target;
 @property (nonatomic, readwrite) NSTimeInterval collisionTime;
 @end
 
@@ -25,7 +25,7 @@
     [super dealloc];
 }
 
--(id)initWithSpriteName:(NSString*)spriteName target:(RaidMember*)target collisionTime:(NSTimeInterval)colTime sourceAgent:(Agent*)source {
+-(id)initWithSpriteName:(NSString*)spriteName target:(Agent*)target collisionTime:(NSTimeInterval)colTime sourceAgent:(Agent*)source {
     if (self=[super init]){
         self.spriteName = spriteName;
         self.target = target;
@@ -39,7 +39,7 @@
 
 //PRTEFF|TARGET|SPRITE|COLPARTNAME|R|G|B|TIME|TYPE|isFailed
 -(NSString*)asNetworkMessage{
-    return [NSString stringWithFormat:@"PRJEFF|%@|%@|%@|%i|%i|%i|%f|%i|%i|%@", self.target.battleID, self.spriteName, self.collisionParticleName, self.spriteColor.r, self.spriteColor.g, self.spriteColor.b, self.collisionTime + self.delay, self.type, self.isFailed, self.sourceAgent.networkID];
+    return [NSString stringWithFormat:@"PRJEFF|%@|%@|%@|%i|%i|%i|%f|%i|%i|%@|%i", ((RaidMember*)self.target).battleID, self.spriteName, self.collisionParticleName, self.spriteColor.r, self.spriteColor.g, self.spriteColor.b, self.collisionTime + self.delay, self.type, self.isFailed, self.sourceAgent.networkID, self.frameCount];
 }
 
 -(id)initWithNetworkMessage:(NSString*)message raid:(Raid*)raid enemies:(NSArray *)enemies{
@@ -63,6 +63,8 @@
                 break;
             }
         }
+        
+        self.frameCount = [[components objectAtIndex:11] intValue];
     }
     return self;
 }

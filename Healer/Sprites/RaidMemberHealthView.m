@@ -11,6 +11,7 @@
 
 #define HEALTH_BAR_BORDER 6
 #define FRAME_SCALE .6
+#define NEGATIVE_FRAME_TARGET_SCALE .25
 #define FILL_INSET_WIDTH 2 * FRAME_SCALE
 #define FILL_INSET_HEIGHT 2 * FRAME_SCALE
 
@@ -120,7 +121,7 @@
         
         self.priorityNegativeEffectSprite = [CCSprite node];
         [self.priorityNegativeEffectSprite setPosition:CGPointMake(86, 13.5)];
-        self.priorityNegativeEffectSprite.scale = .25;
+        self.priorityNegativeEffectSprite.scale = NEGATIVE_FRAME_TARGET_SCALE;
         [self addChild:self.priorityNegativeEffectSprite z:10];
 		
         self.priorityPositiveEffectSprite = [CCSprite node];
@@ -225,7 +226,9 @@
 }
 
 - (void)animateNewNegativeSprite {
-    float currentScale = self.priorityNegativeEffectSprite.scale;
+    [self.priorityNegativeEffectSprite stopAllActions];
+    float currentScale = NEGATIVE_FRAME_TARGET_SCALE;
+    self.priorityNegativeEffectSprite.scale = NEGATIVE_FRAME_TARGET_SCALE;
     [self.priorityNegativeEffectSprite runAction:[CCSequence actions:[CCScaleTo actionWithDuration:.4 scale:currentScale * 1.6], [CCScaleTo actionWithDuration:.4 scale:currentScale], nil]];
 }
 

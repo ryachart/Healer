@@ -10,10 +10,6 @@
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFiles</key>
 	<array>
-		<string></string>
-		<string>backgrounds/Default-Landscape@2x~ipad.png</string>
-		<string>backgrounds/Default-Portrait@2x~ipad.png</string>
-		<string>backgrounds/Default-Landscape~ipad.png</string>
 		<string>healer@2x.png</string>
 		<string>healer.png</string>
 	</array>
@@ -23,10 +19,6 @@
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
-				<string></string>
-				<string>backgrounds/Default-Landscape@2x~ipad.png</string>
-				<string>backgrounds/Default-Portrait@2x~ipad.png</string>
-				<string>backgrounds/Default-Landscape~ipad.png</string>
 				<string>healer@2x.png</string>
 				<string>healer.png</string>
 			</array>
@@ -47,7 +39,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>102</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIPrerenderedIcon</key>

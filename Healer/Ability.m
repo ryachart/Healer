@@ -537,17 +537,16 @@
     if (self = [super init]){
         self.title = @"Disengage";
         self.info = @"Baraghast ignores his focused target and attacks a random ally instead.";
-        self.iconName = @"unknown_ability.png";
+        self.iconName = @"temper.png";
     }
     return self;
 }
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
-    BreakOffEffect *breakoff = [[BreakOffEffect alloc] initWithDuration:5 andEffectType:EffectTypeNegativeInvisible];
+    NSTimeInterval duration = 5.0;
+    BreakOffEffect *breakoff = [[BreakOffEffect alloc] initWithDuration:duration andEffectType:EffectTypeNegativeInvisible];
     [breakoff setOwner:self.owner];
     [breakoff setValuePerTick:-250];
     [breakoff setNumOfTicks:5];
-    [breakoff setReenableAbility:self.ownerAutoAttack];
-    [self.ownerAutoAttack setIsDisabled:YES];
     
     RaidMember *selectTarget = nil;
     
@@ -569,6 +568,7 @@
     [breakoff release];
     
     self.cooldown = arc4random() % 20 + 25;
+    [self startChannel:duration];
 }
 @end
 
@@ -640,7 +640,7 @@
     if (self = [super init]){
         self.info = @"After 5 seconds a massive strike lands on the affected target dealing very high damage.";
         self.title = @"Crush";
-        self.iconName = @"unstoppable.png";
+        self.iconName = @"crush.png";
     }
     return self;
 }
@@ -653,7 +653,7 @@
 
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
     if (self.target && !self.target.isDead){
-        [[self.owner announcer] announce:[NSString stringWithFormat:@"%@ prepares to land a massive strike!", [self.owner title]]];
+        [[self.owner announcer] announce:[NSString stringWithFormat:@"%@ prepares to land a massive strike!", [self.owner namePlateTitle]]];
         DelayedHealthEffect *crushEffect = [[DelayedHealthEffect alloc] initWithDuration:5 andEffectType:EffectTypeNegative];
         [crushEffect setOwner:self.owner];
         [crushEffect setTitle:@"crush"];
@@ -850,7 +850,7 @@
     if (self = [super init]){
         self.info = @"Any healing done is instead converted into damage to the affected target.";
         self.title = @"Spiritual Inversion";
-        self.iconName = @"curse.png";
+        self.iconName = @"toxic_inversion.png";
     }
     return self;
 }
@@ -933,29 +933,31 @@
 @implementation Grip
 - (id)init {
     if (self = [super init]){
-        self.info = @"A random player will be strangled by dark magic reducing healing done by 98% and dealing damage over time.";
+        self.info = @"A random player will be strangled by dark magic reducing healing done by 80% and dealing damage over time.";
         self.title = @"Grip of Delsarn";
-        self.iconName = @"curse.png";
+        self.iconName = @"grip.png";
     }
     return self;
 }
 
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
-    RaidMember *target = [self targetWithoutEffectWithTitle:@"impale-finisher" inRaid:theRaid];
-    if (target.isFocused){
-        return;
-        //The effect fails if the target is focused
-    }
     
-    GripEffect *gripEff = [[GripEffect alloc] initWithDuration:10 andEffectType:EffectTypeNegative];
-    [gripEff setAilmentType:AilmentCurse];
-    [gripEff setSpriteName:self.iconName];
-    [gripEff setOwner:self.owner];
-    [gripEff setValuePerTick:self.abilityValue];
-    [gripEff setNumOfTicks:5];
-    [gripEff setTitle:@"gatekeeper-grip"];
-    [target addEffect:gripEff];
-    [gripEff release];
+    for (int i = 0; i < 2; i++){
+        RaidMember *target = [self targetWithoutEffectsTitled:@[@"impale-finisher", @"gatekeeper-grip"] inRaid:theRaid];
+        if (target.isFocused){
+            return;
+            //The effect fails if the target is focused
+        }
+        
+        GripEffect *gripEff = [[[GripEffect alloc] initWithDuration:30 andEffectType:EffectTypeNegative] autorelease];
+        [gripEff setAilmentType:AilmentCurse];
+        [gripEff setSpriteName:self.iconName];
+        [gripEff setOwner:self.owner];
+        [gripEff setValuePerTick:self.abilityValue];
+        [gripEff setNumOfTicks:20];
+        [gripEff setTitle:@"gatekeeper-grip"];
+        [target addEffect:gripEff];
+    }
 }
 @end
 
@@ -1032,6 +1034,7 @@
         if (self.appliedEffect) {
             Effect *eff = [[self.appliedEffect copy] autorelease];
             [eff setOwner:self.owner];
+            [eff setSpriteName:self.iconName];
             [target addEffect:eff];
         }
     }
@@ -1044,6 +1047,7 @@
     if (self = [super init]){
         self.info = @"Hurls a bone at a target dealing moderate damage and causing the target to be knocked to the ground.  Targets knocked to the ground will deal no damage until they are healed.";
         self.title = @"Bone Throw";
+        self.iconName = @"bone_throw.png";
     }
     return self;
 }
@@ -1059,6 +1063,7 @@
     [boneThrowEffect setMaxStacks:10];
     FallenDownEffect *fde = [FallenDownEffect defaultEffect];
     [fde setOwner:self.owner];
+    [fde setSpriteName:self.iconName];
     [boneThrowEffect setAppliedEffect:fde];
     [target addEffect:boneThrowEffect];
     [boneThrowEffect release];
@@ -1105,14 +1110,14 @@
     NSTimeInterval quakeTime = 3.0;
     
     for (RaidMember *member in members) {
-        RepeatedHealthEffect *bonequakeDot = [[RepeatedHealthEffect alloc] initWithDuration:quakeTime andEffectType:EffectTypeNegative];
+        RepeatedHealthEffect *bonequakeDot = [[[RepeatedHealthEffect alloc] initWithDuration:quakeTime andEffectType:EffectTypeNegative] autorelease];
         [bonequakeDot setNumOfTicks:3];
         [bonequakeDot setValuePerTick:-(arc4random() % 50 + 10)];
         [bonequakeDot setTitle:@"bonequake-dot"];
         [bonequakeDot setSpriteName:self.iconName];
         [bonequakeDot setOwner:self.owner];
         [member addEffect:bonequakeDot];
-        [bonequakeDot release];
+        
     }
     [self startChannel:quakeTime];
     
@@ -1139,7 +1144,7 @@
 }
 
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
-    NSArray *spriteNames = @[@"fireball.png", @"purple_fireball.png", @"blood_ball.png"];
+    NSArray *spriteNames = @[@"fireball.png", @"shadowbolt.png", @"bloodbolt.png"];
     NSArray *collisionParticleNames = @[@"fire_explosion.plist", @"shadow_burst.plist", @"blood_spurt.plist"];
     NSMutableArray *possibleBolts = [NSMutableArray arrayWithCapacity:OverseerProjectileTypeAll];
     for (int i = 0; i < OverseerProjectileTypeAll; i++){
@@ -1515,8 +1520,7 @@
 @implementation Cleave
 + (Cleave *)normalCleave {
     Cleave *cleave = [[[Cleave alloc] init] autorelease];
-    [cleave setTitle:@"Wide Swing"];
-    [cleave setInfo:@"Attacks with a chance to deal high damage to all melee range enemies."];
+    [cleave setTitle:@"Wild Swing"];
     [cleave setKey:@"cleave"];
     [cleave setActivationTime:1.0];
     [cleave setAbilityValue:400];
@@ -2012,8 +2016,9 @@
     [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     
     if (self.owner && self.target) {
-        
-        if (([self.target hasEffectWithTitle:@"brokenwill"] && self.target.healthPercentage > .98) || self.target.isDead) {
+        if (raid.livingMembers.count <= 3 ||
+            ([self.target hasEffectWithTitle:@"brokenwill"]
+             && self.target.healthPercentage > .98) || self.target.isDead) {
             [self.target removeEffectsWithTitle:@"brokenwill"];
             self.owner.autoAttack.isDisabled = NO;
             self.target = nil;
@@ -2051,6 +2056,22 @@
             [self.target addEffect:brokenWill];
             
         }
+    }
+}
+@end
+
+@implementation TailLash
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    [super triggerAbilityForRaid:theRaid players:players enemies:enemies];
+    
+    for (Player *player in players) {
+        Effect *stun = [[[Effect alloc] initWithDuration:2.5 andEffectType:EffectTypeNegative] autorelease];
+        [stun setCausesStun:YES];
+        [stun setOwner:self.owner];
+        [stun setTitle:@"stun"];
+        [player addEffect:stun];
     }
 }
 @end

@@ -94,6 +94,7 @@
             if (stunDur > self.stunMax) {
                 self.stunMax = stunDur;
             }
+            [self fadeInAnimated];
             [self.timeRemaining setString:[NSString stringWithFormat:@"Stunned! %1.2f", self.player.stunDuration]];
             self.castBar.color = ccRED;
             self.castBar.percentage = 100 * (stunDur/self.stunMax);
@@ -101,13 +102,7 @@
             self.stunMax = 0;
             self.spellIcon.displayFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:spell.spriteFrameName];
             
-            const NSInteger fadeInTag = 46433;
-            if (![self getActionByTag:fadeInTag]) {
-                [self stopAllActions];
-                CCFadeTo *fadeIn = [CCFadeTo actionWithDuration:.25 opacity:255];
-                [fadeIn setTag:fadeInTag];
-                [self runAction:fadeIn];
-            }
+            [self fadeInAnimated];
             self.isInterrupted = NO;
             [self.castBar setColor:ccGREEN];
             self.castingSpell = spell;
@@ -117,6 +112,17 @@
             [self.timeRemaining setString:[NSString stringWithFormat:@"%@ %1.2f", spell.title,  self.player.remainingCastTime]];
         }
 	}
+}
+
+- (void)fadeInAnimated
+{
+    const NSInteger fadeInTag = 46433;
+    if (![self getActionByTag:fadeInTag]) {
+        [self stopAllActions];
+        CCFadeTo *fadeIn = [CCFadeTo actionWithDuration:.25 opacity:255];
+        [fadeIn setTag:fadeInTag];
+        [self runAction:fadeIn];
+    }
 }
 
 -(void)displayInterruption

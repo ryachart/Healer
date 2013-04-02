@@ -45,15 +45,11 @@
 
 -(CGPoint)randomMissedProjectileDestination {
     CGPoint returnPoint = CGPointZero;
-    NSInteger otherPos = arc4random() % 500;
+    NSInteger otherPos = arc4random() % 600 + 200;
     
     NSInteger offscreen = -40;
     
-    if (arc4random() % 2 == 0){
-        returnPoint = CGPointMake(otherPos, offscreen);
-    }else{
-        returnPoint = CGPointMake(offscreen, otherPos);
-    }
+    returnPoint = CGPointMake(otherPos, offscreen);
     return returnPoint;
 }
 

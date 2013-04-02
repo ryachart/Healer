@@ -594,6 +594,7 @@
         [member setHealth:member.health + (self.dispelDamageValue * self.owner.damageDoneMultiplier)];
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:self.dispelDamageValue * self.owner.damageDoneMultiplier] andEventType:CombatEventTypeDamage]];
     }
+    [self.owner.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0];
 }
 @end 
 
@@ -774,7 +775,7 @@
 -(void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
     if (*currentHealth < *newHealth){
 		NSInteger healthDelta = *currentHealth - *newHealth;
-		NSInteger newHealthDelta = healthDelta * .02;
+		NSInteger newHealthDelta = healthDelta * .2;
 		*newHealth = *currentHealth - newHealthDelta;
 	}
 }
@@ -1119,4 +1120,41 @@
     }
 }
 
+@end
+
+@implementation BurningInsanity
+- (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
+{
+    if (self = [super initWithDuration:dur andEffectType:type]) {
+        [self setTitle:@"Burning Insanity"];
+        [self setValuePerTick:-10];
+        [self setMaxStacks:3];
+        [self setThreshold:.6];
+    }
+    return self;
+}
+
+- (void)combatUpdateForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
+{
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
+    if (self.stacks >= self.maxStacks) {
+        if (!self.isExpired){
+            Effect *fury = [[[Effect alloc] initWithDuration:75 andEffectType:EffectTypePositive] autorelease];
+            [fury setSpriteName:@"temper.png"];
+            [fury setDamageDoneMultiplierAdjustment:4];
+            [fury setTitle:@"fury-eff"];
+            [fury setOwner:self.owner];
+            [self.target addEffect:fury];
+        }
+        self.isExpired = YES;
+    }
+}
+
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
+    if (*currentHealth < *newHealth){
+		NSInteger healthDelta = *currentHealth - *newHealth;
+		NSInteger newHealthDelta = healthDelta * (1 - (.25 * self.stacks));
+		*newHealth = *currentHealth - newHealthDelta;
+	}
+}
 @end

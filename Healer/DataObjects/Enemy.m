@@ -323,6 +323,7 @@
     [ghoul setSpriteName:@"ghoul_battle_portrait.png"];
     
     ghoul.autoAttack.dodgeChanceAdjustment = -100.0;
+    ghoul.autoAttack.failureChance = .3;
     
     RepeatedHealthEffect *plagueDot = [[[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative] autorelease];
     [plagueDot setTitle:@"plague-dot"];
@@ -330,6 +331,7 @@
     [plagueDot setNumOfTicks:4];
     
     Attack *plagueStrike = [[[Attack alloc] initWithDamage:100 andCooldown:30.0] autorelease];
+    plagueStrike.failureChance = 0;
     [plagueStrike setActivationTime:2.5];
     [plagueStrike setKey:@"plague-strike"];
     [plagueStrike setTitle:@"Plague Strike"];
@@ -386,7 +388,9 @@
     
     [corTroll setTitle:@"Corrupted Troll"];
     
-    [corTroll addAbility:[Cleave normalCleave]];
+    Cleave *cleve = [Cleave normalCleave];
+    [cleve setInfo:@"Attacks with a chance to deal high damage to all melee range enemies."];
+    [corTroll addAbility:cleve];
     
     GroundSmash *groundSmash = [[[GroundSmash alloc] init] autorelease];
     [groundSmash setAbilityValue:54];
@@ -401,6 +405,7 @@
     
     ChannelledEnemyAttackAdjustment *frenzy = [[[ChannelledEnemyAttackAdjustment alloc] init] autorelease];
     [frenzy setCooldown:kAbilityRequiresTrigger];
+    [frenzy setIconName:@"temper.png"];
     [frenzy setKey:@"frenzy"];
     [frenzy setTitle:@"Frenzy"];
     [frenzy setInfo:@"Occasionally, the Corrupted Troll will attack his Focused target furiously dealing high damage."];
@@ -408,7 +413,6 @@
     [frenzy setDamageMultiplier:.5];
     [frenzy setDuration:9.0];
     [corTroll addAbility:frenzy];
-    
     
     return  [corTroll autorelease];
 }
@@ -781,16 +785,8 @@
     
     boss.lastPotionTime = 6.0;
     
-    AbilityDescriptor *poison = [[AbilityDescriptor alloc] init];
-    [poison setAbilityDescription:@"Trulzar fills an allies veins with poison dealing increasing damage over time.  This effect may be removed with the Purify spell."];
-    [poison setIconName:@"unknown_ability.png"];
-    [poison setAbilityName:@"Necrotic Venom"];
-    [boss addAbilityDescriptor:poison];
-    [poison release];
-    
     TrulzarPoison *poisonEffect = [[[TrulzarPoison alloc] initWithDuration:24 andEffectType:EffectTypeNegative] autorelease];
     [poisonEffect setAilmentType:AilmentPoison];
-    [poisonEffect setSpriteName:@"poison.png"];
     [poisonEffect setValuePerTick:-120];
     [poisonEffect setNumOfTicks:30];
     [poisonEffect setTitle:@"trulzar-poison1"];
@@ -798,6 +794,8 @@
     Attack *poisonAttack = [[[Attack alloc] initWithDamage:100 andCooldown:10] autorelease];
     [poisonAttack setAttackParticleEffectName:@"poison_cloud.plist"];
     [poisonAttack setKey:@"poison-attack"];
+    [poisonAttack setIconName:@"poison.png"];
+    [poisonAttack setInfo:@"Trulzar fills an allies veins with poison dealing increasing damage over time.  This effect may be removed with the Purify spell."];
     [poisonAttack setTitle:@"Inject Poison"];
     [poisonAttack setCooldown:9.0];
     [poisonAttack setActivationTime:2.0];
@@ -814,9 +812,11 @@
     [potionThrow setEffectType:ProjectileEffectTypeThrow];
     [potionThrow setAbilityValue:450];
     [potionThrow setProjectileColor:ccGREEN];
+    [potionThrow setTimeApplied:7.0];
     [boss addAbility:potionThrow];
     
     RaidDamagePulse *pulse = [[[RaidDamagePulse alloc] init] autorelease];
+    [pulse setIconName:@"poison_explosion.png"];
     [pulse setActivationTime:2.0];
     [pulse setTitle:@"Poison Nova"];
     [pulse setKey:@"poison-nova"];
@@ -928,7 +928,7 @@
         [grimgonBolts setAttacksPerTrigger:2];
         [grimgonBolts setActivationTime:1.5];
         [grimgonBolts setExplosionParticleName:@"poison_cloud.plist"];
-        [grimgonBolts setSpriteName:@"green_fireball.png"];
+        [grimgonBolts setSpriteName:@"poisonbolt.png"];
         [grimgonBolts setAbilityValue:325];
         [grimgonBolts setAppliedEffect:poisonDoT];
         [grimgonBolts setInfo:@"Vile poison bolts that cause the targets to have healing done to them reduced by 50%."];
@@ -1003,7 +1003,7 @@
         [bolts setAttacksPerTrigger:3];
         [bolts setActivationTime:1.5];
         [bolts setExplosionParticleName:@"shadow_burst.plist"];
-        [bolts setSpriteName:@"purple_fireball.png"];
+        [bolts setSpriteName:@"shadowbolt.png"];
         [bolts setAbilityValue:225];
         [bolts setTitle:@"Bolts of Darkness"];
         [self addAbility:bolts];
@@ -1056,7 +1056,7 @@
         [gushingWound setActivationTime:1.5];
         [gushingWound setEffectType:ProjectileEffectTypeThrow];
         [gushingWound setIconName:@"gushing_wound.png"];
-        [gushingWound setSpriteName:@"sword_champion.png"];
+        [gushingWound setSpriteName:@"sword.png"];
         [gushingWound setAppliedEffect:gushingWoundEffect];
         [gushingWound setAbilityValue:250];
         [self addAbility:gushingWound];
@@ -1081,7 +1081,7 @@
         [executionEffect setAilmentType:AilmentTrauma];
         
         Attack *executionAttack = [[[Attack alloc] init] autorelease];
-        [executionAttack setInfo:@"The Twin Champions will  choose a target for execution.  This target will be instantly slain if not above 50% health when the deathblow lands."];
+        [executionAttack setInfo:@"The Twin Champions will choose a target for execution.  This target will be instantly slain if not above 50% health when the deathblow lands."];
         [executionAttack setTitle:@"Execution"];
         [executionAttack setIconName:@"temper.png"];
         [executionAttack setRequiresDamageToApplyEffect:NO];
@@ -1177,7 +1177,8 @@
     [seer setSpriteName:@"tyonath_battle_portrait.png"];
     
     ProjectileAttack *fireballAbility = [[[ProjectileAttack alloc] init] autorelease];
-    [fireballAbility setSpriteName:@"purple_fireball.png"];
+    [fireballAbility setSpriteName:@"shadowbolt.png"];
+    [fireballAbility setExplosionParticleName:@"shadow_burst.plist"];
     [fireballAbility setAbilityValue:-120];
     [fireballAbility setCooldown:4];
     [seer addAbility:fireballAbility];
@@ -1214,7 +1215,7 @@
 
 @implementation GatekeeperDelsarn
 + (id)defaultBoss {
-    GatekeeperDelsarn *boss = [[GatekeeperDelsarn alloc] initWithHealth:4630000 damage:500 targets:1 frequency:2.1 choosesMT:YES ];
+    GatekeeperDelsarn *boss = [[GatekeeperDelsarn alloc] initWithHealth:4330000 damage:500 targets:1 frequency:2.1 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Gatekeeper of Delsarn"];
     [boss setNamePlateTitle:@"The Gatekeeper"];
@@ -1232,8 +1233,8 @@
     Grip *gripAbility = [[[Grip alloc] init] autorelease];
     [gripAbility setKey:@"grip-ability"];
     [gripAbility setActivationTime:1.5];
-    [gripAbility setCooldown:22];
-    [gripAbility setAbilityValue:-140];
+    [gripAbility setCooldown:10];
+    [gripAbility setAbilityValue:-50];
     [self addAbility:gripAbility];
     
     Impale *impaleAbility = [[[Impale alloc] init] autorelease];
@@ -1253,6 +1254,7 @@
 
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
     if (percentage == 80.0){
+        self.autoAttack.abilityValue = 300;
         [self removeAbility:[self abilityWithKey:@"grip-ability"]];
         [self removeAbility:[self abilityWithKey:@"gatekeeper-impale"]];
         
@@ -1274,36 +1276,32 @@
         
         StackingEnrage *growingHatred = [[[StackingEnrage alloc] init] autorelease];
         [growingHatred setKey:@"growing-hatred"];
-        [growingHatred setAbilityValue:1];
-        [growingHatred setCooldown:4.0];
+        [growingHatred setAbilityValue:2];
+        [growingHatred setCooldown:10.0];
         [growingHatred setTitle:@"Growing Hatred"];
         [growingHatred setIconName:@"temper.png"];
         [growingHatred setInfo:@"The Gatekeeper deals more damage the longer the fight lasts."];
         [growingHatred setActivationTime:1.0];
         [self addAbility:growingHatred];
         
-        ExpireThresholdRepeatedHealthEffect *burningInsanity = [[[ExpireThresholdRepeatedHealthEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
-        [burningInsanity setTitle:@"Burning Insanity"];
-        [burningInsanity setDamageDoneMultiplierAdjustment:1.0];
-        [burningInsanity setValuePerTick:-10];
-        [burningInsanity setMaxStacks:5];
-        [burningInsanity setThreshold:.5];
+        BurningInsanity *burningInsanity = [[[BurningInsanity alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
         
         RaidApplyEffect *insaneRaid = [[[RaidApplyEffect alloc] init] autorelease];
         [insaneRaid setKey:@"insane-raid"];
         [insaneRaid setTitle:@"Burning Insanity"];
         [insaneRaid setIconName:@"burning_insanity.png"];
-        [insaneRaid setInfo:@"Causes effected targets to deal double damage, but deals damage over time.  The effect is removed when the target is healed above 50% health."];
-        [insaneRaid setCooldown:25.0];
+        [insaneRaid setInfo:@"Reduces healing received by 25% per stack and is removed when the target is healed above 50%. At 3 stacks the target gains Fury dealing 400% damage for 75 sec."];
+        [insaneRaid setCooldown:24.0];
+        [insaneRaid setAttackParticleEffectName:@"fire_explosion.plist"];
         [insaneRaid setActivationTime:2.0];
         [insaneRaid setAppliedEffect:burningInsanity];
         [self addAbility:insaneRaid];
         
     }
     
-    if (percentage == 15.0) {
+    if (percentage == 25.0) {
+        self.autoAttack.abilityValue = 500;
         [self removeAbility:[self abilityWithKey:@"insane-raid"]];
-        [self removeAbility:[self abilityWithKey:@"growing-hatred"]];
         [self addGripImpale];
         //Drink in death +10% damage for each ally slain so far.
         NSInteger dead = [raid deadCount];
@@ -1316,7 +1314,7 @@
             [enrageEffect setIsIndependent:YES];
             [enrageEffect setOwner:self];
             [enrageEffect setTitle:@"drink-in-death"];
-            [enrageEffect setDamageDoneMultiplierAdjustment:.2];
+            [enrageEffect setDamageDoneMultiplierAdjustment:.1];
             [self addEffect:[enrageEffect autorelease]];
         }
         
@@ -1360,7 +1358,7 @@
     [boss.tankDamage setCooldown:2.5];
     [boss.tankDamage setFailureChance:.73];
     
-    boss.tailLash = [[[RaidDamage alloc] init] autorelease];
+    boss.tailLash = [[[TailLash alloc] init] autorelease];
     [boss.tailLash setActivationTime:1.5];
     [boss.tailLash setTitle:@"Tail Lash"];
     [boss.tailLash setAbilityValue:320];
@@ -1441,7 +1439,6 @@
     [crushingPunchEffect setTitle:@"crushing-punch"];
     [crushingPunchEffect setOwner:cob];
     [crushingPunchEffect setValue:-900];
-    [crushingPunchEffect setSpriteName:@"crush.png"];
     [(Attack*)cob.crushingPunch setAppliedEffect:crushingPunchEffect];
     [crushingPunchEffect release];
     [cob.crushingPunch setFailureChance:.2];
@@ -1451,6 +1448,7 @@
     [cob addAbility:cob.crushingPunch];
     
     cob.boneQuake = [[[BoneQuake alloc] init] autorelease];
+    [cob.boneQuake setTitle:@"Quake"];
     [cob.boneQuake setAbilityValue:120];
     [cob.boneQuake setActivationTime:1.5];
     [cob.boneQuake setCooldown:28.5];
@@ -1762,7 +1760,7 @@
     [boss addAbilityDescriptor:spDescriptor];
     
     ProjectileAttack *projectileAttack = [[[ProjectileAttack alloc] init] autorelease];
-    [projectileAttack setSpriteName:@"purple_fireball.png"];
+    [projectileAttack setSpriteName:@"shadowbolt.png"];
     [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack setAbilityValue:-200];
     [projectileAttack setCooldown:2.5];
@@ -1770,7 +1768,7 @@
     [boss addAbility:projectileAttack];
     
     ProjectileAttack *projectileAttack2 = [[[ProjectileAttack alloc] init] autorelease];
-    [projectileAttack2 setSpriteName:@"purple_fireball.png"];
+    [projectileAttack2 setSpriteName:@"shadowbolt.png"];
     [projectileAttack2 setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack2 setAbilityValue:-400];
     [projectileAttack2 setCooldown:2.5];
@@ -1834,7 +1832,7 @@
         [gainAbility setCooldown:20.0];
         
         ProjectileAttack *projectileAttack = [[[ProjectileAttack alloc] init] autorelease];
-        [projectileAttack setSpriteName:@"purple_fireball.png"];
+        [projectileAttack setSpriteName:@"shadowbolt.png"];
         [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
         [projectileAttack setAbilityValue:-230];
         [projectileAttack setCooldown:1.2];
@@ -1869,7 +1867,7 @@
     [dcAbility release];
     
     ProjectileAttack *projectileAttack = [[ProjectileAttack alloc] init];
-    [projectileAttack setSpriteName:@"purple_fireball.png"];
+    [projectileAttack setSpriteName:@"shadowbolt.png"];
     [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack setAbilityValue:-400];
     [projectileAttack setCooldown:.75];
@@ -1878,7 +1876,7 @@
     [projectileAttack release];
     
     ProjectileAttack *projectileAttack2 = [[ProjectileAttack alloc] init];
-    [projectileAttack2 setSpriteName:@"purple_fireball.png"];
+    [projectileAttack2 setSpriteName:@"shadowbolt.png"];
     [projectileAttack2 setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack2 setAbilityValue:-400];
     [projectileAttack2 setCooldown:.83];
@@ -1887,7 +1885,7 @@
     [projectileAttack2 release];
     
     ProjectileAttack *projectileAttack3 = [[ProjectileAttack alloc] init];
-    [projectileAttack3 setSpriteName:@"purple_fireball.png"];
+    [projectileAttack3 setSpriteName:@"shadowbolt.png"];
     [projectileAttack3 setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack3 setAbilityValue:-320];
     [projectileAttack3 setCooldown:2.5];
@@ -1939,7 +1937,7 @@
 @implementation SoulOfTorment
 + (id)defaultBoss {
     SoulOfTorment *boss = [[SoulOfTorment alloc] initWithHealth:6040000 damage:0 targets:0 frequency:0.0 choosesMT:NO];
-    
+    [boss setSpriteName:@"souloftorment_battle_portrait.png"];
     [boss setTitle:@"The Soul of Torment"];
     [boss setNamePlateTitle:@"Torment"];
     
@@ -1951,7 +1949,7 @@
     [contagious setAilmentType:AilmentPoison];
     [attack setIconName:@"poison.png"];
     [attack setTitle:@"Contagious Toxin"];
-    [attack setInfo:@"The Soul of Torment poisons a target causing them to take damage periodically.  If the target's health is healed too much this effect will spread to up to 3 additional allies."];
+    [attack setInfo:@"Poisons a target. If the target's is healed too much this effect will spread to up to 3 additional allies."];
     [attack setAppliedEffect:contagious];
     [attack setRequiresDamageToApplyEffect:YES];
     [boss addAbility:attack];

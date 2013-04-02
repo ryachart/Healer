@@ -253,3 +253,6 @@ typedef enum {
 @interface WrackingPainEffect : RepeatedHealthEffect
 @property (nonatomic, readwrite) float threshold;
 @end
+
+@interface BurningInsanity : ExpireThresholdRepeatedHealthEffect
+@end

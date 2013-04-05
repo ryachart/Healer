@@ -98,7 +98,7 @@
             challengeMultiplier = 1.15;
             break;
         case 5:
-            challengeMultiplier = 1.3;
+            challengeMultiplier = 1.5;
             break;
     }
     
@@ -394,12 +394,12 @@
     
     GroundSmash *groundSmash = [[[GroundSmash alloc] init] autorelease];
     [groundSmash setAbilityValue:54];
-    [groundSmash setKey:@"troll-cave-in"];
+    [groundSmash setKey:@"troll-ground-smash"];
     [groundSmash setCooldown:30.0];
     [groundSmash setActivationTime:1.0];
     [groundSmash setTimeApplied:20.0];
     [groundSmash setTitle:@"Ground Smash"];
-    [groundSmash setInfo:@"The Corrupted Troll will smash the ground repeatedly causing damage to all allies."];
+    [groundSmash setInfo:@"The Corrupted Troll will smash the ground repeatedly causing damage to all enemies."];
     corTroll.smash = groundSmash;
     [corTroll addAbility:corTroll.smash];
     
@@ -408,7 +408,7 @@
     [frenzy setIconName:@"temper.png"];
     [frenzy setKey:@"frenzy"];
     [frenzy setTitle:@"Frenzy"];
-    [frenzy setInfo:@"Occasionally, the Corrupted Troll will attack his Focused target furiously dealing high damage."];
+    [frenzy setInfo:@"Occasionally, the Corrupted Troll will attack its Focused target furiously dealing high damage."];
     [frenzy setAttackSpeedMultiplier:.25];
     [frenzy setDamageMultiplier:.5];
     [frenzy setDuration:9.0];
@@ -480,14 +480,21 @@
     [super configureBossForDifficultyLevel:difficulty];
     
     if (difficulty == 5) {
-        Effect *improvedDamageEffect = [[[Effect alloc] initWithDuration:7 andEffectType:EffectTypeNegative] autorelease];
-        [improvedDamageEffect setSpriteName:@"soul_burn.png"];
-        [improvedDamageEffect setTitle:@"imprvd-dmg-fireball"];
-        [improvedDamageEffect setMaxStacks:3];
-        [improvedDamageEffect setDamageTakenMultiplierAdjustment:.2];
-        [(ProjectileAttack*)self.fireballAbility setAppliedEffect:improvedDamageEffect];
+        RepeatedHealthEffect *clawRakeEffect = [[[RepeatedHealthEffect alloc] initWithDuration:8 andEffectType:EffectTypeNegative] autorelease];
+        [clawRakeEffect setHealingReceivedMultiplierAdjustment:-.5];
+        [clawRakeEffect setNumOfTicks:8];
+        [clawRakeEffect setValuePerTick:-10];
+        [clawRakeEffect setTitle:@"claw-rake-eff"];
         
-        [self.fireballAbility setInfo:@"The drake spits fireballs that also cause the target's armor to be ignited increasing damage taken from further fireballs by 20% per stack."];
+        Attack *clawRake = [[[Attack alloc] initWithDamage:350 andCooldown:22.0] autorelease];
+        [clawRake setKey:@"claw-rake"];
+        [clawRake setTitle:@"Claw Rake"];
+        [clawRake setIconName:@"gushing_wound.png"];
+        [clawRake setInfo:@"Strikes a random ally causing them to receive 50% less healing for 8 seconds."];
+        [clawRake setActivationTime:1.0];
+        [clawRake setCooldownVariance:.2];
+        [clawRake setAppliedEffect:clawRakeEffect];
+        [self addAbility:clawRake];
     }
 }
 
@@ -535,6 +542,7 @@
         
         Ability *attackAngrily = [[[Ability alloc] init] autorelease];
         [attackAngrily setTitle:@"Frenzied Attacking"];
+        [attackAngrily setIconName:@"roar.png"];
         [attackAngrily setCooldown:kAbilityRequiresTrigger];
         [self addAbility:attackAngrily];
         [attackAngrily startChannel:9999];
@@ -593,6 +601,7 @@
     RaidDamage *branchAttack = [[[RaidDamage alloc] init] autorelease];
     [branchAttack setTitle:@"Viscious Branches"];
     [branchAttack setKey:@"branch-attack"];
+    [branchAttack setIconName:@"branch_thrash.png"];
     [branchAttack setCooldown:kAbilityRequiresTrigger];
     [branchAttack setActivationTime:2.0];
     [branchAttack setAbilityValue:208];
@@ -721,7 +730,7 @@
     [boss setSpriteName:@"plaguebringer_battle_portrait.png"];
     
     AbilityDescriptor *pusExploDesc = [[AbilityDescriptor alloc] init];
-    [pusExploDesc setAbilityDescription:@"When your allies deal enough damage to the Plaguebringer Colossus to break off a section of its body the section explodes vile toxin dealing high damage to your raid."];
+    [pusExploDesc setAbilityDescription:@"When the Colossus suffers 20% of its health in damage a section of its body explodes dealing high damage to enemies."];
     [pusExploDesc setIconName:@"pus_burst.png"];
     [pusExploDesc setAbilityName:@"Limb Bomb"];
     [boss addAbilityDescriptor:pusExploDesc];
@@ -732,7 +741,7 @@
     PlaguebringerSicken *sicken = [[[PlaguebringerSicken alloc] init] autorelease];
     [sicken setInfo:@"The Colossus will sicken targets causing them to take damage until they are healed to full health."];
     [sicken setKey:@"sicken"];
-    [sicken setIconName:@"bleeding.png"];
+    [sicken setIconName:@"plague.png"];
     [sicken setTitle:@"Sicken"];
     [sicken setActivationTime:2.5];
     [sicken setAbilityValue:100];
@@ -844,7 +853,20 @@
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
-    if (((int)percentage) == 7){
+    
+    if (percentage == 99.0) {
+        [self.announcer announce:@"\"You've arrived just in time.  Your shallow graves were getting cold.\""];
+    }
+    
+    if (percentage == 50.0) {
+        [self.announcer announce:@"\"Even if you defeat me, you will not best my masters.\""];
+    }
+    
+    if (percentage == 10.0) {
+        [self.announcer announce:@"\"You think you have won? Oh, but the best is yet to come.\""];
+    }
+    
+    if (percentage == 7.0){
         [self.announcer announce:@"Trulzar cackles as the room fills with noxious poison."];
         [self.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0.0];
         [self.poisonNova setIsDisabled:YES];
@@ -900,6 +922,13 @@
     return self;
 }
 
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
+{
+    if (percentage == 99.0) {
+        [self.announcer announce:@"\"So you defeated Trulzar? Bah.  His Toxins are so weak.  Try mine.\""];
+    }
+}
+
 @end
 
 @implementation Grimgon
@@ -924,8 +953,9 @@
         ProjectileAttack *grimgonBolts = [[[ProjectileAttack alloc] init] autorelease];
         [grimgonBolts setKey:@"grimgon-bolts"];
         [grimgonBolts setCooldown:7.5];
+        [grimgonBolts setIconName:@"poison2.png"];
         [grimgonBolts setTimeApplied:5.0];
-        [grimgonBolts setAttacksPerTrigger:2];
+        [grimgonBolts setAttacksPerTrigger:3];
         [grimgonBolts setActivationTime:1.5];
         [grimgonBolts setExplosionParticleName:@"poison_cloud.plist"];
         [grimgonBolts setSpriteName:@"poisonbolt.png"];
@@ -955,7 +985,12 @@
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
     if (percentage == 99.0) {
         self.inactive = NO;
-        [self.announcer announce:@"Teritha shouts, \"These pitiful fools are worthless.  I will finish you myself!\""];
+        [self.announcer announce:@"\"These pitiful fools are worthless.  I will finish you myself!\""];
+    }
+    
+    if (percentage == 80.0) {
+        ProjectileAttack *bolts = (ProjectileAttack*)[self abilityWithKey:@"teritha-bolts"];
+        [bolts setAttacksPerTrigger:5];
     }
     
     if (percentage == 50.0) {
@@ -963,7 +998,7 @@
         ProjectileAttack *bolts = (ProjectileAttack*)[self abilityWithKey:@"teritha-bolts"];
         [bolts setTimeApplied:-5.0];
         [bolts fireAtRaid:raid];
-        [bolts setAttacksPerTrigger:5];
+        [bolts setAttacksPerTrigger:7];
     }
     
     if (percentage == 25.0) {
@@ -971,7 +1006,7 @@
         ProjectileAttack *bolts = (ProjectileAttack*)[self abilityWithKey:@"teritha-bolts"];
         [bolts setTimeApplied:-5.0];
         [bolts fireAtRaid:raid];
-        [bolts setAttacksPerTrigger:6];
+        [bolts setAttacksPerTrigger:10];
     }
 }
 
@@ -1022,6 +1057,9 @@
 }
 
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+    if (percentage == 99.0) {
+        [self.announcer announce:@"\"The Master is Generous.  He provides us more lambs for the slaughter.\""];
+    }
     if (percentage == 80.0 || percentage == 60.0 || percentage == 40.0 || percentage == 20.0){
         [self axeSweepThroughRaid:raid];
     }
@@ -1031,16 +1069,16 @@
 {
     if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq choosesMT:chooses]) {
         self.spriteName = @"twinchampions_battle_portrait.png";
-        
+        self.namePlateTitle = @"Sarroth";
         RaidDamageSweep *rds = [[[RaidDamageSweep alloc] init] autorelease];
         [rds setAbilityValue:250];
         [rds setTitle:@"Sweeping Death"];
         [rds setKey:@"axe-sweep"];
+        [rds setIconName:@"impale.png"];
         [rds setCooldown:kAbilityRequiresTrigger];
         [self addAbility:rds];
         
         IntensifyingRepeatedHealthEffect *gushingWoundEffect = [[[IntensifyingRepeatedHealthEffect alloc] initWithDuration:9.0 andEffectType:EffectTypeNegative] autorelease];
-        [gushingWoundEffect setSpriteName:@"bleeding.png"];
         [gushingWoundEffect setAilmentType:AilmentTrauma];
         [gushingWoundEffect setIncreasePerTick:.5];
         [gushingWoundEffect setValuePerTick:-230];
@@ -1071,19 +1109,18 @@
 {
     if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq choosesMT:chooses]) {
         self.spriteName = @"twinchampions2_battle_portrait.png";
-        
+        self.namePlateTitle = @"Vorroth";
         [self addAbility:[Cleave normalCleave]];
         
         ExecutionEffect *executionEffect = [[[ExecutionEffect alloc] initWithDuration:3.75 andEffectType:EffectTypeNegative] autorelease];
         [executionEffect setValue:-2000];
-        [executionEffect setSpriteName:@"execution.png"];
         [executionEffect setEffectivePercentage:.5];
         [executionEffect setAilmentType:AilmentTrauma];
         
         Attack *executionAttack = [[[Attack alloc] init] autorelease];
         [executionAttack setInfo:@"The Twin Champions will choose a target for execution.  This target will be instantly slain if not above 50% health when the deathblow lands."];
         [executionAttack setTitle:@"Execution"];
-        [executionAttack setIconName:@"temper.png"];
+        [executionAttack setIconName:@"execution.png"];
         [executionAttack setRequiresDamageToApplyEffect:NO];
         [executionAttack setIgnoresGuardians:YES];
         [executionAttack setKey:@"execution"];
@@ -1099,6 +1136,13 @@
 {
     if ([ability.key isEqualToString:@"execution"]){
         [self.announcer announce:@"An ally has been chosen for execution!"];
+    }
+}
+
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
+{
+    if (percentage == 97.0) {
+        [self.announcer announce:@"\"We shall feast on their flesh!\""];
     }
 }
 
@@ -1124,6 +1168,7 @@
 
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
     if (percentage == 99.0) {
+        [self.announcer announce:@"\"So you've slain some robed fools and worthless minions. Now you shall see true might.\""];
         BaraghastRoar *roar = [[[BaraghastRoar alloc] init] autorelease];
         [roar setKey:@"baraghast-roar"];
         [roar setCooldown:17.5];
@@ -1155,6 +1200,10 @@
         [dwAbility setTimeApplied:35.0];
         [dwAbility setCooldown:42.0];
         [self addAbility:dwAbility];
+    }
+    
+    if (percentage == 2.0) {
+        [self.announcer announce:@"You cannot defeat me.  This is merely a set back."];
     }
 }
 
@@ -1204,12 +1253,28 @@
     
     RaidDamage *horrifyingLaugh = [[[RaidDamage alloc] init] autorelease];
     [horrifyingLaugh setActivationTime:1.5];
+    [horrifyingLaugh setIconName:@"roar.png"];
     [horrifyingLaugh setTitle:@"Horrifying Laugh"];
     [horrifyingLaugh setAbilityValue:125];
     [horrifyingLaugh setCooldown:25];
     [seer addAbility:horrifyingLaugh];
     
     return [seer autorelease];
+}
+
+- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
+{
+    if (percentage == 99.0) {
+        [self.announcer announce:@"\"Heheheh the master grants me too much power...too much yes..\""];
+    }
+    
+    if (percentage == 50.0) {
+        [self.announcer announce:@"\"Had enough yet?! Heheheh..\""];
+    }
+    
+    if (percentage == 2.0) {
+        [self.announcer announce:@"\"Master will remake me.  Master will make me better...\""];
+    }
 }
 @end
 
@@ -1253,7 +1318,12 @@
 }
 
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+    if (percentage == 99.0) {
+        [self.announcer announce:@"\"You are fools to think you can enter this realm.  You shall suffer.\""];
+    }
+    
     if (percentage == 80.0){
+        [self.announcer announce:@"\"Prepare to taste madness.\""];
         self.autoAttack.abilityValue = 300;
         [self removeAbility:[self abilityWithKey:@"grip-ability"]];
         [self removeAbility:[self abilityWithKey:@"gatekeeper-impale"]];
@@ -1268,6 +1338,7 @@
         [openTheGates setAttackParticleEffectName:nil];
         [openTheGates setKey:@"open-the-gates"];
         [openTheGates setTitle:@"Powers from Beyond"];
+        [openTheGates setIconName:@"shadow_aura.png"];
         [openTheGates setCooldown:kAbilityRequiresTrigger];
         [openTheGates setActivationTime:openingTime];
         [openTheGates setAppliedEffect:pestilenceDot];
@@ -1306,7 +1377,7 @@
         //Drink in death +10% damage for each ally slain so far.
         NSInteger dead = [raid deadCount];
         if (dead > 0) {
-            [self.announcer announce:@"The Gatekeeper grows stronger for each slain ally"];
+            [self.announcer announce:@"\"I drink in the death that surrounds me.\""];
         }
         dead++;
         for (int i = 0; i < dead; i++){
@@ -1398,6 +1469,9 @@
         NSInteger damageValue = 7500 / livingMembers.count;
         for (RaidMember *member in livingMembers){
             FallenDownEffect *fde = [FallenDownEffect defaultEffect];
+            if ([member isKindOfClass:[Player class]]) {
+                [fde setDuration:3.0];
+            }
             [fde setOwner:self];
             [member addEffect:fde];
             
@@ -1444,7 +1518,7 @@
     [cob.crushingPunch setFailureChance:.2];
     [cob.crushingPunch setInfo:@"Periodically, this enemy unleashes a thundering strike on a random ally dealing high damage."];
     [cob.crushingPunch setTitle:@"Crushing Punch"];
-    [cob.crushingPunch setIconName:@"unstoppable.png"];
+    [cob.crushingPunch setIconName:@"crushing_punch.png"];
     [cob addAbility:cob.crushingPunch];
     
     cob.boneQuake = [[[BoneQuake alloc] init] autorelease];
@@ -1584,12 +1658,14 @@
     [boss setSpriteName:@"unspeakable_battle_portrait.png"];
     
     AbilityDescriptor *slimeDescriptor = [[[AbilityDescriptor alloc] init] autorelease];
-    [slimeDescriptor setAbilityDescription:@"As your allies hack their way through the filth beast they become covered in a disgusting slime.  If this slime builds to 5 stacks on any ally that ally will be consumed.  Whenever an ally receives healing from you the slime is removed."];
+    [slimeDescriptor setIconName:@"slime.png"];
+    [slimeDescriptor setAbilityDescription:@"If this slime builds to 5 stacks that ally will be consumed.  Whenever an ally receives healing from you the slime is removed."];
     [slimeDescriptor setAbilityName:@"Engulfing Slime"];
     [boss addAbilityDescriptor:slimeDescriptor];
     
     boss.oozeAll = [[[OozeRaid alloc] init] autorelease];
     [boss.oozeAll setTitle:@"Surging Slime"];
+    [boss.oozeAll setIconName:@"slime.png"];
     [boss.oozeAll setActivationTime:2.0];
     [boss.oozeAll setTimeApplied:17.0];
     [boss.oozeAll setCooldown:22.0];
@@ -1601,6 +1677,7 @@
     
     OozeTwoTargets *oozeTwo = [[[OozeTwoTargets alloc] init] autorelease];
     [oozeTwo setTitle:@"Tendrils of Slime"];
+    [oozeTwo setIconName:@"slime.png"];
     [oozeTwo setActivationTime:1.0];
     [oozeTwo setAbilityValue:450];
     [oozeTwo setCooldown:17.0];
@@ -1633,30 +1710,27 @@
     [super dealloc];
 }
 + (id)defaultBoss {
-    BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:4389000 damage:270 targets:1 frequency:2.25 choosesMT:YES ];
+    BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:3289000 damage:500 targets:1 frequency:2.25 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Baraghast Reborn"];
     [boss setSpriteName:@"baraghastreborn_battle_portrait.png"];
     
-    [boss addAbility:[Cleave normalCleave]];
-    
     BaraghastRoar *roar = [[[BaraghastRoar alloc] init] autorelease];
-    [roar setCooldown:24.0];
+    [roar setCooldown:38.0];
+    [roar setAbilityValue:75];
+    [roar setCooldownVariance:.2];
+    [roar setActivationTime:1.75];
+    [roar setInterruptAppliesDot:YES];
+    [roar setInfo:@"Interrupts spell casting, dispels all positive spell effects, and deals damage to all enemies.  If a Healer is casting when this ability triggers the Healer suffers damage over time."];
     [roar setKey:@"baraghast-roar"];
+    [roar setIconName:@"shadow_roar.png"];
+    [roar setTitle:@"Roar of the Damned"];
     [boss addAbility:roar];
     
     boss.deathwave = [[[Deathwave alloc] init] autorelease];
     [boss.deathwave setCooldown:kAbilityRequiresTrigger];
     [boss.deathwave setKey:@"deathwave"];
     [boss addAbility:boss.deathwave ];
-    
-    ShatterArmor *shatter = [[[ShatterArmor alloc] init] autorelease];
-    [shatter setKey:@"shatter"];
-    [shatter setCooldown:36.0];
-    [shatter setAbilityValue:1200];
-    [shatter setActivationTime:2.0];
-    [shatter setCooldownVariance:.33];
-    [boss addAbility:shatter];
     
     return [boss autorelease];
 }
@@ -1667,18 +1741,6 @@
     
     if (self.difficulty <= 3) {
         self.deathwave.abilityValue = 9000;
-    }
-    
-    if (difficulty == 5) {
-        GraspOfTheDamnedEffect *graspEffect = [[[GraspOfTheDamnedEffect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
-        [graspEffect setNumOfTicks:6];
-        [graspEffect setValuePerTick:-100];
-        [graspEffect setSpriteName:@"blood_curse.png"];
-        [graspEffect setTitle:@"grasp-of-the-damned-eff"];
-        [graspEffect setAilmentType:AilmentTrauma];
-        GraspOfTheDamned *graspOfTheDamned = [[[GraspOfTheDamned alloc] initWithDamage:0 andCooldown:15.0] autorelease];
-        [self addAbility:graspOfTheDamned];
-        [graspOfTheDamned setAppliedEffect:graspEffect];
     }
 }
 
@@ -1695,7 +1757,7 @@
 
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     
-    if (percentage == 99.0 || percentage == 85.0 || percentage == 70.0 || percentage == 15.0){
+    if (percentage == 99.0 || percentage == 90.0 || percentage == 10.0){
         [self.deathwave triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
     }
     
@@ -1703,28 +1765,51 @@
         [self.announcer announce:@"You will all die screaming!"];
     }
     
-    if (percentage == 61.0) {
-        
+    if (percentage == 90.0) {
+        self.autoAttack.abilityValue = 270;
+        [self.announcer announce:@"Weaklings! Kneel before my power."];
+        BloodCrush *bloodcrush = [[[BloodCrush alloc] init] autorelease];
+        [bloodcrush setKey:@"blood-crush"];
+        [bloodcrush setCooldown:40.0];
+        [bloodcrush setCooldownVariance:.2];
+        [bloodcrush setTimeApplied:24.0];
+        [bloodcrush setAbilityValue:950];
+        [bloodcrush setTarget:[(FocusedAttack*)self.autoAttack focusTarget]];
+        [self addAbility:bloodcrush];
     }
     
     if (percentage == 60.0) {
-        [self.announcer announce:@"Baraghast's weapons begin dripping blood."];
-        [[self abilityWithKey:@"shatter"] setIsDisabled:YES];
-        self.deathwave.isDisabled = YES;
+        [self.announcer announce:@"My power only grows.  Your spirits crumble."];
+        DelayedSetHealthEffect *glareEffect = [[[DelayedSetHealthEffect alloc] initWithDuration:7.0 andEffectType:EffectTypeNegative] autorelease];
+        [glareEffect setValue:1];
+        [glareEffect setTitle:@"glare-effect"];
         
-        BrokenWill *brokenWill = [[[BrokenWill alloc] init] autorelease];
-        [brokenWill setKey:@"broken-will"];
-        [brokenWill setTimeApplied:brokenWill.cooldown * .80];
-        [self addAbility:brokenWill];
-        
-        //Stuns the tank until healed to full.  While stunned, Baraghast will attack
-        //other raid members randomly.
-        //Tanks healing is greatly reduced
-        
+        Attack *glareFromBeyond = [[[Attack alloc] initWithDamage:0 andCooldown:30.0] autorelease];
+        [glareFromBeyond setIgnoresGuardians:YES];
+        [glareFromBeyond setRequiresDamageToApplyEffect:NO];
+        [glareFromBeyond setAppliedEffect:glareEffect];
+        [glareFromBeyond setIconName:@"disengage.png"];
+        [glareFromBeyond setTitle:@"Glare from Beyond"];
+        [glareFromBeyond setInfo:@"A horrifying glare that nearly kills any target."];
+        [glareFromBeyond setActivationTime:1.5];
+        [self addAbility:glareFromBeyond];
     }
     
-    if (percentage == 15.0) {
-        [self removeAbility:[self abilityWithKey:@"broken-will"]];
+    if (percentage == 30.0){
+        [self.announcer announce:@"I feed on your fear."];
+        GraspOfTheDamnedEffect *graspEffect = [[[GraspOfTheDamnedEffect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
+        [graspEffect setNumOfTicks:6];
+        [graspEffect setValuePerTick:-50];
+        [graspEffect setTitle:@"grasp-of-the-damned-eff"];
+        [graspEffect setAilmentType:AilmentCurse];
+        GraspOfTheDamned *graspOfTheDamned = [[[GraspOfTheDamned alloc] initWithDamage:0 andCooldown:15.0] autorelease];
+        [graspOfTheDamned setActivationTime:1.5];
+        [self addAbility:graspOfTheDamned];
+        [graspOfTheDamned setAppliedEffect:graspEffect];
+    }
+    
+    if (percentage == 10.0) {
+        [self.announcer announce:@"My rage is unending.  You will not defeat me."];
         BaraghastRoar *roar = (BaraghastRoar*)[self abilityWithKey:@"baraghast-roar"];
         [roar setCooldown:roar.cooldown * .5];
         StackingEnrage *se = [[[StackingEnrage alloc] init] autorelease];
@@ -1732,7 +1817,6 @@
         [se setCooldown:roar.cooldown];
         [self addAbility:se];
         [se triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
-        //Gains increasing damage dealt every 6 seconds and roars more often
     }
     
 }
@@ -1754,7 +1838,7 @@
     [dcAbility release];
     
     AbilityDescriptor *spDescriptor = [[[AbilityDescriptor alloc] init] autorelease];
-    [spDescriptor setIconName:@"temper.png"];
+    [spDescriptor setIconName:@"soul_prison.png"];
     [spDescriptor setAbilityName:@"Soul Prison"];
     [spDescriptor setAbilityDescription:@"Emprisons an ally's soul in unimaginable torment reducing them to just shy of death but preventing all damage done to them."];
     [boss addAbilityDescriptor:spDescriptor];
@@ -1812,6 +1896,7 @@
     
     if (percentage == 70.0) {
         WaveOfTorment *wot = [[[WaveOfTorment alloc] init] autorelease];
+        [wot setIconName:@"deathwave.png"];
         [wot setKey:@"wot"];
         [wot setTitle:@"Waves of Torment"];
         [wot setCooldown:40.0];
@@ -1901,6 +1986,7 @@
     if (percentage == 99.0 || percentage == 95.0) {
         
         WaveOfTorment *wot = [[[WaveOfTorment alloc] init] autorelease];
+        [wot setIconName:@"deathwave.png"];
         [wot setCooldown:40.0];
         [wot setAbilityValue:80];
         [wot setKey:@"wot"];
@@ -1945,11 +2031,11 @@
     ContagiousEffect *contagious = [[[ContagiousEffect alloc] initWithDuration:10.0 andEffectType:EffectTypeNegative] autorelease];
     [contagious setTitle:@"contagion"];
     [contagious setNumOfTicks:10];
-    [contagious setValuePerTick:-50];
+    [contagious setValuePerTick:-20];
     [contagious setAilmentType:AilmentPoison];
-    [attack setIconName:@"poison.png"];
+    [attack setIconName:@"plague.png"];
     [attack setTitle:@"Contagious Toxin"];
-    [attack setInfo:@"Poisons a target. If the target's is healed too much this effect will spread to up to 3 additional allies."];
+    [attack setInfo:@"Plagues a target. If the target's is healed before the effect reaches 5 stacks it will spread to others."];
     [attack setAppliedEffect:contagious];
     [attack setRequiresDamageToApplyEffect:YES];
     [boss addAbility:attack];
@@ -1990,6 +2076,7 @@
         [damage setTitle:@"gather-souls"];
         [damage setValuePerTick:-75];
         [member addEffect:damage];
+        [self.announcer displayParticleSystemWithName:@"skull_float.plist" onTarget:member];
     }
 }
 

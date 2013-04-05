@@ -149,7 +149,7 @@
 - (void)triggerAvatar{
     if (arc4random() % 100 <= 3){
         [self.announcer announce:@"An Avatar comes to your aid!"];
-        AvatarEffect *avatar = [[[AvatarEffect alloc] initWithDuration:15 andEffectType:EffectTypePositive] autorelease];
+        AvatarEffect *avatar = [[[AvatarEffect alloc] initWithDuration:15 andEffectType:EffectTypePositiveInvisible] autorelease];
         [avatar setOwner:self];
         [avatar setTitle:@"avatar-effect"];
         [self addEffect:avatar];
@@ -383,6 +383,16 @@
             }
         }
         self.overhealingToDistribute = 0;
+    }
+    
+    if (self.needsArcaneBlessingShield) {
+        RaidMember *target = [raid lowestHealthMember];
+        ShieldEffect *shield = [[[ShieldEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [shield setTitle:@"arcane-blessing-div-eff"];
+        [shield setOwner:self];
+        [shield setAmountToShield:400];
+        [target addEffect:shield];
+        self.needsArcaneBlessingShield = NO;
     }
     
     if (self.shouldAttack) {
@@ -622,19 +632,18 @@
         self.shouldAttack = YES;
     }
     
-    if ([self hasDivinityEffectWithTitle:@"torrent-of-faith"]){
-        HealingDoneAdjustmentEffect *torrentOfFaith = [[[HealingDoneAdjustmentEffect alloc] initWithDuration:60.0 andEffectType:EffectTypePositiveInvisible] autorelease];
-        [torrentOfFaith setPercentageHealingReceived:1.1];
-        [torrentOfFaith setOwner:self];
-        [torrentOfFaith setTitle:@"torrent-of-faith-hr"];
-        [target addEffect:torrentOfFaith];
+    if ([self hasDivinityEffectWithTitle:@"arcane-blessing"]){
+        if (arc4random() % 1000 < 100) {
+            self.needsArcaneBlessingShield = YES;
+        }
     }
     
     if ([self hasDivinityEffectWithTitle:@"sunlight"]){
-        Effect *sunlight = [[[Effect alloc] initWithDuration:60.0 andEffectType:EffectTypePositiveInvisible] autorelease];
-        [sunlight setDodgeChanceAdjustment:.1];
+        ReactiveHealEffect *sunlight = [[[ReactiveHealEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [sunlight setAmountPerReaction:50];
+        [sunlight setEffectCooldown:10.0];
         [sunlight setOwner:self];
-        [sunlight setTitle:@"sunlight-dodge"];
+        [sunlight setTitle:@"spark-of-life"];
         [target addEffect:sunlight];
     }
     

@@ -41,6 +41,7 @@ typedef enum {
 @property (nonatomic, readwrite) ccColor3B classColor;
 @property (nonatomic, readwrite) BOOL isStunned;
 @property (nonatomic, readwrite) float stunDuration;
+@property (nonatomic, readwrite) BOOL isInvalidAttackTarget;
 
 - (float)dps;
 - (id)initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position;

@@ -182,6 +182,7 @@
 
 -(void)doneButton{
     if (!self.changingSpells){
+        [self.encounter encounterWillBegin];
         GamePlayScene *gps = [[[GamePlayScene alloc] initWithEncounter:self.encounter player:self.player] autorelease];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.5 scene:gps]];
     }

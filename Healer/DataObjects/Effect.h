@@ -61,6 +61,7 @@ typedef enum {
 @property (nonatomic, readwrite) float criticalChanceAdjustment;
 @property (nonatomic, readwrite) float cooldownMultiplierAdjustment;
 @property (nonatomic, readwrite) float dodgeChanceAdjustment;
+@property (nonatomic, readwrite) float healingReceivedMultiplierAdjustment;
 @property (nonatomic, readwrite) BOOL causesStun;
 @property (readwrite) BOOL isIndependent; //Max Stacks doesnt apply and other effects are never the same as this effect
 @property (nonatomic, readwrite) BOOL considerDodgeForDamage;
@@ -237,7 +238,8 @@ typedef enum {
 @property (nonatomic, readwrite) BOOL ignoresInstantSpells;
 @end
 
-@interface ContagiousEffect : RepeatedHealthEffect
+@interface ContagiousEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
+@property (nonatomic, readwrite) BOOL isSpread;
 @end
 
 @interface StackingRepeatedHealthEffect : RepeatedHealthEffect
@@ -255,4 +257,12 @@ typedef enum {
 @end
 
 @interface BurningInsanity : ExpireThresholdRepeatedHealthEffect
+@end
+
+@interface AbsorbsHealingEffect : Effect <HealthAdjustmentModifier>
+@property (nonatomic, readwrite) NSInteger healingToAbsorb;
+@end
+
+@interface DelayedSetHealthEffect : DelayedHealthEffect
+//Value is the target health instead of the damage
 @end

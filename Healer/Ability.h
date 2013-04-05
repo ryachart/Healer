@@ -56,6 +56,7 @@
 
 
 @interface Attack : Ability
+@property (nonatomic, readwrite) NSInteger numberOfTargets; //Default 1
 @property (nonatomic, readwrite) BOOL ignoresGuardians;
 @property (nonatomic, retain) Effect *appliedEffect;
 @property (nonatomic, readwrite) BOOL requiresDamageToApplyEffect;
@@ -115,6 +116,7 @@ typedef enum {
 @end
 
 @interface BaraghastRoar : Ability
+@property (nonatomic, readwrite) BOOL interruptAppliesDot;
 @end
 
 @interface Debilitate : Ability 
@@ -266,4 +268,11 @@ typedef enum {
 @end
 
 @interface TailLash : RaidDamage
+@end
+
+@interface BloodCrush : Crush
+@end
+
+@interface InterruptionAbility : Ability
+@property (nonatomic, retain) Effect *appliedEffectOnInterrupt;
 @end

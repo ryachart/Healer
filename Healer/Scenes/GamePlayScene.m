@@ -30,6 +30,7 @@
 #import "EnemiesLayer.h"
 #import "ShopScene.h"
 #import "LevelSelectMapScene.h"
+#import "TalentScene.h"
 
 #define DEBUG_AUTO_WIN false
 
@@ -76,6 +77,14 @@
     [_encounter release];
     [_pauseMenuLayer release];
     [_playingSoundsDict release];
+    
+    if (_encounter && _encounter.bossKey) {
+        //Unload the boss specific sprites;
+        [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:[NSString stringWithFormat:@"assets/%@.plist", _encounter.bossKey]];
+    }
+    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/battle-sprites.plist"];
+    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/effect-sprites.plist"];
+    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/postbattle.plist"];
     [super dealloc];
 }
 
@@ -99,8 +108,6 @@
         self.encounter = enc;
         self.players = plyers;
         self.playingSoundsDict = [NSMutableDictionary dictionaryWithCapacity:10];
-        
-        [self.encounter encounterWillBegin];
         
         NSAssert(self.players.count > 0, @"A Battle with no players was initiated.");
         
@@ -290,6 +297,7 @@
                 [node pauseSchedulerAndActions];
             }
         }
+        [[self actionManager] pauseTarget:self];
         [self unschedule:@selector(gameEvent:)];
     }else{
         for (CCNode *node in self.children) {
@@ -297,8 +305,10 @@
                 [node resumeSchedulerAndActions];
             }
         }
+        [[self actionManager] resumeTarget:self];
         [self schedule:@selector(gameEvent:)];
     }
+    [self.raidView setPaused:newPaused];
 }
 
 -(void)showPauseMenu{
@@ -375,6 +385,10 @@
             [shopScene setRequiresGreaterHealFtuePurchase:YES];
         }
         [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:shopScene]];
+    }
+    
+    if (destination == PostBattleLayerDestinationTalents) {
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[TalentScene alloc] init] autorelease]]];
     }
 }
 -(void)battleEndWithSuccess:(BOOL)success{    
@@ -580,7 +594,7 @@
     if (delay > 0) {
         [self runAction:[CCSequence actions:[CCDelayTime actionWithDuration:delay], [CCShakeScreen actionWithDuration:duration], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node setPosition:CGPointMake(0, 0)];
-        }], nil] ];
+        }], nil]];
     } else {
         [self runAction:[CCSequence actions:[CCShakeScreen actionWithDuration:duration], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node setPosition:CGPointMake(0, 0)];

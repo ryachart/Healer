@@ -23,9 +23,9 @@
 	<key>searing-power</key>
 	<string>Your healing spells increase the maximum health of the target by 10% for 1 minute.</string>
 	<key>sunlight</key>
-	<string>Your healing spells increase the dodge chance of the target by 10% for 1 minute.</string>
-	<key>torrent-of-faith</key>
-	<string>Your healing spells increase the healing received of the target by 10% for 1 minute.</string>
+	<string>Your spells create a spark of life causing the target to be healed the next time they take damage.</string>
+	<key>arcane-blessing</key>
+	<string>Your healing spells have a 10% chance to grant shielding to the lowest health ally.</string>
 	<key>godstouch</key>
 	<string>Each second you grant a small amount of shielding to all allies.</string>
 	<key>redemption</key>

@@ -13,12 +13,9 @@
 
 @interface Talents : NSObject
 
-+ (NSArray*)divinityChoicesForTier:(NSInteger)tier;
++ (NSArray*)talentChoicesForTier:(NSInteger)tier;
 + (NSString*)descriptionForChoice:(NSString*)choice;
 + (NSString*)spriteFrameNameForChoice:(NSString*)choice;
-
-+ (BOOL)isDivinityUnlocked;
-+ (NSInteger)numDivinityTiersUnlocked;
 
 + (NSArray*)effectsForConfiguration:(NSDictionary*)configuration;
 

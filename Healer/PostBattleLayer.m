@@ -114,9 +114,16 @@
         menu.anchorPoint = CGPointMake(0, 0);
         [self addChild:menu];
         
+        
         if (!self.showsFirstLevelFTUE) {
             [done setPosition:CGPointMake(0, 76)];
             [menu addChild:done];
+            
+            if ([[PlayerDataManager localPlayer] numUnspentTalentChoices]) {
+                CCMenuItem *talentButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneTalents) andTitle:@"Talents" andAlertPip:YES];
+                [talentButton setPosition:CGPointMake(0, 152)];
+                [menu addChild:talentButton];
+            }
         }
         
         
@@ -281,6 +288,11 @@
 - (void)doneMap
 {
     [self.delegate postBattleLayerDidTransitionToScene:PostBattleLayerDestinationMap];
+}
+
+- (void)doneTalents
+{
+    [self.delegate postBattleLayerDidTransitionToScene:PostBattleLayerDestinationTalents];
 }
 
 -(void)setMatch:(GKMatch *)mtch{

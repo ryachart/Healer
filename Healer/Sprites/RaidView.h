@@ -20,6 +20,8 @@
 @property (nonatomic, retain) NSMutableArray *rectsToUse;
 @property (nonatomic, retain) NSMutableArray *raidViews;
 
+- (void)setPaused:(BOOL)paused;
+
 //Returns Yes is successful, no otherwise.
 -(BOOL)addRaidMemberHealthView:(RaidMemberHealthView*)healthView;
 
@@ -31,4 +33,5 @@
 -(void)updateRaidHealthWithPlayer:(Player*)player andTimeDelta:(ccTime)delta;
 
 - (void)endBattleWithSuccess:(BOOL)success;
+
 @end

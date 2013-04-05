@@ -34,14 +34,14 @@
         BasicButton *doneButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(shouldDismiss) andTitle:@"Done"];
         [doneButton setScale:.75];
         CCMenu *menu = [CCMenu menuWithItems:doneButton, nil];
-        [menu setPosition:CGPointMake(356, 190	)];
+        [menu setPosition:CGPointMake(356, 190)];
         [self.alertDialogBackground addChild:menu];
         
         CCLabelTTFShadow *nameLabel = [CCLabelTTFShadow labelWithString:title dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2, self.alertDialogBackground.contentSize.height / 4) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
        [nameLabel setPosition:CGPointMake(376, 276)];
         [self.alertDialogBackground addChild:nameLabel];
         
-        CCLabelTTFShadow *descLabel = [CCLabelTTFShadow labelWithString:description dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2.25, self.alertDialogBackground.contentSize.width / 2) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:16.0];
+        CCLabelTTFShadow *descLabel = [CCLabelTTFShadow labelWithString:description dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2.25, self.alertDialogBackground.contentSize.width / 2) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:14.0];
         [descLabel setPosition:CGPointMake(390, 122)];
         [self.alertDialogBackground addChild:descLabel];
         

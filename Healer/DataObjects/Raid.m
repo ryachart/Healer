@@ -114,6 +114,22 @@
     return selectedMember;
 }
 
+- (RaidMember*)randomNonPlayerLivingMember
+{
+    RaidMember *selectedMember = nil;
+    int safety = 0;
+    do {
+        selectedMember = [self.raidMembers objectAtIndex:arc4random() % self.raidMembers.count];
+        if (selectedMember.isDead || [selectedMember isKindOfClass:[Player class]])
+            selectedMember = nil;
+        safety++;
+        if (safety > 25){
+            break;
+        }
+    }while (!selectedMember);
+    return selectedMember;
+}
+
 - (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos {
     return [self randomTargets:numTargets withPositioning:pos excludingTargets:[NSArray array]];
 }

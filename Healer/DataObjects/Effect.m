@@ -111,6 +111,7 @@
     copied.stacks = self.stacks;
     copied.visibilityPriority = self.visibilityPriority;
     copied.causesStun = self.causesStun;
+    copied.healingReceivedMultiplierAdjustment = self.healingReceivedMultiplierAdjustment;
     return copied;
 }
 
@@ -407,7 +408,7 @@
     if (currentHealth > newHealth){
         if (self.triggerCooldown >= self.effectCooldown){
             self.triggerCooldown = 0.0;
-            DelayedHealthEffect *orbPop = [[DelayedHealthEffect alloc] initWithDuration:0.5 andEffectType:EffectTypePositiveInvisible];
+            DelayedHealthEffect *orbPop = [[DelayedHealthEffect alloc] initWithDuration:0.25 andEffectType:EffectTypePositiveInvisible];
             [orbPop setIsIndependent:YES];
             [orbPop setOwner:self.owner];
             [orbPop setValue:self.amountPerReaction * self.owner.healingDoneMultiplier];
@@ -799,19 +800,12 @@
 
 + (id)defaultEffect {
     FallenDownEffect *fde = [[FallenDownEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegative];
+    [fde setCausesStun:YES];
     [fde setTitle:@"fallen-down"];
     [fde setSpriteName:@"fallen-down.png"];
     [fde setGetUpThreshold:.8];
     [fde setAilmentType:AilmentTrauma];
     return [fde autorelease];
-}
-
-- (float)damageDoneMultiplierAdjustment {
-    return -1.0;
-}
-
-- (double)duration {
-    return -1.0;
 }
 
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
@@ -856,7 +850,7 @@
     [ese setTitle:@"e-slime-eff"];
     [ese setValuePerTick:-10];
     [ese setNumOfTicks:50];
-    [ese setSpriteName:@"poison.png"];
+    [ese setSpriteName:@"slime.png"];
     [ese setMaxStacks:5];
     [ese setAilmentType:AilmentPoison];
     
@@ -978,7 +972,7 @@
     if (self = [super initWithDuration:dur andEffectType:type]){
         self.damageTakenMultiplierAdjustment = -1.0;
         self.title = @"soul-prison-eff";
-        self.spriteName = @"temper.png";
+        self.spriteName = @"soul_prison.png";
     }
     return self;
 }
@@ -1054,25 +1048,36 @@
 @implementation ContagiousEffect
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
-    float thresholdValue = .95;
-    if (self.target.healthPercentage >= thresholdValue) {
-        Enemy *theBoss = (Enemy*)[enemies objectAtIndex:0];
+    if (self.isSpread) {
         for (int i = 0; i < 3; i++) {
             ContagiousEffect *spreadEffect = [self.copy autorelease];
             [spreadEffect setValuePerTick:spreadEffect.valuePerTick * 1.05];
             RaidMember *randomTarget = [raid randomLivingMember];
-            if (randomTarget.healthPercentage >= thresholdValue) {
-                [randomTarget setAbsorb:0];
-                NSInteger preHealth = randomTarget.health;
-                [randomTarget setHealth:randomTarget.maximumHealth * .94];
-                NSInteger damageCaused = preHealth - randomTarget.health;
-                [theBoss.logger logEvent:[CombatEvent eventWithSource:self.owner target:randomTarget value:[NSNumber numberWithInt:damageCaused] andEventType:CombatEventTypeDamage]];
-            }
             [randomTarget addEffect:spreadEffect];
         }
         self.isExpired = YES;
+        self.isSpread = NO;
     }
     [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
+}
+
+- (NSInteger)stacks
+{
+    return (int)(10.0 - self.timeApplied);
+}
+
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth
+{
+    
+}
+
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth
+{
+    if (currentHealth < newHealth) {
+        if (self.timeApplied / self.duration < .5) {
+            self.isSpread = YES;
+        }
+    }
 }
 @end
 
@@ -1157,4 +1162,56 @@
 		*newHealth = *currentHealth - newHealthDelta;
 	}
 }
+@end
+
+@implementation AbsorbsHealingEffect
+
+- (id)copy
+{
+    AbsorbsHealingEffect *copy = [super copy];
+    [copy setHealingToAbsorb:self.healingToAbsorb];
+    return copy;
+}
+
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
+    if (*currentHealth < *newHealth){
+		NSInteger healthDelta = *newHealth - *currentHealth;
+        if (self.healingToAbsorb >= healthDelta) {
+            *newHealth = *currentHealth;
+            self.healingToAbsorb -= healthDelta;
+        } else {
+            *newHealth = *newHealth - self.healingToAbsorb;
+            self.isExpired = YES;
+        }
+	}
+}
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth {
+
+}
+@end
+
+@implementation DelayedSetHealthEffect
+
+- (void)expire{
+    if (!self.target.isDead){
+        if (self.shouldFail){
+            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:0 andEventType:CombatEventTypeDodge]];
+        }else{
+            CombatEventType eventType = CombatEventTypeDamage;
+            NSInteger preHealth = self.target.health;
+            [self.target setHealth:self.value];
+            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:preHealth - self.value] andEventType:eventType]];
+            if (self.appliedEffect){
+                Effect *applyThis = [[self.appliedEffect copy] autorelease];
+                [applyThis setOwner:self.owner];
+                [self.target addEffect:applyThis];
+                self.appliedEffect = nil;
+            }
+            if (self.completionParticleName) {
+                [self.owner.announcer displayParticleSystemWithName:self.completionParticleName onTarget:(RaidMember*)self.target];
+            }
+        }
+    }
+}
+
 @end

@@ -47,11 +47,14 @@ extern NSString* const PlayerGoldDidChangeNotification;
 - (BOOL)hasShopItem:(ShopItem*)item;
 - (BOOL)hasSpell:(Spell*)spell;
 
-#pragma mark - Divinity
+#pragma mark - Talents
 - (NSString*)selectedChoiceForTier:(NSInteger)tier;
-- (NSDictionary*)localDivinityConfig;
+- (NSDictionary*)localTalentConfig;
 - (void)resetConfig;
 - (void)selectChoice:(NSString*)choice forTier:(NSInteger)tier;
+- (NSInteger)numUnspentTalentChoices;
+- (BOOL)isTalentsUnlocked;
+- (NSInteger)numTalentTiersUnlocked;
 
 #pragma mark - Saving
 - (void)saveLocalPlayer;

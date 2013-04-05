@@ -25,6 +25,12 @@
 
 @implementation TalentScene
 
+- (void)dealloc
+{
+    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/divinity-sprites.plist"];
+    [super dealloc];
+}
+
 - (id)init {
     if (self = [super init]){
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/divinity-sprites.plist"];
@@ -76,7 +82,7 @@
             [chargedPipes[i] removeFromParentAndCleanup:YES];
         }
     }
-    for (int i = 0; i < [Talents numDivinityTiersUnlocked]; i++){
+    for (int i = 0; i < [[PlayerDataManager localPlayer] numTalentTiersUnlocked]; i++){
         CCSprite *chargedPipe = [CCSprite spriteWithSpriteFrameName:@"divinity_unlocked_pipe.png"];
         [chargedPipe setAnchorPoint:CGPointZero];
         [chargedPipe setPosition:CGPointMake(133, 768 - 224 - (i * 111))];
@@ -98,7 +104,7 @@
     }
     
     for (int i = 0; i < NUM_DIV_TIERS; i++){
-        NSArray *choices = [Talents divinityChoicesForTier:i];
+        NSArray *choices = [Talents talentChoicesForTier:i];
         for (int j = 0; j < choices.count; j++){
             NSString *choice = [choices objectAtIndex:j];
             CGPoint choicePosition = CGPointMake(90 + (j * 200), 768 - 152 - (i * 111));
@@ -123,7 +129,7 @@
             if ([[[PlayerDataManager localPlayer] selectedChoiceForTier:i] isEqualToString:choice]){
                 [selectedButtonOverlay setOpacity:255];
             }
-            if ([Talents numDivinityTiersUnlocked] > i){
+            if ([[PlayerDataManager localPlayer] numTalentTiersUnlocked] > i){
                 CCMenuItemSprite *menuItem = [CCMenuItemSprite itemWithNormalSprite:selectedButtonOverlay selectedSprite:selectedButtonOverlaySelected target:self selector:@selector(selectedChoice:)];
                 [menuItem setTag:i];
                 [menuItem setUserData:choice];

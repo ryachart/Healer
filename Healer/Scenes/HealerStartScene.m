@@ -48,8 +48,8 @@
         
         self.storeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(storeSelected) andTitle:@"Academy"];
         
-        CCMenuItem *divinityButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(divinitySelected) andTitle:@"Talents"];
-        if (![Talents isDivinityUnlocked]){
+        CCMenuItem *divinityButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(divinitySelected) andTitle:@"Talents" andAlertPip:[[PlayerDataManager localPlayer] numUnspentTalentChoices]];
+        if (![[PlayerDataManager localPlayer] isTalentsUnlocked]){
             [divinityButton setIsEnabled:NO];
         }
     

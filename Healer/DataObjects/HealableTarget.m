@@ -36,6 +36,16 @@
     return _maximumHealth * multiplier;
 }
 
+- (float)healingReceivedMultiplierAdjustment
+{
+    float multiplier = 1.0;
+    
+    for (Effect *eff in self.activeEffects) {
+        multiplier += [eff healingReceivedMultiplierAdjustment];
+    }
+    return multiplier;
+}
+
 - (float)damageTakenMultiplierAdjustment
 {
     float multiplier = 1.0;
@@ -108,7 +118,7 @@
     }
     
     NSInteger healthDelta = _health - newHealth;
-    if (healthDelta > 0) { //If we are taking damage FIXME
+    if (healthDelta > 0) { //If we are taking damage
         NSInteger damage = healthDelta;
         damage *= self.damageTakenMultiplierAdjustment;
         
@@ -125,6 +135,11 @@
             }
         }
         newHealth = _health - damage;
+    } else {
+        //We are being healed
+        NSInteger incomingHealing = newHealth - _health;
+        incomingHealing *= self.healingReceivedMultiplierAdjustment;
+        newHealth = _health + incomingHealing;
     }
 
 

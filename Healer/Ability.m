@@ -229,6 +229,7 @@
         self.cooldown = cd;
         self.failureChance = .05;
         self.cooldownVariance = .1;
+        self.numberOfTargets = 1;
     }
     return self;
 }
@@ -241,19 +242,24 @@
     if ([self checkFailed]){
         return;
     }
-    RaidMember *target = [self targetFromRaid:theRaid];
-    if (target.isFocused){
-        return; //We fail when trying to hit tanks with attacks
-    }
-    NSInteger preHealth = target.health;
-    [self damageTarget:target];
-    if (self.appliedEffect && (preHealth > target.health || !self.requiresDamageToApplyEffect) ){
-        //Only apply the effect if we actually did damaww ge.
-        Effect *applyThis = [self.appliedEffect copy];
-        [applyThis setSpriteName:self.iconName];
-        [applyThis setOwner:self.owner];
-        [target addEffect:applyThis];
-        [applyThis release];
+    
+    NSMutableArray *targetsThisAttack = [NSMutableArray arrayWithCapacity:self.numberOfTargets];
+    for (int i = 0; i < self.numberOfTargets; i++) {
+        RaidMember *target = [self targetFromRaid:theRaid];
+        if (target.isFocused || target.isInvalidAttackTarget || [targetsThisAttack containsObject:target]){
+            continue; //We fail when trying to hit tanks with attacks
+        }
+        [targetsThisAttack addObject:target];
+        NSInteger preHealth = target.health;
+        [self damageTarget:target];
+        if (self.appliedEffect && (preHealth > target.health || !self.requiresDamageToApplyEffect) ){
+            //Only apply the effect if we actually did damaww ge.
+            Effect *applyThis = [self.appliedEffect copy];
+            [applyThis setSpriteName:self.iconName];
+            [applyThis setOwner:self.owner];
+            [target addEffect:applyThis];
+            [applyThis release];
+        }
     }
 }
 
@@ -301,7 +307,7 @@
         NSInteger safety = 0;
         while (!candidate && safety < 20) {
             candidate = [super targetFromRaid:raid];
-            if (candidate.isFocused) {
+            if (candidate.isFocused || candidate.isInvalidAttackTarget) {
                 candidate = nil;
             }
             safety++;
@@ -401,8 +407,8 @@
             
             AbilityDescriptor *glowingPower = [[[AbilityDescriptor alloc] init] autorelease];
             [glowingPower setAbilityDescription:@"After defeating all Guardians, this enemy becomes unstoppable and will deal vastly increased damage."];
-            [glowingPower setAbilityName:@"Glowing with Power"];
-            [glowingPower setIconName:@"unknown_ability.png"];
+            [glowingPower setAbilityName:@"Undefended"];
+            [glowingPower setIconName:@"unstoppable.png"];
             [self.owner addAbilityDescriptor:glowingPower];
             self.enrageApplied = YES;
         }
@@ -537,7 +543,7 @@
     if (self = [super init]){
         self.title = @"Disengage";
         self.info = @"Baraghast ignores his focused target and attacks a random ally instead.";
-        self.iconName = @"temper.png";
+        self.iconName = @"disengage.png";
     }
     return self;
 }
@@ -576,9 +582,10 @@
 - (id)init {
     if (self = [super init]){
         self.info = @"Interrupts spell casting, dispels all positive spell effects, and deals moderate damage to all allies.";
-        self.iconName = @"unknown_ability.png";
+        self.iconName = @"roar.png";
         self.title = @"Warlord's Roar";
         [self setActivationTime:1.0];
+        self.abilityValue = 125;
     }
     return self;
 }
@@ -587,13 +594,22 @@
     for (Player *player in players) {
         if ([player spellBeingCast]){
             [[player spellBeingCast] applyTemporaryCooldown:2.0];
+            if (self.interruptAppliesDot) {
+                RepeatedHealthEffect *dot = [[[RepeatedHealthEffect alloc] initWithDuration:10 andEffectType:EffectTypeNegative] autorelease];
+                [dot setTitle:@"roar-dot"];
+                [dot setValuePerTick:-self.abilityValue * 1.7];
+                [dot setNumOfTicks:10];
+                [dot setOwner:self.owner];
+                [dot setSpriteName:self.iconName];
+                [player addEffect:dot];
+            }
         }
         [player interrupt];
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:player value:[NSNumber numberWithFloat:2.0]  andEventType:CombatEventTypePlayerInterrupted]];
     }
-    for (RaidMember *member in theRaid.raidMembers ){
-        [member setHealth:member.health - (125.0 * self.owner.damageDoneMultiplier)];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(150.0 * self.owner.damageDoneMultiplier)]  andEventType:CombatEventTypeDamage]];
+    for (RaidMember *member in theRaid.raidMembers){
+        [member setHealth:member.health - (self.abilityValue * self.owner.damageDoneMultiplier)];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(self.abilityValue * self.owner.damageDoneMultiplier)]  andEventType:CombatEventTypeDamage]];
         for (Effect *effect in member.activeEffects){
             if (effect.effectType == EffectTypePositive){
                 [effect setIsExpired:YES];
@@ -641,6 +657,7 @@
         self.info = @"After 5 seconds a massive strike lands on the affected target dealing very high damage.";
         self.title = @"Crush";
         self.iconName = @"crush.png";
+        self.abilityValue = 950;
     }
     return self;
 }
@@ -652,13 +669,13 @@
 }
 
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
-    if (self.target && !self.target.isDead){
+    if (self.target && !self.target.isDead && !self.target.isInvalidAttackTarget){
         [[self.owner announcer] announce:[NSString stringWithFormat:@"%@ prepares to land a massive strike!", [self.owner namePlateTitle]]];
         DelayedHealthEffect *crushEffect = [[DelayedHealthEffect alloc] initWithDuration:5 andEffectType:EffectTypeNegative];
         [crushEffect setOwner:self.owner];
         [crushEffect setTitle:@"crush"];
         [crushEffect setSpriteName:self.iconName];
-        [crushEffect setValue:-950];
+        [crushEffect setValue:-self.abilityValue];
         [self.target addEffect:crushEffect];
         [crushEffect release];
     }
@@ -670,7 +687,7 @@
     if (self = [super init]){
         self.info = @"Deals extremely high damage to all living allies.  The damage is divided by the number of living allies.";
         self.title = @"Deathwave";
-        self.iconName = @"choking_cloud.png";
+        self.iconName = @"deathwave.png";
         self.abilityValue = 10000;
         [self setActivationTime:3.5];
 
@@ -875,7 +892,7 @@
     if (self = [super init]){
         self.info = @"Deals moderate damage over time to its target and any healing done to an affected target will burn 75 Mana from the Healer.";
         self.title = @"Soul Burn";
-        self.iconName = @"blood_curse.png";
+        self.iconName = @"soul_burn.png";
     }
     return self;
 }
@@ -965,7 +982,7 @@
 - (id)init {
     if (self = [super init]){
         self.info = @"Periodically a random player will be dealt high damage and begin bleeding severely for several seconds.";
-        self.iconName = @"bleeding.png";
+        self.iconName = @"impale.png";
         self.title = @"Impale";
     }
     return self;
@@ -1045,7 +1062,7 @@
 
 - (id)init {
     if (self = [super init]){
-        self.info = @"Hurls a bone at a target dealing moderate damage and causing the target to be knocked to the ground.  Targets knocked to the ground will deal no damage until they are healed.";
+        self.info = @"Hurls a bone at a target dealing moderate damage and causing the target to be stunned until healed to full health.";
         self.title = @"Bone Throw";
         self.iconName = @"bone_throw.png";
     }
@@ -1063,6 +1080,9 @@
     [boneThrowEffect setMaxStacks:10];
     FallenDownEffect *fde = [FallenDownEffect defaultEffect];
     [fde setOwner:self.owner];
+    if ([target isKindOfClass:[Player class]]) {
+        [fde setDuration:2.0];
+    }
     [fde setSpriteName:self.iconName];
     [boneThrowEffect setAppliedEffect:fde];
     [target addEffect:boneThrowEffect];
@@ -1173,7 +1193,7 @@
             [boltEffect setTitle:@"shadowbolt"];
             appliedEffect = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegative];
             [appliedEffect setTitle:@"shadowbolt-dot"];
-            [appliedEffect setSpriteName:@"angry_spirit.png"];
+            [appliedEffect setSpriteName:@"blood_curse.png"];
             [(RepeatedHealthEffect*)appliedEffect setNumOfTicks:6];
             [(RepeatedHealthEffect*)appliedEffect setValuePerTick:-damage * .15];
             [appliedEffect setOwner:self.owner];
@@ -1183,7 +1203,7 @@
         case OverseerProjectileBlood:
             [boltEffect setTitle:@"bloodbolt"];
             appliedEffect = [[HealingDoneAdjustmentEffect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative];
-            [appliedEffect setSpriteName:@"blood_curse.png"];
+            [appliedEffect setSpriteName:@"gushing_wound.png"];
             [appliedEffect setTitle:@"blood-curse"];
             [appliedEffect setOwner:self.owner];
             [appliedEffect setAilmentType:AilmentCurse];
@@ -1214,7 +1234,7 @@
         
         self.info = @"This aura reduces all healing done to allies by 25% and causes random allies to hemorrhage their lifeforce away.";
         self.title = @"Aura of Blood";
-        self.iconName = @"bleeding.png";
+        self.iconName = @"blood_aura.png";
     }
     return self;
 }
@@ -1230,7 +1250,7 @@
         
         if (arc4random() % 100 < 20){
             RepeatedHealthEffect *bleed = [[RepeatedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypeNegative];
-            [bleed setSpriteName:self.iconName];
+            [bleed setSpriteName:@"bleeding.png"];
             [bleed setValuePerTick:-self.abilityValue];
             [bleed setNumOfTicks:5];
             [bleed setOwner:self.owner];
@@ -1250,7 +1270,7 @@
         
         self.info = @"The heat from this aura burns all enemies and occasionally blasts them with a burst of immolation.";
         self.title = @"Aura of Flame";
-        self.iconName = @"burning.png";
+        self.iconName = @"flame_aura.png";
     }
     return self;
 }
@@ -1278,7 +1298,7 @@
     if (self = [super init]){
         self.info = @"This aura drains mana from Healers each time they cast a spell and spawns a viscious curse on random enemies.";
         self.title = @"Aura of Shadow";
-        self.iconName = @"curse.png";
+        self.iconName = @"shadow_aura.png";
     }
     return self;
 }
@@ -1296,7 +1316,7 @@
     [[self.owner announcer] displayParticleSystemWithName:@"shadow_burst.plist" onTarget:lowestHealthMember];
     RepeatedHealthEffect *shadowCurse = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegative];
     [shadowCurse setTitle:@"shadow-blast"];
-    [shadowCurse setSpriteName:self.iconName];
+    [shadowCurse setSpriteName:@"curse.png"];
     [shadowCurse setNumOfTicks:7];
     [shadowCurse setValuePerTick:-self.abilityValue];
     [shadowCurse setOwner:self.owner];
@@ -1373,7 +1393,8 @@
 - (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd {
     if (self = [super initWithDamage:dmg andCooldown:cd]){
         self.title = @"Grasp of the Damned";
-        self.info = @"Periodically a curse is applied to an enemy that deals damage over time and will explode if the enemy receives any healing.";
+        self.info = @"A curse applied to an enemy that deals damage over time and will cause an explosion if the enemy receives any healing.";
+        self.iconName = @"grip.png";
         [self setKey:@"grasp-of-the-damned"];
     }
     return self;
@@ -1384,7 +1405,7 @@
     RaidMember *target = nil;
     for (int i = 0; i < 20; i++){
         target = [raid randomLivingMember];
-        if (!target.isFocused && [target effectCountOfType:EffectTypePositive] == 0){
+        if (!target.isFocused && !target.isInvalidAttackTarget && [target effectCountOfType:EffectTypePositive] == 0){
             break;
         }
     }
@@ -1476,6 +1497,7 @@
     if (self = [super init]){
         self.title = @"Confusion";
         self.info = @"You will suffer periodic confusion causing some allies to become lost to your senses from a short period of time.";
+        self.iconName = @"confusion.png";
     }
     return self;
 }
@@ -1686,6 +1708,10 @@
 {
     float effectDuration = 5.0;
     NSInteger numberOfTicks = 5;
+    if (self.difficulty == 5) {
+        effectDuration = 8.0;
+        numberOfTicks = 8.0;
+    }
     [self.owner.announcer displayBreathEffectOnRaidForDuration:effectDuration];
     for (RaidMember *member in theRaid.livingMembers) {
         RepeatedHealthEffect *flameBreathEffect = [[[RepeatedHealthEffect alloc] initWithDuration:effectDuration andEffectType:EffectTypeNegativeInvisible] autorelease];
@@ -1726,9 +1752,6 @@
 - (void)triggerForTarget:(RaidMember*)target inRaid:(Raid*)theRaid
 {
     NSInteger possiblePotions = 3;
-    if (self.difficulty > 4) {
-        possiblePotions = 4;
-    }
     int potion = arc4random() % possiblePotions;
     float colTime = 1.5;
     
@@ -1746,7 +1769,7 @@
         RepeatedHealthEffect *burnDoT = [[[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative] autorelease];
         [burnDoT setOwner:self.owner];
         [burnDoT setTitle:@"imp-burn-dot"];
-        [burnDoT setSpriteName:@"burning.png"];
+        [burnDoT setSpriteName:@"soul_burn.png"];
         [burnDoT setValuePerTick:dotDamage];
         [burnDoT setNumOfTicks:4];
         [bottleEffect setAppliedEffect:burnDoT];
@@ -1774,7 +1797,7 @@
     } else if (potion == 2) {
         //Poison explosion
         
-        NSInteger impactDamage = FUZZ(-100, 20);
+        NSInteger impactDamage = FUZZ(-180, 20);
         
         for (RaidMember *member in theRaid.livingMembers) {
             DelayedHealthEffect* bottleEffect = [[[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible] autorelease];
@@ -2072,6 +2095,59 @@
         [stun setOwner:self.owner];
         [stun setTitle:@"stun"];
         [player addEffect:stun];
+    }
+}
+@end
+
+@implementation BloodCrush
+- (id)init {
+    if (self = [super init]){
+        self.info = @"A Massive Strike that deals very high damage to the focused target and causes all nearby targets to bleed.";
+        self.title = @"Blood Crush";
+        self.iconName = @"crush.png";
+    }
+    return self;
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    [super triggerAbilityForRaid:theRaid players:players enemies:enemies];
+    
+    for (RaidMember *melee in [theRaid livingMembersWithPositioning:self.target.positioning]) {
+        if (arc4random() % 1000 > 100) {
+            RepeatedHealthEffect *bleed = [[[RepeatedHealthEffect alloc] initWithDuration:10 andEffectType:EffectTypeNegative] autorelease];
+            [bleed setValuePerTick:-self.abilityValue / 30];
+            [bleed setNumOfTicks:10];
+            [bleed setOwner:self.owner];
+            [bleed setTitle:@"blood-crush-bleed"];
+            [bleed setSpriteName:@"bleeding.png"];
+            
+            DelayedHealthEffect *dhe = [[[DelayedHealthEffect alloc] initWithDuration:5 andEffectType:EffectTypeNegativeInvisible] autorelease];
+            [dhe setValue:-40];
+            [dhe setOwner:self.owner];
+            [dhe setTitle:@"blood-crush-delay"];
+            [dhe setAppliedEffect:bleed];
+            [melee addEffect:dhe];
+        }
+    }
+}
+@end
+
+@implementation InterruptionAbility
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    for (Player *player in players) {
+        if ([player spellBeingCast]){
+            [[player spellBeingCast] applyTemporaryCooldown:2.0];
+            if (self.appliedEffectOnInterrupt) {
+                Effect *eff = [[self.appliedEffectOnInterrupt copy] autorelease];
+                [eff setOwner:self.owner];
+                [eff setSpriteName:self.iconName];
+                [player addEffect:eff];
+            }
+        }
+        [player interrupt];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:player value:[NSNumber numberWithFloat:2.0]  andEventType:CombatEventTypePlayerInterrupted]];
     }
 }
 @end

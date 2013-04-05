@@ -25,7 +25,7 @@
 @property (nonatomic, readonly) NSInteger maximumAbsorbtion;
 @property (nonatomic, readwrite) NSInteger absorb;
 @property (nonatomic, readonly) float damageTakenMultiplierAdjustment;
-
+@property (nonatomic, readonly) float healingReceivedMultiplierAdjustment;
 
 - (void)passiveHealForAmount:(NSInteger)amount;
 - (NSInteger)effectCountOfType:(EffectType)type;

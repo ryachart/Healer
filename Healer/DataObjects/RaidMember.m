@@ -44,6 +44,11 @@
 	return self;
 }
 
+- (BOOL)isInvalidAttackTarget
+{
+    return self.damageTakenMultiplierAdjustment == 0.0;
+}
+
 - (float)dodgeChance
 {
     float base = _dodgeChance;

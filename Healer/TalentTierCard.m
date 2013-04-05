@@ -31,7 +31,7 @@
     if (self = [super init]){
         self.tier = tier;
         self.anchorPoint = CGPointZero;
-        BOOL isUnlocked = [Talents numDivinityTiersUnlocked] > tier || forceUnlocked;
+        BOOL isUnlocked = [[PlayerDataManager localPlayer] numTalentTiersUnlocked] > tier || forceUnlocked;
         
         if (isUnlocked){
             NSString *spriteName = [NSString stringWithFormat:@"divinity_tier%i_frame.png", tier + 1];

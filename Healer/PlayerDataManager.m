@@ -57,8 +57,8 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
 + (Player*)playerFromLocalPlayer
 {
     Player *basicPlayer = [[[Player alloc] initWithHealth:1400 energy:1000 energyRegen:10] autorelease];
-    if ([Talents isDivinityUnlocked]){
-        [basicPlayer setDivinityConfig:[[PlayerDataManager localPlayer] localDivinityConfig]];
+    if ([[PlayerDataManager localPlayer] isTalentsUnlocked]){
+        [basicPlayer setDivinityConfig:[[PlayerDataManager localPlayer] localTalentConfig]];
     }
     return basicPlayer;
 }
@@ -452,14 +452,14 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     [[NSNotificationCenter defaultCenter] postNotificationName:PlayerGoldDidChangeNotification object:nil userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold]];
 }
 
-#pragma mark - Divinity
+#pragma mark - Talents
 
 - (NSString*)selectedChoiceForTier:(NSInteger)tier {
     NSDictionary *config =  (NSDictionary*)[self.playerData objectForKey:DivinityConfig];
     return [config objectForKey:[NSString stringWithFormat:@"tier-%i", tier]];
 }
 
-- (NSDictionary*)localDivinityConfig {
+- (NSDictionary*)localTalentConfig {
     return (NSDictionary*)[self.playerData objectForKey:DivinityConfig];
 }
 
@@ -479,6 +479,36 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     [self saveLocalPlayer];
 }
 
+- (NSInteger)numTalentTiersUnlocked
+{
+    NSInteger currentRating = [[PlayerDataManager localPlayer] totalRating];
+    NSInteger totalTiers = 0;
+    for (int i = 0; i < 5; i++){
+        if (currentRating >= [Talents requiredRatingForTier:i]) {
+            totalTiers++;
+        }
+    }
+    return totalTiers;
+}
+
+- (NSInteger)numUnspentTalentChoices
+{
+    NSInteger unlockedTiers = [self numTalentTiersUnlocked];
+    NSInteger total = 0;
+    for (int i = 0; i < unlockedTiers; i++) {
+        if (![self selectedChoiceForTier:i]) {
+            total++;
+        }
+    }
+    return total;
+}
+
+- (BOOL)isTalentsUnlocked {
+#if TARGET_IPHONE_SIMULATOR
+    return YES;
+#endif
+    return [[PlayerDataManager localPlayer] totalRating] >= [Talents requiredRatingForTier:0];
+}
 #pragma mark - Cached Selections
 
 - (void)setLastSelectedLevel:(NSInteger)lastSelectedLevel {

@@ -15,14 +15,7 @@ static NSDictionary *divinityInfo = nil;
 
 @implementation Talents
 
-+ (BOOL)isDivinityUnlocked {
-#if TARGET_IPHONE_SIMULATOR
-    return YES;
-#endif
-    return [[PlayerDataManager localPlayer] totalRating] >= [Talents requiredRatingForTier:0];
-}
-
-+ (NSArray*)divinityChoicesForTier:(NSInteger)tier {
++ (NSArray*)talentChoicesForTier:(NSInteger)tier {
     NSMutableArray *choices = [NSMutableArray arrayWithCapacity:3];
     
     switch (tier) {
@@ -44,7 +37,7 @@ static NSDictionary *divinityInfo = nil;
         case 3:
             [choices addObject:@"Searing Power"];
             [choices addObject:@"Sunlight"];
-            [choices addObject:@"Torrent of Faith"];
+            [choices addObject:@"Arcane Blessing"];
             break;
         case 4:
             [choices addObject:@"Godstouch"];
@@ -123,18 +116,6 @@ static NSDictionary *divinityInfo = nil;
             return 80;
     }
     return NSUIntegerMax; //Loooool
-}
-
-+ (NSInteger)numDivinityTiersUnlocked
-{
-    NSInteger currentRating = [[PlayerDataManager localPlayer] totalRating];
-    NSInteger totalTiers = 0;
-    for (int i = 0; i < 5; i++){
-        if (currentRating >= [Talents requiredRatingForTier:i]) {
-            totalTiers++;
-        }
-    }
-    return totalTiers;
 }
 
 @end

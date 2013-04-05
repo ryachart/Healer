@@ -11,6 +11,7 @@
 @interface BasicButton : CCMenuItemSprite
 
 + (BasicButton*)basicButtonWithTarget:(id)target andSelector:(SEL)selector andTitle:(NSString*)title;
++ (BasicButton*)basicButtonWithTarget:(id)target andSelector:(SEL)selector andTitle:(NSString*)title andAlertPip:(BOOL)showsAlertPip;
 + (CCMenu *)spriteButtonWithSpriteFrameName:(NSString*)frameName target:(id)target andSelector:(SEL)selector;
 + (CCMenu *)defaultBackButtonWithTarget:(id)target andSelector:(SEL)selector;
 

@@ -32,6 +32,19 @@
     return self;
 }
 
+- (void)setPaused:(BOOL)paused
+{
+    if (paused) {
+        for (CCNode *child in self.children) {
+            [child pauseSchedulerAndActions];
+        }
+    } else {
+        for (CCNode *child in self.children) {
+            [child resumeSchedulerAndActions];
+        }
+    }
+}
+
 -(BOOL)addRaidMemberHealthView:(RaidMemberHealthView*)healthView
 {
 	if (self.nextRectToUse - 1 < MAXIMUM_RAID_MEMBERS_ALLOWED){

@@ -99,6 +99,43 @@
 
 - (void)encounterWillBegin
 {
+    if (self.levelNumber == 4) {
+        if (self.difficulty == 5) {
+            NSInteger brutalHealth = 75000;
+            Enemy *attackingImp = [self.enemies objectAtIndex:1];
+            [attackingImp setThreatPriority:kThreatPriorityRandom];
+            [attackingImp setMaximumHealth:brutalHealth];
+            [attackingImp setHealth:brutalHealth];
+            Enemy *imp3 = [[[Enemy alloc] initWithHealth:brutalHealth damage:0 targets:1 frequency:1.25 choosesMT:NO] autorelease];
+            [imp3 setThreatPriority:kThreatPriorityRandom];
+            [imp3 setSpriteName:@"imps4_battle_portrait.png"];
+            [imp3 setTitle:@"Imp"];
+            self.enemies = [self.enemies arrayByAddingObject:imp3];
+            
+            ProjectileAttack *bolts = [[[ProjectileAttack alloc] init] autorelease];
+            [bolts setSpriteName:@"shadowbolt.png"];
+            [bolts setExplosionParticleName:@"shadow_burst.plist"];
+            [bolts setAbilityValue:-120];
+            [bolts setCooldown:4];
+            [imp3 addAbility:bolts];
+            
+            Effect *cackleFailed = [[[Effect alloc] initWithDuration:10.0 andEffectType:EffectTypeNegative] autorelease];
+            [cackleFailed setCastTimeAdjustment:-.5];
+            [cackleFailed setTitle:@"cackle-fail"];
+            
+            InterruptionAbility *cackle = [[[InterruptionAbility alloc] init] autorelease];
+            [cackle setCooldown:24.0];
+            [cackle setCooldownVariance:.4];
+            [cackle setActivationTime:1.5];
+            [cackle setIconName:@"shadow_roar.png"];
+            [cackle setAppliedEffectOnInterrupt:cackleFailed];
+            [cackle setInfo:@"Interrupts casting.  If a Healer is casting when this ability completes the Healer's cast times are increased by 50% for 10 seconds."];
+            [cackle setTitle:@"Cackle"];
+            [imp3 addAbility:cackle];
+            
+        }
+    }
+    
     for (Enemy *boss in self.enemies) {
         [boss configureBossForDifficultyLevel:self.difficulty];
     }
@@ -200,10 +237,10 @@
         MischievousImps *boss = [MischievousImps defaultBoss];
         [enemies addObject:boss];
         Enemy *imp2 = [[[Enemy alloc] initWithHealth:boss.health damage:0 targets:1 frequency:1.25 choosesMT:NO] autorelease];
-        [imp2 setThreatPriority:1];
+        [imp2 setThreatPriority:2];
         [imp2 setSpriteName:@"imps2_battle_portrait.png"];
         [imp2 setTitle:@"Imp"];
-        [imp2 removeAbility:boss.autoAttack];
+        [imp2 removeAbility:imp2.autoAttack];
         imp2.autoAttack = [[[SustainedAttack alloc] initWithDamage:340 andCooldown:2.25] autorelease];
         imp2.autoAttack.failureChance = .25;
         [imp2 addAbility:imp2.autoAttack];

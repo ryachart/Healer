@@ -26,6 +26,7 @@
 - (RaidMember*)lowestHealthMember;
 - (RaidMember*)randomLivingMember;
 - (RaidMember*)randomNonGuardianLivingMember;
+- (RaidMember*)randomNonPlayerLivingMember;
 - (RaidMember*)randomLivingMemberWithPositioning:(Positioning)pos;
 - (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos;
 - (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos excludingTargets:(NSArray*)targets;

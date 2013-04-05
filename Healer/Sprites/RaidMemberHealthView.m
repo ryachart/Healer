@@ -428,7 +428,7 @@
 }
 
 - (void)triggerConfusion {
-    if (!self.confusionTriggered && self.selectionState != RaidViewSelectionStateSelected && !self.member.isDead){
+    if (!self.confusionTriggered && self.selectionState != RaidViewSelectionStateSelected && !self.member.isDead && !self.member.isFocused){
         self.confusionTriggered = YES;
         
         float transitionDuration = 1.25;

@@ -11,6 +11,11 @@
 @implementation BasicButton
 
 + (BasicButton*)basicButtonWithTarget:(id)target andSelector:(SEL)selector andTitle:(NSString*)title {
+    return [self basicButtonWithTarget:target andSelector:selector andTitle:title andAlertPip:NO];
+}
+
+
++ (BasicButton*)basicButtonWithTarget:(id)target andSelector:(SEL)selector andTitle:(NSString*)title andAlertPip:(BOOL)showsAlertPip {
     CCSprite *basicButton = [CCSprite spriteWithSpriteFrameName:@"button_home.png"];
     CCSprite *basicButtonSelected = [CCSprite spriteWithSpriteFrameName:@"button_home.png"];
     CCSprite *selectedMask = [CCSprite spriteWithSpriteFrameName:@"button_home_pressed.png"];
@@ -33,6 +38,21 @@
     CCLabelTTF *titleLabelDisabled = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize hAlignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
     [titleLabelDisabled setColor:ccc3(240, 181, 123)];
     [titleLabelDisabled setPosition:labelPosition];
+    
+    
+    if (showsAlertPip) {
+        CCSprite *alertPip = [CCSprite spriteWithSpriteFrameName:@"alert_pip.png"];
+        CCSprite *alertPipSelected = [CCSprite spriteWithSpriteFrameName:@"alert_pip.png"];
+        CCSprite *alertPipDisabled = [CCSprite spriteWithSpriteFrameName:@"alert_pip.png"];
+        
+        [alertPip setPosition:CGPointMake(10, basicButton.contentSize.height - 5)];
+        [alertPipSelected setPosition:CGPointMake(10, basicButton.contentSize.height - 5)];
+        [alertPipDisabled setPosition:CGPointMake(10, basicButton.contentSize.height - 5)];
+        
+        [basicButton addChild:alertPip];
+        [basicButtonSelected addChild:alertPipSelected];
+        [basicButtonDisabled addChild:alertPipDisabled];
+    }
     
     [basicButton addChild:titleLabel];
     [basicButtonSelected addChild:titleLabelSelected];

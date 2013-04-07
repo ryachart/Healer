@@ -10,13 +10,12 @@
 #import "GameObjects.h"
 
 
-@class ChannelingDelegate, CCLabelTTFShadow;
+@class ChannelingDelegate, CCLabelTTFShadow, PlayerMoveButton;
 
 @interface PlayerStatusView : CCLayer
 @property (nonatomic, readwrite) float percentEnergy;
 @property (nonatomic, assign) ChannelingDelegate *channelDelegate;
 @property (nonatomic, readwrite) double percentChanneled;
-
 - (void)updateWithPlayer:(Player*)player;
 @end
 

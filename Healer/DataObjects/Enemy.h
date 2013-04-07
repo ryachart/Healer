@@ -34,6 +34,7 @@
 @property (nonatomic, retain) NSMutableArray *abilities;
 @property (nonatomic, retain) NSArray *abilityDescriptors;
 @property (nonatomic, assign) Ability *autoAttack;
+@property (nonatomic, assign) Ability *stunnedAbility;
 @property (nonatomic, retain) NSString* title;
 @property (nonatomic, retain) NSString *namePlateTitle;
 @property (nonatomic, retain) NSString *spriteName;
@@ -52,6 +53,8 @@
 
 - (void)configureBossForDifficultyLevel:(NSInteger)difficulty;
 
+- (void)stunForDuration:(NSTimeInterval)duration;
+
 #pragma Ability Methods
 - (void)addAbility:(Ability*)ability;
 - (void)removeAbility:(Ability*)ability;
@@ -62,6 +65,7 @@
 - (void)ownerWillExecuteAbility:(Ability*)ability;
 - (void)ownerDidExecuteAbility:(Ability*)ability;
 - (void)ownerDidBeginAbility:(Ability*)ability;
+- (void)ownerDidChannelTickForAbility:(Ability *)ability;
 
 @end
 

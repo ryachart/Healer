@@ -424,7 +424,7 @@
     [hotEffect setSpriteName:regrow.spriteFrameName];
     [hotEffect setTitle:@"regrow-effect"];
     [hotEffect setNumOfTicks:4];
-    [hotEffect setValuePerTick:165];
+    [hotEffect setValuePerTick:150];
     [regrow setAppliedEffect:hotEffect];
     [hotEffect release];
     return [regrow autorelease];
@@ -502,8 +502,8 @@
     
     self.healingAmount = initialHealAmount;
     
-    [effectToRemove effectWillBeDispelled:raid player:self.owner];
-    [effectToRemove expire];
+    [effectToRemove effectWillBeDispelled:raid player:self.owner enemies:enemies];
+    [effectToRemove expireForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     [self.owner.spellTarget removeEffect:effectToRemove];
 }
 
@@ -524,7 +524,7 @@
 }
 
 +(id)defaultSpell{
-    OrbsOfLight *orbs = [[OrbsOfLight alloc] initWithTitle:@"Orbs of Light" healAmnt:0 energyCost:120 * kCostEfficiencyScale  castTime:1.0 andCooldown:4.0];
+    OrbsOfLight *orbs = [[OrbsOfLight alloc] initWithTitle:@"Orbs of Light" healAmnt:0 energyCost:100 * kCostEfficiencyScale  castTime:1.0 andCooldown:4.0];
     [orbs setDescription:@"Heals a target for a moderate amount each time it takes damage. Lasts 10 seconds."];
     ReactiveHealEffect *rhe = [[ReactiveHealEffect alloc] initWithDuration:20.0 andEffectType:EffectTypePositive];
     [rhe setTitle:@"orbs-of-light-effect"];
@@ -574,7 +574,7 @@
 }
 
 + (id)defaultSpell {
-    LightEternal *le = [[LightEternal alloc] initWithTitle:@"Light Eternal" healAmnt:300 energyCost:140 * kCostEfficiencyScale  castTime:2.5 andCooldown:0.0];
+    LightEternal *le = [[LightEternal alloc] initWithTitle:@"Light Eternal" healAmnt:300 energyCost:120 * kCostEfficiencyScale  castTime:2.5 andCooldown:0.0];
     [le setDescription:@"Heals up to 5 allies with the least health among allies for a moderate amount."];
     return [le autorelease];
 }

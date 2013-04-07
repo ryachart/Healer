@@ -234,7 +234,7 @@
 		Effect *effect = [self.activeEffects objectAtIndex:i];
         [effect combatUpdateForPlayers:players enemies:enemies theRaid:theRaid gameTime:timeDelta];
 		if ([effect isExpired]){
-			[effect expire];
+			[effect expireForPlayers:players enemies:enemies theRaid:theRaid gameTime:timeDelta];
             [effectsToRemove addObject:effect];
 		}
 	}

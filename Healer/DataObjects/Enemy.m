@@ -79,6 +79,12 @@
     }
 }
 
+- (void)stunForDuration:(NSTimeInterval)duration
+{
+    [self.visibleAbility interrupt];
+    [self.stunnedAbility startChannel:duration];
+}
+
 - (float)damageDoneMultiplier
 {
     return [super damageDoneMultiplier] + [self challengeDamageDoneModifier];
@@ -159,6 +165,11 @@
     
 }
 
+- (void)ownerDidChannelTickForAbility:(Ability *)ability
+{
+    
+}
+
 - (void)dequeueAbilityAdds {
     if (self.queuedAbilitiesToAdd.count > 0){
         for (Ability *ability in self.queuedAbilitiesToAdd){
@@ -203,6 +214,13 @@
         self.criticalChance = 0.0;
         self.abilities = [NSMutableArray arrayWithCapacity:5];
         self.abilityDescriptors = [NSMutableArray arrayWithCapacity:5];
+        
+        self.stunnedAbility = [[[Ability alloc] init] autorelease];
+        [self.stunnedAbility setTitle:@"Stunned!"];
+        [self.stunnedAbility setIconName:@"confusion.png"];
+        [self.stunnedAbility setCooldown:kAbilityRequiresTrigger];
+        [self addAbility:self.stunnedAbility];
+        
         for (int i = 0; i < 101; i++){
             healthThresholdCrossed[i] = NO;
         }
@@ -694,6 +712,7 @@
 
 -(void)ravagerDiedFocusing:(RaidMember*)focus andRaid:(Raid*)raid{
     [self.announcer announce:@"A Fungal Ravager falls to the ground and explodes!"];
+    [self.announcer displayScreenShakeForDuration:2.5];
     [focus setIsFocused:NO];
     
     NSInteger numTargets = arc4random() % 3 + 2;
@@ -719,12 +738,39 @@
     }
 }
 
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    if (difficulty == 5) {
+        WanderingSpiritEffect *wse = [[[WanderingSpiritEffect alloc] initWithDuration:14.0 andEffectType:EffectTypeNegative] autorelease];
+        [wse setAilmentType:AilmentPoison];
+        [wse setTitle:@"pred-fungus-effect"];
+        [wse setValuePerTick:-150];
+        [wse setNumOfTicks:8.0];
+        
+        AbilityDescriptor *fungusDesc = [[[AbilityDescriptor alloc] init] autorelease];
+        [fungusDesc setIconName:@"poison.png"];
+        [fungusDesc setAbilityDescription:@"A living fungus that hunts for the weakest ally and drains their lifeforce."];
+        [fungusDesc setAbilityName:@"Predator Fungus"];
+        [self addAbilityDescriptor:fungusDesc];
+        
+        Attack *predFungus = [[[Attack alloc] initWithDamage:200 andCooldown:24.0] autorelease];
+        [predFungus setKey:@"pred-fungus-bite"];
+        [predFungus setTimeApplied:arc4random() % 16];
+        [predFungus setTitle:@"Infectious Bite"];
+        [predFungus setIconName:@"poison.png"];
+        [predFungus setActivationTime:1.5];
+        [predFungus setAppliedEffect:wse];
+        [self addAbility:predFungus];
+    }
+}
+
 @end
 
 @implementation PlaguebringerColossus
 +(id)defaultBoss {
     //427500
-    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:560000 damage:330 targets:1 frequency:2.5 choosesMT:YES ];
+    PlaguebringerColossus *boss = [[PlaguebringerColossus alloc] initWithHealth:560000 damage:330 targets:1 frequency:2.5 choosesMT:YES];
     boss.autoAttack.failureChance = .30;
     [boss setTitle:@"Plaguebringer Colossus"];
     [boss setSpriteName:@"plaguebringer_battle_portrait.png"];
@@ -752,6 +798,7 @@
 
 -(void)burstPussBubbleOnRaid:(Raid*)theRaid{
     [self.announcer announce:@"A putrid sac of filth bursts onto your allies"];
+    [self.announcer displayScreenShakeForDuration:1.0];
     self.numBubblesPopped++;
     //Boss does 10% less damage for each bubble popped
     Effect *reducedDamageEffect = [[Effect alloc] initWithDuration:300 andEffectType:EffectTypePositiveInvisible];
@@ -780,6 +827,31 @@
 -(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
     if (((int)percentage) % 20 == 0 && percentage != 100){
         [self burstPussBubbleOnRaid:raid];
+    }
+}
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    
+    if (difficulty == 5) {
+        ConsumingCorruption *corrEff = [[[ConsumingCorruption alloc] initWithDuration:12 andEffectType:EffectTypeNegative] autorelease];
+        [corrEff setValuePerTick:-100];
+        [corrEff setConsumptionThreshold:.5];
+        [corrEff setHealPercentage:.02];
+        [corrEff setNumOfTicks:5];
+        [corrEff setTitle:@"consuming-corruption"];
+        
+        Attack *consumingCorruption = [[[Attack alloc] initWithDamage:0 andCooldown:30.0] autorelease];
+        [consumingCorruption setIgnoresGuardians:YES];
+        [consumingCorruption setRequiresDamageToApplyEffect:NO];
+        [consumingCorruption setAbilityValue:100];
+        [consumingCorruption setInfo:@"A plague that heals the Colossus if it damages a target below 50% health."];
+        [consumingCorruption setActivationTime:1.5];
+        [consumingCorruption setIconName:@"corruption.png"];
+        [consumingCorruption setTitle:@"Consuming Corruption"];
+        [consumingCorruption setAppliedEffect:corrEff];
+        [self addAbility:consumingCorruption];
     }
 }
 
@@ -836,7 +908,49 @@
     [pulse setTimeApplied:40.0];
     [boss addAbility:pulse];
     boss.poisonNova = pulse;
+
     return [boss autorelease];
+}
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    if (difficulty == 5) {
+        
+        [[self abilityWithKey:@"poison-attack"] setCooldown:16.0];
+        
+        UnstableToxin *unstable = [[[UnstableToxin alloc] initWithDuration:20.0 andEffectType:EffectTypeNegative] autorelease];
+        [unstable setTitle:@"unstable-tox"];
+        [unstable setValuePerTick:-100];
+        [unstable setNumOfTicks:20];
+        [unstable setAilmentType:AilmentPoison];
+        
+        self.poisonNova.cooldown = 90;
+        
+        RaidDamagePulse *pulse = [[[RaidDamagePulse alloc] init] autorelease];
+        [pulse setIconName:@"poison_explosion.png"];
+        [pulse setActivationTime:1.0];
+        [pulse setTitle:@"Empowered Nova"];
+        [pulse setKey:@"emp-poison-nova"];
+        [pulse setAbilityValue:1950];
+        [pulse setNumTicks:4];
+        [pulse setDuration:12.0];
+        [pulse setCooldown:61.0];
+        [pulse setTimeApplied:40.0];
+        [self addAbility:pulse];
+        
+        Attack *unstableToxin = [[[Attack alloc] initWithDamage:0 andCooldown:18.0] autorelease];
+        [unstableToxin setKey:@"unstable"];
+        [unstableToxin setTimeApplied:10.0];
+        unstableToxin.failureChance = 0.0;
+        [unstableToxin setActivationTime:1.5];
+        [unstableToxin setRequiresDamageToApplyEffect:NO];
+        [unstableToxin setTitle:@"Unstable Toxin"];
+        [unstableToxin setInfo:@"A strange poison that will explode and stun Trulzar for a brief time when removed with Purify."];
+        [unstableToxin setIconName:@"curse.png"];
+        [unstableToxin setAppliedEffect:unstable];
+        [self addAbility:unstableToxin];
+    }
 }
 
 -(void)applyWeakPoisonToTarget:(RaidMember*)target{
@@ -870,6 +984,11 @@
         [self.announcer announce:@"Trulzar cackles as the room fills with noxious poison."];
         [self.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0.0];
         [self.poisonNova setIsDisabled:YES];
+        
+        if (self.difficulty == 5) {
+            [[self abilityWithKey:@"unstable"] setIsDisabled:YES];
+            [[self abilityWithKey:@"emp-poison-nova"] setIsDisabled:YES];
+        }
         [[self abilityWithKey:@"poison-attack"] setIsDisabled:YES];
         for (RaidMember *member in raid.livingMembers){
             [self applyWeakPoisonToTarget:member];
@@ -877,20 +996,11 @@
     }
 }
 
-- (void)ownerDidExecuteAbility:(Ability *)ability
+- (void)ownerDidChannelTickForAbility:(Ability *)ability
 {
-    if (ability == self.poisonNova) {
-        RaidDamagePulse *pulse = (RaidDamagePulse*)ability;
-        NSTimeInterval tickTime = pulse.duration / pulse.numTicks;
-        for (int i = 0; i < pulse.numTicks; i++) {
-            [self.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:(tickTime * (i + 1))];
-        }
-        
+    if (ability == self.poisonNova || [ability.key isEqualToString:@"emp-poison-nova"]) {
+        [self.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0.0];
     }
-    if ([ability.key isEqualToString:@"poison-attack"]) {
-        [self.announcer announce:@"Trulzar fills an ally with poison."];
-    }
-    
 }
 
 @end
@@ -1799,6 +1909,7 @@
         [self.announcer announce:@"I feed on your fear."];
         GraspOfTheDamnedEffect *graspEffect = [[[GraspOfTheDamnedEffect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
         [graspEffect setNumOfTicks:6];
+        [graspEffect setVisibilityPriority:10];
         [graspEffect setValuePerTick:-50];
         [graspEffect setTitle:@"grasp-of-the-damned-eff"];
         [graspEffect setAilmentType:AilmentCurse];
@@ -2022,23 +2133,10 @@
 
 @implementation SoulOfTorment
 + (id)defaultBoss {
-    SoulOfTorment *boss = [[SoulOfTorment alloc] initWithHealth:6040000 damage:0 targets:0 frequency:0.0 choosesMT:NO];
+    SoulOfTorment *boss = [[SoulOfTorment alloc] initWithHealth:5400000 damage:0 targets:0 frequency:0.0 choosesMT:NO];
     [boss setSpriteName:@"souloftorment_battle_portrait.png"];
     [boss setTitle:@"The Soul of Torment"];
     [boss setNamePlateTitle:@"Torment"];
-    
-    Attack *attack = [[[Attack alloc] initWithDamage:120 andCooldown:20] autorelease];
-    ContagiousEffect *contagious = [[[ContagiousEffect alloc] initWithDuration:10.0 andEffectType:EffectTypeNegative] autorelease];
-    [contagious setTitle:@"contagion"];
-    [contagious setNumOfTicks:10];
-    [contagious setValuePerTick:-20];
-    [contagious setAilmentType:AilmentPoison];
-    [attack setIconName:@"plague.png"];
-    [attack setTitle:@"Contagious Toxin"];
-    [attack setInfo:@"Plagues a target. If the target's is healed before the effect reaches 5 stacks it will spread to others."];
-    [attack setAppliedEffect:contagious];
-    [attack setRequiresDamageToApplyEffect:YES];
-    [boss addAbility:attack];
     
     [boss gainSoulDrain];
     
@@ -2066,15 +2164,12 @@
 
 - (void)raidDamageToRaid:(Raid*)raid forPlayers:(NSArray*)players
 {
-    for (Player *player in players) {
-        [player setEnergy:player.maximumEnergy];
-    }
     for (RaidMember *member in raid.livingMembers) {
         RepeatedHealthEffect *damage = [[[RepeatedHealthEffect alloc] initWithDuration:10.0 andEffectType:EffectTypeNegativeInvisible] autorelease];
         [damage setNumOfTicks:8];
         [damage setOwner:self];
         [damage setTitle:@"gather-souls"];
-        [damage setValuePerTick:-75];
+        [damage setValuePerTick:-50];
         [member addEffect:damage];
         [self.announcer displayParticleSystemWithName:@"skull_float.plist" onTarget:member];
     }
@@ -2082,7 +2177,7 @@
 
 - (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
 {
-    if (percentage != 100.0 && (int) percentage % 10 == 0) {
+    if (percentage == 99.0 || percentage == 95.0 || percentage == 90.0 || percentage == 85.0 || percentage == 45.0 || percentage == 37.0 || percentage == 28.0 || percentage == 20.0) {
         //Every 10 percent that isn't 100%...
         [self raidDamageToRaid:raid forPlayers:[NSArray arrayWithObject:player]];
     }
@@ -2090,44 +2185,104 @@
     if (percentage == 85.0) {
         [self.announcer announce:@"You will beg for death."];
         [self gainSoulDrain];
+        Soulshatter *ss = [[[Soulshatter alloc] init] autorelease];
+        [ss setKey:@"soulshatter"];
+        [ss setCooldown:35];
+        [ss setTimeApplied:30.0];
+        [ss setCooldownVariance:.8];
+        [self addAbility:ss];
     }
 
     if (percentage == 70.0) {
-        [self.announcer announce:@"Such glorious anguish"];
-        [self gainSoulDrain];
+        [[self abilityWithKey:@"soulshatter"] setIsDisabled:YES];
+        [self.announcer announce:@"I shall feast on your anguish"];
+        
+        ScentOfDeath *scent = [[[ScentOfDeath alloc] init] autorelease];
+        [scent setAbilityValue:300];
+        [scent setActivationTime:3.0];
+        [scent setCooldownVariance:.8];
+        [scent setKey:@"scent"];
+        [scent setCooldown:14.0];
+        [self addAbility:scent];
+        
+        Attack *attack = [[[Attack alloc] initWithDamage:120 andCooldown:26] autorelease];
+        ContagiousEffect *contagious = [[[ContagiousEffect alloc] initWithDuration:10.0 andEffectType:EffectTypeNegative] autorelease];
+        [contagious setTitle:@"contagion"];
+        [contagious setNumOfTicks:10];
+        [contagious setVisibilityPriority:10];
+        [contagious setValuePerTick:-20];
+        [contagious setAilmentType:AilmentPoison];
+        [attack setIconName:@"plague.png"];
+        [attack setTitle:@"Contagious Toxin"];
+        [attack setInfo:@"Plagues a target. If the target's is healed before the effect reaches 5 stacks it will spread to others."];
+        [attack setKey:@"contagious"];
+        [attack setRemovesPositiveEffects:YES];
+        [attack setAppliedEffect:contagious];
+        [attack setRequiresDamageToApplyEffect:YES];
+        [self addAbility:attack];
     }
     
-    if (percentage == 40.0) {
+    if (percentage == 50.0) {
+        [[self abilityWithKey:@"contagious"] setIsDisabled:YES];
+        [[self abilityWithKey:@"scent"] setIsDisabled:YES];
         [self.announcer announce:@"ENOUGH! YOU SHALL KNOW TRUE TORMENT."];
-        NSMutableArray *abilitiesToRemove = [NSMutableArray arrayWithCapacity:5];
         for (RaidMember *member in raid.livingMembers) {
             [member removeEffectsWithTitle:@"soul-drain"];
         }
         for (Ability *ability in self.abilities) {
             if ([ability.key isEqualToString:@"soul-drain"]){
-                [abilitiesToRemove addObject:ability];
+                [ability setIsDisabled:YES];
             }
         }
-        for (Ability *ab in abilitiesToRemove) {
-            [self removeAbility:ab];
-        }
+        
+        SpiritBarrier *barrier = [[[SpiritBarrier alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+        [barrier setTitle:@"spirit-barrier"];
+        [barrier setValuePerTick:-20];
+        [barrier setNumOfTicks:20];
+        [barrier setHealingToAbsorb:400];
+        
+        Attack *spiritBlock = [[[Attack alloc] initWithDamage:0 andCooldown:40.0] autorelease];
+        [spiritBlock setTimeApplied:20.0];
+        [spiritBlock setIgnoresGuardians:YES];
+        [spiritBlock setKey:@"spirit-barrier"];
+        [spiritBlock setTitle:@"Spirit Barrier"];
+        [spiritBlock setInfo:@"Hex's a player absorbing the next 400 healing cast on them.  When this absorption is depleted the barrier erupts reducing damage taken for all units by 75%."];
+        [spiritBlock setIconName:@"hex.png"];
+        [spiritBlock setAppliedEffect:barrier];
+        [self addAbility:spiritBlock];
+        
+        RaidDamage *cataclysm = [[[RaidDamage alloc] init] autorelease];
+        [cataclysm setKey:@"cataclysm"];
+        [cataclysm setCooldown:35.0];
+        [cataclysm setActivationTime:8.0];
+        [cataclysm setAbilityValue:2500];
+        [cataclysm setAttackParticleEffectName:nil];
+        [cataclysm setTitle:@"Cataclysm"];
+        [cataclysm setIconName:@"choking_cloud.png"];
+        [self addAbility:cataclysm];
         
         FocusedAttack *focusedAttack = [[[FocusedAttack alloc] initWithDamage:550 andCooldown:2.25] autorelease];
         [focusedAttack setFailureChance:.4];
         RepeatedHealthEffect *bleeding = [[[RepeatedHealthEffect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
         [focusedAttack setIconName:@"bleeding.png"];
         [bleeding setTitle:@"soul-bleed"];
+        [bleeding setSpriteName:@"bleeding.png"];
         [bleeding setDodgeChanceAdjustment:.1];
         [bleeding setMaxStacks:5];
         [bleeding setValuePerTick:-50];
         [bleeding setNumOfTicks:4];
         [focusedAttack setAppliedEffect:bleeding];
         [self addAbility:focusedAttack];
-        
-        [[self abilityWithKey:@"contagion"] setCooldown:6.0];
     }
     
     if (percentage == 20.0) {
+        [[self abilityWithKey:@"cataclysm"] setIsDisabled:YES];
+        [[self abilityWithKey:@"spirit-barrier"] setIsDisabled:YES];
+        for (Ability *ability in self.abilities) {
+            if ([ability.key isEqualToString:@"soul-drain"]){
+                [ability setIsDisabled:NO];
+            }
+        }
         [self.announcer announce:@"The Soul of Torment poisons your mind and clouds your vision."];
         Confusion *confusionAbility = [[[Confusion alloc] init] autorelease];
         [confusionAbility setCooldown:14.0];
@@ -2141,19 +2296,16 @@
         [self.announcer announce:@"YOUR SOULS WILL ANGUISH ALONE IN DARKNESS"];
     }
     
-    if (percentage == 2.0) {
+    if (percentage == 1.0) {
         [self.announcer announce:@"NO...NO...IT CANNOT BE...I CAN NOT BE DEFEATED!"];
     }
 }
 
 - (void)ownerDidExecuteAbility:(Ability *)ability
 {
-    if ([ability.key isEqualToString:@"shadow-nova"]){
-        RaidDamagePulse *pulse = (RaidDamagePulse*)ability;
-        NSTimeInterval tickTime = pulse.duration / pulse.numTicks;
-        for (int i = 0; i < pulse.numTicks; i++) {
-            [self.announcer displayParticleSystemOnRaidWithName:@"shadow_raid_burst.plist" delay:(tickTime * (i + 1))];
-        }
+    if ([ability.key isEqualToString:@"cataclysm"]) {
+        [self.announcer displayParticleSystemOnRaidWithName:@"shadow_raid_burst.plist" delay:0];
+        [self.announcer displayScreenShakeForDuration:1.5];
     }
 }
 @end

@@ -634,10 +634,11 @@
     if (delay == 0.0) {
         [self displayParticleSystemOnRaidWithName:name forDuration:0.0 offset:offset];
     } else {
-        [self runAction:[CCSequence actionOne:[CCDelayTime actionWithDuration:delay] two:[CCCallBlockN actionWithBlock:^(CCNode *node){
+        CCSequence *delayedParticle = [CCSequence actionOne:[CCDelayTime actionWithDuration:delay] two:[CCCallBlockN actionWithBlock:^(CCNode *node){
             GamePlayScene *gps = (GamePlayScene *)node;
             [gps displayParticleSystemOnRaidWithName:name forDuration:0.0 offset:offset];
-        }]]];
+        }]];
+        [self runAction:delayedParticle];
     }
 }
 

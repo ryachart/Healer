@@ -101,7 +101,7 @@
 {
     if (self.levelNumber == 4) {
         if (self.difficulty == 5) {
-            NSInteger brutalHealth = 75000;
+            NSInteger brutalHealth = 80000;
             Enemy *attackingImp = [self.enemies objectAtIndex:1];
             [attackingImp setThreatPriority:kThreatPriorityRandom];
             [attackingImp setMaximumHealth:brutalHealth];
@@ -115,7 +115,7 @@
             ProjectileAttack *bolts = [[[ProjectileAttack alloc] init] autorelease];
             [bolts setSpriteName:@"shadowbolt.png"];
             [bolts setExplosionParticleName:@"shadow_burst.plist"];
-            [bolts setAbilityValue:-120];
+            [bolts setAbilityValue:-300];
             [bolts setCooldown:4];
             [imp3 addAbility:bolts];
             

@@ -314,7 +314,7 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     [obj setObject:levelScores forKey:@"levelScores"];
     
     NSMutableArray *levelFails = [NSMutableArray arrayWithCapacity:highestLevelCompleted];
-    for (int i = 1; i <= highestLevelCompleted; i++){
+    for (int i = 1; i <= highestLevelCompleted + 1; i++){
         NSString *failedKey = [PlayerLevelFailed stringByAppendingFormat:@"-%i", i];
         NSInteger failedTimes = [[self.playerData objectForKey:failedKey] intValue];
         NSNumber *numberObj = [NSNumber numberWithInt:failedTimes];

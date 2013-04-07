@@ -47,11 +47,16 @@
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies;
+- (void)channelTickForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies;
+
 - (BOOL)checkFailed;
 - (void)activateAbility;
 
 - (void)willDamageTarget:(RaidMember*)target;
-- (void)startChannel:(float)channel;
+- (void)startChannel:(float)channel; //Zero ticks, purely visual
+- (void)startChannel:(float)channel withTicks:(NSInteger)numTicks;
+
+- (void)interrupt;
 @end
 
 
@@ -60,6 +65,7 @@
 @property (nonatomic, readwrite) BOOL ignoresGuardians;
 @property (nonatomic, retain) Effect *appliedEffect;
 @property (nonatomic, readwrite) BOOL requiresDamageToApplyEffect;
+@property (nonatomic, readwrite) BOOL removesPositiveEffects;
 - (RaidMember *)targetFromRaid:(Raid*)raid;
 - (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd;
 @end
@@ -275,4 +281,10 @@ typedef enum {
 
 @interface InterruptionAbility : Ability
 @property (nonatomic, retain) Effect *appliedEffectOnInterrupt;
+@end
+
+@interface Soulshatter : Ability
+@end
+
+@interface ScentOfDeath : Ability
 @end

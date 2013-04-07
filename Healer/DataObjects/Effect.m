@@ -112,6 +112,7 @@
     copied.visibilityPriority = self.visibilityPriority;
     copied.causesStun = self.causesStun;
     copied.healingReceivedMultiplierAdjustment = self.healingReceivedMultiplierAdjustment;
+    copied.causesReactiveDodge = self.causesReactiveDodge;
     return copied;
 }
 
@@ -164,11 +165,11 @@
     return NO;
 }
 
--(void)effectWillBeDispelled:(Raid*)raid player:(Player*)player{
+-(void)effectWillBeDispelled:(Raid*)raid player:(Player*)player enemies:(NSArray *)enemies{
     
 }
 
--(void)expire{
+-(void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta {
     //This gets called when an effect is removed, not to cause an effect to expire
 }
 
@@ -350,7 +351,7 @@
     }
 }
 
-- (void)expire
+- (void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
 {
     NSInteger absorptionUsed = self.amountToShield * self.stacks - self.target.absorb;
     NSInteger wastedAbsorb = self.amountToShield * self.stacks - absorptionUsed;
@@ -359,7 +360,7 @@
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:wastedAbsorb] andEventType:CombatEventTypeOverheal]];
     }
     
-    [super expire];
+    [super expireForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
 }
 @end
 
@@ -439,7 +440,7 @@
     [super reset];
 }
 
-- (void)expire{
+- (void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta{
     if (!self.target.isDead){
         if (self.shouldFail){
             [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:0 andEventType:CombatEventTypeDodge]];
@@ -478,7 +479,7 @@
             }
         }
     }
-    [super expire];
+    [super expireForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
 }
 @end
 
@@ -530,7 +531,7 @@
 @end
 
 @implementation CouncilPoisonball
--(void)expire{
+-(void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta {
     if (self.shouldFail){
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:0 andEventType:CombatEventTypeDodge]];
     }else{
@@ -543,7 +544,7 @@
         [poisonDoT setAilmentType:AilmentPoison];
         [self.target addEffect:poisonDoT];
         [poisonDoT release];
-        [super expire];
+        [super expireForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     }
 }
 
@@ -590,7 +591,7 @@
     return copy;
 }
 
--(void)effectWillBeDispelled:(Raid *)raid player:(Player *)player{
+-(void)effectWillBeDispelled:(Raid *)raid player:(Player *)player enemies:(NSArray *)enemies{
     for (RaidMember*member in raid.raidMembers){
         [member setHealth:member.health + (self.dispelDamageValue * self.owner.damageDoneMultiplier)];
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:self.dispelDamageValue * self.owner.damageDoneMultiplier] andEventType:CombatEventTypeDamage]];
@@ -622,8 +623,8 @@
 -(void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth{
     
 }
--(void)expire{
-    [super expire];
+-(void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta{
+    [super expireForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
 }
 @end
 
@@ -662,7 +663,7 @@
     }
 }
 
--(void)expire{
+-(void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta{
     if (self.target.healthPercentage <= effectivePercentage && !self.target.isDead){
         CombatEventType eventType = self.value > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
         [self.target setHealth:self.target.health + self.value];
@@ -722,9 +723,9 @@
     [reenableAbility release];
     [super dealloc];
 }
-- (void)expire{
+- (void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta{
     [self.reenableAbility setIsDisabled:NO];
-    [super expire];
+    [super expireForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
 }
 @end
 
@@ -865,7 +866,7 @@
 		self.isExpired = YES;
 	}
 }
-- (void)effectWillBeDispelled:(Raid *)raid player:(Player *)player {
+- (void)effectWillBeDispelled:(Raid *)raid player:(Player *)player enemies:(NSArray *)enemies {
     for (Effect *effect in self.target.activeEffects){
         if ([effect isKindOfEffect:self] && effect != self){
             effect.isExpired = YES;
@@ -1046,10 +1047,17 @@
 @end
 
 @implementation ContagiousEffect
+- (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
+{
+    if (self = [super initWithDuration:dur andEffectType:type]) {
+        self.numberSpreads = 1;
+    }
+    return self;
+}
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     if (self.isSpread) {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < self.numberSpreads; i++) {
             ContagiousEffect *spreadEffect = [self.copy autorelease];
             [spreadEffect setValuePerTick:spreadEffect.valuePerTick * 1.05];
             RaidMember *randomTarget = [raid randomLivingMember];
@@ -1181,6 +1189,7 @@
             self.healingToAbsorb -= healthDelta;
         } else {
             *newHealth = *newHealth - self.healingToAbsorb;
+            self.healingToAbsorb = 0;
             self.isExpired = YES;
         }
 	}
@@ -1213,5 +1222,59 @@
         }
     }
 }
+@end
 
+@implementation ConsumingCorruption
+- (id)copy
+{
+    ConsumingCorruption *copy = [super copy];
+    [copy setConsumptionThreshold:self.consumptionThreshold];
+    [copy setHealPercentage:self.healPercentage];
+    return copy;
+}
+
+- (void)tick
+{
+    if (self.target.healthPercentage <= self.consumptionThreshold) {
+        Enemy *enemyOwner = (Enemy*)self.owner;
+        [enemyOwner setHealth:enemyOwner.health + enemyOwner.maximumHealth * self.healPercentage];
+    }
+    [super tick];
+}
+@end
+
+@implementation UnstableToxin
+
+- (void)effectWillBeDispelled:(Raid *)raid player:(Player *)player enemies:(NSArray *)enemies
+{
+    Enemy *enemyOwner = (Enemy*)self.owner;
+    [enemyOwner stunForDuration:1.0];
+    [enemyOwner.announcer displayScreenShakeForDuration:1.0];
+    
+    for (RaidMember *member in raid.livingMembers) {
+        DelayedHealthEffect *explosion = [[[DelayedHealthEffect alloc] initWithDuration:.1 andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [explosion setValue:-100];
+        [explosion setOwner:self.owner];
+        [explosion setTitle:@"unstable-explosion"];
+        [member addEffect:explosion];
+    }
+}
+@end
+
+
+@implementation SpiritBarrier
+- (void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
+{
+    if (self.healingToAbsorb <= 0) {
+        [self.owner.announcer displayParticleSystemOnRaidWithName:@"purple_pulse.plist" delay:0.0];
+        for (RaidMember *member in raid.livingMembers) {
+            Effect *damageReduction = [[[Effect alloc] initWithDuration:8 andEffectType:EffectTypePositive] autorelease];
+            [damageReduction setDamageTakenMultiplierAdjustment:-.75];
+            [damageReduction setSpriteName:@"spirit_shell.png"];
+            [damageReduction setOwner:self.owner];
+            [damageReduction setTitle:@"spirit-shell-eff"];
+            [member addEffect:damageReduction];
+        }
+    }
+}
 @end

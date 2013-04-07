@@ -67,6 +67,7 @@ typedef enum {
 @property (nonatomic, readwrite) BOOL considerDodgeForDamage;
 @property (nonatomic, readwrite) NSInteger visibilityPriority;
 @property (nonatomic, readonly) NSInteger visibleStacks;
+@property (nonatomic, readwrite) BOOL causesReactiveDodge;
 - (void)reset;
 - (BOOL)isKindOfEffect:(Effect*)effect;
 //Weird fucking hacky solution for figuring out the owner in network play
@@ -78,8 +79,8 @@ typedef enum {
 - (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type;
 
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
-- (void)expire;
-- (void)effectWillBeDispelled:(Raid*)raid player:(Player*)player;
+- (void)expireForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
+- (void)effectWillBeDispelled:(Raid*)raid player:(Player*)player enemies:(NSArray *)enemies;
 - (void)targetDidCastSpell:(Spell*)spell;
 
 //Multiplayer
@@ -239,6 +240,7 @@ typedef enum {
 @end
 
 @interface ContagiousEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
+@property (nonatomic, readwrite) NSInteger numberSpreads; //Default 1
 @property (nonatomic, readwrite) BOOL isSpread;
 @end
 
@@ -259,10 +261,22 @@ typedef enum {
 @interface BurningInsanity : ExpireThresholdRepeatedHealthEffect
 @end
 
-@interface AbsorbsHealingEffect : Effect <HealthAdjustmentModifier>
+@interface AbsorbsHealingEffect : RepeatedHealthEffect <HealthAdjustmentModifier>
 @property (nonatomic, readwrite) NSInteger healingToAbsorb;
 @end
 
 @interface DelayedSetHealthEffect : DelayedHealthEffect
 //Value is the target health instead of the damage
+@end
+
+@interface ConsumingCorruption : RepeatedHealthEffect
+@property (nonatomic, readwrite) float consumptionThreshold;
+@property (nonatomic, readwrite) float healPercentage;
+@end
+
+@interface UnstableToxin : RepeatedHealthEffect
+@end
+
+@interface SpiritBarrier : AbsorbsHealingEffect
+
 @end

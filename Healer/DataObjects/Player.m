@@ -18,6 +18,7 @@
 @property (nonatomic, readwrite) BOOL isGodstouchApplied;
 @property (nonatomic, readwrite) NSTimeInterval godstouchTimeApplied;
 @property (nonatomic, readwrite) NSTimeInterval currentSpellCastTime;
+@property (nonatomic, readwrite) float dodgeRemaining;
 @end
 
 @implementation Player
@@ -424,6 +425,8 @@
 		
 	}
 	
+    self.dodgeRemaining -= timeDelta;
+    
     self.lastEnergyRegen+= timeDelta;
     float tickFactor = .1;
     if (self.lastEnergyRegen >= 1.0 * tickFactor)
@@ -464,6 +467,30 @@
         self.castStart = 0.0f;
         self.currentSpellCastTime = 0.0;
     }
+}
+
+- (BOOL)canDodge
+{
+    for (Effect *eff in self.activeEffects) {
+        if (eff.causesReactiveDodge)
+            return YES;
+    }
+    return NO;
+}
+
+- (BOOL)hasDodged
+{
+    return self.dodgeRemaining > 0;
+}
+
+- (void)dodge
+{
+    self.dodgeRemaining = 5.0;
+}
+
+- (void)setDodgeRemaining:(float)dodgeRemaining
+{
+    _dodgeRemaining = MAX(0, dodgeRemaining);
 }
 
 -(NSTimeInterval) remainingCastTime

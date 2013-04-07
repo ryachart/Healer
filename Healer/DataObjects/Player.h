@@ -60,6 +60,8 @@ typedef int CastingDisabledReason;
 @property (nonatomic, readwrite) float castStart;
 @property (nonatomic, readwrite) BOOL shouldAttack;
 @property (nonatomic, readwrite) BOOL needsArcaneBlessingShield;
+@property (nonatomic, readonly) BOOL hasDodged;
+@property (nonatomic, readonly) BOOL canDodge;
 
 //Temporal Combat Data
 @property (nonatomic, readwrite) float lastEnergyRegen;
@@ -79,6 +81,7 @@ typedef int CastingDisabledReason;
 - (BOOL)canCast;
 - (NSTimeInterval)remainingCastTime;
 - (void)interrupt;
+- (void)dodge;
 
 - (int)channelingBonus;
 - (void)startChanneling;

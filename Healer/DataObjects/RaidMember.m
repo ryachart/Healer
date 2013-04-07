@@ -145,7 +145,7 @@
         }
     }
     
-    if (randomPriorities.count > 1) {
+    if (randomPriorities.count >= 1) {
         return [randomPriorities objectAtIndex:arc4random() % randomPriorities.count];
     }
     return highestPriority;

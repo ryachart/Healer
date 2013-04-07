@@ -18,6 +18,7 @@
 #import "AbilityDescriptor.h"
 
 @interface Ability ()
+@property (nonatomic, readwrite) NSInteger numChannelTicks;
 @end
 
 @implementation Ability
@@ -54,6 +55,22 @@
     [super dealloc];
 }
 
+- (void)interrupt
+{
+    self.channelTimeRemaining = 0;
+    self.maxChannelTime = 0;
+    self.numChannelTicks = 0;
+}
+
+- (void)dispelBeneficialEffectsOnTarget:(RaidMember*)target
+{
+    for (Effect *effect in target.activeEffects){
+        if (effect.effectType == EffectTypePositive){
+            [effect setIsExpired:YES];
+        }
+    }
+}
+
 - (BOOL)isDisabled
 {
     return _isDisabled || self.owner.isDead;
@@ -85,8 +102,14 @@
 
 - (void)startChannel:(float)channel
 {
+    [self startChannel:channel withTicks:0];
+}
+
+- (void)startChannel:(float)channel withTicks:(NSInteger)numTicks
+{
     self.channelTimeRemaining = channel;
     self.maxChannelTime = channel;
+    self.numChannelTicks = numTicks;
 }
 
 - (BOOL)checkFailed{
@@ -121,8 +144,31 @@
         //This ability is on hold because another ability is activating
         self.timeApplied = MIN(self.timeApplied,_cooldown);
         self.channelTimeRemaining = 0; //Channeled abilities are interrupted if another ability is activating.
+        self.numChannelTicks = 0;
+    }
+    if (self.isChanneling) {
+        NSTimeInterval tickThreshold = self.maxChannelTime / self.numChannelTicks;
+        BOOL willCrossThreshold = NO;
+        NSTimeInterval nowTime = self.channelTimeRemaining;
+        NSTimeInterval nextTime = self.channelTimeRemaining - timeDelta;
+        for (int i = 0; i < self.numChannelTicks; i++) {
+            NSTimeInterval thisThreshold = tickThreshold * i;
+            if (nowTime >= thisThreshold && nextTime <= thisThreshold) {
+                willCrossThreshold = YES;
+                break;
+            }
+        }
+        if (willCrossThreshold) {
+            [self channelTickForRaid:raid players:players enemies:enemies];
+        }
     }
     self.channelTimeRemaining -= timeDelta;
+}
+
+- (void)channelTickForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
+{
+    //Subclass for desired effect
+    [self.owner ownerDidChannelTickForAbility:self];
 }
 
 - (void)activateAbility
@@ -199,7 +245,7 @@
         
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:thisDamage] andEventType:CombatEventTypeDamage]];
         [target setHealth:[target health] - thisDamage];
-        if (thisDamage > 0){
+        if (thisDamage > 0 && self.attackParticleEffectName){
             [self.owner.announcer displayParticleSystemWithName:self.attackParticleEffectName onTarget:target];
         }
         
@@ -252,6 +298,9 @@
         [targetsThisAttack addObject:target];
         NSInteger preHealth = target.health;
         [self damageTarget:target];
+        if (self.removesPositiveEffects) {
+            [self dispelBeneficialEffectsOnTarget:target];
+        }
         if (self.appliedEffect && (preHealth > target.health || !self.requiresDamageToApplyEffect) ){
             //Only apply the effect if we actually did damaww ge.
             Effect *applyThis = [self.appliedEffect copy];
@@ -610,11 +659,7 @@
     for (RaidMember *member in theRaid.raidMembers){
         [member setHealth:member.health - (self.abilityValue * self.owner.damageDoneMultiplier)];
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(self.abilityValue * self.owner.damageDoneMultiplier)]  andEventType:CombatEventTypeDamage]];
-        for (Effect *effect in member.activeEffects){
-            if (effect.effectType == EffectTypePositive){
-                [effect setIsExpired:YES];
-            }
-        }
+        [self dispelBeneficialEffectsOnTarget:member];
     }
     
     self.cooldown = arc4random() % 12 + 12;
@@ -1439,8 +1484,8 @@
             }
         }
         for (Effect* effect in effectsToRemove){
-            [effect effectWillBeDispelled:theRaid player:[players objectAtIndex:0]];
-            [effect expire];
+            [effect effectWillBeDispelled:theRaid player:[players objectAtIndex:0] enemies:enemies];
+            [effect expireForPlayers:players enemies:enemies theRaid:theRaid gameTime:0];
             [target removeEffect:effect];
         }
         
@@ -1609,19 +1654,25 @@
 
 @implementation RaidDamagePulse
 
+- (id)init {
+    if (self = [super init]){
+        self.attackParticleEffectName = nil;
+    }
+    return self;
+}
+
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
 {
+    [self startChannel:self.duration withTicks:self.numTicks];
+}
+
+- (void)channelTickForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    [super channelTickForRaid:theRaid players:players enemies:enemies];
     NSArray *targets = [theRaid livingMembers];
-    
     for (RaidMember *member in targets) {
-        RepeatedHealthEffect *damage = [[[RepeatedHealthEffect alloc] initWithDuration:self.duration andEffectType:EffectTypeNegativeInvisible] autorelease];
-        [damage setOwner:self.owner];
-        [damage setTitle:[NSString stringWithFormat:@"%@-%i-pulse", self.owner.sourceName, arc4random() % 20]];
-        [damage setNumOfTicks:self.numTicks];
-        [damage setValuePerTick:-(self.abilityValue/self.numTicks)];
-        [member addEffect:damage];
+        [self damageTarget:member forDamage:self.abilityValue / self.numTicks];
     }
-    [self startChannel:self.duration];
 }
 
 @end
@@ -2149,5 +2200,58 @@
         [player interrupt];
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:player value:[NSNumber numberWithFloat:2.0]  andEventType:CombatEventTypePlayerInterrupted]];
     }
+}
+@end
+
+@implementation Soulshatter
+- (id)init
+{
+    if (self = [super init]) {
+        self.info = @"Deals very high damage over time and reduces healing received by 25%.  Only targets Healers.";
+        self.iconName = @"grip.png";
+        self.title = @"Soulshatter";
+    }
+    return self;
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    for (Player *player in players) {
+        RepeatedHealthEffect *shatter = [[[RepeatedHealthEffect alloc] initWithDuration:16.0 andEffectType:EffectTypeNegative] autorelease];
+        [shatter setTitle:@"soul-shatter-eff"];
+        [shatter setNumOfTicks:4];
+        [shatter setValuePerTick:-350];
+        [shatter setHealingReceivedMultiplierAdjustment:-.25];
+        [shatter setSpriteName:self.iconName];
+        [shatter setOwner:self.owner];
+        [player addEffect:shatter];
+    }
+}
+@end
+
+@implementation ScentOfDeath
+
+- (id)init
+{
+    if (self = [super init]) {
+        self.title = @"Seek Death";
+        self.info  = @"Deals damage to any enemies below 80% health and removes all beneficial effects. This damage drains life.";
+        self.iconName = @"blood_aura.png";
+        self.attackParticleEffectName = @"blood_spurt.png";
+    }
+    return self;
+}
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    NSInteger numberHits = 0;
+    for (RaidMember *member in theRaid.livingMembers) {
+        if (member.healthPercentage < .8) {
+            [self dispelBeneficialEffectsOnTarget:member];
+            [self damageTarget:member];
+            numberHits++;
+        }
+    }
+    
+    [self.owner setHealth:self.owner.health + numberHits * self.abilityValue * 10];
 }
 @end

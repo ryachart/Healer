@@ -9,6 +9,7 @@
 #import "PlayerStatusView.h"
 #import "ClippingNode.h"
 #import "CCLabelTTFShadow.h"
+#import "BasicButton.h"
 
 #define ENERGYBAR_INSET_WIDTH 5.0
 #define ENERGYBAR_INSET_HEIGHT 5.0
@@ -19,6 +20,8 @@
 @property (nonatomic, assign) CCLabelTTFShadow *energyLabel;
 @property (nonatomic, assign) CCLabelTTFShadow *healthLabel;
 @property (nonatomic, readwrite) BOOL isTouched;
+@property (nonatomic, readwrite) CCMenu *dodgeButton;
+@property (nonatomic, readwrite) BOOL dodgeSelected;
 @end
 
 @implementation PlayerStatusView
@@ -110,6 +113,11 @@
 
 - (void)updateWithPlayer:(Player*)player
 {
+    if (self.dodgeSelected) {
+        [player dodge];
+        self.dodgeSelected = NO;
+    }
+    
 	[self.energyLabel setString:[NSString stringWithFormat:@"%i", (int)player.energy]];
     [self.healthLabel setString:[NSString stringWithFormat:@"%1.0f%%", player.healthPercentage * 100.0]];
     

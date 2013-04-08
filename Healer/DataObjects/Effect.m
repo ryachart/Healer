@@ -978,7 +978,7 @@
     return self;
 }
 
-- (void)expire {
+- (void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta {
     DelayedHealthEffect *finisher = [[[DelayedHealthEffect alloc] initWithDuration:.25 andEffectType:EffectTypeNegativeInvisible] autorelease];
     [finisher setValue:-60];
     [finisher setTitle:@"soulpris-finish"];
@@ -1063,7 +1063,6 @@
             RaidMember *randomTarget = [raid randomLivingMember];
             [randomTarget addEffect:spreadEffect];
         }
-        self.isExpired = YES;
         self.isSpread = NO;
     }
     [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
@@ -1201,7 +1200,7 @@
 
 @implementation DelayedSetHealthEffect
 
-- (void)expire{
+- (void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta{
     if (!self.target.isDead){
         if (self.shouldFail){
             [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:0 andEventType:CombatEventTypeDodge]];
@@ -1269,7 +1268,7 @@
         [self.owner.announcer displayParticleSystemOnRaidWithName:@"purple_pulse.plist" delay:0.0];
         for (RaidMember *member in raid.livingMembers) {
             Effect *damageReduction = [[[Effect alloc] initWithDuration:8 andEffectType:EffectTypePositive] autorelease];
-            [damageReduction setDamageTakenMultiplierAdjustment:-.75];
+            [damageReduction setDamageTakenMultiplierAdjustment:-.80];
             [damageReduction setSpriteName:@"spirit_shell.png"];
             [damageReduction setOwner:self.owner];
             [damageReduction setTitle:@"spirit-shell-eff"];

@@ -15,7 +15,7 @@
 #import "LaunchScene.h"
 #import "Talents.h"
 
-#define TestFlightToken @"a0f29ba29227f7587269ec6e6fc30455_NzU1NTQyMDEyLTA0LTI4IDIyOjQ4OjA4Ljk4NzkzMQ"
+#define TestFlightToken @"6352fe22-b170-4fd7-a38a-60ae0ac77d39"
 
 @implementation AppDelegate
 
@@ -24,7 +24,7 @@
 	// Init the window	
     _window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
-    //[TestFlight takeOff:TestFlightToken];
+    [TestFlight takeOff:TestFlightToken];
     
     [Parse setApplicationId:@"BajbrSl60Pz6ukDojWg8CAaUdCU7FoWr7UJCiJPs"
                   clientKey:@"2CSX0jPgh7K4X7PfWbmfPdyo3G8OfCqSa41JW4BZ"];

@@ -145,6 +145,7 @@
 
 - (void)redemptionDidTriggerOnTarget:(HealableTarget *)target {
     self.redemptionTimeApplied = 0.001;
+    [self.announcer announce:@"The light has redeemed a soul."];
 }
 
 - (void)triggerAvatar{

@@ -2246,7 +2246,7 @@
         [spiritBlock setIgnoresGuardians:YES];
         [spiritBlock setKey:@"spirit-barrier"];
         [spiritBlock setTitle:@"Spirit Barrier"];
-        [spiritBlock setInfo:@"Hex's a player absorbing the next 400 healing cast on them.  When this absorption is depleted the barrier erupts reducing damage taken for all units by 75%."];
+        [spiritBlock setInfo:@"Hex's a player absorbing the next 400 healing cast on them.  When this absorption is depleted the barrier erupts reducing damage taken for all units by 80%."];
         [spiritBlock setIconName:@"hex.png"];
         [spiritBlock setAppliedEffect:barrier];
         [self addAbility:spiritBlock];

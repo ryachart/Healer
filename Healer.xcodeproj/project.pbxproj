@@ -50,6 +50,9 @@
 		BF068CA61704F0BC00000C7F /* WidthScalingBackgroundSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF068CA51704F0BC00000C7F /* WidthScalingBackgroundSprite.m */; };
 		BF0DCF64156C6DEE005E74C7 /* ShopItemExtendedNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0DCF63156C6DEE005E74C7 /* ShopItemExtendedNode.m */; };
 		BF1111D716C5C80700A16F2F /* EnemyCastBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BF1111D616C5C80600A16F2F /* EnemyCastBar.m */; };
+		BF1DDBAC1711F52C0008C946 /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1DDBA81711F52C0008C946 /* libTestFlight.a */; };
+		BF1DDBAD1711F52C0008C946 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBA91711F52C0008C946 /* README.md */; };
+		BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBAA1711F52C0008C946 /* release_notes.md */; };
 		BF21071C1527C272001B93D7 /* GamePlayPauseLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */; };
 		BF21071D1527E171001B93D7 /* HealerStartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B45145E1382006D9266 /* HealerStartScene.m */; };
 		BF21071F15291E5F001B93D7 /* emitters in Resources */ = {isa = PBXBuildFile; fileRef = BF21071E15291E5F001B93D7 /* emitters */; };
@@ -67,9 +70,6 @@
 		BF4E508D155C9C4400FC4EE0 /* Ability.m in Sources */ = {isa = PBXBuildFile; fileRef = BF4E508C155C9C4400FC4EE0 /* Ability.m */; };
 		BF68CBA61537364B0096B6CF /* ClippingNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF68CBA51537364B0096B6CF /* ClippingNode.m */; };
 		BF69866C154C7B5F0016F25E /* BackgroundSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF69866B154C7B5F0016F25E /* BackgroundSprite.m */; };
-		BF698673154CE45A0016F25E /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF69866F154CE45A0016F25E /* libTestFlight.a */; };
-		BF698674154CE45A0016F25E /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF698670154CE45A0016F25E /* README.txt */; };
-		BF698675154CE45A0016F25E /* release_notes.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF698671154CE45A0016F25E /* release_notes.txt */; };
 		BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
 		BF730C4015ABC1BD00E09B81 /* MultiplayerQueueScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */; };
 		BF7660C216C0566600985F2E /* GradientBorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7660C116C0566600985F2E /* GradientBorderLayer.m */; };
@@ -629,6 +629,10 @@
 		BF0DCF63156C6DEE005E74C7 /* ShopItemExtendedNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopItemExtendedNode.m; sourceTree = "<group>"; };
 		BF1111D516C5C80600A16F2F /* EnemyCastBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnemyCastBar.h; sourceTree = "<group>"; };
 		BF1111D616C5C80600A16F2F /* EnemyCastBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EnemyCastBar.m; sourceTree = "<group>"; };
+		BF1DDBA81711F52C0008C946 /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
+		BF1DDBA91711F52C0008C946 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		BF1DDBAA1711F52C0008C946 /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
+		BF1DDBAB1711F52C0008C946 /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		BF21071A1527C271001B93D7 /* GamePlayPauseLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlayPauseLayer.h; sourceTree = "<group>"; };
 		BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlayPauseLayer.m; sourceTree = "<group>"; };
 		BF21071E15291E5F001B93D7 /* emitters */ = {isa = PBXFileReference; lastKnownFileType = folder; path = emitters; sourceTree = SOURCE_ROOT; };
@@ -659,10 +663,6 @@
 		BF68CBA51537364B0096B6CF /* ClippingNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClippingNode.m; sourceTree = "<group>"; };
 		BF69866A154C7B5F0016F25E /* BackgroundSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundSprite.h; sourceTree = "<group>"; };
 		BF69866B154C7B5F0016F25E /* BackgroundSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackgroundSprite.m; sourceTree = "<group>"; };
-		BF69866F154CE45A0016F25E /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
-		BF698670154CE45A0016F25E /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
-		BF698671154CE45A0016F25E /* release_notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.txt; sourceTree = "<group>"; };
-		BF698672154CE45A0016F25E /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		BF6CC5CE15022496000F1AFF /* PostBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostBattleScene.h; path = Scenes/PostBattleScene.h; sourceTree = "<group>"; };
 		BF6CC5CF15022496000F1AFF /* PostBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostBattleScene.m; path = Scenes/PostBattleScene.m; sourceTree = "<group>"; };
 		BF730C3E15ABC1BD00E09B81 /* MultiplayerQueueScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiplayerQueueScene.h; sourceTree = "<group>"; };
@@ -757,6 +757,7 @@
 				385B41A8163276E500710700 /* Accounts.framework in Frameworks */,
 				BFD8EC59160ED2E100BAF83A /* libChipmunk.a in Frameworks */,
 				BFD8EC5B160ED2E100BAF83A /* libkazmath.a in Frameworks */,
+				BF1DDBAC1711F52C0008C946 /* libTestFlight.a in Frameworks */,
 				BFD8EC5A160ED2E100BAF83A /* libcocos2d.a in Frameworks */,
 				BFA5464915AA0D3100F9B167 /* MobileCoreServices.framework in Frameworks */,
 				BFA5464715AA0CED00F9B167 /* CFNetwork.framework in Frameworks */,
@@ -771,7 +772,6 @@
 				38024DBA13C2564D003D36F2 /* UIKit.framework in Frameworks */,
 				38024DBC13C2564D003D36F2 /* Foundation.framework in Frameworks */,
 				38024DBE13C2564D003D36F2 /* CoreGraphics.framework in Frameworks */,
-				BF698673154CE45A0016F25E /* libTestFlight.a in Frameworks */,
 				BFA5463B15AA097800F9B167 /* Parse.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -799,6 +799,7 @@
 		38024DAE13C2564D003D36F2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF1DDBA71711F52B0008C946 /* TestFlight */,
 				BFD8EAFB160ED1FC00BAF83A /* cocos2d-ios.xcodeproj */,
 				385B41AB1632771F00710700 /* AdSupport.framework */,
 				385B41A9163276F800710700 /* libsqlite3.0.dylib */,
@@ -808,7 +809,6 @@
 				BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */,
 				BFA5464215AA0C3600F9B167 /* Security.framework */,
 				BFA5463A15AA097800F9B167 /* Parse.framework */,
-				BF69866E154CE45A0016F25E /* TestFlightSDK1.0 */,
 				386DD204145E07100086763E /* FontLabel */,
 				386DD210145E07100086763E /* TouchJSON */,
 				BFE3408A152D57A5008E84F1 /* GameKit.framework */,
@@ -1148,6 +1148,17 @@
 			name = Descriptors;
 			sourceTree = "<group>";
 		};
+		BF1DDBA71711F52B0008C946 /* TestFlight */ = {
+			isa = PBXGroup;
+			children = (
+				BF1DDBA81711F52C0008C946 /* libTestFlight.a */,
+				BF1DDBA91711F52C0008C946 /* README.md */,
+				BF1DDBAA1711F52C0008C946 /* release_notes.md */,
+				BF1DDBAB1711F52C0008C946 /* TestFlight.h */,
+			);
+			path = TestFlight;
+			sourceTree = "<group>";
+		};
 		BF21072015292726001B93D7 /* Animations */ = {
 			isa = PBXGroup;
 			children = (
@@ -1210,17 +1221,6 @@
 				38B0BB241657694300D31540 /* RatingCounterSprite.m */,
 			);
 			name = "UI Layers";
-			sourceTree = "<group>";
-		};
-		BF69866E154CE45A0016F25E /* TestFlightSDK1.0 */ = {
-			isa = PBXGroup;
-			children = (
-				BF69866F154CE45A0016F25E /* libTestFlight.a */,
-				BF698670154CE45A0016F25E /* README.txt */,
-				BF698671154CE45A0016F25E /* release_notes.txt */,
-				BF698672154CE45A0016F25E /* TestFlight.h */,
-			);
-			path = TestFlightSDK1.0;
 			sourceTree = "<group>";
 		};
 		BFA44C1416DC21A400F20C8A /* Deprecated */ = {
@@ -1872,8 +1872,6 @@
 				BFA2F13D16CF02AE00E639A9 /* sounds in Resources */,
 				BF21071F15291E5F001B93D7 /* emitters in Resources */,
 				38F1B45C15CA30D8008B2D99 /* backgrounds in Resources */,
-				BF698674154CE45A0016F25E /* README.txt in Resources */,
-				BF698675154CE45A0016F25E /* release_notes.txt in Resources */,
 				BF865F21159F8652007F5DBF /* healer@2x.png in Resources */,
 				BF865F23159F8655007F5DBF /* healer.png in Resources */,
 				BFF4198C15A27CF700BC0453 /* divinity.plist in Resources */,
@@ -1883,6 +1881,8 @@
 				BF4CD1CA1642D61600EB2336 /* DebugViewController.xib in Resources */,
 				BFD240CD16AC8E09007010D0 /* bosses in Resources */,
 				BFE66EDF16D9749800B9FBEE /* fonts in Resources */,
+				BF1DDBAD1711F52C0008C946 /* README.md in Resources */,
+				BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2050,6 +2050,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/TestFlightSDK1.0\"",
 					"\"$(SDKROOT)/usr/lib/system\"",
+					"\"$(SRCROOT)/TestFlight\"",
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
@@ -2083,6 +2084,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/TestFlightSDK1.0\"",
 					"\"$(SDKROOT)/usr/lib/system\"",
+					"\"$(SRCROOT)/TestFlight\"",
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
@@ -2141,6 +2143,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/TestFlightSDK1.0\"",
 					"\"$(SDKROOT)/usr/lib/system\"",
+					"\"$(SRCROOT)/TestFlight\"",
 				);
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;

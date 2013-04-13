@@ -221,6 +221,12 @@
         [self addChild:self.ftueArrow];
         
     }
+    [self selectFurthestShopCategory];
+}
+
+- (void)selectFurthestShopCategory
+{
+    [self configureShopForCategory:[Shop highestCategoryUnlocked]];
 }
 
 -(void)onEnterTransitionDidFinish {

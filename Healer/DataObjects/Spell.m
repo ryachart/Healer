@@ -417,14 +417,14 @@
 }
 
 +(id)defaultSpell{
-    Regrow *regrow = [[Regrow alloc] initWithTitle:@"Regrow" healAmnt:0 energyCost:25 * kCostEfficiencyScale castTime:0.0 andCooldown:1.0];
+    Regrow *regrow = [[Regrow alloc] initWithTitle:@"Regrow" healAmnt:0 energyCost:32 * kCostEfficiencyScale castTime:0.0 andCooldown:1.0];
     [regrow setDescription:@"Heals for a moderate amount over 12 seconds."];
     
     RepeatedHealthEffect *hotEffect = [[RepeatedHealthEffect alloc] initWithDuration:12.0 andEffectType:EffectTypePositive];
     [hotEffect setSpriteName:regrow.spriteFrameName];
     [hotEffect setTitle:@"regrow-effect"];
     [hotEffect setNumOfTicks:4];
-    [hotEffect setValuePerTick:150];
+    [hotEffect setValuePerTick:100];
     [regrow setAppliedEffect:hotEffect];
     [hotEffect release];
     return [regrow autorelease];

@@ -60,6 +60,10 @@
     self.channelTimeRemaining = 0;
     self.maxChannelTime = 0;
     self.numChannelTicks = 0;
+    if (self.isActivating) {
+        self.timeApplied = 0;
+        self.isActivating = NO;
+    }
 }
 
 - (void)dispelBeneficialEffectsOnTarget:(RaidMember*)target
@@ -281,7 +285,27 @@
 }
 
 - (RaidMember*)targetFromRaid:(Raid*)raid{
-    return self.ignoresGuardians ? raid.randomNonGuardianLivingMember : [raid randomLivingMember];
+    
+    RaidMember *target = [raid randomMemberWithComparator:^BOOL(RaidMember *member) {
+            if (member.isDead || (self.ignoresGuardians && [member isKindOfClass:[Guardian class]]) || (self.prefersTargetsWithoutVisibleEffects && [member effectCountOfType:EffectTypeNegative] > 0) || (self.ignoresPlayers && [member isKindOfClass:[Player class]])) {
+                return false;
+            }
+            return true;
+        }];
+    
+    if (!target) {
+        target = [raid randomMemberWithComparator:^BOOL(RaidMember *member) {
+            if (member.isDead || (self.ignoresGuardians && [member isKindOfClass:[Guardian class]]) || (self.ignoresPlayers && [member isKindOfClass:[Player class]])) {
+                return false;
+            }
+            return true;
+        }];
+    }
+    
+    if (!target) {
+        target = raid.randomLivingMember;
+    }
+    return target;
 }
 
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
@@ -292,7 +316,7 @@
     NSMutableArray *targetsThisAttack = [NSMutableArray arrayWithCapacity:self.numberOfTargets];
     for (int i = 0; i < self.numberOfTargets; i++) {
         RaidMember *target = [self targetFromRaid:theRaid];
-        if (target.isFocused || target.isInvalidAttackTarget || [targetsThisAttack containsObject:target]){
+        if (!target || target.isFocused || target.isInvalidAttackTarget || [targetsThisAttack containsObject:target]){
             continue; //We fail when trying to hit tanks with attacks
         }
         [targetsThisAttack addObject:target];
@@ -1109,7 +1133,7 @@
     if (self = [super init]){
         self.info = @"Hurls a bone at a target dealing moderate damage and causing the target to be stunned until healed to full health.";
         self.title = @"Bone Throw";
-        self.iconName = @"bone_throw.png";
+        self.iconName = @"bone.png";
     }
     return self;
 }
@@ -2253,5 +2277,22 @@
     }
     
     [self.owner setHealth:self.owner.health + numberHits * self.abilityValue * 10];
+}
+@end
+
+@implementation BlindingSmokeAttack
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    for (Player *player in players) {
+        AbsorbsHealingEffect *blindingSmoke = [[[AbsorbsHealingEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+        [blindingSmoke setSpriteName:self.iconName];
+        [blindingSmoke setCausesBlind:YES];
+        [blindingSmoke setHealingToAbsorb:300];
+        [blindingSmoke setOwner:self.owner];
+        [blindingSmoke setValuePerTick:-1];
+        [blindingSmoke setNumOfTicks:10];
+        [player addEffect:blindingSmoke];
+    }
+    [self.owner.announcer displayScreenFlash];
 }
 @end

@@ -86,8 +86,15 @@
             self.confusionCooldown = 0.0;
         }
     }
+    
+    BOOL isPlayerBlinded = player.isBlinded && !player.isDead;
 	for (RaidMemberHealthView *rmhv in self.raidViews){
 		[rmhv updateHealthForInterval:delta];
+        if (isPlayerBlinded && rmhv.member != player) {
+            [rmhv setVisible:NO];
+        } else {
+            [rmhv setVisible:YES];
+        }
 	}
 }
 

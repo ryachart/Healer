@@ -62,7 +62,6 @@
         }
         
         if (victory){
-            [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelComplete:%i",self.encounter.levelNumber]];
             if (!self.isMultiplayer){
                 [[PlayerDataManager localPlayer] completeLevel:self.encounter.levelNumber];
             }
@@ -87,7 +86,6 @@
             
             [[PlayerDataManager localPlayer] setLastSelectedLevel:-1]; //Clear it so it advances to the furthest level next time
         }else {
-            [TestFlight passCheckpoint:[NSString stringWithFormat:@"LevelFailed:%i",self.encounter.levelNumber]];
             [[PlayerDataManager localPlayer] failLevel:self.encounter.levelNumber];
             //Partial Progress Reward
             //10 % of the Reward per minute of encounter up to a maximum of 50% encounter reward

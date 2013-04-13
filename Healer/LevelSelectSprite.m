@@ -87,9 +87,7 @@
             [self.selectedRing runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCFadeTo actionWithDuration:1.0 opacity:120], [CCFadeTo actionWithDuration:1.0 opacity:255], nil]]];
         }
         if (!self.labelBackground) {
-           
             self.encounterNameLabel = [CCLabelTTF labelWithString:[Encounter encounterForLevel:self.levelNum isMultiplayer:NO].title fontName:@"TrebuchetMS-Bold" fontSize:24.0];
-            NSLog(@"%@-%@-%@",self.encounterNameLabel.string, self.encounterNameLabel.description, NSStringFromCGSize(self.encounterNameLabel.contentSize));
             self.encounterNameLabel.horizontalAlignment = kCCTextAlignmentCenter;
             self.encounterNameLabel.position = CGPointMake(self.encounterNameLabel.contentSize.width / 2, 0);
             

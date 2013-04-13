@@ -322,8 +322,8 @@
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell], [Purify defaultSpell], [Regrow defaultSpell], nil];
     
         numWizard = 3;
-        numArcher = 4;
-        numWarlock = 2;
+        numArcher = 3;
+        numWarlock = 3;
         numBerserker = 5;
         numChampion = 4;
         numGuardian = 1;
@@ -350,8 +350,8 @@
         [enemies addObject:galcyon];
         spells = [NSArray arrayWithObjects:[Heal defaultSpell], [Purify defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         numWizard = 3;
-        numArcher = 2;
-        numWarlock = 4;
+        numArcher = 3;
+        numWarlock = 3;
         numBerserker = 5;
         numChampion = 4;
         numGuardian = 1;
@@ -374,10 +374,10 @@
         spells = [NSArray arrayWithObjects:[Heal  defaultSpell], [GreaterHeal defaultSpell] , [Barrier defaultSpell], [HealingBurst defaultSpell], nil];
         
         numWizard = 3;
-        numArcher = 2;
+        numArcher = 3;
         numWarlock = 3;
         numBerserker = 5;
-        numChampion = 4;
+        numChampion = 3;
         numGuardian = 2;
         bossKey = @"twinchampions";
         info = @"You have crossed the eastern mountains through a path filled with ghouls, demons, and other terrible creatures.  Blood stained and battle worn, you and your allies have come across an encampment guarded by two skeletal champions.";
@@ -421,11 +421,11 @@
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numWizard = 3;
-        numArcher = 4;
-        numWarlock = 4;
-        numBerserker = 4;
-        numChampion = 3;
-        numGuardian = 1; //Blooddrinkers
+        numArcher = 3;
+        numWarlock = 3;
+        numBerserker = 5;
+        numChampion = 4;
+        numGuardian = 1;
         bossKey = @"gatekeeper";
         
         info = @"Still deeper beneath the encampment you have discovered a portal to Delsarn.  No mortal has ever set foot in this ancient realm of evil and unless you and your allies can dispatch the gatekeeper no mortal ever will.";
@@ -437,10 +437,10 @@
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numWizard = 3;
-        numWarlock = 4;
-        numArcher = 4;
-        numBerserker = 4;
-        numChampion = 3;
+        numArcher = 3;
+        numWarlock = 3;
+        numBerserker = 5;
+        numChampion = 4;
         numGuardian = 1;
         bossKey = @"skeletaldragon";
         
@@ -453,11 +453,11 @@
         [enemies addObject:[ColossusOfBone defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
-        numArcher = 4;
+        numArcher = 3;
         numWizard = 3;
-        numWarlock = 4;
-        numBerserker = 4;
-        numChampion = 3;
+        numWarlock = 3;
+        numBerserker = 5;
+        numChampion = 4;
         numGuardian = 1;
         bossKey = @"colossusbone";
         info = @"As the skeletal dragon falls and crashes to the ground you feel a rumbling in the distance.  Before you and your allies can even recover from the encounter with the skeletal dragon you are besieged by a monstrosity.";
@@ -468,11 +468,11 @@
         [enemies addObject:[OverseerOfDelsarn defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal  defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
-        numArcher = 4;
-        numWarlock = 4;
+        numArcher = 3;
+        numWarlock = 3;
         numWizard = 3;
-        numBerserker = 4;
-        numChampion = 3;
+        numBerserker = 5;
+        numChampion = 4;
         numGuardian = 1;
         bossKey = @"overseer";
         
@@ -484,11 +484,11 @@
         [enemies addObject:[TheUnspeakable defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
-        numArcher = 4;
-        numWarlock = 4;
+        numArcher = 3;
+        numWarlock = 3;
         numWizard = 3;
-        numBerserker = 4;
-        numChampion = 3;
+        numBerserker = 5;
+        numChampion = 4;
         numGuardian = 1;
         bossKey = @"unspeakable";
         
@@ -500,10 +500,10 @@
         [enemies addObject:[BaraghastReborn defaultBoss]];
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         numWizard = 3;
-        numWarlock = 4;
-        numArcher = 4;
-        numBerserker = 4;
-        numChampion = 3;
+        numWarlock = 3;
+        numArcher = 3;
+        numBerserker = 5;
+        numChampion = 4;
         numGuardian = 1;
         bossKey = @"baraghastreborn";
         
@@ -516,10 +516,10 @@
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numWizard = 3;
-        numWarlock = 4;
-        numArcher = 4;
-        numBerserker = 4;
-        numChampion = 3;
+        numWarlock = 3;
+        numArcher = 3;
+        numBerserker = 5;
+        numChampion = 4;
         numGuardian = 1;
         bossKey = @"avataroftorment";
         
@@ -532,10 +532,10 @@
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numWizard = 3;
-        numWarlock = 4;
-        numArcher = 4;
-        numBerserker = 4;
-        numChampion = 3;
+        numWarlock = 3;
+        numArcher = 3;
+        numBerserker = 5;
+        numChampion = 4;
         numGuardian = 1;
         bossKey = @"avataroftorment";
         
@@ -548,10 +548,10 @@
         spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numWizard = 3;
-        numWarlock = 4;
-        numArcher = 4;
-        numBerserker = 4;
-        numChampion = 3;
+        numWarlock = 3;
+        numArcher = 3;
+        numBerserker = 5;
+        numChampion = 4;
         numGuardian = 1;
         bossKey = @"souloftorment";
         

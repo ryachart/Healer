@@ -63,9 +63,11 @@
 @interface Attack : Ability
 @property (nonatomic, readwrite) NSInteger numberOfTargets; //Default 1
 @property (nonatomic, readwrite) BOOL ignoresGuardians;
+@property (nonatomic, readwrite) BOOL ignoresPlayers;
 @property (nonatomic, retain) Effect *appliedEffect;
 @property (nonatomic, readwrite) BOOL requiresDamageToApplyEffect;
 @property (nonatomic, readwrite) BOOL removesPositiveEffects;
+@property (nonatomic, readwrite) BOOL prefersTargetsWithoutVisibleEffects;
 - (RaidMember *)targetFromRaid:(Raid*)raid;
 - (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd;
 @end
@@ -287,4 +289,7 @@ typedef enum {
 @end
 
 @interface ScentOfDeath : Ability
+@end
+
+@interface BlindingSmokeAttack : Ability
 @end

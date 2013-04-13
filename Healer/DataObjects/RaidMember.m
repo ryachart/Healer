@@ -285,7 +285,7 @@
 -(id)init{
     if (self = [super initWithHealth:1246 damageDealt:664 andDmgFrequency:2.5 andPositioning:Melee]){
         self.title = @"Champion";
-        self.info = @"Reduces enemy damage by 10%.";
+        self.info = @"Improves ally's damage by 20%";
         self.dodgeChance = .07;
         self.lastAttack = arc4random() % 240 / 100.0f;
     }
@@ -296,13 +296,14 @@
     [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     
     if (self.isDead && !self.deathEffectApplied) {
-        Enemy *theBoss = (Enemy*)[enemies objectAtIndex:0];
-        Effect *damageImprovement = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
-        [damageImprovement setOwner:self];
-        [damageImprovement setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.battleID]];
-        [damageImprovement setDamageDoneMultiplierAdjustment:.1];
-        [theBoss addEffect:damageImprovement];
-        self.deathEffectApplied = YES;
+        for (RaidMember *member in raid.livingMembers) {
+            Effect *damageNerf = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
+            [damageNerf setOwner:self];
+            [damageNerf setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.battleID]];
+            [damageNerf setDamageDoneMultiplierAdjustment:-.2];
+            [member addEffect:damageNerf];
+            self.deathEffectApplied = YES;
+        }
     }
 }
 
@@ -371,7 +372,7 @@
 - (id)init{
     if (self = [super initWithHealth:1142 damageDealt:521 andDmgFrequency:2.0 andPositioning:Ranged]){
         self.title = @"Warlock";
-        self.info = @"Reduces enemy damage by 10%";
+        self.info = @"Reduces enemy damage by 20%";
         self.dodgeChance = .07;
         self.lastAttack = arc4random() % 190 / 100.0f;
     }
@@ -400,7 +401,7 @@
         Effect *damageImprovement = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
         [damageImprovement setOwner:self];
         [damageImprovement setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.battleID]];
-        [damageImprovement setDamageDoneMultiplierAdjustment:.1];
+        [damageImprovement setDamageDoneMultiplierAdjustment:.2];
         [theBoss addEffect:damageImprovement];
         self.deathEffectApplied = YES;
     }

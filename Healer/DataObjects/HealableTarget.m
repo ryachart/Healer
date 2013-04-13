@@ -43,7 +43,7 @@
     for (Effect *eff in self.activeEffects) {
         multiplier += [eff healingReceivedMultiplierAdjustment];
     }
-    return multiplier;
+    return MAX(0,multiplier);
 }
 
 - (float)damageTakenMultiplierAdjustment
@@ -67,7 +67,7 @@
         base += [eff healingDoneMultiplierAdjustment];
     }
     
-    return base;
+    return MAX(0, base);
 }
 
 -(float)damageDoneMultiplier{
@@ -76,7 +76,7 @@
     for (Effect *eff in self.activeEffects){
         base += [eff damageDoneMultiplierAdjustment];
     }
-    return base;
+    return MAX(0,base);
 }
 
 -(float)healthPercentage{

@@ -71,9 +71,9 @@
 - (void)checkInactive
 {
     if (self.enemy.inactive) {
-        [self setColor:ccc3(80, 80, 80)];
+        [self.enemySprite setColor:ccc3(80, 80, 80)];
     } else {
-        [self setColor:ccc3(255, 255, 255)];
+        [self.enemySprite setColor:ccc3(255, 255, 255)];
     }
 }
 

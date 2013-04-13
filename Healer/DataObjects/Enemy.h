@@ -49,7 +49,7 @@
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 
 - (float)healthPercentage; //In Hundreds form
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid*)raid andPlayer:(Player*)player;
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 
 - (void)configureBossForDifficultyLevel:(NSInteger)difficulty;
 

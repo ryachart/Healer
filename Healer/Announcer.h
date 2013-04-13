@@ -46,5 +46,5 @@
 - (void)displayAttackFromRaidMember:(RaidMember*)member onTarget:(Enemy*)target;
 
 - (void)displayCriticalPlayerDamage;
-
+- (void)displayScreenFlash;
 @end

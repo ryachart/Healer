@@ -11,6 +11,8 @@
 #define MAXIMUM_RAID_MEMBERS_ALLOWED 26
 /* A collection of RaidMembers */
 
+typedef BOOL (^RaidMemberComparator)(RaidMember*);
+
 @class Player;
 
 @interface Raid : NSObject
@@ -27,6 +29,8 @@
 - (RaidMember*)randomLivingMember;
 - (RaidMember*)randomNonGuardianLivingMember;
 - (RaidMember*)randomNonPlayerLivingMember;
+- (RaidMember*)randomNonPlayerNonGuardianLivingMember;
+- (RaidMember*)randomMemberWithComparator:(RaidMemberComparator)comparator;
 - (RaidMember*)randomLivingMemberWithPositioning:(Positioning)pos;
 - (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos;
 - (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos excludingTargets:(NSArray*)targets;

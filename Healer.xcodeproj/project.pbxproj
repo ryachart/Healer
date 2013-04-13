@@ -53,6 +53,7 @@
 		BF1DDBAC1711F52C0008C946 /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1DDBA81711F52C0008C946 /* libTestFlight.a */; };
 		BF1DDBAD1711F52C0008C946 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBA91711F52C0008C946 /* README.md */; };
 		BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBAA1711F52C0008C946 /* release_notes.md */; };
+		BF1DDBB017136C4E0008C946 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1DDBAF17136C4D0008C946 /* CoreLocation.framework */; };
 		BF21071C1527C272001B93D7 /* GamePlayPauseLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */; };
 		BF21071D1527E171001B93D7 /* HealerStartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B45145E1382006D9266 /* HealerStartScene.m */; };
 		BF21071F15291E5F001B93D7 /* emitters in Resources */ = {isa = PBXBuildFile; fileRef = BF21071E15291E5F001B93D7 /* emitters */; };
@@ -633,6 +634,7 @@
 		BF1DDBA91711F52C0008C946 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		BF1DDBAA1711F52C0008C946 /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
 		BF1DDBAB1711F52C0008C946 /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
+		BF1DDBAF17136C4D0008C946 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BF21071A1527C271001B93D7 /* GamePlayPauseLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlayPauseLayer.h; sourceTree = "<group>"; };
 		BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlayPauseLayer.m; sourceTree = "<group>"; };
 		BF21071E15291E5F001B93D7 /* emitters */ = {isa = PBXFileReference; lastKnownFileType = folder; path = emitters; sourceTree = SOURCE_ROOT; };
@@ -751,6 +753,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF1DDBB017136C4E0008C946 /* CoreLocation.framework in Frameworks */,
 				BFA2F13C16CEFEBF00E639A9 /* libCocosDenshion.a in Frameworks */,
 				385B41AC1632771F00710700 /* AdSupport.framework in Frameworks */,
 				385B41AA163276F900710700 /* libsqlite3.0.dylib in Frameworks */,
@@ -799,6 +802,7 @@
 		38024DAE13C2564D003D36F2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF1DDBAF17136C4D0008C946 /* CoreLocation.framework */,
 				BF1DDBA71711F52B0008C946 /* TestFlight */,
 				BFD8EAFB160ED1FC00BAF83A /* cocos2d-ios.xcodeproj */,
 				385B41AB1632771F00710700 /* AdSupport.framework */,

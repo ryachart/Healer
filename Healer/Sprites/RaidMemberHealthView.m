@@ -140,7 +140,7 @@
         [self.negativeEffectProgress setColor:ccBLACK];
         self.negativeEffectProgress.opacity = 122;
         [self.negativeEffectProgress setScale:.25];
-        [self.negativeEffectProgress setPosition:CGPointMake(86, 13)];
+        [self.negativeEffectProgress setPosition:CGPointMake(86, 13.5)];
         [self addChild:self.negativeEffectProgress z:11];
     }
     return self;

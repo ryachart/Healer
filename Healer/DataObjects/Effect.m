@@ -113,6 +113,7 @@
     copied.causesStun = self.causesStun;
     copied.healingReceivedMultiplierAdjustment = self.healingReceivedMultiplierAdjustment;
     copied.causesReactiveDodge = self.causesReactiveDodge;
+    copied.causesBlind = self.causesBlind;
     return copied;
 }
 
@@ -173,6 +174,11 @@
     //This gets called when an effect is removed, not to cause an effect to expire
 }
 
+- (void)player:(Player*)player causedHealing:(NSInteger)healing
+{
+    
+}
+
 - (void)setStacks:(NSInteger)stacks
 {
     if (stacks > self.maxStacks) {
@@ -188,7 +194,7 @@
 
 //EFF|TARGET|TITLE|DURATION|TYPE|SPRITENAME|OWNER|HDM|DDM|Ind
 -(NSString*)asNetworkMessage{
-    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@|%f|%f|%i|%f|%f|%i|%i|%i|%i", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner, healingDoneMultiplierAdjustment, damageDoneMultiplierAdjustment, self.isIndependent, castTimeAdjustment, _cooldownMultiplierAdjustment, _maximumAbsorbtionAdjustment, self.stacks, self.visibilityPriority, self.causesStun];
+    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@|%f|%f|%i|%f|%f|%i|%i|%i|%i|%i|%i", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner, healingDoneMultiplierAdjustment, damageDoneMultiplierAdjustment, self.isIndependent, castTimeAdjustment, _cooldownMultiplierAdjustment, _maximumAbsorbtionAdjustment, self.stacks, self.visibilityPriority, self.causesStun, self.causesBlind, self.causesConfusion];
     
     return message;
 }
@@ -208,6 +214,8 @@
         self.stacks = [[messageComponents objectAtIndex:13] intValue];
         self.visibilityPriority = [[messageComponents objectAtIndex:14] intValue];
         self.causesStun = [[messageComponents objectAtIndex:15] boolValue];
+        self.causesBlind = [[messageComponents objectAtIndex:16] boolValue];
+        self.causesConfusion = [[messageComponents objectAtIndex:17] boolValue];
     }
     return self;
 }
@@ -616,7 +624,7 @@
 -(void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
     if (*currentHealth < *newHealth){
 		NSInteger healthDelta = *currentHealth - *newHealth;
-		NSInteger newHealthDelta = healthDelta * .05;
+		NSInteger newHealthDelta = healthDelta * .15;
 		*newHealth = *currentHealth - newHealthDelta;
 	}
 }
@@ -897,6 +905,12 @@
 	if (*newHealth <= 0){
         if ([self.redemptionDelegate canRedemptionTrigger]){
             *newHealth = 300;
+            Effect *immunity = [[[Effect alloc] initWithDuration:2.5 andEffectType:EffectTypePositive] autorelease];
+            [immunity setTitle:@"immunity"];
+            [immunity setSpriteName:@"redemption.png"];
+            [immunity setOwner:self.owner];
+            [immunity setDamageTakenMultiplierAdjustment:-1.0];
+            [self.target addEffect:immunity];
             [self.redemptionDelegate redemptionDidTriggerOnTarget:self.target];
         }
     }
@@ -1276,4 +1290,64 @@
         }
     }
 }
+@end
+
+@implementation CorruptedMind
+
+- (id)copy
+{
+    CorruptedMind *copy = [super copy];
+    [copy setEffectForHealing:self.effectForHealing];
+    [copy setTickChangeForHealing:self.tickChangeForHealing];
+    return copy;
+}
+
+- (void)dealloc
+{
+    [_effectForHealing release];
+    [super dealloc];
+}
+
+- (void)player:(Player*)player causedHealing:(NSInteger)healing
+{
+    if (self.effectForHealing) {
+        Effect *eff = [[self.effectForHealing copy] autorelease];
+        [eff setOwner:self.owner];
+        [player addEffect:eff];
+    }
+    
+    self.valuePerTick += self.tickChangeForHealing;
+    self.timeApplied = MAX(0,self.timeApplied - .5);
+    self.numHasTicked = MAX(0, self.numHasTicked - 1);
+}
+@end
+
+@implementation PerfectHeal
+
+- (void)combatUpdateForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
+{
+    if (self.target.health < self.target.maximumHealth) {
+        NSInteger healing = 0;
+        NSInteger preHealth = self.target.health;
+        
+        self.target.health = self.target.maximumHealth;
+        
+        healing = self.target.health - preHealth;
+        
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:healing] andEventType:CombatEventTypeHeal]];
+    }
+}
+
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth
+{
+    if (*newHealth <= 0) {
+        *newHealth = 1;
+    }
+}
+
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth
+{
+    
+}
+
 @end

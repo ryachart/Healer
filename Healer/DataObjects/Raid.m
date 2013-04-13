@@ -83,6 +83,22 @@
 	return aliveMembers;
 }
 
+- (RaidMember*)randomMemberWithComparator:(RaidMemberComparator)comparator
+{
+    NSMutableArray *satisfyingMembers = [NSMutableArray arrayWithCapacity:self.raidMembers.count];
+    for (RaidMember *member in self.raidMembers) {
+        if (comparator(member)) {
+            [satisfyingMembers addObject:member];
+        }
+    }
+    
+    if (satisfyingMembers.count == 0) {
+        return nil;
+    }
+    
+    return [satisfyingMembers objectAtIndex:arc4random() % satisfyingMembers.count];
+}
+
 - (RaidMember*)randomLivingMemberWithPositioning:(Positioning)pos {
     RaidMember *selectedMember = nil;
     int safety = 0;
@@ -100,34 +116,42 @@
 }
 
 -(RaidMember*)randomLivingMember{
-    RaidMember *selectedMember = nil;
-    int safety = 0;
-    do {
-        selectedMember = [self.raidMembers objectAtIndex:arc4random() % self.raidMembers.count];
-        if (selectedMember.isDead)
-            selectedMember = nil;
-        safety++;
-        if (safety > 25){
-            break;
+    return [self randomMemberWithComparator:^BOOL(RaidMember *member) {
+        if (member.isDead) {
+            return false;
         }
-    }while (!selectedMember);
-    return selectedMember;
+        return true;
+    }];
 }
 
 - (RaidMember*)randomNonPlayerLivingMember
 {
-    RaidMember *selectedMember = nil;
-    int safety = 0;
-    do {
-        selectedMember = [self.raidMembers objectAtIndex:arc4random() % self.raidMembers.count];
-        if (selectedMember.isDead || [selectedMember isKindOfClass:[Player class]])
-            selectedMember = nil;
-        safety++;
-        if (safety > 25){
-            break;
+    return [self randomMemberWithComparator:^BOOL(RaidMember *member) {
+        if (member.isDead && ![member isKindOfClass:[Player class]]) {
+            return false;
         }
-    }while (!selectedMember);
-    return selectedMember;
+        return true;
+    }];
+}
+
+- (RaidMember*)randomNonGuardianLivingMember
+{
+    return [self randomMemberWithComparator:^BOOL(RaidMember *member) {
+        if (member.isDead && ![member isKindOfClass:[Guardian class]]) {
+            return false;
+        }
+        return true;
+    }];
+}
+
+- (RaidMember*)randomNonPlayerNonGuardianLivingMember
+{
+    return [self randomMemberWithComparator:^BOOL(RaidMember *member) {
+        if (member.isDead && ![member isKindOfClass:[Player class]] && ![member isKindOfClass:[Guardian class]]) {
+            return false;
+        }
+        return true;
+    }];
 }
 
 - (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos {
@@ -136,6 +160,7 @@
 
 
 - (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos excludingTargets:(NSArray*)exclTargets {
+    
     NSMutableArray *targets = [NSMutableArray arrayWithCapacity:numTargets];
     
     int safety = 0;
@@ -219,19 +244,6 @@
         }
     }
     return targets;
-}
-
-- (RaidMember*)randomNonGuardianLivingMember
-{
-    int safety = 0;
-    RaidMember *randomMember = nil;
-    while (!randomMember && safety < 25) {
-        randomMember = [self randomLivingMember];
-        if ([randomMember isKindOfClass:[Guardian class]]) {
-            randomMember = nil;
-        }
-    }
-    return randomMember;
 }
 
 @end

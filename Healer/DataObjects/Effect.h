@@ -68,6 +68,7 @@ typedef enum {
 @property (nonatomic, readwrite) NSInteger visibilityPriority;
 @property (nonatomic, readonly) NSInteger visibleStacks;
 @property (nonatomic, readwrite) BOOL causesReactiveDodge;
+@property (nonatomic, readwrite) BOOL causesBlind;
 - (void)reset;
 - (BOOL)isKindOfEffect:(Effect*)effect;
 //Weird fucking hacky solution for figuring out the owner in network play
@@ -81,6 +82,7 @@ typedef enum {
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 - (void)expireForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 - (void)effectWillBeDispelled:(Raid*)raid player:(Player*)player enemies:(NSArray *)enemies;
+- (void)player:(Player*)player causedHealing:(NSInteger)healing;
 - (void)targetDidCastSpell:(Spell*)spell;
 
 //Multiplayer
@@ -278,5 +280,14 @@ typedef enum {
 @end
 
 @interface SpiritBarrier : AbsorbsHealingEffect
+
+@end
+
+@interface CorruptedMind : RepeatedHealthEffect
+@property (nonatomic, retain) Effect *effectForHealing;
+@property (nonatomic, readwrite) NSInteger tickChangeForHealing;
+@end
+
+@interface PerfectHeal : Effect <HealthAdjustmentModifier>
 
 @end

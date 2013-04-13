@@ -143,6 +143,18 @@
     return NO;
 }
 
+- (BOOL)isBlinded
+{
+    BOOL blinded = NO;
+    for (Effect *effect in self.activeEffects){
+        if (effect.causesBlind){
+            blinded = YES;
+            break;
+        }
+    }
+    return blinded;
+}
+
 - (void)redemptionDidTriggerOnTarget:(HealableTarget *)target {
     self.redemptionTimeApplied = 0.001;
     [self.announcer announce:@"The light has redeemed a soul."];
@@ -677,16 +689,25 @@
     
     if (amount > 0){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:loggedAmount] eventType:CombatEventTypeHeal critical:critical]];
+        
+        for (Effect *eff in target.activeEffects) {
+            [eff player:self causedHealing:amount];
+        }
     }
     
     if (overhealing > 0){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:overhealing] andEventType:CombatEventTypeOverheal]];
     }
+    
+
 }
 
 - (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical{
     if (amount > 0){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:amount] eventType:CombatEventTypeHeal critical:critical]];
+        for (Effect *eff in target.activeEffects) {
+            [eff player:self causedHealing:amount];
+        }
     }
     if (overhealing > 0){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:overhealing] andEventType:CombatEventTypeOverheal]];

@@ -33,6 +33,8 @@
 #import "TalentScene.h"
 
 #define DEBUG_AUTO_WIN false
+#define DEBUG_IMMUNITIES false
+#define DEBUG_PERFECT_HEALS true
 
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812
@@ -54,6 +56,7 @@
 @property (nonatomic, assign) EnemiesLayer *enemiesLayer;
 @property (nonatomic, assign) GamePlayFTUELayer *ftueLayer;
 @property (nonatomic, assign) CCMenu *pauseButton;
+@property (nonatomic, assign) CCLayerColor *screenFlashLayer;
 @end
 
 @implementation GamePlayScene
@@ -135,6 +138,9 @@
         [self.gradientBorder setOpacity:0];
         [self addChild:self.gradientBorder];
         
+        self.screenFlashLayer = [[[CCLayerColor alloc] initWithColor:ccc4(255, 255, 255, 0)] autorelease];
+        [self addChild:self.screenFlashLayer];
+        
         _paused = YES;
         for (Enemy *enemy in self.encounter.enemies) {
             [enemy setLogger:self];
@@ -156,6 +162,10 @@
         [self.enemiesLayer setPosition:CGPointMake(0, 408)];
         [self addChild:self.enemiesLayer];
         
+        CCParticleSystemQuad *castingEffect = [[ParticleSystemCache sharedCache] systemForKey:@"swirly_casty.png"];
+        [castingEffect setPosition:CGPointMake(54, 280)];
+        [self addChild:castingEffect];
+        
         CCSprite *playerView = [CCSprite spriteWithSpriteFrameName:@"healer-portrait.png"];
         [playerView setPosition:CGPointMake(130, 180)];
         [self addChild:playerView];
@@ -168,6 +178,7 @@
         self.playerMoveButton = [[[PlayerMoveButton alloc] init] autorelease];
         [self.playerMoveButton setPosition:CGPointMake(-280, -324)];
         [self.playerCastBar addChild:self.playerMoveButton];
+        
         
         self.announcementLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
         [self.announcementLabel setPosition:CGPointMake(512, 440)];
@@ -243,6 +254,23 @@
         for (Player *player in self.players) {
             [self.raid addPlayer:player];
         }
+        
+#if DEBUG_IMMUNITIES
+        for (RaidMember *member in self.raid.livingMembers) {
+            Effect *immunity = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
+            [immunity setOwner:self.player];
+            [immunity setDamageTakenMultiplierAdjustment:-1];
+            [member addEffect:immunity];
+        }
+#endif
+
+#if DEBUG_PERFECT_HEALS
+        for (RaidMember *member in self.raid.livingMembers) {
+            PerfectHeal *immunity = [[[PerfectHeal alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
+            [immunity setOwner:self.player];
+            [member addEffect:immunity];
+        }
+#endif
         
         NSArray *raidMembers = [self.raid raidMembers];
         self.selectedRaidMembers = [[[NSMutableArray alloc] initWithCapacity:5] autorelease];
@@ -408,6 +436,8 @@
     if ([PlayerDataManager localPlayer].ftueState == FTUEStateAbilityIconSelected) {
         [PlayerDataManager localPlayer].ftueState = FTUEStateBattle1Finished;
     }
+    
+    [self updateUIForTime:0];
     
     [self.playerCastBar runAction:[CCFadeTo actionWithDuration:.5 opacity:0]];
     [self.enemiesLayer endBattle];
@@ -784,6 +814,12 @@
     [breathEffect setDuration:duration];
     [breathEffect setPosition:CGPointMake(512, 700)];
     [self addChild:breathEffect z:100 tag:PAUSEABLE_TAG];
+}
+
+- (void)displayScreenFlash
+{
+    [self.screenFlashLayer setOpacity:255];
+    [self.screenFlashLayer runAction:[CCFadeTo actionWithDuration:.25 opacity:0]];
 }
 
 - (void)displayCriticalPlayerDamage
@@ -1166,17 +1202,7 @@
         
     }
     
-	//Update UI
-	[self.raidView updateRaidHealthWithPlayer:self.player andTimeDelta:deltaT];
-	[self.bossHealthView updateHealth];
-	[self.playerCastBar update];
-	[self.playerStatusView updateWithPlayer:self.player];
-	[self.alertStatus setString:[self.player statusText]];
-	[self.spellView1 updateUI];
-	[self.spellView2 updateUI];
-	[self.spellView3 updateUI];
-	[self.spellView4 updateUI];
-    [self.enemiesLayer update];
+    [self updateUIForTime:deltaT];
 	
     
 	//Determine if there will be another iteration of the gamestate
@@ -1210,6 +1236,20 @@
             
         }
     }
+}
+
+- (void)updateUIForTime:(ccTime)deltaT
+{
+    [self.raidView updateRaidHealthWithPlayer:self.player andTimeDelta:deltaT];
+	[self.bossHealthView updateHealth];
+	[self.playerCastBar update];
+	[self.playerStatusView updateWithPlayer:self.player];
+	[self.alertStatus setString:[self.player statusText]];
+	[self.spellView1 updateUI];
+	[self.spellView2 updateUI];
+	[self.spellView3 updateUI];
+	[self.spellView4 updateUI];
+    [self.enemiesLayer update];
 }
 
 -(void)beginChanneling{

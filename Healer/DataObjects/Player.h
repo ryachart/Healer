@@ -62,6 +62,7 @@ typedef int CastingDisabledReason;
 @property (nonatomic, readwrite) BOOL needsArcaneBlessingShield;
 @property (nonatomic, readonly) BOOL hasDodged;
 @property (nonatomic, readonly) BOOL canDodge;
+@property (nonatomic, readonly) BOOL isBlinded;
 
 //Temporal Combat Data
 @property (nonatomic, readwrite) float lastEnergyRegen;

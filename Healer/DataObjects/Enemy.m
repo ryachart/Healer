@@ -266,16 +266,15 @@
 }
 
 
--(void)healthPercentageReached:(float)percentage withRaid:(Raid*)raid andPlayer:(Player*)player{
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     //The main entry point for health based triggers
 }
 
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
-    Player *player = [players objectAtIndex:0]; //The first player is the local player
     for (int i = 100; i >= (int)self.healthPercentage; i--){
         if (!healthThresholdCrossed[i] && self.healthPercentage <= (float)i){
-            [self healthPercentageReached:i withRaid:raid andPlayer:player];
+            [self healthPercentageReached:i forPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
             healthThresholdCrossed[i] = YES;
         }
     }
@@ -375,7 +374,7 @@
     }
 }
 
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     if (percentage == 75.0){
         [self.announcer announce:@"A putrid limb falls from the ghoul..."];
         self.autoAttack.abilityValue *= .9;
@@ -454,7 +453,7 @@
     }
 }
 
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     if (percentage == 75.0 || percentage == 50.0 || percentage == 25.0 || percentage == 10.0){
         [[self abilityWithKey:@"frenzy"] activateAbility];
     }
@@ -516,7 +515,7 @@
     }
 }
 
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta  {
     
     if (percentage == 50.0 || percentage == 75.0 || percentage == 25.0){
         //Trigger Flame Breath
@@ -543,7 +542,7 @@
     return [boss autorelease];
 }
 
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     if (percentage == 99.0){
         RandomPotionToss *potionAbility = (RandomPotionToss*)[self abilityWithKey:@"potions"];
         [potionAbility triggerAbilityAtRaid:raid];
@@ -551,6 +550,14 @@
         
         [potionAbility setActivationTime:potionAbility.activationTime / 2];
         [potionAbility setCooldown:potionAbility.cooldown / 2];
+    }
+    
+    if (self.difficulty == 5) {
+        if (percentage == 75.0 || percentage == 50.0 || percentage == 25.0) {
+            RandomPotionToss *potionAbility = (RandomPotionToss*)[self abilityWithKey:@"potions"];
+            [potionAbility triggerAbilityAtRaid:raid];
+            [self.announcer announce:@"An imp angrily hurls the entire case of flasks at you!"];
+        }
     }
     
     if (percentage == 25.0){
@@ -635,7 +642,7 @@
     }
 }
 
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     if (percentage == 96.0 || percentage == 74.0 || percentage == 50.0 || percentage == 29.0){
         [self.announcer announce:@"The Akarus pulls its enormous branches back to lash out at your allies."];
         [[self abilityWithKey:@"branch-attack"] activateAbility];
@@ -662,7 +669,7 @@
     return [boss autorelease];
 }
 
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     
     if (percentage == 100.0){
         [self.announcer announce:@"A putrid green mist fills the area..."];
@@ -731,7 +738,7 @@
     }
 }
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta 
 {
     if (percentage == 1.0) {
         [self ravagerDiedFocusing:[(FocusedAttack*)self.autoAttack focusTarget] andRaid:raid];
@@ -824,7 +831,7 @@
     }
 }
 
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+-(void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta{
     if (((int)percentage) % 20 == 0 && percentage != 100){
         [self burstPussBubbleOnRaid:raid];
     }
@@ -843,6 +850,7 @@
         [corrEff setTitle:@"consuming-corruption"];
         
         Attack *consumingCorruption = [[[Attack alloc] initWithDamage:0 andCooldown:30.0] autorelease];
+        [consumingCorruption setPrefersTargetsWithoutVisibleEffects:YES];
         [consumingCorruption setIgnoresGuardians:YES];
         [consumingCorruption setRequiresDamageToApplyEffect:NO];
         [consumingCorruption setAbilityValue:100];
@@ -873,6 +881,7 @@
     [poisonEffect setTitle:@"trulzar-poison1"];
     
     Attack *poisonAttack = [[[Attack alloc] initWithDamage:100 andCooldown:10] autorelease];
+    [poisonAttack setPrefersTargetsWithoutVisibleEffects:YES];
     [poisonAttack setAttackParticleEffectName:@"poison_cloud.plist"];
     [poisonAttack setKey:@"poison-attack"];
     [poisonAttack setIconName:@"poison.png"];
@@ -925,7 +934,20 @@
         [unstable setNumOfTicks:20];
         [unstable setAilmentType:AilmentPoison];
         
-        self.poisonNova.cooldown = 90;
+        self.poisonNova.cooldown = 75;
+        
+        Attack *unstableToxin = [[[Attack alloc] initWithDamage:0 andCooldown:18.0] autorelease];
+        [unstableToxin setPrefersTargetsWithoutVisibleEffects:YES];
+        [unstableToxin setKey:@"unstable"];
+        [unstableToxin setTimeApplied:10.0];
+        unstableToxin.failureChance = 0.0;
+        [unstableToxin setActivationTime:1.5];
+        [unstableToxin setRequiresDamageToApplyEffect:NO];
+        [unstableToxin setTitle:@"Unstable Toxin"];
+        [unstableToxin setInfo:@"A strange poison that will explode and stun Trulzar for a brief time when removed with Purify."];
+        [unstableToxin setIconName:@"curse.png"];
+        [unstableToxin setAppliedEffect:unstable];
+        [self addAbility:unstableToxin];
         
         RaidDamagePulse *pulse = [[[RaidDamagePulse alloc] init] autorelease];
         [pulse setIconName:@"poison_explosion.png"];
@@ -938,18 +960,6 @@
         [pulse setCooldown:61.0];
         [pulse setTimeApplied:40.0];
         [self addAbility:pulse];
-        
-        Attack *unstableToxin = [[[Attack alloc] initWithDamage:0 andCooldown:18.0] autorelease];
-        [unstableToxin setKey:@"unstable"];
-        [unstableToxin setTimeApplied:10.0];
-        unstableToxin.failureChance = 0.0;
-        [unstableToxin setActivationTime:1.5];
-        [unstableToxin setRequiresDamageToApplyEffect:NO];
-        [unstableToxin setTitle:@"Unstable Toxin"];
-        [unstableToxin setInfo:@"A strange poison that will explode and stun Trulzar for a brief time when removed with Purify."];
-        [unstableToxin setIconName:@"curse.png"];
-        [unstableToxin setAppliedEffect:unstable];
-        [self addAbility:unstableToxin];
     }
 }
 
@@ -966,7 +976,7 @@
     [poisonEffect release];
 }
 
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+-(void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta{
     
     if (percentage == 99.0) {
         [self.announcer announce:@"\"You've arrived just in time.  Your shallow graves were getting cold.\""];
@@ -1032,10 +1042,69 @@
     return self;
 }
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
+- (NSInteger)maximumHealth {
+    float challengeMultiplier = 1.0;
+    
+    switch (self.difficulty) {
+        case 1:
+            challengeMultiplier = .6;
+            break;
+        case 2:
+            challengeMultiplier = .8;
+            break;
+        case 4:
+        case 5:
+            challengeMultiplier = 1.15;
+            break;
+    }
+    
+    return [super maximumHealth] * challengeMultiplier;
+    
+}
+
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     if (percentage == 99.0) {
-        [self.announcer announce:@"\"So you defeated Trulzar? Bah.  His Toxins are so weak.  Try mine.\""];
+        [self.announcer announce:@"\"So you defeated Trulzar? His Magics are so weak.\""];
+    }
+    
+    if (percentage == 20.0) {
+        [self.announcer announce:@"Grimgon shouts, \"You worthless fool.  These mortals are going to destroy you.\""];
+        
+        for (Enemy *enemy in enemies) {
+            if ([enemy isKindOfClass:[Grimgon class]]) {
+                [enemy setInactive:NO];
+            }
+        }
+    }
+}
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    
+    if (difficulty == 5) {
+        EnsureEffectActiveAbility *eea = (EnsureEffectActiveAbility*)[self abilityWithKey:@"explosive-toxin"];
+        
+        RaidDamageOnDispelStackingRHE *eff =  (RaidDamageOnDispelStackingRHE*)[eea ensuredEffect];
+        
+        eff.valuePerTick = -12;
+        eff.dispelDamageValue = -90;
+        
+        RaidDamageOnDispelStackingRHE *poison = [[[RaidDamageOnDispelStackingRHE alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegative] autorelease];
+        [poison setTitle:@"roth_poison2"];
+        [poison setAilmentType:AilmentPoison];
+        [poison setNumOfTicks:20];
+        [poison setMaxStacks:50];
+        [poison setValuePerTick:-12];
+        [poison setDispelDamageValue:-90];
+        
+        EnsureEffectActiveAbility *eeaa = [[[EnsureEffectActiveAbility alloc] init] autorelease];
+        [eeaa setKey:@"explosive-toxin2"];
+        [eeaa setTitle:@"Explosive Toxin"];
+        [eeaa setIconName:@"poison.png"];
+        [eeaa setEnsuredEffect:poison];
+        [self addAbility:eeaa];
     }
 }
 
@@ -1043,10 +1112,28 @@
 
 @implementation Grimgon
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     if (percentage == 99.0) {
-        self.inactive = NO;
-        [self.announcer announce:@"Grimgon chuckles at Galcyon's failure and steps forward."];
+        if (self.difficulty < 5) {
+            self.inactive = NO;
+            [self.announcer announce:@"Grimgon chuckles at Galcyon's failure and steps forward."];
+        } 
+    }
+    
+    if (self.difficulty == 5) {
+        if (percentage == 20.0) {
+            [self.announcer announce:@"Grimgon shouts, \"Teritha, together we can destroy these insects!."];
+            
+            for (Enemy *enemy in enemies) {
+                if ([enemy isKindOfClass:[Teritha class]]) {
+                    [enemy setInactive:NO];
+                }
+            }
+        }
+        
+        if (percentage == 18.0) {
+            [self.announcer announce:@"Teritha shouts, \"Grimgon, you fool.  Must I do everything myself?"];
+        }
     }
 }
 
@@ -1089,13 +1176,50 @@
     return self;
 }
 
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    
+    if (difficulty == 5) {
+        Effect *healingBuff = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositive] autorelease];
+        [healingBuff setTitle:@"insight-eff"];
+        [healingBuff setSpriteName:@"insight.png"];
+        [healingBuff setOwner:self];
+        [healingBuff setHealingDoneMultiplierAdjustment:.04];
+        [healingBuff setEnergyRegenAdjustment:.04];
+        [healingBuff setMaxStacks:99];
+        
+        CorruptedMind *corrupted = [[[CorruptedMind alloc] initWithDuration:8 andEffectType:EffectTypeNegative] autorelease];
+        [corrupted setValuePerTick:-100];
+        [corrupted setNumOfTicks:8];
+        [corrupted setTickChangeForHealing:-20];
+        [corrupted setEffectForHealing:healingBuff];
+        [corrupted setTitle:@"corrupted-mind"];
+
+        Attack *corruptedMind = [[[Attack alloc] initWithDamage:300 andCooldown:10.0] autorelease];
+        [corruptedMind setPrefersTargetsWithoutVisibleEffects:YES];
+        [corruptedMind setIgnoresPlayers:YES];
+        [corruptedMind setIconName:@"corrupt_mind.png"];
+        [corruptedMind setRequiresDamageToApplyEffect:NO];
+        [corruptedMind setActivationTime:1.5];
+        [corruptedMind setTitle:@"Corrupt Mind"];
+        [corruptedMind setInfo:@"A curse that deals damage and each time the afflicted unit is healed the Healer gains 4% more Healing and Mana Regen."];
+        [corruptedMind setAppliedEffect:corrupted];
+        [self addAbility:corruptedMind];
+    }
+}
+
 @end
 
 @implementation Teritha
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     if (percentage == 99.0) {
-        self.inactive = NO;
-        [self.announcer announce:@"\"These pitiful fools are worthless.  I will finish you myself!\""];
+        if (self.difficulty < 5) {
+            [[self abilityWithKey:@"ultimate-corruption"] setTimeApplied:0];
+            
+            self.inactive = NO;
+            [self.announcer announce:@"\"These pitiful fools are worthless.  I will finish you myself!\""];
+        }
     }
     
     if (percentage == 80.0) {
@@ -1155,6 +1279,28 @@
     }
     return self;
 }
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    if (self.difficulty == 5) {
+        RaidApplyEffect *wp = (RaidApplyEffect*)[self abilityWithKey:@"wracking-pain"];
+        
+        [(WrackingPainEffect*)wp.appliedEffect setThreshold:.35];
+        [wp setInfo:@"Teritha covers your allies in a malicious curse that deals damage until their health is reduced to 35% or less."];
+        
+        RaidDamagePulse *pulse = [[[RaidDamagePulse alloc] init] autorelease];
+        [pulse setIconName:@"poison_explosion.png"];
+        [pulse setActivationTime:2.0];
+        [pulse setTitle:@"Ultimate Corruption"];
+        [pulse setKey:@"ultimate-corruption"];
+        [pulse setAbilityValue:2500];
+        [pulse setNumTicks:4];
+        [pulse setDuration:12.0];
+        [pulse setCooldown:200.0];
+        [self addAbility:pulse];
+    }
+}
 @end
 
 @implementation Sarroth
@@ -1166,9 +1312,9 @@
     [self.announcer announce:@"Sarroth sweeps through your allies with spinning blades"];
 }
 
--(void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+-(void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta{
     if (percentage == 99.0) {
-        [self.announcer announce:@"\"The Master is Generous.  He provides us more lambs for the slaughter.\""];
+        [self.announcer announce:@"\"The Master is Generous.  He provides lambs for the slaughter.\""];
     }
     if (percentage == 80.0 || percentage == 60.0 || percentage == 40.0 || percentage == 20.0){
         [self axeSweepThroughRaid:raid];
@@ -1208,6 +1354,15 @@
         [gushingWound setAppliedEffect:gushingWoundEffect];
         [gushingWound setAbilityValue:250];
         [self addAbility:gushingWound];
+        
+        BlindingSmokeAttack *blinding = [[[BlindingSmokeAttack alloc] init] autorelease];
+        [blinding setTitle:@"Blinding Glare"];
+        [blinding setIconName:@"blind.png"];
+        [blinding setInfo:@"A glare that blinds Healers and absorbs 300 healing."];
+        [blinding setActivationTime:.5];
+        [blinding setCooldown:40];
+        [blinding setCooldownVariance:.7];
+        [self addAbility:blinding];
     }
     return self;
 }
@@ -1229,6 +1384,7 @@
         
         Attack *executionAttack = [[[Attack alloc] init] autorelease];
         [executionAttack setInfo:@"The Twin Champions will choose a target for execution.  This target will be instantly slain if not above 50% health when the deathblow lands."];
+        [executionAttack setPrefersTargetsWithoutVisibleEffects:YES];
         [executionAttack setTitle:@"Execution"];
         [executionAttack setIconName:@"execution.png"];
         [executionAttack setRequiresDamageToApplyEffect:NO];
@@ -1238,6 +1394,7 @@
         [executionAttack setFailureChance:0];
         [executionAttack setAppliedEffect:executionEffect];
         [self addAbility:executionAttack];
+        
     }
     return self;
 }
@@ -1249,7 +1406,7 @@
     }
 }
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     if (percentage == 97.0) {
         [self.announcer announce:@"\"We shall feast on their flesh!\""];
@@ -1276,7 +1433,7 @@
     return [boss autorelease];
 }
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     if (percentage == 99.0) {
         [self.announcer announce:@"\"So you've slain some robed fools and worthless minions. Now you shall see true might.\""];
         BaraghastRoar *roar = [[[BaraghastRoar alloc] init] autorelease];
@@ -1372,7 +1529,7 @@
     return [seer autorelease];
 }
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     if (percentage == 99.0) {
         [self.announcer announce:@"\"Heheheh the master grants me too much power...too much yes..\""];
@@ -1427,7 +1584,7 @@
     }
 }
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     if (percentage == 99.0) {
         [self.announcer announce:@"\"You are fools to think you can enter this realm.  You shall suffer.\""];
     }
@@ -1549,7 +1706,7 @@
     return [boss autorelease];
 }
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     if (percentage == 99.0){
         [self.announcer announce:@"The Skeletal Dragon hovers angrily above your allies."];
     }
@@ -1624,6 +1781,7 @@
     [crushingPunchEffect setOwner:cob];
     [crushingPunchEffect setValue:-900];
     [(Attack*)cob.crushingPunch setAppliedEffect:crushingPunchEffect];
+    [(Attack*)cob.crushingPunch setPrefersTargetsWithoutVisibleEffects:YES];
     [crushingPunchEffect release];
     [cob.crushingPunch setFailureChance:.2];
     [cob.crushingPunch setInfo:@"Periodically, this enemy unleashes a thundering strike on a random ally dealing high damage."];
@@ -1731,7 +1889,7 @@
     }
 }
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     if (percentage == 80.0){
         self.projectilesAbility.isDisabled = YES;
         [self.announcer announce:@"The Overseer casts down his staff and begins channeling a demonic ritual."];
@@ -1774,6 +1932,7 @@
     [boss addAbilityDescriptor:slimeDescriptor];
     
     boss.oozeAll = [[[OozeRaid alloc] init] autorelease];
+    [boss.oozeAll setAttackParticleEffectName:nil];
     [boss.oozeAll setTitle:@"Surging Slime"];
     [boss.oozeAll setIconName:@"slime.png"];
     [boss.oozeAll setActivationTime:2.0];
@@ -1806,7 +1965,7 @@
     [oozeTwo setCooldown:oozeTwoCD];
 }
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player {    
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {    
     if ((int)percentage % 10 == 0){
         NSTimeInterval reduction = 1.775 * (self.difficulty) / 5.0;
         [(OozeRaid*)self.oozeAll setOriginalCooldown:[(OozeRaid*)self.oozeAll originalCooldown] - reduction];
@@ -1865,10 +2024,10 @@
     }
 }
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player{
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta{
     
     if (percentage == 99.0 || percentage == 90.0 || percentage == 10.0){
-        [self.deathwave triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
+        [self.deathwave triggerAbilityForRaid:raid players:players enemies:enemies];
     }
     
     if (percentage == 98.0) {
@@ -1895,6 +2054,7 @@
         [glareEffect setTitle:@"glare-effect"];
         
         Attack *glareFromBeyond = [[[Attack alloc] initWithDamage:0 andCooldown:30.0] autorelease];
+        [glareFromBeyond setPrefersTargetsWithoutVisibleEffects:YES];
         [glareFromBeyond setIgnoresGuardians:YES];
         [glareFromBeyond setRequiresDamageToApplyEffect:NO];
         [glareFromBeyond setAppliedEffect:glareEffect];
@@ -1927,7 +2087,7 @@
         [se setAbilityValue:5];
         [se setCooldown:roar.cooldown];
         [self addAbility:se];
-        [se triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
+        [se triggerAbilityForRaid:raid players:players enemies:enemies];
     }
     
 }
@@ -1987,7 +2147,7 @@
     }
 }
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     if (percentage == 92.0) {
         [self.announcer announce:@"Your mortal souls will shatter beneath the power of torment!"];
@@ -2018,7 +2178,9 @@
     
     if (percentage == 40.0) {
         [self.announcer announce:@"The Avatar of Torment drains your mind"];
-        [player setEnergy:0];
+        for (Player *player in players) {
+            [player setEnergy:0];
+        }
         [[self abilityWithKey:@"wot"] setTimeApplied:-20.0];
     }
     
@@ -2092,7 +2254,7 @@
     return [boss autorelease];
 }
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     if (percentage == 99.0 || percentage == 95.0) {
         
@@ -2103,7 +2265,7 @@
         [wot setKey:@"wot"];
         [wot setTitle:@"Waves of Torment"];
         [self addAbility:wot];
-        [wot triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
+        [wot triggerAbilityForRaid:raid players:players enemies:enemies];
         if (percentage == 95.0) {
             [self removeAbility:wot]; //Dont add 2 copies of this ability for the second trigger
         } else {
@@ -2126,7 +2288,7 @@
         [se setAbilityValue:10];
         [se setCooldown:10];
         [self addAbility:se];
-        [se triggerAbilityForRaid:raid players:[NSArray arrayWithObject:player] enemies:[NSArray arrayWithObject:self]];
+        [se triggerAbilityForRaid:raid players:players enemies:enemies];
     }
 }
 @end
@@ -2175,11 +2337,11 @@
     }
 }
 
-- (void)healthPercentageReached:(float)percentage withRaid:(Raid *)raid andPlayer:(Player *)player
+- (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     if (percentage == 99.0 || percentage == 95.0 || percentage == 90.0 || percentage == 85.0 || percentage == 45.0 || percentage == 37.0 || percentage == 28.0 || percentage == 20.0) {
         //Every 10 percent that isn't 100%...
-        [self raidDamageToRaid:raid forPlayers:[NSArray arrayWithObject:player]];
+        [self raidDamageToRaid:raid forPlayers:players];
     }
     
     if (percentage == 85.0) {
@@ -2218,7 +2380,8 @@
         [attack setKey:@"contagious"];
         [attack setRemovesPositiveEffects:YES];
         [attack setAppliedEffect:contagious];
-        [attack setRequiresDamageToApplyEffect:YES];
+        [attack setRequiresDamageToApplyEffect:NO];
+        [attack setPrefersTargetsWithoutVisibleEffects:YES];
         [self addAbility:attack];
     }
     
@@ -2242,6 +2405,7 @@
         [barrier setHealingToAbsorb:400];
         
         Attack *spiritBlock = [[[Attack alloc] initWithDamage:0 andCooldown:40.0] autorelease];
+        [spiritBlock setPrefersTargetsWithoutVisibleEffects:YES];
         [spiritBlock setTimeApplied:20.0];
         [spiritBlock setIgnoresGuardians:YES];
         [spiritBlock setKey:@"spirit-barrier"];
@@ -2319,7 +2483,7 @@
 }
 
 +(id)defaultBoss {
-    TheEndlessVoid *endlessVoid = [[TheEndlessVoid alloc] initWithHealth:99999999 damage:400 targets:4 frequency:2.0 choosesMT:NO ];
+    TheEndlessVoid *endlessVoid = [[TheEndlessVoid alloc] initWithHealth:99999999 damage:400 targets:4 frequency:2.0 choosesMT:NO];
     [endlessVoid setTitle:@"The Endless Void"];
     endlessVoid.autoAttack.failureChance = .25;
     

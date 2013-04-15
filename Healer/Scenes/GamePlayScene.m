@@ -32,7 +32,6 @@
 #import "LevelSelectMapScene.h"
 #import "TalentScene.h"
 
-#define DEBUG_AUTO_WIN false
 #define DEBUG_IMMUNITIES false
 #define DEBUG_PERFECT_HEALS false
 
@@ -1229,11 +1228,8 @@
         {
             [self battleEndWithSuccess:NO];
         }
-        Enemy *boss = [self.encounter.enemies objectAtIndex:0];
-        BOOL forcedSuccess = (DEBUG_AUTO_WIN && boss.health != boss.maximumHealth);
-        if (areAllEnemiesDefeated || forcedSuccess){
+        if (areAllEnemiesDefeated){
             [self battleEndWithSuccess:YES];
-            
         }
     }
 }

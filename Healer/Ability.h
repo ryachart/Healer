@@ -238,7 +238,8 @@ typedef enum {
 @property (nonatomic, retain) Effect *enrageEffect;
 @end
 
-@interface FlameBreath : Ability
+@interface Breath : Ability
+@property (nonatomic, retain) NSString *breathParticleName;
 @end
 
 @interface Earthquake : Ability
@@ -292,4 +293,15 @@ typedef enum {
 @end
 
 @interface BlindingSmokeAttack : Ability
+@end
+
+@interface DisableSpell : Ability
+@end
+
+@interface ImproveProjectileAbility : Ability
+@property (nonatomic, assign) ProjectileAttack *abilityToImprove;
+@end
+
+@interface AttackHealersAbility : Attack
+
 @end

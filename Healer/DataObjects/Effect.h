@@ -71,7 +71,7 @@ typedef enum {
 @property (nonatomic, readwrite) BOOL causesBlind;
 - (void)reset;
 - (BOOL)isKindOfEffect:(Effect*)effect;
-//Weird fucking hacky solution for figuring out the owner in network play
+//Weird hacky solution for figuring out the owner in network play
 @property (nonatomic, retain) NSString* ownerNetworkID;
 @property (nonatomic, readwrite) BOOL needsOwnershipResolution;
 
@@ -288,6 +288,13 @@ typedef enum {
 @property (nonatomic, readwrite) NSInteger tickChangeForHealing;
 @end
 
+@interface DamageOnCastEffect : Effect
+@property (nonatomic, readwrite) NSInteger damage;
+@end
+
 @interface PerfectHeal : Effect <HealthAdjustmentModifier>
+@end
+
+@interface EndlessShackles : AbsorbsHealingEffect
 
 @end

@@ -69,6 +69,6 @@
 }
 
 - (void)shouldDismiss {
-    [self.delegate abilityDescriptorModaldidComplete:self];
+    [self.delegate abilityDescriptorModalDidComplete:self];
 }
 @end

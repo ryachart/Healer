@@ -97,6 +97,10 @@ static NSDictionary *divinityInfo = nil;
                 [divEff setCastTimeAdjustment:0.1];
                 [divEff setCooldownMultiplierAdjustment:-0.1];
             }
+            
+            if ([tierChoiceKey isEqualToString:@"insight"]) {
+                [divEff setSpellCostAdjustment:.1];
+            }
         }
     }
     return effects;

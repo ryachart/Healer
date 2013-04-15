@@ -87,6 +87,9 @@ NSString* const PlayerOverHealingDoneKey = @"com.healer.eventlog.overhealingdone
                 playerOverheal += [[event value] intValue];
             }
         }
+        if (event.type == CombatEventTypeShielding) {
+            playerHealingDone += [[event value] intValue];
+        }
     }
     
     return [NSDictionary dictionaryWithObjectsAndKeys:

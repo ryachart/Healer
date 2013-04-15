@@ -14,6 +14,9 @@
 #import "BackgroundSprite.h"
 #import "PlayerDataManager.h"
 #import "RatingCounterSprite.h"
+#import "IconDescriptionModalLayer.h"
+#import "AbilityDescriptor.h"
+#import "TalentScene.h"
 
 #define TIER_TABLE_Z 100
 #define CHARGED_BAR_Z 50
@@ -165,17 +168,26 @@
 - (void)testChoice:(CCMenuItem*)sender {
     if (!self.showingDivPreview) {
         NSString* choice = (NSString*)[sender userData];
-        NSInteger tier = [sender tag];
-        ViewTalentChoiceLayer *choiceAlert = [[[ViewTalentChoiceLayer alloc] initWithDivinityChoice:choice inTier:tier] autorelease];
-        [choiceAlert setDelegate:self];
-        [self addChild:choiceAlert z:TIER_TABLE_Z + 100];
+        
+        NSString *iconFrameName = [Talents spriteFrameNameForChoice:choice];
+        NSString *titleDescription = [Talents descriptionForChoice:choice];
+        
+        AbilityDescriptor *desc = [[[AbilityDescriptor alloc] init] autorelease];
+        [desc setAbilityDescription:titleDescription];
+        [desc setAbilityName:choice];
+        [desc setIconName:iconFrameName];
+        
+        IconDescriptionModalLayer *modalLayer = [[[IconDescriptionModalLayer alloc] initWithAbilityDescriptor:desc] autorelease];
+        [modalLayer setDelegate:self];
+        [self addChild:modalLayer z:9999];
+        
         self.showingDivPreview = YES;
     }
 }
 
-- (void)dismissDivinityChoiceLayer:(CCLayer *)layer
+- (void)abilityDescriptorModalDidComplete:(id)modal
 {
-    [layer removeFromParentAndCleanup:YES];
+    [(IconDescriptionModalLayer*)modal removeFromParentAndCleanup:YES];
     self.showingDivPreview = NO;
 }
 

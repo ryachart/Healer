@@ -34,7 +34,7 @@
 
 #define DEBUG_AUTO_WIN false
 #define DEBUG_IMMUNITIES false
-#define DEBUG_PERFECT_HEALS true
+#define DEBUG_PERFECT_HEALS false
 
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812
@@ -594,7 +594,7 @@
     [modalLayer addChild:pausedTitle];
 }
 
-- (void)abilityDescriptorModaldidComplete:(id)modal {
+- (void)abilityDescriptorModalDidComplete:(id)modal {
     IconDescriptionModalLayer *layer = (IconDescriptionModalLayer*)modal;
     [layer removeFromParentAndCleanup:YES];
     if (self.isServer || self.isClient){
@@ -806,11 +806,11 @@
     [self displayParticleSystemWithName:name onTarget:target withOffset:offset delay:0.0];
 }
 
-- (void)displayBreathEffectOnRaidForDuration:(float)duration {
+- (void)displayBreathEffectOnRaidForDuration:(float)duration withName:(NSString *)name {
     if (self.isServer) {
         //TODO: network this shit
     }
-    CCParticleSystemQuad *breathEffect = [[ParticleSystemCache sharedCache] systemForKey:@"flame_breath"];
+    CCParticleSystemQuad *breathEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
     [breathEffect setDuration:duration];
     [breathEffect setPosition:CGPointMake(512, 700)];
     [self addChild:breathEffect z:100 tag:PAUSEABLE_TAG];

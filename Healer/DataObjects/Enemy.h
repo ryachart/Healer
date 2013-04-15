@@ -173,6 +173,5 @@
 @end
 
 @interface FungalRavager : Enemy
-
 @end
 

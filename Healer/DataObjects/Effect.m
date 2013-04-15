@@ -518,7 +518,7 @@
     if (!self.target.isDead){
         float percentComplete = self.timeApplied / self.duration;
         CombatEventType eventType = self.valuePerTick > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.valuePerTick] andEventType:eventType]];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.owner.damageDoneMultiplier * ([self valuePerTick] * (int)round(1+percentComplete))] andEventType:eventType]];
         [self.target setHealth:self.target.health + self.owner.damageDoneMultiplier * ([self valuePerTick] * (int)round(1+percentComplete))];
     }
 }
@@ -1326,28 +1326,55 @@
 
 - (void)combatUpdateForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
 {
+    NSArray *excludedEffectTitles = @[@"inverted-healing",@"wracking-pain-eff",@"soul-burn"];
+    
     if (self.target.health < self.target.maximumHealth) {
-        NSInteger healing = 0;
-        NSInteger preHealth = self.target.health;
+        BOOL skipHealing = NO;
+        for (NSString *title in excludedEffectTitles) {
+            if ([self.target hasEffectWithTitle:title]) {
+                skipHealing = YES;
+                break;
+            }
+        }
         
-        self.target.health = self.target.maximumHealth;
-        
-        healing = self.target.health - preHealth;
-        
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:healing] andEventType:CombatEventTypeHeal]];
+        if (!skipHealing) {            
+            NSInteger healing = 0;
+            NSInteger preHealth = self.target.health;
+            
+            self.target.health = self.target.maximumHealth;
+            
+            healing = self.target.health - preHealth;
+            
+            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:healing] andEventType:CombatEventTypeHeal]];
+        }
     }
 }
 
 - (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth
 {
-    if (*newHealth <= 0) {
-        *newHealth = 1;
-    }
+    
 }
 
 - (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth
 {
     
+}
+
+@end
+
+@implementation DamageOnCastEffect
+
+- (id)copy
+{
+    DamageOnCastEffect *copy = [super copy];
+    [copy setDamage:self.damage];
+    return copy;
+}
+
+- (void)targetDidCastSpell:(Spell *)spell
+{
+    [self.target setHealth:self.target.health - self.damage * self.owner.damageDoneMultiplier];
+    [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.damage * self.owner.damageDoneMultiplier] andEventType:CombatEventTypeDamage]];
 }
 
 @end

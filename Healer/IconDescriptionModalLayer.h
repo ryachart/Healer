@@ -12,7 +12,7 @@
 
 @protocol IconDescriptorModalDelegate <NSObject>
 
-- (void)abilityDescriptorModaldidComplete:(id)modal;
+- (void)abilityDescriptorModalDidComplete:(id)modal;
 
 @end
 

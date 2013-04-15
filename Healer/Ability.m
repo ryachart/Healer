@@ -1778,7 +1778,16 @@
 }
 @end
 
-@implementation FlameBreath
+@implementation Breath
+
+- (id)init
+{
+    if (self = [super init]) {
+        self.breathParticleName = @"flame_breath";
+    }
+    return self;
+}
+
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
 {
     float effectDuration = 5.0;
@@ -1787,13 +1796,13 @@
         effectDuration = 8.0;
         numberOfTicks = 8.0;
     }
-    [self.owner.announcer displayBreathEffectOnRaidForDuration:effectDuration];
+    [self.owner.announcer displayBreathEffectOnRaidForDuration:effectDuration withName:self.breathParticleName];
     for (RaidMember *member in theRaid.livingMembers) {
         RepeatedHealthEffect *flameBreathEffect = [[[RepeatedHealthEffect alloc] initWithDuration:effectDuration andEffectType:EffectTypeNegativeInvisible] autorelease];
         [flameBreathEffect setNumOfTicks:numberOfTicks];
         [flameBreathEffect setValuePerTick:-(arc4random() % self.abilityValue/2 + self.abilityValue)];
         [flameBreathEffect setOwner:self.owner];
-        [flameBreathEffect setTitle:@"flame-breath-eff"];
+        [flameBreathEffect setTitle:@"breath-eff"];
         [member addEffect:flameBreathEffect];
     }
     
@@ -2294,5 +2303,46 @@
         [player addEffect:blindingSmoke];
     }
     [self.owner.announcer displayScreenFlash];
+}
+@end
+
+@implementation DisableSpell
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    for (Player *plyer in players) {
+        Spell *spellToDisable = [plyer.activeSpells objectAtIndex:arc4random() % plyer.activeSpells.count];
+        [spellToDisable applyTemporaryCooldown:self.abilityValue];
+    }
+}
+@end
+
+@implementation ImproveProjectileAbility
+- (id)init
+{
+    if (self = [super init]) {
+        self.abilityValue = 1;
+    }
+    return self;
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    self.abilityToImprove.attacksPerTrigger+= self.abilityValue;
+}
+@end
+
+@implementation AttackHealersAbility
+
+- (RaidMember *)targetFromRaid:(Raid *)raid
+{
+    RaidMember *target = [raid randomMemberWithComparator:^BOOL(RaidMember *member){
+        if (!member.isDead && [member isKindOfClass:[Player class]]) {
+            return YES;
+        }
+        return NO;
+        
+    }];
+    
+    return target;
 }
 @end

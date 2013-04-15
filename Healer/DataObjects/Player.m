@@ -178,9 +178,6 @@
 
 - (float)spellCostAdjustmentForSpell:(Spell*)spell{
     float adjustment = [self spellCostAdjustment];
-    if ([self hasDivinityEffectWithTitle:@"insight"]){
-        adjustment -= .075;
-    }
     return adjustment;
 }
 
@@ -194,7 +191,7 @@
     for (Effect *effect in self.activeEffects){
         adjustment -= effect.spellCostAdjustment;
     }
-    return MAX(.1, adjustment);
+    return MAX(0.0, adjustment);
 }
 
 - (void)initializeForCombat {
@@ -557,7 +554,7 @@
         [theSpell spellBeganCasting];
     }
 	self.spellBeingCast = theSpell;
-    self.currentSpellCastTime = theSpell.castTime * self.castTimeAdjustment;
+    self.currentSpellCastTime = theSpell.castTime;
 	self.spellTarget = primaryTarget;
 	self.castStart = 0.0001;
 	self.isCasting = YES;

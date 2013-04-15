@@ -340,7 +340,7 @@
     }
     
     if (self.lastEnergyGrant > tickTime) {
-        if (!self.isDead){
+        if (!self.isDead && !self.isStunned){
             for (Player *player in players){
                 if (arc4random() % 100 < criticalGrantChance) {
                     energyGrant *= 2;
@@ -380,7 +380,7 @@
 }
 
 -(void)performAttackIfAbleOnTarget:(Enemy*)target{
-	if (self.lastAttack >= self.damageFrequency && !self.isDead){
+	if (self.lastAttack >= self.damageFrequency && !self.isDead && !self.isStunned){
 		self.lastAttack = 0.0;
         
         if (self.healthPercentage < .5){

@@ -390,8 +390,8 @@
         [self.owner playerDidHealFor:finalAmount onTarget:healableTarget fromSpell:self withOverhealing:overheal asCritical:critical];
     }
     
-    [self.owner setEnergy:[self.owner energy] - [self energyCost]];
-    
+    NSInteger cost = [self energyCost];
+    [self.owner setEnergy:[self.owner energy] - cost];
     
     if (self.cooldown > 0.0){
         [[self.owner spellsOnCooldown] addObject:self];
@@ -739,6 +739,7 @@
     [super spellFinishedCastingForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     [self.owner.announcer announce:@"You are filled with spiritual power."];
     Effect *soaringSpiritEffect = [[Effect alloc] initWithDuration:7.5 andEffectType:EffectTypePositive];
+    [soaringSpiritEffect setSpriteName:@"soaring-spirit-icon.png"];
     [soaringSpiritEffect setOwner:self.owner];
     [soaringSpiritEffect setHealingDoneMultiplierAdjustment:.5];
     [soaringSpiritEffect setCastTimeAdjustment:.5];

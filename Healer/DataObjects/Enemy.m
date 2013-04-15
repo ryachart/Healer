@@ -481,7 +481,7 @@
     [drake.fireballAbility setCooldown:fireballCooldown];
     [drake addAbility:drake.fireballAbility];
     
-    FlameBreath *fb = [[[FlameBreath alloc] init] autorelease];
+    Breath *fb = [[[Breath alloc] init] autorelease];
     [fb setTitle:@"Flame Breath"];
     [fb setKey:@"flame-breath"];
     [fb setAbilityValue:100];
@@ -729,7 +729,7 @@
         NSInteger damage = arc4random() % 300 + 450;
         RepeatedHealthEffect *damageEffect = [[[RepeatedHealthEffect alloc] initWithDuration:2.5 andEffectType:EffectTypeNegative] autorelease];
         [damageEffect setAilmentType:AilmentPoison];
-        [damageEffect setSpriteName:@"poison.png"];
+        [damageEffect setSpriteName:@"pus_burst.png"];
         [damageEffect setNumOfTicks:3];
         [damageEffect setValuePerTick:-damage / 3];
         [damageEffect setOwner:self];
@@ -741,7 +741,16 @@
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta 
 {
     if (percentage == 1.0) {
-        [self ravagerDiedFocusing:[(FocusedAttack*)self.autoAttack focusTarget] andRaid:raid];
+        RaidMember *target = [(FocusedAttack*)self.autoAttack focusTarget];
+        [self ravagerDiedFocusing:target andRaid:raid];
+        
+        WanderingSpiritEffect *wse = [[[WanderingSpiritEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+        [wse setAilmentType:AilmentTrauma];
+        [wse setTitle:@"pred-fungus-effect"];
+        [wse setSpriteName:@"plague.png"];
+        [wse setValuePerTick:-self.autoAttack.abilityValue];
+        [wse setOwner:self];
+        [target addEffect:wse];
     }
 }
 
@@ -749,26 +758,11 @@
 {
     [super configureBossForDifficultyLevel:difficulty];
     if (difficulty == 5) {
-        WanderingSpiritEffect *wse = [[[WanderingSpiritEffect alloc] initWithDuration:14.0 andEffectType:EffectTypeNegative] autorelease];
-        [wse setAilmentType:AilmentPoison];
-        [wse setTitle:@"pred-fungus-effect"];
-        [wse setValuePerTick:-150];
-        [wse setNumOfTicks:8.0];
-        
         AbilityDescriptor *fungusDesc = [[[AbilityDescriptor alloc] init] autorelease];
         [fungusDesc setIconName:@"poison.png"];
-        [fungusDesc setAbilityDescription:@"A living fungus that hunts for the weakest ally and drains their lifeforce."];
+        [fungusDesc setAbilityDescription:@"When killed, the ravager becomes a living fungus that hunts for the weakest ally and devours them alive."];
         [fungusDesc setAbilityName:@"Predator Fungus"];
         [self addAbilityDescriptor:fungusDesc];
-        
-        Attack *predFungus = [[[Attack alloc] initWithDamage:200 andCooldown:24.0] autorelease];
-        [predFungus setKey:@"pred-fungus-bite"];
-        [predFungus setTimeApplied:arc4random() % 16];
-        [predFungus setTitle:@"Infectious Bite"];
-        [predFungus setIconName:@"poison.png"];
-        [predFungus setActivationTime:1.5];
-        [predFungus setAppliedEffect:wse];
-        [self addAbility:predFungus];
     }
 }
 
@@ -1251,6 +1245,7 @@
         
         WrackingPainEffect *wpe = [[[WrackingPainEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
         [wpe setValuePerTick:-100];
+        [wpe setTitle:@"wracking-pain-eff"];
         [wpe setAilmentType:AilmentCurse];
         
         RaidApplyEffect *wrackingPain = [[[RaidApplyEffect alloc] init] autorelease];
@@ -1421,6 +1416,11 @@
     [super dealloc];
 }
 
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+}
+
 +(id)defaultBoss {
     Baraghast *boss = [[Baraghast alloc] initWithHealth:3040000 damage:150 targets:1 frequency:1.25 choosesMT:YES];
     boss.autoAttack.failureChance = .30;
@@ -1469,6 +1469,52 @@
         [self addAbility:dwAbility];
     }
     
+    if (self.difficulty == 5) {
+        if (percentage == 16.0) {
+            [[self abilityWithKey:@"deathwave"] setIsDisabled:YES];
+            [[self abilityWithKey:@"crush"] setIsDisabled:YES];
+            [[self abilityWithKey:@"break-off"] setIsDisabled:YES];
+            [[self abilityWithKey:@"baraghast-roar"] setIsDisabled:YES];
+            [self.autoAttack setIsDisabled:YES];
+            
+            [self.announcer announce:@"You have come so far only to die now."];
+            
+            AbilityDescriptor *godscall = [[[AbilityDescriptor alloc] init] autorelease];
+            [godscall setIconName:@"redemption.png"];
+            [godscall setAbilityName:@"Light of Purity"];
+            [godscall setAbilityDescription:@"Baraghast's use of ancient demonic powers have signaled help from the light reducing your cast times and cooldowns by 50% and reducing all spell costs by 100%."];
+            [self addAbilityDescriptor:godscall];
+            
+            for (Player *player in players) {
+                Effect *godscallEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositive] autorelease];
+                [godscallEffect setSpriteName:@"redemption.png"];
+                [godscallEffect setSpellCostAdjustment:1.0];
+                [godscallEffect setCastTimeAdjustment:.5];
+                [godscallEffect setCooldownMultiplierAdjustment:-.5];
+                [godscallEffect setOwner:self];
+                [godscallEffect setTitle:@"godscall-eff"];
+                [player addEffect:godscallEffect];
+            }
+            
+            for (RaidMember *member in raid.livingMembers) {
+                Effect *stunned = [[[Effect alloc] initWithDuration:8 andEffectType:EffectTypeNegative] autorelease];
+                [stunned setSpriteName:@"shadow_prison.png"];
+                [stunned setOwner:self];
+                [stunned setTitle:@"shadow-prison-eff"];
+                [stunned setCausesStun:YES];
+                [member addEffect:stunned];
+            }
+            [self.announcer displayScreenFlash];
+            [self.announcer displayScreenShakeForDuration:1.0];
+            
+            Ability *endStunAbility = [[[Ability alloc] init] autorelease];
+            [endStunAbility setCooldown:8];
+            [endStunAbility setKey:@"end-stun"];
+            [self addAbility:endStunAbility];
+            
+        }
+    }
+    
     if (percentage == 2.0) {
         [self.announcer announce:@"You cannot defeat me.  This is merely a set back."];
     }
@@ -1480,6 +1526,41 @@
             if (ab != ability){
                 [ab setTimeApplied:0];
             }
+        }
+    }
+}
+
+- (void)ownerDidExecuteAbility:(Ability *)ability
+{
+    if (self.difficulty == 5) {
+        if ([ability.key isEqualToString:@"end-stun"]) {
+            self.autoAttack.isDisabled = NO;
+            [self removeAbility:ability];
+            
+            Breath *fb = [[[Breath alloc] init] autorelease];
+            [fb setBreathParticleName:@"shadow_breath"];
+            [fb setTitle:@"Demon Breath"];
+            [fb setKey:@"demon-breath"];
+            [fb setIconName:@"shadow_breath.png"];
+            [fb setInfo:@"A horrible blast of soul-crippling darkness.  This breath deals more damage each time it is used."];
+            [fb setAbilityValue:70];
+            [fb setActivationTime:2];
+            [fb setTimeApplied:15.0];
+            [fb setCooldown:17.0];
+            [self addAbility:fb];
+            
+            GroundSmash *groundSmash = [[[GroundSmash alloc] init] autorelease];
+            [groundSmash setAbilityValue:110];
+            [groundSmash setKey:@"demonic-fury"];
+            [groundSmash setCooldown:20.0];
+            [groundSmash setActivationTime:1.5];
+            [groundSmash setTimeApplied:80.0];
+            [groundSmash setTitle:@"Demonic Fury"];
+            [self addAbility:groundSmash];
+        }
+        
+        if ([ability.key isEqualToString:@"demon-breath"]) {
+            ability.abilityValue *= 1.25;
         }
     }
 }
@@ -1510,12 +1591,12 @@
     [sb setCooldown:14.0];
     [seer addAbility:sb];
     
-    GainAbility *gainShadowbolts = [[[GainAbility alloc] init] autorelease];
+    ImproveProjectileAbility *gainShadowbolts = [[[ImproveProjectileAbility alloc] init] autorelease];
     [gainShadowbolts setCooldown:60];
     [gainShadowbolts setInfo:@"Tyonath casts more shadow bolts the longer the fight goes on."];
     [gainShadowbolts setTitle:@"Increasing Insanity"];
     [gainShadowbolts setIconName:@"increasing_insanity.png"];
-    [gainShadowbolts setAbilityToGain:fireballAbility];
+    [gainShadowbolts setAbilityToImprove:fireballAbility];
     [seer addAbility:gainShadowbolts];
     
     RaidDamage *horrifyingLaugh = [[[RaidDamage alloc] init] autorelease];
@@ -1527,6 +1608,21 @@
     [seer addAbility:horrifyingLaugh];
     
     return [seer autorelease];
+}
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    
+    if (difficulty == 5) {
+        DisableSpell *disableSpell = [[[DisableSpell alloc] init] autorelease];
+        [disableSpell setCooldown:15];
+        [disableSpell setAbilityValue:10.0];
+        [disableSpell setTitle:@"Mental Fog"];
+        [disableSpell setInfo:@"The Crazed Seer clouds your mind and disables your spells."];
+        [disableSpell setIconName:@"cloud_mind.png"];
+        [self addAbility:disableSpell];
+    }
 }
 
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta

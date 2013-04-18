@@ -340,7 +340,7 @@
     [ghoul setSpriteName:@"ghoul_battle_portrait.png"];
     
     ghoul.autoAttack.dodgeChanceAdjustment = -100.0;
-    ghoul.autoAttack.failureChance = .3;
+    ghoul.autoAttack.failureChance = 0.0;
     
     RepeatedHealthEffect *plagueDot = [[[RepeatedHealthEffect alloc] initWithDuration:12 andEffectType:EffectTypeNegative] autorelease];
     [plagueDot setTitle:@"plague-dot"];
@@ -349,6 +349,7 @@
     
     Attack *plagueStrike = [[[Attack alloc] initWithDamage:100 andCooldown:30.0] autorelease];
     plagueStrike.failureChance = 0;
+    [plagueStrike setExecutionSound:@"slimeimpact.mp3"];
     [plagueStrike setActivationTime:2.5];
     [plagueStrike setKey:@"plague-strike"];
     [plagueStrike setTitle:@"Plague Strike"];
@@ -371,6 +372,7 @@
 {
     if (ability == self.autoAttack) {
         [self.announcer announceFtueAttack];
+        self.autoAttack.failureChance = 0.3;
     }
 }
 
@@ -472,6 +474,8 @@
     
     drake.fireballAbility = [[[ProjectileAttack alloc] init] autorelease];
     drake.fireballAbility.title = @"Spit Fireball";
+    drake.fireballAbility.executionSound = @"fireball.mp3";
+    [(ProjectileAttack*)drake.fireballAbility setExplosionSoundName:@"fieryexplosion.mp3"];
     drake.fireballAbility.activationTime = 1.5;
     [drake.fireballAbility setIconName:@"burning.png"];
     [drake.fireballAbility setKey:@"fireball-ab"];
@@ -483,6 +487,7 @@
     
     Breath *fb = [[[Breath alloc] init] autorelease];
     [fb setTitle:@"Flame Breath"];
+    [fb setActivationSound:@"dragonroar1.mp3"];
     [fb setKey:@"flame-breath"];
     [fb setAbilityValue:100];
     [fb setActivationTime:2.5];
@@ -504,6 +509,7 @@
         [clawRakeEffect setTitle:@"claw-rake-eff"];
         
         Attack *clawRake = [[[Attack alloc] initWithDamage:350 andCooldown:22.0] autorelease];
+        [clawRake setExecutionSound:@"sharpimpactbleeding.mp3"];
         [clawRake setKey:@"claw-rake"];
         [clawRake setTitle:@"Claw Rake"];
         [clawRake setIconName:@"gushing_wound.png"];
@@ -524,7 +530,6 @@
     }
 }
 @end
-
 
 @implementation MischievousImps
 +(id)defaultBoss {
@@ -587,6 +592,7 @@
     
     if (difficulty > 4) {
         ConstrictingVines *vines = [[[ConstrictingVines alloc] init] autorelease];
+        [vines setExecutionSound:@"vinestightening.mp3"];
         [vines setAbilityValue:80];
         [vines setStunDuration:4.0];
         [vines setKey:@"vines"];
@@ -611,6 +617,7 @@
     Earthquake *eq = [[[Earthquake alloc] init] autorelease];
     [eq setTitle:@"Earthquake"];
     [eq setKey:@"root-quake"];
+    [eq setExecutionSound:@"earthquake.mp3"];
     [eq setCooldown:28.0];
     [eq setActivationTime:2.0];
     [eq setAbilityValue:35];
@@ -624,6 +631,8 @@
     [lashDoT setSpriteName:@"bleeding.png"];
     
     RaidDamage *branchAttack = [[[RaidDamage alloc] init] autorelease];
+    [branchAttack setActivationSound:@"treebranchdrawback.mp3"];
+    [branchAttack setExecutionSound:@"treebranchwhipforward.mp3"];
     [branchAttack setTitle:@"Viscious Branches"];
     [branchAttack setKey:@"branch-attack"];
     [branchAttack setIconName:@"branch_thrash.png"];
@@ -673,6 +682,7 @@
     
     if (percentage == 100.0){
         [self.announcer announce:@"A putrid green mist fills the area..."];
+        [self.announcer playAudioForTitle:@"wolvesgrowling.mp3"];
         [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:-1.0];
         for (RaidMember *member in raid.raidMembers){
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegativeInvisible];
@@ -686,6 +696,7 @@
     
     if (percentage == 99.0){
         [self.announcer announce:@"The final Ravager glows with rage."];
+        [self.announcer playAudioForTitle:@"wolvesgrowling.mp3"];
         AbilityDescriptor *rage = [[[AbilityDescriptor alloc] init] autorelease];
         [rage setAbilityDescription:@"The Fungal Ravager is enraged."];
         [rage setIconName:@"ravager_remaining.png"];
@@ -720,6 +731,7 @@
 -(void)ravagerDiedFocusing:(RaidMember*)focus andRaid:(Raid*)raid{
     [self.announcer announce:@"A Fungal Ravager falls to the ground and explodes!"];
     [self.announcer displayScreenShakeForDuration:2.5];
+    [self.announcer playAudioForTitle:@"fieryexplosion.mp3"];
     [focus setIsFocused:NO];
     
     NSInteger numTargets = arc4random() % 3 + 2;

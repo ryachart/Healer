@@ -20,6 +20,7 @@
 #import "LevelSelectMapScene.h"
 #import "SettingsScene.h"
 #import "RatingCounterSprite.h"
+#import "SimpleAudioEngine.h"
 
 @interface HealerStartScene ()
 @property (assign) CCMenu* menu;
@@ -41,6 +42,10 @@
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/spell-sprites.plist"];
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"homescreen-bg"] autorelease]];
+        
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"sounds/button1.mp3"];
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"sounds/button2.mp3"];
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"sounds/button3.mp3"];
         
         //self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
         
@@ -137,7 +142,6 @@
 {
 	LevelSelectMapScene *qpS = [[LevelSelectMapScene new] autorelease];
 	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:qpS]];
-    
 }
 
 -(void)storeSelected{

@@ -128,7 +128,7 @@
 }
 
 -(BOOL)raidMemberShouldDodgeAttack:(float)modifer{
-    return arc4random() % 100 <= (100 * self.dodgeChance);
+    return arc4random() % 10000 <= (10000 * (self.dodgeChance + modifer));
 }
 
 - (Enemy *)highestPriorityEnemy:(NSArray *)enemies

@@ -21,6 +21,7 @@ typedef enum {
 @property (nonatomic, readwrite) ProjectileEffectType type;
 @property (nonatomic, assign) Agent *sourceAgent;
 @property (nonatomic, retain) NSString* collisionParticleName;
+@property (nonatomic, retain) NSString* collisionSoundName;
 @property (nonatomic, readonly, retain) NSString *spriteName;
 @property (nonatomic, readonly, retain) Agent *target;
 @property (nonatomic, readonly) NSTimeInterval collisionTime;

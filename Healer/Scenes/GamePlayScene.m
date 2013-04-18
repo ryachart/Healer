@@ -24,21 +24,21 @@
 #import "BasicButton.h"
 #import "CCLabelTTFShadow.h"
 #import "GradientBorderLayer.h"
-#import "SimpleAudioEngine.h"
-#import "CocosDenshion.h"
-#import "CDAudioManager.h"
 #import "EnemiesLayer.h"
 #import "ShopScene.h"
 #import "LevelSelectMapScene.h"
 #import "TalentScene.h"
+#import "SimpleAudioEngine.h"
 
 #define DEBUG_IMMUNITIES false
-#define DEBUG_PERFECT_HEALS false
+#define DEBUG_PERFECT_HEALS true
 
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812
 
 #define NETWORK_THROTTLE 5
+
+#define AMBIENT_BATTLE_LOOP @"sounds/ambientbattle.mp3"
 
 @interface GamePlayScene ()
 //Data Models
@@ -56,6 +56,7 @@
 @property (nonatomic, assign) GamePlayFTUELayer *ftueLayer;
 @property (nonatomic, assign) CCMenu *pauseButton;
 @property (nonatomic, assign) CCLayerColor *screenFlashLayer;
+@property (nonatomic, readwrite) ALuint ambientBattleKey;
 @end
 
 @implementation GamePlayScene
@@ -87,6 +88,9 @@
     [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/battle-sprites.plist"];
     [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/effect-sprites.plist"];
     [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/postbattle.plist"];
+    
+    [[SimpleAudioEngine sharedEngine] unloadEffect:AMBIENT_BATTLE_LOOP];
+    
     [super dealloc];
 }
 
@@ -116,7 +120,6 @@
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/battle-sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/effect-sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/postbattle.plist"];
-        
         
         BackgroundSprite *bg = [[[BackgroundSprite alloc] initWithJPEGAssetName:[Encounter backgroundPathForEncounter:self.encounter.levelNumber]] autorelease];
         [bg setPosition:CGPointMake(0, 408)];
@@ -178,7 +181,6 @@
         [self.playerMoveButton setPosition:CGPointMake(-280, -324)];
         [self.playerCastBar addChild:self.playerMoveButton];
         
-        
         self.announcementLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
         [self.announcementLabel setPosition:CGPointMake(512, 440)];
         [self.announcementLabel setColor:ccYELLOW];
@@ -193,7 +195,9 @@
         [self addChild:self.playerStatusView];
         [self addChild:self.announcementLabel z:100 tag:PAUSEABLE_TAG];
         [self addChild:self.errAnnouncementLabel z:98 tag:PAUSEABLE_TAG];
+        
         //CACHE SOUNDS
+        [[SimpleAudioEngine sharedEngine] preloadEffect:AMBIENT_BATTLE_LOOP];
         
         for (int i = 0; i < 4; i++){
             switch (i) {
@@ -326,6 +330,8 @@
         }
         [[self actionManager] pauseTarget:self];
         [self unschedule:@selector(gameEvent:)];
+        [[SimpleAudioEngine sharedEngine] stopEffect:self.ambientBattleKey];
+        self.ambientBattleKey = 0;
     }else{
         for (CCNode *node in self.children) {
             if (node.tag == PAUSEABLE_TAG) {
@@ -431,6 +437,8 @@
             [node setVisible:NO];
         }
     }
+    
+    [[SimpleAudioEngine sharedEngine] stopEffect:self.ambientBattleKey];
     
     if ([PlayerDataManager localPlayer].ftueState == FTUEStateAbilityIconSelected) {
         [PlayerDataManager localPlayer].ftueState = FTUEStateBattle1Finished;
@@ -946,6 +954,7 @@
         collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:effect.collisionParticleName];
     }
     if (projectileSprite){
+        __block GamePlayScene *blockSelf = self;
         [projectileSprite setAnchorPoint:CGPointMake(.5, .5)];
         [projectileSprite setVisible:NO];
         [projectileSprite setPosition:originLocation];
@@ -954,6 +963,9 @@
         [self addChild:projectileSprite z:RAID_Z+1 tag:PAUSEABLE_TAG];
         [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}], [CCMoveTo actionWithDuration:effect.collisionTime position:destination],[CCSpawn actions:[CCCallBlockN actionWithBlock:^(CCNode *node){
             if (collisionEffect){
+                if (effect.collisionSoundName) {
+                    [blockSelf playAudioForTitle:effect.collisionSoundName];
+                }
                 [collisionEffect setPosition:destination];
                 [collisionEffect setAutoRemoveOnFinish:YES];
                 [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
@@ -980,6 +992,7 @@
     }
     
     if (projectileSprite){
+        __block GamePlayScene *blockSelf = self;
         [projectileSprite setAnchorPoint:CGPointMake(.5, .5)];
         [projectileSprite setVisible:NO];
         [projectileSprite setPosition:origin];
@@ -990,6 +1003,9 @@
         [projectileSprite runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:.3 angle:360.0]]];
         [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}],[CCSpawn actions:[CCBezierTo actionWithDuration:effect.collisionTime bezier:bezierConfig],nil],[CCSpawn actions:[CCCallBlockN actionWithBlock:^(CCNode *node){
             if (collisionEffect){
+                if (effect.collisionSoundName) {
+                    [blockSelf playAudioForTitle:effect.collisionSoundName];
+                }
                 [collisionEffect setPosition:destination];
                 [collisionEffect setAutoRemoveOnFinish:YES];
                 [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
@@ -1149,6 +1165,11 @@
     BOOL isNetworkUpdate = NO;
     self.encounter.duration += deltaT;
     self.networkThrottle ++;
+    
+    if (!self.ambientBattleKey) {
+        self.ambientBattleKey = [[SimpleAudioEngine sharedEngine] playEffect:AMBIENT_BATTLE_LOOP pitch:1.0 pan:0.0 gain:.25 loops:YES];
+    }
+    
     NSMutableArray *focusTargets = [NSMutableArray arrayWithCapacity:self.encounter.enemies.count];
     if (self.networkThrottle >= NETWORK_THROTTLE){
         isNetworkUpdate = YES;

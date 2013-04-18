@@ -7,6 +7,8 @@
 //
 
 #import "BasicButton.h"
+#import "SimpleAudioEngine.h"
+
 
 @implementation BasicButton
 
@@ -14,6 +16,11 @@
     return [self basicButtonWithTarget:target andSelector:selector andTitle:title andAlertPip:NO];
 }
 
+- (void)selected
+{
+    PLAY_BUTTON_CLICK;
+    [super selected];
+}
 
 + (BasicButton*)basicButtonWithTarget:(id)target andSelector:(SEL)selector andTitle:(NSString*)title andAlertPip:(BOOL)showsAlertPip {
     CCSprite *basicButton = [CCSprite spriteWithSpriteFrameName:@"button_home.png"];
@@ -70,7 +77,7 @@
     [basicButtonDisabled setOpacity:100];
     [basicButtonSelected setOpacity:200];
     
-    CCMenuItemSprite *menuItem = [CCMenuItemSprite itemWithNormalSprite:basicButton selectedSprite:basicButtonSelected disabledSprite:basicButtonDisabled target:target selector:selector];
+    BasicButton *menuItem = [BasicButton itemWithNormalSprite:basicButton selectedSprite:basicButtonSelected disabledSprite:basicButtonDisabled target:target selector:selector];
     
     return [CCMenu menuWithItems:menuItem, nil];
 }

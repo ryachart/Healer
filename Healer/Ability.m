@@ -52,6 +52,8 @@
     [_key release];
     [_iconName release];
     [_attackParticleEffectName release];
+    [_activationSound release];
+    [_executionSound release];
     [super dealloc];
 }
 
@@ -92,8 +94,6 @@
     return nil;
 }
 
-
-
 - (BOOL)isChanneling
 {
     return self.channelTimeRemaining > 0;
@@ -124,20 +124,31 @@
     return NO;
 }
 
+- (void)abilityDidFailToActivateForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
+{
+    
+}
+
 - (NSTimeInterval)cooldown
 {
     return self.activationTime + _cooldown;
 }
-
 
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     self.timeApplied += timeDelta;
     if (!self.owner.visibleAbility || self.owner.visibleAbility == self || self.ignoresBusy) {
         if ((_cooldown != kAbilityRequiresTrigger || self.isActivating) && self.timeApplied >= self.cooldown){
             if (!self.isDisabled){
-                [self.owner ownerWillExecuteAbility:self];
-                [self triggerAbilityForRaid:raid players:players enemies:enemies];
-                [self.owner ownerDidExecuteAbility:self];
+                if ([self checkFailed]) {
+                    [self abilityDidFailToActivateForRaid:raid players:players enemies:enemies];
+                } else {
+                    [self.owner ownerWillExecuteAbility:self];
+                    [self triggerAbilityForRaid:raid players:players enemies:enemies];
+                    [self.owner ownerDidExecuteAbility:self];
+                    if (self.executionSound) {
+                        [self.owner.announcer playAudioForTitle:self.executionSound];
+                    }
+                }
             }
             self.timeApplied = 0.0 + self.cooldown * self.cooldownVariance * (arc4random() % 1000 / 1000.0);
             self.isActivating = NO;
@@ -180,6 +191,9 @@
     self.timeApplied = _cooldown;
     self.isActivating = YES;
     [self.owner ownerDidBeginAbility:self];
+    if (self.activationSound) {
+        [self.owner.announcer playAudioForTitle:self.activationSound];
+    }
 }
 
 - (NSTimeInterval)remainingActivationTime
@@ -309,9 +323,6 @@
 }
 
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
-    if ([self checkFailed]){
-        return;
-    }
     
     NSMutableArray *targetsThisAttack = [NSMutableArray arrayWithCapacity:self.numberOfTargets];
     for (int i = 0; i < self.numberOfTargets; i++) {
@@ -355,9 +366,6 @@
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
 {
     self.currentAttacksRemaining--;
-    if ([self checkFailed]) {
-        return;
-    }
     [self damageTarget:[self targetFromRaid:theRaid]];
 }
 
@@ -461,9 +469,6 @@
     [_focusTarget setIsFocused:YES];
 }
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies{
-    if ([self checkFailed]){
-        return;
-    }
     RaidMember *target = [self targetFromRaid:theRaid];
     NSInteger preHealth = target.health + target.absorb;
     [self damageTarget:target];
@@ -495,6 +500,7 @@
 {
     if (self = [super init]){
         self.explosionParticleName = @"fire_explosion.plist";
+        self.explosionSoundName = nil;
         self.cooldownVariance = .1;
         self.projectileColor = ccWHITE;
         self.attacksPerTrigger = 1;
@@ -505,6 +511,7 @@
 - (void)dealloc {
     [_spriteName release];
     [_explosionParticleName release];
+    [_explosionSoundName release];
     [_appliedEffect release];
     [super dealloc];
 }
@@ -517,26 +524,23 @@
     [fbCopy setEffectType:self.effectType];
     [fbCopy setAttacksPerTrigger:self.attacksPerTrigger];
     [fbCopy setProjectileColor:self.projectileColor];
+    [fbCopy setExplosionSoundName:self.explosionSoundName];
     return fbCopy;
 }
 
 - (void)fireAtTarget:(RaidMember*)target
 {
-    BOOL didFail = self.checkFailed;
     NSTimeInterval colTime = 1.75;
     
     ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:self.spriteName target:target collisionTime:colTime sourceAgent:self.owner];
     [fireballVisual setCollisionParticleName:self.explosionParticleName];
-    [fireballVisual setIsFailed:didFail];
     [fireballVisual setSpriteColor:self.projectileColor];
+    [fireballVisual setCollisionSoundName:self.explosionSoundName];
     fireballVisual.type = self.effectType;
     [[self.owner announcer] displayProjectileEffect:fireballVisual];
     [fireballVisual release];
     
     DelayedHealthEffect *fireball = [[DelayedHealthEffect alloc] initWithDuration:colTime andEffectType:EffectTypeNegativeInvisible];
-    if (didFail){
-        [fireball setFailureChance:100];
-    }
     [self.appliedEffect setSpriteName:self.iconName];
     [fireball setOwner:self.owner];
     [fireball setIsIndependent:YES];
@@ -553,6 +557,19 @@
     for (int i = 0; i < self.attacksPerTrigger; i++) {
         RaidMember *target = self.ignoresGuardians ? theRaid.randomNonGuardianLivingMember : [theRaid randomLivingMember];
         [self fireAtTarget:target];
+    }
+}
+
+- (void)abilityDidFailToActivateForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    for (int i = 0; i < self.attacksPerTrigger; i++) {
+        RaidMember *target = self.ignoresGuardians ? theRaid.randomNonGuardianLivingMember : [theRaid randomLivingMember];
+        ProjectileEffect *fireballVisual = [[ProjectileEffect alloc] initWithSpriteName:self.spriteName target:target collisionTime:1.5 sourceAgent:self.owner];
+        [fireballVisual setCollisionParticleName:self.explosionParticleName];
+        [fireballVisual setSpriteColor:self.projectileColor];
+        fireballVisual.type = self.effectType;
+        [[self.owner announcer] displayProjectileEffect:fireballVisual];
+        [fireballVisual release];
     }
 }
 
@@ -1091,9 +1108,6 @@
 }
 
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
-    if ([self checkFailed]){
-        return;
-    }
     RaidMember *target = [self targetFromRaid:theRaid];
     [self damageTarget:target];
     if (self.focusTarget == target && self.focusTarget.isDead){
@@ -1111,9 +1125,6 @@
 }
 
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
-    if ([self checkFailed]) {
-        return;
-    }
     NSArray *targets = [self targetsFromRaid:theRaid];
     for (RaidMember *target in targets) {
         [self damageTarget:target];
@@ -1402,9 +1413,6 @@
     [super dealloc];
 }
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
-    if ([self checkFailed]){
-        return;
-    }
     for (RaidMember *member in theRaid.livingMembers){
         Effect *appliedEffect = [[self.appliedEffect copy] autorelease];
         [appliedEffect setSpriteName:self.iconName];
@@ -1833,6 +1841,14 @@
 @end
 
 @implementation RandomPotionToss
+
+- (id)init
+{
+    if (self = [super init]) {
+    }
+    return self;
+}
+
 - (void)triggerForTarget:(RaidMember*)target inRaid:(Raid*)theRaid
 {
     NSInteger possiblePotions = 3;
@@ -1862,6 +1878,7 @@
         [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
         [bottleVisual setType:ProjectileEffectTypeThrow];
         [bottleVisual setCollisionParticleName:@"fire_explosion.plist"];
+        [bottleVisual setCollisionSoundName:@"glassvialthrownwliquid.mp3"];
         [self.owner.announcer displayProjectileEffect:bottleVisual];
         
         
@@ -1872,6 +1889,7 @@
         ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target collisionTime:colTime sourceAgent:self.owner] autorelease];
         [bottleVisual setSpriteColor:ccc3(0, 128, 128)];
         [bottleVisual setType:ProjectileEffectTypeThrow];
+        [bottleVisual setCollisionSoundName:@"glassvialthrownwliquid.mp3"];
         [self.owner.announcer displayProjectileEffect:bottleVisual];
         [bottleEffect setIsIndependent:YES];
         [bottleEffect setOwner:self.owner];
@@ -1895,6 +1913,7 @@
         [bottleVisual setSpriteColor:ccc3(0, 128, 128)];
         [bottleVisual setType:ProjectileEffectTypeThrow];
         [bottleVisual setCollisionParticleName:@"gas_explosion.plist"];
+        [bottleVisual setCollisionSoundName:@"glassvialthrownwliquid.mp3"];
         [self.owner.announcer displayProjectileEffect:bottleVisual];
         
     } else if (potion == 3) {
@@ -1919,6 +1938,7 @@
         ProjectileEffect *bottleVisual = [[[ProjectileEffect alloc] initWithSpriteName:@"potion.png" target:target collisionTime:colTime sourceAgent:self.owner] autorelease];
         [bottleVisual setSpriteColor:ccc3(255, 0, 0 )];
         [bottleVisual setType:ProjectileEffectTypeThrow];
+        [bottleVisual setCollisionSoundName:@"glassvialthrownwliquid.mp3"];
         [self.owner.announcer displayProjectileEffect:bottleVisual];
     }
 

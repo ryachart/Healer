@@ -15,6 +15,7 @@
 #import "ShopItemNode.h"
 #import "PlayerDataManager.h"
 #import "LevelSelectMapScene.h"
+#import "SimpleAudioEngine.h"
 
 #define BOOK_Z -20
 #define FLAVOR_Z -19
@@ -152,6 +153,7 @@
 
 - (void)configureShopCategory:(CCMenuItemSprite *)selection
 {
+    [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/button1.mp3"];
     [self configureShopForCategory:(ShopCategory)selection.tag];
 }
 

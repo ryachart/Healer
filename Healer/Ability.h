@@ -43,6 +43,10 @@
 @property (nonatomic, readwrite) float remainingActivationPercentage;
 @property (nonatomic, readwrite) NSTimeInterval activationTime; //How long the cast time to warn the user
 
+//Audio
+@property (nonatomic, retain) NSString *activationSound;
+@property (nonatomic, retain) NSString *executionSound;
+
 
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 
@@ -51,6 +55,7 @@
 
 - (BOOL)checkFailed;
 - (void)activateAbility;
+- (void)abilityDidFailToActivateForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies;
 
 - (void)willDamageTarget:(RaidMember*)target;
 - (void)startChannel:(float)channel; //Zero ticks, purely visual
@@ -91,6 +96,7 @@
 @property (nonatomic, retain) Effect *appliedEffect;
 @property (nonatomic, retain) NSString* spriteName;
 @property (nonatomic, retain) NSString* explosionParticleName;
+@property (nonatomic, retain) NSString* explosionSoundName;
 @property (nonatomic, readwrite) ProjectileEffectType effectType;
 @property (nonatomic, readwrite) ccColor3B projectileColor;
 - (void)fireAtRaid:(Raid*)raid;

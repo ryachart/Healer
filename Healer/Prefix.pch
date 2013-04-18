@@ -16,3 +16,5 @@
 #define FUZZ(value, range) (((arc4random() % ((int)range * 2) + (100 - (int)range)))/100.0 * (int)value)
 
 #define BACK_BUTTON_POS CGPointMake(90, 725)
+
+#define PLAY_BUTTON_CLICK [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/button3.mp3"]

@@ -10,6 +10,7 @@
 #import "PlayerDataManager.h"
 #import "Encounter.h"
 #import "WidthScalingBackgroundSprite.h"
+#import "SimpleAudioEngine.h"
 
 @interface LevelSelectSprite ()
 @property (nonatomic, assign) CCSprite *selectedRing;
@@ -114,6 +115,7 @@
 - (void)tapped
 {
     if (!self.isAccessible) return;
+    PLAY_BUTTON_CLICK;
     [self.delegate levelSelectSprite:self didSelectLevel:self.levelNum];
 }
 

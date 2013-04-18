@@ -16,6 +16,7 @@
 #import "Talents.h"
 #import "PlayerDataManager.h"
 #import "GoldCounterSprite.h"
+#import "SimpleAudioEngine.h"
 
 @interface LevelSelectMapScene ()
 @property (nonatomic, assign) LevelSelectMapNode *mapScrollView;

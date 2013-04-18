@@ -17,6 +17,7 @@
 #import "IconDescriptionModalLayer.h"
 #import "AbilityDescriptor.h"
 #import "TalentScene.h"
+#import "SimpleAudioEngine.h"
 
 #define TIER_TABLE_Z 100
 #define CHARGED_BAR_Z 50
@@ -161,12 +162,14 @@
     NSString* choice = (NSString*)[sender userData];
     NSInteger tier = [sender tag];
     [[PlayerDataManager localPlayer] selectChoice:choice forTier:tier];
+    [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/button1.mp3"];
     [self layoutDivinityItems];
     [self layoutTierTable];
 }
 
 - (void)testChoice:(CCMenuItem*)sender {
     if (!self.showingDivPreview) {
+        [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/button1.mp3"];
         NSString* choice = (NSString*)[sender userData];
         
         NSString *iconFrameName = [Talents spriteFrameNameForChoice:choice];

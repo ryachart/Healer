@@ -674,10 +674,10 @@
 
 - (void)spellFinishedCastingForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta {
     NSArray *aliveMembers = [raid livingMembers];
-    [self.owner.announcer displaySprite:@"shield_bubble.png" overRaidForDuration:6.0];
     for (RaidMember*member in aliveMembers){
-        Effect *dtde = [[[Effect alloc] initWithDuration:6 andEffectType:EffectTypePositiveInvisible] autorelease];
+        Effect *dtde = [[[Effect alloc] initWithDuration:6 andEffectType:EffectTypePositive] autorelease];
         [dtde setTitle:@"ward-of-ancients-effect"];
+        [dtde setSpriteName:self.spriteFrameName];
         [dtde setDamageTakenMultiplierAdjustment:-.4];
         [dtde setOwner:self.owner];
         [member addEffect:dtde];
@@ -920,8 +920,9 @@
     float healthPercentage = (float)currentHealth/(float)totalHealth;
     for (RaidMember *member in livingMembers) {
         [member setHealth:member.maximumHealth * healthPercentage];
-        Effect *armorEffect = [[[Effect alloc] initWithDuration:6.0 andEffectType:EffectTypePositiveInvisible] autorelease];
+        Effect *armorEffect = [[[Effect alloc] initWithDuration:6.0 andEffectType:EffectTypePositive] autorelease];
         [armorEffect setDamageTakenMultiplierAdjustment:-.15];
+        [armorEffect setSpriteName:self.spriteFrameName];
         [armorEffect setTitle:@"attunement-armor"];
         [armorEffect setOwner:self.owner];
         [member addEffect:armorEffect];

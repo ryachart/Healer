@@ -36,6 +36,8 @@ NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
 NSString* const PlayerLastSelectedLevelKey = @"com.healer.plsl";
 NSString* const ContentKeys = @"com.healer.contentKeys";
 NSString* const PlayerFTUEState = @"com.healer.ftueState";
+NSString* const MusicDisabledKey = @"com.healer.musicDisabled";
+NSString* const EffectsDisabledKey = @"com.healer.effectsDisabled";
 
 //Content Keys
 NSString* const DelsarnContentKey = @"com.healer.content1Key";
@@ -585,6 +587,30 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
 }
 - (void)offerCampaignUnlock {
     //TODO: Show that UI?
+}
+
+#pragma mark - Settings 
+
+- (void)setMusicDisabled:(BOOL)musicDisabled
+{
+    [self.playerData setObject:[NSNumber numberWithBool:musicDisabled] forKey:MusicDisabledKey];
+    [self saveLocalPlayer];
+}
+
+- (BOOL)musicDisabled
+{
+    return [[self.playerData objectForKey:MusicDisabledKey] boolValue];
+}
+
+- (void)setEffectsDisabled:(BOOL)effectsDisabled
+{
+    [self.playerData setObject:[NSNumber numberWithBool:effectsDisabled] forKey:EffectsDisabledKey];
+    [self saveLocalPlayer];
+}
+
+- (BOOL)effectsDisabled
+{
+    return [[self.playerData objectForKey:EffectsDisabledKey] boolValue];
 }
 
 - (void)resetPlayer

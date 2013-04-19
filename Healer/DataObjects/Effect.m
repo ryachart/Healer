@@ -675,7 +675,8 @@
     if (self.target.healthPercentage <= effectivePercentage && !self.target.isDead){
         CombatEventType eventType = self.value > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
         [self.target setHealth:self.target.health + self.value];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]]; 
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]];
+        [self.owner.announcer playAudioForTitle:@"largeaxe.mp3"];
     }
 }
 @end

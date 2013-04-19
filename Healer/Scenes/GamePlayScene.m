@@ -57,6 +57,8 @@
 @property (nonatomic, assign) CCMenu *pauseButton;
 @property (nonatomic, assign) CCLayerColor *screenFlashLayer;
 @property (nonatomic, readwrite) ALuint ambientBattleKey;
+
+@property (nonatomic, retain) NSDictionary *randomTitlesPresetDictionary;
 @end
 
 @implementation GamePlayScene
@@ -80,6 +82,7 @@
     [_encounter release];
     [_pauseMenuLayer release];
     [_playingSoundsDict release];
+    [_randomTitlesPresetDictionary release];
     
     if (_encounter && _encounter.bossKey) {
         //Unload the boss specific sprites;
@@ -114,6 +117,8 @@
         self.encounter = enc;
         self.players = plyers;
         self.playingSoundsDict = [NSMutableDictionary dictionaryWithCapacity:10];
+        
+        self.randomTitlesPresetDictionary = @{@"thud.mp3": @4, @"whiff.mp3" : @6};
         
         NSAssert(self.players.count > 0, @"A Battle with no players was initiated.");
         
@@ -962,10 +967,10 @@
         [projectileSprite setColor:effect.spriteColor];
         [self addChild:projectileSprite z:RAID_Z+1 tag:PAUSEABLE_TAG];
         [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}], [CCMoveTo actionWithDuration:effect.collisionTime position:destination],[CCSpawn actions:[CCCallBlockN actionWithBlock:^(CCNode *node){
+            if (effect.collisionSoundName) {
+                [blockSelf playAudioForTitle:effect.collisionSoundName];
+            }
             if (collisionEffect){
-                if (effect.collisionSoundName) {
-                    [blockSelf playAudioForTitle:effect.collisionSoundName];
-                }
                 [collisionEffect setPosition:destination];
                 [collisionEffect setAutoRemoveOnFinish:YES];
                 [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
@@ -1002,10 +1007,10 @@
         ccBezierConfig bezierConfig = {destination,ccp(destination.x ,origin.y), ccp(destination.x,origin.y) };
         [projectileSprite runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:.3 angle:360.0]]];
         [projectileSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:effect.delay], [CCCallBlockN actionWithBlock:^(CCNode* node){ node.visible = YES;}],[CCSpawn actions:[CCBezierTo actionWithDuration:effect.collisionTime bezier:bezierConfig],nil],[CCSpawn actions:[CCCallBlockN actionWithBlock:^(CCNode *node){
+            if (effect.collisionSoundName) {
+                [blockSelf playAudioForTitle:effect.collisionSoundName];
+            }
             if (collisionEffect){
-                if (effect.collisionSoundName) {
-                    [blockSelf playAudioForTitle:effect.collisionSoundName];
-                }
                 [collisionEffect setPosition:destination];
                 [collisionEffect setAutoRemoveOnFinish:YES];
                 [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
@@ -1108,6 +1113,10 @@
 - (void)playAudioForTitle:(NSString *)title randomTitles:(NSInteger)numRandoms afterDelay:(NSTimeInterval)delay
 {
     NSString *finalTitle = title;
+    NSInteger presetRandomCount = [[self.randomTitlesPresetDictionary objectForKey:title] intValue];
+    if (presetRandomCount > 0) {
+        numRandoms = presetRandomCount;
+    }
     if (numRandoms > 0) {
         NSArray *components = [title componentsSeparatedByString:@"."];
         finalTitle = [NSString stringWithFormat:@"%@%i.%@", [components objectAtIndex:0], arc4random() % numRandoms + 1, [components objectAtIndex:1]];

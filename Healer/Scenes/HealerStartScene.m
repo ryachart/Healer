@@ -47,6 +47,8 @@
         [[SimpleAudioEngine sharedEngine] preloadEffect:@"sounds/button2.mp3"];
         [[SimpleAudioEngine sharedEngine] preloadEffect:@"sounds/button3.mp3"];
         
+        [SettingsScene configureAudioForUserSettings];
+        
         //self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
         
         self.quickPlayButton= [BasicButton basicButtonWithTarget:self andSelector:@selector(quickPlaySelected) andTitle:@"Play"];

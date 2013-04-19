@@ -229,10 +229,12 @@
         for (int i = 0; i < trgets; i++){
             if (chooses && i == 0){
                 FocusedAttack *focusedAttack = [[[FocusedAttack alloc] initWithDamage:dmg/trgets andCooldown:freq] autorelease];
+                [focusedAttack setDamageAudioName:@"thud.mp3"];
                 [self addAbility:focusedAttack];
                 self.autoAttack = focusedAttack;
             }else{
                 Attack *attack = [[Attack alloc] initWithDamage:dmg/trgets andCooldown:freq];
+                [attack setDamageAudioName:@"thud.mp3"];
                 [self addAbility:attack];
                 if (i == 0){
                     self.autoAttack = attack;
@@ -401,7 +403,7 @@
     NSInteger damage = 350;
     NSTimeInterval freq = 2.25;
     
-    CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:health damage:damage targets:1 frequency:freq choosesMT:YES ];
+    CorruptedTroll *corTroll = [[CorruptedTroll alloc] initWithHealth:health damage:damage targets:1 frequency:freq choosesMT:YES];
     corTroll.autoAttack.failureChance = .1;
     [corTroll setSpriteName:@"troll_battle_portrait.png"];
     

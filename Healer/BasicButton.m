@@ -37,13 +37,13 @@
     NSString *fontName = @"Futura";
     CGFloat fontSize = 30.0;
     CCLabelTTF *titleLabel = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize hAlignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
-    [titleLabel setColor:ccc3(240, 181, 123)];
+    [titleLabel setColor:HEALER_BROWN];
     [titleLabel setPosition:labelPosition];
     CCLabelTTF *titleLabelSelected = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize hAlignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
-    [titleLabelSelected setColor:ccc3(240, 181, 123)];
+    [titleLabelSelected setColor:HEALER_BROWN];
     [titleLabelSelected setPosition:labelPosition];
     CCLabelTTF *titleLabelDisabled = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize hAlignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
-    [titleLabelDisabled setColor:ccc3(240, 181, 123)];
+    [titleLabelDisabled setColor:HEALER_BROWN];
     [titleLabelDisabled setPosition:labelPosition];
     
     

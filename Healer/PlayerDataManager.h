@@ -101,6 +101,9 @@ extern NSString* const PlayerGoldDidChangeNotification;
 
 - (void)setPlayerObjectInformation:(PFObject*)obj;
 
+#pragma mark - Settings
+@property (nonatomic, readwrite) BOOL musicDisabled;
+@property (nonatomic, readwrite) BOOL effectsDisabled;
 //Settings Options
 - (void)resetPlayer;
 - (void)unlockAll;

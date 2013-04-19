@@ -284,6 +284,7 @@
 @implementation Attack
 - (void)dealloc {
     [_appliedEffect release];
+    [_damageAudioName release];
     [super dealloc];
 }
 
@@ -333,10 +334,14 @@
         [targetsThisAttack addObject:target];
         NSInteger preHealth = target.health;
         [self damageTarget:target];
+        BOOL causedDamage = preHealth > target.health;
+        if (causedDamage && self.damageAudioName) {
+            [self.owner.announcer playAudioForTitle:self.damageAudioName];
+        }
         if (self.removesPositiveEffects) {
             [self dispelBeneficialEffectsOnTarget:target];
         }
-        if (self.appliedEffect && (preHealth > target.health || !self.requiresDamageToApplyEffect) ){
+        if (self.appliedEffect && (causedDamage || !self.requiresDamageToApplyEffect) ){
             //Only apply the effect if we actually did damaww ge.
             Effect *applyThis = [self.appliedEffect copy];
             [applyThis setSpriteName:self.iconName];
@@ -472,7 +477,11 @@
     RaidMember *target = [self targetFromRaid:theRaid];
     NSInteger preHealth = target.health + target.absorb;
     [self damageTarget:target];
-    if (self.appliedEffect && preHealth > target.health + target.absorb){
+    BOOL causedDamage = preHealth > target.health + target.absorb;
+    if (causedDamage) {
+        [self.owner.announcer playAudioForTitle:@"thud.mp3"];
+    }
+    if (self.appliedEffect && (causedDamage || !self.requiresDamageToApplyEffect)){
         Effect *applyThis = [[self.appliedEffect copy] autorelease];
         [applyThis setOwner:self.owner];
         [target addEffect:applyThis];
@@ -583,32 +592,27 @@
 @end
 
 @implementation GroundSmash
+
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
 {
-    NSInteger tickDamage = -self.abilityValue;
     NSInteger numberOfTicks = 6;
-    
     numberOfTicks += arc4random() % 6;
-    
     NSTimeInterval delayPerTick = .5;
-    float effectDuration = numberOfTicks * delayPerTick;
-    
+        
+    [self startChannel:numberOfTicks * delayPerTick withTicks:numberOfTicks];
+}
+
+- (void)channelTickForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    NSInteger tickDamage = self.abilityValue;
     for (RaidMember *member in theRaid.livingMembers) {
         tickDamage = FUZZ(tickDamage, 25.0);
-        
-        RepeatedHealthEffect *caveInDoT = [[[RepeatedHealthEffect alloc] initWithDuration:effectDuration andEffectType:EffectTypeNegativeInvisible] autorelease];
-        [caveInDoT setTitle:@"channeled-raid-damage"];
-        [caveInDoT setValuePerTick:tickDamage];
-        [caveInDoT setNumOfTicks:numberOfTicks];
-        [caveInDoT setOwner:self.owner];
-        [member addEffect:caveInDoT];
+        [self damageTarget:member forDamage:tickDamage];
     }
-        
-    for (int i = 0; i < numberOfTicks; i++) {
-        [self.owner.announcer displayParticleSystemOnRaidWithName:@"ground_dust.plist" delay:(i+1)*delayPerTick offset:CGPointMake(0, -200)];
-        [self.owner.announcer displayScreenShakeForDuration:.33 afterDelay:(i+1)*delayPerTick];
-    }
-    [self startChannel:numberOfTicks * delayPerTick];
+    
+    [self.owner.announcer displayParticleSystemOnRaidWithName:@"ground_dust.plist" delay:0 offset:CGPointMake(0, -200)];
+    [self.owner.announcer displayScreenShakeForDuration:.33 afterDelay:0];
+    [self.owner.announcer playAudioForTitle:@"stomp.wav" randomTitles:4 afterDelay:0];
 }
 @end
 
@@ -1595,6 +1599,7 @@
         self.effectType = ProjectileEffectTypeThrow;
         self.spriteName = @"rock.png";
         self.explosionParticleName = nil;
+        self.explosionSoundName = @"bouldercrashimpact.mp3";
         Effect *disorient = [[[Effect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
         [disorient setTitle:@"disorient-effect"];
         [disorient setDamageTakenMultiplierAdjustment:.25];
@@ -1625,6 +1630,7 @@
     [cleave setAbilityValue:400];
     [cleave setCooldown:12.0];
     [cleave setFailureChance:.4];
+    [cleave setExecutionSound:@"whiff.mp3"];
     return cleave;
 }
 
@@ -1657,7 +1663,6 @@
         }
     }
     
-    
     NSInteger guardianDamage = self.abilityValue * .25 * self.owner.damageDoneMultiplier;
     NSInteger normalDamage = self.abilityValue * self.owner.damageDoneMultiplier;
     
@@ -1680,7 +1685,6 @@
     }
     
     [self damageTarget:guardianTarget forDamage:FUZZ(guardianDamage, 50)];
-    
 }
 @end
 
@@ -2033,6 +2037,7 @@
 {
     if (self = [super init]) {
         [self setIconName:@"temper.png"];
+        self.attackParticleEffectName = @"pow.plist";
         self.attackSpeedMultiplier = 1.0;
         self.damageMultiplier = 1.0;
         self.duration = 0;
@@ -2045,20 +2050,33 @@
     FocusedAttack *bossAttack = (FocusedAttack*)self.owner.autoAttack;
     RaidMember *target = bossAttack.focusTarget;
     
-    if (target) {
+    if (target && !target.isDead) {
         NSInteger numberOfStrikes = self.duration / (bossAttack.cooldown * self.attackSpeedMultiplier);
-        NSInteger attackDamage = bossAttack.abilityValue * self.damageMultiplier;
-        for (int i = 0; i < numberOfStrikes; i++) {
-            DelayedHealthEffect *strike = [[[DelayedHealthEffect alloc] initWithDuration:i*bossAttack.cooldown * self.attackSpeedMultiplier andEffectType:EffectTypeNegativeInvisible] autorelease];
-            [strike setTitle:[NSString stringWithFormat:@"frenzy-strike-%i", i]];
-            [strike setOwner:self.owner];
-            [strike setFailureChance:target.dodgeChance];
-            [strike setValue:-attackDamage];
-            [strike setCompletionParticleName:@"pow.plist"];
-            [target addEffect:strike];
-        }
-        
-        [self startChannel:self.duration];
+        [self startChannel:self.duration withTicks:numberOfStrikes];
+    }
+    
+}
+
+- (NSInteger)abilityValue
+{
+    FocusedAttack *bossAttack = (FocusedAttack*)self.owner.autoAttack;
+    if (bossAttack) {
+        return bossAttack.abilityValue * self.damageMultiplier;
+    }
+
+    return 0;
+}
+
+- (void)channelTickForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    FocusedAttack *bossAttack = (FocusedAttack*)self.owner.autoAttack;
+    RaidMember *target = bossAttack.focusTarget;
+    
+    if (target && !target.isDead) {
+        [self damageTarget:target];
+        [self.owner.announcer playAudioForTitle:@"thud.mp3"];
+    } else {
+        [self interrupt];
     }
 }
 @end

@@ -18,3 +18,5 @@
 #define BACK_BUTTON_POS CGPointMake(90, 725)
 
 #define PLAY_BUTTON_CLICK [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/button3.mp3"]
+
+#define HEALER_BROWN ccc3(240, 181, 123)

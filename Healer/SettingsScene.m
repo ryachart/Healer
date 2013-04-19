@@ -11,7 +11,12 @@
 #import "HealerStartScene.h"
 #import "BackgroundSprite.h"
 #import "PlayerDataManager.h"
+#import "SimpleAudioEngine.h"
 
+@interface SettingsScene ()
+@property (nonatomic, assign) CCMenuItemToggle *effectsButton;
+@property (nonatomic, assign) CCMenuItemToggle *musicButton;
+@end
 
 @implementation SettingsScene
 
@@ -20,17 +25,132 @@
     if (self = [super init]) {
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
         
-        BasicButton *resetGame = [BasicButton basicButtonWithTarget:self andSelector:@selector(resetGame) andTitle:@"Erase Data"];
+        CCLabelTTF *settingsLabel = [CCLabelTTF labelWithString:@"SETTINGS" fontName:@"TeluguSangamMN-Bold" fontSize:64.0];
+        settingsLabel.color = HEALER_BROWN;
+        [settingsLabel setPosition:CGPointMake(252, 600)];
+        [self addChild:settingsLabel];
         
-        CCMenu *settingsMenu = [CCMenu menuWithItems:resetGame, nil];
-        [settingsMenu setPosition:CGPointMake(512, 384)];
+        BasicButton *resetGame = [BasicButton basicButtonWithTarget:self andSelector:@selector(resetGame) andTitle:@"Erase Data"];
+        BasicButton *feedback = [BasicButton basicButtonWithTarget:self andSelector:@selector(feedback) andTitle:@"Feedback"];
+        
+        CCMenu *settingsMenu = [CCMenu menuWithItems:feedback, resetGame, nil];
+        [settingsMenu setPosition:CGPointMake(250, 295)];
+        [settingsMenu alignItemsVerticallyWithPadding:4.0];
         [self addChild:settingsMenu];
 
         CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
         [backButton setPosition:CGPointMake(90, [CCDirector sharedDirector].winSize.height * .95)];
         [self addChild:backButton];
+        
+        CCSprite *enabledEffects = [CCSprite spriteWithSpriteFrameName:@"divinity_item_selected.png"];
+        CCSprite *disabledEffects = [CCSprite spriteWithSpriteFrameName:@"divinity_item_tested.png"];
+        
+        CCSprite *d_enabledEffects = [CCSprite spriteWithSpriteFrameName:@"divinity_item_selected.png"];
+        CCSprite *d_disabledEffects = [CCSprite spriteWithSpriteFrameName:@"divinity_item_tested.png"];
+        
+        CCMenuItemSprite *enabledEffectItem = [CCMenuItemSprite itemWithNormalSprite:enabledEffects selectedSprite:disabledEffects];
+        CCMenuItemSprite *disabledEffectItem = [CCMenuItemSprite itemWithNormalSprite:d_disabledEffects selectedSprite:d_enabledEffects];
+        
+        CCLabelTTF *soundEffectsLabel = [CCLabelTTF labelWithString:@"Sound Effects:" fontName:@"TrebuchetMS-Bold" fontSize:32.0];
+        soundEffectsLabel.position = CGPointMake(160, 480);
+        soundEffectsLabel.color = HEALER_BROWN;
+        [self addChild:soundEffectsLabel];
+        
+        self.effectsButton = [CCMenuItemToggle itemWithTarget:self selector:@selector(toggleEffects) items:enabledEffectItem, disabledEffectItem, nil];
+        [self.effectsButton setSelectedIndex:[PlayerDataManager localPlayer].effectsDisabled];
+        CCMenu *effectMenu = [CCMenu menuWithItems:self.effectsButton, nil];
+        effectMenu.position = CGPointMake(300, 480);
+        [self addChild:effectMenu];
+        
+        CCSprite *enabledMusic = [CCSprite spriteWithSpriteFrameName:@"divinity_item_selected.png"];
+        CCSprite *disabledMusic = [CCSprite spriteWithSpriteFrameName:@"divinity_item_tested.png"];
+        
+        CCSprite *d_enabledMusic = [CCSprite spriteWithSpriteFrameName:@"divinity_item_selected.png"];
+        CCSprite *d_disabledMusic = [CCSprite spriteWithSpriteFrameName:@"divinity_item_tested.png"];
+        
+        CCMenuItemSprite *enabledMusicItem = [CCMenuItemSprite itemWithNormalSprite:enabledMusic selectedSprite:disabledMusic];
+        CCMenuItemSprite *disabledMusicItem = [CCMenuItemSprite itemWithNormalSprite:d_disabledMusic selectedSprite:d_enabledMusic];
+        
+        CCLabelTTF *musicLabel = [CCLabelTTF labelWithString:@"Music:" fontName:@"TrebuchetMS-Bold" fontSize:32.0];
+        musicLabel.position = CGPointMake(222, 410);
+        musicLabel.color = HEALER_BROWN;
+        [self addChild:musicLabel];
+        
+        self.musicButton = [CCMenuItemToggle itemWithTarget:self selector:@selector(toggleMusic) items:enabledMusicItem, disabledMusicItem, nil];
+        [self.musicButton setSelectedIndex:[PlayerDataManager localPlayer].musicDisabled];
+        CCMenu *musicMenu = [CCMenu menuWithItems:self.musicButton, nil];
+        musicMenu.position = CGPointMake(300, 410);
+        [self addChild:musicMenu];
+        
+        CCLayerColor *divider = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 255)];
+        divider.color = HEALER_BROWN;
+        divider.contentSize = CGSizeMake(1, 768);
+        divider.position = CGPointMake(512, 0);
+        [self addChild:divider];
+        
+#pragma Credits
+        
+        CCLabelTTF *creditsLabel = [CCLabelTTF labelWithString:@"CREDITS" fontName:@"TeluguSangamMN-Bold" fontSize:64.0];
+        creditsLabel.color = HEALER_BROWN;
+        [creditsLabel setPosition:CGPointMake(772, 600)];
+        [self addChild:creditsLabel];
+        
+        CCLabelTTF *gameDesignProgramming = [CCLabelTTF labelWithString:@"Game Design/Programming\nRyan Hart" fontName:@"TrebuchetMS-Bold" fontSize:20.0];
+        gameDesignProgramming.color = HEALER_BROWN;
+        [gameDesignProgramming setPosition:CGPointMake(660,480)];
+        [self addChild:gameDesignProgramming];
+        
+        CCLabelTTF *visuals = [CCLabelTTF labelWithString:@"Visual Production\nBrad Applebaum" fontName:@"TrebuchetMS-Bold" fontSize:20.0];
+        visuals.color = HEALER_BROWN;
+        [visuals setPosition:CGPointMake(900,480)];
+        [self addChild:visuals];
+        
+        CCLabelTTF *illustrator = [CCLabelTTF labelWithString:@"Illustration\nLyn Lopez" fontName:@"TrebuchetMS" fontSize:20.0];
+        illustrator.color = HEALER_BROWN;
+        [illustrator setPosition:CGPointMake(780,390)];
+        [self addChild:illustrator];
+        
+        CCLabelTTF *soundDesign = [CCLabelTTF labelWithString:@"Sound Design\nRJ Temple" fontName:@"TrebuchetMS" fontSize:20.0];
+        soundDesign.color = HEALER_BROWN;
+        [soundDesign setPosition:CGPointMake(780,330)];
+        [self addChild:soundDesign];
+        
+//        CCLabelTTF *testers = [CCLabelTTF labelWithString:@"Testers\n" fontName:@"TrebuchetMS" fontSize:20.0];
+//        testers.color = HEALER_BROWN;
+//        [testers setPosition:CGPointMake(780, 220)];
+//        [self addChild:testers];
     }
     return self;
+}
+
+- (void)toggleEffects
+{
+    [[PlayerDataManager localPlayer] setEffectsDisabled:![PlayerDataManager localPlayer].effectsDisabled];
+    [SettingsScene configureAudioForUserSettings];
+}
+
+- (void)toggleMusic
+{
+    [[PlayerDataManager localPlayer] setMusicDisabled:![PlayerDataManager localPlayer].musicDisabled];
+    [SettingsScene configureAudioForUserSettings];
+}
+
++ (void)configureAudioForUserSettings
+{
+    float effectsVolume = ![[PlayerDataManager localPlayer] effectsDisabled];
+    float musicVolume = ![[PlayerDataManager localPlayer] musicDisabled];
+    
+    [[SimpleAudioEngine sharedEngine] setBackgroundMusicVolume:musicVolume];
+    [[SimpleAudioEngine sharedEngine] setEffectsVolume:effectsVolume];
+}
+
+- (void)feedback
+{
+    MFMailComposeViewController *mailVC = [[[MFMailComposeViewController alloc] init] autorelease];
+    [mailVC setSubject:@"Healer Feedback"];
+    [mailVC setMailComposeDelegate:self];
+    [mailVC setToRecipients:@[@"feedback@healergame.com"]];
+    [[CCDirectorIOS sharedDirector] presentModalViewController:mailVC animated:YES];
 }
 
 - (void)resetGame
@@ -49,5 +169,11 @@
     if (alertView.cancelButtonIndex != buttonIndex) {
         [[PlayerDataManager localPlayer] resetPlayer];
     }
+}
+
+#pragma mark - Mail
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    [[CCDirectorIOS sharedDirector] dismissModalViewControllerAnimated:YES];
 }
 @end

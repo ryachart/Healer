@@ -7,7 +7,8 @@
 //
 
 #import "cocos2d.h"
+#import <MessageUI/MessageUI.h>
 
-@interface SettingsScene : CCScene <UIAlertViewDelegate>
-
+@interface SettingsScene : CCScene <UIAlertViewDelegate, MFMailComposeViewControllerDelegate>
++ (void)configureAudioForUserSettings;
 @end

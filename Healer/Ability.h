@@ -73,6 +73,7 @@
 @property (nonatomic, readwrite) BOOL requiresDamageToApplyEffect;
 @property (nonatomic, readwrite) BOOL removesPositiveEffects;
 @property (nonatomic, readwrite) BOOL prefersTargetsWithoutVisibleEffects;
+@property (nonatomic, retain) NSString *damageAudioName;
 - (RaidMember *)targetFromRaid:(Raid*)raid;
 - (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd;
 @end

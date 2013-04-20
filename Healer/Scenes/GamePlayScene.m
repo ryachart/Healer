@@ -31,7 +31,7 @@
 #import "SimpleAudioEngine.h"
 
 #define DEBUG_IMMUNITIES false
-#define DEBUG_PERFECT_HEALS true
+#define DEBUG_PERFECT_HEALS false
 
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812
@@ -93,6 +93,8 @@
     [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/postbattle.plist"];
     
     [[SimpleAudioEngine sharedEngine] unloadEffect:AMBIENT_BATTLE_LOOP];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     [super dealloc];
 }
@@ -310,6 +312,8 @@
             [self.ftueLayer setDelegate:self];
             [self addChild:self.ftueLayer z:1000];
         }
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationEnteredBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
 	}
     return self;
 }
@@ -376,6 +380,10 @@
     [self.pauseMenuLayer removeFromParentAndCleanup:YES];
     self.pauseMenuLayer = nil;  
     [self battleEndWithSuccess:NO];
+}
+
+- (void)applicationEnteredBackground {
+    [self showPauseMenu];
 }
 
 -(void)onEnterTransitionDidFinish{

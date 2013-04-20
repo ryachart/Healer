@@ -287,7 +287,6 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     [obj setObject:[NSNumber numberWithInt:[self highestLevelCompleted]] forKey:@"HLCompleted"];
     [obj setObject:[NSNumber numberWithInt:self.gold] forKey:@"Gold"];
     [obj setObject:[NSNumber numberWithInt:numVisits+1] forKey:@"saves"];
-    [obj setObject:[UIDevice currentDevice].name forKey:@"deviceName"];
     if ([self lastUsedSpellTitles]){
         [obj setObject:[self lastUsedSpellTitles] forKey:@"lastUsedSpells"];
     }

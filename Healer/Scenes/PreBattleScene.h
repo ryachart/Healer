@@ -7,10 +7,11 @@
 
 #import "cocos2d.h"
 #import "AddRemoveSpellLayer.h"
+#import "IconDescriptionModalLayer.h"
 
 @class Encounter, Player, BasicButton;
 
-@interface PreBattleScene : CCScene <SpellSwitchDelegate>
+@interface PreBattleScene : CCScene <SpellSwitchDelegate, IconDescriptorModalDelegate>
 @property (readwrite) NSInteger levelNumber;
 @property (nonatomic, retain) Player *player;
 @property (nonatomic, retain) Encounter *encounter;

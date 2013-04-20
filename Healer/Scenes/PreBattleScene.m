@@ -182,9 +182,16 @@
 
 -(void)doneButton{
     if (!self.changingSpells){
-        [self.encounter encounterWillBegin];
-        GamePlayScene *gps = [[[GamePlayScene alloc] initWithEncounter:self.encounter player:self.player] autorelease];
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.5 scene:gps]];
+        if (self.encounter.levelNumber >= 13 && self.encounter.difficulty == 5) {
+            //This encounter is unavailable on Brutal
+            IconDescriptionModalLayer *modalLayer = [[[IconDescriptionModalLayer alloc] initWithIconName:nil title:@"Unavailable" andDescription:@"This battle is unavailable on Brutal difficulty.  Please check back in a future update."] autorelease];
+            [modalLayer setDelegate:self];
+            [self addChild:modalLayer];
+        } else {
+            [self.encounter encounterWillBegin];
+            GamePlayScene *gps = [[[GamePlayScene alloc] initWithEncounter:self.encounter player:self.player] autorelease];
+            [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.5 scene:gps]];
+        }
     }
 }
 
@@ -209,6 +216,13 @@
     [self configureSpellsWithInactiveIndexes:noInactives];
     self.changingSpells = NO;
     [self.changeButton setVisible:YES];
+}
+
+#pragma mark - Icon Description Modal Layer
+
+- (void)iconDescriptionModalDidComplete:(id)modal
+{
+    [(IconDescriptionModalLayer*)modal removeFromParentAndCleanup:YES];
 }
 
 @end

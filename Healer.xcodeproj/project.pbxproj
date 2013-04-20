@@ -55,6 +55,7 @@
 		BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBAA1711F52C0008C946 /* release_notes.md */; };
 		BF1DDBB017136C4E0008C946 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1DDBAF17136C4D0008C946 /* CoreLocation.framework */; };
 		BF1DF41F1722057300046EB2 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1DF41E1722057300046EB2 /* MessageUI.framework */; };
+		BF1DF45C17220FFC00046EB2 /* TipsLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF1DF45B17220FFC00046EB2 /* TipsLayer.m */; };
 		BF21071C1527C272001B93D7 /* GamePlayPauseLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */; };
 		BF21071D1527E171001B93D7 /* HealerStartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B45145E1382006D9266 /* HealerStartScene.m */; };
 		BF21071F15291E5F001B93D7 /* emitters in Resources */ = {isa = PBXBuildFile; fileRef = BF21071E15291E5F001B93D7 /* emitters */; };
@@ -120,7 +121,7 @@
 		BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */; };
 		BFE3408B152D57A5008E84F1 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE3408A152D57A5008E84F1 /* GameKit.framework */; };
 		BFE66EDF16D9749800B9FBEE /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = BFE66EDE16D9749800B9FBEE /* fonts */; };
-		BFF4198C15A27CF700BC0453 /* divinity.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFF4198B15A27CF700BC0453 /* divinity.plist */; };
+		BFF4198C15A27CF700BC0453 /* talents.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFF4198B15A27CF700BC0453 /* talents.plist */; };
 		BFFB58E6152D69C7005B760E /* MultiplayerSetupScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */; };
 		BFFF9919168D7F52007AF447 /* PlayerDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BFFF9918168D7F52007AF447 /* PlayerDataManager.m */; };
 /* End PBXBuildFile section */
@@ -637,6 +638,8 @@
 		BF1DDBAB1711F52C0008C946 /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		BF1DDBAF17136C4D0008C946 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BF1DF41E1722057300046EB2 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		BF1DF45A17220FFC00046EB2 /* TipsLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TipsLayer.h; sourceTree = "<group>"; };
+		BF1DF45B17220FFC00046EB2 /* TipsLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TipsLayer.m; sourceTree = "<group>"; };
 		BF21071A1527C271001B93D7 /* GamePlayPauseLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlayPauseLayer.h; sourceTree = "<group>"; };
 		BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlayPauseLayer.m; sourceTree = "<group>"; };
 		BF21071E15291E5F001B93D7 /* emitters */ = {isa = PBXFileReference; lastKnownFileType = folder; path = emitters; sourceTree = SOURCE_ROOT; };
@@ -743,7 +746,7 @@
 		BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape@2x~ipad.png"; sourceTree = SOURCE_ROOT; };
 		BFE3408A152D57A5008E84F1 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		BFE66EDE16D9749800B9FBEE /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = SOURCE_ROOT; };
-		BFF4198B15A27CF700BC0453 /* divinity.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = divinity.plist; sourceTree = "<group>"; };
+		BFF4198B15A27CF700BC0453 /* talents.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = talents.plist; sourceTree = "<group>"; };
 		BFFB58E4152D69C7005B760E /* MultiplayerSetupScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiplayerSetupScene.h; sourceTree = "<group>"; };
 		BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiplayerSetupScene.m; sourceTree = "<group>"; };
 		BFFF9917168D7F52007AF447 /* PlayerDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayerDataManager.h; path = Healer/PlayerDataManager.h; sourceTree = "<group>"; };
@@ -866,7 +869,7 @@
 				38024DC313C2564D003D36F2 /* fps_images.png */,
 				38024DD113C2564D003D36F2 /* Info.plist */,
 				38024DD213C2564D003D36F2 /* iTunesArtwork */,
-				BFF4198B15A27CF700BC0453 /* divinity.plist */,
+				BFF4198B15A27CF700BC0453 /* talents.plist */,
 				BF87D85A1601ABFB00BEAD5B /* tips.plist */,
 			);
 			name = Resources;
@@ -1133,6 +1136,7 @@
 		38F0504413C2618900BCADCB /* View Objects */ = {
 			isa = PBXGroup;
 			children = (
+				BF1DF45917220FE400046EB2 /* Tips */,
 				382C463F1648CD9000883CFA /* PreBattle */,
 				BFD106F8163A2944002318CE /* Map Views */,
 				BFAFA3F615F54B8A0052FCA5 /* Talent Views */,
@@ -1165,6 +1169,15 @@
 				BF1DDBAB1711F52C0008C946 /* TestFlight.h */,
 			);
 			path = TestFlight;
+			sourceTree = "<group>";
+		};
+		BF1DF45917220FE400046EB2 /* Tips */ = {
+			isa = PBXGroup;
+			children = (
+				BF1DF45A17220FFC00046EB2 /* TipsLayer.h */,
+				BF1DF45B17220FFC00046EB2 /* TipsLayer.m */,
+			);
+			name = Tips;
 			sourceTree = "<group>";
 		};
 		BF21072015292726001B93D7 /* Animations */ = {
@@ -1882,7 +1895,7 @@
 				38F1B45C15CA30D8008B2D99 /* backgrounds in Resources */,
 				BF865F21159F8652007F5DBF /* healer@2x.png in Resources */,
 				BF865F23159F8655007F5DBF /* healer.png in Resources */,
-				BFF4198C15A27CF700BC0453 /* divinity.plist in Resources */,
+				BFF4198C15A27CF700BC0453 /* talents.plist in Resources */,
 				BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */,
 				BF87D85B1601ABFB00BEAD5B /* tips.plist in Resources */,
 				BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */,
@@ -1976,6 +1989,7 @@
 				BFA44C1F16DC34FF00F20C8A /* EnemyHealthBar.m in Sources */,
 				BFB2C40116FA5B3F004C1AB1 /* PostBattleLayer.m in Sources */,
 				BF068CA61704F0BC00000C7F /* WidthScalingBackgroundSprite.m in Sources */,
+				BF1DF45C17220FFC00046EB2 /* TipsLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

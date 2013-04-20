@@ -37,19 +37,28 @@
         [menu setPosition:CGPointMake(356, 190)];
         [self.alertDialogBackground addChild:menu];
         
+        NSInteger noIconTitleAdjust = 0;
+        NSInteger noIconDescAdjust = 0;
+        if (!iconName) {
+            noIconTitleAdjust = -20;
+            noIconDescAdjust = -26;
+        }
+        
         CCLabelTTFShadow *nameLabel = [CCLabelTTFShadow labelWithString:title dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2, self.alertDialogBackground.contentSize.height / 4) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
-       [nameLabel setPosition:CGPointMake(376, 276)];
+        [nameLabel setPosition:CGPointMake(376 + noIconTitleAdjust, 276)];
         [self.alertDialogBackground addChild:nameLabel];
         
         CCLabelTTFShadow *descLabel = [CCLabelTTFShadow labelWithString:description dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2.25, self.alertDialogBackground.contentSize.width / 2) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:14.0];
-        [descLabel setPosition:CGPointMake(390, 122)];
+        [descLabel setPosition:CGPointMake(390 + noIconDescAdjust, 122)];
         [self.alertDialogBackground addChild:descLabel];
         
-        CCSprite *descImage = [CCSprite spriteWithSpriteFrameName:iconName];
-        descImage.scaleX = TARGET_WIDTH / descImage.contentSize.width;
-        descImage.scaleY = TARGET_HEIGHT / descImage.contentSize.height;
-        [descImage setPosition:CGPointMake(200, 260)];
-        [self.alertDialogBackground addChild:descImage];
+        if (iconName) {
+            CCSprite *descImage = [CCSprite spriteWithSpriteFrameName:iconName];
+            descImage.scaleX = TARGET_WIDTH / descImage.contentSize.width;
+            descImage.scaleY = TARGET_HEIGHT / descImage.contentSize.height;
+            [descImage setPosition:CGPointMake(200, 260)];
+            [self.alertDialogBackground addChild:descImage];
+        }
         
     }
     return self;
@@ -69,6 +78,6 @@
 }
 
 - (void)shouldDismiss {
-    [self.delegate abilityDescriptorModalDidComplete:self];
+    [self.delegate iconDescriptionModalDidComplete:self];
 }
 @end

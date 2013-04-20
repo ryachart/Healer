@@ -21,6 +21,8 @@
 #import "SettingsScene.h"
 #import "RatingCounterSprite.h"
 #import "SimpleAudioEngine.h"
+#import "TipsLayer.h"
+
 
 @interface HealerStartScene ()
 @property (assign) CCMenu* menu;
@@ -89,6 +91,11 @@
         CCMenu *settingsMenu = [CCMenu menuWithItems:settingsButton, nil];
         [settingsMenu setPosition:CGPointMake(50, 20)];
         [self addChild:settingsMenu];
+        
+        if ([PlayerDataManager localPlayer].highestLevelCompleted > 1) {        
+            TipsLayer *tipsLayer = [[[TipsLayer alloc] init] autorelease];
+            [self addChild:tipsLayer];
+        }
         
     }
     return self;

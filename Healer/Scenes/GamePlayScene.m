@@ -606,7 +606,7 @@
     [modalLayer addChild:pausedTitle];
 }
 
-- (void)abilityDescriptorModalDidComplete:(id)modal {
+- (void)iconDescriptionModalDidComplete:(id)modal {
     IconDescriptionModalLayer *layer = (IconDescriptionModalLayer*)modal;
     [layer removeFromParentAndCleanup:YES];
     if (self.isServer || self.isClient){

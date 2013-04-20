@@ -188,7 +188,7 @@
     }
 }
 
-- (void)abilityDescriptorModalDidComplete:(id)modal
+- (void)iconDescriptionModalDidComplete:(id)modal
 {
     [(IconDescriptionModalLayer*)modal removeFromParentAndCleanup:YES];
     self.showingDivPreview = NO;

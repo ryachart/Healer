@@ -60,7 +60,7 @@ static NSDictionary *divinityInfo = nil;
 }
 
 + (void)loadDivinityInfo {
-    NSString *pathToDict = [[NSBundle mainBundle] pathForResource:@"divinity" ofType:@"plist"];
+    NSString *pathToDict = [[NSBundle mainBundle] pathForResource:@"talents" ofType:@"plist"];
     divinityInfo = [[NSDictionary dictionaryWithContentsOfFile:pathToDict] retain];
 }
 

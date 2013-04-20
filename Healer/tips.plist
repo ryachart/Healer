@@ -3,15 +3,15 @@
 <plist version="1.0">
 <array>
 	<string>Wizards give you extra mana regeneration.  Keep them alive!</string>
-	<string>Try to keep your mana below full.  Mana regeneration is wasted while at full energy!</string>
+	<string>Try to keep your mana below full.  Mana regeneration is wasted while at full energy.</string>
 	<string>Spells that heal slowly are more mana efficient.  Use them when damage is low.</string>
 	<string>Try to find your next healing target while casting spells.</string>
 	<string>Curses and Poisons can be removed from allies by using Purify.</string>
 	<string>When healing a Guardian that is already at full health it gives the Guardian a small damage absorption effect.</string>
 	<string>Warlocks will heal themselves slowly when they are at low health.</string>
 	<string>If you find yourself not using a spell during a fight try replacing it with something else next time.</string>
-	<string>Targets that are Focused must stay alive!  Make sure they stay healthy!</string>
-	<string>Make sure to read about the enemy abilities by tapping on the icons beneath the enemy health bar.</string>
+	<string>Targets that are Focused must stay alive!  Make sure to watch them carefully.</string>
+	<string>Read about the enemy abilities by tapping on the icons beneath the enemy health bar.</string>
 	<string>No spell is always better than another.  Use the right spell for the right situation.</string>
 	<string>Talents allows you to enhance your abilities in special ways.</string>
 	<string>You can earn gold from repeating bosses you&apos;ve already defeated.</string>
@@ -19,6 +19,7 @@
 	<string>Berserkers heal themself for a small amount when they critically strike.</string>
 	<string>All allies deal more damage when they have more health.</string>
 	<string>Wizards have a small chance to critically grant you energy.</string>
-	<string>If an ally has any absorption their damage taken is reduced by 5%.</string>
+	<string>If an ally has any absorption they take 5% less damage.</string>
+	<string>On Brutal Difficulty, bosses have additional abilities.</string>
 </array>
 </plist>

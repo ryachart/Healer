@@ -95,24 +95,29 @@
         [creditsLabel setPosition:CGPointMake(772, 600)];
         [self addChild:creditsLabel];
         
-        CCLabelTTF *gameDesignProgramming = [CCLabelTTF labelWithString:@"Game Design/Programming\nRyan Hart" fontName:@"TrebuchetMS-Bold" fontSize:20.0];
+        CCLabelTTF *gameDesignProgramming = [CCLabelTTF labelWithString:@"Game Design/Programming\nRyan Hart" fontName:@"TrebuchetMS-Bold" fontSize:18.0];
         gameDesignProgramming.color = HEALER_BROWN;
         [gameDesignProgramming setPosition:CGPointMake(660,480)];
         [self addChild:gameDesignProgramming];
         
-        CCLabelTTF *visuals = [CCLabelTTF labelWithString:@"Visual Production\nBrad Applebaum" fontName:@"TrebuchetMS-Bold" fontSize:20.0];
+        CCLabelTTF *visuals = [CCLabelTTF labelWithString:@"Art Direction/UI Design\nBrad Applebaum" fontName:@"TrebuchetMS-Bold" fontSize:18.0];
         visuals.color = HEALER_BROWN;
         [visuals setPosition:CGPointMake(900,480)];
         [self addChild:visuals];
         
-        CCLabelTTF *illustrator = [CCLabelTTF labelWithString:@"Illustration\nLyn Lopez" fontName:@"TrebuchetMS" fontSize:20.0];
+        CCLabelTTF *illustrator = [CCLabelTTF labelWithString:@"Illustration\nLyn Lopez" fontName:@"TrebuchetMS" fontSize:18.0];
         illustrator.color = HEALER_BROWN;
         [illustrator setPosition:CGPointMake(780,390)];
         [self addChild:illustrator];
         
-        CCLabelTTF *soundDesign = [CCLabelTTF labelWithString:@"Sound Design\nRJ Temple" fontName:@"TrebuchetMS" fontSize:20.0];
+        CCLabelTTF *illustrator2 = [CCLabelTTF labelWithString:@"Illustration\nCraig Simpson" fontName:@"TrebuchetMS" fontSize:18.0];
+        illustrator2.color = HEALER_BROWN;
+        [illustrator2 setPosition:CGPointMake(780,330)];
+        [self addChild:illustrator2];
+        
+        CCLabelTTF *soundDesign = [CCLabelTTF labelWithString:@"Sound Design\nRJ Temple" fontName:@"TrebuchetMS" fontSize:18.0];
         soundDesign.color = HEALER_BROWN;
-        [soundDesign setPosition:CGPointMake(780,330)];
+        [soundDesign setPosition:CGPointMake(780,270)];
         [self addChild:soundDesign];
         
 //        CCLabelTTF *testers = [CCLabelTTF labelWithString:@"Testers\n" fontName:@"TrebuchetMS" fontSize:20.0];

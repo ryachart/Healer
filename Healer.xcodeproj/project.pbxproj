@@ -45,6 +45,8 @@
 		38B0BB28165779BC00D31540 /* ViewTalentChoiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 38B0BB27165779BC00D31540 /* ViewTalentChoiceLayer.m */; };
 		38F1B45C15CA30D8008B2D99 /* backgrounds in Resources */ = {isa = PBXBuildFile; fileRef = 38F1B45B15CA30D8008B2D99 /* backgrounds */; };
 		BF0022BE163EE94C00384882 /* EncounterCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0022BD163EE94C00384882 /* EncounterCard.m */; };
+		BF03E26B1725CA2900F3A429 /* Collectible.m in Sources */ = {isa = PBXBuildFile; fileRef = BF03E26A1725CA2900F3A429 /* Collectible.m */; };
+		BF03E26F1725CE6700F3A429 /* CollectibleLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF03E26E1725CE6700F3A429 /* CollectibleLayer.m */; };
 		BF0557A015268D0A006B4781 /* ProjectileEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF05579F15268D0A006B4781 /* ProjectileEffect.m */; };
 		BF0557B51526BC02006B4781 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = BF0557B41526BC02006B4781 /* assets */; };
 		BF068CA61704F0BC00000C7F /* WidthScalingBackgroundSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF068CA51704F0BC00000C7F /* WidthScalingBackgroundSprite.m */; };
@@ -622,6 +624,10 @@
 		38F1B45B15CA30D8008B2D99 /* backgrounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = backgrounds; sourceTree = SOURCE_ROOT; };
 		BF0022BC163EE94C00384882 /* EncounterCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncounterCard.h; sourceTree = "<group>"; };
 		BF0022BD163EE94C00384882 /* EncounterCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EncounterCard.m; sourceTree = "<group>"; };
+		BF03E2691725CA2900F3A429 /* Collectible.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Collectible.h; sourceTree = "<group>"; };
+		BF03E26A1725CA2900F3A429 /* Collectible.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Collectible.m; sourceTree = "<group>"; };
+		BF03E26D1725CE6700F3A429 /* CollectibleLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectibleLayer.h; sourceTree = "<group>"; };
+		BF03E26E1725CE6700F3A429 /* CollectibleLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CollectibleLayer.m; sourceTree = "<group>"; };
 		BF05579E15268D0A006B4781 /* ProjectileEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProjectileEffect.h; sourceTree = "<group>"; };
 		BF05579F15268D0A006B4781 /* ProjectileEffect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectileEffect.m; sourceTree = "<group>"; };
 		BF0557AC1526BBA6006B4781 /* build-spritesheet.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "build-spritesheet.sh"; path = "scripts/build-spritesheet.sh"; sourceTree = SOURCE_ROOT; };
@@ -845,7 +851,6 @@
 				38F0504413C2618900BCADCB /* View Objects */,
 				BF21072015292726001B93D7 /* Animations */,
 				387E7AE3145E0D09006D9266 /* Scenes */,
-				387E7AE9145E0F8F006D9266 /* Audio */,
 				38024F0713C2564E003D36F2 /* Supporting Files */,
 				38024DC013C2564D003D36F2 /* Resources */,
 			);
@@ -855,6 +860,7 @@
 		38024DC013C2564D003D36F2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BFB99F1A15257F6D007EE559 /* sounds */,
 				BFE66EDE16D9749800B9FBEE /* fonts */,
 				BFD240CC16AC8E09007010D0 /* bosses */,
 				BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */,
@@ -1027,14 +1033,6 @@
 			name = Constants;
 			sourceTree = "<group>";
 		};
-		387E7AE9145E0F8F006D9266 /* Audio */ = {
-			isa = PBXGroup;
-			children = (
-				BFB99F1A15257F6D007EE559 /* sounds */,
-			);
-			name = Audio;
-			sourceTree = "<group>";
-		};
 		387E7B5B145E1756006D9266 /* Player */ = {
 			isa = PBXGroup;
 			children = (
@@ -1065,6 +1063,8 @@
 				387E7B58145E1701006D9266 /* Enemy.m */,
 				387E7AF7145E1263006D9266 /* Player.h */,
 				387E7AF8145E1263006D9266 /* Player.m */,
+				BF03E2691725CA2900F3A429 /* Collectible.h */,
+				BF03E26A1725CA2900F3A429 /* Collectible.m */,
 			);
 			name = Agents;
 			sourceTree = "<group>";
@@ -1087,6 +1087,7 @@
 		387E7B73145E28CA006D9266 /* GamePlay */ = {
 			isa = PBXGroup;
 			children = (
+				BF03E26C1725CE4500F3A429 /* Collectibles */,
 				BFA44C1416DC21A400F20C8A /* Deprecated */,
 				BFA44C1516DC237F00F20C8A /* Raid */,
 				387E7B5B145E1756006D9266 /* Player */,
@@ -1149,6 +1150,15 @@
 				387E7B73145E28CA006D9266 /* GamePlay */,
 			);
 			name = "View Objects";
+			sourceTree = "<group>";
+		};
+		BF03E26C1725CE4500F3A429 /* Collectibles */ = {
+			isa = PBXGroup;
+			children = (
+				BF03E26D1725CE6700F3A429 /* CollectibleLayer.h */,
+				BF03E26E1725CE6700F3A429 /* CollectibleLayer.m */,
+			);
+			name = Collectibles;
 			sourceTree = "<group>";
 		};
 		BF05579C15268CEF006B4781 /* Descriptors */ = {
@@ -1990,6 +2000,8 @@
 				BFB2C40116FA5B3F004C1AB1 /* PostBattleLayer.m in Sources */,
 				BF068CA61704F0BC00000C7F /* WidthScalingBackgroundSprite.m in Sources */,
 				BF1DF45C17220FFC00046EB2 /* TipsLayer.m in Sources */,
+				BF03E26B1725CA2900F3A429 /* Collectible.m in Sources */,
+				BF03E26F1725CE6700F3A429 /* CollectibleLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

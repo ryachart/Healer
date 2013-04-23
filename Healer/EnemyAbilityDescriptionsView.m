@@ -9,7 +9,7 @@
 #import "EnemyAbilityDescriptionsView.h"
 #import "Enemy.h"
 #import "EnemyAbilityDescriptorIcon.h"
-
+#import "SimpleAudioEngine.h"
 
 @interface EnemyAbilityDescriptionsView ()
 @property (nonatomic, readwrite) NSInteger lastCount;
@@ -63,6 +63,7 @@
 }
 
 - (void)bossAbilitySelected:(id)sender {
+    PLAY_BUTTON_CLICK;
     CCMenuItemSprite *menuItem = (CCMenuItemSprite*)sender;
     AbilityDescriptor *abilityDesc = (AbilityDescriptor*)[menuItem userData];
     [self.delegate abilityDescriptionViewDidSelectAbility:abilityDesc];
@@ -70,6 +71,12 @@
 
 - (void)update {
     [self configureIcons];
+}
+
+- (void)fadeIn
+{
+    self.opacity = 0;
+    [self runAction:[CCFadeTo actionWithDuration:.5 opacity:255]];
 }
 
 #pragma mark - CCRBGAProtocol

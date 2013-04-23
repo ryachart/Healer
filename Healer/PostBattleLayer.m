@@ -17,6 +17,7 @@
 #import "BasicButton.h"
 #import "CCNumberChangeAction.h"
 #import "Enemy.h"
+#import "SimpleAudioEngine.h"
 
 @interface PostBattleLayer ()
 @property (nonatomic, readwrite) BOOL isMultiplayer;
@@ -275,6 +276,7 @@
 
 - (void)finishGoldCountUp
 {
+    [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/coinschest.mp3"];
     [self.goldCounter updateGoldAnimated:YES toGold:[PlayerDataManager localPlayer].gold];
 }
 

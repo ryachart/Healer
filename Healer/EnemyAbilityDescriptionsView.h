@@ -23,7 +23,7 @@
 @property (nonatomic, assign) id<AbilityDescriptionViewDelegate> delegate;
 
 - (id)initWithBoss:(Enemy*)boss;
-
+- (void)fadeIn;
 - (void)update;
 
 @end

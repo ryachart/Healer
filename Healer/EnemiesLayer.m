@@ -26,6 +26,7 @@
 {
     if (self = [super init]) {
         _enemies = [enemies retain];
+        self.areAbilitiesVisible = YES;
         self.enemySprites = [NSMutableArray arrayWithCapacity:3];
     }
     return self;
@@ -34,7 +35,7 @@
 - (void)onEnter
 {
     [super onEnter];
-    [self updateEnemySprites];
+    [self createEnemySprites];
 }
 
 - (CGPoint)spriteCenterForEnemy:(Enemy *)enemy
@@ -68,7 +69,7 @@
     return CGPointZero;
 }
 
-- (void)updateEnemySprites
+- (void)createEnemySprites
 {
     for (EnemySprite *sprite in self.enemySprites) {
         [sprite removeFromParentAndCleanup:YES];
@@ -84,6 +85,7 @@
         [self addChild:sprite];
         i++;
         [self.enemySprites addObject:sprite];
+        sprite.abilitiesView.visible = self.areAbilitiesVisible;
     }
 }
 
@@ -92,7 +94,24 @@
     [_enemies release];
     _enemies = [enemies retain];
     
-    [self updateEnemySprites];
+    [self createEnemySprites];
+}
+
+- (void)setAreAbilitiesVisible:(BOOL)areAbilitiesVisible
+{
+    for (EnemySprite *sprite in self.enemySprites) {
+        sprite.abilitiesView.visible = areAbilitiesVisible;
+    }
+    _areAbilitiesVisible = areAbilitiesVisible;
+}
+
+- (void)fadeInAbilities
+{
+    _areAbilitiesVisible = YES;
+    for (EnemySprite *sprite in self.enemySprites) {
+        sprite.abilitiesView.visible = YES;
+        [sprite.abilitiesView fadeIn];
+    }
 }
 
 - (void)update {

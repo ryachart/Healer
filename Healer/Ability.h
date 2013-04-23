@@ -11,11 +11,12 @@
 #import <Foundation/Foundation.h>
 #import "RaidMember.h"
 #import "ProjectileEffect.h"
+#import "Collectible.h"
 
 #define kAbilityRequiresTrigger 99999
 
 @class Raid, Player, Enemy, Agent, HealableTarget, AbilityDescriptor, Effect;
-@interface Ability : NSObject
+@interface Ability : NSObject <CollectibleDelegate>
 
 @property (nonatomic, readwrite) float failureChance;
 @property (nonatomic, readwrite) NSTimeInterval timeApplied;
@@ -310,5 +311,12 @@ typedef enum {
 @end
 
 @interface AttackHealersAbility : Attack
+@end
 
+@interface SpewManaOrbsAbility : Ability
+@end
+
+@interface OrbsOfFury : Ability
+@property (nonatomic, readwrite) float particleEffectCooldown;
+@property (nonatomic, retain) Effect *ownerEffect;
 @end

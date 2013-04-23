@@ -380,17 +380,14 @@
 
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     if (percentage == 75.0){
-        [self.announcer announce:@"A putrid limb falls from the ghoul..."];
         self.autoAttack.abilityValue *= .9;
     }
     
     if (percentage == 50.0){
-        [self.announcer announce:@"The ghoul begins to crumble."];
         self.autoAttack.abilityValue *= .9;
     }
     
     if (percentage == 25.0){
-        [self.announcer announce:@"The nearly lifeless ghoul shrieks in agony.."];
         self.autoAttack.abilityValue *= .8;
     }
 }
@@ -1664,10 +1661,25 @@
     [boss setSpriteName:@"gatekeeper_battle_portrait.png"];
     
     [boss addAbility:[Cleave normalCleave]];
-    
     [boss addGripImpale];
     
     return [boss autorelease];
+}
+
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+            return -.40;
+        case 2:
+            return -.20;
+        case 4:
+        case 5:
+            return .125;
+        case 3: //Normal
+        default:
+            return 0.0;
+    }
 }
 
 - (void)addGripImpale
@@ -1691,6 +1703,21 @@
 {
     if ([ability.key isEqualToString:@"open-the-gates"]) {
         [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:20];
+    }
+}
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    if (difficulty == 5) {
+        OrbsOfFury *orbsOfFury = [[[OrbsOfFury alloc] init] autorelease];
+        [orbsOfFury setCooldown:16.0];
+        [orbsOfFury setCooldownVariance:.4];
+        [orbsOfFury setAbilityValue:30];
+        [orbsOfFury setIconName:@"red_curse.png"];
+        [orbsOfFury setTitle:@"Orbs of Fury"];
+        [orbsOfFury setInfo:@"The Gatekeeper summons orbs of fury increasing his damage taken and dealt by 4% per orb.  The Healer may detonate the orbs by tapping them."];
+        [self addAbility:orbsOfFury];
     }
 }
 

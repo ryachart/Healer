@@ -249,6 +249,7 @@
 {
     if ([[PlayerDataManager localPlayer] canAffordShopItem:selectedNode.item] && ![[PlayerDataManager localPlayer] hasShopItem:selectedNode.item]){
             [[PlayerDataManager localPlayer] purchaseItem:selectedNode.item];
+            [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/coinschest.mp3"];
             [self configureCategoryButtons];
             if (self.requiresGreaterHealFtuePurchase) {
                 [self.ftueArrow setVisible:NO];

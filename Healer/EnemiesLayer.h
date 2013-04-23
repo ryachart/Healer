@@ -14,6 +14,9 @@
 @interface EnemiesLayer : CCLayer <AbilityDescriptionViewDelegate>
 @property (nonatomic, retain) NSArray *enemies;
 @property (nonatomic, assign) id<AbilityDescriptionViewDelegate>delegate;
+
+@property (nonatomic, readwrite) BOOL areAbilitiesVisible;
+
 - (id)initWithEnemies:(NSArray *)enemies;
 
 - (CGPoint)spriteCenterForEnemy:(Enemy*)enemy;
@@ -21,4 +24,6 @@
 - (void)update;
 
 - (void)endBattle;
+
+- (void)fadeInAbilities;
 @end

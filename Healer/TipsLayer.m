@@ -58,10 +58,13 @@
 - (NSString *)nextRandomTip
 {
     NSMutableArray *candidates = [NSMutableArray arrayWithCapacity:self.usedTipsArray.count];
+    int i = 0; 
     for (NSNumber *boolNumber in self.usedTipsArray) {
         if (![boolNumber boolValue]) {
-            [candidates addObject:[self.tipsArray objectAtIndex:[self.usedTipsArray indexOfObject:boolNumber]]];
+            NSString *candidate = [self.tipsArray objectAtIndex:i];
+            [candidates addObject:candidate];
         }
+        i++;
     }
 
     if (candidates.count == 0) {

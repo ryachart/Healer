@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "ProjectileEffect.h"
 
-@class RaidMember, Enemy;
+@class RaidMember, Enemy, Collectible;
 @protocol Announcer <NSObject>
 
 //Ftue Events
@@ -47,4 +47,7 @@
 
 - (void)displayCriticalPlayerDamage;
 - (void)displayScreenFlash;
+
+//Collectibles
+- (void)displayCollectible:(Collectible*)collectible;
 @end

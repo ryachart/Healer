@@ -16,6 +16,7 @@
 #import "Spell.h"
 #import "CombatEvent.h"
 #import "AbilityDescriptor.h"
+#import "Collectible.h"
 
 @interface Ability ()
 @property (nonatomic, readwrite) NSInteger numChannelTicks;
@@ -66,6 +67,16 @@
         self.timeApplied = 0;
         self.isActivating = NO;
     }
+}
+
+- (void)collectible:(Collectible *)col wasCollectedByPlayer:(Player *)player forRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
+{
+    
+}
+
+- (void)collectibleDidExpire:(Collectible *)col forRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    
 }
 
 - (void)dispelBeneficialEffectsOnTarget:(RaidMember*)target
@@ -2382,5 +2393,102 @@
     }];
     
     return target;
+}
+@end
+
+@implementation SpewManaOrbsAbility
+
+- (void)collectible:(Collectible *)col wasCollectedByPlayer:(Player *)player forRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    player.energy += 20;
+}
+
+- (void)collectibleDidExpire:(Collectible *)col forRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    NSInteger numOrbs = self.abilityValue;
+    for (int i = 0; i < numOrbs; i++) {
+        Collectible *manaOrb = [[[Collectible alloc] initWithSpriteName:@"energy_orb2.png" andDuration:2.0] autorelease];
+        manaOrb.movementVector = CGPointMake(0, arc4random() % 15 + 10);
+        manaOrb.movementType = CollectibleMovementTypeFloat;
+        manaOrb.entranceType = CollectibleEntranceTypeSpew;
+        [manaOrb registerDelegate:self];
+        [self.owner.announcer displayCollectible:manaOrb];
+    }
+}
+@end
+
+@implementation OrbsOfFury
+
+- (id)init
+{
+    if (self = [super init]) {
+        self.dodgeChanceAdjustment = -100.0;
+        self.attackParticleEffectName = nil;
+    }
+    return self;
+}
+- (void)dealloc
+{
+    [_ownerEffect release];
+    [super dealloc];
+}
+
+- (void)setOwner:(Enemy *)owner
+{
+    [self.owner removeEffect:self.ownerEffect];
+    self.ownerEffect = nil;
+    [super setOwner:owner];
+    self.ownerEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
+    [self.ownerEffect setTitle:@"orbs-of-fury-eff"];
+    [self.ownerEffect setMaxStacks:99];
+    [self.ownerEffect setDamageDoneMultiplierAdjustment:.04];
+    [self.ownerEffect setDamageTakenMultiplierAdjustment:.04];
+    [self.owner addEffect:self.ownerEffect];
+}
+
+- (void)combatUpdateForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
+{
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
+    self.particleEffectCooldown = MAX(0.0, self.particleEffectCooldown - timeDelta);
+}
+
+- (void)collectible:(Collectible *)col wasCollectedByPlayer:(Player *)player forRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    if (self.ownerEffect.stacks > 1) {
+        self.ownerEffect.stacks--;
+    }
+    
+    for (RaidMember *member in theRaid.livingMembers) {
+        [self damageTarget:member];
+    }
+    
+    if (self.particleEffectCooldown <= 0.0) {
+        self.particleEffectCooldown = 2.0;
+        [self.owner.announcer displayScreenShakeForDuration:.5];
+        [self.owner.announcer displayParticleSystemOnRaidWithName:@"red_pulse.plist" forDuration:1.0 offset:CGPointZero];
+    }
+}
+
+- (void)collectibleDidExpire:(Collectible *)col forRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    NSInteger numOrbs = arc4random() % 3 + 1;
+    for (int i = 0; i < numOrbs; i++) {
+        Collectible *manaOrb = [[[Collectible alloc] initWithSpriteName:@"red_orb.png" andDuration:99999] autorelease];
+        manaOrb.movementVector = CGPointMake(0, arc4random() % 15 + 10);
+        manaOrb.movementType = CollectibleMovementTypeFloat;
+        manaOrb.entranceType = CollectibleEntranceTypeSpew;
+        [manaOrb registerDelegate:self];
+        [self.owner.announcer displayCollectible:manaOrb];
+        self.ownerEffect.stacks++;
+    }
 }
 @end

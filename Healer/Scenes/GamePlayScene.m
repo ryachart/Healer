@@ -29,6 +29,7 @@
 #import "LevelSelectMapScene.h"
 #import "TalentScene.h"
 #import "SimpleAudioEngine.h"
+#import "CollectibleLayer.h"
 
 #define DEBUG_IMMUNITIES false
 #define DEBUG_PERFECT_HEALS false
@@ -57,6 +58,7 @@
 @property (nonatomic, assign) CCMenu *pauseButton;
 @property (nonatomic, assign) CCLayerColor *screenFlashLayer;
 @property (nonatomic, readwrite) ALuint ambientBattleKey;
+@property (nonatomic, assign) CollectibleLayer *collectibleLayer;
 
 @property (nonatomic, retain) NSDictionary *randomTitlesPresetDictionary;
 @end
@@ -169,6 +171,7 @@
         self.enemiesLayer = [[[EnemiesLayer alloc] initWithEnemies:self.encounter.enemies] autorelease];
         [self.enemiesLayer setDelegate:self];
         [self.enemiesLayer setPosition:CGPointMake(0, 408)];
+        [self.enemiesLayer setAreAbilitiesVisible:NO];
         [self addChild:self.enemiesLayer];
         
         CCParticleSystemQuad *castingEffect = [[ParticleSystemCache sharedCache] systemForKey:@"swirly_casty.png"];
@@ -303,6 +306,9 @@
         [self.pauseButton setPosition:CGPointMake(50, [CCDirector sharedDirector].winSize.height * .9325)];
         [self addChild:self.pauseButton];
         
+        self.collectibleLayer = [[[CollectibleLayer alloc] initWithOwningPlayer:self.player encounter:self.encounter players:self.players] autorelease];
+        [self addChild:self.collectibleLayer z:100];
+        
         self.networkThrottle = 0;
         
         if (self.encounter.levelNumber == 1 && [PlayerDataManager localPlayer].ftueState < FTUEStateBattle1Finished) {
@@ -351,6 +357,7 @@
         [self schedule:@selector(gameEvent:)];
     }
     [self.raidView setPaused:newPaused];
+    [self.collectibleLayer setIsPaused:newPaused];
 }
 
 -(void)showPauseMenu{
@@ -412,6 +419,7 @@
     }], [CCDelayTime actionWithDuration:1.0], [CCCallBlock actionWithBlock:^{
         blockSelf.announcementLabel.visible = NO;
         blockSelf.announcementLabel.string = @"";
+        [blockSelf.enemiesLayer fadeInAbilities];
         [blockSelf setPaused:NO];
     }], nil]];
 }
@@ -1029,6 +1037,11 @@
     }
 }
 
+- (void)displayCollectible:(Collectible *)collectible
+{
+    [self.collectibleLayer addCollectible:collectible];
+}
+
 - (void)announceFtuePlagueStrike
 {
     if ([PlayerDataManager localPlayer].ftueState < FTUEStateAbilityIconSelected) {
@@ -1186,6 +1199,7 @@
     if (!self.ambientBattleKey) {
         self.ambientBattleKey = [[SimpleAudioEngine sharedEngine] playEffect:AMBIENT_BATTLE_LOOP pitch:1.0 pan:0.0 gain:.25 loops:YES];
     }
+
     
     NSMutableArray *focusTargets = [NSMutableArray arrayWithCapacity:self.encounter.enemies.count];
     if (self.networkThrottle >= NETWORK_THROTTLE){
@@ -1284,6 +1298,7 @@
 	[self.spellView3 updateUI];
 	[self.spellView4 updateUI];
     [self.enemiesLayer update];
+    [self.collectibleLayer updateAllCollectibles:deltaT];
 }
 
 -(void)beginChanneling{

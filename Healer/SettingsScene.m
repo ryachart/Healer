@@ -34,8 +34,8 @@
         BasicButton *feedback = [BasicButton basicButtonWithTarget:self andSelector:@selector(feedback) andTitle:@"Feedback"];
         
         CCMenu *settingsMenu = [CCMenu menuWithItems:feedback, resetGame, nil];
-        [settingsMenu setPosition:CGPointMake(250, 295)];
-        [settingsMenu alignItemsVerticallyWithPadding:4.0];
+        [settingsMenu setPosition:CGPointMake(250, 235)];
+        [settingsMenu alignItemsVerticallyWithPadding:20.0];
         [self addChild:settingsMenu];
 
         CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
@@ -59,7 +59,7 @@
         self.effectsButton = [CCMenuItemToggle itemWithTarget:self selector:@selector(toggleEffects) items:enabledEffectItem, disabledEffectItem, nil];
         [self.effectsButton setSelectedIndex:[PlayerDataManager localPlayer].effectsDisabled];
         CCMenu *effectMenu = [CCMenu menuWithItems:self.effectsButton, nil];
-        effectMenu.position = CGPointMake(300, 480);
+        effectMenu.position = CGPointMake(320, 480);
         [self addChild:effectMenu];
         
         CCSprite *enabledMusic = [CCSprite spriteWithSpriteFrameName:@"divinity_item_selected.png"];
@@ -72,14 +72,14 @@
         CCMenuItemSprite *disabledMusicItem = [CCMenuItemSprite itemWithNormalSprite:d_disabledMusic selectedSprite:d_enabledMusic];
         
         CCLabelTTF *musicLabel = [CCLabelTTF labelWithString:@"Music:" fontName:@"TrebuchetMS-Bold" fontSize:32.0];
-        musicLabel.position = CGPointMake(222, 410);
+        musicLabel.position = CGPointMake(222, 400);
         musicLabel.color = HEALER_BROWN;
         [self addChild:musicLabel];
         
         self.musicButton = [CCMenuItemToggle itemWithTarget:self selector:@selector(toggleMusic) items:enabledMusicItem, disabledMusicItem, nil];
         [self.musicButton setSelectedIndex:[PlayerDataManager localPlayer].musicDisabled];
         CCMenu *musicMenu = [CCMenu menuWithItems:self.musicButton, nil];
-        musicMenu.position = CGPointMake(300, 410);
+        musicMenu.position = CGPointMake(320, 400);
         [self addChild:musicMenu];
         
         CCLayerColor *divider = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 255)];

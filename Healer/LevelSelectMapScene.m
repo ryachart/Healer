@@ -60,6 +60,14 @@
     return self;
 }
 
+- (void)onEnterTransitionDidFinish
+{
+    [super onEnterTransitionDidFinish];
+    if (![SimpleAudioEngine sharedEngine].isBackgroundMusicPlaying) {
+        [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"sounds/theme.mp3" loop:YES];
+    }
+}
+
 - (void)loadEncounterCardForSelectedEncounter:(NSInteger)selectedEncounter {
     [self.encCard setLevelNum:selectedEncounter];
 }

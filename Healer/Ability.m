@@ -375,6 +375,7 @@
 {
     if (self = [super initWithDamage:dmg andCooldown:cd]) {
         self.currentAttacksRemaining = arc4random() % 3 + 2;
+        self.damageAudioName = @"thud.mp3";
     }
     return self;
 }
@@ -382,7 +383,13 @@
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
 {
     self.currentAttacksRemaining--;
-    [self damageTarget:[self targetFromRaid:theRaid]];
+    RaidMember *target = [self targetFromRaid:theRaid];
+    NSInteger preHealth = target.health;
+    [self damageTarget:target];
+    BOOL causedDamage = preHealth > target.health;
+    if (causedDamage && self.damageAudioName) {
+        [self.owner.announcer playAudioForTitle:self.damageAudioName];
+    }
 }
 
 - (void)setFocusTarget:(RaidMember *)focusTarget
@@ -490,7 +497,7 @@
     [self damageTarget:target];
     BOOL causedDamage = preHealth > target.health + target.absorb;
     if (causedDamage) {
-        [self.owner.announcer playAudioForTitle:@"thud.mp3"];
+        [self.owner.announcer playAudioForTitle:self.damageAudioName];
     }
     if (self.appliedEffect && (causedDamage || !self.requiresDamageToApplyEffect)){
         Effect *applyThis = [[self.appliedEffect copy] autorelease];
@@ -511,6 +518,13 @@
             self.enrageApplied = YES;
         }
     }
+}
+
+- (id)init{
+    if (self = [super init]) {
+        self.damageAudioName = @"thud.mp3";
+    }
+    return self;
 }
 @end
 
@@ -780,6 +794,7 @@
         [self.target addEffect:crushEffect];
         [crushEffect release];
     }
+    [self.owner.announcer playAudioForTitle:@"armorcrunchingimpact.mp3" afterDelay:5.0];
 }
 @end
 
@@ -790,6 +805,7 @@
         self.title = @"Deathwave";
         self.iconName = @"deathwave.png";
         self.abilityValue = 10000;
+        self.executionSound = @"explosion2.wav";
         [self setActivationTime:3.5];
 
     }
@@ -1184,6 +1200,7 @@
     [boneThrowEffect release];
     
     ProjectileEffect *boneVisual = [[ProjectileEffect alloc] initWithSpriteName:@"bone_throw.png" target:target collisionTime:throwDuration sourceAgent:self.owner];
+    [boneVisual setCollisionSoundName:@"bonecrunching.mp3"];
     [boneVisual setType:ProjectileEffectTypeThrow];
     [[self.owner announcer] displayProjectileEffect:boneVisual];
     [boneVisual release];
@@ -1279,12 +1296,15 @@
 
     NSInteger damage = (arc4random() % ABS(self.abilityValue) + ABS((self.abilityValue / 2)));
     Effect *appliedEffect = nil;
+    NSString *audioTitle = nil;
     
     switch (boltTypeRoll) {
         case OverseerProjectileFire:
+            audioTitle = @"explosion_5.mp3";
             [boltEffect setTitle:@"firebolt"];  
             break;
         case OverseerProjectileShadow:
+            audioTitle = @"liquid_impact.mp3";
             [boltEffect setTitle:@"shadowbolt"];
             appliedEffect = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegative];
             [appliedEffect setTitle:@"shadowbolt-dot"];
@@ -1296,6 +1316,7 @@
             damage *= .45;
             break;
         case OverseerProjectileBlood:
+            audioTitle = @"liquid_impact.mp3";
             [boltEffect setTitle:@"bloodbolt"];
             appliedEffect = [[HealingDoneAdjustmentEffect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative];
             [appliedEffect setSpriteName:@"gushing_wound.png"];
@@ -1318,6 +1339,7 @@
     
     ProjectileEffect *projVisual = [[ProjectileEffect alloc] initWithSpriteName:[spriteNames objectAtIndex:boltTypeRoll] target:target collisionTime:colTime sourceAgent:self.owner];
     [projVisual setCollisionParticleName:[collisionParticleNames objectAtIndex:boltTypeRoll]];
+    [projVisual setCollisionSoundName:audioTitle];
     [[self.owner announcer] displayProjectileEffect:projVisual];
     [projVisual release];
 }
@@ -1354,7 +1376,7 @@
             [bleed autorelease];
         }
     }
-    
+    [self.owner.announcer playAudioForTitle:@"sharpimpactbleeding.mp3"];
 }
 @end
 
@@ -1384,6 +1406,7 @@
     //Blast
     RaidMember *blastTarget = [theRaid randomLivingMember];
     [self damageTarget:blastTarget];
+    [self.owner.announcer playAudioForTitle:@"fieryexplosion.mp3"];
 }
 @end
 
@@ -1409,6 +1432,7 @@
     
     RaidMember *lowestHealthMember = [theRaid lowestHealthMember];
     [[self.owner announcer] displayParticleSystemWithName:@"shadow_burst.plist" onTarget:lowestHealthMember];
+    [self.owner.announcer playAudioForTitle:@"liquid_impact.mp3"];
     RepeatedHealthEffect *shadowCurse = [[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegative];
     [shadowCurse setTitle:@"shadow-blast"];
     [shadowCurse setSpriteName:@"curse.png"];
@@ -1611,6 +1635,7 @@
         self.spriteName = @"rock.png";
         self.explosionParticleName = nil;
         self.explosionSoundName = @"bouldercrashimpact.mp3";
+        self.iconName = @"boulder_throw.png";
         Effect *disorient = [[[Effect alloc] initWithDuration:8.0 andEffectType:EffectTypeNegative] autorelease];
         [disorient setTitle:@"disorient-effect"];
         [disorient setDamageTakenMultiplierAdjustment:.25];
@@ -1637,6 +1662,7 @@
     Cleave *cleave = [[[Cleave alloc] init] autorelease];
     [cleave setTitle:@"Wild Swing"];
     [cleave setKey:@"cleave"];
+    [cleave setIconName:@"wide_swing.png"];
     [cleave setActivationTime:1.0];
     [cleave setAbilityValue:400];
     [cleave setCooldown:12.0];
@@ -1701,6 +1727,12 @@
 
 @implementation RaidDamagePulse
 
+- (void)dealloc
+{
+    [_pulseSoundTitle release];
+    [super dealloc];
+}
+
 - (id)init {
     if (self = [super init]){
         self.attackParticleEffectName = nil;
@@ -1719,6 +1751,9 @@
     NSArray *targets = [theRaid livingMembers];
     for (RaidMember *member in targets) {
         [self damageTarget:member forDamage:self.abilityValue / self.numTicks];
+    }
+    if (self.pulseSoundTitle) {
+        [self.owner.announcer playAudioForTitle:self.pulseSoundTitle];
     }
 }
 
@@ -1815,9 +1850,11 @@
 {
     float effectDuration = 5.0;
     NSInteger numberOfTicks = 5;
+    NSString *breathAudioTitle = @"breath5.mp3";
     if (self.difficulty == 5) {
         effectDuration = 8.0;
         numberOfTicks = 8.0;
+        breathAudioTitle = @"breath8.mp3";
     }
     [self.owner.announcer displayBreathEffectOnRaidForDuration:effectDuration withName:self.breathParticleName];
     for (RaidMember *member in theRaid.livingMembers) {
@@ -1830,6 +1867,7 @@
     }
     
     [self startChannel:effectDuration];
+    [self.owner.announcer playAudioForTitle:breathAudioTitle];
 }
 @end
 
@@ -2032,10 +2070,12 @@
         if (![member isDead]) {
             [member addEffect:axeSweepEffect];
             [self.owner.announcer displayParticleSystemWithName:@"pow.plist" onTarget:member withOffset:CGPointZero delay:i * .5];
+            [self.owner.announcer playAudioForTitle:@"largeaxe.mp3" afterDelay:i * .5];
         }
         if (![member2 isDead]) {
             [member2 addEffect:axeSweep2];
             [self.owner.announcer displayParticleSystemWithName:@"pow.plist" onTarget:member2 withOffset:CGPointZero delay:i * .5];
+            [self.owner.announcer playAudioForTitle:@"sword_slash.mp3" afterDelay:i * .5];
         }
     }
     [self startChannel:7.5];
@@ -2445,8 +2485,8 @@
     self.ownerEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
     [self.ownerEffect setTitle:@"orbs-of-fury-eff"];
     [self.ownerEffect setMaxStacks:99];
-    [self.ownerEffect setDamageDoneMultiplierAdjustment:.04];
-    [self.ownerEffect setDamageTakenMultiplierAdjustment:.04];
+    [self.ownerEffect setDamageDoneMultiplierAdjustment:.03];
+    [self.ownerEffect setDamageTakenMultiplierAdjustment:.05];
     [self.owner addEffect:self.ownerEffect];
 }
 
@@ -2470,6 +2510,7 @@
         self.particleEffectCooldown = 2.0;
         [self.owner.announcer displayScreenShakeForDuration:.5];
         [self.owner.announcer displayParticleSystemOnRaidWithName:@"red_pulse.plist" forDuration:1.0 offset:CGPointZero];
+        [self.owner.announcer playAudioForTitle:@"explosion3.mp3"];
     }
 }
 

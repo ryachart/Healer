@@ -114,6 +114,8 @@
             
             ProjectileAttack *bolts = [[[ProjectileAttack alloc] init] autorelease];
             [bolts setSpriteName:@"shadowbolt.png"];
+            bolts.executionSound = @"fireball.mp3";
+            bolts.explosionSoundName = @"explosion_pulse.wav";
             [bolts setExplosionParticleName:@"shadow_burst.plist"];
             [bolts setAbilityValue:-300];
             [bolts setCooldown:4];
@@ -202,7 +204,7 @@
         numChampion = 1;
         numGuardian = 1;
         bossKey = @"ghoul";
-        info = @"These are strange times in the once peaceful kingdom of Theronia.  An eerie peace has finally been broken by a strange risen creature  attacking villagers in the farm lands.";
+        info = @"You have been sent to a local farm to sound the King’s Call-to-Arms.  Upon your arrival you notice the men you’ve been sent to recruit fighting off a foul-looking creature.  A mangled body of a long-dead Theronian soldier is swinging wildly at your allies.  You rush to their aid.";
         title = @"The Ghoul";
     }
     
@@ -216,7 +218,7 @@
         numChampion = 1;
         numGuardian = 1;
         bossKey = @"troll";
-        info = @"Three days ago, mining operations were disrupted when a Raklorian Troll was awakened in a cave below the mines.";
+        info = @"After enlisting the aid of a small band of soldiers you begin your trek back to Terun.  Upon your return you notice that the ground around a local cave, home to a Raklorian Troll, has stains of blood leading into the cave’s entrance. You and your allies enter to investigate.";
         title = @"Corrupted Troll";
     }
     
@@ -229,7 +231,7 @@
         numGuardian = 1;
         bossKey = @"drake";
         
-        info = @"A Drake of Soldorn has not been seen in Theronia for ages, but in this forgotten cave below the mines an ancient creature stirs.";
+        info = @"Upon further investigation you discover that the Troll’s sanctum leads deeper into the cavern.  You find that the Troll hasn’t been eating all of the livestock that it has been stealing; rather, feeding it to something more terrible.";
         title = @"Tainted Drake";
     }
     
@@ -252,7 +254,7 @@
         numChampion = 1;
         numGuardian = 1;
         bossKey = @"imps";
-        info = @"One week afer discovering the strange cave beneath the mines, a dark mist began to spread across the kingdom and more strange creatures began terrorizing the innocents.  Viscious imps have infiltrated the alchemical storehouses on the outskirts of Terun.";
+        info = @"On your way to the King's keep you are approached by a flustered guard.  He informs you that imps have invaded the capital’s Alchemical Storehouse.  The warehouse is home to dangerous potions and elixirs.  To avoid a major catastrophe your party hurries to the storehouse.";
         title = @"Mischievious Imps";
     }
     
@@ -267,7 +269,7 @@
         numGuardian = 1;
         bossKey = @"treant";
         
-        info = @"The Akarus, an ancient tree that has long rested in the Peraxu Forest, has become tainted by the dark mists. This once great tree must be ended for good.";
+        info = @"Your warband has been sent to the Green Citadel deep in the Peraxu Forest.  The Archmage Tyonath journeyed there weeks ago but never returned.  Upon approaching the forest’s edge you encounter the Akarus, a wise old treant and guardian of the forest.  Tainted by foul magics the Akarus confronts you as an enemy.";
         title = @"Befouled Akarus";
     }
     
@@ -298,7 +300,7 @@
         numGuardian = 3;
         bossKey = @"fungalravagers";
         
-        info = @"As the dark mist consumes the Akarus, ferocious beasts are birthed from its roots.  The ravagers immediately attack you and your allies.";
+        info = @"With a monstrous crash the sage old tree comes thundering to the earth.  As you are all catching your breath a fog of spores releases itself from the tree.  The tree withers before you at an unnatural rate.  Through the dark, stifling cloud you can see three pairs of yellow, glowing eye.";
         title = @"Fungal Ravagers";
     }
     
@@ -313,7 +315,7 @@
         numGuardian = 1;
         bossKey = @"plaguebringer";
         
-        info = @"As the Akarus is finally consumed its branches begin to quiver and shake.  As the ground rumbles beneath its might, you and your allies witness a hideous transformation.  What once was a peaceful treant has now become an abomination.  Only truly foul magics could have caused this.";
+        info = @"As the last Ravager falls you peer into the distance to notice the forest withered more and more as it recedes into darkness.  The ground appears to be dying in sync with the vegetation.  As the sky darkens the ground beneath you discover that the now mutated Akarus has risen once more.";
         title = @"Plaguebringer Colossus";
     }
     
@@ -329,7 +331,7 @@
         numGuardian = 1;
         bossKey = @"trulzar";
         
-        info = @"Days before the dark mists came, Trulzar disappeared into the Peraxu forest with only a spell book.  This once loyal warlock is wanted for questioning regarding the strange events that have befallen the land.  You have been sent with a large warband to bring Trulzar to justice.";
+        info = @"After a grueling journey through the forest you come to the doors of The Green Citadel. The citadel itself is now black and seems to be the center of the forest’s corruption.  A torn violet banner now hangs over its entrance.  You open the doors cautiously to find Trulzar, the Citadel’s keeper.  He is...changed.";
         title = @"Trulzar the Maleficar";
     }
     
@@ -356,7 +358,7 @@
         numChampion = 4;
         numGuardian = 1;
         bossKey = @"council";
-        info = @"A contract in blood lay signed and sealed in Trulzar's belongings.  He had been summoned by a council of dark summoners to participate in an arcane ritual for some horrible purpose.  You and your allies have followed the sanguine invitation to a dark chamber beneath the Vargothian Swamps.";
+        info = @"One of your wizards finds a writ of orders in Trulzar’s belongings.  He was ordered to torture and brainwash a prisoner.  It was signed by a name unknown to you - Baraghast.  As you journey deeper into the citadel you find three hooded wizards channeling an incantation over an altar. Stop them!";
         title = @"Council of Dark Summoners";
     }
     
@@ -380,7 +382,7 @@
         numChampion = 3;
         numGuardian = 2;
         bossKey = @"twinchampions";
-        info = @"You have crossed the eastern mountains through a path filled with ghouls, demons, and other terrible creatures.  Blood stained and battle worn, you and your allies have come across an encampment guarded by two skeletal champions.";
+        info = @"As the last of the council of dark wizards falls a beam of blue light emits from the altar.  The beam streaks through grooves cut into the floor leading to the exit.  The doors fly open revealing a throne room.  Two huge, armored skeletons come to life and assemble before you.";
         title = @"Twin Champions of Baraghast";
     }
     
@@ -396,7 +398,7 @@
         numGuardian = 1;
         bossKey = @"baraghast";
         
-        info = @"As his champions fell the dark warlord emerged from deep in the encampment.  Disgusted with the failure of his champions he confronts you and your allies himself.";
+        info = @"A large, bulky suit of armor slumped on the throne before you, stirs.  A pair of glowing red eyes spark to life, and the breathless mass of flesh and armor slowly rises before you.  With disembodied echo the creature speaks to you, \"I am Baraghast, Warlord of the Damned.  Your villages will burn. Your cities will anguish.  Torment is coming.\".";
         title = @"Baraghast, Warlord of the Damned";
     }
     
@@ -412,7 +414,7 @@
         numGuardian = 1;
         bossKey = @"tyonath";
         
-        info = @"Seer Tyonath was tormented and tortured after his capture by the Dark Horde. He guards the secrets to Baraghast's origin in a horrific chamber beneath the encampment.";
+        info = @"Your group moves onward toward what you believe to be the prison tower.  After climbing the spiral staircase you enter a large chamber at the top of the tower.  Alone in the dark stands a wizard in tattered cloth.  He appears to be blind.  He hears your entrance and grins with crooked teeth. Through furious cackles he shouts,\"Visitors!\"";
         title = @"Crazed Seer Tyonath";
     }
     
@@ -428,7 +430,7 @@
         numGuardian = 1;
         bossKey = @"gatekeeper";
         
-        info = @"Still deeper beneath the encampment you have discovered a portal to Delsarn.  No mortal has ever set foot in this ancient realm of evil and unless you and your allies can dispatch the gatekeeper no mortal ever will.";
+        info = @"Your captain sends word to the king discussing the fates of the forest, the citadel, and the archmage.  Days later, the king responds.  Baraghast’s words seem to hint at the fulfillment of a dark prophecy.  He orders you to take the citadel’s portal to Delsarn to investigate.  As you approach the portal a hulking fiend emerges to stop you.";
         title = @"Gatekeeper of Delsarn";
     }
     
@@ -444,7 +446,7 @@
         numGuardian = 1;
         bossKey = @"skeletaldragon";
         
-        info = @"After slaying countless Delsari minor demons, your party has encountered a towering Skeletal Dragon.";
+        info = @"On the other side of the portal you find an underground entrance to a subterranean lair beneath the landscape known as the Gateway to Delsarn. You make your way through the lair and approach a chamber with the skeletal remains of a dragon.  Before you can leave the chasm the skeleton glows with dark magic and rises to block your path.";
         title = @"Skeletal Dragon";
         
     }
@@ -460,7 +462,7 @@
         numChampion = 4;
         numGuardian = 1;
         bossKey = @"colossusbone";
-        info = @"As the skeletal dragon falls and crashes to the ground you feel a rumbling in the distance.  Before you and your allies can even recover from the encounter with the skeletal dragon you are besieged by a monstrosity.";
+        info = @"The dragon shatters before you and its bone fragments drop off into the toxic pool over which it stands.  The green concoction begins to bubble and boil and from it ascends a colossal construct of bone.";
         title = @"Colossus of Bone";
     }
     
@@ -476,13 +478,13 @@
         numGuardian = 1;
         bossKey = @"overseer";
         
-        info = @"After defeating the most powerful and terrible creatures in Delsarn the Overseer of this treacherous realm confronts you himself.";
+        info = @"You enter Delsarn to see the streets deserted. As you approach the castle you see the violet banner of the Damned hanging from the entryway.  Outside the castle gates a hooded Delsari battlemage confronts you. \"You will not stop us from bringing Torment to this world.  Delsarn has already fallen to our dark lord. Theronia shall be next.\"";
         title = @"Overseer of Delsarn";
     }
     
     if (level == 17){
         [enemies addObject:[TheUnspeakable defaultBoss]];
-        spells = [NSArray arrayWithObjects:[Heal    defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
+        spells = [NSArray arrayWithObjects:[Heal defaultSpell], [GreaterHeal defaultSpell] , [Regrow defaultSpell], [LightEternal defaultSpell], nil];
         
         numArcher = 3;
         numWarlock = 3;
@@ -492,7 +494,7 @@
         numGuardian = 1;
         bossKey = @"unspeakable";
         
-        info = @"As you peel back the blood-sealed door to the inner sanctum of the Delsari citadel you find a horrific room filled with a disgusting mass of bones and rotten corpses.  The room itself seems to be ... alive.";
+        info = @"As the overseer falls crazed cultists pour from the castle.  The sheer number of cultists forces you into full retreat from the city streets.  You fall back into a dark sewer beneath the city’s magic academy.  The cultists grow wide-eyed and flee as a strange rumbling grows behind you.";
         title = @"The Unspeakable";
     }
     
@@ -507,7 +509,7 @@
         numGuardian = 1;
         bossKey = @"baraghastreborn";
         
-        info = @"Before you stands the destroyed but risen warchief Baraghast.  His horrible visage once again sows fear in the hearts of all of your allies.  His undead ferocity swells with the ancient and evil power of Delsarn.";
+        info = @"You emerge from the sewer just outside the city.  As you leave Delsarn to regroup and send word you hear an all too familiar roar behind you.  Reborn in blood, Baraghast approaches with glowing runes of power seared into his reformed flesh.";
         title = @"Baraghast Reborn";
     }
     
@@ -523,7 +525,7 @@
         numGuardian = 1;
         bossKey = @"avataroftorment";
         
-        info = @"From the dark heart of Baraghast's shattered corpse emerges a hideous and cackling demon of unfathomable power. Before you stands a massive creature spawned of pure hatred whose only purpose is torment.";
+        info = @"As Baraghast falls the ground shakes and the mountain in the distance erupts into a torrent of obsidian and brimstone.  A bright red portal opens before you as an invitation to your own demise.  Beyond the portal you emerge to a demonic creature. \"I,\"he snarls, \"am Torment’s vessel.\"";
         title = @"The Avatar of Torment";
     }
     
@@ -539,7 +541,7 @@
         numGuardian = 1;
         bossKey = @"avataroftorment";
         
-        info = @"Torment will not be vanquished so easily.";
+        info = @"The Avatar sinks beneath the pool of molten rock to regain its power.  Knowing you have not yet vanquished this beast your allies briefly recover and prepare for a second battle against this demon.";
         title = @"The Avatar of Torment II";
     }
     
@@ -555,7 +557,7 @@
         numGuardian = 1;
         bossKey = @"souloftorment";
         
-        info = @"Its body shattered and broken--the last gasp of this terrible creature conspires to unleash its most unspeakable power.  Your allies are bleeding and broken and your souls are exhausted by the strain of endless battle, but the final evil must be vanquished...";
+        info = @"Its flesh shattered and broken, you stand before a massive orb of blinding light.  Red light rays violently lash out at your party members.  You feel your mind succumbing to your body’s intense pain.  You take one deep breath to calm your senses, and prepare your most powerful magics to end this great evil once and for all.";
         title = @"The Soul of Torment";
     }
     
@@ -692,11 +694,11 @@
             background = @"kingdom-bg";
             break;
         case 5:
-            background = @"forest-day";
+            background = @"forest-day-bg";
             break;
         case 6:
         case 7:
-            background = @"forest-night";
+            background = @"forest-night-bg";
             break;
         case 8:
             background = @"darkroom-bg";
@@ -717,18 +719,18 @@
             background = @"cave-poison-bg";
             break;
         case 16:
-            background = @"city";
+            background = @"city-bg";
             break;
         case 17:
             background = @"cave-poison-bg";
             break;
         case 18:
-            background = @"city";
+            background = @"city-bg";
             break;
         case 19:
         case 20:
         case 21:
-            background = @"tormentrealm";
+            background = @"tormentrealm-bg";
             break;
         default:
             background = @"cave-poison-bg";
@@ -736,6 +738,22 @@
             
     }
     return background;
+}
+
+- (NSString *)battleTrackTitle
+{
+    switch (self.levelNumber) {
+        case 7:
+        case 8:
+        case 9:
+        case 11:
+        case 19:
+        case 20:
+        case 21:
+            return @"sounds/battle2.mp3";
+    }
+    
+    return @"sounds/battle1.mp3";
 }
 
 @end

@@ -605,6 +605,7 @@
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:self.dispelDamageValue * self.owner.damageDoneMultiplier] andEventType:CombatEventTypeDamage]];
     }
     [self.owner.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0];
+    [self.owner.announcer playAudioForTitle:@"explosion2.wav"];
 }
 @end 
 
@@ -731,6 +732,12 @@
 - (void)dealloc{
     [reenableAbility release];
     [super dealloc];
+}
+
+- (void)tick
+{
+    [super tick];
+    [self.owner.announcer playAudioForTitle:@"sword_slash.mp3"];
 }
 - (void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta{
     [self.reenableAbility setIsDisabled:NO];
@@ -1272,6 +1279,7 @@
         [explosion setTitle:@"unstable-explosion"];
         [member addEffect:explosion];
     }
+    [self.owner.announcer playAudioForTitle:@"fieryexplosion.mp3"];
 }
 @end
 

@@ -24,6 +24,7 @@
 @property (nonatomic, retain) NSString *info;
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, readwrite) NSTimeInterval duration;
+@property (nonatomic, readonly) NSString *battleTrackTitle;
 
 //PostBattle
 @property (nonatomic, readonly) NSInteger reward;

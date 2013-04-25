@@ -411,6 +411,7 @@
     [corTroll addAbility:cleve];
     
     GroundSmash *groundSmash = [[[GroundSmash alloc] init] autorelease];
+    [groundSmash setIconName:@"ground_smash.png"];
     [groundSmash setAbilityValue:54];
     [groundSmash setKey:@"troll-ground-smash"];
     [groundSmash setCooldown:30.0];
@@ -474,9 +475,9 @@
     drake.fireballAbility = [[[ProjectileAttack alloc] init] autorelease];
     drake.fireballAbility.title = @"Spit Fireball";
     drake.fireballAbility.executionSound = @"fireball.mp3";
-    [(ProjectileAttack*)drake.fireballAbility setExplosionSoundName:@"fieryexplosion.mp3"];
+    [(ProjectileAttack*)drake.fireballAbility setExplosionSoundName:@"explosion2.wav"];
     drake.fireballAbility.activationTime = 1.5;
-    [drake.fireballAbility setIconName:@"burning.png"];
+    [drake.fireballAbility setIconName:@"fireball.png"];
     [drake.fireballAbility setKey:@"fireball-ab"];
     [(ProjectileAttack*)drake.fireballAbility setSpriteName:@"fireball.png"];
     [drake.fireballAbility setAbilityValue:fireballDamage];
@@ -488,6 +489,7 @@
     [fb setTitle:@"Flame Breath"];
     [fb setActivationSound:@"dragonroar1.mp3"];
     [fb setKey:@"flame-breath"];
+    [fb setIconName:@"burning.png"];
     [fb setAbilityValue:100];
     [fb setActivationTime:2.5];
     [fb setCooldown:kAbilityRequiresTrigger];
@@ -538,6 +540,8 @@
     RandomPotionToss *rpt = [[[RandomPotionToss alloc] init] autorelease];
     [rpt setKey:@"potions"];
     [rpt setTitle:@"Throw Vial"];
+    [rpt setIconName:@"vial_throw.png"];
+    [rpt setExecutionSound:@"whiff.mp3"];
     [rpt setCooldown:11.0];
     [rpt setActivationTime:1.5];
     [boss addAbility:rpt];
@@ -592,6 +596,7 @@
     if (difficulty > 4) {
         ConstrictingVines *vines = [[[ConstrictingVines alloc] init] autorelease];
         [vines setExecutionSound:@"vinestightening.mp3"];
+        [vines setIconName:@"constrict.png"];
         [vines setAbilityValue:80];
         [vines setStunDuration:4.0];
         [vines setKey:@"vines"];
@@ -616,6 +621,7 @@
     Earthquake *eq = [[[Earthquake alloc] init] autorelease];
     [eq setTitle:@"Earthquake"];
     [eq setKey:@"root-quake"];
+    [eq setIconName:@"quake.png"];
     [eq setExecutionSound:@"earthquake.mp3"];
     [eq setCooldown:28.0];
     [eq setActivationTime:2.0];
@@ -648,6 +654,7 @@
     if ([ability.key isEqualToString:@"root-quake"]) {
         [self.announcer announce:@"The Akarus' roots move the earth."];
     }
+    
 }
 
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
@@ -797,6 +804,7 @@
     [boss addAbility:[Cleave normalCleave]];
     
     PlaguebringerSicken *sicken = [[[PlaguebringerSicken alloc] init] autorelease];
+    [sicken setExecutionSound:@"slimespraying.mp3"];
     [sicken setInfo:@"The Colossus will sicken targets causing them to take damage until they are healed to full health."];
     [sicken setKey:@"sicken"];
     [sicken setIconName:@"plague.png"];
@@ -811,6 +819,8 @@
 -(void)burstPussBubbleOnRaid:(Raid*)theRaid{
     [self.announcer announce:@"A putrid sac of filth bursts onto your allies"];
     [self.announcer displayScreenShakeForDuration:1.0];
+    [self.announcer playAudioForTitle:@"fieryexplosion.mp3"];
+    [self.announcer playAudioForTitle:@"grossbubble.mp3" afterDelay:2.0];
     self.numBubblesPopped++;
     //Boss does 10% less damage for each bubble popped
     Effect *reducedDamageEffect = [[Effect alloc] initWithDuration:300 andEffectType:EffectTypePositiveInvisible];
@@ -855,6 +865,7 @@
         [corrEff setTitle:@"consuming-corruption"];
         
         Attack *consumingCorruption = [[[Attack alloc] initWithDamage:0 andCooldown:30.0] autorelease];
+        [consumingCorruption setExecutionSound:@"slimeimpact.mp3"];
         [consumingCorruption setPrefersTargetsWithoutVisibleEffects:YES];
         [consumingCorruption setIgnoresGuardians:YES];
         [consumingCorruption setRequiresDamageToApplyEffect:NO];
@@ -886,6 +897,7 @@
     [poisonEffect setTitle:@"trulzar-poison1"];
     
     Attack *poisonAttack = [[[Attack alloc] initWithDamage:100 andCooldown:10] autorelease];
+    [poisonAttack setExecutionSound:@"gas_impact.mp3"];
     [poisonAttack setPrefersTargetsWithoutVisibleEffects:YES];
     [poisonAttack setAttackParticleEffectName:@"poison_cloud.plist"];
     [poisonAttack setKey:@"poison-attack"];
@@ -900,6 +912,9 @@
     ProjectileAttack *potionThrow = [[[ProjectileAttack alloc] init] autorelease];
     [potionThrow setTitle:@"Toxic Vial"];
     [potionThrow setKey:@"potion-throw"];
+    [potionThrow setIconName:@"vial_throw.png"];
+    [potionThrow setExecutionSound:@"whiff.mp3"];
+    [potionThrow setExplosionSoundName:@"glassvialthrownwliquid.mp3"];
     [potionThrow setCooldown:8.0];
     [potionThrow setSpriteName:@"potion.png"];
     [potionThrow setActivationTime:1.0];
@@ -911,6 +926,7 @@
     [boss addAbility:potionThrow];
     
     RaidDamagePulse *pulse = [[[RaidDamagePulse alloc] init] autorelease];
+    [pulse setPulseSoundTitle:@"explosion_pulse.wav"];
     [pulse setIconName:@"poison_explosion.png"];
     [pulse setActivationTime:2.0];
     [pulse setTitle:@"Poison Nova"];
@@ -955,6 +971,7 @@
         [self addAbility:unstableToxin];
         
         RaidDamagePulse *pulse = [[[RaidDamagePulse alloc] init] autorelease];
+        [pulse setPulseSoundTitle:@"explosion_pulse.wav"];
         [pulse setIconName:@"poison_explosion.png"];
         [pulse setActivationTime:1.0];
         [pulse setTitle:@"Empowered Nova"];
@@ -999,6 +1016,7 @@
         [self.announcer announce:@"Trulzar cackles as the room fills with noxious poison."];
         [self.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0.0];
         [self.poisonNova setIsDisabled:YES];
+        [self.announcer playAudioForTitle:@"gas_impact.wav"];
         
         if (self.difficulty == 5) {
             [[self abilityWithKey:@"unstable"] setIsDisabled:YES];
@@ -1154,6 +1172,8 @@
         
         ProjectileAttack *grimgonBolts = [[[ProjectileAttack alloc] init] autorelease];
         [grimgonBolts setKey:@"grimgon-bolts"];
+        [grimgonBolts setExecutionSound:@"fireball.mp3"];
+        [grimgonBolts setExplosionSoundName:@"liquid_impact.mp3"];
         [grimgonBolts setCooldown:7.5];
         [grimgonBolts setIconName:@"poison2.png"];
         [grimgonBolts setTimeApplied:5.0];
@@ -1169,6 +1189,7 @@
         
         DarkCloud *dc = [[[DarkCloud alloc] init] autorelease];
         [dc setKey:@"dark-cloud"];
+        [dc setExecutionSound:@"gas_impact.mp3"];
         [dc setIconName:@"choking_cloud.png"];
         [dc setCooldown:18.0];
         [dc setActivationTime:1.5];
@@ -1202,6 +1223,7 @@
         [corrupted setTitle:@"corrupted-mind"];
 
         Attack *corruptedMind = [[[Attack alloc] initWithDamage:300 andCooldown:10.0] autorelease];
+        [corruptedMind setExecutionSound:@"curse.mp3"];
         [corruptedMind setPrefersTargetsWithoutVisibleEffects:YES];
         [corruptedMind setIgnoresPlayers:YES];
         [corruptedMind setIconName:@"corrupt_mind.png"];
@@ -1260,6 +1282,7 @@
         [wpe setAilmentType:AilmentCurse];
         
         RaidApplyEffect *wrackingPain = [[[RaidApplyEffect alloc] init] autorelease];
+        [wrackingPain setExecutionSound:@"explosion_pulse.wav"];
         [wrackingPain setKey:@"wracking-pain"];
         [wrackingPain setTitle:@"Wracking Pain"];
         [wrackingPain setAttackParticleEffectName:@"shadow_burst.plist"];
@@ -1272,7 +1295,10 @@
         [self addAbility:wrackingPain];
         
         ProjectileAttack *bolts = [[[ProjectileAttack alloc] init] autorelease];
+        [bolts setIconName:@"shadow_bolt.png"];
         [bolts setKey:@"teritha-bolts"];
+        [bolts setExecutionSound:@"fireball.mp3"];
+        [bolts setExplosionSoundName:@"explosion5.mp3"];
         [bolts setCooldown:7.5];
         [bolts setTimeApplied:0.0];
         [bolts setAttacksPerTrigger:3];
@@ -1311,6 +1337,21 @@
 
 @implementation Sarroth
 
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    if (difficulty == 5) {
+        BlindingSmokeAttack *blinding = [[[BlindingSmokeAttack alloc] init] autorelease];
+        [blinding setTitle:@"Blinding Glare"];
+        [blinding setIconName:@"blind.png"];
+        [blinding setInfo:@"A glare that blinds Healers and absorbs 300 healing."];
+        [blinding setActivationTime:.5];
+        [blinding setCooldown:40];
+        [blinding setCooldownVariance:.7];
+        [self addAbility:blinding];
+    }
+}
+
 -(void)axeSweepThroughRaid:(Raid*)theRaid{
     self.autoAttack.timeApplied = -7.0;
     //Set all the other abilities to be on a long cooldown...
@@ -1332,6 +1373,7 @@
     if (self = [super initWithHealth:hlth damage:dmg targets:trgets frequency:freq choosesMT:chooses]) {
         self.spriteName = @"twinchampions_battle_portrait.png";
         self.namePlateTitle = @"Sarroth";
+        [(FocusedAttack*)self.autoAttack setDamageAudioName:@"sword_slash.mp3"];
         RaidDamageSweep *rds = [[[RaidDamageSweep alloc] init] autorelease];
         [rds setAbilityValue:250];
         [rds setTitle:@"Sweeping Death"];
@@ -1351,6 +1393,8 @@
         [gushingWound setIgnoresGuardians:YES];
         [gushingWound setKey:@"gushing-wound"];
         [gushingWound setExplosionParticleName:@"blood_spurt.plist"];
+        [gushingWound setExecutionSound:@"whiff.mp3"];
+        [gushingWound setExplosionSoundName:@"sharpimpactbleeding.mp3"];
         [gushingWound setTitle:@"Deadly Throw"];
         [gushingWound setCooldown:17.0];
         [gushingWound setActivationTime:1.5];
@@ -1360,15 +1404,6 @@
         [gushingWound setAppliedEffect:gushingWoundEffect];
         [gushingWound setAbilityValue:250];
         [self addAbility:gushingWound];
-        
-        BlindingSmokeAttack *blinding = [[[BlindingSmokeAttack alloc] init] autorelease];
-        [blinding setTitle:@"Blinding Glare"];
-        [blinding setIconName:@"blind.png"];
-        [blinding setInfo:@"A glare that blinds Healers and absorbs 300 healing."];
-        [blinding setActivationTime:.5];
-        [blinding setCooldown:40];
-        [blinding setCooldownVariance:.7];
-        [self addAbility:blinding];
     }
     return self;
 }
@@ -1382,6 +1417,7 @@
         self.spriteName = @"twinchampions2_battle_portrait.png";
         self.namePlateTitle = @"Vorroth";
         [self addAbility:[Cleave normalCleave]];
+        [(FocusedAttack*)self.autoAttack setDamageAudioName:@"largeaxe.mp3"];
         
         ExecutionEffect *executionEffect = [[[ExecutionEffect alloc] initWithDuration:3.75 andEffectType:EffectTypeNegative] autorelease];
         [executionEffect setValue:-2000];
@@ -1435,6 +1471,7 @@
 +(id)defaultBoss {
     Baraghast *boss = [[Baraghast alloc] initWithHealth:3040000 damage:150 targets:1 frequency:1.25 choosesMT:YES];
     boss.autoAttack.failureChance = .30;
+    [(FocusedAttack*)boss.autoAttack setDamageAudioName:@"sword_slash.mp3"];
     [boss setTitle:@"Baraghast, Warlord of the Damned"];
     [boss setNamePlateTitle:@"Baraghast"];
     [boss setSpriteName:@"baraghast_battle_portrait.png"];
@@ -1561,6 +1598,7 @@
             [self addAbility:fb];
             
             GroundSmash *groundSmash = [[[GroundSmash alloc] init] autorelease];
+            [groundSmash setIconName:@"crushing_punch.png"];
             [groundSmash setAbilityValue:110];
             [groundSmash setKey:@"demonic-fury"];
             [groundSmash setCooldown:20.0];
@@ -1585,6 +1623,8 @@
     [seer setSpriteName:@"tyonath_battle_portrait.png"];
     
     ProjectileAttack *fireballAbility = [[[ProjectileAttack alloc] init] autorelease];
+    [fireballAbility setExecutionSound:@"fireball.mp3"];
+    [fireballAbility setExplosionSoundName:@"liquid_impact.mp3"];
     [fireballAbility setSpriteName:@"shadowbolt.png"];
     [fireballAbility setExplosionParticleName:@"shadow_burst.plist"];
     [fireballAbility setAbilityValue:-120];
@@ -1685,6 +1725,7 @@
 - (void)addGripImpale
 {
     Grip *gripAbility = [[[Grip alloc] init] autorelease];
+    [gripAbility setExecutionSound:@"chainstightening.mp3"];
     [gripAbility setKey:@"grip-ability"];
     [gripAbility setActivationTime:1.5];
     [gripAbility setCooldown:10];
@@ -1692,6 +1733,7 @@
     [self addAbility:gripAbility];
     
     Impale *impaleAbility = [[[Impale alloc] init] autorelease];
+    [impaleAbility setExecutionSound:@"sharpimpactbleeding.mp3"];
     [impaleAbility setKey:@"gatekeeper-impale"];
     [impaleAbility setActivationTime:1.5];
     [impaleAbility setCooldown:16];
@@ -1716,7 +1758,7 @@
         [orbsOfFury setAbilityValue:30];
         [orbsOfFury setIconName:@"red_curse.png"];
         [orbsOfFury setTitle:@"Orbs of Fury"];
-        [orbsOfFury setInfo:@"The Gatekeeper summons orbs of fury increasing his damage taken and dealt by 4% per orb.  The Healer may detonate the orbs by tapping them."];
+        [orbsOfFury setInfo:@"The Gatekeeper summons orbs of fury increasing his damage taken by 5% and damage dealt by 3% per orb.  The Healer may detonate the orbs by tapping them."];
         [self addAbility:orbsOfFury];
     }
 }
@@ -1762,6 +1804,7 @@
         BurningInsanity *burningInsanity = [[[BurningInsanity alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
         
         RaidApplyEffect *insaneRaid = [[[RaidApplyEffect alloc] init] autorelease];
+        [insaneRaid setExecutionSound:@"fieryexplosion.mp3"];
         [insaneRaid setKey:@"insane-raid"];
         [insaneRaid setTitle:@"Burning Insanity"];
         [insaneRaid setIconName:@"burning_insanity.png"];
@@ -1811,6 +1854,7 @@
     [boss setSpriteName:@"skeletaldragon_battle_portrait.png"];
     
     boss.boneThrowAbility = [[[BoneThrow alloc] init] autorelease];
+    [boss.boneThrowAbility setExecutionSound:@"whiff.mp3"];
     [boss.boneThrowAbility setActivationTime:1.5];
     [boss.boneThrowAbility setCooldown:3.5];
     [boss addAbility:boss.boneThrowAbility];
@@ -1821,6 +1865,7 @@
     [burningEffect setTitle:@"alternating-flame-burn"];
     
     boss.sweepingFlame = [[[AlternatingFlame alloc] init] autorelease];
+    [boss.sweepingFlame setExecutionSound:@"fieryexplosion.mp3"];
     [(AlternatingFlame*)boss.sweepingFlame setAppliedEffect:burningEffect];
     [boss.sweepingFlame setActivationTime:1.0];
     [boss.sweepingFlame setCooldown:9.0];
@@ -1835,6 +1880,7 @@
     
     boss.tailLash = [[[TailLash alloc] init] autorelease];
     [boss.tailLash setActivationTime:1.5];
+    [boss.tailLash setActivationSound:@"dragonroar1.mp3"];
     [boss.tailLash setTitle:@"Tail Lash"];
     [boss.tailLash setAbilityValue:320];
     [boss.tailLash setCooldown:24.0];
@@ -1846,9 +1892,11 @@
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     if (percentage == 99.0){
         [self.announcer announce:@"The Skeletal Dragon hovers angrily above your allies."];
+        [self.announcer playAudioForTitle:@"dragonwings.mp3"];
     }
     
     if (percentage == 66.0){
+        [self.announcer playAudioForTitle:@"stomp.wav"];
         [self.announcer displayScreenShakeForDuration:.33];
         [self.announcer announce:@"The Skeletal Dragon lands and begins to thrash your allies"];
         self.boneThrowAbility.isDisabled = YES;
@@ -1859,6 +1907,7 @@
     
     if (percentage == 33.0){
         [self.announcer announce:@"The Skeletal Dragon soars off into the air."];
+        [self.announcer playAudioForTitle:@"dragonwings.mp3"];
         [self.sweepingFlame setCooldown:14.5];
         [self.tankDamage setIsDisabled:YES];
         [self.tailLash setIsDisabled:YES];
@@ -1868,6 +1917,7 @@
 
     if (percentage == 5.0){
         [self.announcer displayScreenShakeForDuration:.66];
+        [self.announcer playAudioForTitle:@"stomp.wav"];
         [self.announcer announce:@"The Skeletal Dragon crashes down onto your allies from the sky."];
         NSArray *livingMembers = [raid livingMembers];
         NSInteger damageValue = 7500 / livingMembers.count;
@@ -1927,6 +1977,7 @@
     [cob addAbility:cob.crushingPunch];
     
     cob.boneQuake = [[[BoneQuake alloc] init] autorelease];
+    [cob.boneQuake setExecutionSound:@"earthquake.mp3"];
     [cob.boneQuake setTitle:@"Quake"];
     [cob.boneQuake setAbilityValue:120];
     [cob.boneQuake setActivationTime:1.5];
@@ -1934,6 +1985,7 @@
     [cob addAbility:cob.boneQuake];
     
     BoneThrow *boneThrow = [[[BoneThrow alloc] init] autorelease];
+    [boneThrow setExecutionSound:@"whiff.mp3"];
     [boneThrow setActivationTime:1.5];
     [boneThrow setAbilityValue:240];
     [boneThrow setCooldown:14.0];
@@ -1975,6 +2027,7 @@
     boss.projectilesAbility = [[[OverseerProjectiles alloc] init] autorelease];
     [boss.projectilesAbility setTitle:@"Bolt of Despair"];
     [boss.projectilesAbility setActivationTime:1.25];
+    [boss.projectilesAbility setExecutionSound:@"fireball.mp3"];
     [boss.projectilesAbility setAbilityValue:514];
     [boss.projectilesAbility setCooldown:2.5];
     [boss addAbility:boss.projectilesAbility];

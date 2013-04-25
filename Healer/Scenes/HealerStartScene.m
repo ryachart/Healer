@@ -48,7 +48,9 @@
         [[SimpleAudioEngine sharedEngine] preloadEffect:@"sounds/button1.mp3"];
         [[SimpleAudioEngine sharedEngine] preloadEffect:@"sounds/button2.mp3"];
         [[SimpleAudioEngine sharedEngine] preloadEffect:@"sounds/button3.mp3"];
-        
+        if (![[SimpleAudioEngine sharedEngine] isBackgroundMusicPlaying]) {
+            [[SimpleAudioEngine sharedEngine] preloadBackgroundMusic:@"sounds/theme.mp3"];
+        }
         [SettingsScene configureAudioForUserSettings];
         
         //self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
@@ -144,6 +146,9 @@
 
 - (void)onEnterTransitionDidFinish {
     [super onEnterTransitionDidFinish];
+    if (![[SimpleAudioEngine sharedEngine] isBackgroundMusicPlaying]) {
+        [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"sounds/theme.mp3" loop:YES];
+    }
 }
 
 

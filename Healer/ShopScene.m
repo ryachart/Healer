@@ -37,8 +37,8 @@
 
 @property (nonatomic, assign) CCSprite *ftueArrow;
 
-- (void)back;
-- (void)configureShopForCategory:(ShopCategory)category;
+@property (nonatomic, assign) CCLabelTTF *flavorTextLabel;
+
 @end
 
 @implementation ShopScene
@@ -61,7 +61,6 @@
         [book setPosition:ccp(38, 110)];
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"shop-bg"] autorelease] z:-100];
         [self addChild:book z:BOOK_Z];
-
         
         self.itemsTable = [[[CCScrollView alloc] initWithViewSize:CGSizeMake(500, 430)] autorelease];
         [self.itemsTable setDirection:SWScrollViewDirectionVertical];
@@ -84,7 +83,10 @@
         self.darkenLayer = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 0)];
         [self addChild:self.darkenLayer z:50];
         
-        
+        self.flavorTextLabel = [CCLabelTTF labelWithString:@"" dimensions:CGSizeMake(380, 140) hAlignment:kCCTextAlignmentCenter fontName:@"Palatino-BoldItalic" fontSize:18.0];
+        self.flavorTextLabel.position = CGPointMake(290, 230);
+        self.flavorTextLabel.color = ccc3(68, 39, 23);
+        [self addChild:self.flavorTextLabel];
         
         self.essentialsButton = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithSpriteFrameName:@"shop-tab-essentials.png"] selectedSprite:[CCSprite spriteWithSpriteFrameName:@"shop-tab-essentials.png"] target:self selector:@selector(configureShopCategory:)];
         self.essentialsButton.tag = ShopCategoryEssentials;
@@ -163,23 +165,27 @@
     [self.selectedCategorySprite removeFromParentAndCleanup:NO];
     switch (category) {
         case ShopCategoryEssentials:
-            flavorSpriteFrameName = @"shop-essentials-flavor.png";
+            flavorSpriteFrameName = @"shop_essentials_flavor.png";
             itemsToDisplay = [Shop essentialsShopItems];
+            self.flavorTextLabel.string = @"Marked by the Council of Light as the most basic spells any apprentice Healer should know.";
             [self.essentialsButton addChild:self.selectedCategorySprite];
             break;
         case ShopCategoryAdvanced:
-            flavorSpriteFrameName = @"shop-advanced-flavor.png";
+            flavorSpriteFrameName = @"shop_advanced_flavor.png";
             itemsToDisplay = [Shop advancedShopItems];
+            self.flavorTextLabel.string = @"A collection of spells a more seasoned Healer would desire.  These spells are taugh to further challenge a nascent Healer.";            
             [self.advancedButton addChild:self.selectedCategorySprite];
             break;
         case ShopCategoryArchives:
-            flavorSpriteFrameName = @"shop-archives-flavor.png";
+            flavorSpriteFrameName = @"shop_archives_flavor.png";
             itemsToDisplay = [Shop archivesShopItems];
+            self.flavorTextLabel.string = @"A powerful collection of ancient healing magics.  These spells serve their wielder in the most dire of situations.";            
             [self.archivesButton addChild:self.selectedCategorySprite];
             break;
         case ShopCategoryVault:
-            flavorSpriteFrameName = @"shop-vault-flavor.png";
+            flavorSpriteFrameName = @"shop_vault_flavor.png";
             itemsToDisplay = [Shop vaultShopItems];
+            self.flavorTextLabel.string = @"Once thought to be lost to time, an ancient tome discovered in the Vaults revealed the necessary incantations for the most legendary of spells. Any who could control these would be true masters of the craft.";            
             [self.vaultButton addChild:self.selectedCategorySprite];
             break;
         default:
@@ -234,6 +240,9 @@
 -(void)onEnterTransitionDidFinish {
     [super onEnterTransitionDidFinish];
     [self.itemsTable scrollToTopAnimated:NO];
+    if (![SimpleAudioEngine sharedEngine].isBackgroundMusicPlaying) {
+        [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"sounds/theme.mp3" loop:YES];
+    }
 }
 
 -(void)back{

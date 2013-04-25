@@ -44,6 +44,8 @@
         } else if ([enemy.spriteName isEqualToString:@"twinchampions2_battle_portrait.png"]) {
             enemySpritePositionFix = CGPointMake(0, -35);
             center = ccpAdd(center, CGPointMake(-50, 0));
+        } else if ([enemy.spriteName hasPrefix:@"fungalravagers"]) {
+            enemySpritePositionFix = CGPointMake(0, -20);
         }
         
         [self.enemySprite setPosition:enemySpritePositionFix];

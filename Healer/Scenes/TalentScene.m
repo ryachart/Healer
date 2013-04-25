@@ -64,6 +64,14 @@
     return self;
 }
 
+- (void)onEnterTransitionDidFinish
+{
+    [super onEnterTransitionDidFinish];
+    if (![SimpleAudioEngine sharedEngine].isBackgroundMusicPlaying) {
+        [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"sounds/theme.mp3" loop:YES];
+    }
+}
+
 - (void)layoutTierTable {
     for (int i = 0; i < NUM_DIV_TIERS; i++){
         if (tierTableCards[i]){

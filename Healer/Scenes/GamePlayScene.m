@@ -122,7 +122,7 @@
         self.players = plyers;
         self.playingSoundsDict = [NSMutableDictionary dictionaryWithCapacity:10];
         
-        self.randomTitlesPresetDictionary = @{@"thud.mp3": @4, @"whiff.mp3" : @6};
+        self.randomTitlesPresetDictionary = @{@"thud.mp3": @4, @"whiff.mp3" : @6, @"sword_slash.mp3" : @3};
         
         NSAssert(self.players.count > 0, @"A Battle with no players was initiated.");
         
@@ -163,8 +163,16 @@
         
         self.players = [NSArray arrayWithObject:self.player];
         
+        CGPoint raidViewLoc = CGPointMake(260, 10);
+        
+        if (self.encounter.raid.members.count <= 5) {
+            raidViewLoc = CGPointMake(260, 170);
+        } else if (self.encounter.raid.members.count <= 10) {
+            raidViewLoc = CGPointMake(260, 120);
+        }
+        
         self.raidView = [[[RaidView alloc] init] autorelease];
-        [self.raidView setPosition:CGPointMake(260, 10)];
+        [self.raidView setPosition:raidViewLoc];
         [self.raidView setContentSize:CGSizeMake(500, 320)];
         [self addChild:self.raidView z:RAID_Z];
         
@@ -216,7 +224,6 @@
                     [self.spellView1 setPosition:CGPointMake(910, 295)];
                     if (self.player.activeSpells.count > i) {
                         Spell *spell = [[self.player activeSpells] objectAtIndex:i];
-                        [self preloadSpellAudio:spell];
                         [self.spellView1 setSpellData:spell];
                         [self.spellView1 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                         [self.spellView1 setPlayer:self.player];
@@ -228,7 +235,6 @@
                     [self.spellView2 setPosition:CGPointMake(910, 200)];
                     if (self.player.activeSpells.count > i) {
                         Spell *spell = [[self.player activeSpells] objectAtIndex:i];
-                        [self preloadSpellAudio:spell];
                         [self.spellView2 setSpellData:spell];
                         [self.spellView2 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                         [self.spellView2 setPlayer:self.player];
@@ -240,7 +246,6 @@
                     [self.spellView3 setPosition:CGPointMake(910, 105)];
                     if (self.player.activeSpells.count > i) {
                         Spell *spell = [[self.player activeSpells] objectAtIndex:i];
-                        [self preloadSpellAudio:spell];
                         [self.spellView3 setSpellData:spell];
                         [self.spellView3 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                         [self.spellView3 setPlayer:self.player];
@@ -252,7 +257,6 @@
                     [self.spellView4 setPosition:CGPointMake(910, 10)];
                     if (self.player.activeSpells.count > i) {
                         Spell *spell = [[self.player activeSpells] objectAtIndex:i];
-                        [self preloadSpellAudio:spell];
                         [self.spellView4 setSpellData:spell];
                         [self.spellView4 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
                         [self.spellView4 setPlayer:self.player];
@@ -280,6 +284,7 @@
 #if DEBUG_PERFECT_HEALS
         for (RaidMember *member in self.raid.livingMembers) {
             PerfectHeal *immunity = [[[PerfectHeal alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
+            [immunity setDamageDoneMultiplierAdjustment:4];
             [immunity setOwner:self.player];
             [member addEffect:immunity];
         }
@@ -453,6 +458,14 @@
 //        [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:nmcs]];
 //        return;
 //    }
+    
+    [[SimpleAudioEngine sharedEngine] crossFadeBackgroundMusic:nil forDuration:.5];
+    if (success) {
+        [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/victory.mp3"];
+    } else {
+        [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/defeat.mp3"];
+    }
+    
     for (CCNode *node in self.children) {
         if (node.tag == PAUSEABLE_TAG) {
             [node setVisible:NO];
@@ -1133,6 +1146,13 @@
 
 - (void)playAudioForTitle:(NSString *)title randomTitles:(NSInteger)numRandoms afterDelay:(NSTimeInterval)delay
 {
+    if (delay) {
+        [self runAction:[CCSequence actionOne:[CCDelayTime actionWithDuration:delay] two:[CCCallBlockN actionWithBlock:^(CCNode*node){
+            GamePlayScene *gps = (GamePlayScene*)node;
+            [gps playAudioForTitle:title];
+        }]]];
+        return;
+    }
     NSString *finalTitle = title;
     NSInteger presetRandomCount = [[self.randomTitlesPresetDictionary objectForKey:title] intValue];
     if (presetRandomCount > 0) {

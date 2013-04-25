@@ -125,6 +125,7 @@ typedef enum {
 @interface RaidDamagePulse : Ability //Deals <abilityValue> damage over the duration to all raid members
 @property (nonatomic, readwrite) NSTimeInterval duration;
 @property (nonatomic, readwrite) NSInteger numTicks;
+@property (nonatomic, retain) NSString *pulseSoundTitle;
 @end
 
 @interface BaraghastBreakOff : Ability

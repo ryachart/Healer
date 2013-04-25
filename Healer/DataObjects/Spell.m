@@ -36,9 +36,9 @@
         self.isMultitouch = NO;
         self.percentagesPerTarget = nil;
         self.spellID = NSStringFromClass([self class]);
-        self.beginCastingAudioTitle = @"heal_begin.wav";
-        self.endCastingAudioTitle = @"heal_finish.wav";
-        self.interruptedAudioTitle = @"interrupted.wav";
+        self.beginCastingAudioTitle = @"heal_begin.mp3";
+        self.endCastingAudioTitle = @"heal_finish.mp3";
+        self.interruptedAudioTitle = @"interrupted.mp3";
     }
 	return self;
 }
@@ -442,6 +442,7 @@
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
         self.spellType = SpellTypeProtective;
+        self.endCastingAudioTitle = @"barrier_finish.mp3";
     }
     return self;
 }
@@ -477,6 +478,7 @@
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
         self.spellType = SpellTypeProtective;
+        self.endCastingAudioTitle = @"purify_finish.mp3";
     }
     return self;
 }
@@ -519,6 +521,7 @@
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
         self.spellType = SpellTypeProtective;
+        self.endCastingAudioTitle = @"barrier_finish.mp3";
     }
     return self;
 }
@@ -575,7 +578,7 @@
 
 + (id)defaultSpell {
     LightEternal *le = [[LightEternal alloc] initWithTitle:@"Light Eternal" healAmnt:300 energyCost:120 * kCostEfficiencyScale  castTime:2.5 andCooldown:0.0];
-    [le setDescription:@"Heals up to 5 allies with the least health among allies for a moderate amount."];
+    [le setDescription:@"Heals up to 5 allies with the least health for a moderate amount."];
     return [le autorelease];
 }
 
@@ -870,11 +873,12 @@
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
         self.spellType = SpellTypeProtective;
+        self.endCastingAudioTitle = @"barrier_finish.mp3";
     }
     return self;
 }
 + (id)defaultSpell {
-    BlessedArmor *defaultSpell = [[BlessedArmor alloc] initWithTitle:@"Blessed Armor" healAmnt:0 energyCost:50 * kCostEfficiencyScale  castTime:0.0 andCooldown:9.0];
+    BlessedArmor *defaultSpell = [[BlessedArmor alloc] initWithTitle:@"Blessed Armor" healAmnt:0 energyCost:10 * kCostEfficiencyScale  castTime:0.0 andCooldown:9.0];
     
     [defaultSpell setDescription:@"Reduces damage done to a target by 25% for 5 seconds.  When the effect ends it heals for a moderate amount."];
     DelayedHealthEffect *bae = [[DelayedHealthEffect alloc] initWithDuration:5.0 andEffectType:EffectTypePositive];
@@ -903,7 +907,7 @@
 }
 + (id)defaultSpell {
     Attunement *defaultSpell = [[Attunement alloc] initWithTitle:@"Attunement" healAmnt:0 energyCost:100 * kCostEfficiencyScale  castTime:0.0 andCooldown:35.0];
-    [defaultSpell setDescription:@"Binds the souls of all allies redistributing health evenly and reducing damage taken for those allies by 15% for 6 seconds."];
+    [defaultSpell setDescription:@"Binds the souls of all allies redistributing health evenly and reducing damage taken for those allies by 20% for 8 seconds."];
     return [defaultSpell autorelease];
 }
 - (void)spellFinishedCastingForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta {
@@ -920,8 +924,8 @@
     float healthPercentage = (float)currentHealth/(float)totalHealth;
     for (RaidMember *member in livingMembers) {
         [member setHealth:member.maximumHealth * healthPercentage];
-        Effect *armorEffect = [[[Effect alloc] initWithDuration:6.0 andEffectType:EffectTypePositive] autorelease];
-        [armorEffect setDamageTakenMultiplierAdjustment:-.15];
+        Effect *armorEffect = [[[Effect alloc] initWithDuration:8.0 andEffectType:EffectTypePositive] autorelease];
+        [armorEffect setDamageTakenMultiplierAdjustment:-.2];
         [armorEffect setSpriteName:self.spriteFrameName];
         [armorEffect setTitle:@"attunement-armor"];
         [armorEffect setOwner:self.owner];

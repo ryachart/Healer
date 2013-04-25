@@ -19,6 +19,7 @@
 #import "Encounter.h"
 #import "ChallengeRatingStepper.h"
 #import "GoldCounterSprite.h"
+#import "SimpleAudioEngine.h"
 
 #define SPELL_ITEM_TAG 43234
 
@@ -189,6 +190,7 @@
             [self addChild:modalLayer];
         } else {
             [self.encounter encounterWillBegin];
+            [[SimpleAudioEngine sharedEngine] crossFadeBackgroundMusic:self.encounter.battleTrackTitle forDuration:1.5];
             GamePlayScene *gps = [[[GamePlayScene alloc] initWithEncounter:self.encounter player:self.player] autorelease];
             [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.5 scene:gps]];
         }

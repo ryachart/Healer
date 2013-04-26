@@ -198,6 +198,10 @@
 }
 
 -(void)displaySCT:(NSString*)sct asCritical:(BOOL)critical {
+    [self displaySCT:sct asCritical:critical color:ccGREEN];
+}
+
+- (void)displaySCT:(NSString*)sct asCritical:(BOOL)critical color:(ccColor3B)color{
     CGFloat fontSize = 20;
     NSString *fontName = @"TrebuchetMS";
     float scale = 1.0;
@@ -216,7 +220,7 @@
     }
     
     CCLabelTTFShadow *sctLabel = [CCLabelTTFShadow labelWithString:sct fontName:fontName fontSize:fontSize];
-    [sctLabel setColor:ccGREEN];
+    [sctLabel setColor:color];
     [sctLabel setPosition:CGPointMake(self.contentSize.width /2 , self.contentSize.height /2)];
     [sctLabel setScale:scale];
     
@@ -253,7 +257,7 @@
         self.alertTextCooldown -= timeDelta;
     }
     
-    if (self.alertTextCooldown <= 0.0 && self.member && self.member.health < self.lastHealth){
+    if (self.alertTextCooldown <= 0.0 && self.member && self.member.health < self.lastHealth && ![self.member isKindOfClass:[Player class]]){
         int damage = self.lastHealth - self.member.health;
         
         if ((float)damage / self.member.maximumHealth >= .33){
@@ -278,12 +282,12 @@
                 default:
                     break;
             }
-            [self displaySCT:sctString];
+            [self displaySCT:sctString asCritical:NO color:ccWHITE];
             self.alertTextCooldown += 2.0;
         }
         
         if ((float)self.member.health / self.member.maximumHealth <= .25){
-            if (self.member.health != 0){
+            if (self.member.health != 0 && ![self.member isKindOfClass:[Player class]]){
                 NSInteger roll = arc4random() % 4;
                 NSString *sctString = nil;
                 switch (roll) {
@@ -305,7 +309,7 @@
                     default:
                         break;
                 }
-                [self displaySCT:sctString];
+                [self displaySCT:sctString asCritical:NO color:ccWHITE];
             }
         }
     }

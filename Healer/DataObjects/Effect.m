@@ -648,7 +648,7 @@
 - (void)dealApplicationDamage
 {
     NSInteger currentHealth = self.target.health;
-    NSInteger healthLimit = self.target.maximumHealth * .4;
+    NSInteger healthLimit = self.target.maximumHealth * .4 - self.target.absorb;
     if (currentHealth > healthLimit) {
         [self.target setHealth:healthLimit];
         if (currentHealth > healthLimit) {
@@ -976,6 +976,7 @@
         self.needsDetonation = NO;
         self.isExpired = YES;
         [[(Enemy*)self.owner announcer] displayParticleSystemWithName:@"fire_explosion.plist" onTarget:(RaidMember*)self.target];
+        [self.owner.announcer playAudioForTitle:@"explosion3.mp3"];
         [[(Enemy*)self.owner announcer] displayScreenShakeForDuration:1.0];
     }
 }

@@ -31,6 +31,7 @@ typedef enum {
 
 - (void)displaySCT:(NSString*)sct;
 - (void)displaySCT:(NSString*)sct asCritical:(BOOL)critical;
+- (void)displaySCT:(NSString*)sct asCritical:(BOOL)critical color:(ccColor3B)color;
 - (void)triggerConfusion;
 
 @end

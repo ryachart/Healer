@@ -10,8 +10,8 @@
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFiles</key>
 	<array>
-		<string>healer@2x.png</string>
-		<string>healer.png</string>
+		<string>Healer_iTunesStore_Icon72x72.png</string>
+		<string>Healer_iTunesStore_Icon144x144.png</string>
 	</array>
 	<key>CFBundleIcons</key>
 	<dict>
@@ -19,15 +19,15 @@
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
-				<string>healer@2x.png</string>
-				<string>healer.png</string>
+				<string>Healer_iTunesStore_Icon72x72.png</string>
+				<string>Healer_iTunesStore_Icon144x144.png</string>
 			</array>
 			<key>UIPrerenderedIcon</key>
 			<true/>
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
-	<string>com.ryachart.healergame</string>
+	<string>com.rhbg.healergame</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -39,7 +39,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>116</string>
+	<string>120</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIPrerenderedIcon</key>

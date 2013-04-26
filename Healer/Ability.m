@@ -45,6 +45,8 @@
     [ab setTitle:self.title];
     [ab setInfo:self.info];
     [ab setIconName:self.iconName];
+    [ab setExecutionSound:self.executionSound];
+    [ab setActivationSound:self.activationSound];
     return ab;
 }
 - (void)dealloc{
@@ -297,6 +299,21 @@
     [_appliedEffect release];
     [_damageAudioName release];
     [super dealloc];
+}
+
+- (id)copy
+{
+    Attack *copy = [super copy];
+    [copy setRequiresDamageToApplyEffect:self.requiresDamageToApplyEffect];
+    [copy setIgnoresGuardians:self.ignoresGuardians];
+    [copy setIgnoresBusy:self.ignoresBusy];
+    [copy setIgnoresPlayers:self.ignoresPlayers];
+    [copy setAppliedEffect:self.appliedEffect];
+    [copy setRemovesPositiveEffects:self.removesPositiveEffects];
+    [copy setDamageAudioName:self.damageAudioName];
+    [copy setPrefersTargetsWithoutVisibleEffects:self.prefersTargetsWithoutVisibleEffects];
+    [copy setNumberOfTargets:self.numberOfTargets];
+    return copy;
 }
 
 - (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd{
@@ -617,6 +634,14 @@
 @end
 
 @implementation GroundSmash
+
+- (id)init
+{
+    if (self = [super init]) {
+        self.attackParticleEffectName = nil;
+    }
+    return self;
+}
 
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
 {
@@ -1811,6 +1836,7 @@
             [wotEffect setValue:-self.abilityValue * (1.1 * (i+1))];
             [member addEffect:wotEffect];
             [self.owner.announcer displayParticleSystemWithName:@"shadow_burst.plist" onTarget:member withOffset:CGPointZero delay:0.01 + (delay * i)];
+            [self.owner.announcer playAudioForTitle:@"explosion_pulse.wav" afterDelay:0.01 + (delay * i)];
         }
         [groups removeObject:groupToHurt];
     }

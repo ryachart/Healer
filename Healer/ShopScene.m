@@ -173,7 +173,7 @@
         case ShopCategoryAdvanced:
             flavorSpriteFrameName = @"shop_advanced_flavor.png";
             itemsToDisplay = [Shop advancedShopItems];
-            self.flavorTextLabel.string = @"A collection of spells a more seasoned Healer would desire.  These spells are taugh to further challenge a nascent Healer.";            
+            self.flavorTextLabel.string = @"A collection of spells a more seasoned Healer would desire.  These spells are taught to further challenge a nascent Healer.";            
             [self.advancedButton addChild:self.selectedCategorySprite];
             break;
         case ShopCategoryArchives:

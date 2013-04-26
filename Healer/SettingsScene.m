@@ -140,12 +140,13 @@
     [SettingsScene configureAudioForUserSettings];
 }
 
+#define DEFAULT_BACKGROUND_VOLUME .5
 + (void)configureAudioForUserSettings
 {
     float effectsVolume = ![[PlayerDataManager localPlayer] effectsDisabled];
     float musicVolume = ![[PlayerDataManager localPlayer] musicDisabled];
     
-    [[SimpleAudioEngine sharedEngine] setBackgroundMusicVolume:musicVolume];
+    [[SimpleAudioEngine sharedEngine] setBackgroundMusicVolume:musicVolume * DEFAULT_BACKGROUND_VOLUME];
     [[SimpleAudioEngine sharedEngine] setEffectsVolume:effectsVolume];
 }
 

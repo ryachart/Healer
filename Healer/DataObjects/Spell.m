@@ -314,6 +314,7 @@
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
         self.spellType = SpellTypeBasic;
+        self.endCastingAudioTitle = @"burst_finish.mp3";
     }
     return self;
 }
@@ -335,6 +336,7 @@
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
         self.spellType = SpellTypeBasic;
+        self.endCastingAudioTitle = @"burst_finish.mp3";
     }
     return self;
 }
@@ -356,6 +358,7 @@
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
         self.spellType = SpellTypeMulti;
+        self.endCastingAudioTitle = @"forked_finish.mp3";
     }
     return self;
 }
@@ -521,7 +524,7 @@
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
         self.spellType = SpellTypeProtective;
-        self.endCastingAudioTitle = @"barrier_finish.mp3";
+        self.endCastingAudioTitle = @"orbs_finish.mp3";
     }
     return self;
 }
@@ -548,6 +551,7 @@
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
         self.spellType = SpellTypePeriodic;
+        self.endCastingAudioTitle = @"regrow_finish.wav";
     }
     return self;
 }
@@ -572,6 +576,7 @@
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
         self.spellType = SpellTypeMulti;
+        self.endCastingAudioTitle = @"burst_finish.mp3";
     }
     return self;
 }
@@ -694,6 +699,7 @@
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
         self.spellType = SpellTypeBasic;
+        self.endCastingAudioTitle = @"orbs_finish.mp3";
     }
     return self;
 }
@@ -779,6 +785,7 @@
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
         self.spellType = SpellTypeMulti;
+        self.endCastingAudioTitle = @"orbs_finish.mp3";
     }
     return self;
 }
@@ -846,6 +853,7 @@
     NSTimeInterval healDelay = 1.75;
     NSTimeInterval preDelay = .33;
     healDelay -= preDelay;
+    int i = 0; 
     for (RaidMember *starTarget in finalTargets){
         if (starTarget != self.owner.spellTarget) {
             [self willHealTarget:starTarget inRaid:raid withEnemies:enemies andPlayers:players forAmount:0];
@@ -854,6 +862,9 @@
         }
         ProjectileEffect *starProjectile = [[ProjectileEffect alloc] initWithSpriteName:@"star.png" target:starTarget collisionTime:healDelay sourceAgent:self.owner];
         [starProjectile setCollisionParticleName:@"star_explosion.plist"];
+        if (i == 0){
+            [starProjectile setCollisionSoundName:@"purify_finish.mp3"];
+        }
         [starProjectile setDelay:preDelay];
         [self.owner.announcer displayProjectileEffect:starProjectile fromOrigin:CGPointMake(400 - (arc4random() % 300 - 150), 800)];
         DelayedHealthEffect *starDelayedHealthEff = [[DelayedHealthEffect alloc] initWithDuration:healDelay+preDelay andEffectType:EffectTypePositiveInvisible];
@@ -864,6 +875,7 @@
         [starTarget addEffect:starDelayedHealthEff];
         [starProjectile release];
         [starDelayedHealthEff release];
+        i++;
     }
 }
 

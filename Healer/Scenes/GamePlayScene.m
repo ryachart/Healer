@@ -409,23 +409,44 @@
 }
 
 -(void)battleBegin{
-    self.announcementLabel.visible = YES;
     __block GamePlayScene *blockSelf = self;
-    [blockSelf runAction:[CCSequence actions:
-                          [CCCallBlock actionWithBlock:^(){
-        [blockSelf.announcementLabel setString:@"Battle Begins in 3"];
-    }], 
-                          [CCDelayTime actionWithDuration:1.0], 
-                          [CCCallBlock actionWithBlock:^(){
-        [blockSelf.announcementLabel setString:@"Battle Begins in 2"];
-    }], [CCDelayTime actionWithDuration:1.0],
-                          [CCCallBlock actionWithBlock:^(){
-        [blockSelf.announcementLabel setString:@"Battle Begins in 1"];
-    }], [CCDelayTime actionWithDuration:1.0], [CCCallBlock actionWithBlock:^{
-        blockSelf.announcementLabel.visible = NO;
-        blockSelf.announcementLabel.string = @"";
+    CCSprite *startingTimer = [CCSprite spriteWithSpriteFrameName:@"three.png"];
+    [startingTimer setPosition:CGPointMake(512, 540)];
+    [startingTimer setScale:2.0];
+    [startingTimer setOpacity:0];
+    [self addChild:startingTimer z:1000];
+    
+    [startingTimer runAction:[CCSequence actions:
+                              [CCSpawn actionOne:[CCScaleTo actionWithDuration:.33 scale:1.0] two:[CCFadeTo actionWithDuration:.33 opacity:255]],
+                              [CCCallBlock actionWithBlock:^{
+        [blockSelf playAudioForTitle:@"bang1.mp3"];
+    }],
+                              [CCFadeTo actionWithDuration:1.0 opacity:0],
+                              [CCCallBlockN actionWithBlock:^(CCNode *node){
+        CCSprite *sprite = (CCSprite*)node;
+        [sprite setOpacity:0];
+        [sprite setScale:2.0];
+        [sprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"two.png"]];
+        }],
+                              [CCSpawn actionOne:[CCScaleTo actionWithDuration:.33 scale:1.0] two:[CCFadeTo actionWithDuration:.33 opacity:255]],
+                              [CCCallBlock actionWithBlock:^{
+        [blockSelf playAudioForTitle:@"bang2.mp3"];
+    }],
+                              [CCFadeTo actionWithDuration:1.0 opacity:0],
+                              [CCCallBlockN actionWithBlock:^(CCNode *node){
+        CCSprite *sprite = (CCSprite*)node;
+        [sprite setOpacity:0];
+        [sprite setScale:2.0];
+        [sprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"one.png"]];
+    }],[CCSpawn actionOne:[CCScaleTo actionWithDuration:.33 scale:1.0] two:[CCFadeTo actionWithDuration:.33 opacity:255]],[CCCallBlock actionWithBlock:^{
+        [blockSelf playAudioForTitle:@"bang1.mp3"];
+    }],
+                              [CCFadeTo actionWithDuration:1.0 opacity:0],
+                              [CCCallBlockN actionWithBlock:^(CCNode *node){
+        [node removeFromParentAndCleanup:YES];
         [blockSelf.enemiesLayer fadeInAbilities];
         [blockSelf setPaused:NO];
+        
     }], nil]];
 }
 
@@ -462,6 +483,14 @@
     [[SimpleAudioEngine sharedEngine] crossFadeBackgroundMusic:nil forDuration:.5];
     if (success) {
         [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/victory.mp3"];
+        
+        NSArray *happyWords = @[@"Huzzah!", @"Victory!", @"Hooray!", @"Glorious!", @"Well Done!", @"Excellent!", @"Very Good!", @"Grand!", @"Heroic!", @"Marvelous", @"Superb!", @"Brilliant!"];
+        for (RaidMemberHealthView *hv in self.raidView.raidViews) {
+            if (!hv.member.isDead && ![hv.member isKindOfClass:[Player class]]) {
+                [hv displaySCT:[happyWords objectAtIndex:arc4random() % happyWords.count] asCritical:NO color:ccWHITE];
+            }
+        }
+        
     } else {
         [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/defeat.mp3"];
     }
@@ -1183,7 +1212,7 @@
     
     if (event.type == CombatEventTypeDodge){
         RaidMember *dodgedTarget = (RaidMember*)event.target;
-        [[self.raidView healthViewForMember:dodgedTarget] displaySCT:@"Dodge"];
+        [[self.raidView healthViewForMember:dodgedTarget] displaySCT:@"Dodge" asCritical:NO color:ccYELLOW];
     }
     
     if (event.type == CombatEventTypeHeal){

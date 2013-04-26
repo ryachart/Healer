@@ -1342,6 +1342,7 @@
     [super configureBossForDifficultyLevel:difficulty];
     if (difficulty == 5) {
         BlindingSmokeAttack *blinding = [[[BlindingSmokeAttack alloc] init] autorelease];
+        [blinding setExecutionSound:@"bang1.mp3"];
         [blinding setTitle:@"Blinding Glare"];
         [blinding setIconName:@"blind.png"];
         [blinding setInfo:@"A glare that blinds Healers and absorbs 300 healing."];
@@ -1420,11 +1421,12 @@
         [(FocusedAttack*)self.autoAttack setDamageAudioName:@"largeaxe.mp3"];
         
         ExecutionEffect *executionEffect = [[[ExecutionEffect alloc] initWithDuration:3.75 andEffectType:EffectTypeNegative] autorelease];
+        [executionEffect setTitle:@"exec-eff"];
         [executionEffect setValue:-2000];
         [executionEffect setEffectivePercentage:.5];
         [executionEffect setAilmentType:AilmentTrauma];
         
-        Attack *executionAttack = [[[Attack alloc] init] autorelease];
+        Attack *executionAttack = [[[Attack alloc] initWithDamage:0 andCooldown:30] autorelease];
         [executionAttack setInfo:@"The Twin Champions will choose a target for execution.  This target will be instantly slain if not above 50% health when the deathblow lands."];
         [executionAttack setPrefersTargetsWithoutVisibleEffects:YES];
         [executionAttack setTitle:@"Execution"];
@@ -1432,7 +1434,6 @@
         [executionAttack setRequiresDamageToApplyEffect:NO];
         [executionAttack setIgnoresGuardians:YES];
         [executionAttack setKey:@"execution"];
-        [executionAttack setCooldown:30];
         [executionAttack setFailureChance:0];
         [executionAttack setAppliedEffect:executionEffect];
         [self addAbility:executionAttack];
@@ -1554,6 +1555,7 @@
             }
             [self.announcer displayScreenFlash];
             [self.announcer displayScreenShakeForDuration:1.0];
+            [self.announcer playAudioForTitle:@"bang1.mp3"];
             
             Ability *endStunAbility = [[[Ability alloc] init] autorelease];
             [endStunAbility setCooldown:8];
@@ -1632,12 +1634,14 @@
     [seer addAbility:fireballAbility];
     
     InvertedHealing *invHeal = [[[InvertedHealing alloc] init] autorelease];
+    [invHeal setExecutionSound:@"curse.mp3"];
     [invHeal setNumTargets:3];
     [invHeal setCooldown:5.0];
     [invHeal setActivationTime:1.5];
     [seer addAbility:invHeal];
     
     SoulBurn *sb = [[[SoulBurn alloc] init] autorelease];
+    [sb setExecutionSound:@"fire_start.mp3"];
     [sb setActivationTime:2.0];
     [sb setCooldown:14.0];
     [seer addAbility:sb];
@@ -2125,6 +2129,7 @@
     [boss.oozeAll setAttackParticleEffectName:nil];
     [boss.oozeAll setTitle:@"Surging Slime"];
     [boss.oozeAll setIconName:@"slime.png"];
+    [boss.oozeAll setExecutionSound:@"slimeimpact.mp3"];
     [boss.oozeAll setActivationTime:2.0];
     [boss.oozeAll setTimeApplied:17.0];
     [boss.oozeAll setCooldown:22.0];
@@ -2137,6 +2142,7 @@
     OozeTwoTargets *oozeTwo = [[[OozeTwoTargets alloc] init] autorelease];
     [oozeTwo setTitle:@"Tendrils of Slime"];
     [oozeTwo setIconName:@"slime.png"];
+    [oozeTwo setExecutionSound:@"slimespraying.mp3"];
     [oozeTwo setActivationTime:1.0];
     [oozeTwo setAbilityValue:450];
     [oozeTwo setCooldown:17.0];
@@ -2228,6 +2234,7 @@
         self.autoAttack.abilityValue = 270;
         [self.announcer announce:@"Weaklings! Kneel before my power."];
         BloodCrush *bloodcrush = [[[BloodCrush alloc] init] autorelease];
+        [bloodcrush setExecutionSound:@"sharpimpactbleeding.mp3"];
         [bloodcrush setKey:@"blood-crush"];
         [bloodcrush setCooldown:40.0];
         [bloodcrush setCooldownVariance:.2];
@@ -2245,6 +2252,7 @@
         
         Attack *glareFromBeyond = [[[Attack alloc] initWithDamage:0 andCooldown:30.0] autorelease];
         [glareFromBeyond setPrefersTargetsWithoutVisibleEffects:YES];
+        [glareFromBeyond setExecutionSound:@"bang1.mp3"];
         [glareFromBeyond setIgnoresGuardians:YES];
         [glareFromBeyond setRequiresDamageToApplyEffect:NO];
         [glareFromBeyond setAppliedEffect:glareEffect];
@@ -2264,6 +2272,7 @@
         [graspEffect setTitle:@"grasp-of-the-damned-eff"];
         [graspEffect setAilmentType:AilmentCurse];
         GraspOfTheDamned *graspOfTheDamned = [[[GraspOfTheDamned alloc] initWithDamage:0 andCooldown:15.0] autorelease];
+        [graspOfTheDamned setExecutionSound:@"curse.mp3"];
         [graspOfTheDamned setActivationTime:1.5];
         [self addAbility:graspOfTheDamned];
         [graspOfTheDamned setAppliedEffect:graspEffect];
@@ -2291,6 +2300,7 @@
     [boss setSpriteName:@"avataroftorment_battle_portrait.png"];
     
     DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
+    [dcAbility setExecutionSound:@"gas_impact.mp3"];
     [dcAbility setKey:@"dis-cloud"];
     [dcAbility setCooldown:23.0];
     [dcAbility setAbilityValue:20];
@@ -2305,6 +2315,8 @@
     [boss addAbilityDescriptor:spDescriptor];
     
     ProjectileAttack *projectileAttack = [[[ProjectileAttack alloc] init] autorelease];
+    [projectileAttack setExecutionSound:@"fireball.mp3"];
+    [projectileAttack setExplosionSoundName:@"liquid_impact.mp3"];
     [projectileAttack setSpriteName:@"shadowbolt.png"];
     [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack setAbilityValue:-200];
@@ -2313,6 +2325,8 @@
     [boss addAbility:projectileAttack];
     
     ProjectileAttack *projectileAttack2 = [[[ProjectileAttack alloc] init] autorelease];
+    [projectileAttack2 setExecutionSound:@"fireball.mp3"];
+    [projectileAttack2 setExplosionSoundName:@"liquid_impact.mp3"];
     [projectileAttack2 setSpriteName:@"shadowbolt.png"];
     [projectileAttack2 setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack2 setAbilityValue:-400];
@@ -2327,6 +2341,7 @@
 - (void)soulPrisonAll:(Raid *)raid
 {
     [self.announcer announce:@"YOUR SOULS BELONG TO THE ABYSS"];
+    [self.announcer playAudioForTitle:@"bang2.mp3"];
     for (RaidMember *member in raid.livingMembers) {
         SoulPrisonEffect *spe = [[[SoulPrisonEffect alloc] initWithDuration:35.0 - (self.difficulty - 1.0 * 2) andEffectType:EffectTypeNegative] autorelease];
         [spe setOwner:self];
@@ -2380,6 +2395,8 @@
         [gainAbility setCooldown:20.0];
         
         ProjectileAttack *projectileAttack = [[[ProjectileAttack alloc] init] autorelease];
+        [projectileAttack setExecutionSound:@"fireball.mp3"];
+        [projectileAttack setExplosionSoundName:@"liquid_impact.mp3"];
         [projectileAttack setSpriteName:@"shadowbolt.png"];
         [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
         [projectileAttack setAbilityValue:-230];
@@ -2407,6 +2424,7 @@
     [boss setSpriteName:@"avataroftorment_battle_portrait.png"];
     
     DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
+    [dcAbility setExecutionSound:@"gas_impact.mp3"];
     [dcAbility setKey:@"dis-cloud"];
     [dcAbility setCooldown:23.0];
     [dcAbility setAbilityValue:26];
@@ -2415,6 +2433,8 @@
     [dcAbility release];
     
     ProjectileAttack *projectileAttack = [[ProjectileAttack alloc] init];
+    [projectileAttack setExecutionSound:@"fireball.mp3"];
+    [projectileAttack setExplosionSoundName:@"liquid_impact.mp3"];
     [projectileAttack setSpriteName:@"shadowbolt.png"];
     [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack setAbilityValue:-400];
@@ -2424,6 +2444,8 @@
     [projectileAttack release];
     
     ProjectileAttack *projectileAttack2 = [[ProjectileAttack alloc] init];
+    [projectileAttack2 setExecutionSound:@"fireball.mp3"];
+    [projectileAttack2 setExplosionSoundName:@"liquid_impact.mp3"];
     [projectileAttack2 setSpriteName:@"shadowbolt.png"];
     [projectileAttack2 setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack2 setAbilityValue:-400];
@@ -2433,6 +2455,8 @@
     [projectileAttack2 release];
     
     ProjectileAttack *projectileAttack3 = [[ProjectileAttack alloc] init];
+    [projectileAttack2 setExecutionSound:@"fireball.mp3"];
+    [projectileAttack2 setExplosionSoundName:@"liquid_impact.mp3"];
     [projectileAttack3 setSpriteName:@"shadowbolt.png"];
     [projectileAttack3 setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack3 setAbilityValue:-320];
@@ -2465,6 +2489,7 @@
     if (percentage == 50.0) {
         [self.announcer announce:@"You feel Anguish cloud your mind..."];
         Confusion *confusionAbility = [[[Confusion alloc] init] autorelease];
+        [confusionAbility setExecutionSound:@"cackling_demons.mp3"];
         [confusionAbility setCooldown:14.0];
         [confusionAbility setAbilityValue:7.0];
         [confusionAbility setKey:@"confusion"];
@@ -2516,6 +2541,7 @@
 
 - (void)raidDamageToRaid:(Raid*)raid forPlayers:(NSArray*)players
 {
+    [self.announcer playAudioForTitle:@"cackling_demons.mp3"];
     for (RaidMember *member in raid.livingMembers) {
         RepeatedHealthEffect *damage = [[[RepeatedHealthEffect alloc] initWithDuration:10.0 andEffectType:EffectTypeNegativeInvisible] autorelease];
         [damage setNumOfTicks:8];
@@ -2565,6 +2591,7 @@
         [contagious setValuePerTick:-20];
         [contagious setAilmentType:AilmentPoison];
         [attack setIconName:@"plague.png"];
+        [attack setExecutionSound:@"slimeimpact.mp3"];
         [attack setTitle:@"Contagious Toxin"];
         [attack setInfo:@"Plagues a target. If the target's is healed before the effect reaches 5 stacks it will spread to others."];
         [attack setKey:@"contagious"];
@@ -2595,6 +2622,7 @@
         [barrier setHealingToAbsorb:400];
         
         Attack *spiritBlock = [[[Attack alloc] initWithDamage:0 andCooldown:40.0] autorelease];
+        [spiritBlock setExecutionSound:@"curse.png"];
         [spiritBlock setPrefersTargetsWithoutVisibleEffects:YES];
         [spiritBlock setTimeApplied:20.0];
         [spiritBlock setIgnoresGuardians:YES];
@@ -2606,6 +2634,7 @@
         [self addAbility:spiritBlock];
         
         RaidDamage *cataclysm = [[[RaidDamage alloc] init] autorelease];
+        [cataclysm setExecutionSound:@"gasexplosion.png"];
         [cataclysm setKey:@"cataclysm"];
         [cataclysm setCooldown:35.0];
         [cataclysm setActivationTime:8.0];
@@ -2639,6 +2668,7 @@
         }
         [self.announcer announce:@"The Soul of Torment poisons your mind and clouds your vision."];
         Confusion *confusionAbility = [[[Confusion alloc] init] autorelease];
+        [confusionAbility setExecutionSound:@"cackling_demons.mp3"];
         [confusionAbility setCooldown:14.0];
         [confusionAbility setAbilityValue:8.0];
         [confusionAbility setKey:@"confusion"];

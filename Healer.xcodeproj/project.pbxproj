@@ -47,6 +47,8 @@
 		BF0022BE163EE94C00384882 /* EncounterCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0022BD163EE94C00384882 /* EncounterCard.m */; };
 		BF03E26B1725CA2900F3A429 /* Collectible.m in Sources */ = {isa = PBXBuildFile; fileRef = BF03E26A1725CA2900F3A429 /* Collectible.m */; };
 		BF03E26F1725CE6700F3A429 /* CollectibleLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF03E26E1725CE6700F3A429 /* CollectibleLayer.m */; };
+		BF03E2AE172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png in Resources */ = {isa = PBXBuildFile; fileRef = BF03E2AD172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png */; };
+		BF03E2B0172A44F900F3A429 /* Healer_iTunesStore_Icon144x144.png in Resources */ = {isa = PBXBuildFile; fileRef = BF03E2AF172A44F900F3A429 /* Healer_iTunesStore_Icon144x144.png */; };
 		BF0557A015268D0A006B4781 /* ProjectileEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF05579F15268D0A006B4781 /* ProjectileEffect.m */; };
 		BF0557B51526BC02006B4781 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = BF0557B41526BC02006B4781 /* assets */; };
 		BF068CA61704F0BC00000C7F /* WidthScalingBackgroundSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF068CA51704F0BC00000C7F /* WidthScalingBackgroundSprite.m */; };
@@ -80,8 +82,6 @@
 		BF7660C216C0566600985F2E /* GradientBorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7660C116C0566600985F2E /* GradientBorderLayer.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
 		BF8249D71526D7C2000B554B /* RaidMemberPreBattleCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */; };
-		BF865F21159F8652007F5DBF /* healer@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF865F20159F8651007F5DBF /* healer@2x.png */; };
-		BF865F23159F8655007F5DBF /* healer.png in Resources */ = {isa = PBXBuildFile; fileRef = BF865F22159F8655007F5DBF /* healer.png */; };
 		BF865F26159F9878007F5DBF /* Talents.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F25159F9878007F5DBF /* Talents.m */; };
 		BF865F29159F9C1F007F5DBF /* TalentScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F28159F9C1F007F5DBF /* TalentScene.m */; };
 		BF865F2C15A031FB007F5DBF /* BasicButton.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F2B15A031FB007F5DBF /* BasicButton.m */; };
@@ -628,6 +628,8 @@
 		BF03E26A1725CA2900F3A429 /* Collectible.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Collectible.m; sourceTree = "<group>"; };
 		BF03E26D1725CE6700F3A429 /* CollectibleLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectibleLayer.h; sourceTree = "<group>"; };
 		BF03E26E1725CE6700F3A429 /* CollectibleLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CollectibleLayer.m; sourceTree = "<group>"; };
+		BF03E2AD172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Healer_iTunesStore_Icon72x72.png; sourceTree = SOURCE_ROOT; };
+		BF03E2AF172A44F900F3A429 /* Healer_iTunesStore_Icon144x144.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Healer_iTunesStore_Icon144x144.png; sourceTree = SOURCE_ROOT; };
 		BF05579E15268D0A006B4781 /* ProjectileEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProjectileEffect.h; sourceTree = "<group>"; };
 		BF05579F15268D0A006B4781 /* ProjectileEffect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectileEffect.m; sourceTree = "<group>"; };
 		BF0557AC1526BBA6006B4781 /* build-spritesheet.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "build-spritesheet.sh"; path = "scripts/build-spritesheet.sh"; sourceTree = SOURCE_ROOT; };
@@ -860,6 +862,8 @@
 		38024DC013C2564D003D36F2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BF03E2AF172A44F900F3A429 /* Healer_iTunesStore_Icon144x144.png */,
+				BF03E2AD172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png */,
 				BFB99F1A15257F6D007EE559 /* sounds */,
 				BFE66EDE16D9749800B9FBEE /* fonts */,
 				BFD240CC16AC8E09007010D0 /* bosses */,
@@ -1903,8 +1907,6 @@
 				BFA2F13D16CF02AE00E639A9 /* sounds in Resources */,
 				BF21071F15291E5F001B93D7 /* emitters in Resources */,
 				38F1B45C15CA30D8008B2D99 /* backgrounds in Resources */,
-				BF865F21159F8652007F5DBF /* healer@2x.png in Resources */,
-				BF865F23159F8655007F5DBF /* healer.png in Resources */,
 				BFF4198C15A27CF700BC0453 /* talents.plist in Resources */,
 				BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */,
 				BF87D85B1601ABFB00BEAD5B /* tips.plist in Resources */,
@@ -1914,6 +1916,8 @@
 				BFE66EDF16D9749800B9FBEE /* fonts in Resources */,
 				BF1DDBAD1711F52C0008C946 /* README.md in Resources */,
 				BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */,
+				BF03E2AE172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png in Resources */,
+				BF03E2B0172A44F900F3A429 /* Healer_iTunesStore_Icon144x144.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2079,7 +2083,7 @@
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/system\"",
@@ -2112,7 +2116,7 @@
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/system\"",
@@ -2170,7 +2174,7 @@
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/system\"",

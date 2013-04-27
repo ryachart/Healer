@@ -52,6 +52,7 @@
             [[SimpleAudioEngine sharedEngine] preloadBackgroundMusic:@"sounds/theme.mp3"];
         }
         [SettingsScene configureAudioForUserSettings];
+        [[PlayerDataManager localPlayer] unlockAll];
         //self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
         
         self.quickPlayButton= [BasicButton basicButtonWithTarget:self andSelector:@selector(quickPlaySelected) andTitle:@"Play"];

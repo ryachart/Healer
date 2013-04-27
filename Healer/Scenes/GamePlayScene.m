@@ -32,7 +32,7 @@
 #import "CollectibleLayer.h"
 
 #define DEBUG_IMMUNITIES false
-#define DEBUG_PERFECT_HEALS false
+#define DEBUG_PERFECT_HEALS true
 
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812
@@ -284,7 +284,7 @@
 #if DEBUG_PERFECT_HEALS
         for (RaidMember *member in self.raid.livingMembers) {
             PerfectHeal *immunity = [[[PerfectHeal alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
-            [immunity setDamageDoneMultiplierAdjustment:4];
+            [immunity setDamageDoneMultiplierAdjustment:1];
             [immunity setOwner:self.player];
             [member addEffect:immunity];
         }

@@ -1200,7 +1200,7 @@
     if (self = [super init]){
         self.info = @"Hurls a bone at a target dealing moderate damage and causing the target to be stunned until healed to full health.";
         self.title = @"Bone Throw";
-        self.iconName = @"bone.png";
+        self.iconName = @"bone_throw.png";
     }
     return self;
 }
@@ -1224,7 +1224,7 @@
     [target addEffect:boneThrowEffect];
     [boneThrowEffect release];
     
-    ProjectileEffect *boneVisual = [[ProjectileEffect alloc] initWithSpriteName:@"bone_throw.png" target:target collisionTime:throwDuration sourceAgent:self.owner];
+    ProjectileEffect *boneVisual = [[ProjectileEffect alloc] initWithSpriteName:@"bone.png" target:target collisionTime:throwDuration sourceAgent:self.owner];
     [boneVisual setCollisionSoundName:@"bonecrunching.mp3"];
     [boneVisual setType:ProjectileEffectTypeThrow];
     [[self.owner announcer] displayProjectileEffect:boneVisual];

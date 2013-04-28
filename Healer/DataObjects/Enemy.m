@@ -336,7 +336,7 @@
 
 @implementation Ghoul
 +(id)defaultBoss{
-    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:150000
+    Ghoul *ghoul = [[Ghoul alloc] initWithHealth:110000
                                           damage:300 targets:1 frequency:2.0 choosesMT:NO ];
     [ghoul setTitle:@"Ghoul"];
     [ghoul setSpriteName:@"ghoul_battle_portrait.png"];
@@ -438,6 +438,12 @@
 
 - (void)configureBossForDifficultyLevel:(NSInteger)difficulty {
     [super configureBossForDifficultyLevel:difficulty];
+    
+    if (difficulty <= 2) {
+        ChannelledEnemyAttackAdjustment *frenzy = (ChannelledEnemyAttackAdjustment*)[self abilityWithKey:@"frenzy"];
+        [frenzy setDamageMultiplier:.25];
+        [frenzy setAttackSpeedMultiplier:.25];
+    }
         
     if (difficulty >= 4) {
         self.autoAttack.abilityValue = 500;
@@ -689,7 +695,7 @@
     if (percentage == 100.0){
         [self.announcer announce:@"A putrid green mist fills the area..."];
         [self.announcer playAudioForTitle:@"wolvesgrowling.mp3"];
-        [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:-1.0];
+        [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:-1.0 offset:CGPointMake(0, -100)]; //Lower this because it's a 10 man...kind of awful
         for (RaidMember *member in raid.raidMembers){
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegativeInvisible];
             [rhe setOwner:self];
@@ -762,13 +768,15 @@
         RaidMember *target = [(FocusedAttack*)self.autoAttack focusTarget];
         [self ravagerDiedFocusing:target andRaid:raid];
         
-        WanderingSpiritEffect *wse = [[[WanderingSpiritEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
-        [wse setAilmentType:AilmentTrauma];
-        [wse setTitle:@"pred-fungus-effect"];
-        [wse setSpriteName:@"plague.png"];
-        [wse setValuePerTick:-self.autoAttack.abilityValue];
-        [wse setOwner:self];
-        [target addEffect:wse];
+        if (self.difficulty == 5) {
+            WanderingSpiritEffect *wse = [[[WanderingSpiritEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+            [wse setAilmentType:AilmentTrauma];
+            [wse setTitle:@"pred-fungus-effect"];
+            [wse setSpriteName:@"plague.png"];
+            [wse setValuePerTick:-self.autoAttack.abilityValue];
+            [wse setOwner:self];
+            [target addEffect:wse];
+        }
     }
 }
 
@@ -1762,7 +1770,7 @@
         [orbsOfFury setAbilityValue:30];
         [orbsOfFury setIconName:@"red_curse.png"];
         [orbsOfFury setTitle:@"Orbs of Fury"];
-        [orbsOfFury setInfo:@"The Gatekeeper summons orbs of fury increasing his damage taken by 5% and damage dealt by 3% per orb.  The Healer may detonate the orbs by tapping them."];
+        [orbsOfFury setInfo:@"The Gatekeeper summons orbs of fury increasing his damage taken by 10% and damage dealt by 4% per orb.  The Healer may detonate the orbs by tapping them."];
         [self addAbility:orbsOfFury];
     }
 }

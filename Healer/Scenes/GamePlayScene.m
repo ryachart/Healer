@@ -32,7 +32,7 @@
 #import "CollectibleLayer.h"
 
 #define DEBUG_IMMUNITIES false
-#define DEBUG_PERFECT_HEALS true
+#define DEBUG_PERFECT_HEALS false
 
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812

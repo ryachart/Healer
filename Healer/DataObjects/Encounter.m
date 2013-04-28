@@ -674,9 +674,7 @@
     if (duration < 120){
         return 0;
     }
-    
     return MIN(200, MAX(0, (duration - 120) / 2));
-    
 }
 
 + (NSString *)backgroundPathForEncounter:(NSInteger)encounter

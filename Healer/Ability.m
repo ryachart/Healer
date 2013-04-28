@@ -2511,8 +2511,8 @@
     self.ownerEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
     [self.ownerEffect setTitle:@"orbs-of-fury-eff"];
     [self.ownerEffect setMaxStacks:99];
-    [self.ownerEffect setDamageDoneMultiplierAdjustment:.03];
-    [self.ownerEffect setDamageTakenMultiplierAdjustment:.05];
+    [self.ownerEffect setDamageDoneMultiplierAdjustment:.04];
+    [self.ownerEffect setDamageTakenMultiplierAdjustment:.10];
     [self.owner addEffect:self.ownerEffect];
 }
 

@@ -17,6 +17,8 @@
 @property (nonatomic, assign) CCLabelTTF *difficultyLabel;
 @property (nonatomic, assign) CCLabelTTF *difficultyWordLabel;
 @property (nonatomic, retain) NSMutableArray *difficultySkulls;
+@property (nonatomic, assign) BasicButton *harder;
+@property (nonatomic, assign) BasicButton *easier;
 @end
 
 @implementation ChallengeRatingStepper
@@ -72,12 +74,12 @@
         
         [self configureDifficultySymbols];
         
-        BasicButton *harder = [BasicButton basicButtonWithTarget:self andSelector:@selector(increaseSelected) andTitle:@"Harder"];
-        [harder setScale:.5];
-        BasicButton *easier = [BasicButton basicButtonWithTarget:self andSelector:@selector(decreaseSelected) andTitle:@"Easier"];
-        [easier setScale:.5];
+        self.harder = [BasicButton basicButtonWithTarget:self andSelector:@selector(increaseSelected) andTitle:@"Harder"];
+        [self.harder setScale:.5];
+        self.easier = [BasicButton basicButtonWithTarget:self andSelector:@selector(decreaseSelected) andTitle:@"Easier"];
+        [self.easier setScale:.5];
         
-        CCMenu *steppers = [CCMenu menuWithItems:easier, harder, nil];
+        CCMenu *steppers = [CCMenu menuWithItems:self.easier, self.harder, nil];
         [steppers setPosition:CGPointMake(110.0f, 10.0)];
         [steppers alignItemsHorizontally];
         [self addChild:steppers];
@@ -99,6 +101,8 @@
 
 - (void)reloadLabels {
     self.difficultyWordLabel.string = [ChallengeRatingStepper difficultyWorldForDifficultyNumber:self.encounter.difficulty];
+    self.harder.isEnabled = self.encounter.difficulty != 5;
+    self.easier.isEnabled = self.encounter.difficulty != 1;
 }
 
 - (void)increaseSelected {

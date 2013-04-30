@@ -815,6 +815,13 @@
 
 @implementation FallenDownEffect
 
+- (id)copy
+{
+    FallenDownEffect *copy = [super copy];
+    copy.getUpThreshold = self.getUpThreshold;
+    return copy;
+}
+
 + (id)defaultEffect {
     FallenDownEffect *fde = [[FallenDownEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegative];
     [fde setCausesStun:YES];
@@ -1104,7 +1111,7 @@
 - (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth
 {
     if (currentHealth < newHealth) {
-        if (self.timeApplied / self.duration < .5) {
+        if (self.stacks > 5) {
             self.isSpread = YES;
         }
     }

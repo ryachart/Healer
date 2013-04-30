@@ -32,7 +32,7 @@
 #import "CollectibleLayer.h"
 
 #define DEBUG_IMMUNITIES false
-#define DEBUG_PERFECT_HEALS false
+#define DEBUG_PERFECT_HEALS true
 
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812
@@ -59,6 +59,7 @@
 @property (nonatomic, assign) CCLayerColor *screenFlashLayer;
 @property (nonatomic, readwrite) ALuint ambientBattleKey;
 @property (nonatomic, assign) CollectibleLayer *collectibleLayer;
+@property (nonatomic, retain) NSMutableArray *effectsPlayedThisSession;
 
 @property (nonatomic, retain) NSDictionary *randomTitlesPresetDictionary;
 @end
@@ -85,6 +86,11 @@
     [_pauseMenuLayer release];
     [_playingSoundsDict release];
     [_randomTitlesPresetDictionary release];
+    
+    for (NSString *effect in _effectsPlayedThisSession) {
+        [[SimpleAudioEngine sharedEngine] unloadEffect:effect];
+    }
+    [_effectsPlayedThisSession release];
     
     if (_encounter && _encounter.bossKey) {
         //Unload the boss specific sprites;
@@ -121,6 +127,7 @@
         self.encounter = enc;
         self.players = plyers;
         self.playingSoundsDict = [NSMutableDictionary dictionaryWithCapacity:10];
+        self.effectsPlayedThisSession = [NSMutableArray arrayWithCapacity:20];
         
         self.randomTitlesPresetDictionary = @{@"thud.mp3": @4, @"whiff.mp3" : @6, @"sword_slash.mp3" : @3};
         
@@ -430,7 +437,7 @@
         }],
                               [CCSpawn actionOne:[CCScaleTo actionWithDuration:.33 scale:1.0] two:[CCFadeTo actionWithDuration:.33 opacity:255]],
                               [CCCallBlock actionWithBlock:^{
-        [blockSelf playAudioForTitle:@"bang2.mp3"];
+        [blockSelf playAudioForTitle:@"bang1.mp3"];
     }],
                               [CCFadeTo actionWithDuration:1.0 opacity:0],
                               [CCCallBlockN actionWithBlock:^(CCNode *node){
@@ -463,6 +470,8 @@
         if ([PlayerDataManager localPlayer].ftueState == FTUEStateBattle1Finished)
         {
             [shopScene setRequiresGreaterHealFtuePurchase:YES];
+        } else {
+            [shopScene setReturnsToMap:YES];
         }
         [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:shopScene]];
     }
@@ -1152,10 +1161,6 @@
     [[SimpleAudioEngine sharedEngine] preloadEffect:audioPath];
 }
 
-- (void)unloadAudioWithTitle:(NSString *)title {
-    
-}
-
 - (void)preloadSpellAudio:(Spell*)spell
 {
     [self preloadAudioWithTitle:spell.beginCastingAudioTitle];
@@ -1194,6 +1199,7 @@
     
     NSString *audioPath = [@"sounds" stringByAppendingPathComponent:finalTitle];
     ALuint sound = [[SimpleAudioEngine sharedEngine] playEffect:audioPath];
+    [self.effectsPlayedThisSession addObject:audioPath];
     [self.playingSoundsDict setObject:[NSNumber numberWithUnsignedInt:sound] forKey:title];
 }
 
@@ -1229,6 +1235,19 @@
             }
         
         }
+    }
+    
+    if (event.type == CombatEventTypeMemberDied) {
+        if ([event.source isKindOfClass:[Archer class]]) {
+            [self playAudioForTitle:@"archer_hurt.mp3"];
+        } else if ([event.source isKindOfClass:[Guardian class]] || [event.source isKindOfClass:[Champion class]]) {
+            [self playAudioForTitle:@"champion_hurt.mp3"];
+        } else if ([event.source isKindOfClass:[Berserker class]]) {
+            [self playAudioForTitle:@"berserker_hurt.mp3"];
+        } else if ([event.source isKindOfClass:[Wizard class]] || [event.source isKindOfClass:[Warlock class]]) {
+            [self playAudioForTitle:@"wizard_hurt.mp3"];
+        }
+        
     }
 }
 

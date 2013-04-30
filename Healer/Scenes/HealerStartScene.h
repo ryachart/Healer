@@ -9,9 +9,10 @@
 #import "cocos2d.h"
 #import <UIKit/UIKit.h>
 #import <GameKit/GameKit.h>
+#import "IconDescriptionModalLayer.h"
 
 
 /* This is the start screen. */
-@interface HealerStartScene : CCScene 
+@interface HealerStartScene : CCScene <IconDescriptorModalDelegate>
 @end
 

@@ -126,6 +126,7 @@
             [cackleFailed setTitle:@"cackle-fail"];
             
             InterruptionAbility *cackle = [[[InterruptionAbility alloc] init] autorelease];
+            [cackle setExecutionSound:@"imp_cackle.mp3"];
             [cackle setCooldown:24.0];
             [cackle setCooldownVariance:.4];
             [cackle setActivationTime:1.5];
@@ -315,7 +316,7 @@
         numGuardian = 1;
         bossKey = @"plaguebringer";
         
-        info = @"As the last Ravager falls you peer into the distance to notice the forest withered more and more as it recedes into darkness.  The ground appears to be dying in sync with the vegetation.  As the sky darkens the ground beneath you discover that the now mutated Akarus has risen once more.";
+        info = @"As the last Ravager falls you notice the forest wither more and more as it recedes into darkness.  The ground is dying in sync with the vegetation and, as the sky darkens you discover that the now mutated Akarus has risen once more.";
         title = @"Plaguebringer Colossus";
     }
     

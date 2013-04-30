@@ -76,7 +76,7 @@
     if ([self.spellData title].length > 8) {
         contentSizeDivisor = 2.0;
     }
-    self.spellTitle = [[[CCLabelTTFShadow alloc] initWithString:[self.spellData title] dimensions:CGSizeMake(self.contentSize.width, self.contentSize.height / contentSizeDivisor) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Bold" fontSize:fontSize] autorelease];
+    self.spellTitle = [[[CCLabelTTFShadow alloc] initWithString:[self.spellData title] dimensions:CGSizeMake(self.contentSize.width - 2, self.contentSize.height / contentSizeDivisor) hAlignment:kCCTextAlignmentCenter fontName:@"Marion-Bold" fontSize:fontSize] autorelease];
     [self.spellTitle setShadowColor:ccc3(200, 200, 200)];
     [self.spellTitle setPosition:CGPointMake(50 * .9, 15 * .9)];
     [self.spellTitle setShadowOffset:CGPointMake(-1, -1)];

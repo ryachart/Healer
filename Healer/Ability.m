@@ -513,7 +513,7 @@
     NSInteger preHealth = target.health + target.absorb;
     [self damageTarget:target];
     BOOL causedDamage = preHealth > target.health + target.absorb;
-    if (causedDamage) {
+    if (causedDamage && self.damageAudioName) {
         [self.owner.announcer playAudioForTitle:self.damageAudioName];
     }
     if (self.appliedEffect && (causedDamage || !self.requiresDamageToApplyEffect)){
@@ -727,6 +727,7 @@
     if (self = [super init]){
         self.info = @"Interrupts spell casting, dispels all positive spell effects, and deals moderate damage to all allies.";
         self.iconName = @"roar.png";
+        self.executionSound = @"warlord_roar.mp3";
         self.title = @"Warlord's Roar";
         [self setActivationTime:1.0];
         self.abilityValue = 125;
@@ -1201,6 +1202,7 @@
         self.info = @"Hurls a bone at a target dealing moderate damage and causing the target to be stunned until healed to full health.";
         self.title = @"Bone Throw";
         self.iconName = @"bone_throw.png";
+        self.executionSound = @"whiff.mp3";
     }
     return self;
 }
@@ -1413,6 +1415,7 @@
         self.info = @"The heat from this aura burns all enemies and occasionally blasts them with a burst of immolation.";
         self.title = @"Aura of Flame";
         self.iconName = @"flame_aura.png";
+        self.failureChance = 0;
     }
     return self;
 }
@@ -1442,17 +1445,21 @@
         self.info = @"This aura drains mana from Healers each time they cast a spell and spawns a viscious curse on random enemies.";
         self.title = @"Aura of Shadow";
         self.iconName = @"shadow_aura.png";
+        self.failureChance = 0;
     }
     return self;
 }
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
-    for (Player *player in players) {
-        EnergyAdjustmentPerCastEffect *shadowDrain = [[EnergyAdjustmentPerCastEffect alloc] initWithDuration:self.cooldown andEffectType:EffectTypeNegative];
-        [shadowDrain setEnergyChangePerCast:10];
-        [shadowDrain setOwner:self.owner];
-        [shadowDrain setTitle:@"shadow-drain"];
-        [player addEffect:shadowDrain];
-        [shadowDrain release];
+    if (!self.hasAppliedDrain) {
+        self.hasAppliedDrain = YES;
+        for (Player *player in players) {
+            EnergyAdjustmentPerCastEffect *shadowDrain = [[EnergyAdjustmentPerCastEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegativeInvisible];
+            [shadowDrain setEnergyChangePerCast:10];
+            [shadowDrain setOwner:self.owner];
+            [shadowDrain setTitle:@"shadow-drain"];
+            [player addEffect:shadowDrain];
+            [shadowDrain release];
+        }
     }
     
     RaidMember *lowestHealthMember = [theRaid lowestHealthMember];

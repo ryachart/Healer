@@ -14,6 +14,8 @@
 #import "SimpleAudioEngine.h"
 
 @interface SettingsScene ()
+@property (nonatomic, assign) CCLabelTTF *effectsToggleLabel;
+@property (nonatomic, assign) CCLabelTTF *musicToggleLabel;
 @property (nonatomic, assign) CCMenuItemToggle *effectsButton;
 @property (nonatomic, assign) CCMenuItemToggle *musicButton;
 @end
@@ -37,7 +39,17 @@
         [settingsMenu setPosition:CGPointMake(250, 235)];
         [settingsMenu alignItemsVerticallyWithPadding:20.0];
         [self addChild:settingsMenu];
-
+        
+        self.effectsToggleLabel = [CCLabelTTF labelWithString:@"On" fontName:@"TrebuchetMS-Bold" fontSize:32.0];
+        self.effectsToggleLabel.color = HEALER_BROWN;
+        self.effectsToggleLabel.position = CGPointMake(400, 480);
+        [self addChild:self.effectsToggleLabel];
+        
+        self.musicToggleLabel = [CCLabelTTF labelWithString:@"On" fontName:@"TrebuchetMS-Bold" fontSize:32.0];
+        self.musicToggleLabel.color = HEALER_BROWN;
+        self.musicToggleLabel.position = CGPointMake(400, 400);
+        [self addChild:self.musicToggleLabel];
+        
         CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
         [backButton setPosition:CGPointMake(90, [CCDirector sharedDirector].winSize.height * .95)];
         [self addChild:backButton];
@@ -124,19 +136,28 @@
 //        testers.color = HEALER_BROWN;
 //        [testers setPosition:CGPointMake(780, 220)];
 //        [self addChild:testers];
+        self.musicToggleLabel.string = [self toggleTextForBool:![PlayerDataManager localPlayer].musicDisabled];
+        self.effectsToggleLabel.string = [self toggleTextForBool:![PlayerDataManager localPlayer].effectsDisabled];
     }
     return self;
+}
+
+- (NSString *)toggleTextForBool:(BOOL)isOn
+{
+    return isOn ? @"On" : @"Off";
 }
 
 - (void)toggleEffects
 {
     [[PlayerDataManager localPlayer] setEffectsDisabled:![PlayerDataManager localPlayer].effectsDisabled];
+    self.effectsToggleLabel.string = [self toggleTextForBool:![PlayerDataManager localPlayer].effectsDisabled];
     [SettingsScene configureAudioForUserSettings];
 }
 
 - (void)toggleMusic
 {
     [[PlayerDataManager localPlayer] setMusicDisabled:![PlayerDataManager localPlayer].musicDisabled];
+    self.musicToggleLabel.string = [self toggleTextForBool:![PlayerDataManager localPlayer].musicDisabled];
     [SettingsScene configureAudioForUserSettings];
 }
 

@@ -487,7 +487,7 @@
 }
 
 +(id)defaultSpell{
-    Purify *purify = [[Purify alloc] initWithTitle:@"Purify" healAmnt:50 * kCostEfficiencyScale  energyCost:40 castTime:0.0 andCooldown:5.0];
+    Purify *purify = [[Purify alloc] initWithTitle:@"Purify" healAmnt:50  energyCost:40 * kCostEfficiencyScale castTime:0.0 andCooldown:5.0];
     [purify setDescription:@"Removes evil curses or poisons from your allies.  If there are none to remove, Purify heals for a moderate amount."];
     return [purify autorelease];
 }

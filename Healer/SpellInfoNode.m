@@ -24,9 +24,9 @@
     if (self = [super initWithSpriteFrameName:@"spell_info_node_bg.png"]){
         CGFloat itemNameFontSize = 20.0;
         
-        self.titleLabel = [CCLabelTTF labelWithString:spell.title dimensions:CGSizeMake(180, 40) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:itemNameFontSize];
+        self.titleLabel = [CCLabelTTF labelWithString:spell.title dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:itemNameFontSize];
         [self.titleLabel setColor:ccWHITE];
-        [self.titleLabel setPosition:CGPointMake(180, 65)];
+        [self.titleLabel setPosition:CGPointMake(190, 65)];
         [self.titleLabel setHorizontalAlignment:UITextAlignmentLeft];
         [self addChild:self.titleLabel];
         
@@ -45,21 +45,21 @@
         [spellIconBack setScale:self.spellIcon.scale];
         [self addChild:self.spellIcon];
         
-        self.itemCooldown = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cooldown: %1.2f%@",spell.cooldown, @"s"] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+        self.itemCooldown = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cooldown: %1.2f%@",spell.cooldown, @"s"] dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:12.0];
         
-        self.itemEnergyCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i Mana",spell.energyCost] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+        self.itemEnergyCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i Mana",spell.energyCost] dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:12.0];
         
         NSString *castTimeString = spell.castTime == 0.0 ? @"Instant Cast" : [NSString stringWithFormat:@"Cast Time: %1.2f%@", spell.castTime, @"s"];
         
-        self.itemCastTime = [CCLabelTTF labelWithString:castTimeString dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
-        self.itemDescription = [CCLabelTTF labelWithString:spell.spellDescription dimensions:CGSizeMake(200, 80) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS" fontSize:12.0];
+        self.itemCastTime = [CCLabelTTF labelWithString:castTimeString dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+        self.itemDescription = [CCLabelTTF labelWithString:spell.spellDescription dimensions:CGSizeMake(200, 80) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS" fontSize:12.0];
         
-        self.itemSpellType = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%@", spell.spellTypeDescription] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+        self.itemSpellType = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%@", spell.spellTypeDescription] dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentLeft   fontName:@"Arial" fontSize:12.0];
         
         self.itemEnergyCost.position = CGPointMake(235, 120);
         self.itemCastTime.position = CGPointMake(235, 135);
         self.itemCooldown.position = CGPointMake(334, 120);
-        self.itemDescription.position = CGPointMake(190, 22);
+        self.itemDescription.position = CGPointMake(190, 24);
         self.itemSpellType.position = CGPointMake(334, 135);
         
         if (spell.cooldown == 0.0) {
@@ -67,7 +67,6 @@
         }
         
         [self addChild:self.itemDescription];
-        
     }
     return self;
 }

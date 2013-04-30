@@ -51,18 +51,15 @@
         if (![[SimpleAudioEngine sharedEngine] isBackgroundMusicPlaying]) {
             [[SimpleAudioEngine sharedEngine] preloadBackgroundMusic:@"sounds/theme.mp3"];
         }
-        [SettingsScene configureAudioForUserSettings];
+        [SettingsScene configureAudioForUserSettings];		
         //self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
         
         self.quickPlayButton= [BasicButton basicButtonWithTarget:self andSelector:@selector(quickPlaySelected) andTitle:@"Play"];
         
         self.storeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(storeSelected) andTitle:@"Academy"];
         
-        CCMenuItem *divinityButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(divinitySelected) andTitle:@"Talents" andAlertPip:[[PlayerDataManager localPlayer] numUnspentTalentChoices]];
-        if (![[PlayerDataManager localPlayer] isTalentsUnlocked]){
-            [divinityButton setIsEnabled:NO];
-        }
-    
+        CCMenuItem *divinityButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(divinitySelected) andTitle:@"Talents" andAlertPip:[[PlayerDataManager localPlayer] numUnspentTalentChoices] showsLockForDisabled:![[PlayerDataManager localPlayer] isTalentsUnlocked]];
+        
         self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, divinityButton, nil];
         
         [self.menu alignItemsVerticallyWithPadding:20.0];
@@ -163,11 +160,22 @@
 }
 
 -(void)divinitySelected{
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[TalentScene alloc] init] autorelease]]];
+    if ([[PlayerDataManager localPlayer] isTalentsUnlocked]){
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[TalentScene alloc] init] autorelease]]];
+    } else {
+        IconDescriptionModalLayer *modalLayer = [[[IconDescriptionModalLayer alloc] initWithIconName:@"lock.png" title:@"Unavailable" andDescription:@"Talents become unlocked once you have acquired 15 boss kill points."] autorelease];
+        [modalLayer setDelegate:self];
+        [self addChild:modalLayer z:1000];
+    }
 }
 
 - (void)dealloc {
     [super dealloc];
+}
+
+- (void)iconDescriptionModalDidComplete:(id)modal
+{
+    [(IconDescriptionModalLayer*)modal removeFromParentAndCleanup:YES];
 }
 
 @end

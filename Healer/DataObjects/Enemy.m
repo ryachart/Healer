@@ -441,8 +441,9 @@
     
     if (difficulty <= 2) {
         ChannelledEnemyAttackAdjustment *frenzy = (ChannelledEnemyAttackAdjustment*)[self abilityWithKey:@"frenzy"];
-        [frenzy setDamageMultiplier:.25];
+        [frenzy setDamageMultiplier:.35];
         [frenzy setAttackSpeedMultiplier:.25];
+        [frenzy setDuration:6.5];
     }
         
     if (difficulty >= 4) {
@@ -557,6 +558,10 @@
 }
 
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
+    if (percentage == 100.0) {
+        [self.announcer playAudioForTitle:@"imp_cackle.mp3"];
+    }
+    
     if (percentage == 99.0){
         RandomPotionToss *potionAbility = (RandomPotionToss*)[self abilityWithKey:@"potions"];
         [potionAbility triggerAbilityAtRaid:raid];
@@ -564,6 +569,7 @@
         
         [potionAbility setActivationTime:potionAbility.activationTime / 2];
         [potionAbility setCooldown:potionAbility.cooldown / 2];
+        [self.announcer playAudioForTitle:@"imp_cackle.mp3"];
     }
     
     if (self.difficulty == 5) {
@@ -1096,15 +1102,18 @@
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     if (percentage == 99.0) {
+        [self.announcer playAudioForTitle:@"galcyon_laugh.mp3"];
         [self.announcer announce:@"\"So you defeated Trulzar? His Magics are so weak.\""];
     }
     
-    if (percentage == 20.0) {
-        [self.announcer announce:@"Grimgon shouts, \"You worthless fool.  These mortals are going to destroy you.\""];
-        
-        for (Enemy *enemy in enemies) {
-            if ([enemy isKindOfClass:[Grimgon class]]) {
-                [enemy setInactive:NO];
+    if (self.difficulty == 5) {
+        if (percentage == 20.0) {
+            [self.announcer announce:@"Grimgon shouts, \"You worthless fool.  These mortals are going to destroy you.\""];
+            
+            for (Enemy *enemy in enemies) {
+                if ([enemy isKindOfClass:[Grimgon class]]) {
+                    [enemy setInactive:NO];
+                }
             }
         }
     }
@@ -1254,6 +1263,7 @@
             
             self.inactive = NO;
             [self.announcer announce:@"\"These pitiful fools are worthless.  I will finish you myself!\""];
+            [self.announcer playAudioForTitle:@"teritha_laugh.mp3"];
         }
     }
     
@@ -1264,6 +1274,7 @@
     
     if (percentage == 50.0) {
         [self.announcer announce:@"Such Insolent Creatures! Embrace your demise!"];
+        [self.announcer playAudioForTitle:@"teritha_laugh.mp3"];
         ProjectileAttack *bolts = (ProjectileAttack*)[self abilityWithKey:@"teritha-bolts"];
         [bolts setTimeApplied:-5.0];
         [bolts fireAtRaid:raid];
@@ -1272,6 +1283,7 @@
     
     if (percentage == 25.0) {
         [self.announcer announce:@"I am darkness.  I AM YOUR DOOM!"];
+        [self.announcer playAudioForTitle:@"teritha_laugh.mp3"];
         ProjectileAttack *bolts = (ProjectileAttack*)[self abilityWithKey:@"teritha-bolts"];
         [bolts setTimeApplied:-5.0];
         [bolts fireAtRaid:raid];
@@ -1663,6 +1675,7 @@
     [seer addAbility:gainShadowbolts];
     
     RaidDamage *horrifyingLaugh = [[[RaidDamage alloc] init] autorelease];
+    [horrifyingLaugh setExecutionSound:@"tyonath_laugh.mp3"];
     [horrifyingLaugh setActivationTime:1.5];
     [horrifyingLaugh setIconName:@"roar.png"];
     [horrifyingLaugh setTitle:@"Horrifying Laugh"];
@@ -1866,7 +1879,6 @@
     [boss setSpriteName:@"skeletaldragon_battle_portrait.png"];
     
     boss.boneThrowAbility = [[[BoneThrow alloc] init] autorelease];
-    [boss.boneThrowAbility setExecutionSound:@"whiff.mp3"];
     [boss.boneThrowAbility setActivationTime:1.5];
     [boss.boneThrowAbility setCooldown:3.5];
     [boss addAbility:boss.boneThrowAbility];
@@ -1891,12 +1903,12 @@
     [boss.tankDamage setFailureChance:.73];
     
     boss.tailLash = [[[TailLash alloc] init] autorelease];
+    boss.tailLash.iconName = @"tail_lash.png";
     [boss.tailLash setActivationTime:1.5];
     [boss.tailLash setActivationSound:@"dragonroar1.mp3"];
     [boss.tailLash setTitle:@"Tail Lash"];
     [boss.tailLash setAbilityValue:320];
-    [boss.tailLash setCooldown:24.0];
-    [boss.tailLash setFailureChance:.25];
+    [boss.tailLash setCooldown:17.5];
     
     return [boss autorelease];
 }
@@ -1929,7 +1941,7 @@
 
     if (percentage == 5.0){
         [self.announcer displayScreenShakeForDuration:.66];
-        [self.announcer playAudioForTitle:@"stomp.wav"];
+        [self.announcer playAudioForTitle:@"stomp1.wav"];
         [self.announcer announce:@"The Skeletal Dragon crashes down onto your allies from the sky."];
         NSArray *livingMembers = [raid livingMembers];
         NSInteger damageValue = 7500 / livingMembers.count;
@@ -1965,14 +1977,10 @@
     [super dealloc];
 }
 + (id)defaultBoss {
-    ColossusOfBone *cob = [[ColossusOfBone alloc] initWithHealth:1710000 damage:0 targets:0 frequency:0 choosesMT:NO ];
+    ColossusOfBone *cob = [[ColossusOfBone alloc] initWithHealth:1710000 damage:620 targets:1 frequency:2.15 choosesMT:YES];
     [cob setTitle:@"Colossus of Bone"];
+    [cob.autoAttack setFailureChance:.35];
     [cob setSpriteName:@"colossusbone_battle_portrait.png"];
-    
-    FocusedAttack *tankAttack = [[FocusedAttack alloc] initWithDamage:620 andCooldown:2.15];
-    [tankAttack setFailureChance:.4];
-    [cob addAbility:tankAttack];
-    [tankAttack release];
     
     cob.crushingPunch = [[[Attack alloc] initWithDamage:0 andCooldown:10.0] autorelease];
     DelayedHealthEffect *crushingPunchEffect = [[DelayedHealthEffect alloc] initWithDuration:3.0 andEffectType:EffectTypeNegative];
@@ -1983,12 +1991,13 @@
     [(Attack*)cob.crushingPunch setPrefersTargetsWithoutVisibleEffects:YES];
     [crushingPunchEffect release];
     [cob.crushingPunch setFailureChance:.2];
-    [cob.crushingPunch setInfo:@"Periodically, this enemy unleashes a thundering strike on a random ally dealing high damage."];
-    [cob.crushingPunch setTitle:@"Crushing Punch"];
+    [cob.crushingPunch setInfo:@"Periodically, this enemy unleashes a colossal strike on a random ally dealing very high damage."];
+    [cob.crushingPunch setTitle:@"Crushing Slam"];
     [cob.crushingPunch setIconName:@"crushing_punch.png"];
     [cob addAbility:cob.crushingPunch];
     
     cob.boneQuake = [[[BoneQuake alloc] init] autorelease];
+    [cob.boneQuake setIconName:@"quake.png"];
     [cob.boneQuake setExecutionSound:@"earthquake.mp3"];
     [cob.boneQuake setTitle:@"Quake"];
     [cob.boneQuake setAbilityValue:120];
@@ -1997,20 +2006,12 @@
     [cob addAbility:cob.boneQuake];
     
     BoneThrow *boneThrow = [[[BoneThrow alloc] init] autorelease];
-    [boneThrow setExecutionSound:@"whiff.mp3"];
     [boneThrow setActivationTime:1.5];
     [boneThrow setAbilityValue:240];
     [boneThrow setCooldown:14.0];
     [cob addAbility:boneThrow];
     
     return [cob autorelease];
-}
-
-- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
-    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
-    if (self.crushingPunch.timeApplied + 3.0 >= self.crushingPunch.cooldown){
-        self.hasShownCrushingPunchThisCooldown = YES;
-    }
 }
 
 - (void)ownerDidExecuteAbility:(Ability *)ability {
@@ -2037,6 +2038,7 @@
     [boss setSpriteName:@"overseer_battle_portrait.png"];
     
     boss.projectilesAbility = [[[OverseerProjectiles alloc] init] autorelease];
+    [boss.projectilesAbility setIconName:@"blood_bolt.png"];
     [boss.projectilesAbility setTitle:@"Bolt of Despair"];
     [boss.projectilesAbility setActivationTime:1.25];
     [boss.projectilesAbility setExecutionSound:@"fireball.mp3"];
@@ -2242,7 +2244,6 @@
         self.autoAttack.abilityValue = 270;
         [self.announcer announce:@"Weaklings! Kneel before my power."];
         BloodCrush *bloodcrush = [[[BloodCrush alloc] init] autorelease];
-        [bloodcrush setExecutionSound:@"sharpimpactbleeding.mp3"];
         [bloodcrush setKey:@"blood-crush"];
         [bloodcrush setCooldown:40.0];
         [bloodcrush setCooldownVariance:.2];
@@ -2302,7 +2303,7 @@
 
 @implementation AvatarOfTorment1
 + (id)defaultBoss {
-    AvatarOfTorment1 *boss = [[AvatarOfTorment1 alloc] initWithHealth:2880000 damage:0 targets:0 frequency:0.0 choosesMT:NO];
+    AvatarOfTorment1 *boss = [[AvatarOfTorment1 alloc] initWithHealth:2304000 damage:0 targets:0 frequency:0.0 choosesMT:NO];
     [boss setTitle:@"The Avatar of Torment"];
     [boss setNamePlateTitle:@"Torment"];
     [boss setSpriteName:@"avataroftorment_battle_portrait.png"];

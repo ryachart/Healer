@@ -195,6 +195,7 @@ typedef enum {
 @end
 
 @interface ShadowMinion : Ability
+@property (nonatomic, readwrite) BOOL hasAppliedDrain;
 @end
 
 @interface GroundSmash : Ability

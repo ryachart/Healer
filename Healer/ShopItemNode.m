@@ -47,15 +47,10 @@
         self.selector = selc;
         self.background = bg;
         
-        
         [self addChild:background];
         
         CGFloat itemNameFontSize = 24.0;
         CGFloat titleVerticalAdjustment = 0;
-        
-//        if (self.item.title.length >= 12) {
-//            titleVerticalAdjustment = -6;
-//        }
         
         self.titleLabel = [CCLabelTTF labelWithString:itm.title dimensions:CGSizeMake(200, 50) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:itemNameFontSize];
         [self.titleLabel setColor:ccWHITE];
@@ -83,7 +78,6 @@
         [self.buyButton setPosition:CGPointMake(332, 123)];
         [self.background addChild:self.buyButton];
         
-        
         self.itemCooldown = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cooldown: %1.2f%@",self.item.purchasedSpell.cooldown, @"s"] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
         
         self.itemEnergyCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i Mana",self.item.purchasedSpell.energyCost] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
@@ -94,11 +88,6 @@
         self.itemDescription = [CCLabelTTF labelWithString:self.item.purchasedSpell.spellDescription dimensions:CGSizeMake(380, 80) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:15.0];
         
         self.itemSpellType = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%@", self.item.purchasedSpell.spellTypeDescription] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
-        
-//        CCLayerColor *dividerLine = [CCLayerColor layerWithColor:ccc4(255, 255, 255, 225)];
-//        [dividerLine setContentSize:CGSizeMake(1, 30)];
-//        [dividerLine setPosition:CGPointMake(174, 58)];
-//        [self.background addChild:dividerLine];
         
         self.itemEnergyCost.position = CGPointMake(185, 70);
         self.itemCastTime.position = CGPointMake(185, 85);

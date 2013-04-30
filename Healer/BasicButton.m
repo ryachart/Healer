@@ -22,7 +22,12 @@
     [super selected];
 }
 
-+ (BasicButton*)basicButtonWithTarget:(id)target andSelector:(SEL)selector andTitle:(NSString*)title andAlertPip:(BOOL)showsAlertPip {
++ (BasicButton*)basicButtonWithTarget:(id)target andSelector:(SEL)selector andTitle:(NSString*)title andAlertPip:(BOOL)showsAlertPip
+{
+    return [self basicButtonWithTarget:target andSelector:selector andTitle:title andAlertPip:showsAlertPip showsLockForDisabled:NO];
+}
+
++ (BasicButton*)basicButtonWithTarget:(id)target andSelector:(SEL)selector andTitle:(NSString*)title andAlertPip:(BOOL)showsAlertPip showsLockForDisabled:(BOOL)showsLock {
     CCSprite *basicButton = [CCSprite spriteWithSpriteFrameName:@"button_home.png"];
     CCSprite *basicButtonSelected = [CCSprite spriteWithSpriteFrameName:@"button_home.png"];
     CCSprite *selectedMask = [CCSprite spriteWithSpriteFrameName:@"button_home_pressed.png"];
@@ -58,7 +63,24 @@
         
         [basicButton addChild:alertPip];
         [basicButtonSelected addChild:alertPipSelected];
-        [basicButtonDisabled addChild:alertPipDisabled];
+        
+        if (!showsLock) {
+            [basicButtonDisabled addChild:alertPipDisabled];
+        }
+    }
+    
+    if (showsLock) {
+        CCSprite *lock = [CCSprite spriteWithSpriteFrameName:@"lock.png"];
+        CCSprite *lockSelected = [CCSprite spriteWithSpriteFrameName:@"lock.png"];
+        CCSprite *lockDisabled = [CCSprite spriteWithSpriteFrameName:@"lock.png"];
+        [lock setPosition:CGPointMake(28, 35)];
+        [lockSelected setPosition:CGPointMake(28, 35)];
+        [lockDisabled setPosition:CGPointMake(28, 35)];
+        [lockDisabled setOpacity:122];
+        
+        [basicButton addChild:lock];
+        [basicButtonSelected addChild:lockSelected];
+        [basicButtonDisabled addChild:lockDisabled];
     }
     
     [basicButton addChild:titleLabel];

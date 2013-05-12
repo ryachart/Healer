@@ -287,6 +287,17 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     [obj setObject:[NSNumber numberWithInt:[self highestLevelCompleted]] forKey:@"HLCompleted"];
     [obj setObject:[NSNumber numberWithInt:self.gold] forKey:@"Gold"];
     [obj setObject:[NSNumber numberWithInt:numVisits+1] forKey:@"saves"];
+    
+    NSMutableArray *talents = [NSMutableArray arrayWithCapacity:5];
+    
+    for (int i = 0; i < 5; i++) {
+        NSString *choice = [self selectedChoiceForTier:i];
+        if (choice) {
+            [talents addObject:choice];
+        }
+    }
+    [obj setObject:talents forKey:@"talents"];
+    
     if ([self lastUsedSpellTitles]){
         [obj setObject:[self lastUsedSpellTitles] forKey:@"lastUsedSpells"];
     }

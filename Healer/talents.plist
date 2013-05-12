@@ -15,21 +15,21 @@
 	<key>after-light</key>
 	<string>Non-periodic healing shields the target for 10% of the healing done.</string>
 	<key>repel-the-darkness</key>
-	<string>Your spells fire a bolt of light at an enemy target dealing high damage.</string>
+	<string>Your spells cast 5% faster and fire a bolt of light at an enemy target dealing 1000 damage. </string>
 	<key>ancient-knowledge</key>
-	<string>50% of Overhealing is distributed to injured allies.</string>
+	<string>Increases critical chance by 5% and 50% of Overhealing is distributed to injured allies.</string>
 	<key>purity-of-soul</key>
-	<string>10% of your healing done is granted to you.</string>
+	<string>Healing done is increased by 10% and your damage taken is reduced by 10%.</string>
 	<key>searing-power</key>
 	<string>Your healing spells increase the maximum health of the target by 10% for 1 minute.</string>
 	<key>sunlight</key>
-	<string>Your spells create a spark of life causing the target to be healed the next time they take damage.</string>
+	<string>Your spells create a spark of life causing the target to be healed for 50 the next time they take damage.</string>
 	<key>arcane-blessing</key>
-	<string>Your healing spells have a 10% chance to grant shielding to the lowest health ally.</string>
+	<string>Your healing spells have a 10% chance to grant 400 shielding to the lowest health ally.</string>
 	<key>godstouch</key>
-	<string>Each second you grant a small amount of shielding to all allies.</string>
+	<string>Each second you grant 3 shielding to all allies.</string>
 	<key>redemption</key>
-	<string>If an ally would die instead you instantly heal that ally for a small amount.  This can not occur more than once every 30 seconds.</string>
+	<string>Once every 30 seconds if an ally would die instead you instantly heal them for 300 and make them immune for 2.5 seconds.</string>
 	<key>avatar</key>
 	<string>All healing done has a 3% chance to summon an Avatar that heals allies for 15 seconds.</string>
 </dict>

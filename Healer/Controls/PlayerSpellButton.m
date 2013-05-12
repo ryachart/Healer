@@ -113,7 +113,7 @@
         [self.cooldownCountLayer setPercentage:0.0];
     }
     
-    if (self.player && (self.player.energy < self.spellData.energyCost || self.player.isDead || self.player.isStunned) && !self.cooldownCountLayer.visible) {
+    if (self.player && (self.player.energy < self.spellData.energyCost || self.player.isDead || self.player.isStunned)) {
         [self.oomLayer setVisible:YES];
     } else {
         [self.oomLayer setVisible:NO];

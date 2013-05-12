@@ -2647,7 +2647,7 @@
         [cataclysm setKey:@"cataclysm"];
         [cataclysm setCooldown:35.0];
         [cataclysm setActivationTime:8.0];
-        [cataclysm setAbilityValue:2500];
+        [cataclysm setAbilityValue:1800];
         [cataclysm setAttackParticleEffectName:nil];
         [cataclysm setTitle:@"Cataclysm"];
         [cataclysm setIconName:@"choking_cloud.png"];

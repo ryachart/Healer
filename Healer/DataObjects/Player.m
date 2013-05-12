@@ -367,7 +367,7 @@
         if (self.godstouchTimeApplied >= 1.0) {
             self.godstouchTimeApplied = 0.0;
             for (RaidMember *member in raid.livingMembers) {
-                [member setAbsorb:member.absorb + 5];
+                [member setAbsorb:member.absorb + 3];
             }
         }
     }
@@ -643,14 +643,6 @@
         [armorEffect setTitle:@"shining-aegis-armor-eff"];
         [armorEffect setDamageTakenMultiplierAdjustment:-.25];
         [target addEffect:armorEffect];
-    }
-    
-    if ([self hasDivinityEffectWithTitle:@"purity-of-soul"]){
-        NSInteger selfHealing = loggedAmount * .1;
-        NSInteger preHealth = self.health;
-        self.health += selfHealing;
-        NSInteger healthGained = self.health - preHealth;
-        loggedAmount += healthGained;
     }
     
     if ([self hasDivinityEffectWithTitle:@"ancient-knowledge"]){

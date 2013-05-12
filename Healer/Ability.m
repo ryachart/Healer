@@ -639,6 +639,7 @@
 {
     if (self = [super init]) {
         self.attackParticleEffectName = nil;
+        self.dodgeChanceAdjustment = -100.0f;
     }
     return self;
 }
@@ -1110,6 +1111,7 @@
         }
         
         GripEffect *gripEff = [[[GripEffect alloc] initWithDuration:30 andEffectType:EffectTypeNegative] autorelease];
+        [gripEff setVisibilityPriority:3];
         [gripEff setAilmentType:AilmentCurse];
         [gripEff setSpriteName:self.iconName];
         [gripEff setOwner:self.owner];
@@ -1140,6 +1142,7 @@
     }
     DelayedHealthEffect *finishHimEffect = [[DelayedHealthEffect alloc] initWithDuration:3.5 andEffectType:EffectTypeNegative];
     [finishHimEffect setSpriteName:self.iconName];
+    [finishHimEffect setVisibilityPriority:2];
     
     NSInteger damage = self.abilityValue * self.owner.damageDoneMultiplier;
     [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target  value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];

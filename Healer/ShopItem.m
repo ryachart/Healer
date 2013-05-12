@@ -36,50 +36,50 @@
         return 250;
     }
     if ([spell isEqualToString:@"Barrier"]){
-        return 450;
+        return 300;
     }
     if ([spell isEqualToString:@"Purify"]){
         return 25;
     }
     if ([spell isEqualToString:@"Touch of Hope"]){
-        return 450;
+        return 300;
     }
     
     
     if ([spell isEqualToString:@"Blessed Armor"]){
-        return 600;
+        return 500;
     }
     if ([spell isEqualToString:@"Light Eternal"]){
-        return 800;
+        return 500;
     }
     if ([spell isEqualToString:@"Fading Light"]) {
-        return 400;
+        return 500;
     }
     if ([spell isEqualToString:@"Sunburst"]){
-        return 800;
+        return 500;
     }
     if ([spell isEqualToString:@"Swirling Light"]){
-        return 600;
+        return 500;
     }
     if ([spell isEqualToString:@"Orbs of Light"]){
-        return 600;
+        return 500;
     }
     
     
     if ([spell isEqualToString:@"Respite"]){
-        return 1000;
+        return 900;
     }
     if ([spell isEqualToString:@"Ward of Ancients"]){
-        return 1000;
+        return 900;
     }
     if ([spell isEqualToString:@"Soaring Spirit"]){
-        return 1000;
+        return 900;
     }
     if ([spell isEqualToString:@"Attunement"]){
-        return 1000;
+        return 900;
     }
     if ([spell isEqualToString:@"Wandering Spirit"]){
-        return 1000;
+        return 900;
     }
 
     return 10000;

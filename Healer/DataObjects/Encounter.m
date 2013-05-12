@@ -301,7 +301,7 @@
         numGuardian = 3;
         bossKey = @"fungalravagers";
         
-        info = @"With a monstrous crash the sage old tree comes thundering to the earth.  As you are all catching your breath a fog of spores releases itself from the tree.  The tree withers before you at an unnatural rate.  Through the dark, stifling cloud you can see three pairs of yellow, glowing eye.";
+        info = @"With a monstrous crash the sage old tree comes thundering to the earth.  As you are all catching your breath a fog of spores releases itself from the tree.  The tree withers before you at an unnatural rate.  Through the dark, stifling cloud you can see three pairs of yellow, glowing eyes.";
         title = @"Fungal Ravagers";
     }
     

@@ -101,6 +101,19 @@ static NSDictionary *divinityInfo = nil;
             if ([tierChoiceKey isEqualToString:@"insight"]) {
                 [divEff setSpellCostAdjustment:.1];
             }
+            
+            if ([tierChoiceKey isEqualToString:@"repel-the-darkness"]) {
+                [divEff setCastTimeAdjustment:.05];
+            }
+            
+            if ([tierChoiceKey isEqualToString:@"ancient-knowledge"]) {
+                [divEff setCriticalChanceAdjustment:.05];
+            }
+            
+            if ([tierChoiceKey isEqualToString:@"purity-of-soul"]){
+                [divEff setHealingDoneMultiplierAdjustment:.1];
+                [divEff setDamageTakenMultiplierAdjustment:-.10];
+            }
         }
     }
     return effects;

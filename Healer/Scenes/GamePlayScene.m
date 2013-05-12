@@ -32,7 +32,7 @@
 #import "CollectibleLayer.h"
 
 #define DEBUG_IMMUNITIES false
-#define DEBUG_PERFECT_HEALS true
+#define DEBUG_PERFECT_HEALS false
 
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812
@@ -1325,7 +1325,7 @@
 	
     
 	//Determine if there will be another iteration of the gamestate
-    NSArray *raidMembers = [self.raid livingMembers];
+    NSArray *raidMembers = [self.raid raidMembers];
     NSInteger survivors = 0;
     
     BOOL areAllEnemiesDefeated = YES;

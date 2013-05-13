@@ -298,3 +298,6 @@ typedef enum {
 @interface EndlessShackles : AbsorbsHealingEffect
 
 @end
+
+@interface DecayingDamageTakenEffect : Effect
+@end

@@ -786,7 +786,7 @@
     return self;
 }
 + (id)defaultSpell {
-    Sunburst *sb = [[Sunburst alloc] initWithTitle:@"Sunburst" healAmnt:0 energyCost:100 * kCostEfficiencyScale  castTime:0.0 andCooldown:10.0];
+    Sunburst *sb = [[Sunburst alloc] initWithTitle:@"Sunburst" healAmnt:0 energyCost:30 * kCostEfficiencyScale  castTime:0.0 andCooldown:10.0];
     [sb setDescription:@"Heals up to 7 injured allies for 100 over 5 seconds."];
     return [sb autorelease];
 }
@@ -833,7 +833,7 @@
 
 + (id)defaultSpell {
     StarsOfAravon *spell = [[StarsOfAravon alloc] initWithTitle:@"Stars of Aravon" healAmnt:0 energyCost:60 * kCostEfficiencyScale  castTime:1.75 andCooldown:0.0];
-    [spell setDescription:@"Summon 4 Stars of Aravon from the heavens.  The Stars travel for 1.75 seconds before healing their target for 190."];
+    [spell setDescription:@"Summon 4 Stars of Aravon from the heavens.  The Stars travel for 1.75 seconds before healing their target for 200."];
     return [spell autorelease];
 }
 
@@ -866,7 +866,7 @@
         DelayedHealthEffect *starDelayedHealthEff = [[DelayedHealthEffect alloc] initWithDuration:healDelay+preDelay andEffectType:EffectTypePositiveInvisible];
         [starDelayedHealthEff setIsIndependent:YES];
         [starDelayedHealthEff setOwner:self.owner];
-        [starDelayedHealthEff setValue:190];
+        [starDelayedHealthEff setValue:200];
         [starDelayedHealthEff setTitle:@"star-of-aravon-eff"];
         [starTarget addEffect:starDelayedHealthEff];
         [starProjectile release];

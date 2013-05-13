@@ -19,6 +19,7 @@
 static dispatch_queue_t parse_queue = nil;
 static dispatch_queue_t saving_queue = nil;
 static PlayerDataManager *_localPlayer = nil;
+static BOOL app_store_requested_this_session = NO;
 
 NSString* const PlayerHighestLevelAttempted = @"com.healer.playerHighestLevelAttempted";
 NSString* const PlayerHighestLevelCompleted = @"com.healer.playerHighestLevelCompleted";
@@ -38,6 +39,7 @@ NSString* const ContentKeys = @"com.healer.contentKeys";
 NSString* const PlayerFTUEState = @"com.healer.ftueState";
 NSString* const MusicDisabledKey = @"com.healer.musicDisabled";
 NSString* const EffectsDisabledKey = @"com.healer.effectsDisabled";
+NSString* const HasRequestedAppStoreReviewKey = @"com.healer.requestedAppStoreReview";
 
 //Content Keys
 NSString* const DelsarnContentKey = @"com.healer.content1Key";
@@ -638,5 +640,25 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
         [self setLevelRating:5 forLevel:i];
     }
     [self saveLocalPlayer];
+}
+
+- (BOOL)isAppStoreReviewRequested
+{
+    return  [[self.playerData objectForKey:HasRequestedAppStoreReviewKey] boolValue];
+}
+
+- (void)appStoreReviewPerformed
+{
+    [self.playerData setObject:[NSNumber numberWithBool:YES] forKey:HasRequestedAppStoreReviewKey];
+    [self saveLocalPlayer];
+}
+
+- (BOOL)shouldRequestAppStore
+{
+    if (!self.isAppStoreReviewRequested && !app_store_requested_this_session) {
+        app_store_requested_this_session = YES;
+        return YES;
+    }
+    return NO;
 }
 @end

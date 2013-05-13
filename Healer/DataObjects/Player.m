@@ -625,24 +625,46 @@
         }
     }
     
-    if ([self hasDivinityEffectWithTitle:@"after-light"] && (
-        spell.spellType == SpellTypeBasic ||
-        [spell.title isEqualToString:@"Light Eternal"] ||
-        [spell.title isEqualToString:@"Forked Heal"])) {
-        ShieldEffect *shield = [[[ShieldEffect alloc] initWithDuration:15.0 andEffectType:EffectTypePositiveInvisible] autorelease];
-        [shield setTitle:@"afterlight-div-eff"];
-        [shield setOwner:self];
-        [shield setAmountToShield:(int)round((amount + overhealing) * .10)];
-        [target addEffect:shield];
+    if ((amount + overhealing) > 0 && [self hasDivinityEffectWithTitle:@"after-light"]) {
+        NSInteger sum = amount + overhealing;
+        NSInteger amountToShield = (int)round(sum * .10);
+        NSString *effectTitle = @"al-div-eff";
+        ShieldEffect *alEffect = nil;
+        for (Effect *eff in target.activeEffects) {
+            if ([eff.title isEqualToString:effectTitle] && eff.owner == self) {
+                alEffect = (ShieldEffect*)eff;
+                break;
+            }
+        }
+        if (alEffect) {
+            alEffect.amountToShield += amountToShield;
+            alEffect.timeApplied = 0;
+            target.absorb += amountToShield;
+        } else {
+            ShieldEffect *shield = [[[ShieldEffect alloc] initWithDuration:15.0 andEffectType:EffectTypePositiveInvisible] autorelease];
+            [shield setTitle:effectTitle];
+            [shield setOwner:self];
+            [shield setAmountToShield:amount];
+            [target addEffect:shield];
+        }
     }
     
     if ([self hasDivinityEffectWithTitle:@"shining-aegis"]){
-        Effect *armorEffect = [[[Effect alloc] initWithDuration:1 andEffectType:EffectTypePositive] autorelease];
+        DecayingDamageTakenEffect *armorEffect = [[[DecayingDamageTakenEffect alloc] initWithDuration:5 andEffectType:EffectTypePositive] autorelease];
         [armorEffect setOwner:self];
+        [armorEffect setVisibilityPriority:-1];
         [armorEffect setSpriteName:@"shining-aegis-effect-icon.png"];
         [armorEffect setTitle:@"shining-aegis-armor-eff"];
         [armorEffect setDamageTakenMultiplierAdjustment:-.25];
-        [target addEffect:armorEffect];
+        if ([spell.title isEqualToString:@"Stars of Aravon"]) {
+            DelayedHealthEffect *delayApplyAegis = [[[DelayedHealthEffect alloc] initWithDuration:1.75 andEffectType:EffectTypePositiveInvisible] autorelease];
+            [delayApplyAegis setOwner:self];
+            [delayApplyAegis setAppliedEffect:armorEffect];
+            [delayApplyAegis setTitle:@"delay-app-aegis"];
+            [target addEffect:delayApplyAegis];
+        } else {
+            [target addEffect:armorEffect];
+        }
     }
     
     if ([self hasDivinityEffectWithTitle:@"ancient-knowledge"]){
@@ -652,6 +674,7 @@
     if ([self hasDivinityEffectWithTitle:@"searing-power"]){
         Effect *searingHealth = [[[Effect alloc] initWithDuration:60.0 andEffectType:EffectTypePositiveInvisible] autorelease];
         [searingHealth setMaximumHealthMultiplierAdjustment:.1];
+        [searingHealth setDamageDoneMultiplierAdjustment:.1];
         [searingHealth setOwner:self];
         [searingHealth setTitle:@"searing-health"];
         [target addEffect:searingHealth];
@@ -702,12 +725,28 @@
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:overhealing] andEventType:CombatEventTypeOverheal]];
     }
     
-    if ([self hasDivinityEffectWithTitle:@"after-light"] && [effect.title isEqualToString:@"star-of-aravon-eff"]) {
-        ShieldEffect *shield = [[[ShieldEffect alloc] initWithDuration:15.0 andEffectType:EffectTypePositiveInvisible] autorelease];
-        [shield setTitle:@"afterlight-div-eff"];
-        [shield setOwner:self];
-        [shield setAmountToShield:(int)round((amount + overhealing) * .10)];
-        [target addEffect:shield];
+    if ((amount + overhealing) > 0 && [self hasDivinityEffectWithTitle:@"after-light"]) {
+        NSInteger sum = amount + overhealing;
+        NSInteger amountToShield = (int)round(sum * .10);
+        NSString *effectTitle = @"al-div-eff";
+        ShieldEffect *alEffect = nil;
+        for (Effect *eff in target.activeEffects) {
+            if ([eff.title isEqualToString:effectTitle] && eff.owner == self) {
+                alEffect = (ShieldEffect*)eff;
+                break;
+            }
+        }
+        if (alEffect) {
+            alEffect.amountToShield += amountToShield;
+            alEffect.timeApplied = 0;
+            target.absorb += amountToShield;
+        } else {
+            ShieldEffect *shield = [[[ShieldEffect alloc] initWithDuration:15.0 andEffectType:EffectTypePositiveInvisible] autorelease];
+            [shield setTitle:effectTitle];
+            [shield setOwner:self];
+            [shield setAmountToShield:amount];
+            [target addEffect:shield];
+        }
     }
     
     if ([self hasDivinityEffectWithTitle:@"ancient-knowledge"]){

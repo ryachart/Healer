@@ -44,6 +44,7 @@
 @interface GamePlayScene ()
 //Data Models
 @property (nonatomic, readwrite) BOOL paused;
+@property (nonatomic, readwrite) BOOL restarting;
 @property (nonatomic, retain) Encounter *encounter;
 @property (nonatomic, readonly) Raid *raid;
 @property (nonatomic, readonly) Player *player;
@@ -87,20 +88,21 @@
     [_playingSoundsDict release];
     [_randomTitlesPresetDictionary release];
     
-    for (NSString *effect in _effectsPlayedThisSession) {
-        [[SimpleAudioEngine sharedEngine] unloadEffect:effect];
+    if (!_restarting){
+        for (NSString *effect in _effectsPlayedThisSession) {
+            [[SimpleAudioEngine sharedEngine] unloadEffect:effect];
+        }
+        if (_encounter && _encounter.bossKey) {
+            //Unload the boss specific sprites;
+            [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:[NSString stringWithFormat:@"assets/%@.plist", _encounter.bossKey]];
+        }
+        [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/battle-sprites.plist"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/effect-sprites.plist"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/postbattle.plist"];
+        
+        [[SimpleAudioEngine sharedEngine] unloadEffect:AMBIENT_BATTLE_LOOP];
     }
     [_effectsPlayedThisSession release];
-    
-    if (_encounter && _encounter.bossKey) {
-        //Unload the boss specific sprites;
-        [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:[NSString stringWithFormat:@"assets/%@.plist", _encounter.bossKey]];
-    }
-    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/battle-sprites.plist"];
-    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/effect-sprites.plist"];
-    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/postbattle.plist"];
-    
-    [[SimpleAudioEngine sharedEngine] unloadEffect:AMBIENT_BATTLE_LOOP];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
@@ -386,6 +388,23 @@
     [self addChild:self.pauseMenuLayer z:10000];
 }
 
+- (void)pauseLayerDidRestart
+{
+    [self.pauseMenuLayer removeFromParentAndCleanup:YES];
+    self.pauseMenuLayer = nil;
+    [[PlayerDataManager localPlayer] failLevel:self.encounter.levelNumber];
+    
+    self.restarting = YES;
+    
+    Encounter *encounter = [Encounter encounterForLevel:self.encounter.levelNumber isMultiplayer:NO];
+    Player *player = [PlayerDataManager playerFromLocalPlayer];
+    [player configureForRecommendedSpells:nil withLastUsedSpells:[PlayerDataManager localPlayer].lastUsedSpells];
+    
+    [encounter encounterWillBegin];
+    GamePlayScene *gps = [[[GamePlayScene alloc] initWithEncounter:encounter player:player] autorelease];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.5 scene:gps]];
+}
+
 -(void)pauseLayerDidFinish{
     [self.pauseMenuLayer removeFromParentAndCleanup:YES];
     self.pauseMenuLayer = nil;
@@ -458,10 +477,13 @@
 }
 
 #pragma mark - Battle Completion
-- (void)postBattleLayerDidTransitionToScene:(PostBattleLayerDestination)destination
+- (void)postBattleLayerDidTransitionToScene:(PostBattleLayerDestination)destination asVictory:(BOOL)victory
 {
     if (destination == PostBattleLayerDestinationMap) {
         LevelSelectMapScene *qps = [[[LevelSelectMapScene alloc] init] autorelease];
+        if (self.encounter.levelNumber >= 5) {
+            [qps setComingFromVictory:victory];
+        }
         [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:qps]];
     }
     

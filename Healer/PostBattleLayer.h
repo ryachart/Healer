@@ -19,7 +19,7 @@ typedef enum {
 
 @protocol PostBattleLayerDelegate
 
-- (void)postBattleLayerDidTransitionToScene:(PostBattleLayerDestination)destination;
+- (void)postBattleLayerDidTransitionToScene:(PostBattleLayerDestination)destination asVictory:(BOOL)victory;
 
 @end
 

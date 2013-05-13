@@ -9,6 +9,6 @@
 #import "cocos2d.h"
 #import "LevelSelectMapNode.h"
 
-@interface LevelSelectMapScene : CCScene <LevelSelectMapNodeDelegate>
-
+@interface LevelSelectMapScene : CCScene <LevelSelectMapNodeDelegate, UIAlertViewDelegate>
+@property (nonatomic, readwrite) BOOL comingFromVictory;
 @end

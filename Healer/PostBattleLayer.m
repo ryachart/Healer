@@ -282,17 +282,17 @@
 
 - (void)doneAcademy
 {
-    [self.delegate postBattleLayerDidTransitionToScene:PostBattleLayerDestinationShop];
+    [self.delegate postBattleLayerDidTransitionToScene:PostBattleLayerDestinationShop asVictory:self.isVictory];
 }
 
 - (void)doneMap
 {
-    [self.delegate postBattleLayerDidTransitionToScene:PostBattleLayerDestinationMap];
+    [self.delegate postBattleLayerDidTransitionToScene:PostBattleLayerDestinationMap asVictory:self.isVictory];
 }
 
 - (void)doneTalents
 {
-    [self.delegate postBattleLayerDidTransitionToScene:PostBattleLayerDestinationTalents];
+    [self.delegate postBattleLayerDidTransitionToScene:PostBattleLayerDestinationTalents asVictory:self.isVictory];
 }
 
 -(void)setMatch:(GKMatch *)mtch{

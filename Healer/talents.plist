@@ -11,9 +11,9 @@
 	<key>surging-glory</key>
 	<string>Increases natural mana regeneration by 10%.</string>
 	<key>shining-aegis</key>
-	<string>Your spells reduce the target&apos;s damage taken by 25% for 1 second.</string>
+	<string>Your spells reduce the target&apos;s damage taken by 25% decreasing to 0% over 5 seconds.</string>
 	<key>after-light</key>
-	<string>Non-periodic healing shields the target for 10% of the healing done.</string>
+	<string>Your healing shields the target for 10% of the healing done.</string>
 	<key>repel-the-darkness</key>
 	<string>Your spells cast 5% faster and fire a bolt of light at an enemy target dealing 1000 damage. </string>
 	<key>ancient-knowledge</key>
@@ -21,11 +21,11 @@
 	<key>purity-of-soul</key>
 	<string>Healing done is increased by 10% and your damage taken is reduced by 10%.</string>
 	<key>searing-power</key>
-	<string>Your healing spells increase the maximum health of the target by 10% for 1 minute.</string>
+	<string>Your spells increase the maximum health and damage done of the target by 10% for 1 minute.</string>
 	<key>sunlight</key>
 	<string>Your spells create a spark of life causing the target to be healed for 50 the next time they take damage.</string>
 	<key>arcane-blessing</key>
-	<string>Your healing spells have a 10% chance to grant 400 shielding to the lowest health ally.</string>
+	<string>Your spells have a 10% chance to grant 400 shielding to the lowest health ally.</string>
 	<key>godstouch</key>
 	<string>Each second you grant 3 shielding to all allies.</string>
 	<key>redemption</key>

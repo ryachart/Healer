@@ -18,11 +18,16 @@
         
         CCLabelTTF *closeLabel = [CCLabelTTF labelWithString:@"Resume" fontName:@"TrebuchetMS-Bold" fontSize:48.0];
         CCLabelTTF *quitLabel = [CCLabelTTF labelWithString:@"Escape" fontName:@"TrebuchetMS-Bold" fontSize:48.0];
+        CCLabelTTF *restartLabel = [CCLabelTTF labelWithString:@"Restart" fontName:@"TrebuchetMS-Bold" fontSize:48.0];
         
         CCMenu *menu = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:closeLabel target:self selector:@selector(close)],
                                             [CCMenuItemLabel itemWithLabel:quitLabel target:self selector:@selector(quit)], nil];
         [menu alignItemsHorizontallyWithPadding:100.0];
         [self addChild:menu];
+        
+        CCMenu *restartMenu = [CCMenu menuWithItems:[CCMenuItemLabel itemWithLabel:restartLabel target:self selector:@selector(restart)], nil];
+        [self addChild:restartMenu];
+        [restartMenu setPosition:CGPointMake(512, 300)];
     }
     return self;
 }
@@ -42,4 +47,8 @@
     [self.delegate pauseLayerDidFinish];
 }
 
+- (void)restart
+{
+    [self.delegate pauseLayerDidRestart];
+}
 @end

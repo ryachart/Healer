@@ -1169,7 +1169,7 @@
 {
     if (self = [super initWithDuration:dur andEffectType:type]) {
         [self setTitle:@"Burning Insanity"];
-        [self setValuePerTick:-10];
+        [self setValuePerTick:-7];
         [self setMaxStacks:3];
         [self setThreshold:.6];
     }
@@ -1394,4 +1394,13 @@
     [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.damage * self.owner.damageDoneMultiplier] andEventType:CombatEventTypeDamage]];
 }
 
+@end
+
+@implementation DecayingDamageTakenEffect
+- (float)damageTakenMultiplierAdjustment
+{
+    float base = [super damageTakenMultiplierAdjustment];
+    NSLog(@"Damage Taken Reduced by %1.2f", base * (1.0 - (self.timeApplied / self.duration)));
+    return base * (1.0 - (self.timeApplied / self.duration));
+}
 @end

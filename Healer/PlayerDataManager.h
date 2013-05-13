@@ -39,6 +39,10 @@ extern NSString* const PlayerGoldDidChangeNotification;
 
 + (Player*)playerFromLocalPlayer;
 
+- (BOOL)isAppStoreReviewRequested;
+- (void)appStoreReviewPerformed;
+- (BOOL)shouldRequestAppStore;
+
 #pragma mark - Shop And Gold
 - (void)playerEarnsGold:(NSInteger)gold;
 - (void)playerLosesGold:(NSInteger)gold;

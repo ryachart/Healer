@@ -104,7 +104,7 @@
             challengeMultiplier = 1.15;
             break;
         case 5:
-            challengeMultiplier = 1.5;
+            challengeMultiplier = 1.4;
             break;
     }
     
@@ -1396,7 +1396,8 @@
         self.namePlateTitle = @"Sarroth";
         [(FocusedAttack*)self.autoAttack setDamageAudioName:@"sword_slash.mp3"];
         RaidDamageSweep *rds = [[[RaidDamageSweep alloc] init] autorelease];
-        [rds setAbilityValue:250];
+        [rds setAbilityValue:150];
+        [rds setBonusCriticalChance:.2];
         [rds setTitle:@"Sweeping Death"];
         [rds setKey:@"axe-sweep"];
         [rds setIconName:@"impale.png"];
@@ -1780,7 +1781,7 @@
         OrbsOfFury *orbsOfFury = [[[OrbsOfFury alloc] init] autorelease];
         [orbsOfFury setCooldown:16.0];
         [orbsOfFury setCooldownVariance:.4];
-        [orbsOfFury setAbilityValue:30];
+        [orbsOfFury setAbilityValue:20];
         [orbsOfFury setIconName:@"red_curse.png"];
         [orbsOfFury setTitle:@"Orbs of Fury"];
         [orbsOfFury setInfo:@"The Gatekeeper summons orbs of fury increasing his damage taken by 10% and damage dealt by 4% per orb.  The Healer may detonate the orbs by tapping them."];
@@ -2556,7 +2557,7 @@
         [damage setNumOfTicks:8];
         [damage setOwner:self];
         [damage setTitle:@"gather-souls"];
-        [damage setValuePerTick:-50];
+        [damage setValuePerTick:-45];
         [member addEffect:damage];
         [self.announcer displayParticleSystemWithName:@"skull_float.plist" onTarget:member];
     }

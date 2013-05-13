@@ -332,7 +332,7 @@
     
     NSTimeInterval tickTime = 10.0;
     NSTimeInterval orbTravelTime = 1.5;
-    NSInteger energyGrant = 22;
+    NSInteger energyGrant = 24;
     NSInteger criticalGrantChance = 5;
     
     if (self.lastEnergyGrant > (tickTime - orbTravelTime) && !self.energyGrantAnnounced && !self.isDead) {

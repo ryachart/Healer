@@ -66,6 +66,14 @@
     if (![SimpleAudioEngine sharedEngine].isBackgroundMusicPlaying) {
         [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"sounds/theme.mp3" loop:YES];
     }
+    
+    if (self.comingFromVictory) {
+        if ([[PlayerDataManager localPlayer] shouldRequestAppStore]) {
+            UIAlertView *rateUs = [[[UIAlertView alloc] initWithTitle:@"Rate Us?!" message:@"Enjoying Healer? Let others know how you feel by rating us on the App Store!" delegate:self cancelButtonTitle:@"Later" otherButtonTitles:@"Okay", nil] autorelease];
+            [rateUs setDelegate:self];
+            [rateUs show];
+        }
+    }
 }
 
 - (void)loadEncounterCardForSelectedEncounter:(NSInteger)selectedEncounter {
@@ -98,6 +106,14 @@
 {
     self.selectedLevel = levelNum;
     [self loadEncounterCardForSelectedEncounter:levelNum];
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex != alertView.cancelButtonIndex) {
+        [[PlayerDataManager localPlayer] appStoreReviewPerformed];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/us/app/healer-a-light-in-the-darkness/id641418872?ls=1&mt=8"]];
+    }
 }
 
 @end

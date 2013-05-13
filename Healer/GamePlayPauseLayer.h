@@ -11,6 +11,7 @@
 
 - (void)pauseLayerDidFinish;
 - (void)pauseLayerDidQuit;
+- (void)pauseLayerDidRestart;
 
 @end
 

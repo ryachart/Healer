@@ -19,6 +19,8 @@
 @interface Ability : NSObject <CollectibleDelegate>
 
 @property (nonatomic, readwrite) float failureChance;
+@property (nonatomic, readwrite) float bonusCriticalChance; //In addition to owner crit chance
+@property (nonatomic, readwrite) float criticalChance;
 @property (nonatomic, readwrite) NSTimeInterval timeApplied;
 @property (nonatomic, readwrite) NSTimeInterval cooldown; //9999 denotes an ability that must be triggered
 @property (nonatomic, retain) NSString *title;

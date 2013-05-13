@@ -94,6 +94,25 @@
             TipsLayer *tipsLayer = [[[TipsLayer alloc] init] autorelease];
             [self addChild:tipsLayer];
         }
+     
+        CCSprite *facebook = [CCSprite spriteWithSpriteFrameName:@"facebook.png"];
+        CCSprite *facebookSelected = [CCSprite spriteWithSpriteFrameName:@"facebook.png"];
+        [facebookSelected setOpacity:122];
+        
+        CCMenuItem *facebookButton = [CCMenuItemSprite itemWithNormalSprite:facebook selectedSprite:facebookSelected target:self selector:@selector(facebookSelected)];
+        [facebookButton setScale:.75];
+        
+        CCSprite *twitter = [CCSprite spriteWithSpriteFrameName:@"twitter.png"];
+        CCSprite *twitterSelected = [CCSprite spriteWithSpriteFrameName:@"twitter.png"];
+        [twitterSelected setOpacity:122];
+        
+        CCMenuItem *twitterButton = [CCMenuItemSprite itemWithNormalSprite:twitter selectedSprite:twitterSelected target:self selector:@selector(twitterSelected)];
+        [twitterButton setScale:.75];
+        
+        CCMenu *socialMediaMenu = [CCMenu menuWithItems:facebookButton, twitterButton, nil];
+        [self addChild:socialMediaMenu];
+        [socialMediaMenu alignItemsVertically];
+        [socialMediaMenu setPosition:CGPointMake(35, 100)];
         
     }
     return self;
@@ -167,6 +186,16 @@
         [modalLayer setDelegate:self];
         [self addChild:modalLayer z:1000];
     }
+}
+
+- (void)twitterSelected
+{
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.twitter.com/healergame"]];
+}
+
+- (void)facebookSelected
+{
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.facebook.com/healergame"]];
 }
 
 - (void)dealloc {

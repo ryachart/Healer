@@ -36,6 +36,7 @@
 - (id)copy {
     Ability *ab = [[[self class] alloc] init];
     [ab setFailureChance:self.failureChance];
+    [ab setBonusCriticalChance:self.bonusCriticalChance];
     [ab setCooldown:self.cooldown];
     [ab setKey:self.key];
     [ab setOwner:self.owner];
@@ -258,7 +259,7 @@
     float multiplyModifier = self.owner.damageDoneMultiplier;
     int additiveModifier = 0;
     
-    float criticalChance = self.owner.criticalChance;
+    float criticalChance = self.owner.criticalChance  + self.bonusCriticalChance;
     if (criticalChance != 0.0 && arc4random() % 100 < (criticalChance * 100)){
         multiplyModifier += 1.5;
     }
@@ -731,7 +732,7 @@
         self.executionSound = @"warlord_roar.mp3";
         self.title = @"Warlord's Roar";
         [self setActivationTime:1.0];
-        self.abilityValue = 125;
+        self.abilityValue = 90;
     }
     return self;
 }
@@ -743,7 +744,7 @@
             if (self.interruptAppliesDot) {
                 RepeatedHealthEffect *dot = [[[RepeatedHealthEffect alloc] initWithDuration:10 andEffectType:EffectTypeNegative] autorelease];
                 [dot setTitle:@"roar-dot"];
-                [dot setValuePerTick:-self.abilityValue * 1.7];
+                [dot setValuePerTick:-self.abilityValue * 2.15];
                 [dot setNumOfTicks:10];
                 [dot setOwner:self.owner];
                 [dot setSpriteName:self.iconName];

@@ -74,6 +74,13 @@ static NSArray *shopItems = nil;
     return category;
 }
 
++ (NSInteger)purchasesUntilCategory:(NSInteger)category
+{
+    NSInteger totalPurchases = [[PlayerDataManager localPlayer] allOwnedSpells].count;
+    NSInteger requiredForCategory = [Shop purchasesForCategory:category];
+    return requiredForCategory - totalPurchases;
+}
+
 + (NSInteger)numPurchasesUntilNextCategory {
     NSInteger totalPurchases = [[PlayerDataManager localPlayer] allOwnedSpells].count;
     ShopCategory highestCategory = [Shop highestCategoryUnlocked];

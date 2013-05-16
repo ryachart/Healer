@@ -16,6 +16,7 @@
 #import "PlayerDataManager.h"
 #import "LevelSelectMapScene.h"
 #import "SimpleAudioEngine.h"
+#import "PurchaseManager.h"
 
 #define BOOK_Z -20
 #define FLAVOR_Z -19
@@ -106,11 +107,17 @@
         
         [self configureCategoryButtons];
         
-        
         self.categoryMenu = [CCMenu menuWithItems:self.essentialsButton,self.advancedButton,self.archivesButton, self.vaultButton, nil];
         [self.categoryMenu setPosition:CGPointMake(512, 90)];
         [self.categoryMenu alignItemsHorizontally];
         [self addChild:self.categoryMenu z:BOOK_Z - 1];
+        
+        BasicButton *getGold = [BasicButton basicButtonWithTarget:self andSelector:@selector(getGold) andTitle:@"Buy Gold"];
+        [getGold setScale:.75];
+        CCMenu *getGoldMenu = [CCMenu menuWithItems:getGold, nil];
+        [self addChild:getGoldMenu];
+        [getGoldMenu setPosition:CGPointMake(100, 50)];
+        
     }
     return self;
 }
@@ -133,20 +140,14 @@
         case ShopCategoryEssentials:
             lockSprite = [CCSprite spriteWithSpriteFrameName:@"lock.png"];
             [lockSprite setPosition:lockPosition];
-            [self.advancedButton setOpacity:125];
-            [self.advancedButton setIsEnabled:NO];
             [self.advancedButton addChild:lockSprite z:500 tag:lockTag];
         case ShopCategoryAdvanced:
             lockSprite = [CCSprite spriteWithSpriteFrameName:@"lock.png"];
             [lockSprite setPosition:lockPosition];
-            [self.archivesButton setOpacity:125];
-            [self.archivesButton setIsEnabled:NO];
             [self.archivesButton addChild:lockSprite z:500 tag:lockTag];
         case ShopCategoryArchives:
             lockSprite = [CCSprite spriteWithSpriteFrameName:@"lock.png"];
             [lockSprite setPosition:lockPosition];
-            [self.vaultButton setOpacity:125];
-            [self.vaultButton setIsEnabled:NO];
             [self.vaultButton addChild:lockSprite z:500 tag:lockTag];
         default:
             break;
@@ -160,6 +161,17 @@
 }
 
 - (void)configureShopForCategory:(ShopCategory)category {
+    if (category > [Shop highestCategoryUnlocked]) {
+        NSInteger purchasesUntil = [Shop purchasesUntilCategory:category];
+        NSString *failureReason = [NSString stringWithFormat:@"Purchase %i additional spell%@ to unlock this section of the Academy", purchasesUntil, purchasesUntil == 1 ? @"" : @"s"];
+        if ((category == ShopCategoryArchives || category == ShopCategoryVault) && ![[PlayerDataManager localPlayer] hasPurchasedContentWithKey:MainGameContentKey]) {
+            failureReason = [NSString stringWithFormat:@"Purchase %i additional spell%@ and The Legacy of Torment Expansion to unlock this section of the Academy", purchasesUntil, purchasesUntil == 1 ? @"" : @"s"];
+        }
+        IconDescriptionModalLayer *unlockModal = [[[IconDescriptionModalLayer alloc] initWithIconName:@"lock.png" title:@"Locked!" andDescription:failureReason] autorelease];
+        [unlockModal setDelegate:self];
+        [self addChild:unlockModal];
+        return;
+    }
     
     if (![[PlayerDataManager localPlayer] hasPurchasedContentWithKey:MainGameContentKey] && (category == ShopCategoryArchives || category == ShopCategoryVault)) {
         IconDescriptionModalLayer *purchaseModal = [[[IconDescriptionModalLayer alloc] initAsMainContentSalesModal] autorelease];
@@ -292,6 +304,11 @@
 {
     IconDescriptionModalLayer *idml = (IconDescriptionModalLayer*)modal;
     [idml removeFromParentAndCleanup:YES];
+}
+
+- (void)getGold
+{
+    [[PurchaseManager sharedPurchaseManager] purchaseGoldOne];
 }
 
 @end

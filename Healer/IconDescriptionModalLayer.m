@@ -12,6 +12,8 @@
 #import "BasicButton.h"
 #import "CCLabelTTFShadow.h"
 #import "PlayerDataManager.h"
+#import "PurchaseManager.h"
+
 
 #define TARGET_WIDTH 75.0f
 #define TARGET_HEIGHT 75.0f
@@ -112,7 +114,8 @@
 
 - (void)purchaseMainContent
 {
-    
+    [[PurchaseManager sharedPurchaseManager] purchaseLegacyOfTorment];
+    [self shouldDismiss];
 }
 
 - (void)shouldDismiss {

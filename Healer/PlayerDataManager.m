@@ -94,7 +94,6 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     NSInteger backgroundExceptionIdentifer = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{}];
     dispatch_async([PlayerDataManager parseQueue], ^{
         NSString* playerObjectID = [[NSUserDefaults standardUserDefaults] objectForKey:PlayerRemoteObjectIdKey];
-        NSLog(@"Fetching Player with id %@", playerObjectID);
         if (playerObjectID){
             PFQuery *playerObjectQuery = [PFQuery queryWithClassName:@"player"];
             PFObject *playerObject = [playerObjectQuery getObjectWithId:playerObjectID];
@@ -117,42 +116,6 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         }
         [[UIApplication sharedApplication] endBackgroundTask:backgroundExceptionIdentifer];
     });
-}
-
-- (void)attemptMigrationFromUserDefaults {
-    @try {
-        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        if ([userDefaults objectForKey:PlayerHighestLevelCompleted] && [[userDefaults objectForKey:PlayerHighestLevelCompleted] intValue] > 1) {
-            self.playerData = [NSMutableDictionary dictionary];
-            [self.playerData setObject:[NSNumber numberWithInt:[userDefaults integerForKey:PlayerHighestLevelCompleted]] forKey:PlayerHighestLevelCompleted];
-            [self.playerData setObject:[NSNumber numberWithInt:[userDefaults integerForKey:PlayerGold]] forKey:PlayerGold];
-            if ([self lastUsedSpellTitles]){
-                [self.playerData setObject:[userDefaults objectForKey:PlayerLastUsedSpellsKey] forKey:PlayerLastUsedSpellsKey];
-            }
-            for (int i = 1; i <= [userDefaults integerForKey:PlayerHighestLevelCompleted]; i++){
-                NSString *key = [PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%d", i];
-                NSInteger rating =  [userDefaults integerForKey:key];
-                NSNumber *numberObj = [NSNumber numberWithInt:rating];
-                [self.playerData setObject:numberObj forKey:key];
-            }
-                        
-            for (int i = 1; i <= [userDefaults integerForKey:PlayerHighestLevelCompleted]; i++){
-                NSString *failedKey = [PlayerLevelFailed stringByAppendingFormat:@"-%i", i];
-                NSInteger failedTimes = [[userDefaults objectForKey:failedKey] intValue];
-                NSNumber *numberObj = [NSNumber numberWithInt:failedTimes];
-                [self.playerData setObject:numberObj forKey:failedKey];
-            }
-            
-            NSArray *allItems = [Shop allShopItems];
-            for (ShopItem *item in allItems){
-                if ([[userDefaults objectForKey:[item key]] boolValue]) {
-                    [self.playerData setObject:[NSNumber numberWithBool:YES] forKey:[item key]];
-                }
-            }
-        }
-    } @catch (NSException *e) {
-        NSLog(@"Migration failed for some reason");
-    }
 }
 
 - (id)initAsLocalPlayer
@@ -447,14 +410,11 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     return allSpells;
 }
 
--(void)playerEarnsGold:(NSInteger)gold{
-    if (gold < 0)
+- (void)playerEarnsGold:(NSInteger)gold{
+    if (gold <= 0)
         return;
     NSInteger currentGold = [[self.playerData objectForKey:PlayerGold] intValue];
-    currentGold+= gold;
-    if (currentGold > 5000){
-        currentGold = 5000; //MAX GOLD
-    }
+    currentGold += gold;
     [self.playerData setObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold];
     [self saveLocalPlayer];
     [[NSNotificationCenter defaultCenter] postNotificationName:PlayerGoldDidChangeNotification object:nil userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold]];
@@ -569,7 +529,10 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 - (void)purchaseContentWithKey:(NSString*)key
 {
     //Yay you made a purchase =D
-    NSMutableArray *contentKeys = [NSMutableArray arrayWithArray:[self.playerData objectForKey:ContentKeys]];
+    NSMutableArray *contentKeys = [NSMutableArray array];
+    if ([self.playerData objectForKey:ContentKeys]) {
+        contentKeys = [NSMutableArray arrayWithArray:[self.playerData objectForKey:ContentKeys]];
+    }
     [contentKeys addObject:key];
     [self.playerData setObject:contentKeys forKey:ContentKeys];
     [self saveLocalPlayer];
@@ -577,8 +540,8 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (BOOL)hasPurchasedContentWithKey:(NSString*)key
 {
-    NSMutableArray *contentKeys = [NSMutableArray arrayWithArray:[self.playerData objectForKey:ContentKeys]];
-    if ([contentKeys containsObject:key]) {
+    NSArray *contentKeys = [self.playerData objectForKey:ContentKeys];
+    if (contentKeys && [contentKeys containsObject:key]) {
         return YES;
     }
     return NO;
@@ -612,9 +575,14 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 - (void)resetPlayer
 {
     [self resetConfig];
+    NSArray *contentKeys = [[self.playerData objectForKey:ContentKeys] retain];
     self.playerData = [NSMutableDictionary dictionary];
+    if (contentKeys) {
+        [self.playerData setObject:contentKeys forKey:ContentKeys];
+    }
+    [contentKeys release];
+    [self.playerData setObject:[NSNumber numberWithBool:YES] forKey:GamePurchasedCheckedKey];
     [self saveLocalPlayer];
-    [self saveRemotePlayer];
 }
 
 - (void)unlockAll

@@ -20,6 +20,7 @@ typedef enum {
 //Shop Categories
 + (ShopCategory)highestCategoryUnlocked;
 + (NSInteger)numPurchasesUntilNextCategory;
++ (NSInteger)purchasesUntilCategory:(NSInteger)category;
 + (NSArray*)essentialsShopItems;
 + (NSArray*)advancedShopItems;
 + (NSArray*)archivesShopItems;

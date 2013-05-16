@@ -13,7 +13,7 @@
 
 #define MAX_CHARACTERS 5
 
-#define END_FREE_ENCOUNTER_LEVEL 2
+#define END_FREE_ENCOUNTER_LEVEL 7
 
 #define END_FREE_STRING @"Purchase The Legacy of Torment Expansion to unlock new bosses, the Cleric's Archives, and the Sage Vault!"
 

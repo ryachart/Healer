@@ -14,6 +14,7 @@
 #import "PlayerDataManager.h"
 #import "LaunchScene.h"
 #import "Talents.h"
+#import "PurchaseManager.h"
 
 #define TestFlightToken @"6352fe22-b170-4fd7-a38a-60ae0ac77d39"
 
@@ -32,6 +33,7 @@
                   clientKey:@"2CSX0jPgh7K4X7PfWbmfPdyo3G8OfCqSa41JW4BZ"];
     
     
+    [[PurchaseManager sharedPurchaseManager] getProducts];
     
 	CCDirector *director = [CCDirector sharedDirector];
     [director setProjection:kCCDirectorProjection2D];

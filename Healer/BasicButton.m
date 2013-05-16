@@ -41,6 +41,10 @@
     CGPoint labelPosition = CGPointMake(basicButton.contentSize.width /2 , 4 + basicButton.contentSize.height / 4);
     NSString *fontName = @"Futura";
     CGFloat fontSize = 30.0;
+    if (title.length > 14) {
+        fontSize = 18.0;
+        labelPosition = CGPointMake(basicButton.contentSize.width / 2, basicButton.contentSize.height / 6);
+    }
     CCLabelTTF *titleLabel = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize hAlignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
     [titleLabel setColor:HEALER_BROWN];
     [titleLabel setPosition:labelPosition];

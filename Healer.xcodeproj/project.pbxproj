@@ -53,6 +53,8 @@
 		BF0557B51526BC02006B4781 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = BF0557B41526BC02006B4781 /* assets */; };
 		BF068CA61704F0BC00000C7F /* WidthScalingBackgroundSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF068CA51704F0BC00000C7F /* WidthScalingBackgroundSprite.m */; };
 		BF0DCF64156C6DEE005E74C7 /* ShopItemExtendedNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0DCF63156C6DEE005E74C7 /* ShopItemExtendedNode.m */; };
+		BF1079371745565E0077DBBD /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1079361745565E0077DBBD /* StoreKit.framework */; };
+		BF10793A174557DA0077DBBD /* PurchaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BF107939174557DA0077DBBD /* PurchaseManager.m */; };
 		BF1111D716C5C80700A16F2F /* EnemyCastBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BF1111D616C5C80600A16F2F /* EnemyCastBar.m */; };
 		BF1DDBAC1711F52C0008C946 /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1DDBA81711F52C0008C946 /* libTestFlight.a */; };
 		BF1DDBAD1711F52C0008C946 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBA91711F52C0008C946 /* README.md */; };
@@ -638,6 +640,9 @@
 		BF068CA51704F0BC00000C7F /* WidthScalingBackgroundSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WidthScalingBackgroundSprite.m; sourceTree = "<group>"; };
 		BF0DCF62156C6DEE005E74C7 /* ShopItemExtendedNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopItemExtendedNode.h; sourceTree = "<group>"; };
 		BF0DCF63156C6DEE005E74C7 /* ShopItemExtendedNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopItemExtendedNode.m; sourceTree = "<group>"; };
+		BF1079361745565E0077DBBD /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		BF107938174557DA0077DBBD /* PurchaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PurchaseManager.h; path = Healer/PurchaseManager.h; sourceTree = "<group>"; };
+		BF107939174557DA0077DBBD /* PurchaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PurchaseManager.m; path = Healer/PurchaseManager.m; sourceTree = "<group>"; };
 		BF1111D516C5C80600A16F2F /* EnemyCastBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnemyCastBar.h; sourceTree = "<group>"; };
 		BF1111D616C5C80600A16F2F /* EnemyCastBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EnemyCastBar.m; sourceTree = "<group>"; };
 		BF1DDBA81711F52C0008C946 /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
@@ -766,6 +771,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF1079371745565E0077DBBD /* StoreKit.framework in Frameworks */,
 				BF1DF41F1722057300046EB2 /* MessageUI.framework in Frameworks */,
 				BF1DDBB017136C4E0008C946 /* CoreLocation.framework in Frameworks */,
 				BFA2F13C16CEFEBF00E639A9 /* libCocosDenshion.a in Frameworks */,
@@ -816,6 +822,7 @@
 		38024DAE13C2564D003D36F2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF1079361745565E0077DBBD /* StoreKit.framework */,
 				BF1DF41E1722057300046EB2 /* MessageUI.framework */,
 				BF1DDBAF17136C4D0008C946 /* CoreLocation.framework */,
 				BF1DDBA71711F52B0008C946 /* TestFlight */,
@@ -1024,6 +1031,8 @@
 				BFFF9918168D7F52007AF447 /* PlayerDataManager.m */,
 				BF865F24159F9878007F5DBF /* Talents.h */,
 				BF865F25159F9878007F5DBF /* Talents.m */,
+				BF107938174557DA0077DBBD /* PurchaseManager.h */,
+				BF107939174557DA0077DBBD /* PurchaseManager.m */,
 			);
 			name = "Persistent Stores";
 			path = ..;
@@ -2006,6 +2015,7 @@
 				BF1DF45C17220FFC00046EB2 /* TipsLayer.m in Sources */,
 				BF03E26B1725CA2900F3A429 /* Collectible.m in Sources */,
 				BF03E26F1725CE6700F3A429 /* CollectibleLayer.m in Sources */,
+				BF10793A174557DA0077DBBD /* PurchaseManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

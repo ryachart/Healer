@@ -12,6 +12,7 @@
 #import "BackgroundSprite.h"
 #import "PlayerDataManager.h"
 #import "SimpleAudioEngine.h"
+#import "PurchaseManager.h"
 
 @interface SettingsScene ()
 @property (nonatomic, assign) CCLabelTTF *effectsToggleLabel;
@@ -35,7 +36,9 @@
         BasicButton *resetGame = [BasicButton basicButtonWithTarget:self andSelector:@selector(resetGame) andTitle:@"Erase Data"];
         BasicButton *feedback = [BasicButton basicButtonWithTarget:self andSelector:@selector(feedback) andTitle:@"Feedback"];
         
-        CCMenu *settingsMenu = [CCMenu menuWithItems:feedback, resetGame, nil];
+        BasicButton *restorePurchases = [BasicButton basicButtonWithTarget:self andSelector:@selector(restorePurchases) andTitle:@"Restore Purchases"];
+        
+        CCMenu *settingsMenu = [CCMenu menuWithItems:feedback, resetGame, restorePurchases, nil];
         [settingsMenu setPosition:CGPointMake(250, 235)];
         [settingsMenu alignItemsVerticallyWithPadding:20.0];
         [self addChild:settingsMenu];
@@ -184,6 +187,11 @@
 {
     UIAlertView *areYouSure = [[[UIAlertView alloc] initWithTitle:@"Are you Sure?" message:@"Are you sure you want to erase all of your game data and start over again? Your data will not be recoverable." delegate:self cancelButtonTitle:@"No!" otherButtonTitles:@"Yes", nil] autorelease];
     [areYouSure show];
+}
+
+- (void)restorePurchases
+{
+    [[PurchaseManager sharedPurchaseManager] restorePurchases];
 }
 
 - (void)back

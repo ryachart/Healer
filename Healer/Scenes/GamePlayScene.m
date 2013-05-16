@@ -491,7 +491,12 @@
         ShopScene *shopScene = [[[ShopScene alloc] init] autorelease];
         if ([PlayerDataManager localPlayer].ftueState == FTUEStateBattle1Finished)
         {
-            [shopScene setRequiresGreaterHealFtuePurchase:YES];
+            if (![[PlayerDataManager localPlayer] hasSpell:[GreaterHeal defaultSpell]]) {
+                [shopScene setRequiresGreaterHealFtuePurchase:YES];
+            } else {
+                [shopScene setReturnsToMap:YES];
+                [PlayerDataManager localPlayer].ftueState = FTUEStateGreaterHealPurchased;
+            }
         } else {
             [shopScene setReturnsToMap:YES];
         }

@@ -628,6 +628,7 @@
     if ((amount + overhealing) > 0 && [self hasDivinityEffectWithTitle:@"after-light"]) {
         NSInteger sum = amount + overhealing;
         NSInteger amountToShield = (int)round(sum * .10);
+        NSLog(@"Afterlight provided %i shiedling", amountToShield);
         NSString *effectTitle = @"al-div-eff";
         ShieldEffect *alEffect = nil;
         for (Effect *eff in target.activeEffects) {
@@ -644,9 +645,10 @@
             ShieldEffect *shield = [[[ShieldEffect alloc] initWithDuration:15.0 andEffectType:EffectTypePositiveInvisible] autorelease];
             [shield setTitle:effectTitle];
             [shield setOwner:self];
-            [shield setAmountToShield:amount];
+            [shield setAmountToShield:amountToShield];
             [target addEffect:shield];
         }
+        NSLog(@"Absorb of the target is now %i", target.absorb);
     }
     
     if ([self hasDivinityEffectWithTitle:@"shining-aegis"]){

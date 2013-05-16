@@ -746,7 +746,7 @@
             ShieldEffect *shield = [[[ShieldEffect alloc] initWithDuration:15.0 andEffectType:EffectTypePositiveInvisible] autorelease];
             [shield setTitle:effectTitle];
             [shield setOwner:self];
-            [shield setAmountToShield:amount];
+            [shield setAmountToShield:amountToShield];
             [target addEffect:shield];
         }
     }

@@ -51,7 +51,7 @@
         if (![[SimpleAudioEngine sharedEngine] isBackgroundMusicPlaying]) {
             [[SimpleAudioEngine sharedEngine] preloadBackgroundMusic:@"sounds/theme.mp3"];
         }
-        [SettingsScene configureAudioForUserSettings];		
+        [SettingsScene configureAudioForUserSettings];
         //self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
         
         self.quickPlayButton= [BasicButton basicButtonWithTarget:self andSelector:@selector(quickPlaySelected) andTitle:@"Play"];
@@ -195,7 +195,7 @@
 
 - (void)facebookSelected
 {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.facebook.com/healergame"]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://m.facebook.com/healergame?_rdr"]];
 }
 
 - (void)dealloc {

@@ -6,9 +6,9 @@
 //
 
 #import "cocos2d.h"
+#import "IconDescriptionModalLayer.h"
 
-
-@interface ShopScene : CCScene
+@interface ShopScene : CCScene <IconDescriptorModalDelegate>
 @property (nonatomic, readwrite) BOOL requiresGreaterHealFtuePurchase;
 @property (nonatomic, readwrite) BOOL returnsToMap;
 @end

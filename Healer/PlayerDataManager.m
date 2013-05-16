@@ -40,9 +40,10 @@ NSString* const PlayerFTUEState = @"com.healer.ftueState";
 NSString* const MusicDisabledKey = @"com.healer.musicDisabled";
 NSString* const EffectsDisabledKey = @"com.healer.effectsDisabled";
 NSString* const HasRequestedAppStoreReviewKey = @"com.healer.requestedAppStoreReview";
+NSString* const GamePurchasedCheckedKey = @"com.healer.gpck";
 
 //Content Keys
-NSString* const DelsarnContentKey = @"com.healer.content1Key";
+NSString* const MainGameContentKey = @"com.healer.c1key";
 
 @implementation PlayerDataManager
 
@@ -67,7 +68,7 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     return basicPlayer;
 }
 
-- (NSString *)localPlayerSavePath
++ (NSString *)localPlayerSavePath
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 	NSString *documentsDirectory = [paths objectAtIndex:0];
@@ -81,7 +82,7 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
 - (void)saveLocalPlayer {
     NSInteger backgroundExceptionIdentifer = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{}];
     dispatch_async([PlayerDataManager savingQueue], ^{
-        NSString *appFile = [self localPlayerSavePath];
+        NSString *appFile = [PlayerDataManager localPlayerSavePath];
         NSData *dataFromPlayerData = [NSPropertyListSerialization dataFromPropertyList:self.playerData format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
         [dataFromPlayerData writeToFile:appFile atomically:YES];
         [self saveRemotePlayer];
@@ -158,7 +159,7 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
 {
     if (self = [super init]) {
         
-        self.playerData = [NSMutableDictionary dictionaryWithContentsOfFile:[self localPlayerSavePath]];
+        self.playerData = [NSMutableDictionary dictionaryWithContentsOfFile:[PlayerDataManager localPlayerSavePath]];
         
         if (!self.playerData) {
             self.playerData = [NSMutableDictionary dictionary];
@@ -171,6 +172,12 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
         }
     }
     return self;
+}
+
++ (BOOL)isFreshInstall
+{
+    BOOL playerFileExists = [[NSFileManager defaultManager] fileExistsAtPath:[PlayerDataManager localPlayerSavePath]];
+    return !playerFileExists;
 }
 
 + (dispatch_queue_t)parseQueue {
@@ -545,6 +552,20 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
 
 #pragma mark - Purchases
 
+- (BOOL)hasPerformedGamePurchaseCheck
+{
+    return [[self.playerData objectForKey:GamePurchasedCheckedKey] boolValue];
+}
+
+- (void)performGamePurchaseCheckForFreshInstall:(BOOL)isFreshInstall
+{
+    if (!isFreshInstall) {
+        [self purchaseContentWithKey:MainGameContentKey];
+    }
+    
+    [self.playerData setObject:[NSNumber numberWithBool:YES] forKey:GamePurchasedCheckedKey];
+}
+
 - (void)purchaseContentWithKey:(NSString*)key
 {
     //Yay you made a purchase =D
@@ -563,43 +584,6 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
     return NO;
 }
 
-- (BOOL)isEncounterPurchased:(NSInteger)encounterNum {
-    if (encounterNum < 14) {
-        //The first 13 encounters are free
-        return YES;
-    }
-    
-    if (encounterNum >= 14 && encounterNum < 22) {
-        return [self hasPurchasedContentWithKey:DelsarnContentKey];
-    }
-    return NO;
-}
-
-- (BOOL)isShopCategoryPurchased:(ShopCategory)category {
-    switch (category) {
-        case ShopCategoryEssentials:
-            return YES;
-        case ShopCategoryAdvanced:
-            return YES;
-        case ShopCategoryArchives:
-            return YES;
-        case ShopCategoryVault:
-            return [self hasPurchasedContentWithKey:DelsarnContentKey];
-    }
-    return NO;
-}
-
-- (NSInteger)isDifficultyPurchased:(NSInteger)difficulty {
-    if (difficulty < 4) {
-        //Easy, Normal, and Tough are all free
-        return YES;
-    }
-    
-    return [self hasPurchasedContentWithKey:DelsarnContentKey];
-}
-- (void)offerCampaignUnlock {
-    //TODO: Show that UI?
-}
 
 #pragma mark - Settings 
 
@@ -639,6 +623,7 @@ NSString* const DelsarnContentKey = @"com.healer.content1Key";
         [self completeLevel:i];
         [self setLevelRating:5 forLevel:i];
     }
+    [self purchaseContentWithKey:MainGameContentKey];
     [self saveLocalPlayer];
 }
 

@@ -8,7 +8,8 @@
 
 #import "cocos2d.h"
 #import "LevelSelectMapNode.h"
+#import "IconDescriptionModalLayer.h"
 
-@interface LevelSelectMapScene : CCScene <LevelSelectMapNodeDelegate, UIAlertViewDelegate>
+@interface LevelSelectMapScene : CCScene <LevelSelectMapNodeDelegate, UIAlertViewDelegate, IconDescriptorModalDelegate>
 @property (nonatomic, readwrite) BOOL comingFromVictory;
 @end

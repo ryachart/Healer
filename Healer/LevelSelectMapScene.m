@@ -18,6 +18,7 @@
 #import "GoldCounterSprite.h"
 #import "SimpleAudioEngine.h"
 
+
 @interface LevelSelectMapScene ()
 @property (nonatomic, assign) LevelSelectMapNode *mapScrollView;
 @property (assign) CCMenu *diffMenu;
@@ -82,6 +83,15 @@
 
 - (void)battle {
     NSInteger level = self.selectedLevel;
+    
+    if (![[PlayerDataManager localPlayer] hasPurchasedContentWithKey:MainGameContentKey] && level > END_FREE_ENCOUNTER_LEVEL) {
+        //Player hasn't unlocked this level yet! Wanna buy Legacy of Torment?
+        IconDescriptionModalLayer *purchaseModal = [[[IconDescriptionModalLayer alloc] initAsMainContentSalesModal] autorelease];
+        [purchaseModal setDelegate:self];
+        [self addChild:purchaseModal];
+        return;
+    }
+    
     Encounter *encounter = [Encounter encounterForLevel:level isMultiplayer:NO];
     Player *basicPlayer = [PlayerDataManager playerFromLocalPlayer];
     [basicPlayer configureForRecommendedSpells:encounter.recommendedSpells withLastUsedSpells:[PlayerDataManager localPlayer].lastUsedSpells];
@@ -104,8 +114,12 @@
 
 - (void)levelSelectMapNodeDidSelectLevelNum:(NSInteger)levelNum
 {
-    self.selectedLevel = levelNum;
-    [self loadEncounterCardForSelectedEncounter:levelNum];
+    if (self.selectedLevel == levelNum) {
+        [self battle];
+    } else {
+        self.selectedLevel = levelNum;
+        [self loadEncounterCardForSelectedEncounter:levelNum];
+    }
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -114,6 +128,12 @@
         [[PlayerDataManager localPlayer] appStoreReviewPerformed];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/us/app/healer-a-light-in-the-darkness/id641418872?ls=1&mt=8"]];
     }
+}
+
+- (void)iconDescriptionModalDidComplete:(id)modal
+{
+    IconDescriptionModalLayer *idml = (IconDescriptionModalLayer*)modal;
+    [idml removeFromParentAndCleanup:YES];
 }
 
 @end

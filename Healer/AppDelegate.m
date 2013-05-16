@@ -24,6 +24,8 @@
 	// Init the window	
     _window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
+    BOOL isFreshInstall = [PlayerDataManager isFreshInstall];
+    
     [TestFlight takeOff:TestFlightToken];
     
     [Parse setApplicationId:@"BajbrSl60Pz6ukDojWg8CAaUdCU7FoWr7UJCiJPs"
@@ -70,6 +72,10 @@
     // Run the intro Scene
 	[[CCDirector sharedDirector] pushScene: [[LaunchScene new] autorelease]];
     [[PlayerDataManager localPlayer] saveRemotePlayer];
+    
+    if (![[PlayerDataManager localPlayer] hasPerformedGamePurchaseCheck]) {
+        [[PlayerDataManager localPlayer] performGamePurchaseCheckForFreshInstall:isFreshInstall];
+    }
     
     self.navController = [[[UINavigationController alloc] initWithRootViewController:director] autorelease];
     self.navController.navigationBarHidden = YES;

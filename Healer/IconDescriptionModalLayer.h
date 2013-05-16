@@ -20,5 +20,6 @@
 @property (nonatomic, assign) id <IconDescriptorModalDelegate> delegate;
 - (id)initWithAbilityDescriptor:(AbilityDescriptor*)descriptor;
 - (id)initWithIconName:(NSString *)iconName title:(NSString *)title andDescription:(NSString *)description;
+- (id)initAsMainContentSalesModal;
 @end
 

@@ -160,6 +160,14 @@
 }
 
 - (void)configureShopForCategory:(ShopCategory)category {
+    
+    if (![[PlayerDataManager localPlayer] hasPurchasedContentWithKey:MainGameContentKey] && (category == ShopCategoryArchives || category == ShopCategoryVault)) {
+        IconDescriptionModalLayer *purchaseModal = [[[IconDescriptionModalLayer alloc] initAsMainContentSalesModal] autorelease];
+        [purchaseModal setDelegate:self];
+        [self addChild:purchaseModal];
+        return;
+    }
+    
     NSArray *itemsToDisplay = nil;
     NSString *flavorSpriteFrameName = nil;
     [self.selectedCategorySprite removeFromParentAndCleanup:NO];
@@ -234,7 +242,14 @@
 
 - (void)selectFurthestShopCategory
 {
-    [self configureShopForCategory:[Shop highestCategoryUnlocked]];
+    
+    ShopCategory furthestCategory = [Shop highestCategoryUnlocked];
+    
+    if (![[PlayerDataManager localPlayer] hasPurchasedContentWithKey:MainGameContentKey] && furthestCategory > ShopCategoryAdvanced) {
+        furthestCategory = ShopCategoryAdvanced;
+    }
+    
+    [self configureShopForCategory:furthestCategory];
 }
 
 -(void)onEnterTransitionDidFinish {
@@ -271,6 +286,12 @@
                 }
             }
     }
+}
+
+- (void)iconDescriptionModalDidComplete:(id)modal
+{
+    IconDescriptionModalLayer *idml = (IconDescriptionModalLayer*)modal;
+    [idml removeFromParentAndCleanup:YES];
 }
 
 @end

@@ -13,6 +13,10 @@
 
 #define MAX_CHARACTERS 5
 
+#define END_FREE_ENCOUNTER_LEVEL 2
+
+#define END_FREE_STRING @"Purchase The Legacy of Torment Expansion to unlock new bosses, the Cleric's Archives, and the Sage Vault!"
+
 typedef enum {
     FTUEStateFresh = 1,
     FTUEStateTargetSelected,
@@ -27,6 +31,8 @@ extern NSString* const PlayerHighestLevelCompleted;
 extern NSString* const PlayerRemoteObjectIdKey;
 extern NSString* const PlayerGold;
 extern NSString* const PlayerGoldDidChangeNotification;
+
+extern NSString* const MainGameContentKey;
 
 @class ShopItem, Spell;
 
@@ -61,8 +67,10 @@ extern NSString* const PlayerGoldDidChangeNotification;
 - (NSInteger)numTalentTiersUnlocked;
 
 #pragma mark - Saving
++ (BOOL)isFreshInstall;
 - (void)saveLocalPlayer;
 - (void)saveRemotePlayer;
++ (NSString *)localPlayerSavePath;
 
 #pragma mark - Progress
 @property (nonatomic, readwrite) NSInteger lastSelectedLevel;
@@ -84,13 +92,10 @@ extern NSString* const PlayerGoldDidChangeNotification;
 - (void)completeLevel:(NSInteger)level;
 
 #pragma mark - Purchasing Content
+- (void)performGamePurchaseCheckForFreshInstall:(BOOL)isFreshInstall;
+- (BOOL)hasPerformedGamePurchaseCheck;
 - (void)purchaseContentWithKey:(NSString*)key;
 - (BOOL)hasPurchasedContentWithKey:(NSString*)key;
-/* Painful and Brutal Difficulties, The final Campaign, and the final shop category require purchasing the third campaign to unlock */
-- (BOOL)isEncounterPurchased:(NSInteger)encounterNum;
-- (BOOL)isShopCategoryPurchased:(ShopCategory)category;
-- (NSInteger)isDifficultyPurchased:(NSInteger)difficulty;
-- (void)offerCampaignUnlock;
 
 #pragma mark - Multiplayer
 

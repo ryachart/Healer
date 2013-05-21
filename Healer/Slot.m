@@ -13,6 +13,7 @@
 @interface Slot ()
 @property (nonatomic, assign) CCLabelTTF *titleLabel;
 @property (nonatomic, assign) CCLabelTTF *accessoryLabel;
+@property (nonatomic, assign) CCSprite *lockedSprite;
 @end
 
 @implementation Slot
@@ -37,8 +38,20 @@
         self.accessoryLabel = [CCLabelTTF labelWithString:nil dimensions:CGSizeMake(140, 70) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [self.accessoryLabel setPosition:CGPointMake(self.contentSize.width * 1.75, self.contentSize.height / 2 - 10)];
         [self addChild:self.accessoryLabel];
+        
+        self.lockedSprite = [CCSprite spriteWithSpriteFrameName:@"lock.png"];
+        [self.lockedSprite setScale:1.33];
+        [self.lockedSprite setPosition:CGPointMake(self.contentSize.width / 2, self.contentSize.height / 2)];
+        [self.lockedSprite setVisible:NO];
+        [self addChild:self.lockedSprite];
     }
     return self;
+}
+
+- (void)setIsLocked:(BOOL)isLocked
+{
+    _isLocked = isLocked;
+    self.lockedSprite.visible = _isLocked;
 }
 
 - (void)setTitle:(NSString *)title {
@@ -76,7 +89,7 @@
 
 - (BOOL)canDropIntoSlotFromRect:(CGRect)candidateRect {
     if (CGRectIntersectsRect(self.boundingBox, candidateRect)){
-        if (!self.inhabitant){
+        if (!self.inhabitant && !self.isLocked){
             return YES;
         }
     }

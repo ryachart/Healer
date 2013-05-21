@@ -19,6 +19,7 @@
 @property (nonatomic, assign) id delegate;
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *accessoryTitle;
+@property (nonatomic, readwrite) BOOL isLocked;
 
 - (id)initWithInhabitantOrNil:(CCSprite*)inhabitant;
 - (BOOL)canDropIntoSlotFromRect:(CGRect)candidateRect;

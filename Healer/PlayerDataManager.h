@@ -15,7 +15,7 @@
 
 #define END_FREE_ENCOUNTER_LEVEL 7
 
-#define END_FREE_STRING @"Purchase The Legacy of Torment Expansion to unlock new bosses, the Cleric's Archives, and the Sage Vault!"
+#define END_FREE_STRING @"Purchase The Legacy of Torment Expansion to unlock new bosses, an additional spell slot, the Cleric's Archives, and the Sage Vault!"
 
 typedef enum {
     FTUEStateFresh = 1,
@@ -38,6 +38,7 @@ extern NSString* const MainGameContentKey;
 
 @interface PlayerDataManager : NSObject
 @property (nonatomic, readonly) NSInteger gold;
+@property (nonatomic, readonly) NSInteger maximumStandardSpellSlots;
 @property (nonatomic, readonly) NSArray* allOwnedSpells;
 @property (nonatomic, readwrite) FTUEState ftueState;
 

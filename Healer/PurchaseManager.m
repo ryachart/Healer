@@ -12,6 +12,8 @@
 #define LEGACY_OF_TORMENT_EXPAC_ID @"torment_expac"
 #define GOLD_ONE_ID @"gold_one"
 
+NSString *const PlayerDidPurchaseExpansionNotification = @"com.healer.playerDidPurchaseExpac";
+
 static PurchaseManager *_sharedPurchaseManager;
 
 @implementation PurchaseManager
@@ -106,6 +108,8 @@ static PurchaseManager *_sharedPurchaseManager;
             [[PlayerDataManager localPlayer] playerEarnsGold:1000];
         } else if ([transaction.payment.productIdentifier isEqualToString:LEGACY_OF_TORMENT_EXPAC_ID]) {
             [[PlayerDataManager localPlayer] purchaseContentWithKey:MainGameContentKey];
+            [[PlayerDataManager localPlayer] saveLocalPlayer];
+            [[NSNotificationCenter defaultCenter] postNotificationName:PlayerDidPurchaseExpansionNotification object:nil];
         }
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
         UIAlertView *thankYou = [[[UIAlertView alloc] initWithTitle:@"Thank you!" message:@"Thank you for your purchase." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil] autorelease];

@@ -20,6 +20,7 @@
 #import "ChallengeRatingStepper.h"
 #import "GoldCounterSprite.h"
 #import "SimpleAudioEngine.h"
+#import "PurchaseManager.h"
 
 #define SPELL_ITEM_TAG 43234
 
@@ -38,6 +39,8 @@
     [_spellInfoNodes release];
     [_player release];
     [_encounter release];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
 }
 - (id)initWithEncounter:(Encounter*)enc andPlayer:(Player*)player {
@@ -144,6 +147,7 @@
         }
         
         [[PlayerDataManager localPlayer] setLastSelectedLevel:enc.levelNumber];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(expansionPurchased) name:PlayerDidPurchaseExpansionNotification object:nil];
     }
     return self;
 }
@@ -159,7 +163,11 @@
     for (int i = 0; i < 4; i++) {
             SpellInfoNode *spellInfoNode = nil;
             if (inactives[i] == 1 || spellsUsedIndex >= self.player.activeSpells.count) {
-                spellInfoNode = [[SpellInfoNode alloc] initAsEmpty];
+                BOOL locked =  i >= [[PlayerDataManager localPlayer] maximumStandardSpellSlots];
+                spellInfoNode = [[SpellInfoNode alloc] initAsEmpty:locked];
+                if (locked) {
+                    [spellInfoNode setupUnlockButton];
+                }
             } else {
                 Spell *activeSpell = [self.player.activeSpells objectAtIndex:spellsUsedIndex];
                 spellInfoNode = [[SpellInfoNode alloc] initWithSpell:activeSpell];
@@ -225,6 +233,14 @@
 - (void)iconDescriptionModalDidComplete:(id)modal
 {
     [(IconDescriptionModalLayer*)modal removeFromParentAndCleanup:YES];
+}
+
+#pragma mark - Notifications
+
+- (void)expansionPurchased
+{
+    int noInactives[] = {0,0,0,0};
+    [self configureSpellsWithInactiveIndexes:noInactives];
 }
 
 @end

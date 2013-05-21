@@ -21,6 +21,7 @@
 
 @interface IconDescriptionModalLayer ()
 @property (nonatomic, assign) BackgroundSprite *alertDialogBackground;
+@property (nonatomic, assign) CCMenu *menu;
 @end
 
 @implementation IconDescriptionModalLayer
@@ -98,10 +99,10 @@
         BasicButton *purchaseButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(purchaseMainContent) andTitle:@"Purchase"];
         [purchaseButton setScale:.75];
         
-        CCMenu *menu = [CCMenu menuWithItems:doneButton, purchaseButton, nil];
-        [menu alignItemsHorizontally];
-        [menu setPosition:CGPointMake(356, 190)];
-        [self.alertDialogBackground addChild:menu];
+        self.menu = [CCMenu menuWithItems:doneButton, purchaseButton, nil];
+        [self.menu alignItemsHorizontally];
+        [self.menu setPosition:CGPointMake(356, 190)];
+        [self.alertDialogBackground addChild:self.menu];
     }
     return self;
 }
@@ -110,6 +111,15 @@
     [super onEnter];
     
     [self runAction:[CCScaleTo actionWithDuration:.15 scale:1.0]];
+    [[CCDirectorIOS sharedDirector].touchDispatcher addTargetedDelegate:self priority:kCCMenuHandlerPriority -1 swallowsTouches:YES];
+    
+    [[CCDirectorIOS sharedDirector].touchDispatcher setPriority:kCCMenuHandlerPriority - 2 forDelegate:self.menu];
+}
+
+- (void)onExit
+{
+    [super onExit];
+    [[CCDirectorIOS sharedDirector].touchDispatcher removeDelegate:self];
 }
 
 - (void)purchaseMainContent
@@ -120,5 +130,11 @@
 
 - (void)shouldDismiss {
     [self.delegate iconDescriptionModalDidComplete:self];
+}
+
+#pragma mark - Targeted Delegate
+- (BOOL)ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    return YES;
 }
 @end

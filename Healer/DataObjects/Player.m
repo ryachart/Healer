@@ -271,13 +271,15 @@
     }else {
         for (Spell *spell in recommendSpells){
             if ([[PlayerDataManager localPlayer] hasSpell:spell]){
-                [actSpells addObject:[[spell class] defaultSpell]];
+                if (actSpells.count < [[PlayerDataManager localPlayer] maximumStandardSpellSlots]) {
+                    [actSpells addObject:[[spell class] defaultSpell]];
+                }
             }
         }
     }
     //Add other spells the player has
     for (Spell *spell in [[PlayerDataManager localPlayer] allOwnedSpells]){
-        if (actSpells.count < 4){
+        if (actSpells.count < [[PlayerDataManager localPlayer] maximumStandardSpellSlots]){
             if (![actSpells containsObject:spell]){
                 [actSpells addObject:[[spell class] defaultSpell]];
             }

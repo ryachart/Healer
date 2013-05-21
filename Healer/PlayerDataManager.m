@@ -348,6 +348,16 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     return spells;
 }
 
+- (NSInteger)maximumStandardSpellSlots
+{
+    NSInteger totalSlots = 3; //Default is 3.
+    
+    if ([self hasPurchasedContentWithKey:MainGameContentKey]) {
+        totalSlots ++;
+    }
+    return totalSlots;
+}
+
 #pragma mark - Normal Mode Completion
 - (BOOL)hasShownNormalModeCompleteScene {
     return [[self.playerData objectForKey:PlayerNormalModeCompleteShown] boolValue];
@@ -522,8 +532,8 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     if (!isFreshInstall) {
         [self purchaseContentWithKey:MainGameContentKey];
     }
-    
     [self.playerData setObject:[NSNumber numberWithBool:YES] forKey:GamePurchasedCheckedKey];
+    [self saveLocalPlayer];
 }
 
 - (void)purchaseContentWithKey:(NSString*)key
@@ -535,7 +545,6 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     }
     [contentKeys addObject:key];
     [self.playerData setObject:contentKeys forKey:ContentKeys];
-    [self saveLocalPlayer];
 }
 
 - (BOOL)hasPurchasedContentWithKey:(NSString*)key

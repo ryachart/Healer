@@ -106,6 +106,9 @@
                 inhabitant = [[[DraggableSpellIcon alloc] initWithSpell:spell] autorelease];
             }
             Slot *spellSlot = [[[Slot alloc] initWithInhabitantOrNil:inhabitant] autorelease];
+            if (i >= [[PlayerDataManager localPlayer] maximumStandardSpellSlots]) {
+                [spellSlot setIsLocked:YES];
+            }
             spellSlot.scale = iconScale;
             [spellSlot setDelegate:self];
             [spellSlot setPosition:CGPointMake(695, 553.5 - (95 * i))];

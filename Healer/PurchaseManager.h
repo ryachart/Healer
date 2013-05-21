@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
+extern NSString *const PlayerDidPurchaseExpansionNotification;
+
 @interface PurchaseManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver, SKRequestDelegate>
 @property (nonatomic, retain) NSArray *products;
 

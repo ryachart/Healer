@@ -15,6 +15,11 @@
 
 #define FUZZ(value, range) (((arc4random() % ((int)range * 2) + (100 - (int)range)))/100.0 * (int)value)
 
+#define IS_IPAD [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad
+#define IS_FOUR_INCH [[UIScreen mainScreen] bounds].size.width == 568 || [[UIScreen mainScreen] bounds].size.height == 568
+
+#define SCREEN_HEIGHT [[UIScreen mainScreen] bounds].size.height
+
 #define BACK_BUTTON_POS CGPointMake(90, 725)
 
 #define PLAY_BUTTON_CLICK [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/button3.mp3"]

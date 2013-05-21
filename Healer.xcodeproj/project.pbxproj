@@ -56,6 +56,9 @@
 		BF1079371745565E0077DBBD /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1079361745565E0077DBBD /* StoreKit.framework */; };
 		BF10793A174557DA0077DBBD /* PurchaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BF107939174557DA0077DBBD /* PurchaseManager.m */; };
 		BF1111D716C5C80700A16F2F /* EnemyCastBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BF1111D616C5C80600A16F2F /* EnemyCastBar.m */; };
+		BF13AD65174AF37D00A613B1 /* assets-iphone in Resources */ = {isa = PBXBuildFile; fileRef = BF13AD64174AF37D00A613B1 /* assets-iphone */; };
+		BF13AD72174AFE2800A613B1 /* LevelSelectScene_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BF13AD71174AFE2800A613B1 /* LevelSelectScene_iPhone.m */; };
+		BF13AD74174AFEC200A613B1 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF13AD73174AFEC200A613B1 /* Default-568h@2x.png */; };
 		BF1DDBAC1711F52C0008C946 /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1DDBA81711F52C0008C946 /* libTestFlight.a */; };
 		BF1DDBAD1711F52C0008C946 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBA91711F52C0008C946 /* README.md */; };
 		BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBAA1711F52C0008C946 /* release_notes.md */; };
@@ -93,6 +96,126 @@
 		BF98B18215D3572700017EA4 /* EnemyAbilityDescriptionsView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18115D3572700017EA4 /* EnemyAbilityDescriptionsView.m */; };
 		BF98B18615D3577A00017EA4 /* EnemyAbilityDescriptorIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18515D3577A00017EA4 /* EnemyAbilityDescriptorIcon.m */; };
 		BF98B18A15D37EAE00017EA4 /* IconDescriptionModalLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18915D37EAE00017EA4 /* IconDescriptionModalLayer.m */; };
+		BF9ACD7B1749B2AA00C05A61 /* HealerStartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B45145E1382006D9266 /* HealerStartScene.m */; };
+		BF9ACD7C1749B2AA00C05A61 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 38024F0913C2564E003D36F2 /* main.m */; };
+		BF9ACD7D1749B2AA00C05A61 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 38024F0C13C2564E003D36F2 /* AppDelegate.m */; };
+		BF9ACD7E1749B2AA00C05A61 /* Effect.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AED145E1263006D9266 /* Effect.m */; };
+		BF9ACD7F1749B2AA00C05A61 /* GameRect.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AF0145E1263006D9266 /* GameRect.m */; };
+		BF9ACD801749B2AA00C05A61 /* HealableTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AF2145E1263006D9266 /* HealableTarget.m */; };
+		BF9ACD811749B2AA00C05A61 /* Player.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AF8145E1263006D9266 /* Player.m */; };
+		BF9ACD821749B2AA00C05A61 /* Raid.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AFA145E1263006D9266 /* Raid.m */; };
+		BF9ACD831749B2AA00C05A61 /* RaidMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AFC145E1263006D9266 /* RaidMember.m */; };
+		BF9ACD841749B2AA00C05A61 /* Spell.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7AFE145E1263006D9266 /* Spell.m */; };
+		BF9ACD851749B2AA00C05A61 /* BossHealthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B0A145E1375006D9266 /* BossHealthView.m */; };
+		BF9ACD861749B2AA00C05A61 /* PlayerCastBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B18145E1375006D9266 /* PlayerCastBar.m */; };
+		BF9ACD871749B2AA00C05A61 /* PlayerStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B1A145E1375006D9266 /* PlayerStatusView.m */; };
+		BF9ACD881749B2AA00C05A61 /* RaidMemberHealthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B1E145E1375006D9266 /* RaidMemberHealthView.m */; };
+		BF9ACD891749B2AA00C05A61 /* RaidView.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B20145E1375006D9266 /* RaidView.m */; };
+		BF9ACD8A1749B2AA00C05A61 /* GamePlayScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B3F145E1382006D9266 /* GamePlayScene.m */; };
+		BF9ACD8B1749B2AA00C05A61 /* Enemy.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B58145E1701006D9266 /* Enemy.m */; };
+		BF9ACD8C1749B2AA00C05A61 /* PlayerMoveButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B5F145E177B006D9266 /* PlayerMoveButton.m */; };
+		BF9ACD8D1749B2AA00C05A61 /* PlayerSpellButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B61145E177B006D9266 /* PlayerSpellButton.m */; };
+		BF9ACD8E1749B2AA00C05A61 /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
+		BF9ACD8F1749B2AA00C05A61 /* CombatEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 386747A81520073D0057A8C9 /* CombatEvent.m */; };
+		BF9ACD901749B2AA00C05A61 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
+		BF9ACD911749B2AA00C05A61 /* GamePlayFTUELayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */; };
+		BF9ACD921749B2AA00C05A61 /* ProjectileEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = BF05579F15268D0A006B4781 /* ProjectileEffect.m */; };
+		BF9ACD931749B2AA00C05A61 /* RaidMemberPreBattleCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */; };
+		BF9ACD941749B2AA00C05A61 /* GamePlayPauseLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */; };
+		BF9ACD951749B2AA00C05A61 /* CCShakeScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21072215292740001B93D7 /* CCShakeScreen.m */; };
+		BF9ACD961749B2AA00C05A61 /* Scale9Sprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF210749152AAAEB001B93D7 /* Scale9Sprite.m */; };
+		BF9ACD971749B2AA00C05A61 /* ParticleSystemCache.m in Sources */ = {isa = PBXBuildFile; fileRef = BF21075C152B5623001B93D7 /* ParticleSystemCache.m */; };
+		BF9ACD981749B2AA00C05A61 /* MultiplayerSetupScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */; };
+		BF9ACD991749B2AA00C05A61 /* Encounter.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD804F41530D17400570A0A /* Encounter.m */; };
+		BF9ACD9A1749B2AA00C05A61 /* ClippingNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF68CBA51537364B0096B6CF /* ClippingNode.m */; };
+		BF9ACD9B1749B2AA00C05A61 /* Agent.m in Sources */ = {isa = PBXBuildFile; fileRef = BFC1022E153F90BA00884677 /* Agent.m */; };
+		BF9ACD9C1749B2AA00C05A61 /* ShopScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46406154A25DD00503E30 /* ShopScene.m */; };
+		BF9ACD9D1749B2AA00C05A61 /* ShopItemNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB4640B154A262800503E30 /* ShopItemNode.m */; };
+		BF9ACD9E1749B2AA00C05A61 /* Shop.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46410154A268900503E30 /* Shop.m */; };
+		BF9ACD9F1749B2AA00C05A61 /* ShopItem.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46413154A26A100503E30 /* ShopItem.m */; };
+		BF9ACDA01749B2AA00C05A61 /* AddRemoveSpellLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */; };
+		BF9ACDA11749B2AA00C05A61 /* SpellInfoNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C59154BB04A009401A6 /* SpellInfoNode.m */; };
+		BF9ACDA21749B2AA00C05A61 /* BackgroundSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF69866B154C7B5F0016F25E /* BackgroundSprite.m */; };
+		BF9ACDA31749B2AA00C05A61 /* Ability.m in Sources */ = {isa = PBXBuildFile; fileRef = BF4E508C155C9C4400FC4EE0 /* Ability.m */; };
+		BF9ACDA41749B2AA00C05A61 /* ShopItemExtendedNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0DCF63156C6DEE005E74C7 /* ShopItemExtendedNode.m */; };
+		BF9ACDA51749B2AA00C05A61 /* Talents.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F25159F9878007F5DBF /* Talents.m */; };
+		BF9ACDA61749B2AA00C05A61 /* TalentScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F28159F9C1F007F5DBF /* TalentScene.m */; };
+		BF9ACDA71749B2AA00C05A61 /* BasicButton.m in Sources */ = {isa = PBXBuildFile; fileRef = BF865F2B15A031FB007F5DBF /* BasicButton.m */; };
+		BF9ACDA81749B2AA00C05A61 /* MultiplayerQueueScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */; };
+		BF9ACDA91749B2AA00C05A61 /* AbilityDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = BF26BFC515CA0B5D00B7132D /* AbilityDescriptor.m */; };
+		BF9ACDAA1749B2AA00C05A61 /* EnemyAbilityDescriptionsView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18115D3572700017EA4 /* EnemyAbilityDescriptionsView.m */; };
+		BF9ACDAB1749B2AA00C05A61 /* EnemyAbilityDescriptorIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18515D3577A00017EA4 /* EnemyAbilityDescriptorIcon.m */; };
+		BF9ACDAC1749B2AA00C05A61 /* IconDescriptionModalLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18915D37EAE00017EA4 /* IconDescriptionModalLayer.m */; };
+		BF9ACDAD1749B2AA00C05A61 /* GoldCounterSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */; };
+		BF9ACDAE1749B2AA00C05A61 /* TalentTierCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F815F54BBD0052FCA5 /* TalentTierCard.m */; };
+		BF9ACDAF1749B2AA00C05A61 /* DraggableSpellIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = BF261C341602C74F003307DF /* DraggableSpellIcon.m */; };
+		BF9ACDB01749B2AA00C05A61 /* Slot.m in Sources */ = {isa = PBXBuildFile; fileRef = BF261C371602C7A3003307DF /* Slot.m */; };
+		BF9ACDB11749B2AA00C05A61 /* NormalModeCompleteScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA60E43160CD331005FFE1B /* NormalModeCompleteScene.m */; };
+		BF9ACDB21749B2AA00C05A61 /* LaunchScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD8EF4B160F9F1C00BAF83A /* LaunchScene.m */; };
+		BF9ACDB31749B2AA00C05A61 /* LevelSelectMapScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106F6163A282D002318CE /* LevelSelectMapScene.m */; };
+		BF9ACDB41749B2AA00C05A61 /* LevelSelectMapNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106FA163A2956002318CE /* LevelSelectMapNode.m */; };
+		BF9ACDB51749B2AA00C05A61 /* LevelSelectSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106FD163A29D5002318CE /* LevelSelectSprite.m */; };
+		BF9ACDB61749B2AA00C05A61 /* EncounterCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0022BD163EE94C00384882 /* EncounterCard.m */; };
+		BF9ACDB71749B2AA00C05A61 /* DebugViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BF4CD1C71642D61500EB2336 /* DebugViewController.m */; };
+		BF9ACDB81749B2AA00C05A61 /* ChallengeRatingStepper.m in Sources */ = {isa = PBXBuildFile; fileRef = 382C46411648CDA400883CFA /* ChallengeRatingStepper.m */; };
+		BF9ACDB91749B2AA00C05A61 /* SettingsScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E82A3164F1648009F11E6 /* SettingsScene.m */; };
+		BF9ACDBA1749B2AA00C05A61 /* CCNumberChangeAction.m in Sources */ = {isa = PBXBuildFile; fileRef = BF95CF78165736190058FB85 /* CCNumberChangeAction.m */; };
+		BF9ACDBB1749B2AA00C05A61 /* RatingCounterSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 38B0BB241657694300D31540 /* RatingCounterSprite.m */; };
+		BF9ACDBC1749B2AA00C05A61 /* ViewTalentChoiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 38B0BB27165779BC00D31540 /* ViewTalentChoiceLayer.m */; };
+		BF9ACDBD1749B2AA00C05A61 /* PlayerDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BFFF9918168D7F52007AF447 /* PlayerDataManager.m */; };
+		BF9ACDBE1749B2AA00C05A61 /* CCLabelTTFShadow.m in Sources */ = {isa = PBXBuildFile; fileRef = BF2D1C1B16968A14006DCA9A /* CCLabelTTFShadow.m */; };
+		BF9ACDBF1749B2AA00C05A61 /* GradientBorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7660C116C0566600985F2E /* GradientBorderLayer.m */; };
+		BF9ACDC01749B2AA00C05A61 /* EnemyCastBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BF1111D616C5C80600A16F2F /* EnemyCastBar.m */; };
+		BF9ACDC11749B2AA00C05A61 /* EnemiesLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA44C1816DC23CE00F20C8A /* EnemiesLayer.m */; };
+		BF9ACDC21749B2AA00C05A61 /* EnemySprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA44C1B16DC241500F20C8A /* EnemySprite.m */; };
+		BF9ACDC31749B2AA00C05A61 /* EnemyHealthBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA44C1E16DC34FF00F20C8A /* EnemyHealthBar.m */; };
+		BF9ACDC41749B2AA00C05A61 /* PostBattleLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB2C40016FA5B3F004C1AB1 /* PostBattleLayer.m */; };
+		BF9ACDC51749B2AA00C05A61 /* WidthScalingBackgroundSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF068CA51704F0BC00000C7F /* WidthScalingBackgroundSprite.m */; };
+		BF9ACDC61749B2AA00C05A61 /* TipsLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF1DF45B17220FFC00046EB2 /* TipsLayer.m */; };
+		BF9ACDC71749B2AA00C05A61 /* Collectible.m in Sources */ = {isa = PBXBuildFile; fileRef = BF03E26A1725CA2900F3A429 /* Collectible.m */; };
+		BF9ACDC81749B2AA00C05A61 /* CollectibleLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF03E26E1725CE6700F3A429 /* CollectibleLayer.m */; };
+		BF9ACDC91749B2AA00C05A61 /* PurchaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BF107939174557DA0077DBBD /* PurchaseManager.m */; };
+		BF9ACDCB1749B2AA00C05A61 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1079361745565E0077DBBD /* StoreKit.framework */; };
+		BF9ACDCC1749B2AA00C05A61 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1DF41E1722057300046EB2 /* MessageUI.framework */; };
+		BF9ACDCD1749B2AA00C05A61 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1DDBAF17136C4D0008C946 /* CoreLocation.framework */; };
+		BF9ACDCE1749B2AA00C05A61 /* libCocosDenshion.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB76160ED1FF00BAF83A /* libCocosDenshion.a */; };
+		BF9ACDCF1749B2AA00C05A61 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B41AB1632771F00710700 /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		BF9ACDD01749B2AA00C05A61 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B41A9163276F800710700 /* libsqlite3.0.dylib */; };
+		BF9ACDD11749B2AA00C05A61 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B41A7163276E500710700 /* Accounts.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		BF9ACDD21749B2AA00C05A61 /* libChipmunk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB70160ED1FF00BAF83A /* libChipmunk.a */; };
+		BF9ACDD31749B2AA00C05A61 /* libkazmath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB78160ED1FF00BAF83A /* libkazmath.a */; };
+		BF9ACDD41749B2AA00C05A61 /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1DDBA81711F52C0008C946 /* libTestFlight.a */; };
+		BF9ACDD51749B2AA00C05A61 /* libcocos2d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB72160ED1FF00BAF83A /* libcocos2d.a */; };
+		BF9ACDD61749B2AA00C05A61 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */; };
+		BF9ACDD71749B2AA00C05A61 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464615AA0CED00F9B167 /* CFNetwork.framework */; };
+		BF9ACDD81749B2AA00C05A61 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */; };
+		BF9ACDD91749B2AA00C05A61 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464215AA0C3600F9B167 /* Security.framework */; };
+		BF9ACDDA1749B2AA00C05A61 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE3408A152D57A5008E84F1 /* GameKit.framework */; };
+		BF9ACDDB1749B2AA00C05A61 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38024DAF13C2564D003D36F2 /* QuartzCore.framework */; };
+		BF9ACDDC1749B2AA00C05A61 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38024DB113C2564D003D36F2 /* OpenGLES.framework */; };
+		BF9ACDDD1749B2AA00C05A61 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38024DB313C2564D003D36F2 /* OpenAL.framework */; };
+		BF9ACDDE1749B2AA00C05A61 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38024DB513C2564D003D36F2 /* AudioToolbox.framework */; };
+		BF9ACDDF1749B2AA00C05A61 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38024DB713C2564D003D36F2 /* AVFoundation.framework */; };
+		BF9ACDE01749B2AA00C05A61 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38024DB913C2564D003D36F2 /* UIKit.framework */; };
+		BF9ACDE11749B2AA00C05A61 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38024DBB13C2564D003D36F2 /* Foundation.framework */; };
+		BF9ACDE21749B2AA00C05A61 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38024DBD13C2564D003D36F2 /* CoreGraphics.framework */; };
+		BF9ACDE31749B2AA00C05A61 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5463A15AA097800F9B167 /* Parse.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		BF9ACDE51749B2AA00C05A61 /* fps_images.png in Resources */ = {isa = PBXBuildFile; fileRef = 38024DC313C2564D003D36F2 /* fps_images.png */; };
+		BF9ACDE61749B2AA00C05A61 /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 38024DD213C2564D003D36F2 /* iTunesArtwork */; };
+		BF9ACDE81749B2AA00C05A61 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = BFB99F1A15257F6D007EE559 /* sounds */; };
+		BF9ACDE91749B2AA00C05A61 /* emitters in Resources */ = {isa = PBXBuildFile; fileRef = BF21071E15291E5F001B93D7 /* emitters */; };
+		BF9ACDEB1749B2AA00C05A61 /* talents.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFF4198B15A27CF700BC0453 /* talents.plist */; };
+		BF9ACDEC1749B2AA00C05A61 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */; };
+		BF9ACDED1749B2AA00C05A61 /* tips.plist in Resources */ = {isa = PBXBuildFile; fileRef = BF87D85A1601ABFB00BEAD5B /* tips.plist */; };
+		BF9ACDEE1749B2AA00C05A61 /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */; };
+		BF9ACDEF1749B2AA00C05A61 /* DebugViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BF4CD1C81642D61600EB2336 /* DebugViewController.xib */; };
+		BF9ACDF11749B2AA00C05A61 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = BFE66EDE16D9749800B9FBEE /* fonts */; };
+		BF9ACDF21749B2AA00C05A61 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBA91711F52C0008C946 /* README.md */; };
+		BF9ACDF31749B2AA00C05A61 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBAA1711F52C0008C946 /* release_notes.md */; };
+		BF9ACDF41749B2AA00C05A61 /* Healer_iTunesStore_Icon72x72.png in Resources */ = {isa = PBXBuildFile; fileRef = BF03E2AD172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png */; };
+		BF9ACDF51749B2AA00C05A61 /* Healer_iTunesStore_Icon144x144.png in Resources */ = {isa = PBXBuildFile; fileRef = BF03E2AF172A44F900F3A429 /* Healer_iTunesStore_Icon144x144.png */; };
+		BF9ACE371749C41F00C05A61 /* backgrounds-iphone in Resources */ = {isa = PBXBuildFile; fileRef = BF9ACE361749C41F00C05A61 /* backgrounds-iphone */; };
+		BF9ACE3B1749DE9E00C05A61 /* HealerStartScene_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BF9ACE3A1749DE9E00C05A61 /* HealerStartScene_iPhone.m */; };
 		BFA2F13C16CEFEBF00E639A9 /* libCocosDenshion.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB76160ED1FF00BAF83A /* libCocosDenshion.a */; };
 		BFA2F13D16CF02AE00E639A9 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = BFB99F1A15257F6D007EE559 /* sounds */; };
 		BFA44C1916DC23CE00F20C8A /* EnemiesLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA44C1816DC23CE00F20C8A /* EnemiesLayer.m */; };
@@ -116,7 +239,6 @@
 		BFD106F7163A282D002318CE /* LevelSelectMapScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106F6163A282D002318CE /* LevelSelectMapScene.m */; };
 		BFD106FB163A2956002318CE /* LevelSelectMapNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106FA163A2956002318CE /* LevelSelectMapNode.m */; };
 		BFD106FE163A29D5002318CE /* LevelSelectSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106FD163A29D5002318CE /* LevelSelectSprite.m */; };
-		BFD240CD16AC8E09007010D0 /* bosses in Resources */ = {isa = PBXBuildFile; fileRef = BFD240CC16AC8E09007010D0 /* bosses */; };
 		BFD804F51530D17400570A0A /* Encounter.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD804F41530D17400570A0A /* Encounter.m */; };
 		BFD8EC59160ED2E100BAF83A /* libChipmunk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB70160ED1FF00BAF83A /* libChipmunk.a */; };
 		BFD8EC5A160ED2E100BAF83A /* libcocos2d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB72160ED1FF00BAF83A /* libcocos2d.a */; };
@@ -645,6 +767,10 @@
 		BF107939174557DA0077DBBD /* PurchaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PurchaseManager.m; path = Healer/PurchaseManager.m; sourceTree = "<group>"; };
 		BF1111D516C5C80600A16F2F /* EnemyCastBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnemyCastBar.h; sourceTree = "<group>"; };
 		BF1111D616C5C80600A16F2F /* EnemyCastBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EnemyCastBar.m; sourceTree = "<group>"; };
+		BF13AD64174AF37D00A613B1 /* assets-iphone */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "assets-iphone"; sourceTree = SOURCE_ROOT; };
+		BF13AD70174AFE2800A613B1 /* LevelSelectScene_iPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelSelectScene_iPhone.h; sourceTree = "<group>"; };
+		BF13AD71174AFE2800A613B1 /* LevelSelectScene_iPhone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelSelectScene_iPhone.m; sourceTree = "<group>"; };
+		BF13AD73174AFEC200A613B1 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		BF1DDBA81711F52C0008C946 /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
 		BF1DDBA91711F52C0008C946 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		BF1DDBAA1711F52C0008C946 /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
@@ -713,6 +839,11 @@
 		BF98B18515D3577A00017EA4 /* EnemyAbilityDescriptorIcon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EnemyAbilityDescriptorIcon.m; sourceTree = "<group>"; };
 		BF98B18815D37EAE00017EA4 /* IconDescriptionModalLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconDescriptionModalLayer.h; sourceTree = "<group>"; };
 		BF98B18915D37EAE00017EA4 /* IconDescriptionModalLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconDescriptionModalLayer.m; sourceTree = "<group>"; };
+		BF9ACDFA1749B2AA00C05A61 /* HealerPocket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HealerPocket.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF9ACDFB1749B2AA00C05A61 /* HealerPocket-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "HealerPocket-Info.plist"; path = "/Users/ryachart/Documents/Github/Healer/HealerPocket-Info.plist"; sourceTree = "<absolute>"; };
+		BF9ACE361749C41F00C05A61 /* backgrounds-iphone */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "backgrounds-iphone"; sourceTree = SOURCE_ROOT; };
+		BF9ACE391749DE9E00C05A61 /* HealerStartScene_iPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HealerStartScene_iPhone.h; sourceTree = "<group>"; };
+		BF9ACE3A1749DE9E00C05A61 /* HealerStartScene_iPhone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HealerStartScene_iPhone.m; sourceTree = "<group>"; };
 		BFA44C1716DC23CE00F20C8A /* EnemiesLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnemiesLayer.h; sourceTree = "<group>"; };
 		BFA44C1816DC23CE00F20C8A /* EnemiesLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EnemiesLayer.m; sourceTree = "<group>"; };
 		BFA44C1A16DC241500F20C8A /* EnemySprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnemySprite.h; sourceTree = "<group>"; };
@@ -799,6 +930,38 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BF9ACDCA1749B2AA00C05A61 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF9ACDCB1749B2AA00C05A61 /* StoreKit.framework in Frameworks */,
+				BF9ACDCC1749B2AA00C05A61 /* MessageUI.framework in Frameworks */,
+				BF9ACDCD1749B2AA00C05A61 /* CoreLocation.framework in Frameworks */,
+				BF9ACDCE1749B2AA00C05A61 /* libCocosDenshion.a in Frameworks */,
+				BF9ACDCF1749B2AA00C05A61 /* AdSupport.framework in Frameworks */,
+				BF9ACDD01749B2AA00C05A61 /* libsqlite3.0.dylib in Frameworks */,
+				BF9ACDD11749B2AA00C05A61 /* Accounts.framework in Frameworks */,
+				BF9ACDD21749B2AA00C05A61 /* libChipmunk.a in Frameworks */,
+				BF9ACDD31749B2AA00C05A61 /* libkazmath.a in Frameworks */,
+				BF9ACDD41749B2AA00C05A61 /* libTestFlight.a in Frameworks */,
+				BF9ACDD51749B2AA00C05A61 /* libcocos2d.a in Frameworks */,
+				BF9ACDD61749B2AA00C05A61 /* MobileCoreServices.framework in Frameworks */,
+				BF9ACDD71749B2AA00C05A61 /* CFNetwork.framework in Frameworks */,
+				BF9ACDD81749B2AA00C05A61 /* SystemConfiguration.framework in Frameworks */,
+				BF9ACDD91749B2AA00C05A61 /* Security.framework in Frameworks */,
+				BF9ACDDA1749B2AA00C05A61 /* GameKit.framework in Frameworks */,
+				BF9ACDDB1749B2AA00C05A61 /* QuartzCore.framework in Frameworks */,
+				BF9ACDDC1749B2AA00C05A61 /* OpenGLES.framework in Frameworks */,
+				BF9ACDDD1749B2AA00C05A61 /* OpenAL.framework in Frameworks */,
+				BF9ACDDE1749B2AA00C05A61 /* AudioToolbox.framework in Frameworks */,
+				BF9ACDDF1749B2AA00C05A61 /* AVFoundation.framework in Frameworks */,
+				BF9ACDE01749B2AA00C05A61 /* UIKit.framework in Frameworks */,
+				BF9ACDE11749B2AA00C05A61 /* Foundation.framework in Frameworks */,
+				BF9ACDE21749B2AA00C05A61 /* CoreGraphics.framework in Frameworks */,
+				BF9ACDE31749B2AA00C05A61 /* Parse.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -815,6 +978,7 @@
 			isa = PBXGroup;
 			children = (
 				38024DAB13C2564D003D36F2 /* Healer.app */,
+				BF9ACDFA1749B2AA00C05A61 /* HealerPocket.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -853,6 +1017,7 @@
 		38024DBF13C2564D003D36F2 /* Healer */ = {
 			isa = PBXGroup;
 			children = (
+				BF9ACE381749CE9E00C05A61 /* Scenes iPhone */,
 				387E7AE0145E0A91006D9266 /* App Init */,
 				387E7AE5145E0F54006D9266 /* Constants */,
 				387E7AE4145E0D1B006D9266 /* Persistent Stores */,
@@ -869,6 +1034,8 @@
 		38024DC013C2564D003D36F2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BF9ACE361749C41F00C05A61 /* backgrounds-iphone */,
+				BF9ACDFB1749B2AA00C05A61 /* HealerPocket-Info.plist */,
 				BF03E2AF172A44F900F3A429 /* Healer_iTunesStore_Icon144x144.png */,
 				BF03E2AD172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png */,
 				BFB99F1A15257F6D007EE559 /* sounds */,
@@ -876,9 +1043,11 @@
 				BFD240CC16AC8E09007010D0 /* bosses */,
 				BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */,
 				BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */,
+				BF13AD73174AFEC200A613B1 /* Default-568h@2x.png */,
 				BF865F22159F8655007F5DBF /* healer.png */,
 				BF865F20159F8651007F5DBF /* healer@2x.png */,
 				BF21071E15291E5F001B93D7 /* emitters */,
+				BF13AD64174AF37D00A613B1 /* assets-iphone */,
 				BF0557B41526BC02006B4781 /* assets */,
 				38F1B45B15CA30D8008B2D99 /* backgrounds */,
 				BF0557AC1526BBA6006B4781 /* build-spritesheet.sh */,
@@ -1267,6 +1436,17 @@
 			name = "UI Layers";
 			sourceTree = "<group>";
 		};
+		BF9ACE381749CE9E00C05A61 /* Scenes iPhone */ = {
+			isa = PBXGroup;
+			children = (
+				BF9ACE391749DE9E00C05A61 /* HealerStartScene_iPhone.h */,
+				BF9ACE3A1749DE9E00C05A61 /* HealerStartScene_iPhone.m */,
+				BF13AD70174AFE2800A613B1 /* LevelSelectScene_iPhone.h */,
+				BF13AD71174AFE2800A613B1 /* LevelSelectScene_iPhone.m */,
+			);
+			name = "Scenes iPhone";
+			sourceTree = "<group>";
+		};
 		BFA44C1416DC21A400F20C8A /* Deprecated */ = {
 			isa = PBXGroup;
 			children = (
@@ -1435,6 +1615,34 @@
 			passBuildSettingsInEnvironment = 1;
 			productName = MakeAssets;
 		};
+		BF13AD66174AFA1800A613B1 /* MakeAssetsiPhone */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "${PROJECT_DIR}/scripts/build-spritesheet-iphone.sh";
+			buildConfigurationList = BF13AD67174AFA1800A613B1 /* Build configuration list for PBXLegacyTarget "MakeAssetsiPhone" */;
+			buildPhases = (
+			);
+			buildToolPath = /bin/sh;
+			buildWorkingDirectory = "";
+			dependencies = (
+			);
+			name = MakeAssetsiPhone;
+			passBuildSettingsInEnvironment = 1;
+			productName = MakeAssetsiPhone;
+		};
+		BF13AD6B174AFA5400A613B1 /* MakeBossesiPhone */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "${PROJECT_DIR}/scripts/build-boss-assets-iphone.sh";
+			buildConfigurationList = BF13AD6C174AFA5400A613B1 /* Build configuration list for PBXLegacyTarget "MakeBossesiPhone" */;
+			buildPhases = (
+			);
+			buildToolPath = /bin/sh;
+			buildWorkingDirectory = "";
+			dependencies = (
+			);
+			name = MakeBossesiPhone;
+			passBuildSettingsInEnvironment = 1;
+			productName = MakeBossesiPhone;
+		};
 		BFFF991A169437E1007AF447 /* MakeBosses */ = {
 			isa = PBXLegacyTarget;
 			buildArgumentsString = "${PROJECT_DIR}/scripts/build-boss-assets.sh";
@@ -1469,6 +1677,23 @@
 			productReference = 38024DAB13C2564D003D36F2 /* Healer.app */;
 			productType = "com.apple.product-type.application";
 		};
+		BF9ACD791749B2AA00C05A61 /* HealerPocket */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BF9ACDF61749B2AA00C05A61 /* Build configuration list for PBXNativeTarget "HealerPocket" */;
+			buildPhases = (
+				BF9ACD7A1749B2AA00C05A61 /* Sources */,
+				BF9ACDCA1749B2AA00C05A61 /* Frameworks */,
+				BF9ACDE41749B2AA00C05A61 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HealerPocket;
+			productName = Healer;
+			productReference = BF9ACDFA1749B2AA00C05A61 /* HealerPocket.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1497,8 +1722,11 @@
 			projectRoot = "";
 			targets = (
 				38024DAA13C2564D003D36F2 /* Healer */,
+				BF9ACD791749B2AA00C05A61 /* HealerPocket */,
 				BF0557C11526BD39006B4781 /* MakeAssets */,
 				BFFF991A169437E1007AF447 /* MakeBosses */,
+				BF13AD66174AFA1800A613B1 /* MakeAssetsiPhone */,
+				BF13AD6B174AFA5400A613B1 /* MakeBossesiPhone */,
 			);
 		};
 /* End PBXProject section */
@@ -1921,12 +2149,35 @@
 				BF87D85B1601ABFB00BEAD5B /* tips.plist in Resources */,
 				BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */,
 				BF4CD1CA1642D61600EB2336 /* DebugViewController.xib in Resources */,
-				BFD240CD16AC8E09007010D0 /* bosses in Resources */,
 				BFE66EDF16D9749800B9FBEE /* fonts in Resources */,
 				BF1DDBAD1711F52C0008C946 /* README.md in Resources */,
 				BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */,
 				BF03E2AE172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png in Resources */,
 				BF03E2B0172A44F900F3A429 /* Healer_iTunesStore_Icon144x144.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF9ACDE41749B2AA00C05A61 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF9ACDE51749B2AA00C05A61 /* fps_images.png in Resources */,
+				BF9ACDE61749B2AA00C05A61 /* iTunesArtwork in Resources */,
+				BF9ACDE81749B2AA00C05A61 /* sounds in Resources */,
+				BF9ACDE91749B2AA00C05A61 /* emitters in Resources */,
+				BF9ACDEB1749B2AA00C05A61 /* talents.plist in Resources */,
+				BF9ACDEC1749B2AA00C05A61 /* Default-Landscape~ipad.png in Resources */,
+				BF9ACDED1749B2AA00C05A61 /* tips.plist in Resources */,
+				BF9ACDEE1749B2AA00C05A61 /* Default-Landscape@2x~ipad.png in Resources */,
+				BF9ACDEF1749B2AA00C05A61 /* DebugViewController.xib in Resources */,
+				BF9ACDF11749B2AA00C05A61 /* fonts in Resources */,
+				BF9ACDF21749B2AA00C05A61 /* README.md in Resources */,
+				BF9ACDF31749B2AA00C05A61 /* release_notes.md in Resources */,
+				BF9ACDF41749B2AA00C05A61 /* Healer_iTunesStore_Icon72x72.png in Resources */,
+				BF9ACDF51749B2AA00C05A61 /* Healer_iTunesStore_Icon144x144.png in Resources */,
+				BF9ACE371749C41F00C05A61 /* backgrounds-iphone in Resources */,
+				BF13AD65174AF37D00A613B1 /* assets-iphone in Resources */,
+				BF13AD74174AFEC200A613B1 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2019,6 +2270,94 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BF9ACD7A1749B2AA00C05A61 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF9ACD7B1749B2AA00C05A61 /* HealerStartScene.m in Sources */,
+				BF9ACD7C1749B2AA00C05A61 /* main.m in Sources */,
+				BF9ACD7D1749B2AA00C05A61 /* AppDelegate.m in Sources */,
+				BF9ACD7E1749B2AA00C05A61 /* Effect.m in Sources */,
+				BF9ACD7F1749B2AA00C05A61 /* GameRect.m in Sources */,
+				BF9ACD801749B2AA00C05A61 /* HealableTarget.m in Sources */,
+				BF9ACD811749B2AA00C05A61 /* Player.m in Sources */,
+				BF9ACD821749B2AA00C05A61 /* Raid.m in Sources */,
+				BF9ACD831749B2AA00C05A61 /* RaidMember.m in Sources */,
+				BF9ACD841749B2AA00C05A61 /* Spell.m in Sources */,
+				BF9ACD851749B2AA00C05A61 /* BossHealthView.m in Sources */,
+				BF9ACD861749B2AA00C05A61 /* PlayerCastBar.m in Sources */,
+				BF9ACD871749B2AA00C05A61 /* PlayerStatusView.m in Sources */,
+				BF9ACD881749B2AA00C05A61 /* RaidMemberHealthView.m in Sources */,
+				BF9ACD891749B2AA00C05A61 /* RaidView.m in Sources */,
+				BF9ACD8A1749B2AA00C05A61 /* GamePlayScene.m in Sources */,
+				BF9ACD8B1749B2AA00C05A61 /* Enemy.m in Sources */,
+				BF9ACD8C1749B2AA00C05A61 /* PlayerMoveButton.m in Sources */,
+				BF9ACD8D1749B2AA00C05A61 /* PlayerSpellButton.m in Sources */,
+				BF9ACD8E1749B2AA00C05A61 /* PostBattleScene.m in Sources */,
+				BF9ACD8F1749B2AA00C05A61 /* CombatEvent.m in Sources */,
+				BF9ACD901749B2AA00C05A61 /* PreBattleScene.m in Sources */,
+				BF9ACD911749B2AA00C05A61 /* GamePlayFTUELayer.m in Sources */,
+				BF9ACD921749B2AA00C05A61 /* ProjectileEffect.m in Sources */,
+				BF9ACD931749B2AA00C05A61 /* RaidMemberPreBattleCard.m in Sources */,
+				BF9ACD941749B2AA00C05A61 /* GamePlayPauseLayer.m in Sources */,
+				BF9ACD951749B2AA00C05A61 /* CCShakeScreen.m in Sources */,
+				BF9ACD961749B2AA00C05A61 /* Scale9Sprite.m in Sources */,
+				BF9ACD971749B2AA00C05A61 /* ParticleSystemCache.m in Sources */,
+				BF9ACD981749B2AA00C05A61 /* MultiplayerSetupScene.m in Sources */,
+				BF9ACD991749B2AA00C05A61 /* Encounter.m in Sources */,
+				BF9ACD9A1749B2AA00C05A61 /* ClippingNode.m in Sources */,
+				BF9ACD9B1749B2AA00C05A61 /* Agent.m in Sources */,
+				BF9ACD9C1749B2AA00C05A61 /* ShopScene.m in Sources */,
+				BF9ACD9D1749B2AA00C05A61 /* ShopItemNode.m in Sources */,
+				BF9ACD9E1749B2AA00C05A61 /* Shop.m in Sources */,
+				BF9ACD9F1749B2AA00C05A61 /* ShopItem.m in Sources */,
+				BF9ACDA01749B2AA00C05A61 /* AddRemoveSpellLayer.m in Sources */,
+				BF9ACDA11749B2AA00C05A61 /* SpellInfoNode.m in Sources */,
+				BF9ACDA21749B2AA00C05A61 /* BackgroundSprite.m in Sources */,
+				BF9ACDA31749B2AA00C05A61 /* Ability.m in Sources */,
+				BF9ACDA41749B2AA00C05A61 /* ShopItemExtendedNode.m in Sources */,
+				BF9ACDA51749B2AA00C05A61 /* Talents.m in Sources */,
+				BF9ACDA61749B2AA00C05A61 /* TalentScene.m in Sources */,
+				BF9ACDA71749B2AA00C05A61 /* BasicButton.m in Sources */,
+				BF9ACDA81749B2AA00C05A61 /* MultiplayerQueueScene.m in Sources */,
+				BF9ACDA91749B2AA00C05A61 /* AbilityDescriptor.m in Sources */,
+				BF9ACDAA1749B2AA00C05A61 /* EnemyAbilityDescriptionsView.m in Sources */,
+				BF9ACDAB1749B2AA00C05A61 /* EnemyAbilityDescriptorIcon.m in Sources */,
+				BF9ACDAC1749B2AA00C05A61 /* IconDescriptionModalLayer.m in Sources */,
+				BF9ACDAD1749B2AA00C05A61 /* GoldCounterSprite.m in Sources */,
+				BF9ACDAE1749B2AA00C05A61 /* TalentTierCard.m in Sources */,
+				BF9ACDAF1749B2AA00C05A61 /* DraggableSpellIcon.m in Sources */,
+				BF9ACDB01749B2AA00C05A61 /* Slot.m in Sources */,
+				BF9ACDB11749B2AA00C05A61 /* NormalModeCompleteScene.m in Sources */,
+				BF9ACDB21749B2AA00C05A61 /* LaunchScene.m in Sources */,
+				BF9ACDB31749B2AA00C05A61 /* LevelSelectMapScene.m in Sources */,
+				BF9ACDB41749B2AA00C05A61 /* LevelSelectMapNode.m in Sources */,
+				BF9ACDB51749B2AA00C05A61 /* LevelSelectSprite.m in Sources */,
+				BF9ACDB61749B2AA00C05A61 /* EncounterCard.m in Sources */,
+				BF9ACDB71749B2AA00C05A61 /* DebugViewController.m in Sources */,
+				BF9ACDB81749B2AA00C05A61 /* ChallengeRatingStepper.m in Sources */,
+				BF9ACDB91749B2AA00C05A61 /* SettingsScene.m in Sources */,
+				BF9ACDBA1749B2AA00C05A61 /* CCNumberChangeAction.m in Sources */,
+				BF9ACDBB1749B2AA00C05A61 /* RatingCounterSprite.m in Sources */,
+				BF9ACDBC1749B2AA00C05A61 /* ViewTalentChoiceLayer.m in Sources */,
+				BF9ACDBD1749B2AA00C05A61 /* PlayerDataManager.m in Sources */,
+				BF9ACDBE1749B2AA00C05A61 /* CCLabelTTFShadow.m in Sources */,
+				BF9ACDBF1749B2AA00C05A61 /* GradientBorderLayer.m in Sources */,
+				BF9ACDC01749B2AA00C05A61 /* EnemyCastBar.m in Sources */,
+				BF9ACDC11749B2AA00C05A61 /* EnemiesLayer.m in Sources */,
+				BF9ACDC21749B2AA00C05A61 /* EnemySprite.m in Sources */,
+				BF9ACDC31749B2AA00C05A61 /* EnemyHealthBar.m in Sources */,
+				BF9ACDC41749B2AA00C05A61 /* PostBattleLayer.m in Sources */,
+				BF9ACDC51749B2AA00C05A61 /* WidthScalingBackgroundSprite.m in Sources */,
+				BF9ACDC61749B2AA00C05A61 /* TipsLayer.m in Sources */,
+				BF9ACDC71749B2AA00C05A61 /* Collectible.m in Sources */,
+				BF9ACDC81749B2AA00C05A61 /* CollectibleLayer.m in Sources */,
+				BF9ACDC91749B2AA00C05A61 /* PurchaseManager.m in Sources */,
+				BF9ACE3B1749DE9E00C05A61 /* HealerStartScene_iPhone.m in Sources */,
+				BF13AD72174AFE2800A613B1 /* LevelSelectScene_iPhone.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -2088,12 +2427,14 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					DEBUG,
 					"COCOS2D_DEBUG=0",
+					"IS_POCKET=$IS_POCKET",
 				);
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IS_POCKET = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/system\"",
@@ -2122,11 +2463,16 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Healer/Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NDEBUG,
+					"IS_POCKET=$IS_POCKET",
+				);
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IS_POCKET = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/system\"",
@@ -2180,11 +2526,16 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Healer/Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NDEBUG,
+					"IS_POCKET=\"${IS_POCKET}\"",
+				);
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IS_POCKET = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SDKROOT)/usr/lib/system\"",
@@ -2267,6 +2618,261 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+			};
+			name = "Ad Hoc";
+		};
+		BF13AD68174AFA1800A613B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		BF13AD69174AFA1800A613B1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		BF13AD6A174AFA1800A613B1 /* Ad Hoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "Ad Hoc";
+		};
+		BF13AD6D174AFA5400A613B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		BF13AD6E174AFA5400A613B1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		BF13AD6F174AFA5400A613B1 /* Ad Hoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "Ad Hoc";
+		};
+		BF9ACDF71749B2AA00C05A61 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Healer/Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"IS_POCKET=$IS_POCKET",
+					"COCOS2D_DEBUG=0",
+					DEBUG,
+				);
+				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
+				GCC_VERSION = "";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
+				INFOPLIST_FILE = "HealerPocket-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IS_POCKET = 1;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SDKROOT)/usr/lib/system\"",
+					"\"$(SRCROOT)/TestFlight\"",
+				);
+				OTHER_LDFLAGS = "-lz";
+				PRODUCT_NAME = HealerPocket;
+				PROVISIONING_PROFILE = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALID_ARCHS = armv7;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		BF9ACDF81749B2AA00C05A61 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Healer/Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"IS_POCKET=$IS_POCKET",
+					NDEBUG,
+				);
+				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
+				GCC_VERSION = "";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
+				INFOPLIST_FILE = "HealerPocket-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IS_POCKET = 1;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SDKROOT)/usr/lib/system\"",
+					"\"$(SRCROOT)/TestFlight\"",
+				);
+				OTHER_LDFLAGS = "-lz";
+				PRODUCT_NAME = HealerPocket;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = armv7;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		BF9ACDF91749B2AA00C05A61 /* Ad Hoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Healer/Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"IS_POCKET=$IS_POCKET",
+					NDEBUG,
+				);
+				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
+				GCC_VERSION = "";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
+				INFOPLIST_FILE = "HealerPocket-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IS_POCKET = 1;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SDKROOT)/usr/lib/system\"",
+					"\"$(SRCROOT)/TestFlight\"",
+				);
+				OTHER_LDFLAGS = "-lz";
+				PRODUCT_NAME = HealerPocket;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = armv7;
+				WRAPPER_EXTENSION = app;
 			};
 			name = "Ad Hoc";
 		};
@@ -2376,6 +2982,34 @@
 				BF0557C31526BD39006B4781 /* Debug */,
 				BF0557C41526BD39006B4781 /* Release */,
 				BF0557C51526BD39006B4781 /* Ad Hoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BF13AD67174AFA1800A613B1 /* Build configuration list for PBXLegacyTarget "MakeAssetsiPhone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF13AD68174AFA1800A613B1 /* Debug */,
+				BF13AD69174AFA1800A613B1 /* Release */,
+				BF13AD6A174AFA1800A613B1 /* Ad Hoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		BF13AD6C174AFA5400A613B1 /* Build configuration list for PBXLegacyTarget "MakeBossesiPhone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF13AD6D174AFA5400A613B1 /* Debug */,
+				BF13AD6E174AFA5400A613B1 /* Release */,
+				BF13AD6F174AFA5400A613B1 /* Ad Hoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		BF9ACDF61749B2AA00C05A61 /* Build configuration list for PBXNativeTarget "HealerPocket" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF9ACDF71749B2AA00C05A61 /* Debug */,
+				BF9ACDF81749B2AA00C05A61 /* Release */,
+				BF9ACDF91749B2AA00C05A61 /* Ad Hoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

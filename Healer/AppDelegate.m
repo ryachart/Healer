@@ -16,6 +16,12 @@
 #import "Talents.h"
 #import "PurchaseManager.h"
 
+#if IS_POCKET
+    #import "HealerStartScene_iPhone.h"
+#else
+
+#endif
+
 #define TestFlightToken @"6352fe22-b170-4fd7-a38a-60ae0ac77d39"
 
 @implementation AppDelegate
@@ -71,8 +77,16 @@
 	[sharedFileUtils setiPadRetinaDisplaySuffix:@"-ipad-hd"];	// Default on iPad RetinaDisplay is "-ipadhd"
     [director enableRetinaDisplay:YES];
 
+    
     // Run the intro Scene
-	[[CCDirector sharedDirector] pushScene: [[LaunchScene new] autorelease]];
+    if (IS_IPAD) {
+        [[CCDirector sharedDirector] pushScene: [[LaunchScene new] autorelease]];
+    } else {
+#if IS_POCKET
+        [[CCDirector sharedDirector] pushScene:[[HealerStartScene_iPhone new] autorelease]];
+#endif
+    }
+    
     [[PlayerDataManager localPlayer] saveRemotePlayer];
     
     if (![[PlayerDataManager localPlayer] hasPerformedGamePurchaseCheck]) {

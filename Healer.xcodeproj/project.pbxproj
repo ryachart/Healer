@@ -56,6 +56,8 @@
 		BF1079371745565E0077DBBD /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1079361745565E0077DBBD /* StoreKit.framework */; };
 		BF10793A174557DA0077DBBD /* PurchaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BF107939174557DA0077DBBD /* PurchaseManager.m */; };
 		BF1111D716C5C80700A16F2F /* EnemyCastBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BF1111D616C5C80600A16F2F /* EnemyCastBar.m */; };
+		BF13AD77174D6F7200A613B1 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF13AD76174D6F7200A613B1 /* FacebookSDK.framework */; };
+		BF13ADB2174DB57E00A613B1 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF13ADB1174DB57E00A613B1 /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		BF1DDBAC1711F52C0008C946 /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1DDBA81711F52C0008C946 /* libTestFlight.a */; };
 		BF1DDBAD1711F52C0008C946 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBA91711F52C0008C946 /* README.md */; };
 		BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBAA1711F52C0008C946 /* release_notes.md */; };
@@ -645,6 +647,8 @@
 		BF107939174557DA0077DBBD /* PurchaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PurchaseManager.m; path = Healer/PurchaseManager.m; sourceTree = "<group>"; };
 		BF1111D516C5C80600A16F2F /* EnemyCastBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnemyCastBar.h; sourceTree = "<group>"; };
 		BF1111D616C5C80600A16F2F /* EnemyCastBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EnemyCastBar.m; sourceTree = "<group>"; };
+		BF13AD76174D6F7200A613B1 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
+		BF13ADB1174DB57E00A613B1 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		BF1DDBA81711F52C0008C946 /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
 		BF1DDBA91711F52C0008C946 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		BF1DDBAA1711F52C0008C946 /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
@@ -771,6 +775,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF13ADB2174DB57E00A613B1 /* Social.framework in Frameworks */,
 				BF1079371745565E0077DBBD /* StoreKit.framework in Frameworks */,
 				BF1DF41F1722057300046EB2 /* MessageUI.framework in Frameworks */,
 				BF1DDBB017136C4E0008C946 /* CoreLocation.framework in Frameworks */,
@@ -796,6 +801,7 @@
 				38024DBC13C2564D003D36F2 /* Foundation.framework in Frameworks */,
 				38024DBE13C2564D003D36F2 /* CoreGraphics.framework in Frameworks */,
 				BFA5463B15AA097800F9B167 /* Parse.framework in Frameworks */,
+				BF13AD77174D6F7200A613B1 /* FacebookSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -822,6 +828,8 @@
 		38024DAE13C2564D003D36F2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF13ADB1174DB57E00A613B1 /* Social.framework */,
+				BF13AD76174D6F7200A613B1 /* FacebookSDK.framework */,
 				BF1079361745565E0077DBBD /* StoreKit.framework */,
 				BF1DF41E1722057300046EB2 /* MessageUI.framework */,
 				BF1DDBAF17136C4D0008C946 /* CoreLocation.framework */,
@@ -2081,6 +2089,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../FacebookSDK\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2119,6 +2128,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../FacebookSDK\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Healer/Prefix.pch;
@@ -2177,6 +2187,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../FacebookSDK\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Healer/Prefix.pch;

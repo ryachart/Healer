@@ -165,7 +165,7 @@
             if (inactives[i] == 1 || spellsUsedIndex >= self.player.activeSpells.count) {
                 BOOL locked =  i >= [[PlayerDataManager localPlayer] maximumStandardSpellSlots];
                 spellInfoNode = [[SpellInfoNode alloc] initAsEmpty:locked];
-                if (locked) {
+                if (locked && ([PlayerDataManager localPlayer].allOwnedSpells.count > 3)) {
                     [spellInfoNode setupUnlockButton];
                 }
             } else {
@@ -232,7 +232,8 @@
 
 - (void)iconDescriptionModalDidComplete:(id)modal
 {
-    [(IconDescriptionModalLayer*)modal removeFromParentAndCleanup:YES];
+    IconDescriptionModalLayer *completedModal = (IconDescriptionModalLayer*)modal;
+    [completedModal removeFromParentAndCleanup:YES];
 }
 
 #pragma mark - Notifications

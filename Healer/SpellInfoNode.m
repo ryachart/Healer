@@ -110,7 +110,7 @@
 {
     IconDescriptionModalLayer *modalLayer = [[[IconDescriptionModalLayer alloc] initAsMainContentSalesModal] autorelease];
     [modalLayer setDelegate:(PreBattleScene*)self.parent];
-    [self.parent addChild:modalLayer];
+    [self.parent addChild:modalLayer z:100];
     
 }
 @end

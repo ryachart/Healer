@@ -29,9 +29,8 @@
 - (id)initWithBase
 {
     if (self = [super init]) {
-        self.scale = 0;
         
-        self.alertDialogBackground = [[[BackgroundSprite alloc] initWithAssetName:@"alert-dialog-ipad"] autorelease];
+        self.alertDialogBackground = [[[BackgroundSprite alloc] initWithAssetName:@"alert-dialog"] autorelease];
         [self.alertDialogBackground setPosition:CGPointMake(512, 384)];
         [self.alertDialogBackground setAnchorPoint:CGPointMake(.5, .5)];
         [self addChild:self.alertDialogBackground];
@@ -43,9 +42,9 @@
     if (self = [self initWithBase]) {
         BasicButton *doneButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(shouldDismiss) andTitle:@"Done"];
         [doneButton setScale:.75];
-        CCMenu *menu = [CCMenu menuWithItems:doneButton, nil];
-        [menu setPosition:CGPointMake(356, 190)];
-        [self.alertDialogBackground addChild:menu];
+        self.menu = [CCMenu menuWithItems:doneButton, nil];
+        [self.menu setPosition:CGPointMake(356, 190)];
+        [self.alertDialogBackground addChild:self.menu];
         
         NSInteger noIconTitleAdjust = 0;
         NSInteger noIconDescAdjust = 0;
@@ -83,15 +82,9 @@
 
 - (id)initAsMainContentSalesModal
 {
-    if (self = [self initWithBase]) {
-        CCLabelTTFShadow *nameLabel = [CCLabelTTFShadow labelWithString:@"GET THE LEGACY OF TORMENT" dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2, self.alertDialogBackground.contentSize.height / 4) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
-        [nameLabel setPosition:CGPointMake(356, 276)];
-        [nameLabel setColor:ccRED];
-        [self.alertDialogBackground addChild:nameLabel];
-        
-        CCLabelTTFShadow *descLabel = [CCLabelTTFShadow labelWithString:END_FREE_STRING dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2.5, self.alertDialogBackground.contentSize.width / 2) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:14.0];
-        [descLabel setPosition:CGPointMake(364, 122)];
-        [self.alertDialogBackground addChild:descLabel];
+    if (self = [super init]) {
+        self.alertDialogBackground = [[[BackgroundSprite alloc] initWithJPEGAssetName:@"lot-expansion"] autorelease];
+        [self addChild:self.alertDialogBackground];
         
         BasicButton *doneButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(shouldDismiss) andTitle:@"Later"];
         [doneButton setScale:.75];
@@ -100,9 +93,11 @@
         [purchaseButton setScale:.75];
         
         self.menu = [CCMenu menuWithItems:doneButton, purchaseButton, nil];
-        [self.menu alignItemsHorizontally];
-        [self.menu setPosition:CGPointMake(356, 190)];
+        [self.menu alignItemsHorizontallyWithPadding:100];
+        [self.menu setPosition:CGPointMake(512, 70)];
         [self.alertDialogBackground addChild:self.menu];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didPurchaseExpansion) name:PlayerDidPurchaseExpansionNotification object:nil];
     }
     return self;
 }
@@ -110,22 +105,32 @@
 - (void)onEnter {
     [super onEnter];
     
-    [self runAction:[CCScaleTo actionWithDuration:.15 scale:1.0]];
+    float targetScale = self.scale;
+    
+    self.scale = 0;
+    [self runAction:[CCScaleTo actionWithDuration:.15 scale:targetScale]];
     [[CCDirectorIOS sharedDirector].touchDispatcher addTargetedDelegate:self priority:kCCMenuHandlerPriority -1 swallowsTouches:YES];
     
-    [[CCDirectorIOS sharedDirector].touchDispatcher setPriority:kCCMenuHandlerPriority - 2 forDelegate:self.menu];
+    if (self.menu) {
+        [[CCDirectorIOS sharedDirector].touchDispatcher setPriority:kCCMenuHandlerPriority - 2 forDelegate:self.menu];
+    }
 }
 
 - (void)onExit
 {
     [super onExit];
     [[CCDirectorIOS sharedDirector].touchDispatcher removeDelegate:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)didPurchaseExpansion
+{
+    [self shouldDismiss];
 }
 
 - (void)purchaseMainContent
 {
     [[PurchaseManager sharedPurchaseManager] purchaseLegacyOfTorment];
-    [self shouldDismiss];
 }
 
 - (void)shouldDismiss {

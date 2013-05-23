@@ -250,7 +250,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 - (void)completeLevel:(NSInteger)level {
     BOOL isFirstWin = level > [self highestLevelCompleted];
     if (isFirstWin){
-        [self.playerData setValue:[NSNumber numberWithInt:level] forKey:PlayerHighestLevelCompleted ];
+        [self.playerData setValue:[NSNumber numberWithInt:level] forKey:PlayerHighestLevelCompleted];
     }
 }
 

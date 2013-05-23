@@ -103,7 +103,6 @@ static PurchaseManager *_sharedPurchaseManager;
 - (void)completeTransaction:(SKPaymentTransaction*)transaction
 {
     if (transaction.transactionState == SKPaymentTransactionStatePurchased || transaction.transactionState == SKPaymentTransactionStateRestored) {
-        NSLog(@"User Finished Purchasing: %@", transaction.payment.productIdentifier);
         if ([transaction.payment.productIdentifier isEqualToString:GOLD_ONE_ID]) {
             [[PlayerDataManager localPlayer] playerEarnsGold:1000];
         } else if ([transaction.payment.productIdentifier isEqualToString:LEGACY_OF_TORMENT_EXPAC_ID]) {
@@ -115,7 +114,6 @@ static PurchaseManager *_sharedPurchaseManager;
         UIAlertView *thankYou = [[[UIAlertView alloc] initWithTitle:@"Thank you!" message:@"Thank you for your purchase." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil] autorelease];
         [thankYou show];
     } else if (transaction.transactionState == SKPaymentTransactionStateFailed) {
-        NSLog(@"Transaction has entered a failed state.");
         UIAlertView *failedTransaction = [[[UIAlertView alloc] initWithTitle:@"Purchase Failed" message:@"The purchase failed.  You have not been charged.  Please check your internet connection and try again." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
         [failedTransaction show];
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];

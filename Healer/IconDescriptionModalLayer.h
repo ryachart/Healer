@@ -16,7 +16,7 @@
 
 @end
 
-@interface IconDescriptionModalLayer : CCLayer <CCTargetedTouchDelegate>
+@interface IconDescriptionModalLayer : CCLayerColor <CCTargetedTouchDelegate>
 @property (nonatomic, assign) id <IconDescriptorModalDelegate> delegate;
 - (id)initWithAbilityDescriptor:(AbilityDescriptor*)descriptor;
 - (id)initWithIconName:(NSString *)iconName title:(NSString *)title andDescription:(NSString *)description;

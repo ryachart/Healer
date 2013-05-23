@@ -100,14 +100,25 @@ static PurchaseManager *_sharedPurchaseManager;
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
+- (void)saveRemotePurchase:(SKPaymentTransaction*)transaction
+{
+    PFObject *purchaseObject = [PFObject objectWithClassName:@"purchase"];
+    NSString* playerObjectID = [[NSUserDefaults standardUserDefaults] objectForKey:PlayerRemoteObjectIdKey];
+    [purchaseObject setObject:playerObjectID forKey:@"playerObjectId"];
+    [purchaseObject setObject:transaction.payment.productIdentifier forKey:@"productId"];
+    [purchaseObject saveEventually];
+}
+
 - (void)completeTransaction:(SKPaymentTransaction*)transaction
 {
     if (transaction.transactionState == SKPaymentTransactionStatePurchased || transaction.transactionState == SKPaymentTransactionStateRestored) {
         if ([transaction.payment.productIdentifier isEqualToString:GOLD_ONE_ID]) {
             [[PlayerDataManager localPlayer] playerEarnsGold:1000];
+            [self saveRemotePurchase:transaction];
         } else if ([transaction.payment.productIdentifier isEqualToString:LEGACY_OF_TORMENT_EXPAC_ID]) {
             [[PlayerDataManager localPlayer] purchaseContentWithKey:MainGameContentKey];
             [[PlayerDataManager localPlayer] saveLocalPlayer];
+            [self saveRemotePurchase:transaction];
             [[NSNotificationCenter defaultCenter] postNotificationName:PlayerDidPurchaseExpansionNotification object:nil];
         }
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];

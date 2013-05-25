@@ -122,7 +122,7 @@
     }
     
     //Health adjustment
-    finalAmount *= MAX(self.healthPercentage, 0.6);
+    finalAmount *= 1 - (.25 - .25 * self.healthPercentage);
     
     return finalAmount;
 }

@@ -33,7 +33,7 @@
     
     [Parse setApplicationId:@"BajbrSl60Pz6ukDojWg8CAaUdCU7FoWr7UJCiJPs"
                   clientKey:@"2CSX0jPgh7K4X7PfWbmfPdyo3G8OfCqSa41JW4BZ"];
-    
+    [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     [[PurchaseManager sharedPurchaseManager] getProducts];
     

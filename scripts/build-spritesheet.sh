@@ -11,6 +11,7 @@ shop_flavor_1_dir=${PROJECT_DIR}/shop-flavor-1
 shop_flavor_2_dir=${PROJECT_DIR}/shop-flavor-2
 post_battle_dir=${PROJECT_DIR}/postbattle
 map_icon_dir=${PROJECT_DIR}/map-icons
+items_dir=${PROJECT_DIR}/items
 
 asset=`basename $sprites_dir`
 mkdir -p $ASSETS_DIR
@@ -63,5 +64,10 @@ mapicon_plist=$ASSETS_DIR/mapicon-ipad-hd.plist
 mapicon_sheet=$ASSETS_DIR/mapicon-ipad-hd.pvr.ccz
 /usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $mapicon_plist --format cocos2d --sheet $mapicon_sheet --auto-sd $map_icon_dir/*.png
 /usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $mapicon_plist --format cocos2d --sheet $mapicon_sheet $map_icon_dir/*.png
+
+items_plist=$ASSETS_DIR/items-ipad-hd.plist
+items_sheet=$ASSETS_DIR/items-ipad-hd.pvr.ccz
+/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $items_plist --format cocos2d --sheet $items_sheet --auto-sd $items_dir/*.png
+/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $items_plist --format cocos2d --sheet $items_sheet $items_dir/*.png
 
 sh ${PROJECT_DIR}/scripts/build-boss-assets.sh

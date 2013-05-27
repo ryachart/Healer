@@ -8,7 +8,7 @@
 
 #import "cocos2d.h"
 
-@class AbilityDescriptor;
+@class AbilityDescriptor, EquipmentItem;
 
 @protocol IconDescriptorModalDelegate <NSObject>
 
@@ -21,5 +21,6 @@
 - (id)initWithAbilityDescriptor:(AbilityDescriptor*)descriptor;
 - (id)initWithIconName:(NSString *)iconName title:(NSString *)title andDescription:(NSString *)description;
 - (id)initAsMainContentSalesModal;
+- (id)initAsItemSellConfirmModalWithItem:(EquipmentItem*)item;
 @end
 

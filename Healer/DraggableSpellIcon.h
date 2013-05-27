@@ -15,6 +15,5 @@
 @property (nonatomic, retain) Spell *spell;
 
 - (id)initWithSpell:(Spell*)spell;
-- (CCSprite*)draggableSprite;
 
 @end

@@ -41,6 +41,10 @@ NSString* const MusicDisabledKey = @"com.healer.musicDisabled";
 NSString* const EffectsDisabledKey = @"com.healer.effectsDisabled";
 NSString* const HasRequestedAppStoreReviewKey = @"com.healer.requestedAppStoreReview";
 NSString* const GamePurchasedCheckedKey = @"com.healer.gpck";
+NSString* const PlayerInventoryKey = @"com.healer.ou1";
+NSString* const PlayerSlotKey = @"com.healer.eslot";
+NSString* const PlayerAllyDamageUpgradesKey = @"com.healer.paduk";
+NSString* const PlayerAllyHealthUpgradesKey = @"com.healer.pahuk";
 
 //Content Keys
 NSString* const MainGameContentKey = @"com.healer.c1key";
@@ -88,9 +92,14 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         [self saveRemotePlayer];
         [[UIApplication sharedApplication] endBackgroundTask:backgroundExceptionIdentifer];
     });
+    NSLog(@"Saved: \n%@", self.playerData);
 }
 
 - (void)saveRemotePlayer {
+#if TARGET_IPHONE_SIMULATOR
+    NSLog(@"Not saving to Parse because Im the simulator");
+    return;
+#endif
     NSInteger backgroundExceptionIdentifer = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{}];
     dispatch_async([PlayerDataManager parseQueue], ^{
         NSString* playerObjectID = [[NSUserDefaults standardUserDefaults] objectForKey:PlayerRemoteObjectIdKey];
@@ -622,5 +631,158 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         return YES;
     }
     return NO;
+}
+
+#pragma mark - Items
+
+- (NSString *)slotKeyForSlot:(SlotType)slot
+{
+    return [NSString stringWithFormat:@"%@-%i",PlayerSlotKey, slot];
+}
+
+- (NSArray*)inventory
+{
+    NSArray *inventory = [self.playerData objectForKey:PlayerInventoryKey];
+    if (!inventory) {
+        return [NSArray array];
+    }
+    NSMutableArray *decodedInventory = [NSMutableArray arrayWithCapacity:inventory.count];
+    for (NSString *cacheString in inventory) {
+        EquipmentItem *item = [[[EquipmentItem alloc] initWithItemCacheString:cacheString] autorelease];
+        if (item){
+            [decodedInventory addObject:item];
+        }
+    }
+    return decodedInventory;
+}
+
+- (NSInteger)maximumInventorySize
+{
+    return 10;
+}
+
+- (void)playerEarnsItem:(EquipmentItem *)item
+{
+    NSArray *inventory = [self.playerData objectForKey:PlayerInventoryKey];
+    if (!inventory) {
+        inventory = [NSArray array];
+    }
+    NSArray *newInventory = [inventory arrayByAddingObject:item.cacheString];
+    [self.playerData setObject:newInventory forKey:PlayerInventoryKey];
+    [self saveLocalPlayer];
+}
+
+- (void)playerEquipsItem:(EquipmentItem*)item
+{
+    NSArray *inventory = [self inventory];
+    if ([inventory containsObject:item]) {
+        [self playerRemovesItemFromInventory:item];
+        [self.playerData setObject:item.cacheString forKey:[self slotKeyForSlot:item.slot]];
+    }
+    
+    [self saveLocalPlayer];
+}
+
+- (void)playerUnequipsItemInSlot:(SlotType)slot
+{
+    EquipmentItem *item = [[[EquipmentItem alloc] initWithItemCacheString:[self.playerData objectForKey:[self slotKeyForSlot:slot]]] autorelease];
+    if (item) {
+        [item retain];
+        [self.playerData removeObjectForKey:[self slotKeyForSlot:slot]];
+        [self playerEarnsItem:item];
+        [item release];
+    }
+}
+
+- (BOOL)playerCanEquipItem:(EquipmentItem*)item
+{
+    return [self itemForSlot:item.slot] == nil;
+}
+
+- (EquipmentItem*)itemForSlot:(SlotType)slotType
+{
+    NSString *cacheString = [self.playerData objectForKey:[self slotKeyForSlot:slotType]];
+    if (cacheString) {
+        return [[[EquipmentItem alloc] initWithItemCacheString:cacheString] autorelease];
+    }
+    return nil;
+}
+
+- (NSArray *)equippedItems
+{
+    NSMutableArray *items = [NSMutableArray arrayWithCapacity:6];
+    
+    for (int i = 0; i < SlotTypeMaximum; i++) {
+        if ([self itemForSlot:i]) {
+            [items addObject:[self itemForSlot:i]];
+        }
+    }
+    return [NSArray arrayWithArray:items];
+}
+
+- (void)playerSellsItem:(EquipmentItem *)item
+{
+    if ([[self itemForSlot:item.slot] isEqual:item]) {
+        [self playerUnequipsItemInSlot:item.slot];
+    }
+    NSInteger sellPrice = [item salePrice];
+    [self playerRemovesItemFromInventory:item];
+    [self playerEarnsGold:sellPrice];
+}
+
+- (void)playerRemovesItemFromInventory:(EquipmentItem *)item
+{
+    NSArray *inventory = [self inventory];
+    if ([inventory containsObject:item]) {
+        [item retain];
+        NSMutableArray *newInventory = [NSMutableArray arrayWithArray:[self.playerData objectForKey:PlayerInventoryKey]];
+        [newInventory removeObject:item.cacheString];
+        
+        [self.playerData setObject:newInventory forKey:PlayerInventoryKey];
+        [item release];
+    }
+}
+
+#pragma mark - Ally Upgrades
+- (NSInteger)nextAllyDamageUpgradeCost
+{
+    return 200 + [self allyDamageUpgrades] * 50;
+}
+
+- (NSInteger)nextAllyHealthUpgradeCost
+{
+    return 200 + [self allyHealthUpgrades] * 50;
+}
+
+- (NSInteger)allyDamageUpgrades
+{
+    return [[self.playerData objectForKey:PlayerAllyDamageUpgradesKey] integerValue];
+}
+
+- (NSInteger)allyHealthUpgrades
+{
+    return [[self.playerData objectForKey:PlayerAllyHealthUpgradesKey] integerValue];
+}
+
+- (void)purchaseAllyDamageUpgrade
+{
+    NSInteger cost = self.nextAllyDamageUpgradeCost;
+    if (self.gold >= cost) {
+        NSInteger numUpgrades = [[self.playerData objectForKey:PlayerAllyDamageUpgradesKey] integerValue];
+        numUpgrades++;
+        [self.playerData setObject:[NSNumber numberWithInt:numUpgrades] forKey:PlayerAllyHealthUpgradesKey];
+        [self playerLosesGold:cost];
+    }
+}
+
+- (void)purchaseAllyHealthUpgrade
+{
+    NSInteger cost = self.nextAllyHealthUpgradeCost;
+    if (self.gold >= cost) {
+        NSInteger numUpgrades = [[self.playerData objectForKey:PlayerAllyHealthUpgradesKey] integerValue];
+        numUpgrades++;
+        [self.playerData setObject:[NSNumber numberWithInt:numUpgrades] forKey:PlayerAllyHealthUpgradesKey];
+        [self playerLosesGold:cost];
+    }
 }
 @end

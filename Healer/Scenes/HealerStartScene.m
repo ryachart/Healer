@@ -22,6 +22,7 @@
 #import "RatingCounterSprite.h"
 #import "SimpleAudioEngine.h"
 #import "TipsLayer.h"
+#import "InventoryScene.h"
 
 
 @interface HealerStartScene ()
@@ -58,9 +59,11 @@
         
         self.storeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(storeSelected) andTitle:@"Academy"];
         
+        BasicButton *armoryButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(armorySelected) andTitle:@"Armory"];
+        
         CCMenuItem *divinityButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(divinitySelected) andTitle:@"Talents" andAlertPip:[[PlayerDataManager localPlayer] numUnspentTalentChoices] showsLockForDisabled:![[PlayerDataManager localPlayer] isTalentsUnlocked]];
         
-        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, divinityButton, nil];
+        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, armoryButton, divinityButton, nil];
         
         [self.menu alignItemsVerticallyWithPadding:20.0];
         CGSize winSize = [CCDirector sharedDirector].winSize;
@@ -186,6 +189,11 @@
         [modalLayer setDelegate:self];
         [self addChild:modalLayer z:1000];
     }
+}
+
+- (void)armorySelected {
+    InventoryScene *is = [[InventoryScene new] autorelease];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:is]];
 }
 
 - (void)twitterSelected

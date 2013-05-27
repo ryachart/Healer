@@ -58,6 +58,11 @@
 		BF1111D716C5C80700A16F2F /* EnemyCastBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BF1111D616C5C80600A16F2F /* EnemyCastBar.m */; };
 		BF13AD77174D6F7200A613B1 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF13AD76174D6F7200A613B1 /* FacebookSDK.framework */; };
 		BF13ADB2174DB57E00A613B1 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF13ADB1174DB57E00A613B1 /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		BF13ADB817517EFF00A613B1 /* InventoryScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF13ADB717517EFF00A613B1 /* InventoryScene.m */; };
+		BF13ADF41751831800A613B1 /* EquipmentItem.m in Sources */ = {isa = PBXBuildFile; fileRef = BF13ADF31751831700A613B1 /* EquipmentItem.m */; };
+		BF13ADF9175189D800A613B1 /* DraggableItemIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = BF13ADF8175189D800A613B1 /* DraggableItemIcon.m */; };
+		BF13ADFD1751B60600A613B1 /* ItemDescriptionNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF13ADFC1751B60600A613B1 /* ItemDescriptionNode.m */; };
+		BF13AE031753F97900A613B1 /* SellDropSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF13AE021753F97900A613B1 /* SellDropSprite.m */; };
 		BF1DDBAC1711F52C0008C946 /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1DDBA81711F52C0008C946 /* libTestFlight.a */; };
 		BF1DDBAD1711F52C0008C946 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBA91711F52C0008C946 /* README.md */; };
 		BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBAA1711F52C0008C946 /* release_notes.md */; };
@@ -649,6 +654,16 @@
 		BF1111D616C5C80600A16F2F /* EnemyCastBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EnemyCastBar.m; sourceTree = "<group>"; };
 		BF13AD76174D6F7200A613B1 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
 		BF13ADB1174DB57E00A613B1 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		BF13ADB617517EFF00A613B1 /* InventoryScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InventoryScene.h; sourceTree = "<group>"; };
+		BF13ADB717517EFF00A613B1 /* InventoryScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InventoryScene.m; sourceTree = "<group>"; };
+		BF13ADF21751831700A613B1 /* EquipmentItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EquipmentItem.h; sourceTree = "<group>"; };
+		BF13ADF31751831700A613B1 /* EquipmentItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EquipmentItem.m; sourceTree = "<group>"; };
+		BF13ADF7175189D800A613B1 /* DraggableItemIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DraggableItemIcon.h; sourceTree = "<group>"; };
+		BF13ADF8175189D800A613B1 /* DraggableItemIcon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DraggableItemIcon.m; sourceTree = "<group>"; };
+		BF13ADFB1751B60600A613B1 /* ItemDescriptionNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemDescriptionNode.h; sourceTree = "<group>"; };
+		BF13ADFC1751B60600A613B1 /* ItemDescriptionNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemDescriptionNode.m; sourceTree = "<group>"; };
+		BF13AE011753F97900A613B1 /* SellDropSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SellDropSprite.h; sourceTree = "<group>"; };
+		BF13AE021753F97900A613B1 /* SellDropSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SellDropSprite.m; sourceTree = "<group>"; };
 		BF1DDBA81711F52C0008C946 /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
 		BF1DDBA91711F52C0008C946 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		BF1DDBAA1711F52C0008C946 /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
@@ -923,6 +938,7 @@
 		386DD03A145DFF2D0086763E /* Model Objects */ = {
 			isa = PBXGroup;
 			children = (
+				BF13ADF51751831F00A613B1 /* Items */,
 				BFB4640E154A267100503E30 /* Shop */,
 				387E7B77145E290A006D9266 /* Game States */,
 				387E7B75145E28F5006D9266 /* Groups */,
@@ -1028,6 +1044,8 @@
 				BFD106F6163A282D002318CE /* LevelSelectMapScene.m */,
 				387E82A2164F1648009F11E6 /* SettingsScene.h */,
 				387E82A3164F1648009F11E6 /* SettingsScene.m */,
+				BF13ADB617517EFF00A613B1 /* InventoryScene.h */,
+				BF13ADB717517EFF00A613B1 /* InventoryScene.m */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -1158,6 +1176,7 @@
 		38F0504413C2618900BCADCB /* View Objects */ = {
 			isa = PBXGroup;
 			children = (
+				BF13ADFA1751B5F500A613B1 /* Inventory Views */,
 				BF1DF45917220FE400046EB2 /* Tips */,
 				382C463F1648CD9000883CFA /* PreBattle */,
 				BFD106F8163A2944002318CE /* Map Views */,
@@ -1189,6 +1208,39 @@
 				BF05579F15268D0A006B4781 /* ProjectileEffect.m */,
 			);
 			name = Descriptors;
+			sourceTree = "<group>";
+		};
+		BF13ADF51751831F00A613B1 /* Items */ = {
+			isa = PBXGroup;
+			children = (
+				BF13ADF21751831700A613B1 /* EquipmentItem.h */,
+				BF13ADF31751831700A613B1 /* EquipmentItem.m */,
+			);
+			name = Items;
+			sourceTree = "<group>";
+		};
+		BF13ADF6175189C300A613B1 /* Slots */ = {
+			isa = PBXGroup;
+			children = (
+				BF261C331602C74F003307DF /* DraggableSpellIcon.h */,
+				BF261C341602C74F003307DF /* DraggableSpellIcon.m */,
+				BF261C361602C7A3003307DF /* Slot.h */,
+				BF261C371602C7A3003307DF /* Slot.m */,
+				BF13ADF7175189D800A613B1 /* DraggableItemIcon.h */,
+				BF13ADF8175189D800A613B1 /* DraggableItemIcon.m */,
+			);
+			name = Slots;
+			sourceTree = "<group>";
+		};
+		BF13ADFA1751B5F500A613B1 /* Inventory Views */ = {
+			isa = PBXGroup;
+			children = (
+				BF13ADFB1751B60600A613B1 /* ItemDescriptionNode.h */,
+				BF13ADFC1751B60600A613B1 /* ItemDescriptionNode.m */,
+				BF13AE011753F97900A613B1 /* SellDropSprite.h */,
+				BF13AE021753F97900A613B1 /* SellDropSprite.m */,
+			);
+			name = "Inventory Views";
 			sourceTree = "<group>";
 		};
 		BF1DDBA71711F52B0008C946 /* TestFlight */ = {
@@ -1248,21 +1300,10 @@
 			name = Caches;
 			sourceTree = "<group>";
 		};
-		BF261C311602C71D003307DF /* AddRemoveSpell Objects */ = {
-			isa = PBXGroup;
-			children = (
-				BF261C331602C74F003307DF /* DraggableSpellIcon.h */,
-				BF261C341602C74F003307DF /* DraggableSpellIcon.m */,
-				BF261C361602C7A3003307DF /* Slot.h */,
-				BF261C371602C7A3003307DF /* Slot.m */,
-			);
-			name = "AddRemoveSpell Objects";
-			sourceTree = "<group>";
-		};
 		BF448C53154BA49E009401A6 /* UI Layers */ = {
 			isa = PBXGroup;
 			children = (
-				BF261C311602C71D003307DF /* AddRemoveSpell Objects */,
+				BF13ADF6175189C300A613B1 /* Slots */,
 				BF448C55154BA4D1009401A6 /* AddRemoveSpellLayer.h */,
 				BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */,
 				BF448C58154BB04A009401A6 /* SpellInfoNode.h */,
@@ -2024,6 +2065,11 @@
 				BF03E26B1725CA2900F3A429 /* Collectible.m in Sources */,
 				BF03E26F1725CE6700F3A429 /* CollectibleLayer.m in Sources */,
 				BF10793A174557DA0077DBBD /* PurchaseManager.m in Sources */,
+				BF13ADB817517EFF00A613B1 /* InventoryScene.m in Sources */,
+				BF13ADF41751831800A613B1 /* EquipmentItem.m in Sources */,
+				BF13ADF9175189D800A613B1 /* DraggableItemIcon.m in Sources */,
+				BF13ADFD1751B60600A613B1 /* ItemDescriptionNode.m in Sources */,
+				BF13AE031753F97900A613B1 /* SellDropSprite.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

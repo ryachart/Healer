@@ -10,6 +10,7 @@
 #import <Parse/Parse.h>
 #import "Shop.h"
 #import "Player.h"
+#import "EquipmentItem.h"
 
 #define MAX_CHARACTERS 5
 
@@ -110,6 +111,27 @@ extern NSString* const MainGameContentKey;
 - (void)clearLevelRatings;
 
 - (void)setPlayerObjectInformation:(PFObject*)obj;
+
+#pragma mark - Items
+@property (nonatomic, readonly) NSArray *inventory;
+@property (nonatomic, readonly) NSInteger maximumInventorySize;
+@property (nonatomic, readonly) NSArray *equippedItems;
+
+- (EquipmentItem*)itemForSlot:(SlotType)slotType;
+- (void)playerEarnsItem:(EquipmentItem*)item;
+- (BOOL)playerCanEquipItem:(EquipmentItem*)item;
+- (void)playerEquipsItem:(EquipmentItem*)item;
+- (void)playerUnequipsItemInSlot:(SlotType)slot;
+- (void)playerSellsItem:(EquipmentItem*)item;
+
+#pragma mark - Ally Upgrades
+@property (nonatomic, readonly) NSInteger nextAllyDamageUpgradeCost;
+@property (nonatomic, readonly) NSInteger nextAllyHealthUpgradeCost;
+@property (nonatomic, readonly) NSInteger allyDamageUpgrades;
+@property (nonatomic, readonly) NSInteger allyHealthUpgrades;
+
+- (void)purchaseAllyDamageUpgrade;
+- (void)purchaseAllyHealthUpgrade;
 
 #pragma mark - Settings
 @property (nonatomic, readwrite) BOOL musicDisabled;

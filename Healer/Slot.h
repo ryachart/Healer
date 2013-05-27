@@ -20,6 +20,10 @@
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *accessoryTitle;
 @property (nonatomic, readwrite) BOOL isLocked;
+@property (nonatomic, readwrite) NSInteger slotType;
+@property (nonatomic, readwrite) ccColor3B titleColor;
+@property (nonatomic, readwrite) BOOL isSelected;
+@property (nonatomic, readwrite) ccColor3B selectionColor;
 
 - (id)initWithInhabitantOrNil:(CCSprite*)inhabitant;
 - (BOOL)canDropIntoSlotFromRect:(CGRect)candidateRect;

@@ -106,7 +106,7 @@
 }
 
 -(float)dps{
-    return (float)self.damageDealt  / _damageFrequency;
+    return (float)_damageDealt  / _damageFrequency;
 }
 
 -(NSInteger)damageDealt{

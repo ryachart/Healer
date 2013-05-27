@@ -13,7 +13,8 @@
 #import "CCLabelTTFShadow.h"
 #import "PlayerDataManager.h"
 #import "PurchaseManager.h"
-
+#import "EquipmentItem.h"
+#import "ItemDescriptionNode.h"
 
 #define TARGET_WIDTH 75.0f
 #define TARGET_HEIGHT 75.0f
@@ -22,9 +23,16 @@
 @interface IconDescriptionModalLayer ()
 @property (nonatomic, assign) BackgroundSprite *alertDialogBackground;
 @property (nonatomic, assign) CCMenu *menu;
+@property (nonatomic, retain) EquipmentItem *item;
 @end
 
 @implementation IconDescriptionModalLayer
+
+- (void)dealloc
+{
+    [_item release];
+    [super dealloc];
+}
 
 - (id)initWithBase
 {
@@ -76,6 +84,43 @@
 - (id)initWithAbilityDescriptor:(AbilityDescriptor *)descriptor {
     if (self = [self initWithIconName:descriptor.iconName title:descriptor.abilityName andDescription:descriptor.abilityDescription]) {
         
+    }
+    return self;
+}
+
+- (id)initAsItemSellConfirmModalWithItem:(EquipmentItem *)item
+{
+    if (self = [self initWithBase]) {
+        self.item = item;
+        BasicButton *cancelButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(shouldDismiss) andTitle:@"Cancel"];
+        [cancelButton setScale:.75];
+        
+        BasicButton *sellButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(sellItem) andTitle:@"Sell"];
+        [sellButton setScale:.75];
+        
+        CCLabelTTFShadow *nameLabel = [CCLabelTTFShadow labelWithString:@"Are you sure you want to sell" dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2, self.alertDialogBackground.contentSize.height / 4) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        [nameLabel setPosition:CGPointMake(356, 276)];
+        [self.alertDialogBackground addChild:nameLabel];
+        
+        CCLabelTTFShadow *itemNameLabel = [CCLabelTTFShadow labelWithString:item.name dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2, self.alertDialogBackground.contentSize.height / 4) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        [itemNameLabel setPosition:CGPointMake(356, 246)];
+        [itemNameLabel setColor:[ItemDescriptionNode colorForRarity:item.rarity]];
+        [self.alertDialogBackground addChild:itemNameLabel];
+        
+        CCLabelTTFShadow *costLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"for %i ", item.salePrice] fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        [costLabel setHorizontalAlignment:kCCTextAlignmentCenter];
+        [costLabel setPosition:CGPointMake(356, 246)];
+        [self.alertDialogBackground addChild:costLabel];
+        
+        CCSprite *coinSprite = [CCSprite spriteWithSpriteFrameName:@"gold_coin.png"];
+        [coinSprite setPosition:CGPointMake(costLabel.position.x + costLabel.contentSize.width - 25, costLabel.position.y)];
+        [coinSprite setScale:.25];
+        [self.alertDialogBackground addChild:coinSprite];
+        
+        self.menu = [CCMenu menuWithItems:cancelButton, sellButton, nil];
+        [self.menu setPosition:CGPointMake(356, 190)];
+        [self.menu alignItemsHorizontallyWithPadding:4];
+        [self.alertDialogBackground addChild:self.menu];
     }
     return self;
 }
@@ -134,6 +179,12 @@
 }
 
 - (void)shouldDismiss {
+    [self.delegate iconDescriptionModalDidComplete:self];
+}
+
+- (void)sellItem
+{
+    [[PlayerDataManager localPlayer] playerSellsItem:self.item];
     [self.delegate iconDescriptionModalDidComplete:self];
 }
 

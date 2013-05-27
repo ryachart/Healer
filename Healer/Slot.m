@@ -7,13 +7,15 @@
 //
 
 #import "Slot.h"
+#import "CCLabelTTFShadow.h"
 
 #define DEFAULT_INHABITANT_Z 0
 
 @interface Slot ()
-@property (nonatomic, assign) CCLabelTTF *titleLabel;
-@property (nonatomic, assign) CCLabelTTF *accessoryLabel;
+@property (nonatomic, assign) CCLabelTTFShadow *titleLabel;
+@property (nonatomic, assign) CCLabelTTFShadow *accessoryLabel;
 @property (nonatomic, assign) CCSprite *lockedSprite;
+@property (nonatomic, readwrite) CCSprite *selectedSprite;
 @end
 
 @implementation Slot
@@ -27,15 +29,21 @@
 
 - (id)initWithInhabitantOrNil:(CCSprite*)inhabitant{
     if (self = [super initWithSpriteFrameName:@"spell_icon_back.png"]){
+        self.selectedSprite = [CCSprite spriteWithSpriteFrameName:@"spell_icon_selected.png"];
+        self.selectedSprite.position = CGPointMake(self.contentSize.width/2, self.contentSize.height/2);
+        [self.selectedSprite setVisible:NO];
+        [self addChild:self.selectedSprite z:-1];
+        self.selectionColor = ccYELLOW;
+        
         self.inhabitant = inhabitant;
         
         [self configureInhabitant];
         
-        self.titleLabel = [CCLabelTTF labelWithString:nil dimensions:CGSizeMake(self.contentSize.width, 40) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:16.0];
+        self.titleLabel = [CCLabelTTFShadow    labelWithString:nil dimensions:CGSizeMake(self.contentSize.width, 40) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:16.0];
         [self.titleLabel setPosition:CGPointMake(self.contentSize.width / 2, -20)];
         [self addChild:self.titleLabel];
         
-        self.accessoryLabel = [CCLabelTTF labelWithString:nil dimensions:CGSizeMake(140, 70) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        self.accessoryLabel = [CCLabelTTFShadow labelWithString:nil dimensions:CGSizeMake(140, 70) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [self.accessoryLabel setPosition:CGPointMake(self.contentSize.width * 1.75, self.contentSize.height / 2 - 10)];
         [self addChild:self.accessoryLabel];
         
@@ -52,6 +60,12 @@
 {
     _isLocked = isLocked;
     self.lockedSprite.visible = _isLocked;
+}
+
+- (void)setIsSelected:(BOOL)isSelected
+{
+    _isSelected = isSelected;
+    self.selectedSprite.visible = isSelected;
 }
 
 - (void)setTitle:(NSString *)title {
@@ -97,7 +111,7 @@
 }
 
 - (void)dropInhabitant:(CCSprite *)inhabitant {
-    if (self.inhabitant == nil){
+    if (inhabitant == nil){
         [self.inhabitant removeFromParentAndCleanup:YES];
     }
     
@@ -114,5 +128,17 @@
     CCSprite *inhabitant = [self.inhabitant retain];
     self.inhabitant = nil;
     return [inhabitant autorelease];
+}
+
+- (void)setTitleColor:(ccColor3B)titleColor
+{
+    _titleColor = titleColor;
+    self.titleLabel.color = titleColor;
+}
+
+- (void)setSelectionColor:(ccColor3B)selectionColor
+{
+    _selectionColor = selectionColor;
+    self.selectedSprite.color = selectionColor;
 }
 @end

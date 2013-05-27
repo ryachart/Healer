@@ -22,8 +22,4 @@
     }
     return self;
 }
-
-- (CCSprite*)draggableSprite{
-    return nil;
-}
 @end

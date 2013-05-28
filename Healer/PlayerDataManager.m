@@ -69,6 +69,9 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     if ([[PlayerDataManager localPlayer] isTalentsUnlocked]){
         [basicPlayer setDivinityConfig:[[PlayerDataManager localPlayer] localTalentConfig]];
     }
+    if ([PlayerDataManager localPlayer].equippedItems.count > 0) {
+        [basicPlayer setEquippedItems:[PlayerDataManager localPlayer].equippedItems];
+    }
     return basicPlayer;
 }
 
@@ -770,7 +773,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     if (self.gold >= cost) {
         NSInteger numUpgrades = [[self.playerData objectForKey:PlayerAllyDamageUpgradesKey] integerValue];
         numUpgrades++;
-        [self.playerData setObject:[NSNumber numberWithInt:numUpgrades] forKey:PlayerAllyHealthUpgradesKey];
+        [self.playerData setObject:[NSNumber numberWithInt:numUpgrades] forKey:PlayerAllyDamageUpgradesKey];
         [self playerLosesGold:cost];
     }
 }

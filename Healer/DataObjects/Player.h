@@ -63,6 +63,7 @@ typedef int CastingDisabledReason;
 @property (nonatomic, readonly) BOOL hasDodged;
 @property (nonatomic, readonly) BOOL canDodge;
 @property (nonatomic, readonly) BOOL isBlinded;
+@property (nonatomic, retain) NSArray *equippedItems;
 
 //Temporal Combat Data
 @property (nonatomic, readwrite) float lastEnergyRegen;

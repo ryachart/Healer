@@ -11,6 +11,7 @@
 #import <GameKit/GameKit.h>
 #import "Talents.h"
 #import "CombatEvent.h"
+#import "EquipmentItem.h"
 
 @interface Player ()
 @property (nonatomic, readwrite) NSTimeInterval redemptionTimeApplied;
@@ -19,6 +20,7 @@
 @property (nonatomic, readwrite) NSTimeInterval godstouchTimeApplied;
 @property (nonatomic, readwrite) NSTimeInterval currentSpellCastTime;
 @property (nonatomic, readwrite) float dodgeRemaining;
+@property (nonatomic, readwrite) NSInteger maximumHealth;
 @end
 
 @implementation Player
@@ -31,6 +33,7 @@
     [_spellsOnCooldown release]; _spellsOnCooldown = nil;
     [_additionalTargets release]; _additionalTargets = nil;
     [_divinityConfig release]; _divinityConfig = nil;
+    [_equippedItems release]; _equippedItems = nil;
     [super dealloc];
 }
 
@@ -55,6 +58,7 @@
         self.spellCriticalChance = .1; //10% Base chance to crit
         self.criticalBonusMultiplier = 1.5; //50% more on a crit
         self.damageDealt = 1000;
+        self.equippedItems = [NSArray array];
         _spellsOnCooldown = [[NSMutableSet setWithCapacity:4] retain];
         
         for (int i = 0; i < CastingDisabledReasonTotal; i++){
@@ -77,6 +81,10 @@
     for (Effect *eff in self.activeEffects) {
         base += eff.cooldownMultiplierAdjustment;
     }
+    
+    for (EquipmentItem *item in self.equippedItems) {
+        base += (item.speed / 100.0);
+    }
     return base;
 }
 
@@ -88,7 +96,28 @@
         base += eff.criticalChanceAdjustment;
     }
     
+    for (EquipmentItem *item in self.equippedItems) {
+        base += (item.crit / 100.0);
+    }
+    
     return base;
+}
+
+- (NSInteger)maximumHealth
+{
+    NSInteger base = [super maximumHealth];
+    NSInteger adjustment = 0;
+    float multiplier = 1;
+    
+    for (EquipmentItem *item in self.equippedItems) {
+        adjustment += item.health;
+    }
+    
+    for (Effect *eff in self.activeEffects) {
+        multiplier += eff.maximumHealthMultiplierAdjustment;
+    }
+    
+    return base + adjustment * multiplier;
 }
 
 - (void)setHealth:(NSInteger)newHealth
@@ -186,6 +215,20 @@
     return adjustment;
 }
 
+-(float)healingDoneMultiplier{
+    float base = 1.0;
+    
+    for (Effect *eff in self.activeEffects){
+        base += [eff healingDoneMultiplierAdjustment];
+    }
+    
+    for (EquipmentItem *item in self.equippedItems) {
+        base += (item.healing / 100.0);
+    }
+    
+    return MAX(0, base);
+}
+
 - (float)spellCostAdjustment {
     float adjustment = 1.0;
     for (Effect *effect in self.activeEffects){
@@ -205,6 +248,10 @@
     
     for (Effect *effect in self.activeEffects) {
         adjustment -= effect.castTimeAdjustment;
+    }
+    
+    for (EquipmentItem *item in self.equippedItems) {
+        adjustment -= (item.speed / 100.0);
     }
     
     adjustment = MAX(adjustment, .5);
@@ -447,6 +494,10 @@
         
         for (Effect *eff in self.activeEffects) {
             energyRegenAdjustment += [eff energyRegenAdjustment];
+        }
+        
+        for (EquipmentItem *item in self.equippedItems) {
+            energyRegenAdjustment += (item.regen / 100);
         }
         
         [self setEnergy:_energy + (_energyRegenPerSecond * energyRegenAdjustment * tickFactor) + [self channelingBonus]];

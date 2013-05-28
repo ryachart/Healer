@@ -16,6 +16,7 @@
 #import "DraggableItemIcon.h"
 #import "ItemDescriptionNode.h"
 #import "SellDropSprite.h"
+#import "GoldCounterSprite.h"
 #import "CCLabelTTFShadow.h"
 
 @interface InventoryScene ()
@@ -31,6 +32,13 @@
 @property (nonatomic, assign) ItemDescriptionNode *itemDescriptionNode;
 @property (nonatomic, assign) SellDropSprite *sellDrop;
 @property (nonatomic, assign) CCLabelTTFShadow *statsLabel;
+
+@property (nonatomic, assign) CCLabelTTFShadow *allyDamage;
+@property (nonatomic, assign) CCLabelTTFShadow *allyHealth;
+@property (nonatomic, assign) CCNode *allyDamageCostNode;
+@property (nonatomic, assign) CCNode *allyHealthCostNode;
+@property (nonatomic, assign) BasicButton *allyHealthUpgradeButton;
+@property (nonatomic, assign) BasicButton *allyDamageUpgradeButton;
 @end
 
 #define INVENTORY_ROW_SIZE 5
@@ -53,7 +61,7 @@
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/items.plist"];
         
         CCSprite *healerPortrait = [CCSprite spriteWithSpriteFrameName:@"healer-portrait.png"];
-        [healerPortrait setPosition:CGPointMake(200, 350)];
+        [healerPortrait setPosition:CGPointMake(180, 380)];
         [self addChild:healerPortrait];
         
         CGPoint slotOffsets = CGPointMake(healerPortrait.position.x * healerPortrait.anchorPoint.x, healerPortrait.position.y * healerPortrait.anchorPoint.y);
@@ -130,7 +138,7 @@
         [self addChild:self.itemDescriptionNode];
         
         self.sellDrop = [[[SellDropSprite alloc] init] autorelease];
-        [self.sellDrop setPosition:CGPointMake(800, 100)];
+        [self.sellDrop setPosition:CGPointMake(800, 200)];
         [self addChild:self.sellDrop];
         
         CCLabelTTFShadow *statsTitleLabel = [CCLabelTTFShadow labelWithString:@"Stats:" fontName:@"TrebuchetMS-Bold" fontSize:28.0];
@@ -140,6 +148,31 @@
         self.statsLabel = [CCLabelTTFShadow labelWithString:[self statsString] dimensions:CGSizeMake(200, 600) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS" fontSize:14.0];
         [self.statsLabel setPosition:CGPointMake(475, 220)];
         [self addChild:self.statsLabel];
+        
+        self.allyDamage = [CCLabelTTFShadow labelWithString:@"Ally Damage:\n+0%" fontName:@"TrebuchetMS-Bold" fontSize:28.0];
+        [self.allyDamage setPosition:CGPointMake(300, 120)];
+        [self addChild:self.allyDamage];
+        
+        self.allyHealth = [CCLabelTTFShadow labelWithString:@"Ally Health:\n+0%" fontName:@"TrebuchetMS-Bold" fontSize:28.0];
+        [self.allyHealth setPosition:CGPointMake(500, 120)];
+        [self addChild:self.allyHealth];
+        
+        GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
+        [goldCounter setPosition:CGPointMake(900, 45)];
+        [self addChild:goldCounter];
+        
+        self.allyHealthUpgradeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(upgradeAllyHealth) andTitle:@"Upgrade"];
+        [self.allyHealthUpgradeButton setScale:.5];
+        
+        self.allyDamageUpgradeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(upgradeAllyDamage) andTitle:@"Upgrade"];
+        [self.allyDamageUpgradeButton setScale:.5];
+        
+        [self configureAllyUpgrades];
+        
+        CCMenu *upgradeMenu = [CCMenu menuWithItems:self.allyDamageUpgradeButton,self.allyHealthUpgradeButton, nil];
+        [upgradeMenu setPosition:CGPointMake(400, 28)];
+        [upgradeMenu alignItemsHorizontallyWithPadding:90];
+        [self addChild:upgradeMenu];
         
     }
     return self;
@@ -189,11 +222,32 @@
         [slot inhabitantRemovedForDragging]; //Clear all the inhabitants
     }
     
-    for (int i = 0; i < inventory.count; i++) {
+    for (int i = 0; i < MIN(10,inventory.count); i++) {
         EquipmentItem *currentItem = [inventory objectAtIndex:i];
         DraggableItemIcon *itemSprite = [[[DraggableItemIcon alloc] initWithEquipmentItem:currentItem] autorelease];
         [[self.inventorySlots objectAtIndex:i] dropInhabitant:itemSprite];
     }
+}
+
+- (void)configureAllyUpgrades
+{
+    if (self.allyDamageCostNode) {
+        [self.allyDamageCostNode removeFromParentAndCleanup:YES];
+    }
+    if (self.allyHealthCostNode) {
+        [self.allyHealthCostNode removeFromParentAndCleanup:YES];
+    }
+    
+    self.allyDamage.string = [NSString stringWithFormat:@"Ally Damage:\n+%i%%", [PlayerDataManager localPlayer].allyDamageUpgrades];
+    self.allyHealth.string = [NSString stringWithFormat:@"Ally Health:\n+%i%%", [PlayerDataManager localPlayer].allyHealthUpgrades];
+    
+    self.allyHealthCostNode = [GoldCounterSprite goldCostNodeForCost:[PlayerDataManager localPlayer].nextAllyHealthUpgradeCost];
+    [self.allyHealthCostNode setPosition:CGPointMake(550, 50)];
+    [self addChild:self.allyHealthCostNode];
+    
+    self.allyDamageCostNode = [GoldCounterSprite goldCostNodeForCost:[PlayerDataManager localPlayer].nextAllyDamageUpgradeCost];
+    [self.allyDamageCostNode setPosition:CGPointMake(350, 50)];
+    [self addChild:self.allyDamageCostNode];
 }
 
 -(void)back
@@ -383,11 +437,13 @@
 - (void)upgradeAllyHealth
 {
     [[PlayerDataManager localPlayer] purchaseAllyHealthUpgrade];
+    [self configureAllyUpgrades];
 }
 
 - (void)upgradeAllyDamage
 {
     [[PlayerDataManager localPlayer] purchaseAllyDamageUpgrade];
+    [self configureAllyUpgrades];
 }
 
 #pragma mark - IconDescriptorModalDelegate

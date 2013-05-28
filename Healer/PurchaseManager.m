@@ -8,6 +8,7 @@
 
 #import "PurchaseManager.h"
 #import "PlayerDataManager.h"
+#import <Parse/Parse.h>
 
 #define LEGACY_OF_TORMENT_EXPAC_ID @"torment_expac"
 #define GOLD_ONE_ID @"gold_one"
@@ -111,24 +112,33 @@ static PurchaseManager *_sharedPurchaseManager;
 
 - (void)completeTransaction:(SKPaymentTransaction*)transaction
 {
-    if (transaction.transactionState == SKPaymentTransactionStatePurchased || transaction.transactionState == SKPaymentTransactionStateRestored) {
-        if ([transaction.payment.productIdentifier isEqualToString:GOLD_ONE_ID]) {
-            [[PlayerDataManager localPlayer] playerEarnsGold:1000];
-            [self saveRemotePurchase:transaction];
-        } else if ([transaction.payment.productIdentifier isEqualToString:LEGACY_OF_TORMENT_EXPAC_ID]) {
-            [[PlayerDataManager localPlayer] purchaseContentWithKey:MainGameContentKey];
-            [[PlayerDataManager localPlayer] saveLocalPlayer];
-            [self saveRemotePurchase:transaction];
-            [[NSNotificationCenter defaultCenter] postNotificationName:PlayerDidPurchaseExpansionNotification object:nil];
-        }
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-        UIAlertView *thankYou = [[[UIAlertView alloc] initWithTitle:@"Thank you!" message:@"Thank you for your purchase." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil] autorelease];
-        [thankYou show];
-    } else if (transaction.transactionState == SKPaymentTransactionStateFailed) {
+    if (transaction.transactionState == SKPaymentTransactionStateFailed) {
         UIAlertView *failedTransaction = [[[UIAlertView alloc] initWithTitle:@"Purchase Failed" message:@"The purchase failed.  You have not been charged.  Please check your internet connection and try again." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
         [failedTransaction show];
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    } else if (transaction.transactionState == SKPaymentTransactionStatePurchased) {
+            [PFPurchase downloadAssetForTransaction:transaction completion:^(NSString *filepath, NSError *error) {
+                [self awardPurchase:transaction];
+            }];
+    } else if (transaction.transactionState == SKPaymentTransactionStateRestored) {
+        [self awardPurchase:transaction];
     }
+}
+
+- (void)awardPurchase:(SKPaymentTransaction *)transaction
+{
+    if ([transaction.payment.productIdentifier isEqualToString:GOLD_ONE_ID]) {
+        [[PlayerDataManager localPlayer] playerEarnsGold:1000];
+        [self saveRemotePurchase:transaction];
+    } else if ([transaction.payment.productIdentifier isEqualToString:LEGACY_OF_TORMENT_EXPAC_ID]) {
+        [[PlayerDataManager localPlayer] purchaseContentWithKey:MainGameContentKey];
+        [[PlayerDataManager localPlayer] saveLocalPlayer];
+        [self saveRemotePurchase:transaction];
+        [[NSNotificationCenter defaultCenter] postNotificationName:PlayerDidPurchaseExpansionNotification object:nil];
+    }
+    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    UIAlertView *thankYou = [[[UIAlertView alloc] initWithTitle:@"Thank you!" message:@"Thank you for your purchase." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil] autorelease];
+    [thankYou show];
 }
 
 #pragma mark - SKRequestDelegate

@@ -118,7 +118,6 @@
 		BFD106F7163A282D002318CE /* LevelSelectMapScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106F6163A282D002318CE /* LevelSelectMapScene.m */; };
 		BFD106FB163A2956002318CE /* LevelSelectMapNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106FA163A2956002318CE /* LevelSelectMapNode.m */; };
 		BFD106FE163A29D5002318CE /* LevelSelectSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106FD163A29D5002318CE /* LevelSelectSprite.m */; };
-		BFD240CD16AC8E09007010D0 /* bosses in Resources */ = {isa = PBXBuildFile; fileRef = BFD240CC16AC8E09007010D0 /* bosses */; };
 		BFD804F51530D17400570A0A /* Encounter.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD804F41530D17400570A0A /* Encounter.m */; };
 		BFD8EC59160ED2E100BAF83A /* libChipmunk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB70160ED1FF00BAF83A /* libChipmunk.a */; };
 		BFD8EC5A160ED2E100BAF83A /* libcocos2d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB72160ED1FF00BAF83A /* libcocos2d.a */; };
@@ -1929,7 +1928,6 @@
 				BF87D85B1601ABFB00BEAD5B /* tips.plist in Resources */,
 				BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */,
 				BF4CD1CA1642D61600EB2336 /* DebugViewController.xib in Resources */,
-				BFD240CD16AC8E09007010D0 /* bosses in Resources */,
 				BFE66EDF16D9749800B9FBEE /* fonts in Resources */,
 				BF1DDBAD1711F52C0008C946 /* README.md in Resources */,
 				BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */,

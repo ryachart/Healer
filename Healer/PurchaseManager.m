@@ -107,22 +107,33 @@ static PurchaseManager *_sharedPurchaseManager;
     NSString* playerObjectID = [[NSUserDefaults standardUserDefaults] objectForKey:PlayerRemoteObjectIdKey];
     [purchaseObject setObject:playerObjectID forKey:@"playerObjectId"];
     [purchaseObject setObject:transaction.payment.productIdentifier forKey:@"productId"];
+    [purchaseObject setObject:transaction.transactionIdentifier forKey:@"transactionId"];
     [purchaseObject saveEventually];
 }
 
 - (void)completeTransaction:(SKPaymentTransaction*)transaction
 {
     if (transaction.transactionState == SKPaymentTransactionStateFailed) {
-        UIAlertView *failedTransaction = [[[UIAlertView alloc] initWithTitle:@"Purchase Failed" message:@"The purchase failed.  You have not been charged.  Please check your internet connection and try again." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
-        [failedTransaction show];
+        [self transactionFailed:transaction];
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
     } else if (transaction.transactionState == SKPaymentTransactionStatePurchased) {
             [PFPurchase downloadAssetForTransaction:transaction completion:^(NSString *filepath, NSError *error) {
-                [self awardPurchase:transaction];
+                if (!error) {
+                    [self awardPurchase:transaction];
+                } else {
+                    NSLog(@"ERROR: %@", error.description);
+                    [self transactionFailed:transaction];
+                }
             }];
     } else if (transaction.transactionState == SKPaymentTransactionStateRestored) {
         [self awardPurchase:transaction];
     }
+}
+
+- (void)transactionFailed:(SKPaymentTransaction *)transaction
+{
+    UIAlertView *failedTransaction = [[[UIAlertView alloc] initWithTitle:@"Purchase Failed" message:@"The purchase failed.  You have not been charged.  Please check your internet connection and try again." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
+    [failedTransaction show];
 }
 
 - (void)awardPurchase:(SKPaymentTransaction *)transaction

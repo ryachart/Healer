@@ -8,7 +8,9 @@
 
 #import "cocos2d.h"
 
+@class CCLabelTTFShadow;
+
 @interface RatingCounterSprite : CCSprite
 @property (nonatomic, readwrite) BOOL updatesAutomatically; //Defaults to YES
-@property (nonatomic, assign) CCLabelTTF *ratingAmountLabel;
+@property (nonatomic, assign) CCLabelTTFShadow *ratingAmountLabel;
 @end

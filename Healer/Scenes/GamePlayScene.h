@@ -35,6 +35,7 @@
 @property (nonatomic, retain) PlayerSpellButton *spellView2;
 @property (nonatomic, retain) PlayerSpellButton *spellView3;
 @property (nonatomic, retain) PlayerSpellButton *spellView4;
+@property (nonatomic, retain) PlayerSpellButton *weaponSpell;
 @property (nonatomic, retain) RaidView* raidView;
 @property (nonatomic, retain) BossHealthView *bossHealthView;
 @property (nonatomic, retain) PlayerStatusView *playerStatusView;

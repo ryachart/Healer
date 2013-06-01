@@ -1342,6 +1342,7 @@
         [wp setInfo:@"Teritha covers your allies in a malicious curse that deals damage until their health is reduced to 35% or less."];
         
         RaidDamagePulse *pulse = [[[RaidDamagePulse alloc] init] autorelease];
+        [pulse setInfo:@"When you begin fighting Teritha she starts a dark ritual.  All hope is lost if you and your allies cannot defeat her before she gains Ultimate Corruption."];
         [pulse setIconName:@"poison_explosion.png"];
         [pulse setActivationTime:2.0];
         [pulse setTitle:@"Ultimate Corruption"];
@@ -1349,7 +1350,7 @@
         [pulse setAbilityValue:2500];
         [pulse setNumTicks:4];
         [pulse setDuration:12.0];
-        [pulse setCooldown:200.0];
+        [pulse setCooldown:220.0];
         [self addAbility:pulse];
     }
 }
@@ -1911,16 +1912,42 @@
     [boss.tailLash setAbilityValue:320];
     [boss.tailLash setCooldown:17.5];
     
+    [boss addAbilityDescriptor:[(SkeletalDragon*)boss flyingDescriptor]];
+    
     return [boss autorelease];
 }
 
+- (AbilityDescriptor *)flyingDescriptor
+{
+    AbilityDescriptor *flying= [[[AbilityDescriptor alloc] init] autorelease];
+    [flying setIconName:@"flying.png"];
+    [flying setAbilityDescription:@"The Skeletal Dragon is flying above you and your allies."];
+    [flying setAbilityName:@"Flying"];
+    return flying;
+}
+
+- (AbilityDescriptor *)groundedDescriptor
+{
+    AbilityDescriptor *grounded = [[[AbilityDescriptor alloc] init] autorelease];
+    [grounded setIconName:@"grounded.png"];
+    [grounded setAbilityName:@"Grounded"];
+    [grounded setAbilityDescription:@"The Skeletal Dragon has landed and will thrash your enemies with its claws."];
+    return grounded;
+}
+
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
+    
+
+    
     if (percentage == 99.0){
         [self.announcer announce:@"The Skeletal Dragon hovers angrily above your allies."];
         [self.announcer playAudioForTitle:@"dragonwings.mp3"];
+        
     }
     
     if (percentage == 66.0){
+        [self clearExtraDescriptors];
+        [self addAbilityDescriptor:[self groundedDescriptor]];
         [self.announcer playAudioForTitle:@"stomp.wav"];
         [self.announcer displayScreenShakeForDuration:.33];
         [self.announcer announce:@"The Skeletal Dragon lands and begins to thrash your allies"];
@@ -1931,6 +1958,8 @@
     }
     
     if (percentage == 33.0){
+        [self clearExtraDescriptors];
+        [self addAbilityDescriptor:[self flyingDescriptor]];
         [self.announcer announce:@"The Skeletal Dragon soars off into the air."];
         [self.announcer playAudioForTitle:@"dragonwings.mp3"];
         [self.sweepingFlame setCooldown:14.5];
@@ -1941,6 +1970,8 @@
     }
 
     if (percentage == 5.0){
+        [self clearExtraDescriptors];
+        [self addAbilityDescriptor:[self groundedDescriptor]];
         [self.announcer displayScreenShakeForDuration:.66];
         [self.announcer playAudioForTitle:@"stomp1.wav"];
         [self.announcer announce:@"The Skeletal Dragon crashes down onto your allies from the sky."];

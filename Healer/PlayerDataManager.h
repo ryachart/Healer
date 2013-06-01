@@ -16,6 +16,12 @@
 
 #define END_FREE_ENCOUNTER_LEVEL 7
 
+#define STAMINA_NOT_LOADED -9999
+
+#define MAXIMUM_ALLY_UPGRADES 99999
+
+typedef void (^SpendStaminaResultBlock)(BOOL success);
+
 #define END_FREE_STRING @"Purchase The Legacy of Torment Expansion to unlock new bosses, an additional spell slot, the Cleric's Archives, and the Sage Vault!"
 
 typedef enum {
@@ -32,6 +38,7 @@ extern NSString* const PlayerHighestLevelCompleted;
 extern NSString* const PlayerRemoteObjectIdKey;
 extern NSString* const PlayerGold;
 extern NSString* const PlayerGoldDidChangeNotification;
+extern NSString* const PlayerStaminaDidChangeNotification;
 
 extern NSString* const MainGameContentKey;
 
@@ -140,4 +147,11 @@ extern NSString* const MainGameContentKey;
 - (void)resetPlayer;
 - (void)unlockAll;
 
+#pragma mark - Stamina
+@property (nonatomic, readonly) NSInteger stamina;
+@property (nonatomic, readonly) NSInteger maxStamina;
+@property (nonatomic, readonly, retain) NSDate *nextStamina;
+@property (nonatomic, readonly) NSTimeInterval secondsUntilNextStamina;
+- (void)staminaUsedWithCompletion:(SpendStaminaResultBlock)block;
+- (void)checkStamina;
 @end

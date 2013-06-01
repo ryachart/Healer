@@ -42,6 +42,8 @@ typedef enum {
 @property (nonatomic, retain) Effect* appliedEffect;
 @property (nonatomic, readwrite) BOOL isExclusiveEffectTarget;
 @property (nonatomic, readwrite) BOOL isMultitouch;
+@property (nonatomic, readwrite) BOOL isItem;
+@property (nonatomic, retain) NSString *itemSpriteName;
 
 @property (nonatomic, readonly) NSString* spellTypeDescription;
 @property (nonatomic, readwrite) SpellType spellType;
@@ -95,6 +97,7 @@ typedef enum {
 @end
 
 @interface Barrier : Spell //Fast cast expensive Absorb
+@property (nonatomic, readwrite) NSInteger absorbAmount;
 @end
 
 @interface HealingBurst : Spell //Instant cast short cooldown heal

@@ -10,9 +10,10 @@
 #import "Shop.h"
 #import "PlayerDataManager.h"
 #import "CCNumberChangeAction.h"
+#import "CCLabelTTFShadow.h"
 
 @interface GoldCounterSprite ()
-@property (nonatomic, assign) CCLabelTTF *goldAmountLabel;
+@property (nonatomic, assign) CCLabelTTFShadow *goldAmountLabel;
 @end
 
 @implementation GoldCounterSprite
@@ -60,9 +61,9 @@
     }
 }
 
-+ (CCLabelTTF*)goldCostLabelWithCost:(NSInteger)cost andFontSize:(CGFloat)fontSize{
++ (CCLabelTTFShadow*)goldCostLabelWithCost:(NSInteger)cost andFontSize:(CGFloat)fontSize{
     NSString *labelText = [NSString stringWithFormat:@"%i", cost];
-    CCLabelTTF *goldLabel = [CCLabelTTF labelWithString:labelText dimensions:[[CCSprite spriteWithSpriteFrameName:@"gold_bg.png"] contentSize] hAlignment:UITextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:fontSize];
+    CCLabelTTFShadow *goldLabel = [CCLabelTTFShadow labelWithString:labelText dimensions:[[CCSprite spriteWithSpriteFrameName:@"gold_bg.png"] contentSize] hAlignment:UITextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:fontSize];
     [goldLabel setColor:ccc3(241, 181, 123)];
     return goldLabel;
 }

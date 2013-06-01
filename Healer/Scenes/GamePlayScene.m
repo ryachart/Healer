@@ -61,6 +61,10 @@
 @property (nonatomic, readwrite) ALuint ambientBattleKey;
 @property (nonatomic, assign) CollectibleLayer *collectibleLayer;
 @property (nonatomic, retain) NSMutableArray *effectsPlayedThisSession;
+@property (nonatomic, assign) BackgroundSprite *sceneBackground;
+@property (nonatomic, assign) BackgroundSprite *mainBackground;
+@property (nonatomic, assign) CCSprite *healerPortrait;
+@property (nonatomic, assign) CCParticleSystemQuad *castingEffect;
 
 @property (nonatomic, retain) NSDictionary *randomTitlesPresetDictionary;
 @end
@@ -72,6 +76,7 @@
     [_spellView2 release];
     [_spellView3 release];
     [_spellView4 release];
+    [_weaponSpell release];
     [_raidView release];
     [_bossHealthView release];
     [_playerStatusView release];
@@ -99,6 +104,7 @@
         [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/battle-sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/effect-sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/postbattle.plist"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/items.plist"];
         
         [[SimpleAudioEngine sharedEngine] unloadEffect:AMBIENT_BATTLE_LOOP];
     }
@@ -138,12 +144,14 @@
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/battle-sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/effect-sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/postbattle.plist"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/items.plist"];
         
-        BackgroundSprite *bg = [[[BackgroundSprite alloc] initWithJPEGAssetName:[Encounter backgroundPathForEncounter:self.encounter.levelNumber]] autorelease];
-        [bg setPosition:CGPointMake(0, 408)];
-        [self addChild:bg];
+        self.sceneBackground = [[[BackgroundSprite alloc] initWithJPEGAssetName:[Encounter backgroundPathForEncounter:self.encounter.levelNumber]] autorelease];
+        [self.sceneBackground setPosition:CGPointMake(0, 408)];
+        [self addChild:self.sceneBackground];
         
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"battle_back_main"] autorelease]];
+        self.mainBackground = [[[BackgroundSprite alloc] initWithAssetName:@"battle_back_main"] autorelease];
+        [self addChild:self.mainBackground];
 
         if (self.players.count > 1) {
             for (int i = 1; i < self.players.count; i++){
@@ -191,13 +199,13 @@
         [self.enemiesLayer setAreAbilitiesVisible:NO];
         [self addChild:self.enemiesLayer];
         
-        CCParticleSystemQuad *castingEffect = [[ParticleSystemCache sharedCache] systemForKey:@"swirly_casty.png"];
-        [castingEffect setPosition:CGPointMake(54, 280)];
-        [self addChild:castingEffect];
+        self.castingEffect = [[ParticleSystemCache sharedCache] systemForKey:@"swirly_casty.png"];
+        [self.castingEffect setPosition:CGPointMake(54, 280)];
+        [self addChild:self.castingEffect];
         
-        CCSprite *playerView = [CCSprite spriteWithSpriteFrameName:@"healer-portrait.png"];
-        [playerView setPosition:CGPointMake(130, 180)];
-        [self addChild:playerView];
+        self.healerPortrait = [CCSprite spriteWithSpriteFrameName:@"healer-portrait.png"];
+        [self.healerPortrait setPosition:CGPointMake(130, 180)];
+        [self addChild:self.healerPortrait];
         
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(322,350, 400, 50)] autorelease];
         [self.playerCastBar setPlayer:self.player];
@@ -275,6 +283,15 @@
                 default:
                     break;
             }
+        }
+        
+        if (self.player.spellsFromEquipment.count > 0) {
+            self.weaponSpell = [[[PlayerSpellButton alloc] init] autorelease];
+            [self.weaponSpell setPosition:CGPointMake(815, 10)];
+            [self.weaponSpell setSpellData:[self.player.spellsFromEquipment objectAtIndex:0]];
+            [self.weaponSpell setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+            [self.weaponSpell setPlayer:self.player];
+            [self addChild:self.weaponSpell];
         }
         
         for (Player *player in self.players) {
@@ -477,6 +494,23 @@
 }
 
 #pragma mark - Battle Completion
+- (void)postBattleLayerWillAwardLoot
+{
+    //We need to clear out the UI and center the scene
+    [self.raidView endBattleWithSuccess:YES];
+    [self.sceneBackground runAction:[CCMoveTo actionWithDuration:1.0 position:CGPointMake(0, 200)]];
+    [self.mainBackground runAction:[CCFadeOut actionWithDuration:1.0]];
+    [self.healerPortrait runAction:[CCFadeOut actionWithDuration:1.0]];
+    [self.castingEffect removeFromParentAndCleanup:YES];
+    [self.playerCastBar removeFromParentAndCleanup:YES];
+    [self.playerStatusView removeFromParentAndCleanup:YES];
+    [self.spellView1 removeFromParentAndCleanup:YES];
+    [self.spellView2 removeFromParentAndCleanup:YES];
+    [self.spellView3 removeFromParentAndCleanup:YES];
+    [self.spellView4 removeFromParentAndCleanup:YES];
+    [self.weaponSpell removeFromParentAndCleanup:YES];
+}
+
 - (void)postBattleLayerDidTransitionToScene:(PostBattleLayerDestination)destination asVictory:(BOOL)victory
 {
     if (destination == PostBattleLayerDestinationMap) {
@@ -1392,6 +1426,7 @@
 	[self.spellView2 updateUI];
 	[self.spellView3 updateUI];
 	[self.spellView4 updateUI];
+    [self.weaponSpell updateUI];
     [self.enemiesLayer update];
     [self.collectibleLayer updateAllCollectibles:deltaT];
 }

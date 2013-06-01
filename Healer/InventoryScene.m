@@ -18,6 +18,7 @@
 #import "SellDropSprite.h"
 #import "GoldCounterSprite.h"
 #import "CCLabelTTFShadow.h"
+#import "Encounter.h"
 
 @interface InventoryScene ()
 @property (nonatomic, assign) Slot *headSlot;
@@ -32,6 +33,7 @@
 @property (nonatomic, assign) ItemDescriptionNode *itemDescriptionNode;
 @property (nonatomic, assign) SellDropSprite *sellDrop;
 @property (nonatomic, assign) CCLabelTTFShadow *statsLabel;
+@property (nonatomic, assign) CCLabelTTFShadow *overflowLabel;
 
 @property (nonatomic, assign) CCLabelTTFShadow *allyDamage;
 @property (nonatomic, assign) CCLabelTTFShadow *allyHealth;
@@ -59,6 +61,10 @@
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/battle-sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/items.plist"];
+        
+        CCLabelTTF *titleLabel = [CCLabelTTF labelWithString:@"ARMORY" fontName:@"TeluguSangamMN-Bold" fontSize:64.0];
+        [titleLabel setPosition:CGPointMake(512, 700)];
+        [self addChild:titleLabel];
         
         CCSprite *healerPortrait = [CCSprite spriteWithSpriteFrameName:@"healer-portrait.png"];
         [healerPortrait setPosition:CGPointMake(180, 380)];
@@ -123,15 +129,20 @@
                 [self addChild:inventorySlot];
             }
         }
+        
+        self.overflowLabel = [CCLabelTTFShadow labelWithString:@"You have items in overflow that will be made available once you can hold them." dimensions:CGSizeMake(400, 50) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:18.0];
+        self.overflowLabel.position = ccpSub(inventoryPosition, CGPointMake(-180, 180));
+        [self addChild:self.overflowLabel];
+        
         [self configureInventory];
         
         CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
         [backButton setPosition:BACK_BUTTON_POS];
         [self addChild:backButton z:100];
         
-        CCMenu *freeItem = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(freeItem)];
-        [freeItem setPosition:CGPointMake(512, 725)];
-        [self addChild:freeItem z:100];
+//        CCMenu *freeItem = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(freeItem)];
+//        [freeItem setPosition:CGPointMake(512, 725)];
+//        [self addChild:freeItem z:100];
         
         self.itemDescriptionNode = [[[ItemDescriptionNode alloc] init] autorelease];
         self.itemDescriptionNode.position = CGPointMake(800, 600);
@@ -149,9 +160,9 @@
         [self.statsLabel setPosition:CGPointMake(475, 220)];
         [self addChild:self.statsLabel];
         
-        self.allyDamage = [CCLabelTTFShadow labelWithString:@"Ally Damage:\n+0%" fontName:@"TrebuchetMS-Bold" fontSize:28.0];
-        [self.allyDamage setPosition:CGPointMake(300, 120)];
-        [self addChild:self.allyDamage];
+//        self.allyDamage = [CCLabelTTFShadow labelWithString:@"Ally Damage:\n+0%" fontName:@"TrebuchetMS-Bold" fontSize:28.0];
+//        [self.allyDamage setPosition:CGPointMake(300, 120)];
+//        [self addChild:self.allyDamage];
         
         self.allyHealth = [CCLabelTTFShadow labelWithString:@"Ally Health:\n+0%" fontName:@"TrebuchetMS-Bold" fontSize:28.0];
         [self.allyHealth setPosition:CGPointMake(500, 120)];
@@ -164,14 +175,14 @@
         self.allyHealthUpgradeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(upgradeAllyHealth) andTitle:@"Upgrade"];
         [self.allyHealthUpgradeButton setScale:.5];
         
-        self.allyDamageUpgradeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(upgradeAllyDamage) andTitle:@"Upgrade"];
-        [self.allyDamageUpgradeButton setScale:.5];
+//        self.allyDamageUpgradeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(upgradeAllyDamage) andTitle:@"Upgrade"];
+//        [self.allyDamageUpgradeButton setScale:.5];
         
         [self configureAllyUpgrades];
         
-        CCMenu *upgradeMenu = [CCMenu menuWithItems:self.allyDamageUpgradeButton,self.allyHealthUpgradeButton, nil];
-        [upgradeMenu setPosition:CGPointMake(400, 28)];
-        [upgradeMenu alignItemsHorizontallyWithPadding:90];
+        CCMenu *upgradeMenu = [CCMenu menuWithItems:/*self.allyDamageUpgradeButton,*/self.allyHealthUpgradeButton, nil];
+        [upgradeMenu setPosition:CGPointMake(500, 28)];
+//        [upgradeMenu alignItemsHorizontallyWithPadding:90];
         [self addChild:upgradeMenu];
         
     }
@@ -227,27 +238,33 @@
         DraggableItemIcon *itemSprite = [[[DraggableItemIcon alloc] initWithEquipmentItem:currentItem] autorelease];
         [[self.inventorySlots objectAtIndex:i] dropInhabitant:itemSprite];
     }
+    
+    if (inventory.count > 10) {
+        self.overflowLabel.visible = YES;
+    } else {
+        self.overflowLabel.visible = NO;
+    }
 }
 
 - (void)configureAllyUpgrades
 {
-    if (self.allyDamageCostNode) {
-        [self.allyDamageCostNode removeFromParentAndCleanup:YES];
-    }
+//    if (self.allyDamageCostNode) {
+//        [self.allyDamageCostNode removeFromParentAndCleanup:YES];
+//    }
     if (self.allyHealthCostNode) {
         [self.allyHealthCostNode removeFromParentAndCleanup:YES];
     }
     
-    self.allyDamage.string = [NSString stringWithFormat:@"Ally Damage:\n+%i%%", [PlayerDataManager localPlayer].allyDamageUpgrades];
+//    self.allyDamage.string = [NSString stringWithFormat:@"Ally Damage:\n+%i%%", [PlayerDataManager localPlayer].allyDamageUpgrades];
     self.allyHealth.string = [NSString stringWithFormat:@"Ally Health:\n+%i%%", [PlayerDataManager localPlayer].allyHealthUpgrades];
     
     self.allyHealthCostNode = [GoldCounterSprite goldCostNodeForCost:[PlayerDataManager localPlayer].nextAllyHealthUpgradeCost];
     [self.allyHealthCostNode setPosition:CGPointMake(550, 50)];
     [self addChild:self.allyHealthCostNode];
     
-    self.allyDamageCostNode = [GoldCounterSprite goldCostNodeForCost:[PlayerDataManager localPlayer].nextAllyDamageUpgradeCost];
-    [self.allyDamageCostNode setPosition:CGPointMake(350, 50)];
-    [self addChild:self.allyDamageCostNode];
+//    self.allyDamageCostNode = [GoldCounterSprite goldCostNodeForCost:[PlayerDataManager localPlayer].nextAllyDamageUpgradeCost];
+//    [self.allyDamageCostNode setPosition:CGPointMake(350, 50)];
+//    [self addChild:self.allyDamageCostNode];
 }
 
 -(void)back
@@ -257,9 +274,14 @@
 
 - (void)freeItem
 {
-    EquipmentItem *randomItem = [EquipmentItem randomItemWithRarity:1 + arc4random() % ItemRarityLegendary andQuality:arc4random() % 5 + 1];
-    [[PlayerDataManager localPlayer] playerEarnsItem:randomItem];
-    [self configureInventory];
+    [[PlayerDataManager localPlayer] staminaUsedWithCompletion:^(BOOL success) {
+        if (success) {
+            Encounter *encounter = [Encounter encounterForLevel:arc4random() % 21 + 1 isMultiplayer:NO];
+            EquipmentItem *randomItem = encounter.randomLootReward;
+            [[PlayerDataManager localPlayer] playerEarnsItem:randomItem];
+            [self configureInventory];
+        }
+    }];
 }
 
 - (NSArray *)allSlots
@@ -395,7 +417,7 @@
                 [self.draggingSprite removeFromParentAndCleanup:YES];
                 [slot dropInhabitant:self.draggingSprite];
                 self.draggingSprite = nil;
-                droppedIntoSlot = YES;
+                //droppedIntoSlot = YES; //Not required here, but it seems right
             }
         }
     }

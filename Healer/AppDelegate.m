@@ -81,6 +81,8 @@
         [[PlayerDataManager localPlayer] performGamePurchaseCheckForFreshInstall:isFreshInstall];
     }
     
+    [[PlayerDataManager localPlayer] checkStamina];
+    
     self.navController = [[[UINavigationController alloc] initWithRootViewController:director] autorelease];
     self.navController.navigationBarHidden = YES;
     
@@ -106,6 +108,7 @@
 -(void) applicationDidEnterBackground:(UIApplication*)application {
 	[[CCDirector sharedDirector] stopAnimation];
     [[PlayerDataManager localPlayer] saveLocalPlayer];
+    [[PlayerDataManager localPlayer] saveRemotePlayer];
 }
 
 -(void) applicationWillEnterForeground:(UIApplication*)application {
@@ -122,6 +125,7 @@
 	[director end];	
     
     [[PlayerDataManager localPlayer] saveLocalPlayer];
+    [[PlayerDataManager localPlayer] saveRemotePlayer];
 }
 
 - (void)applicationSignificantTimeChange:(UIApplication *)application {

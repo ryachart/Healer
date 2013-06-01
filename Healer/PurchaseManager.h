@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
+typedef void (^ChestKeyPurchaseCompletion)(BOOL success);
+
 extern NSString *const PlayerDidPurchaseExpansionNotification;
 
 @interface PurchaseManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver, SKRequestDelegate>
@@ -19,9 +21,11 @@ extern NSString *const PlayerDidPurchaseExpansionNotification;
 - (void)getProducts;
 - (SKProduct *)legacyOfTormentProduct;
 - (SKProduct *)goldOneProduct;
+- (SKProduct *)chestKeyProduct;
 
 - (BOOL)purchaseLegacyOfTorment; //Returns NO if the payment immediately fails
 - (BOOL)purchaseGoldOne;
+- (void)purchaseChestKeyWithCompletion:(ChestKeyPurchaseCompletion)completion;
 - (void)restorePurchases;
 
 @end

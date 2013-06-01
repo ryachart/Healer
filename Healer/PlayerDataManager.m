@@ -14,6 +14,9 @@
 
 @interface PlayerDataManager ()
 @property (nonatomic, retain) NSMutableDictionary *playerData;
+@property (nonatomic, readwrite) NSInteger stamina;
+@property (nonatomic, readwrite, retain) NSDate *nextStamina;
+@property (nonatomic, readwrite) NSInteger maxStamina;
 @end
 
 static dispatch_queue_t parse_queue = nil;
@@ -31,7 +34,6 @@ NSString* const PlayerLastUsedSpellsKey = @"com.healer.lastUsedSpells";
 NSString* const PlayerNormalModeCompleteShown = @"com.healer.nmcs";
 NSString* const PlayerLevelDifficultyLevelsKey = @"com.healer.diffLevels";
 NSString* const PlayerGold = @"com.healer.playerId";
-NSString* const PlayerGoldDidChangeNotification = @"com.healer.goldDidChangeNotif";
 NSString* const DivinityConfig = @"com.healer.divinityConfig";
 NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
 NSString* const PlayerLastSelectedLevelKey = @"com.healer.plsl";
@@ -46,6 +48,8 @@ NSString* const PlayerSlotKey = @"com.healer.eslot";
 NSString* const PlayerAllyDamageUpgradesKey = @"com.healer.paduk";
 NSString* const PlayerAllyHealthUpgradesKey = @"com.healer.pahuk";
 
+NSString* const PlayerStaminaDidChangeNotification = @"com.healer.staminaDidChangeNotif";
+NSString* const PlayerGoldDidChangeNotification = @"com.healer.goldDidChangeNotif";
 //Content Keys
 NSString* const MainGameContentKey = @"com.healer.c1key";
 
@@ -53,12 +57,14 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (void)dealloc {
     [_playerData release];
+    [_nextStamina release];
     [super dealloc];
 }
 
 + (PlayerDataManager *)localPlayer {
     if (!_localPlayer) {
         _localPlayer = [[PlayerDataManager alloc] initAsLocalPlayer];
+        _localPlayer.stamina = STAMINA_NOT_LOADED;
     }
     return _localPlayer;
 }
@@ -71,6 +77,14 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     }
     if ([PlayerDataManager localPlayer].equippedItems.count > 0) {
         [basicPlayer setEquippedItems:[PlayerDataManager localPlayer].equippedItems];
+        NSMutableArray *spellsFromItems = [NSMutableArray arrayWithCapacity:2];
+        for (EquipmentItem *item in basicPlayer.equippedItems) {
+            Spell *spell = item.spellFromItem;
+            if (spell) {
+                [spellsFromItems addObject:spell];
+            }
+        }
+        [basicPlayer setSpellsFromEquipment:spellsFromItems];
     }
     return basicPlayer;
 }
@@ -92,28 +106,31 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         NSString *appFile = [PlayerDataManager localPlayerSavePath];
         NSData *dataFromPlayerData = [NSPropertyListSerialization dataFromPropertyList:self.playerData format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
         [dataFromPlayerData writeToFile:appFile atomically:YES];
-        [self saveRemotePlayer];
         [[UIApplication sharedApplication] endBackgroundTask:backgroundExceptionIdentifer];
     });
-    NSLog(@"Saved: \n%@", self.playerData);
+}
+
+- (NSString *)remoteObjectId
+{
+    return [[NSUserDefaults standardUserDefaults] objectForKey:PlayerRemoteObjectIdKey];
 }
 
 - (void)saveRemotePlayer {
+    NSString *className = @"player";
 #if TARGET_IPHONE_SIMULATOR
-    NSLog(@"Not saving to Parse because Im the simulator");
-    return;
+    className = @"test_player";
 #endif
     NSInteger backgroundExceptionIdentifer = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{}];
     dispatch_async([PlayerDataManager parseQueue], ^{
-        NSString* playerObjectID = [[NSUserDefaults standardUserDefaults] objectForKey:PlayerRemoteObjectIdKey];
+        NSString* playerObjectID = [self remoteObjectId];
         if (playerObjectID){
-            PFQuery *playerObjectQuery = [PFQuery queryWithClassName:@"player"];
+            PFQuery *playerObjectQuery = [PFQuery queryWithClassName:className];
             PFObject *playerObject = [playerObjectQuery getObjectWithId:playerObjectID];
             [self setPlayerObjectInformation:playerObject];
             [playerObject saveEventually];
         } else {
             @try {
-                PFObject *newPlayerObject = [PFObject objectWithClassName:@"player"];
+                PFObject *newPlayerObject = [PFObject objectWithClassName:className];
                 [self setPlayerObjectInformation:newPlayerObject];
                 if ([newPlayerObject save]) {
                     if (newPlayerObject.objectId){
@@ -754,6 +771,9 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (NSInteger)nextAllyHealthUpgradeCost
 {
+    if (self.allyHealthUpgrades >= 50) {
+        return MAXIMUM_ALLY_UPGRADES;
+    }
     return 200 + [self allyHealthUpgrades] * 50;
 }
 
@@ -787,5 +807,57 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         [self.playerData setObject:[NSNumber numberWithInt:numUpgrades] forKey:PlayerAllyHealthUpgradesKey];
         [self playerLosesGold:cost];
     }
+}
+
+#pragma mark - Stamina
+
+- (void)setStamina:(NSInteger)stamina
+{
+    BOOL willChange = stamina != _stamina;
+    _stamina = stamina;
+    if (willChange) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:PlayerStaminaDidChangeNotification object:nil userInfo:nil];
+    }
+}
+
+- (void)checkStamina
+{
+    NSString *remoteObjectId = [self remoteObjectId];
+    if (remoteObjectId) {
+        [PFCloud callFunctionInBackground:@"getStamina" withParameters:[NSDictionary dictionaryWithObject:remoteObjectId forKey:@"playerId"] block:^(id object, NSError *error) {
+            NSDictionary *result = (NSDictionary*)object;
+            NSInteger stamina = [[result objectForKey:@"stamina"] intValue];
+            NSInteger maxStamina = [[result objectForKey:@"maxStamina"] intValue];
+            NSInteger secondsUntil = [[result objectForKey:@"secondsUntilNextStamina"] intValue];
+            self.maxStamina = maxStamina;
+            self.nextStamina = [NSDate dateWithTimeIntervalSinceNow:secondsUntil];
+            self.stamina = stamina; //Must be last for notification purposes
+        }];
+    }
+}
+
+- (void)staminaUsedWithCompletion:(SpendStaminaResultBlock)block
+{
+    NSString *remoteObjectId = [self remoteObjectId];
+    if (remoteObjectId) {
+        [PFCloud callFunctionInBackground:@"spendStamina" withParameters:[NSDictionary dictionaryWithObject:remoteObjectId forKey:@"playerId"] block:^(id object, NSError *error) {
+            NSDictionary *result = (NSDictionary*)object;
+            NSInteger newStamina = [[result objectForKey:@"stamina"] intValue];
+            BOOL success = [[result objectForKey:@"success"] boolValue];
+            self.stamina = newStamina;
+            block(success);
+            if (success) {
+                [[PlayerDataManager localPlayer] checkStamina];
+            }
+        }];
+    }
+}
+
+- (NSTimeInterval)secondsUntilNextStamina
+{
+    if (!self.nextStamina) {
+        return STAMINA_NOT_LOADED;
+    }
+    return self.nextStamina.timeIntervalSince1970 - [[NSDate date] timeIntervalSince1970];
 }
 @end

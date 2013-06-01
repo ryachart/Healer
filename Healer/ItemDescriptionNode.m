@@ -12,6 +12,8 @@
 @interface ItemDescriptionNode ()
 @property (nonatomic, assign) CCLabelTTFShadow *titleLabel;
 @property (nonatomic, assign) CCLabelTTFShadow *descriptionLabel;
+@property (nonatomic, assign) CCLabelTTFShadow *infoLabel;
+@property (nonatomic, assign) CCLabelTTFShadow *slotTypeLabel;
 @end
 
 @implementation ItemDescriptionNode
@@ -35,6 +37,15 @@
         self.descriptionLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(300, 60) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
         self.descriptionLabel.position = CGPointMake(0, 0);
         [self addChild:self.descriptionLabel];
+        
+        self.infoLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(bg.contentSize.width, 34) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
+        self.infoLabel.position = CGPointMake(10, -bg.contentSize.height / 2 + 24);
+        [self addChild:self.infoLabel];
+        
+        self.slotTypeLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(300, 50) hAlignment:kCCTextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:16.0];
+        self.slotTypeLabel.color = ccGRAY;
+        self.slotTypeLabel.position = CGPointMake(2, 30);
+        [self addChild:self.slotTypeLabel];
     }
     return self;
 }
@@ -67,9 +78,13 @@
         self.titleLabel.string = self.item.name;
         self.titleLabel.color = [ItemDescriptionNode colorForRarity:self.item.rarity];
         self.descriptionLabel.string = [self statsLineForItem:self.item];
+        self.infoLabel.string = self.item.info;
+        self.slotTypeLabel.string = self.item.slotTypeName;
     } else {
         self.titleLabel.string = @"";
         self.descriptionLabel.string = @"";
+        self.infoLabel.string = @"";
+        self.slotTypeLabel.string = @"";
     }
 }
 
@@ -107,7 +122,7 @@
         [self formatString:statsLine forCount:statsCount];
     }
     if (item.regen > 0) {
-        [statsLine appendFormat:@"Mana Regen: +%1.1f", item.regen];
+        [statsLine appendFormat:@"Mana Regen: +%1.1f%%", item.regen];
         statsCount++;
         [self formatString:statsLine forCount:statsCount];
     }

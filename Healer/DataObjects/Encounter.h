@@ -11,6 +11,7 @@
 @class Raid;
 @class Enemy;
 @class Player;
+@class EquipmentItem;
 
 #define ENDLESS_VOID_ENCOUNTER_NUMBER 992342
 @interface Encounter : NSObject
@@ -28,6 +29,7 @@
 
 //PostBattle
 @property (nonatomic, readonly) NSInteger reward;
+@property (nonatomic, readonly) EquipmentItem *randomLootReward;
 @property (nonatomic, readonly) NSInteger score;
 @property (nonatomic, readonly) NSInteger healingDone;
 @property (nonatomic, readonly) NSInteger overhealingDone;

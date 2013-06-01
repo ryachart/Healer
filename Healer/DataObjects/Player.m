@@ -40,6 +40,7 @@
 -(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen
 {
     if (self = [super init]){
+        self.spellsFromEquipment = [NSArray array];
         self.isLocalPlayer = YES;
         self.maximumHealth = hlth;
         self.health = hlth;
@@ -241,6 +242,9 @@
     for (Spell *spell in self.activeSpells) {
         [spell checkDivinity];
     }
+    for (Spell *spell in self.spellsFromEquipment) {
+        [spell checkDivinity];
+    }
 }
 
 - (void)cacheCastTimeAdjustment {
@@ -308,6 +312,15 @@
     }
     [_activeSpells release];
     _activeSpells = [actSpells retain];
+}
+
+- (void)setSpellsFromEquipment:(NSArray *)spellsFromEquipment
+{
+    for (Spell* spell in spellsFromEquipment) {
+        [spell setOwner:self];
+    }
+    [_spellsFromEquipment release];
+    _spellsFromEquipment = [spellsFromEquipment retain];
 }
 
 - (void)configureForRecommendedSpells:(NSArray *)recommendSpells withLastUsedSpells:(NSArray *)lastUsedSpells {

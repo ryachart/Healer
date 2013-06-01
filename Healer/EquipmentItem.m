@@ -7,6 +7,7 @@
 //
 
 #import "EquipmentItem.h"
+#import "Spell.h"
 
 
 static float stat_atoms[StatTypeMaximum] = {
@@ -33,6 +34,10 @@ static float stat_atoms[StatTypeMaximum] = {
 {
     EquipmentItem *otherItem = (EquipmentItem*)object;
     if ([otherItem isKindOfClass:[EquipmentItem class]]) {
+        if (otherItem.uniqueId == self.uniqueId) {
+            return YES;
+        }
+        
         BOOL isEqual = [otherItem.name isEqualToString:self.name] &&
         otherItem.rarity == self.rarity &&
         otherItem.regen == self.regen &&
@@ -49,7 +54,7 @@ static float stat_atoms[StatTypeMaximum] = {
     return false;
 }
 
-- (id)initWithName:(NSString *)name health:(NSInteger)health regen:(float)regen speed:(float)speed crit:(float)crit healing:(float)healing slot:(SlotType)slot rarity:(ItemRarity)rarity specialKey:(NSString *)specialKey quality:(NSInteger)quality
+- (id)initWithName:(NSString *)name health:(NSInteger)health regen:(float)regen speed:(float)speed crit:(float)crit healing:(float)healing slot:(SlotType)slot rarity:(ItemRarity)rarity specialKey:(NSString *)specialKey quality:(NSInteger)quality uniqueId:(NSInteger)uniqueId
 {
     if (self = [super init]) {
         _slot = slot;
@@ -62,6 +67,7 @@ static float stat_atoms[StatTypeMaximum] = {
         _rarity = rarity;
         _specialKey = [specialKey retain];
         _quality = quality;
+        _uniqueId = uniqueId;
     }
     return self;
 }
@@ -72,7 +78,7 @@ static float stat_atoms[StatTypeMaximum] = {
         NSLog(@"WUT!?");
     }
     NSArray *components = [string componentsSeparatedByString:@"|"];
-    if (components.count < 10) {
+    if (components.count < 11) {
         return nil; //Corrupted item
     }
     NSString* name = [components objectAtIndex:0];
@@ -85,19 +91,29 @@ static float stat_atoms[StatTypeMaximum] = {
     ItemRarity rarity = (ItemRarity)[[components objectAtIndex:7] integerValue];
     NSString *specialKey = [components objectAtIndex:8];
     NSInteger quality = [[components objectAtIndex:9] integerValue];
-    self = [self initWithName:name health:health regen:regen speed:speed crit:crit healing:healing slot:slot rarity:rarity specialKey:specialKey quality:quality];
+    NSInteger uniqueId = [[components objectAtIndex:10] integerValue];
+    self = [self initWithName:name health:health regen:regen speed:speed crit:crit healing:healing slot:slot rarity:rarity specialKey:specialKey quality:quality uniqueId:uniqueId];
     return self;
 }
 
 - (NSString *)cacheString
 {
-    return [NSString stringWithFormat:@"%@|%i|%1.3f|%1.3f|%1.3f|%1.3f|%i|%i|%@|%i", self.name, self.health, self.regen, self.speed, self.crit, self.healing, self.slot, self.rarity, self.specialKey, self.quality];
+    return [NSString stringWithFormat:@"%@|%i|%1.3f|%1.3f|%1.3f|%1.3f|%i|%i|%@|%i|%i", self.name, self.health, self.regen, self.speed, self.crit, self.healing, self.slot, self.rarity, self.specialKey, self.quality, self.uniqueId];
+}
+
++ (NSString *)randomItemNameForSlot:(SlotType)slot
+{
+    NSArray *prefixesForSlot = [[EquipmentItem slotPrefixes] objectAtIndex:slot];
+    NSArray *suffixes = [EquipmentItem suffixes];
+    
+    return [NSString stringWithFormat:@"%@ of %@", [prefixesForSlot objectAtIndex:arc4random() % prefixesForSlot.count], [suffixes objectAtIndex:arc4random() % suffixes.count]];
 }
 
 + (EquipmentItem *)randomItemWithRarity:(ItemRarity)rarity andQuality:(NSInteger)quality
 {
     SlotType slot = arc4random() % SlotTypeMaximum;
-    NSInteger totalAtoms = quality * (slot == SlotTypeWeapon ? 1.5 : 1) * (rarity);
+    int slotModifiers[SlotTypeMaximum] = {1.125, 1, 1.25, 1.125, 1, 1};
+    NSInteger totalAtoms = quality * slotModifiers[slot] * rarity;
     NSInteger totalStats = rarity;
     
     NSMutableArray *stats = [NSMutableArray arrayWithCapacity:StatTypeMaximum];
@@ -128,43 +144,91 @@ static float stat_atoms[StatTypeMaximum] = {
         statValues[type] += stat_atoms[type];
     }
     
-    EquipmentItem *item = [[[EquipmentItem alloc] initWithName:[NSString stringWithFormat:@"%@ of Light", [[[EquipmentItem slotPrefixes] objectAtIndex:slot] objectAtIndex:0]] health:statValues[StatTypeHealth] regen:statValues[StatTypeRegen] speed:statValues[StatTypeSpeed] crit:statValues[StatTypeCrit] healing:statValues[StatTypeHealing] slot:slot rarity:rarity specialKey:nil quality:quality] autorelease];
+    NSString *randomName = [EquipmentItem randomItemNameForSlot:slot];
+    NSArray *specialKeys = [EquipmentItem specialKeys];
+    NSString *specialKey = nil;
+    if (slot == SlotTypeWeapon && quality >= 4) {
+        specialKey = [specialKeys objectAtIndex:arc4random() % specialKeys.count];
+    }
+    
+    EquipmentItem *item = [[[EquipmentItem alloc] initWithName:randomName health:statValues[StatTypeHealth] regen:statValues[StatTypeRegen] speed:statValues[StatTypeSpeed] crit:statValues[StatTypeCrit] healing:statValues[StatTypeHealing] slot:slot rarity:rarity specialKey:specialKey quality:quality uniqueId:0] autorelease];
     
     return item;
 }
 
 - (NSString *)itemSpriteName
 {
-    NSString *itemSprite = @"helm.png";
+    NSString *raritySuffix = nil;
+    switch (self.rarity) {
+        case ItemRarityUncommon:
+            raritySuffix = @"-uncommon";
+            break;
+        case ItemRarityRare:
+            raritySuffix = @"-rare";
+            break;
+        case ItemRarityEpic:
+            raritySuffix = @"-epic";
+            break;
+        case ItemRarityLegendary:
+            raritySuffix = @"-epic";
+            break;
+    }
+    
+    NSString *slotName = nil;
     switch (self.slot) {
         case SlotTypeBoots:
-            itemSprite = @"boots.png";
+            slotName = @"boots";
             break;
         case SlotTypeChest:
-            itemSprite = @"robe.png";
+            slotName = @"robe";
             break;
         case SlotTypeHead:
-            itemSprite = @"helm.png";
+            slotName = @"helm";
             break;
         case SlotTypeLegs:
-            itemSprite = @"pants.png";
+            slotName = @"pants";
             break;
         case SlotTypeNeck:
-            itemSprite = @"necklace.png";
+            slotName = @"necklace";
             break;
         case SlotTypeWeapon:
-            itemSprite = @"wand.png";
+            slotName = @"wand";
             break;
         case SlotTypeMaximum:
         default:
             break;
     }
-    return itemSprite;
+    return [NSString stringWithFormat:@"%@%@.png", slotName, raritySuffix];
 }
 
 - (NSInteger)salePrice
 {
     return 5 * (self.quality + (self.rarity * 2));
+}
+
+- (NSString *)info
+{
+    if (!self.specialKey) {
+        return nil;
+    }
+    return [EquipmentItem descriptionForSpecialKey:self.specialKey];
+}
+
+- (Spell*)spellFromItem
+{
+    if (self.specialKey) {
+        Spell *spell = nil;
+        if ([self.specialKey isEqualToString:@"burst1"]) {
+            spell = [[[Spell alloc] initWithTitle:@"Burst1" healAmnt:100 energyCost:0 castTime:0 andCooldown:15.0] autorelease];
+        }
+        if ([self.specialKey isEqualToString:@"burst2"]) {
+            spell = [[[Spell alloc] initWithTitle:@"Burst2" healAmnt:150 energyCost:0 castTime:0 andCooldown:15.0] autorelease];
+        }
+        [spell setIsItem:YES];
+        [spell setItemSpriteName:self.itemSpriteName];
+        return spell;
+    }
+    return nil;
 }
 
 + (NSArray *)slotPrefixes{
@@ -180,11 +244,52 @@ static float stat_atoms[StatTypeMaximum] = {
 
 + (NSArray *)suffixes {
     NSArray *suffix = @[@"Light", //+Healing
-                        @"Fortitude", //+Health
+                        @"Hope", //+Health
                         @"Glory", //+Speed
                         @"Knowledge", //+Regen
-                        @"Chance", //+Crit
-                        ];
+                        @"Insight", //+Crit
+                        @"Power",
+                        @"Solace",
+                        @"Radiance",
+                        @"Peace",
+                        @"Purity",
+                        @"Warmth",
+                        @"the Sun"];
     return suffix;
 }
+
++ (NSArray *)specialKeys
+{
+    return @[@"burst1", @"burst2"];
+}
+
++ (NSString *)descriptionForSpecialKey:(NSString *)specialKey
+{
+    NSDictionary *dict = @{@"burst1" : @"On Use: Heals your target for 100.  15s Cooldown.",
+                           @"burst2" : @"On Use: Heals your target for 150.  15s Cooldown."};
+    return [dict objectForKey:specialKey];
+}
+
+- (NSString *)slotTypeName
+{
+    switch (self.slot) {
+        case SlotTypeWeapon:
+            return @"Weapon";
+        case SlotTypeBoots:
+            return @"Boots";
+        case SlotTypeChest:
+            return @"Chest";
+        case SlotTypeHead:
+            return @"Head";
+        case SlotTypeLegs:
+            return @"Legs";
+        case SlotTypeNeck:
+            return @"Neck";
+        case SlotTypeMaximum:
+        default:
+            break;
+    }
+    return nil;
+}
+
 @end

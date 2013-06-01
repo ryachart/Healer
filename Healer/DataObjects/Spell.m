@@ -49,6 +49,7 @@
     [_spellID release]; _spellID = nil;
     [_description release]; _description = nil;
     [_appliedEffect release]; _appliedEffect = nil;
+    [_itemSpriteName release]; _itemSpriteName = nil;
     [super dealloc];
     
 }
@@ -79,6 +80,10 @@
 }
 
 - (NSString*)spriteFrameName {
+    if (self.itemSpriteName) {
+        return self.itemSpriteName;
+    }
+    
     NSString* path = [[[[self.title lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"-"] stringByAppendingString:@"-icon"] stringByAppendingPathExtension:@"png"];
     return path;
 }
@@ -442,13 +447,14 @@
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
         self.spellType = SpellTypeProtective;
         self.endCastingAudioTitle = @"barrier_finish.mp3";
+        self.absorbAmount = 400;
     }
     return self;
 }
 
 - (void)spellFinishedCastingForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
 {
-    [(ShieldEffect*)self.appliedEffect setAmountToShield:400*self.owner.healingDoneMultiplier];
+    [(ShieldEffect*)self.appliedEffect setAmountToShield:self.absorbAmount*self.owner.healingDoneMultiplier];
     [super spellFinishedCastingForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
 }
 

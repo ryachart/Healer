@@ -34,6 +34,8 @@ typedef enum {
     ItemRarityLegendary
 } ItemRarity;
 
+@class Spell;
+
 @interface EquipmentItem : NSObject
 @property (nonatomic, retain, readonly) NSString *name;
 @property (nonatomic, readonly) NSInteger health;
@@ -48,7 +50,11 @@ typedef enum {
 @property (nonatomic, readwrite) ItemRarity rarity;
 @property (nonatomic, retain, readonly) NSString *specialKey;
 @property (nonatomic, readonly) NSInteger salePrice;
-- (id)initWithName:(NSString *)name health:(NSInteger)health regen:(float)regen speed:(float)speed crit:(float)crit healing:(float)healing slot:(SlotType)slot rarity:(ItemRarity)rarity specialKey:(NSString *)specialKey quality:(NSInteger)quality;
+@property (nonatomic, readonly) NSInteger uniqueId;
+@property (nonatomic, readonly) NSString *info;
+@property (nonatomic, readonly) Spell *spellFromItem;
+@property (nonatomic, readonly) NSString *slotTypeName;
+- (id)initWithName:(NSString *)name health:(NSInteger)health regen:(float)regen speed:(float)speed crit:(float)crit healing:(float)healing slot:(SlotType)slot rarity:(ItemRarity)rarity specialKey:(NSString *)specialKey quality:(NSInteger)quality uniqueId:(NSInteger)uniqueId;
 - (id)initWithItemCacheString:(NSString *)string;
 
 + (EquipmentItem *)randomItemWithRarity:(ItemRarity)rarity andQuality:(NSInteger)quality;

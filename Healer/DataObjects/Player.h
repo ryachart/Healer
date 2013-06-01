@@ -38,6 +38,7 @@ typedef int CastingDisabledReason;
 @interface Player : RaidMember <RedemptionDelegate> {
 	BOOL castingDisabledReasons[CastingDisabledReasonTotal];
 }
+@property (nonatomic, retain) NSArray *spellsFromEquipment;
 @property (nonatomic, retain) NSArray *activeSpells;
 @property (nonatomic, retain, readonly) NSMutableSet *spellsOnCooldown;
 @property (nonatomic, retain) NSDictionary *divinityConfig;

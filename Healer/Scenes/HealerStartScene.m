@@ -23,6 +23,7 @@
 #import "SimpleAudioEngine.h"
 #import "TipsLayer.h"
 #import "InventoryScene.h"
+#import "StaminaCounterNode.h"
 
 
 @interface HealerStartScene ()
@@ -72,12 +73,16 @@
         [self.menu setColor:ccc3(255, 255, 255)];
         [self addChild:self.menu z:2];
         
+        StaminaCounterNode *stamina = [[[StaminaCounterNode alloc] init] autorelease];
+        [stamina setPosition:CGPointMake(620, 45)];
+        [self addChild:stamina];
+        
         GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
-        [goldCounter setPosition:CGPointMake(900, 45)];
+        [goldCounter setPosition:CGPointMake(920, 45)];
         [self addChild:goldCounter];
         
         RatingCounterSprite *ratingCounter = [[[RatingCounterSprite alloc] init] autorelease];
-        [ratingCounter setPosition:CGPointMake(750, 45)];
+        [ratingCounter setPosition:CGPointMake(770, 45)];
         [self addChild:ratingCounter];
         
         CCSprite *logoSprite = [CCSprite spriteWithSpriteFrameName:@"home_logo.png"];

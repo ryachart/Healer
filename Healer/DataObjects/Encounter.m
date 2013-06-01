@@ -16,6 +16,8 @@
 #import "PlayerDataManager.h"
 #import "CombatEvent.h"
 #import "Ability.h"
+#import "EquipmentItem.h"
+#import "LootTable.h"
 
 @interface Encounter ()
 @property (nonatomic, readwrite) NSInteger levelNumber;
@@ -753,6 +755,44 @@
     }
     
     return @"sounds/battle1.mp3";
+}
+
++ (NSArray *)weightsForDifficulty:(NSInteger)difficulty
+{
+    if (difficulty <= 3) {
+        return @[@55, @35, @10, @0];
+    } else if (difficulty == 4) {
+        return @[@30, @50, @20, @0];
+    } else if (difficulty == 5) {
+        return @[@0, @70, @30, @0];
+    }
+    return @[@100,@0,@0,@0];
+}
+
++ (EquipmentItem*)randomItemForLevelNumber:(NSInteger)levelNum difficulty:(NSInteger)difficulty rarity:(ItemRarity)rarity
+{
+    NSInteger ql = 0;
+    if (levelNum <= 7) {
+        ql = min(difficulty, 4);
+    } else if (levelNum <= 13) {
+        ql = min(2+difficulty, 6);
+    } else if (levelNum <= 21) {
+        ql = min(4+difficulty, 8);
+    }
+    
+    return [EquipmentItem randomItemWithRarity:rarity andQuality:ql];
+}
+
+- (EquipmentItem *)randomLootReward
+{
+    NSArray *weights = [Encounter weightsForDifficulty:self.difficulty];
+    EquipmentItem *green = [Encounter randomItemForLevelNumber:self.levelNumber difficulty:self.difficulty rarity:ItemRarityUncommon];
+    EquipmentItem *blue = [Encounter randomItemForLevelNumber:self.levelNumber difficulty:self.difficulty rarity:ItemRarityRare];
+    EquipmentItem *epic = [Encounter randomItemForLevelNumber:self.levelNumber difficulty:self.difficulty rarity:ItemRarityRare]; //replace this with something that gets the actual epic for the encounter
+    EquipmentItem *legendary = [Encounter randomItemForLevelNumber:self.levelNumber difficulty:self.difficulty rarity:ItemRarityRare]; //replace this with something that gets the legendary or epic for the encounter
+    NSArray *items = [NSArray arrayWithObjects:green,blue, epic, legendary, nil];
+    LootTable *table = [[[LootTable alloc] initWithItems:items andWeights:weights] autorelease];
+    return [table randomObject];
 }
 
 @end

@@ -209,6 +209,7 @@
                 [playerUpgradeEffect setDamageDoneMultiplierAdjustment:playerDamageUpgradesAdjustment];
                 [playerUpgradeEffect setMaximumHealthMultiplierAdjustment:playerHealthUpgradesAdjustment];
                 [member addEffect:playerUpgradeEffect];
+                member.health = member.maximumHealth;
             }
             
             [[SimpleAudioEngine sharedEngine] crossFadeBackgroundMusic:self.encounter.battleTrackTitle forDuration:1.5];

@@ -21,8 +21,10 @@
 #import "GoldCounterSprite.h"
 #import "SimpleAudioEngine.h"
 #import "PurchaseManager.h"
+#import "EncounterDescriptionLayer.h"
 
 #define SPELL_ITEM_TAG 43234
+#define ENCOUNTER_INFO_TAG 40328
 
 @interface PreBattleScene ()
 @property (nonatomic, readwrite) NSInteger maxPlayers;
@@ -31,6 +33,7 @@
 @property (nonatomic, assign) ChallengeRatingStepper *challengeStepper;
 @property (nonatomic, assign) CCMenu *backButton;
 @property (nonatomic, assign) CCMenu *changeButton;
+@property (nonatomic, assign) BasicButton *infoButton;
 @end
 
 @implementation PreBattleScene
@@ -71,7 +74,7 @@
         [self addChild:spellsLabel];
         
         if ([PlayerDataManager localPlayer].allOwnedSpells.count > 1) {
-            BasicButton *changeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(changeSpells) andTitle:@"Change"];
+            BasicButton *changeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(changeSpells) andTitle:@"CHANGE"];
             [changeButton setScale:.6];
             self.changeButton = [CCMenu menuWithItems:changeButton, nil];
             [self.changeButton setPosition:CGPointMake(908, 632)];
@@ -144,6 +147,15 @@
                 [bossPortrait setPosition:CGPointMake(200, 450)];
                 [self addChild:bossPortrait];
             }
+        }
+        
+        self.infoButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(showInfo) andTitle:@"LOOT"];
+        [self.infoButton setScale:.75];
+        
+        if (self.encounter.levelNumber > 1 && [PlayerDataManager localPlayer].highestLevelCompleted >= 2) {
+            CCMenu *infoMenu = [CCMenu menuWithItems:self.infoButton, nil];
+            [infoMenu setPosition:CGPointMake(266, 38)];
+            [self addChild:infoMenu];
         }
         
         [[PlayerDataManager localPlayer] setLastSelectedLevel:enc.levelNumber];
@@ -240,6 +252,12 @@
     [self configureSpellsWithInactiveIndexes:noInactives];
     self.changingSpells = NO;
     [self.changeButton setVisible:YES];
+}
+
+- (void)showInfo
+{
+    EncounterDescriptionLayer *edl = [[[EncounterDescriptionLayer alloc] initWithEncounter:self.encounter] autorelease];
+    [self addChild:edl z:3 tag:ENCOUNTER_INFO_TAG];
 }
 
 #pragma mark - Icon Description Modal Layer

@@ -48,6 +48,7 @@
 + (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer;
 + (NSInteger)goldForLevelNumber:(NSInteger)levelNumber;
 + (NSInteger)goldRewardForSurvivalEncounterWithDuration:(NSTimeInterval)duration;
++ (NSArray *)epicItemsForLevelNumber:(NSInteger)levelNumber;
 
 + (NSString *)backgroundPathForEncounter:(NSInteger)encounter;
 @end

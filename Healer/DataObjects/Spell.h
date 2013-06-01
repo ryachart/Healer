@@ -144,6 +144,12 @@ typedef enum {
 
 @interface Attunement : Spell
 @end
+
+@interface RaidHeal : Spell
+@end
+
+@interface HealBuff : Spell
+@end
 ////RITUALIST SPELLS/////
 @interface HastyBrew : Spell <Chargable>{
 	NSDate *chargeStart;

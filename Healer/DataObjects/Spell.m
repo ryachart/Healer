@@ -948,6 +948,40 @@
 }
 @end
 
+@implementation RaidHeal
+
+- (void)spellFinishedCastingForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
+{
+    NSArray *livingMembers = raid.livingMembers;
+    for (RaidMember *member in livingMembers) {
+        RepeatedHealthEffect *rhe = [[[RepeatedHealthEffect alloc] initWithDuration:6 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [rhe setOwner:self.owner];
+        [rhe setValuePerTick:self.healingAmount / 6];
+        [rhe setNumOfTicks:6];
+        [rhe setTitle:@"raid-heal"];
+        [member addEffect:rhe];
+    }
+    
+    [self.owner setEnergy:[self.owner energy] - [self energyCost]];
+    
+    if (self.cooldown > 0.0){
+        [[self.owner spellsOnCooldown] addObject:self];
+        self.cooldownRemaining = self.cooldown;
+    }
+}
+@end
+
+@implementation HealBuff
+- (void)spellFinishedCastingForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta {
+    [super spellFinishedCastingForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
+    Effect *soaringSpiritEffect = [[Effect alloc] initWithDuration:6.0 andEffectType:EffectTypePositiveInvisible];
+    [soaringSpiritEffect setOwner:self.owner];
+    [soaringSpiritEffect setHealingDoneMultiplierAdjustment:.25];
+    [self.owner addEffect:soaringSpiritEffect];
+    [soaringSpiritEffect release];
+}
+@end
+
 #pragma mark -
 #pragma mark Test Spells
 @implementation HastyBrew

@@ -65,6 +65,7 @@
 		BF13AE031753F97900A613B1 /* SellDropSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF13AE021753F97900A613B1 /* SellDropSprite.m */; };
 		BF13AE41175694C800A613B1 /* StaminaCounterNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF13AE40175694C800A613B1 /* StaminaCounterNode.m */; };
 		BF13AE7D1758031E00A613B1 /* LootTable.m in Sources */ = {isa = PBXBuildFile; fileRef = BF13AE7C1758031E00A613B1 /* LootTable.m */; };
+		BF13AE801759A26D00A613B1 /* EncounterDescriptionLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF13AE7F1759A26D00A613B1 /* EncounterDescriptionLayer.m */; };
 		BF1DDBAC1711F52C0008C946 /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1DDBA81711F52C0008C946 /* libTestFlight.a */; };
 		BF1DDBAD1711F52C0008C946 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBA91711F52C0008C946 /* README.md */; };
 		BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBAA1711F52C0008C946 /* release_notes.md */; };
@@ -669,6 +670,8 @@
 		BF13AE40175694C800A613B1 /* StaminaCounterNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StaminaCounterNode.m; sourceTree = "<group>"; };
 		BF13AE7B1758031E00A613B1 /* LootTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LootTable.h; sourceTree = "<group>"; };
 		BF13AE7C1758031E00A613B1 /* LootTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LootTable.m; sourceTree = "<group>"; };
+		BF13AE7E1759A26D00A613B1 /* EncounterDescriptionLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncounterDescriptionLayer.h; sourceTree = "<group>"; };
+		BF13AE7F1759A26D00A613B1 /* EncounterDescriptionLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EncounterDescriptionLayer.m; sourceTree = "<group>"; };
 		BF1DDBA81711F52C0008C946 /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
 		BF1DDBA91711F52C0008C946 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		BF1DDBAA1711F52C0008C946 /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
@@ -936,6 +939,8 @@
 				382C46411648CDA400883CFA /* ChallengeRatingStepper.m */,
 				BF8249D51526D7C2000B554B /* RaidMemberPreBattleCard.h */,
 				BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */,
+				BF13AE7E1759A26D00A613B1 /* EncounterDescriptionLayer.h */,
+				BF13AE7F1759A26D00A613B1 /* EncounterDescriptionLayer.m */,
 			);
 			name = PreBattle;
 			sourceTree = "<group>";
@@ -2080,6 +2085,7 @@
 				BF13AE031753F97900A613B1 /* SellDropSprite.m in Sources */,
 				BF13AE41175694C800A613B1 /* StaminaCounterNode.m in Sources */,
 				BF13AE7D1758031E00A613B1 /* LootTable.m in Sources */,
+				BF13AE801759A26D00A613B1 /* EncounterDescriptionLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

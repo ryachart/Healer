@@ -51,7 +51,6 @@
 - (void)dealloc
 {
     [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/battle-sprites.plist"];
-    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets/items.plist"];
     [super dealloc];
 }
 
@@ -60,7 +59,6 @@
     if (self = [super init]) {
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/battle-sprites.plist"];
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/items.plist"];
         
         CCLabelTTF *titleLabel = [CCLabelTTF labelWithString:@"ARMORY" fontName:@"TeluguSangamMN-Bold" fontSize:64.0];
         [titleLabel setPosition:CGPointMake(512, 700)];

@@ -14,4 +14,5 @@
 @property (nonatomic, retain) EquipmentItem *item;
 
 + (ccColor3B)colorForRarity:(ItemRarity)rarity;
+- (void)configureForRandomWithRarity:(ItemRarity)rarity;
 @end

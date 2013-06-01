@@ -14,6 +14,7 @@
 @property (nonatomic, assign) CCLabelTTFShadow *descriptionLabel;
 @property (nonatomic, assign) CCLabelTTFShadow *infoLabel;
 @property (nonatomic, assign) CCLabelTTFShadow *slotTypeLabel;
+@property (nonatomic, assign) CCSprite *background;
 @end
 
 @implementation ItemDescriptionNode
@@ -27,24 +28,28 @@
 - (id)init
 {
     if (self = [super init]) {
-        CCSprite *bg = [CCSprite spriteWithSpriteFrameName:@"spell_info_node_bg.png"];
-        [self addChild:bg];
+        self.background = [CCSprite spriteWithSpriteFrameName:@"spell_info_node_bg.png"];
+        [self addChild:self.background];
         
         self.titleLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(300, 50) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
-        self.titleLabel.position = CGPointMake(2, 34);
+        self.titleLabel.position = CGPointMake(2, 46);
+        self.titleLabel.shadowOffset = CGPointMake(-1, -1);
         [self addChild:self.titleLabel];
         
         self.descriptionLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(300, 60) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
         self.descriptionLabel.position = CGPointMake(0, 0);
+        self.descriptionLabel.shadowOffset = CGPointMake(-1, -1);
         [self addChild:self.descriptionLabel];
         
-        self.infoLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(bg.contentSize.width, 34) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
-        self.infoLabel.position = CGPointMake(10, -bg.contentSize.height / 2 + 24);
+        self.infoLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(self.background.contentSize.width, 34) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
+        self.infoLabel.position = CGPointMake(10, -self.background.contentSize.height / 2 + 24);
+        self.infoLabel.shadowOffset = CGPointMake(-1, -1);
         [self addChild:self.infoLabel];
         
         self.slotTypeLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(300, 50) hAlignment:kCCTextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:16.0];
         self.slotTypeLabel.color = ccGRAY;
-        self.slotTypeLabel.position = CGPointMake(2, 30);
+        self.slotTypeLabel.position = CGPointMake(2, 20);
+        self.slotTypeLabel.shadowOffset = CGPointMake(-1, -1);
         [self addChild:self.slotTypeLabel];
     }
     return self;
@@ -75,6 +80,11 @@
 - (void)configureForItem
 {
     if (self.item) {
+        CGFloat fontSize = 24.0;
+//        if (self.item.name.length > 20) {
+//            fontSize = 20.0;
+//        }
+        self.titleLabel.fontSize = fontSize;
         self.titleLabel.string = self.item.name;
         self.titleLabel.color = [ItemDescriptionNode colorForRarity:self.item.rarity];
         self.descriptionLabel.string = [self statsLineForItem:self.item];
@@ -128,6 +138,15 @@
     }
     
     return statsLine;
+}
+
+- (void)configureForRandomWithRarity:(ItemRarity)rarity
+{
+    self.titleLabel.string = @"Random";
+    self.titleLabel.color = [ItemDescriptionNode colorForRarity:rarity];
+    self.descriptionLabel.string = @"Health: +??\nHealing: +??%     Speed: +??%\nCrit: +??%     Mana Regen: +??%";
+    self.slotTypeLabel.string = @"Random";
+    self.infoLabel.string = @"";
 }
 
 @end

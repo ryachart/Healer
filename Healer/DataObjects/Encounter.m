@@ -759,7 +759,9 @@
 
 + (NSArray *)weightsForDifficulty:(NSInteger)difficulty
 {
-    if (difficulty <= 3) {
+    if (difficulty <= 2) {
+        return @[@70, @25, @5, @0];
+    } else if (difficulty == 3) {
         return @[@55, @35, @10, @0];
     } else if (difficulty == 4) {
         return @[@30, @50, @20, @0];
@@ -783,12 +785,118 @@
     return [EquipmentItem randomItemWithRarity:rarity andQuality:ql];
 }
 
+
++ (NSArray *)epicItemsForLevelNumber:(NSInteger)levelNumber
+{
+    NSMutableArray *items = [NSMutableArray arrayWithCapacity:2];
+    
+    if (levelNumber == 2) {
+        EquipmentItem *trollEpic = [[[EquipmentItem alloc] initWithName:@"Cudgel of Subdued Rage" health:20 regen:2.0 speed:0 crit:0 healing:2.0 slot:SlotTypeWeapon rarity:ItemRarityEpic specialKey:@"burst1" quality:3 uniqueId:100] autorelease];
+        [items addObject:trollEpic];
+    }
+    
+    if (levelNumber == 3) {
+        EquipmentItem *drakeEpic = [[[EquipmentItem alloc] initWithName:@"Drakewing Hood" health:0 regen:0.0 speed:2.0 crit:3.0 healing:2.0 slot:SlotTypeHead rarity:ItemRarityEpic specialKey:nil quality:3 uniqueId:101] autorelease];
+        [items addObject:drakeEpic];
+    }
+    
+    if (levelNumber == 4) {
+        EquipmentItem *impsEpic = [[[EquipmentItem alloc] initWithName:@"Pendant of Mischief" health:0 regen:4.0 speed:2.5 crit:2.5 healing:0.0 slot:SlotTypeNeck rarity:ItemRarityEpic specialKey:nil quality:4 uniqueId:102] autorelease];
+        [items addObject:impsEpic];
+    }
+    
+    if (levelNumber == 5) {
+        EquipmentItem *treantEpic = [[[EquipmentItem alloc] initWithName:@"Barkskin Trousers" health:30 regen:0.0 speed:0.0 crit:3.0 healing:3.0 slot:SlotTypeLegs rarity:ItemRarityEpic specialKey:nil quality:4 uniqueId:103] autorelease];
+        [items addObject:treantEpic];
+    }
+    
+    if (levelNumber == 6) {
+        EquipmentItem *ravagersEpic = [[[EquipmentItem alloc] initWithName:@"Sandals of Regrowth" health:0 regen:2.5 speed:0 crit:2.5 healing:5.0 slot:SlotTypeBoots rarity:ItemRarityEpic specialKey:nil quality:5 uniqueId:104] autorelease];
+        [items addObject:ravagersEpic];
+    }
+    
+    if (levelNumber == 7) {
+        EquipmentItem *plaguebringerEpic = [[[EquipmentItem alloc] initWithName:@"Gown of the Purifier" health:50 regen:5.0 speed:0 crit:0 healing:2.5 slot:SlotTypeChest rarity:ItemRarityEpic specialKey:nil quality:5 uniqueId:105] autorelease];
+        [items addObject:plaguebringerEpic];
+    }
+    
+    if (levelNumber == 8) {
+        EquipmentItem *trulzarEpic = [[[EquipmentItem alloc] initWithName:@"The Maleficar's Cowl" health:0 regen:3.0 speed:3.0 crit:0.0 healing:5.0 slot:SlotTypeHead rarity:ItemRarityEpic specialKey:nil quality:5 uniqueId:106] autorelease];
+        [items addObject:trulzarEpic];
+    }
+    
+    if (levelNumber == 9) {
+        EquipmentItem *councilEpic = [[[EquipmentItem alloc] initWithName:@"Amulet of the Ritualist" health:25 regen:0 speed:5.0 crit:0 healing:2.5 slot:SlotTypeNeck rarity:ItemRarityEpic specialKey:nil quality:5 uniqueId:107] autorelease];
+        [items addObject:councilEpic];
+    }
+    
+    if (levelNumber == 10) {
+        EquipmentItem *twinsEpic = [[[EquipmentItem alloc] initWithName:@"Pants of Execution" health:0 regen:5.0 speed:4.0 crit:4.0 healing:0 slot:SlotTypeLegs rarity:ItemRarityEpic specialKey:nil quality:6 uniqueId:108] autorelease];
+        [items addObject:twinsEpic];
+    }
+    
+    if (levelNumber == 11) {
+        EquipmentItem *baraghastEpic = [[[EquipmentItem alloc] initWithName:@"Rod of the Warlord" health:0 regen:2.0 speed:0.0 crit:2.0 healing:8.0 slot:SlotTypeWeapon rarity:ItemRarityEpic specialKey:@"raidheal1" quality:6 uniqueId:109] autorelease];
+        [items addObject:baraghastEpic];
+    }
+    
+    if (levelNumber == 12) {
+        EquipmentItem *seerEpic = [[[EquipmentItem alloc] initWithName:@"Gown of Insanity" health:75 regen:5 speed:0 crit:0 healing:5 slot:SlotTypeChest rarity:ItemRarityEpic specialKey:nil quality:7 uniqueId:110] autorelease];
+        [items addObject:seerEpic];
+    }
+    
+    if (levelNumber == 13) {
+        EquipmentItem *gatekeeperEpic = [[[EquipmentItem alloc] initWithName:@"Boots from Beyond" health:40 regen:0 speed:5.0 crit:5.0 healing:0 slot:SlotTypeBoots rarity:ItemRarityEpic specialKey:nil quality:7 uniqueId:111] autorelease];
+        [items addObject:gatekeeperEpic];
+    }
+    
+    if (levelNumber == 14) {
+        EquipmentItem *dragonEpic = [[[EquipmentItem alloc] initWithName:@"Bone-scaled Breeches" health:60 regen:5.0 speed:2.5 crit:0.0 healing:5.0 slot:SlotTypeLegs rarity:ItemRarityEpic specialKey:nil quality:8 uniqueId:112] autorelease];
+        [items addObject:dragonEpic];
+    }
+    
+    if (levelNumber == 15) {
+        EquipmentItem *colossusEpic = [[[EquipmentItem alloc] initWithName:@"Colossal Bone Necklace" health:0 regen:3.5 speed:5.0 crit:5.0 healing:2.5 slot:SlotTypeNeck rarity:ItemRarityEpic specialKey:nil quality:8 uniqueId:113] autorelease];
+        [items addObject:colossusEpic];
+    }
+    
+    if (levelNumber == 16) {
+        EquipmentItem *unspeakableEpic = [[[EquipmentItem alloc] initWithName:@"Slime-soaked Waders" health:25 regen:5.0 speed:5.0 crit:3.5 healing:0 slot:SlotTypeBoots rarity:ItemRarityEpic specialKey:nil quality:8 uniqueId:114] autorelease];
+        [items addObject:unspeakableEpic];
+    }
+    
+    if (levelNumber == 17) {
+        EquipmentItem *overseerEpic = [[[EquipmentItem alloc] initWithName:@"Staff of the Overseer" health:0 regen:2.5 speed:3.5 crit:5.0 healing:5.0 slot:SlotTypeWeapon rarity:ItemRarityEpic specialKey:@"healbuff1" quality:8 uniqueId:115] autorelease];
+        [items addObject:overseerEpic];
+    }
+    
+    if (levelNumber == 18) {
+        EquipmentItem *rebornEpic = [[[EquipmentItem alloc] initWithName:@"Helm of the Reborn" health:50 regen:5.0 speed:6.0 crit:0 healing:5.0 slot:SlotTypeHead rarity:ItemRarityEpic specialKey:nil quality:9 uniqueId:116] autorelease];
+        [items addObject:rebornEpic];
+    }
+    
+    if (levelNumber == 19 || levelNumber == 20) {
+        EquipmentItem *avatar1Epic = [[[EquipmentItem alloc] initWithName:@"Amulet of Torment" health:30 regen:5 speed:0 crit:5.0 healing:0.0 slot:SlotTypeNeck rarity:ItemRarityEpic specialKey:nil quality:9 uniqueId:117] autorelease];
+        [items addObject:avatar1Epic];
+    }
+    
+    if (levelNumber == 21) {
+        EquipmentItem *soulEpic = [[[EquipmentItem alloc] initWithName:@"Soul-Imbued Robes" health:75 regen:5.0 speed:5.0 crit:5.0 healing:0.0 slot:SlotTypeChest rarity:ItemRarityEpic specialKey:nil quality:9 uniqueId:118] autorelease];
+        [items addObject:soulEpic];
+    }
+    
+    
+    return items;
+}
+
+
 - (EquipmentItem *)randomLootReward
 {
     NSArray *weights = [Encounter weightsForDifficulty:self.difficulty];
     EquipmentItem *green = [Encounter randomItemForLevelNumber:self.levelNumber difficulty:self.difficulty rarity:ItemRarityUncommon];
     EquipmentItem *blue = [Encounter randomItemForLevelNumber:self.levelNumber difficulty:self.difficulty rarity:ItemRarityRare];
-    EquipmentItem *epic = [Encounter randomItemForLevelNumber:self.levelNumber difficulty:self.difficulty rarity:ItemRarityRare]; //replace this with something that gets the actual epic for the encounter
+    NSArray *epics = [Encounter epicItemsForLevelNumber:self.levelNumber];
+    EquipmentItem *epic = [epics objectAtIndex:arc4random() % epics.count];
     EquipmentItem *legendary = [Encounter randomItemForLevelNumber:self.levelNumber difficulty:self.difficulty rarity:ItemRarityRare]; //replace this with something that gets the legendary or epic for the encounter
     NSArray *items = [NSArray arrayWithObjects:green,blue, epic, legendary, nil];
     LootTable *table = [[[LootTable alloc] initWithItems:items andWeights:weights] autorelease];

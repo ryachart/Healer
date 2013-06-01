@@ -34,7 +34,7 @@ static float stat_atoms[StatTypeMaximum] = {
 {
     EquipmentItem *otherItem = (EquipmentItem*)object;
     if ([otherItem isKindOfClass:[EquipmentItem class]]) {
-        if (otherItem.uniqueId == self.uniqueId) {
+        if (self.uniqueId != 0 && otherItem.uniqueId == self.uniqueId) {
             return YES;
         }
         
@@ -224,6 +224,12 @@ static float stat_atoms[StatTypeMaximum] = {
         if ([self.specialKey isEqualToString:@"burst2"]) {
             spell = [[[Spell alloc] initWithTitle:@"Burst2" healAmnt:150 energyCost:0 castTime:0 andCooldown:15.0] autorelease];
         }
+        if ([self.specialKey isEqualToString:@"raidheal1"]) {
+            spell = [[[RaidHeal alloc] initWithTitle:@"RaidHeal" healAmnt:30 energyCost:0 castTime:0 andCooldown:30.0] autorelease];
+        }
+        if ([self.specialKey isEqualToString:@"healbuff1"]) {
+            spell = [[[HealBuff alloc] initWithTitle:@"HealBuff" healAmnt:0 energyCost:0 castTime:0 andCooldown:30.0] autorelease];
+        }
         [spell setIsItem:YES];
         [spell setItemSpriteName:self.itemSpriteName];
         return spell;
@@ -266,7 +272,9 @@ static float stat_atoms[StatTypeMaximum] = {
 + (NSString *)descriptionForSpecialKey:(NSString *)specialKey
 {
     NSDictionary *dict = @{@"burst1" : @"On Use: Heals your target for 100.  15s Cooldown.",
-                           @"burst2" : @"On Use: Heals your target for 150.  15s Cooldown."};
+                           @"burst2" : @"On Use: Heals your target for 150.  15s Cooldown.",
+                           @"raidheal1" : @"On Use: Heals all allies for 30 over 6 seconds. 30s Cooldown.",
+                           @"healbuff1" : @"On Use: Increases your healing done by 25% for 6 seconds. 30s Cooldown."};
     return [dict objectForKey:specialKey];
 }
 

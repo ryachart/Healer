@@ -301,3 +301,6 @@ typedef enum {
 
 @interface DecayingDamageTakenEffect : Effect
 @end
+
+@interface UndyingFlameEffect : RepeatedHealthEffect
+@end

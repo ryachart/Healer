@@ -8,13 +8,14 @@
 
 #import "EquipmentItem.h"
 #import "Spell.h"
-
+#import "Effect.h"
+#import "NSString+Obfuscation.h"
 
 static float stat_atoms[StatTypeMaximum] = {
     5, //Health
     0.5, //Healing
     0.5, //Regen
-    0.5, //Crit
+    0.75, //Crit
     0.5}; //Speed
 
 @implementation EquipmentItem
@@ -30,13 +31,18 @@ static float stat_atoms[StatTypeMaximum] = {
     return [NSString stringWithFormat:@"%@", self.name];
 }
 
+- (BOOL)isEarnedItem:(EquipmentItem *)item
+{
+    if (self.earnedItemId && item.earnedItemId == self.earnedItemId) {
+        return YES;
+    }
+    return NO;
+}
+
 - (BOOL)isEqual:(id)object
 {
     EquipmentItem *otherItem = (EquipmentItem*)object;
     if ([otherItem isKindOfClass:[EquipmentItem class]]) {
-        if (self.uniqueId != 0 && otherItem.uniqueId == self.uniqueId) {
-            return YES;
-        }
         
         BOOL isEqual = [otherItem.name isEqualToString:self.name] &&
         otherItem.rarity == self.rarity &&
@@ -47,7 +53,8 @@ static float stat_atoms[StatTypeMaximum] = {
         otherItem.crit == self.crit &&
         otherItem.slot == self.slot &&
         otherItem.quality == self.quality &&
-        [otherItem.specialKey isEqualToString:self.specialKey];
+        [otherItem.specialKey isEqualToString:self.specialKey] &&
+        otherItem.uniqueId == self.uniqueId;
         return isEqual;
     }
     
@@ -77,8 +84,9 @@ static float stat_atoms[StatTypeMaximum] = {
     if (![string isKindOfClass:[NSString class]]) {
         NSLog(@"WUT!?");
     }
-    NSArray *components = [string componentsSeparatedByString:@"|"];
-    if (components.count < 11) {
+    NSString *deobString = string.deobfuscatedString;
+    NSArray *components = [deobString componentsSeparatedByString:@"|"];
+    if (components.count < 12) {
         return nil; //Corrupted item
     }
     NSString* name = [components objectAtIndex:0];
@@ -92,13 +100,19 @@ static float stat_atoms[StatTypeMaximum] = {
     NSString *specialKey = [components objectAtIndex:8];
     NSInteger quality = [[components objectAtIndex:9] integerValue];
     NSInteger uniqueId = [[components objectAtIndex:10] integerValue];
+    NSInteger itemId = [[components objectAtIndex:11] integerValue];
     self = [self initWithName:name health:health regen:regen speed:speed crit:crit healing:healing slot:slot rarity:rarity specialKey:specialKey quality:quality uniqueId:uniqueId];
+    if (itemId) {
+        [self itemEarnedWithId:itemId];
+    }
     return self;
 }
 
 - (NSString *)cacheString
 {
-    return [NSString stringWithFormat:@"%@|%i|%1.3f|%1.3f|%1.3f|%1.3f|%i|%i|%@|%i|%i", self.name, self.health, self.regen, self.speed, self.crit, self.healing, self.slot, self.rarity, self.specialKey, self.quality, self.uniqueId];
+    NSString *baseString = [NSString stringWithFormat:@"%@|%i|%1.3f|%1.3f|%1.3f|%1.3f|%i|%i|%@|%i|%i|%i", self.name, self.health, self.regen, self.speed, self.crit, self.healing, self.slot, self.rarity, self.specialKey, self.quality, self.uniqueId, self.earnedItemId];
+    
+    return baseString.obfuscatedString;
 }
 
 + (NSString *)randomItemNameForSlot:(SlotType)slot
@@ -125,6 +139,14 @@ static float stat_atoms[StatTypeMaximum] = {
     
     for (int i = 0; i < (StatTypeMaximum - totalStats); i++) {
         [stats removeObjectAtIndex:arc4random() % stats.count];
+    }
+    
+    if (slot == SlotTypeChest) {
+        //Chests must contain the health stat
+        if (![stats containsObject:[NSNumber numberWithInt:StatTypeHealth]]) {
+            [stats removeObjectAtIndex:arc4random() % stats.count];
+            [stats addObject:[NSNumber numberWithInt:StatTypeHealth]];
+        }
     }
     
     //What's left are the stats we're building with.
@@ -230,6 +252,27 @@ static float stat_atoms[StatTypeMaximum] = {
         if ([self.specialKey isEqualToString:@"healbuff1"]) {
             spell = [[[HealBuff alloc] initWithTitle:@"HealBuff" healAmnt:0 energyCost:0 castTime:0 andCooldown:30.0] autorelease];
         }
+        
+        if ([self.specialKey isEqualToString:@"purify1"]) {
+            spell = [[[Purify alloc] initWithTitle:@"PurifyItem" healAmnt:5 energyCost:0 castTime:0 andCooldown:10.0] autorelease];
+        }
+        
+        if ([self.specialKey isEqualToString:@"armor1"]) {
+            spell = [[[Spell alloc] initWithTitle:@"Armor" healAmnt:0 energyCost:0 castTime:0 andCooldown:10] autorelease];
+            Effect *armor = [[[Effect alloc] initWithDuration:5.0 andEffectType:EffectTypePositiveInvisible] autorelease];
+            [armor setDamageTakenMultiplierAdjustment:-.1];
+            [armor setTitle:@"armor1-eff"];
+            [spell setAppliedEffect:armor];
+        }
+        
+        if ([self.specialKey isEqualToString:@"blast1"]) {
+            spell = [[[LightBolt alloc] initWithTitle:@"Bolt1" healAmnt:0 energyCost:0 castTime:0 andCooldown:15.0] autorelease];
+        }
+        
+        if ([self.specialKey isEqualToString:@"aravon1"]) {
+            spell = [[[StarsOfAravon alloc] initWithTitle:@"Stars1" healAmnt:0 energyCost:0 castTime:0 andCooldown:15.0] autorelease];
+        }
+        
         [spell setIsItem:YES];
         [spell setItemSpriteName:self.itemSpriteName];
         return spell;
@@ -266,7 +309,7 @@ static float stat_atoms[StatTypeMaximum] = {
 
 + (NSArray *)specialKeys
 {
-    return @[@"burst1", @"burst2"];
+    return @[@"burst1", @"burst2", @"armor1"];
 }
 
 + (NSString *)descriptionForSpecialKey:(NSString *)specialKey
@@ -274,7 +317,11 @@ static float stat_atoms[StatTypeMaximum] = {
     NSDictionary *dict = @{@"burst1" : @"On Use: Heals your target for 100.  15s Cooldown.",
                            @"burst2" : @"On Use: Heals your target for 150.  15s Cooldown.",
                            @"raidheal1" : @"On Use: Heals all allies for 30 over 6 seconds. 30s Cooldown.",
-                           @"healbuff1" : @"On Use: Increases your healing done by 25% for 6 seconds. 30s Cooldown."};
+                           @"healbuff1" : @"On Use: Increases your healing done by 25% for 6 seconds. 30s Cooldown.",
+                           @"purify1" : @"On Use: Removes all curses and poisons from an ally.",
+                           @"armor1" : @"On Use: Reduces the damage taken of target ally by 10% for 5 seconds.  10s Cooldown",
+                           @"blast1" : @"On Use: Fire a bolt of light at an enemy dealing 1000 damage. 15s Cooldown.",
+                           @"aravon1" : @"On Use: Summons 4 Stars of Aravon from the Heavens.  15s Cooldown."};
     return [dict objectForKey:specialKey];
 }
 
@@ -298,6 +345,13 @@ static float stat_atoms[StatTypeMaximum] = {
             break;
     }
     return nil;
+}
+
+- (void)itemEarnedWithId:(NSInteger)earnedId
+{
+    if (!self.earnedItemId) {
+        _earnedItemId = earnedId;
+    }
 }
 
 @end

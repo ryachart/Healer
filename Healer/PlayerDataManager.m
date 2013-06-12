@@ -47,6 +47,7 @@ NSString* const PlayerInventoryKey = @"com.healer.ou1";
 NSString* const PlayerSlotKey = @"com.healer.eslot";
 NSString* const PlayerAllyDamageUpgradesKey = @"com.healer.paduk";
 NSString* const PlayerAllyHealthUpgradesKey = @"com.healer.pahuk";
+NSString* const PlayerTotalItemsEarnedKey = @"com.healer.ptie";
 
 NSString* const PlayerStaminaDidChangeNotification = @"com.healer.staminaDidChangeNotif";
 NSString* const PlayerGoldDidChangeNotification = @"com.healer.goldDidChangeNotif";
@@ -678,11 +679,20 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (NSInteger)maximumInventorySize
 {
-    return 10;
+    return 15;
+}
+
+- (NSInteger)totalItemsEarned
+{
+    return [[self.playerData objectForKey:PlayerTotalItemsEarnedKey] integerValue];
 }
 
 - (void)playerEarnsItem:(EquipmentItem *)item
 {
+    NSInteger newTotal = self.totalItemsEarned + 1;
+    [item itemEarnedWithId:newTotal];
+    [self.playerData setObject:[NSNumber numberWithInt:newTotal] forKey:PlayerTotalItemsEarnedKey];
+    
     NSArray *inventory = [self.playerData objectForKey:PlayerInventoryKey];
     if (!inventory) {
         inventory = [NSArray array];
@@ -695,9 +705,17 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 - (void)playerEquipsItem:(EquipmentItem*)item
 {
     NSArray *inventory = [self inventory];
-    if ([inventory containsObject:item]) {
-        [self playerRemovesItemFromInventory:item];
-        [self.playerData setObject:item.cacheString forKey:[self slotKeyForSlot:item.slot]];
+    EquipmentItem *thisItem = nil;
+    
+    for (EquipmentItem *inventoryItem in inventory) {
+        if (inventoryItem.earnedItemId == item.earnedItemId) {
+            thisItem = inventoryItem;
+            break;
+        }
+    }
+    if (thisItem) {
+        [self playerRemovesItemFromInventory:thisItem];
+        [self.playerData setObject:thisItem.cacheString forKey:[self slotKeyForSlot:thisItem.slot]];
     }
     
     [self saveLocalPlayer];
@@ -742,7 +760,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (void)playerSellsItem:(EquipmentItem *)item
 {
-    if ([[self itemForSlot:item.slot] isEqual:item]) {
+    if ([[self itemForSlot:item.slot] isEarnedItem:item]) {
         [self playerUnequipsItemInSlot:item.slot];
     }
     NSInteger sellPrice = [item salePrice];
@@ -753,13 +771,23 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 - (void)playerRemovesItemFromInventory:(EquipmentItem *)item
 {
     NSArray *inventory = [self inventory];
-    if ([inventory containsObject:item]) {
-        [item retain];
+    EquipmentItem *thisItem = nil;
+    
+    //Find the item in the inventory if exists
+    for (EquipmentItem *inventoryItem in inventory) {
+        if ([item isEarnedItem:inventoryItem]) {
+            thisItem = inventoryItem;
+            break;
+        }
+    }
+    
+    if (thisItem) {
+        [thisItem retain];
         NSMutableArray *newInventory = [NSMutableArray arrayWithArray:[self.playerData objectForKey:PlayerInventoryKey]];
-        [newInventory removeObject:item.cacheString];
+        [newInventory removeObject:thisItem.cacheString];
         
         [self.playerData setObject:newInventory forKey:PlayerInventoryKey];
-        [item release];
+        [thisItem release];
     }
 }
 
@@ -771,7 +799,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (NSInteger)nextAllyHealthUpgradeCost
 {
-    if (self.allyHealthUpgrades >= 50) {
+    if (self.allyHealthUpgrades >= 25) {
         return MAXIMUM_ALLY_UPGRADES;
     }
     return 200 + [self allyHealthUpgrades] * 50;

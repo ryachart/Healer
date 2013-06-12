@@ -135,6 +135,7 @@
 		BFE3408B152D57A5008E84F1 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE3408A152D57A5008E84F1 /* GameKit.framework */; };
 		BFE66EDF16D9749800B9FBEE /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = BFE66EDE16D9749800B9FBEE /* fonts */; };
 		BFF4198C15A27CF700BC0453 /* talents.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFF4198B15A27CF700BC0453 /* talents.plist */; };
+		BFF6B202176926130014640C /* NSString+Obfuscation.m in Sources */ = {isa = PBXBuildFile; fileRef = BFF6B201176926130014640C /* NSString+Obfuscation.m */; };
 		BFFB58E6152D69C7005B760E /* MultiplayerSetupScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */; };
 		BFFF9919168D7F52007AF447 /* PlayerDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BFFF9918168D7F52007AF447 /* PlayerDataManager.m */; };
 /* End PBXBuildFile section */
@@ -787,6 +788,8 @@
 		BFE3408A152D57A5008E84F1 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		BFE66EDE16D9749800B9FBEE /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = SOURCE_ROOT; };
 		BFF4198B15A27CF700BC0453 /* talents.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = talents.plist; sourceTree = "<group>"; };
+		BFF6B200176926130014640C /* NSString+Obfuscation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Obfuscation.h"; sourceTree = "<group>"; };
+		BFF6B201176926130014640C /* NSString+Obfuscation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Obfuscation.m"; sourceTree = "<group>"; };
 		BFFB58E4152D69C7005B760E /* MultiplayerSetupScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiplayerSetupScene.h; sourceTree = "<group>"; };
 		BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiplayerSetupScene.m; sourceTree = "<group>"; };
 		BFFF9917168D7F52007AF447 /* PlayerDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayerDataManager.h; path = Healer/PlayerDataManager.h; sourceTree = "<group>"; };
@@ -1069,6 +1072,8 @@
 				BF865F25159F9878007F5DBF /* Talents.m */,
 				BF107938174557DA0077DBBD /* PurchaseManager.h */,
 				BF107939174557DA0077DBBD /* PurchaseManager.m */,
+				BFF6B200176926130014640C /* NSString+Obfuscation.h */,
+				BFF6B201176926130014640C /* NSString+Obfuscation.m */,
 			);
 			name = "Persistent Stores";
 			path = ..;
@@ -2086,6 +2091,7 @@
 				BF13AE41175694C800A613B1 /* StaminaCounterNode.m in Sources */,
 				BF13AE7D1758031E00A613B1 /* LootTable.m in Sources */,
 				BF13AE801759A26D00A613B1 /* EncounterDescriptionLayer.m in Sources */,
+				BFF6B202176926130014640C /* NSString+Obfuscation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

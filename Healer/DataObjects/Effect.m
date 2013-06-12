@@ -1404,3 +1404,14 @@
     return base * (1.0 - (self.timeApplied / self.duration));
 }
 @end
+
+@implementation UndyingFlameEffect
+- (void)player:(Player *)player causedHealing:(NSInteger)healing
+{
+    if (self.stacks == 1) {
+        self.isExpired = YES;
+        return;
+    }
+    self.stacks--;
+}
+@end

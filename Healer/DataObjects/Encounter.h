@@ -49,6 +49,7 @@
 + (NSInteger)goldForLevelNumber:(NSInteger)levelNumber;
 + (NSInteger)goldRewardForSurvivalEncounterWithDuration:(NSTimeInterval)duration;
 + (NSArray *)epicItemsForLevelNumber:(NSInteger)levelNumber;
++ (NSArray *)legendaryItemsForLevelNumber:(NSInteger)levelNumber;
 
 + (NSString *)backgroundPathForEncounter:(NSInteger)encounter;
 @end

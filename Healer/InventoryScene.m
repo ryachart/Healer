@@ -57,64 +57,64 @@
 - (id)init
 {
     if (self = [super init]) {
-        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/battle-sprites.plist"];
+        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"curtain-bg"] autorelease]];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/inventory.plist"];
         
         CCLabelTTF *titleLabel = [CCLabelTTF labelWithString:@"ARMORY" fontName:@"TeluguSangamMN-Bold" fontSize:64.0];
         [titleLabel setPosition:CGPointMake(512, 700)];
         [self addChild:titleLabel];
         
-        CCSprite *healerPortrait = [CCSprite spriteWithSpriteFrameName:@"healer-portrait.png"];
-        [healerPortrait setPosition:CGPointMake(180, 380)];
-        [self addChild:healerPortrait];
+        CCSprite *equipmentBack = [CCSprite spriteWithSpriteFrameName:@"equip_back.png"];
+        [equipmentBack setPosition:CGPointMake(260, 430)];
+        [self addChild:equipmentBack];
         
-        CGPoint slotOffsets = CGPointMake(healerPortrait.position.x * healerPortrait.anchorPoint.x, healerPortrait.position.y * healerPortrait.anchorPoint.y);
+        CGPoint slotOffsets = CGPointMake(equipmentBack.position.x * equipmentBack.anchorPoint.x, equipmentBack.position.y * equipmentBack.anchorPoint.y);
         
         self.headSlot = [[[Slot alloc] initWithInhabitantOrNil:nil] autorelease];
         self.headSlot.slotType = SlotTypeHead;
         self.headSlot.scale = .75;
-        [self.headSlot setTitle:[self titleForSlotType:self.headSlot.slotType]];
         [self.headSlot setPosition:CGPointMake(100+slotOffsets.x, 400+slotOffsets.y)];
         [self addChild:self.headSlot];
         
         self.neckSlot = [[[Slot alloc] initWithInhabitantOrNil:nil] autorelease];
         self.neckSlot.slotType = SlotTypeNeck;
         self.neckSlot.scale = .75;
-        [self.neckSlot setTitle:[self titleForSlotType:self.neckSlot.slotType]];
         [self.neckSlot setPosition:CGPointMake(10+slotOffsets.x, 300+slotOffsets.y)];
         [self addChild:self.neckSlot];
         
         self.chestSlot = [[[Slot alloc] initWithInhabitantOrNil:nil] autorelease];
         self.chestSlot.slotType = SlotTypeChest;
         self.chestSlot.scale = .75;
-        [self.chestSlot setTitle:[self titleForSlotType:self.chestSlot.slotType]];
         [self.chestSlot setPosition:CGPointMake(10+slotOffsets.x, 150+slotOffsets.y)];
         [self addChild:self.chestSlot];
         
         self.legsSlot = [[[Slot alloc] initWithInhabitantOrNil:nil] autorelease];
         self.legsSlot.slotType = SlotTypeLegs;
         self.legsSlot.scale = .75;
-        [self.legsSlot setTitle:[self titleForSlotType:self.legsSlot.slotType]];
         [self.legsSlot setPosition:CGPointMake(200+slotOffsets.x, 150+slotOffsets.y)];
         [self addChild:self.legsSlot];
         
         self.bootsSlot = [[[Slot alloc] initWithInhabitantOrNil:nil] autorelease];
         self.bootsSlot.scale = .75;
         self.bootsSlot.slotType = SlotTypeBoots;
-        [self.bootsSlot setTitle:[self titleForSlotType:self.bootsSlot.slotType]];
         [self.bootsSlot setPosition:CGPointMake(100+slotOffsets.x, 50+slotOffsets.y)];
         [self addChild:self.bootsSlot];
         
         self.weaponSlot = [[[Slot alloc] initWithInhabitantOrNil:nil] autorelease];
         self.weaponSlot.scale = .75;
         self.weaponSlot.slotType = SlotTypeWeapon;
-        [self.weaponSlot setTitle:[self titleForSlotType:self.weaponSlot.slotType]];
         [self.weaponSlot setPosition:CGPointMake(200+slotOffsets.x, 300+slotOffsets.y)];
         [self addChild:self.weaponSlot];
         
         [self configureEquippedSlots];
     
-        CGPoint inventoryPosition = CGPointMake(620, 500);
+        CGPoint inventoryPosition = CGPointMake(700, 400);
+        CGPoint slotsPosition = CGPointMake(526, 490);
+        
+        CCSprite *inventoryBack = [CCSprite spriteWithSpriteFrameName:@"inventory_back.png"];
+        [inventoryBack setPosition:inventoryPosition];
+        [self addChild:inventoryBack];
+        
         self.inventorySlots = [NSMutableArray arrayWithCapacity:[[PlayerDataManager localPlayer] maximumInventorySize]];
         
         for (int i = 0; i < [[PlayerDataManager localPlayer] maximumInventorySize] / INVENTORY_ROW_SIZE;i++) {
@@ -122,15 +122,15 @@
                 Slot *inventorySlot = [[[Slot alloc] initWithInhabitantOrNil:nil] autorelease];
                 inventorySlot.scale = .75;
                 inventorySlot.slotType = INVENTORY_SLOT_TYPE;
-                [inventorySlot setPosition:CGPointMake(inventoryPosition.x + 85 * j, inventoryPosition.y + (-85 * i))];
+                [inventorySlot setPosition:CGPointMake(slotsPosition.x + 85 * j, slotsPosition.y + (-85 * i))];
                 [self.inventorySlots addObject:inventorySlot];
                 [self addChild:inventorySlot];
             }
         }
         
-        self.overflowLabel = [CCLabelTTFShadow labelWithString:@"You have items in overflow that will be made available once you can hold them." dimensions:CGSizeMake(400, 50) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:18.0];
-        self.overflowLabel.position = ccpSub(inventoryPosition, CGPointMake(-180, 180));
-        [self addChild:self.overflowLabel];
+//        self.overflowLabel = [CCLabelTTFShadow labelWithString:@"You have items in overflow that will be made available once you can hold them." dimensions:CGSizeMake(400, 50) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:18.0];
+//        self.overflowLabel.position = ccpSub(inventoryPosition, CGPointMake(-180, 180));
+//        [self addChild:self.overflowLabel];
         
         [self configureInventory];
         
@@ -138,50 +138,57 @@
         [backButton setPosition:BACK_BUTTON_POS];
         [self addChild:backButton z:100];
         
-//        CCMenu *freeItem = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(freeItem)];
-//        [freeItem setPosition:CGPointMake(512, 725)];
-//        [self addChild:freeItem z:100];
+        CCMenu *freeItem = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(freeItem)];
+        [freeItem setPosition:CGPointMake(512, 725)];
+        [self addChild:freeItem z:100];
         
         self.itemDescriptionNode = [[[ItemDescriptionNode alloc] init] autorelease];
-        self.itemDescriptionNode.position = CGPointMake(800, 600);
+        self.itemDescriptionNode.position = CGPointMake(696, 590);
         [self addChild:self.itemDescriptionNode];
         
         self.sellDrop = [[[SellDropSprite alloc] init] autorelease];
-        [self.sellDrop setPosition:CGPointMake(800, 200)];
+        [self.sellDrop setPosition:CGPointMake(696, 210)];
         [self addChild:self.sellDrop];
         
-        CCLabelTTFShadow *statsTitleLabel = [CCLabelTTFShadow labelWithString:@"Stats:" fontName:@"TrebuchetMS-Bold" fontSize:28.0];
-        [statsTitleLabel setPosition:CGPointMake(400, 550)];
-        [self addChild:statsTitleLabel];
+        CCSprite *statsBack = [CCSprite spriteWithSpriteFrameName:@"stats_back.png"];
+        [statsBack setPosition:CGPointMake(260, 120)];
+        [self addChild:statsBack];
         
-        self.statsLabel = [CCLabelTTFShadow labelWithString:[self statsString] dimensions:CGSizeMake(200, 600) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS" fontSize:14.0];
-        [self.statsLabel setPosition:CGPointMake(475, 220)];
-        [self addChild:self.statsLabel];
+        CCLabelTTFShadow *statsTitleLabel = [CCLabelTTFShadow labelWithString:@"Stats:" fontName:@"TrebuchetMS-Bold" fontSize:28.0];
+        [statsTitleLabel setPosition:CGPointMake(50, 120)];
+        [statsBack addChild:statsTitleLabel];
+        
+        self.statsLabel = [CCLabelTTFShadow labelWithString:[self statsString] dimensions:CGSizeMake(200, 200) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS" fontSize:14.0];
+        [self.statsLabel setPosition:CGPointMake(240, 25)];
+        [statsBack addChild:self.statsLabel];
         
 //        self.allyDamage = [CCLabelTTFShadow labelWithString:@"Ally Damage:\n+0%" fontName:@"TrebuchetMS-Bold" fontSize:28.0];
 //        [self.allyDamage setPosition:CGPointMake(300, 120)];
 //        [self addChild:self.allyDamage];
         
-        self.allyHealth = [CCLabelTTFShadow labelWithString:@"Ally Health:\n+0%" fontName:@"TrebuchetMS-Bold" fontSize:28.0];
-        [self.allyHealth setPosition:CGPointMake(500, 120)];
-        [self addChild:self.allyHealth];
-        
         GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
         [goldCounter setPosition:CGPointMake(900, 45)];
         [self addChild:goldCounter];
         
+        CCSprite *upgradeAllyHealthBack = [CCSprite spriteWithSpriteFrameName:@"allies_back.png"];
+        [upgradeAllyHealthBack setPosition:CGPointMake(640, 60)];
+        [self addChild:upgradeAllyHealthBack];
+        
+        self.allyHealth = [CCLabelTTFShadow labelWithString:@"" fontName:@"TrebuchetMS-Bold" fontSize:28.0];
+        [self.allyHealth setPosition:CGPointMake(upgradeAllyHealthBack.contentSize.width/2, 100)];
+        [upgradeAllyHealthBack addChild:self.allyHealth];
+        
         self.allyHealthUpgradeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(upgradeAllyHealth) andTitle:@"Upgrade"];
-        [self.allyHealthUpgradeButton setScale:.5];
+        [self.allyHealthUpgradeButton setScale:.75];
         
-//        self.allyDamageUpgradeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(upgradeAllyDamage) andTitle:@"Upgrade"];
-//        [self.allyDamageUpgradeButton setScale:.5];
-        
+        self.allyHealthCostNode = [GoldCounterSprite goldCostNodeForCost:[PlayerDataManager localPlayer].nextAllyHealthUpgradeCost];
+        [self.allyHealthCostNode setPosition:CGPointMake(120, 40)];
+        [upgradeAllyHealthBack addChild:self.allyHealthCostNode];
         [self configureAllyUpgrades];
         
         CCMenu *upgradeMenu = [CCMenu menuWithItems:/*self.allyDamageUpgradeButton,*/self.allyHealthUpgradeButton, nil];
-        [upgradeMenu setPosition:CGPointMake(500, 28)];
-//        [upgradeMenu alignItemsHorizontallyWithPadding:90];
-        [self addChild:upgradeMenu];
+        [upgradeMenu setPosition:CGPointMake(upgradeAllyHealthBack.contentSize.width - 116, 54)];
+        [upgradeAllyHealthBack addChild:upgradeMenu];
         
     }
     return self;
@@ -246,23 +253,18 @@
 
 - (void)configureAllyUpgrades
 {
-//    if (self.allyDamageCostNode) {
-//        [self.allyDamageCostNode removeFromParentAndCleanup:YES];
-//    }
+    CCNode *parent = self.allyHealthCostNode.parent;
+    CGPoint position = self.allyHealthCostNode.position;
+    
     if (self.allyHealthCostNode) {
         [self.allyHealthCostNode removeFromParentAndCleanup:YES];
     }
     
-//    self.allyDamage.string = [NSString stringWithFormat:@"Ally Damage:\n+%i%%", [PlayerDataManager localPlayer].allyDamageUpgrades];
-    self.allyHealth.string = [NSString stringWithFormat:@"Ally Health:\n+%i%%", [PlayerDataManager localPlayer].allyHealthUpgrades];
+    self.allyHealth.string = [NSString stringWithFormat:@"Ally Health: +%i%%", [PlayerDataManager localPlayer].allyHealthUpgrades];
     
     self.allyHealthCostNode = [GoldCounterSprite goldCostNodeForCost:[PlayerDataManager localPlayer].nextAllyHealthUpgradeCost];
-    [self.allyHealthCostNode setPosition:CGPointMake(550, 50)];
-    [self addChild:self.allyHealthCostNode];
-    
-//    self.allyDamageCostNode = [GoldCounterSprite goldCostNodeForCost:[PlayerDataManager localPlayer].nextAllyDamageUpgradeCost];
-//    [self.allyDamageCostNode setPosition:CGPointMake(350, 50)];
-//    [self addChild:self.allyDamageCostNode];
+    [self.allyHealthCostNode setPosition:position];
+    [parent addChild:self.allyHealthCostNode];
 }
 
 -(void)back

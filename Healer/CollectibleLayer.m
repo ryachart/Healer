@@ -36,7 +36,10 @@
 - (void)beginMovement
 {
     if (self.collectible.movementType == CollectibleMovementTypeFloat) {
-        CCRepeatForever *floatAction = [CCRepeatForever actionWithAction:[CCSequence actions:[CCMoveBy actionWithDuration:1.0 position:self.collectible.movementVector], [CCMoveBy actionWithDuration:1.0 position:CGPointMake(-self.collectible.movementVector.x, -self.collectible.movementVector.y)], nil]];
+        CCRepeatForever *floatAction = [CCRepeatForever actionWithAction:
+                                        [CCSequence actions:
+                                         [CCMoveBy actionWithDuration:1.0 position:self.collectible.movementVector],
+                                         [CCMoveBy actionWithDuration:1.0 position:CGPointMake(-self.collectible.movementVector.x, -self.collectible.movementVector.y)], nil]];
         [self runAction:floatAction];
     }
 }

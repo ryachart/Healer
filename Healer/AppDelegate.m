@@ -10,7 +10,7 @@
 #import "AppDelegate.h"
 #import "GameConfig.h"
 #import "TestFlight.h"
-#import "Parse/Parse.h"
+#import <Parse/Parse.h>
 #import "PlayerDataManager.h"
 #import "LaunchScene.h"
 #import "Talents.h"

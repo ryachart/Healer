@@ -1273,7 +1273,7 @@
     NSTimeInterval quakeTime = 3.0;
     
     for (RaidMember *member in members) {
-        RepeatedHealthEffect *bonequakeDot = [[[RepeatedHealthEffect alloc] initWithDuration:quakeTime andEffectType:EffectTypeNegative] autorelease];
+        RepeatedHealthEffect *bonequakeDot = [[[RepeatedHealthEffect alloc] initWithDuration:quakeTime andEffectType:EffectTypeNegativeInvisible] autorelease];
         [bonequakeDot setNumOfTicks:3];
         [bonequakeDot setValuePerTick:-(arc4random() % 50 + 10)];
         [bonequakeDot setTitle:@"bonequake-dot"];
@@ -2567,6 +2567,62 @@
         [manaOrb registerDelegate:self];
         [self.owner.announcer displayCollectible:manaOrb];
         self.ownerEffect.stacks++;
+    }
+}
+@end
+
+@implementation UndyingFlame
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    if (self.appliedEffect) {
+        self.appliedEffect.title = @"undying-flame-eff";
+    }
+    [super triggerAbilityForRaid:theRaid players:players enemies:enemies];
+    for (RaidMember *member in theRaid.livingMembers) {
+        Effect *eff = [member effectWithTitle:self.appliedEffect.title];
+        if (eff) {
+            eff.stacks = eff.maxStacks;
+        }
+    }
+    
+}
+@end
+
+@implementation InterruptedByFullHealthTargets
+- (void)dealloc
+{
+    [_channelTickRaidParticleEffectName release];
+    [super dealloc];
+}
+
+- (NSInteger)fullHealthTargetsInRaid:(Raid*)theRaid
+{
+    NSInteger total = 0;
+    for (RaidMember *member in theRaid.livingMembers) {
+        if (member.health == member.maximumHealth) {
+            total++;
+        }
+    }
+    return total;
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    [super triggerAbilityForRaid:theRaid players:players enemies:enemies];
+    [self startChannel:20.0 withTicks:8.0];
+}
+
+- (void)channelTickForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    if ([self fullHealthTargetsInRaid:theRaid] >= self.requiredNumberOfTargets) {
+        [self interrupt];
+    } else {
+        for (RaidMember *member in theRaid.livingMembers) {
+            [self damageTarget:member];
+        }
+        if (self.channelTickRaidParticleEffectName) {
+            [self.owner.announcer displayParticleSystemOnRaidWithName:self.channelTickRaidParticleEffectName delay:0.0];
+        }
     }
 }
 @end

@@ -123,6 +123,7 @@ extern NSString* const MainGameContentKey;
 @property (nonatomic, readonly) NSArray *inventory;
 @property (nonatomic, readonly) NSInteger maximumInventorySize;
 @property (nonatomic, readonly) NSArray *equippedItems;
+@property (nonatomic, readonly) NSInteger totalItemsEarned;
 
 - (EquipmentItem*)itemForSlot:(SlotType)slotType;
 - (void)playerEarnsItem:(EquipmentItem*)item;

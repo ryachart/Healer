@@ -63,7 +63,7 @@
         } else {
             self.nextLabel.visible = YES;
             NSInteger secondsUntil =  [PlayerDataManager localPlayer].secondsUntilNextStamina;
-            self.nextLabel.string = [NSString stringWithFormat:@"Next in %d:%2d:%02d", secondsUntil / 3600, secondsUntil / 60 % 60, secondsUntil % 60];
+            self.nextLabel.string = [NSString stringWithFormat:@"Next in %d:%02d:%02d", secondsUntil / 3600, secondsUntil / 60 % 60, secondsUntil % 60];
         }
     }
     

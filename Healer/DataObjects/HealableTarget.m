@@ -195,6 +195,19 @@
     return count;
 }
 
+- (Effect*)effectWithTitle:(NSString *)effect
+{
+    if (self.isDead) {
+        return nil;
+    }
+    for (Effect *eff in self.activeEffects) {
+        if ([eff.title isEqualToString:effect]) {
+            return eff;
+        }
+    }
+    return nil;
+}
+
 -(void)addEffect:(Effect*)theEffect
 {
 	if (self.activeEffects){

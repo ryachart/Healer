@@ -41,8 +41,8 @@
         self.descriptionLabel.shadowOffset = CGPointMake(-1, -1);
         [self addChild:self.descriptionLabel];
         
-        self.infoLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(self.background.contentSize.width, 34) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
-        self.infoLabel.position = CGPointMake(10, -self.background.contentSize.height / 2 + 24);
+        self.infoLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(300, 34) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
+        self.infoLabel.position = CGPointMake(2, -self.background.contentSize.height / 2 + 24);
         self.infoLabel.shadowOffset = CGPointMake(-1, -1);
         [self addChild:self.infoLabel];
         
@@ -110,7 +110,7 @@
 - (NSString *)statsLineForItem:(EquipmentItem *)item
 {
     NSMutableString *statsLine = [NSMutableString string];
-    NSInteger statsCount = 0;
+    NSInteger statsCount = 1;
     if (item.health > 0) {
         [statsLine appendFormat:@"Health: +%i", item.health];
         statsCount++;

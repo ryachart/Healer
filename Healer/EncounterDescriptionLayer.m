@@ -61,7 +61,8 @@
         [self.overpaper addChild:divider];
         
         NSInteger descriptionHeight = 120;
-        NSArray *encounterLoot = [Encounter epicItemsForLevelNumber:encounter.levelNumber];
+        NSArray *legendaries = [Encounter legendaryItemsForLevelNumber:encounter.levelNumber];
+        NSArray *encounterLoot = [legendaries arrayByAddingObjectsFromArray:[Encounter epicItemsForLevelNumber:encounter.levelNumber]];
         NSInteger height = encounterInfo.position.y - 120;
         for (EquipmentItem *item in encounterLoot) {
             CCSprite *icon = [CCSprite spriteWithSpriteFrameName:item.itemSpriteName];
@@ -86,12 +87,19 @@
         [self.overpaper addChild:randomGreen];
         height -= descriptionHeight;
         
-        CCLabelTTFShadow *lootInfo = [CCLabelTTFShadow labelWithString:@"Increased difficulty improves the quality of random loot and the chances of epic loot." dimensions: CGSizeMake(self.overpaper.contentSize.width * .8, 80) hAlignment:kCCTextAlignmentCenter  fontName:@"Cochin" fontSize:24.0];
+        
+        NSString *lootInfoString = @"Increased difficulty improves the quality of random loot and the chances of epic loot.";
+        
+        if ([Encounter legendaryItemsForLevelNumber:encounter.levelNumber].count > 0) {
+            lootInfoString = [lootInfoString stringByAppendingString:@" Legendary items can only drop on Brutal difficulty."];
+        }
+        
+        CCLabelTTFShadow *lootInfo = [CCLabelTTFShadow labelWithString:lootInfoString dimensions: CGSizeMake(self.overpaper.contentSize.width * .8, 80) hAlignment:kCCTextAlignmentCenter  fontName:@"Cochin" fontSize:24.0];
         [lootInfo setColor:ccc3(88, 54, 22)];
         lootInfo.shadowOffset = CGPointMake(-1, -1);
         [lootInfo setPosition:CGPointMake(self.overpaper.contentSize.width / 2, height)];
         [self.overpaper addChild:lootInfo];
-        height -= descriptionHeight;
+        //height -= descriptionHeight;
         
     }
     return self;

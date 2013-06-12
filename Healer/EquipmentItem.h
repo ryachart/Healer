@@ -30,8 +30,8 @@ typedef enum {
 typedef enum {
     ItemRarityUncommon = 1,
     ItemRarityRare,
-    ItemRarityEpic,
-    ItemRarityLegendary
+    ItemRarityEpic = 4,
+    ItemRarityLegendary = 5
 } ItemRarity;
 
 @class Spell;
@@ -54,8 +54,13 @@ typedef enum {
 @property (nonatomic, readonly) NSString *info;
 @property (nonatomic, readonly) Spell *spellFromItem;
 @property (nonatomic, readonly) NSString *slotTypeName;
+@property (nonatomic, readonly) NSInteger earnedItemId;
+
 - (id)initWithName:(NSString *)name health:(NSInteger)health regen:(float)regen speed:(float)speed crit:(float)crit healing:(float)healing slot:(SlotType)slot rarity:(ItemRarity)rarity specialKey:(NSString *)specialKey quality:(NSInteger)quality uniqueId:(NSInteger)uniqueId;
 - (id)initWithItemCacheString:(NSString *)string;
+
+- (void)itemEarnedWithId:(NSInteger)earnedId;
+- (BOOL)isEarnedItem:(EquipmentItem *)item;
 
 + (EquipmentItem *)randomItemWithRarity:(ItemRarity)rarity andQuality:(NSInteger)quality;
 @end

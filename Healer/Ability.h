@@ -324,3 +324,14 @@ typedef enum {
 @property (nonatomic, readwrite) float particleEffectCooldown;
 @property (nonatomic, retain) Effect *ownerEffect;
 @end
+
+@interface UndyingFlame : Attack
+@end
+
+@interface InterruptedByFullHealthTargets : Ability
+@property (nonatomic, readwrite) NSInteger requiredNumberOfTargets;
+@property (nonatomic, retain) NSString *channelTickRaidParticleEffectName;
+@end
+
+@interface BoneStorm : InterruptedByFullHealthTargets
+@end

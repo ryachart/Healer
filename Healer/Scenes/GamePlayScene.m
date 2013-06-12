@@ -309,7 +309,7 @@
 #if DEBUG_PERFECT_HEALS
         for (RaidMember *member in self.raid.livingMembers) {
             PerfectHeal *immunity = [[[PerfectHeal alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
-            [immunity setDamageDoneMultiplierAdjustment:1];
+            //[immunity setDamageDoneMultiplierAdjustment:1];
             [immunity setOwner:self.player];
             [member addEffect:immunity];
         }

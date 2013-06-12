@@ -982,6 +982,14 @@
 }
 @end
 
+@implementation LightBolt
+- (void)spellFinishedCastingForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
+{
+    [super spellFinishedCastingForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
+    self.owner.shouldAttack = YES;
+}
+@end
+
 #pragma mark -
 #pragma mark Test Spells
 @implementation HastyBrew

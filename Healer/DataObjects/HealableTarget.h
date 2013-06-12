@@ -37,5 +37,6 @@
 - (void)removeEffectsWithTitle:(NSString *)effectTitle;
 - (void)addHealthAdjustmentModifier:(HealthAdjustmentModifier*)hamod;
 - (BOOL)hasEffectWithTitle:(NSString*)title;
+- (Effect*)effectWithTitle:(NSString *)effect;
 - (void)updateEffects:(NSArray*)enemies raid:(Raid*)theRaid players:(NSArray*)players time:(float)timeDelta;
 @end

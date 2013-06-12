@@ -203,7 +203,7 @@
 
 -(void)doneButton{
     if (!self.changingSpells){
-        if (self.encounter.levelNumber >= 14 && self.encounter.difficulty == 5) {
+        if (self.encounter.levelNumber >= 22 && self.encounter.difficulty == 5) {
             //This encounter is unavailable on Brutal
             IconDescriptionModalLayer *modalLayer = [[[IconDescriptionModalLayer alloc] initWithIconName:nil title:@"Unavailable" andDescription:@"This battle is unavailable on Brutal difficulty.  Please check back in a future update."] autorelease];
             [modalLayer setDelegate:self];

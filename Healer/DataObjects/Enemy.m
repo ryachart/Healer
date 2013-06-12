@@ -2000,6 +2000,31 @@
         [self.announcer displayScreenShakeForDuration:.25];
     }
 }
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    if (difficulty == 5) {
+        UndyingFlameEffect *flames = [[[UndyingFlameEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+        [flames setTitle:@"undying-flames-eff"];
+        [flames setValuePerTick:-20];
+        [flames setStacks:5];
+        [flames setMaxStacks:5];
+        [flames setVisibilityPriority:100];
+        
+        UndyingFlame *undyingFlame = [[[UndyingFlame alloc] initWithDamage:1 andCooldown:15.0] autorelease];
+        [undyingFlame setActivationTime:1.25];
+        [undyingFlame setAttackParticleEffectName:@"flame_spawn.plist"];
+        [undyingFlame setExecutionSound:@"dragonroar2.mp3"];
+        [undyingFlame setRequiresDamageToApplyEffect:NO];
+        [undyingFlame setPrefersTargetsWithoutVisibleEffects:YES];
+        [undyingFlame setInfo:@"A target is covered in flames.  The flame starts with 5 stacks but a stack is removed each time the target is healed.  Whenever the dragon applies this flame all flames are reignited."];
+        [undyingFlame setIconName:@"soul_burn.png"];
+        [undyingFlame setTitle:@"Undying Flame"];
+        [undyingFlame setAppliedEffect:flames];
+        [self addAbility:undyingFlame];
+    }
+}
 @end
 
 @implementation ColossusOfBone
@@ -2051,6 +2076,26 @@
         [self.announcer displayScreenShakeForDuration:3.0];
         float boneQuakeCD = arc4random() % 15 + 15;
         [self.boneQuake setCooldown:boneQuakeCD];
+    }
+}
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    
+    if (difficulty == 5) {
+        InterruptedByFullHealthTargets *boneStorm = [[[InterruptedByFullHealthTargets alloc] init] autorelease];
+        [boneStorm setAttackParticleEffectName:nil];
+        [boneStorm setInfo:@"The Colossus summons a storm of bones to crush his enemies.  This ability is interrupted if the Colossus detects 3 full health enemies."];
+        [boneStorm setTitle:@"Bonestorm"];
+        [boneStorm setIconName:@"bonestorm.png"];
+        [boneStorm setChannelTickRaidParticleEffectName:@"bonestorm.plist"];
+        [boneStorm setRequiredNumberOfTargets:3];
+        [boneStorm setActivationTime:1.5];
+        [boneStorm setCooldown:60.0];
+        [boneStorm setAbilityValue:65];
+        [boneStorm setTimeApplied:20.0];
+        [self addAbility:boneStorm];
     }
 }
 
@@ -2663,8 +2708,11 @@
         [barrier setHealingToAbsorb:400];
         
         Attack *spiritBlock = [[[Attack alloc] initWithDamage:0 andCooldown:40.0] autorelease];
+        [spiritBlock setFailureChance:0.0];
+        [spiritBlock setDodgeChanceAdjustment:-100.0];
         [spiritBlock setExecutionSound:@"curse.png"];
         [spiritBlock setPrefersTargetsWithoutVisibleEffects:YES];
+        [spiritBlock setRequiresDamageToApplyEffect:NO];
         [spiritBlock setTimeApplied:20.0];
         [spiritBlock setIgnoresGuardians:YES];
         [spiritBlock setKey:@"spirit-barrier"];

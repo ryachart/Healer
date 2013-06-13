@@ -147,6 +147,27 @@
     return self;
 }
 
+- (id)initAsConfirmationDialogueWithDescription:(NSString *)description
+{
+    if (self = [self initWithBase]) {
+        BasicButton *cancelButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(shouldDismiss) andTitle:@"Cancel"];
+        [cancelButton setScale:.75];
+        
+        BasicButton *confirmButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(confirm) andTitle:@"Okay"];
+        [confirmButton setScale:.75];
+        
+        CCLabelTTFShadow *descLabel = [CCLabelTTFShadow labelWithString:description dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2.25, self.alertDialogBackground.contentSize.width / 2) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:20.0];
+        [descLabel setPosition:CGPointMake(356, 122)];
+        [self.alertDialogBackground addChild:descLabel];
+        
+        self.menu = [CCMenu menuWithItems:cancelButton, confirmButton, nil];
+        [self.menu setPosition:CGPointMake(356, 190)];
+        [self.menu alignItemsHorizontallyWithPadding:4];
+        [self.alertDialogBackground addChild:self.menu];
+    }
+    return self;
+}
+
 - (void)onEnter {
     [super onEnter];
     
@@ -180,6 +201,11 @@
 
 - (void)shouldDismiss {
     [self.delegate iconDescriptionModalDidComplete:self];
+}
+
+- (void)confirm {
+    self.isConfirmed = YES;
+    [self shouldDismiss];
 }
 
 - (void)sellItem

@@ -139,8 +139,8 @@ static PurchaseManager *_sharedPurchaseManager;
                 if (!error) {
                     [self awardPurchase:transaction];
                 } else {
-                    NSLog(@"ERROR: %@", error.description);
-                    [self transactionFailed:transaction];
+                    //This is probably a Parse Timeout
+                    [self completeTransaction:transaction]; //Infinite Retry
                 }
             }];
     } else if (transaction.transactionState == SKPaymentTransactionStateRestored) {

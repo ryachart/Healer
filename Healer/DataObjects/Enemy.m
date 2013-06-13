@@ -779,7 +779,7 @@
             [wse setAilmentType:AilmentTrauma];
             [wse setTitle:@"pred-fungus-effect"];
             [wse setSpriteName:@"plague.png"];
-            [wse setValuePerTick:-self.autoAttack.abilityValue];
+            [wse setValuePerTick:-self.autoAttack.abilityValue * .75];
             [wse setOwner:self];
             [target addEffect:wse];
         }
@@ -1917,6 +1917,21 @@
     return [boss autorelease];
 }
 
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .35;
+        default:
+            return 0.0;
+    }
+}
+
 - (AbilityDescriptor *)flyingDescriptor
 {
     AbilityDescriptor *flying= [[[AbilityDescriptor alloc] init] autorelease];
@@ -1936,8 +1951,6 @@
 }
 
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
-    
-
     
     if (percentage == 99.0){
         [self.announcer announce:@"The Skeletal Dragon hovers angrily above your allies."];
@@ -2071,6 +2084,21 @@
     return [cob autorelease];
 }
 
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .35;
+        default:
+            return 0.0;
+    }
+}
+
 - (void)ownerDidExecuteAbility:(Ability *)ability {
     if (ability == self.boneQuake){
         [self.announcer displayScreenShakeForDuration:3.0];
@@ -2108,6 +2136,21 @@
     [super dealloc];
 }
 
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .35;
+        default:
+            return 0.0;
+    }
+}
+
 + (id)defaultBoss {
     OverseerOfDelsarn *boss = [[OverseerOfDelsarn alloc] initWithHealth:2580000 damage:0 targets:0 frequency:0 choosesMT:NO ];
     [boss setTitle:@"Overseer of Delsarn"];
@@ -2125,19 +2168,19 @@
     
     boss.demonAbilities = [NSMutableArray arrayWithCapacity:3];
     
-    BloodMinion *bm = [[BloodMinion alloc] init];
-    [bm setKey:@"blood-minion"];
-    [bm setCooldown:10.0];
-    [bm setAbilityValue:90];
-    [boss.demonAbilities addObject:bm];
-    [bm release];
-    
     FireMinion *fm = [[FireMinion alloc] init];
     [fm setKey:@"fire-minion"];
     [fm setCooldown:15.0];
     [fm setAbilityValue:315];
     [boss.demonAbilities addObject:fm];
     [fm release];
+    
+    BloodMinion *bm = [[BloodMinion alloc] init];
+    [bm setKey:@"blood-minion"];
+    [bm setCooldown:10.0];
+    [bm setAbilityValue:90];
+    [boss.demonAbilities addObject:bm];
+    [bm release];
     
     ShadowMinion *sm = [[ShadowMinion alloc] init];
     [sm setKey:@"shadow-minion"];
@@ -2151,6 +2194,10 @@
 
 - (void)addRandomDemonAbility {
     NSInteger indexToAdd = arc4random() % self.demonAbilities.count;
+    
+    if (self.difficulty == 5) {
+        indexToAdd = 0;
+    }
     
     Ability *addedAbility = [self.demonAbilities objectAtIndex:indexToAdd];
     [self addAbility:addedAbility];
@@ -2192,12 +2239,52 @@
         self.projectilesAbility.isDisabled = NO;
     }
 }
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    if (difficulty == 5) {
+        DispelsWhenSelectedRepeatedHealthEffect *consumingShadows = [[[DispelsWhenSelectedRepeatedHealthEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [consumingShadows setValuePerTick:-170];
+        [consumingShadows setTitle:@"consuming-shadows-eff"];
+        [consumingShadows setAilmentType:AilmentCurse];
+        [consumingShadows setParticleEffectName:@"consuming_shadows.plist"];
+        
+        Attack *swellingDarkness = [[[Attack alloc] initWithDamage:1 andCooldown:30] autorelease];
+        [swellingDarkness setTimeApplied:28.0];
+        [swellingDarkness setNumberOfTargets:5];
+        [swellingDarkness setAttackParticleEffectName:nil];
+        [swellingDarkness setInfo:@"The Overseer covers several allies in shadows, but your radiance will remove the shadows by simply targeting the ally."];
+        [swellingDarkness setTitle:@"Consuming Shadows"];
+        [swellingDarkness setIconName:@"shadow_prison.png"];
+        [swellingDarkness setRequiresDamageToApplyEffect:NO];
+        [swellingDarkness setKey:@"consuming-shadows"];
+        [swellingDarkness setFailureChance:0];
+        [swellingDarkness setAppliedEffect:consumingShadows];
+        [self addAbility:swellingDarkness];
+    }
+}
 @end
 
 @implementation TheUnspeakable
 - (void)dealloc {
     [_oozeAll release];
     [super dealloc];
+}
+
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .35;
+        default:
+            return 0.0;
+    }
 }
 
 + (id)defaultBoss {
@@ -2261,6 +2348,22 @@
     [_deathwave release];
     [super dealloc];
 }
+
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .45;
+        default:
+            return 0.0;
+    }
+}
+
 + (id)defaultBoss {
     BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:3289000 damage:500 targets:1 frequency:2.25 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
@@ -2424,6 +2527,21 @@
     return [boss autorelease];
 }
 
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .45;
+        default:
+            return 0.0;
+    }
+}
+
 - (void)soulPrisonAll:(Raid *)raid
 {
     [self.announcer announce:@"YOUR SOULS BELONG TO THE ABYSS"];
@@ -2554,6 +2672,21 @@
     return [boss autorelease];
 }
 
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .45;
+        default:
+            return 0.0;
+    }
+}
+
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     if (percentage == 99.0 || percentage == 95.0) {
@@ -2604,6 +2737,21 @@
     [boss gainSoulDrain];
     
     return [boss autorelease];
+}
+
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .45;
+        default:
+            return 0.0;
+    }
 }
 
 - (void)gainSoulDrain
@@ -2722,12 +2870,18 @@
         [spiritBlock setAppliedEffect:barrier];
         [self addAbility:spiritBlock];
         
+        NSInteger cataclysmDamage = 1800;
+        
+        if (self.difficulty == 1) {
+            cataclysmDamage = 1200;
+        }
+        
         RaidDamage *cataclysm = [[[RaidDamage alloc] init] autorelease];
         [cataclysm setExecutionSound:@"gasexplosion.png"];
         [cataclysm setKey:@"cataclysm"];
         [cataclysm setCooldown:35.0];
         [cataclysm setActivationTime:8.0];
-        [cataclysm setAbilityValue:1800];
+        [cataclysm setAbilityValue:cataclysmDamage];
         [cataclysm setAttackParticleEffectName:nil];
         [cataclysm setTitle:@"Cataclysm"];
         [cataclysm setIconName:@"choking_cloud.png"];

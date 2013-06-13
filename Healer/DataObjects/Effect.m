@@ -22,6 +22,7 @@
     [spriteName release];
     [title release];
     [ownerNetworkID release];
+    [_particleEffectName release];
     [super dealloc];
 }
 -(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
@@ -87,6 +88,10 @@
     self.isExpired = NO;
 }
 
+- (void)targetWasSelectedByPlayer:(Player*)player
+{
+}
+
 -(id)copy{
     Effect *copied = [[[self class] alloc] initWithDuration:self.duration andEffectType:self.effectType];
     copied.maxStacks = maxStacks;
@@ -114,6 +119,7 @@
     copied.healingReceivedMultiplierAdjustment = self.healingReceivedMultiplierAdjustment;
     copied.causesReactiveDodge = self.causesReactiveDodge;
     copied.causesBlind = self.causesBlind;
+    copied.particleEffectName = self.particleEffectName;
     return copied;
 }
 
@@ -1413,5 +1419,12 @@
         return;
     }
     self.stacks--;
+}
+@end
+
+@implementation DispelsWhenSelectedRepeatedHealthEffect
+- (void)targetWasSelectedByPlayer:(Player *)player
+{
+    self.isExpired = YES;
 }
 @end

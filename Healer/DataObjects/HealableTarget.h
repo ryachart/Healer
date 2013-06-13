@@ -39,4 +39,5 @@
 - (BOOL)hasEffectWithTitle:(NSString*)title;
 - (Effect*)effectWithTitle:(NSString *)effect;
 - (void)updateEffects:(NSArray*)enemies raid:(Raid*)theRaid players:(NSArray*)players time:(float)timeDelta;
+- (void)targetWasSelectedByPlayer:(Player*)player;
 @end

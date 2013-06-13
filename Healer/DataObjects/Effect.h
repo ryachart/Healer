@@ -69,6 +69,7 @@ typedef enum {
 @property (nonatomic, readonly) NSInteger visibleStacks;
 @property (nonatomic, readwrite) BOOL causesReactiveDodge;
 @property (nonatomic, readwrite) BOOL causesBlind;
+@property (nonatomic, retain) NSString *particleEffectName;
 - (void)reset;
 - (BOOL)isKindOfEffect:(Effect*)effect;
 //Weird hacky solution for figuring out the owner in network play
@@ -84,6 +85,7 @@ typedef enum {
 - (void)effectWillBeDispelled:(Raid*)raid player:(Player*)player enemies:(NSArray *)enemies;
 - (void)player:(Player*)player causedHealing:(NSInteger)healing;
 - (void)targetDidCastSpell:(Spell*)spell;
+- (void)targetWasSelectedByPlayer:(Player*)player;
 
 //Multiplayer
 -(NSString*)asNetworkMessage;
@@ -303,4 +305,7 @@ typedef enum {
 @end
 
 @interface UndyingFlameEffect : RepeatedHealthEffect
+@end
+
+@interface DispelsWhenSelectedRepeatedHealthEffect : RepeatedHealthEffect
 @end

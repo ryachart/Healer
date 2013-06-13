@@ -301,4 +301,11 @@
     }
     return hasEffect;
 }
+
+- (void)targetWasSelectedByPlayer:(Player*)player
+{
+    for (Effect *eff in self.activeEffects) {
+        [eff targetWasSelectedByPlayer:player];
+    }
+}
 @end

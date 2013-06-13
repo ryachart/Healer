@@ -7,7 +7,7 @@
 //
 
 #import "RaidMemberHealthView.h"
-
+#import "ParticleSystemCache.h"
 
 #define HEALTH_BAR_BORDER 6
 #define FRAME_SCALE .6
@@ -42,12 +42,15 @@
 @property (nonatomic, assign) CCProgressTimer *negativeEffectProgress;
 
 @property (nonatomic, readwrite) NSTimeInterval alertTextCooldown;
+
+@property (nonatomic, retain) NSMutableDictionary *particleEffects;
 @end
 
 @implementation RaidMemberHealthView
 
 - (void)dealloc {
     [_healthLabel release];
+    [_particleEffects release];
     [super dealloc];
 }
 
@@ -58,6 +61,8 @@
         self.contentSize = frame.size;
         
         self.lastHealth = 0;
+        
+        self.particleEffects = [NSMutableDictionary dictionaryWithCapacity:5];
         
         float frameScale = FRAME_SCALE;
         
@@ -347,6 +352,8 @@
     Effect *negativeEffect = nil;
     Effect *positiveEffect = nil;
     
+    NSMutableArray *liveParticleEffects = [NSMutableArray arrayWithCapacity:self.member.activeEffects.count];
+    
 	for (Effect *eff in self.member.activeEffects){
         if ([eff effectType] == EffectTypePositive){
             if (!positiveEffect || eff.visibilityPriority > positiveEffect.visibilityPriority) {
@@ -358,7 +365,34 @@
                 negativeEffect = eff;
             }
         }
+        if (eff.particleEffectName) {
+            [liveParticleEffects addObject:eff.particleEffectName];
+        }
 	}
+    
+    NSMutableArray *particlesToRemove = [NSMutableArray arrayWithCapacity:self.particleEffects.allKeys.count];
+    //Remove any particleEffects we are running that are no longer existing
+    for (NSString *effectName in self.particleEffects.allKeys) {
+        if (![liveParticleEffects containsObject:effectName]) {
+            [particlesToRemove addObject:effectName];
+        }
+    }
+    
+    for (NSString *removeMe in particlesToRemove) {
+        CCParticleSystemQuad *pSystem = [self.particleEffects objectForKey:removeMe];
+        [pSystem removeFromParentAndCleanup:YES];
+    }
+    [self.particleEffects removeObjectsForKeys:particlesToRemove];
+    
+    for (NSString *effectName in liveParticleEffects) {
+        if (![self.particleEffects objectForKey:effectName]) {
+            CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:effectName];
+            [collisionEffect setAutoRemoveOnFinish:YES];
+            [collisionEffect setPosition:CGPointMake(self.contentSize.width / 2, 0)];
+            [self.particleEffects setObject:collisionEffect forKey:effectName];
+            [self addChild:collisionEffect z:50];
+        }
+    }
     
     if (positiveEffect && positiveEffect.spriteName && !self.member.isDead){
         [self.priorityPositiveEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:positiveEffect.spriteName]];

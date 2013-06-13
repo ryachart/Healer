@@ -7,6 +7,7 @@
 //
 
 #import "cocos2d.h"
+#import "IconDescriptionModalLayer.h"
 #import <GameKit/GameKit.h>
 
 @class Encounter;
@@ -14,8 +15,10 @@
 typedef enum {
     PostBattleLayerDestinationMap,
     PostBattleLayerDestinationShop,
-    PostBattleLayerDestinationTalents
+    PostBattleLayerDestinationTalents,
+    PostBattleLayerDestinationArmory
 } PostBattleLayerDestination;
+
 
 @protocol PostBattleLayerDelegate
 
@@ -24,7 +27,7 @@ typedef enum {
 
 @end
 
-@interface PostBattleLayer : CCLayerColor
+@interface PostBattleLayer : CCLayerColor <IconDescriptorModalDelegate>
 
 - (id)initWithVictory:(BOOL)victory encounter:(Encounter*)enc andIsMultiplayer:(BOOL)isMult andDuration:(NSTimeInterval)duration;
 

@@ -766,7 +766,7 @@
     } else if (difficulty == 4) {
         return @[@30, @50, @20, @0];
     } else if (difficulty == 5) {
-        return @[@0, @50, @50, @0];
+        return @[@0, @30, @50, @20];
     }
     return @[@100,@0,@0,@0];
 }
@@ -948,12 +948,19 @@
     NSArray *legendarys = [Encounter legendaryItemsForLevelNumber:self.levelNumber];
     EquipmentItem *legendary = nil;
     if (legendarys.count == 0) {
-        legendary = [Encounter randomItemForLevelNumber:self.levelNumber difficulty:self.difficulty rarity:ItemRarityRare];
+        legendarys = [Encounter epicItemsForLevelNumber:self.levelNumber];
+        if (legendarys.count == 0) {
+            legendary = [Encounter randomItemForLevelNumber:self.levelNumber difficulty:self.difficulty rarity:ItemRarityRare];
+        } else {
+            legendary = [legendarys objectAtIndex:arc4random() % legendarys.count];
+        }
     } else {
-        legendary = [legendarys objectAtIndex:arc4random() % legendarys.count];
+            legendary = [legendarys objectAtIndex:arc4random() % legendarys.count];
     }
     NSArray *items = [NSArray arrayWithObjects:green,blue, epic, legendary, nil];
     LootTable *table = [[[LootTable alloc] initWithItems:items andWeights:weights] autorelease];
+    
+    
     return [table randomObject];
 }
 

@@ -30,9 +30,10 @@
 #import "TalentScene.h"
 #import "SimpleAudioEngine.h"
 #import "CollectibleLayer.h"
+#import "InventoryScene.h"
 
 #define DEBUG_IMMUNITIES false
-#define DEBUG_PERFECT_HEALS false
+#define DEBUG_PERFECT_HEALS true
 
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812
@@ -309,7 +310,7 @@
 #if DEBUG_PERFECT_HEALS
         for (RaidMember *member in self.raid.livingMembers) {
             PerfectHeal *immunity = [[[PerfectHeal alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
-            //[immunity setDamageDoneMultiplierAdjustment:1];
+            //[immunity setDamageDoneMultiplierAdjustment:5];
             [immunity setOwner:self.player];
             [member addEffect:immunity];
         }
@@ -517,7 +518,7 @@
         if (self.encounter.levelNumber >= 5) {
             [qps setComingFromVictory:victory];
         }
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:qps]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:qps]];
     }
     
     if (destination == PostBattleLayerDestinationShop) {
@@ -533,11 +534,15 @@
         } else {
             [shopScene setReturnsToMap:YES];
         }
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:shopScene]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:shopScene]];
     }
     
     if (destination == PostBattleLayerDestinationTalents) {
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[TalentScene alloc] init] autorelease]]];
+    }
+    
+    if (destination == PostBattleLayerDestinationArmory) {
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[InventoryScene alloc] init] autorelease]]];
     }
 }
 -(void)battleEndWithSuccess:(BOOL)success{    
@@ -611,6 +616,7 @@
 		[self.selectedRaidMembers addObject:hv];
 		[hv setSelectionState:RaidViewSelectionStateSelected];
         [self checkForFtueSelectionForHealthView:hv];
+        [hv.member targetWasSelectedByPlayer:self.player];
 	}
 	else if ([self.selectedRaidMembers objectAtIndex:0] == hv){
 		//Here we do nothing because the already selected object has been reselected
@@ -626,6 +632,7 @@
 			[self.selectedRaidMembers removeObjectAtIndex:0];
 			[self.selectedRaidMembers insertObject:hv atIndex:0];
             [hv setSelectionState:RaidViewSelectionStateSelected];
+            [hv.member targetWasSelectedByPlayer:self.player];
             [self checkForFtueSelectionForHealthView:hv];
 		}
 		

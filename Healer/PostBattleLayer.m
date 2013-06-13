@@ -22,6 +22,7 @@
 #import "ItemDescriptionNode.h"
 #import "PurchaseManager.h"
 
+
 @interface PostBattleLayer ()
 @property (nonatomic, readwrite) BOOL isMultiplayer;
 @property (nonatomic, readwrite) BOOL isVictory;
@@ -29,6 +30,7 @@
 @property (nonatomic, readwrite) BOOL localPlayerHasQueued;
 @property (nonatomic, readwrite) BOOL isNewBestScore;
 @property (nonatomic, readwrite) BOOL showsFirstLevelFTUE;
+@property (nonatomic, readwrite) BOOL isLootSequencedCompleted;
 @property (nonatomic, assign) CCLabelTTFShadow *healingDoneLabel;
 @property (nonatomic, assign) CCLabelTTFShadow *overhealingDoneLabel;
 @property (nonatomic, assign) CCLabelTTFShadow *damageTakenLabel;
@@ -42,6 +44,7 @@
 @property (nonatomic, assign) CCMenu *advanceMenu;
 @property (nonatomic, assign) CCSprite *resultLabel;
 @property (nonatomic, assign) CCSprite *betterHighScoreLabel;
+@property (nonatomic, readwrite) PostBattleLayerDestination chosenDestination;
 
 //Loot Award Stuff
 @property (nonatomic, assign) CCSprite *chestSprite;
@@ -128,6 +131,7 @@
         } else {
             [self configureAdvanceMenu];
             self.advanceMenu.position = CGPointMake(890, 470);
+            self.isLootSequencedCompleted = YES;
         
         }
         
@@ -291,23 +295,51 @@
     [self.goldCounter updateGoldAnimated:YES toGold:[PlayerDataManager localPlayer].gold];
 }
 
+- (void)showConfirmationDialog
+{
+    IconDescriptionModalLayer *confirmDialog = [[[IconDescriptionModalLayer alloc] initAsConfirmationDialogueWithDescription:@"Are you sure you want to abandon this loot?"] autorelease];
+    [confirmDialog setDelegate:self];
+    [self addChild:confirmDialog z:1000];
+}
+
 - (void)doneAcademy
 {
-    [self.advanceMenu removeFromParentAndCleanup:YES];
-    self.advanceMenu = nil;
-    [self.delegate postBattleLayerDidTransitionToScene:PostBattleLayerDestinationShop asVictory:self.isVictory];
+    self.chosenDestination = PostBattleLayerDestinationShop;
+    if (self.isLootSequencedCompleted) {
+        [self.delegate postBattleLayerDidTransitionToScene:self.chosenDestination asVictory:self.isVictory];
+    } else {
+        [self showConfirmationDialog];
+    }
 }
 
 - (void)doneMap
 {
-    [self.advanceMenu removeFromParentAndCleanup:YES];
-    self.advanceMenu = nil;
-    [self.delegate postBattleLayerDidTransitionToScene:PostBattleLayerDestinationMap asVictory:self.isVictory];
+    self.chosenDestination = PostBattleLayerDestinationMap;
+    if (self.isLootSequencedCompleted) {
+        [self.delegate postBattleLayerDidTransitionToScene:self.chosenDestination asVictory:self.isVictory];
+    } else {
+        [self showConfirmationDialog];
+    }
 }
 
 - (void)doneTalents
 {
-    [self.delegate postBattleLayerDidTransitionToScene:PostBattleLayerDestinationTalents asVictory:self.isVictory];
+    self.chosenDestination = PostBattleLayerDestinationTalents;
+    if (self.isLootSequencedCompleted) {
+        [self.delegate postBattleLayerDidTransitionToScene:self.chosenDestination asVictory:self.isVictory];
+    } else {
+        [self showConfirmationDialog];
+    }
+}
+
+- (void)doneArmory
+{
+    self.chosenDestination = PostBattleLayerDestinationArmory;
+    if (self.isLootSequencedCompleted) {
+        [self.delegate postBattleLayerDidTransitionToScene:self.chosenDestination asVictory:self.isVictory];
+    } else {
+        [self showConfirmationDialog];
+    }
 }
 
 - (void)awardLoot
@@ -374,6 +406,7 @@
                 [itemDesc setItem:itemLooted];
                 [itemDesc setPosition:CGPointMake(512, 344)];
                 [self addChild:itemDesc];
+                self.isLootSequencedCompleted = YES;
             }], nil]];
         } else {
             self.openChest.visible = YES;
@@ -386,6 +419,7 @@
         [[PlayerDataManager localPlayer] staminaUsedWithCompletion:spendStamina];
     } else {
         spendStamina(YES);
+        self.isLootSequencedCompleted = YES;
     }
 }
 
@@ -412,22 +446,31 @@
         self.advanceMenu = nil;
     }
     
+    int totalOptions = 1;
+    int buttonHeight = 76;
     NSString* doneLabelString = self.isMultiplayer ? @"Leave Group" : @"Adventure";
     CCMenuItem *done = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneMap) andTitle:doneLabelString];
     CCMenuItem *academy = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneAcademy) andTitle:@"Academy"];
+    CCMenuItem *armory = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneArmory) andTitle:@"Armory"];
     self.advanceMenu = [CCMenu menuWithItems:academy, nil];
     self.advanceMenu.anchorPoint = CGPointMake(0, 0);
     [self addChild:self.advanceMenu];
     
     
     if (!self.showsFirstLevelFTUE) {
-        [done setPosition:CGPointMake(0, 76)];
+        [done setPosition:CGPointMake(0, totalOptions * buttonHeight)];
         [self.advanceMenu addChild:done];
+        totalOptions++;
+        
+        [armory setPosition:CGPointMake(0, totalOptions * buttonHeight)];
+        [self.advanceMenu addChild:armory];
+        totalOptions++;
         
         if ([[PlayerDataManager localPlayer] numUnspentTalentChoices]) {
             CCMenuItem *talentButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneTalents) andTitle:@"Talents" andAlertPip:YES];
-            [talentButton setPosition:CGPointMake(0, 152)];
+            [talentButton setPosition:CGPointMake(0, totalOptions * buttonHeight)];
             [self.advanceMenu addChild:talentButton];
+            totalOptions++;
         }
     }
 
@@ -437,6 +480,15 @@
     [_match release];
     _match = [mtch retain];
     //[self.match setDelegate:self];
+}
+
+- (void)iconDescriptionModalDidComplete:(id)modal
+{
+    IconDescriptionModalLayer *completedModal = (IconDescriptionModalLayer*)modal;
+    if (completedModal.isConfirmed) {
+        [self.delegate postBattleLayerDidTransitionToScene:self.chosenDestination asVictory:self.isVictory];
+    }
+    [completedModal removeFromParentAndCleanup:YES];
 }
 
 @end

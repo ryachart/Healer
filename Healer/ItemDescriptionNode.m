@@ -37,7 +37,7 @@
         [self addChild:self.titleLabel];
         
         self.descriptionLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(300, 60) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
-        self.descriptionLabel.position = CGPointMake(0, 0);
+        self.descriptionLabel.position = CGPointMake(0, 8);
         self.descriptionLabel.shadowOffset = CGPointMake(-1, -1);
         [self addChild:self.descriptionLabel];
         

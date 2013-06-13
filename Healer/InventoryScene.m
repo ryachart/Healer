@@ -320,8 +320,6 @@
                     self.draggingSprite = (DraggableItemIcon*)[slotChild inhabitantRemovedForDragging];
                     if (slotChild.slotType != INVENTORY_SLOT_TYPE) {
                         [[PlayerDataManager localPlayer] playerUnequipsItemInSlot:self.draggingSprite.item.slot];
-                        [slotChild setTitle:[self titleForSlotType:slotChild.slotType]];
-                        [slotChild setTitleColor:ccWHITE];
                     }
                     [self.draggingSprite setAnchorPoint:CGPointMake(.5, .5)];
                     [self addChild:self.draggingSprite];

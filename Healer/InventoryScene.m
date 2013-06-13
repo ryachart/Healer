@@ -70,40 +70,40 @@
         
         CGPoint slotOffsets = CGPointMake(equipmentBack.position.x * equipmentBack.anchorPoint.x, equipmentBack.position.y * equipmentBack.anchorPoint.y);
         
-        self.headSlot = [[[Slot alloc] initWithInhabitantOrNil:nil] autorelease];
+        self.headSlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_head.png" andInhabitantOrNil:nil] autorelease];
         self.headSlot.slotType = SlotTypeHead;
         self.headSlot.scale = .75;
-        [self.headSlot setPosition:CGPointMake(100+slotOffsets.x, 400+slotOffsets.y)];
+        [self.headSlot setPosition:CGPointMake(124+slotOffsets.x, 380+slotOffsets.y)];
         [self addChild:self.headSlot];
         
-        self.neckSlot = [[[Slot alloc] initWithInhabitantOrNil:nil] autorelease];
+        self.neckSlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_neck.png" andInhabitantOrNil:nil] autorelease];
         self.neckSlot.slotType = SlotTypeNeck;
         self.neckSlot.scale = .75;
-        [self.neckSlot setPosition:CGPointMake(10+slotOffsets.x, 300+slotOffsets.y)];
+        [self.neckSlot setPosition:CGPointMake(10+slotOffsets.x, 280+slotOffsets.y)];
         [self addChild:self.neckSlot];
         
-        self.chestSlot = [[[Slot alloc] initWithInhabitantOrNil:nil] autorelease];
+        self.chestSlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_chest.png" andInhabitantOrNil:nil] autorelease];
         self.chestSlot.slotType = SlotTypeChest;
         self.chestSlot.scale = .75;
-        [self.chestSlot setPosition:CGPointMake(10+slotOffsets.x, 150+slotOffsets.y)];
+        [self.chestSlot setPosition:CGPointMake(10+slotOffsets.x, 160+slotOffsets.y)];
         [self addChild:self.chestSlot];
         
-        self.legsSlot = [[[Slot alloc] initWithInhabitantOrNil:nil] autorelease];
+        self.legsSlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_legs.png" andInhabitantOrNil:nil] autorelease];
         self.legsSlot.slotType = SlotTypeLegs;
         self.legsSlot.scale = .75;
-        [self.legsSlot setPosition:CGPointMake(200+slotOffsets.x, 150+slotOffsets.y)];
+        [self.legsSlot setPosition:CGPointMake(240+slotOffsets.x, 160+slotOffsets.y)];
         [self addChild:self.legsSlot];
         
-        self.bootsSlot = [[[Slot alloc] initWithInhabitantOrNil:nil] autorelease];
+        self.bootsSlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_boots.png" andInhabitantOrNil:nil] autorelease];
         self.bootsSlot.scale = .75;
         self.bootsSlot.slotType = SlotTypeBoots;
-        [self.bootsSlot setPosition:CGPointMake(100+slotOffsets.x, 50+slotOffsets.y)];
+        [self.bootsSlot setPosition:CGPointMake(124+slotOffsets.x, 70+slotOffsets.y)];
         [self addChild:self.bootsSlot];
         
-        self.weaponSlot = [[[Slot alloc] initWithInhabitantOrNil:nil] autorelease];
+        self.weaponSlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_weapon.png" andInhabitantOrNil:nil] autorelease];
         self.weaponSlot.scale = .75;
         self.weaponSlot.slotType = SlotTypeWeapon;
-        [self.weaponSlot setPosition:CGPointMake(200+slotOffsets.x, 300+slotOffsets.y)];
+        [self.weaponSlot setPosition:CGPointMake(240+slotOffsets.x, 280+slotOffsets.y)];
         [self addChild:self.weaponSlot];
         
         [self configureEquippedSlots];
@@ -119,7 +119,7 @@
         
         for (int i = 0; i < [[PlayerDataManager localPlayer] maximumInventorySize] / INVENTORY_ROW_SIZE;i++) {
             for (int j = 0; j < INVENTORY_ROW_SIZE; j++) {
-                Slot *inventorySlot = [[[Slot alloc] initWithInhabitantOrNil:nil] autorelease];
+                Slot *inventorySlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_empty.png" andInhabitantOrNil:nil] autorelease];
                 inventorySlot.scale = .75;
                 inventorySlot.slotType = INVENTORY_SLOT_TYPE;
                 [inventorySlot setPosition:CGPointMake(slotsPosition.x + 85 * j, slotsPosition.y + (-85 * i))];
@@ -138,9 +138,9 @@
         [backButton setPosition:BACK_BUTTON_POS];
         [self addChild:backButton z:100];
         
-        CCMenu *freeItem = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(freeItem)];
-        [freeItem setPosition:CGPointMake(512, 725)];
-        [self addChild:freeItem z:100];
+//        CCMenu *freeItem = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(freeItem)];
+//        [freeItem setPosition:CGPointMake(512, 725)];
+//        [self addChild:freeItem z:100];
         
         self.itemDescriptionNode = [[[ItemDescriptionNode alloc] init] autorelease];
         self.itemDescriptionNode.position = CGPointMake(696, 590);
@@ -320,6 +320,7 @@
                     self.draggingSprite = (DraggableItemIcon*)[slotChild inhabitantRemovedForDragging];
                     if (slotChild.slotType != INVENTORY_SLOT_TYPE) {
                         [[PlayerDataManager localPlayer] playerUnequipsItemInSlot:self.draggingSprite.item.slot];
+                        [slotChild setTitle:nil];
                     }
                     [self.draggingSprite setAnchorPoint:CGPointMake(.5, .5)];
                     [self addChild:self.draggingSprite];

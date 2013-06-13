@@ -8,7 +8,10 @@
 
 #import "PurchaseManager.h"
 #import "PlayerDataManager.h"
+#if ANDROID
+#else
 #import <Parse/Parse.h>
+#endif
 
 #define LEGACY_OF_TORMENT_EXPAC_ID @"torment_expac"
 #define GOLD_ONE_ID @"gold_one"
@@ -121,12 +124,15 @@ static PurchaseManager *_sharedPurchaseManager;
 
 - (void)saveRemotePurchase:(SKPaymentTransaction*)transaction
 {
+#if ANDROID
+#else
     PFObject *purchaseObject = [PFObject objectWithClassName:@"purchase"];
     NSString* playerObjectID = [[NSUserDefaults standardUserDefaults] objectForKey:PlayerRemoteObjectIdKey];
     [purchaseObject setObject:playerObjectID forKey:@"playerObjectId"];
     [purchaseObject setObject:transaction.payment.productIdentifier forKey:@"productId"];
     [purchaseObject setObject:transaction.transactionIdentifier forKey:@"transactionId"];
     [purchaseObject saveEventually];
+#endif
 }
 
 - (void)completeTransaction:(SKPaymentTransaction*)transaction
@@ -135,14 +141,18 @@ static PurchaseManager *_sharedPurchaseManager;
         [self transactionFailed:transaction];
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
     } else if (transaction.transactionState == SKPaymentTransactionStatePurchased) {
-            [PFPurchase downloadAssetForTransaction:transaction completion:^(NSString *filepath, NSError *error) {
-                if (!error) {
-                    [self awardPurchase:transaction];
-                } else {
-                    //This is probably a Parse Timeout
-                    [self completeTransaction:transaction]; //Infinite Retry
-                }
-            }];
+#if ANDROID
+        [self awardPurchase:transaction];
+#else
+        [PFPurchase downloadAssetForTransaction:transaction completion:^(NSString *filepath, NSError *error) {
+            if (!error) {
+                [self awardPurchase:transaction];
+            } else {
+                //This is probably a Parse Timeout
+                [self completeTransaction:transaction]; //Infinite Retry
+            }
+        }];
+#endif
     } else if (transaction.transactionState == SKPaymentTransactionStateRestored) {
         [self awardPurchase:transaction];
     }

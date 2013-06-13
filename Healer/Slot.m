@@ -27,8 +27,8 @@
     [super dealloc];
 }
 
-- (id)initWithInhabitantOrNil:(CCSprite*)inhabitant{
-    if (self = [super initWithSpriteFrameName:@"spell_icon_back.png"]){
+- (id)initWithSpriteFrameName:(NSString*)spriteFrameName andInhabitantOrNil:(CCSprite*)inhabitant{
+    if (self = [super initWithSpriteFrameName:spriteFrameName]){
         self.selectedSprite = [CCSprite spriteWithSpriteFrameName:@"spell_icon_selected.png"];
         self.selectedSprite.position = CGPointMake(self.contentSize.width/2, self.contentSize.height/2);
         [self.selectedSprite setVisible:NO];

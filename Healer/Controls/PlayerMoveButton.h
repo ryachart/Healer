@@ -6,7 +6,7 @@
 //  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
 
-#import <cocos2d.h>
+#import "cocos2d.h"
 
 
 @interface PlayerMoveButton : CCLayer <CCRGBAProtocol>

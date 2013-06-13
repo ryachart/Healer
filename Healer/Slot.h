@@ -25,7 +25,7 @@
 @property (nonatomic, readwrite) BOOL isSelected;
 @property (nonatomic, readwrite) ccColor3B selectionColor;
 
-- (id)initWithInhabitantOrNil:(CCSprite*)inhabitant;
+- (id)initWithSpriteFrameName:(NSString*)spriteFrameName andInhabitantOrNil:(CCSprite*)inhabitant;
 - (BOOL)canDropIntoSlotFromRect:(CGRect)candidateRect;
 - (void)dropInhabitant:(CCSprite*)inhabitant;
 - (CCSprite *)inhabitantRemovedForDragging;

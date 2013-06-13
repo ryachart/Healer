@@ -1351,7 +1351,8 @@
 {
     NSArray *excludedEffectTitles = @[@"inverted-healing",@"wracking-pain-eff",@"soul-burn"];
     
-    if (self.target.health < self.target.maximumHealth) {
+    float targetHealth = (int)round(self.target.maximumHealth * .98);
+    if (self.target.health < targetHealth) {
         BOOL skipHealing = NO;
         for (NSString *title in excludedEffectTitles) {
             if ([self.target hasEffectWithTitle:title]) {
@@ -1364,7 +1365,7 @@
             NSInteger healing = 0;
             NSInteger preHealth = self.target.health;
             
-            self.target.health = self.target.maximumHealth;
+            self.target.health = targetHealth;
             
             healing = self.target.health - preHealth;
             

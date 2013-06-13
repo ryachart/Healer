@@ -540,6 +540,20 @@
 			remoteGlobalIDString = E0EA56A5134B9CA800F212C8;
 			remoteInfo = Bug1159;
 		};
+		BFF6B23E176A70560014640C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFD8EAFB160ED1FC00BAF83A /* cocos2d-ios.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5018F24C0DFDEAC400C013A5;
+			remoteInfo = cocos2d;
+		};
+		BFF6B240176A705B0014640C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFD8EAFB160ED1FC00BAF83A /* cocos2d-ios.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A04A1FEA13B826B300ABAFB7;
+			remoteInfo = kazmath;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -1531,6 +1545,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				BFF6B241176A705B0014640C /* PBXTargetDependency */,
+				BFF6B23F176A70560014640C /* PBXTargetDependency */,
 			);
 			name = Healer;
 			productName = Healer;
@@ -2096,6 +2112,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BFF6B23F176A70560014640C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = cocos2d;
+			targetProxy = BFF6B23E176A70560014640C /* PBXContainerItemProxy */;
+		};
+		BFF6B241176A705B0014640C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = kazmath;
+			targetProxy = BFF6B240176A705B0014640C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		38024F1513C2564E003D36F2 /* Debug */ = {

@@ -7,7 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#if ANDROID
+#else
 #import <Parse/Parse.h>
+#endif
 #import "Shop.h"
 #import "Player.h"
 #import "EquipmentItem.h"
@@ -43,6 +47,10 @@ extern NSString* const PlayerStaminaDidChangeNotification;
 extern NSString* const MainGameContentKey;
 
 @class ShopItem, Spell;
+
+#if ANDROID
+@class PFObject;
+#endif
 
 @interface PlayerDataManager : NSObject
 @property (nonatomic, readonly) NSInteger gold;

@@ -12,7 +12,6 @@
 #import "Encounter.h"
 #import "Raid.h"
 #import "PlayerDataManager.h"
-#import "TestFlight.h"
 #import "BackgroundSprite.h"
 #import "BasicButton.h"
 #import "CCNumberChangeAction.h"

@@ -5,18 +5,19 @@
 //  Created by Ryan Hart on 7/4/11.
 //
 
-#import <cocos2d.h>
-
 #import "AppDelegate.h"
 #import "GameConfig.h"
+#if ANDROID
+#else
 #import "TestFlight.h"
 #import <Parse/Parse.h>
+#endif
 #import "PlayerDataManager.h"
 #import "LaunchScene.h"
 #import "Talents.h"
 #import "PurchaseManager.h"
 
-#define TestFlightToken @"6352fe22-b170-4fd7-a38a-60ae0ac77d39"
+#define TestFlightToken @"e0959a56-31b4-4303-8734-69eec008ccd8"
 #define Facebook_App_ID @"397451217035067"
 
 @implementation AppDelegate
@@ -28,12 +29,14 @@
     
     BOOL isFreshInstall = [PlayerDataManager isFreshInstall];
     
+#if ANDROID
+#else
     [TestFlight takeOff:TestFlightToken];
     [FBSettings publishInstall:Facebook_App_ID];
-    
     [Parse setApplicationId:@"BajbrSl60Pz6ukDojWg8CAaUdCU7FoWr7UJCiJPs"
                   clientKey:@"2CSX0jPgh7K4X7PfWbmfPdyo3G8OfCqSa41JW4BZ"];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
+#endif
     
     [[PurchaseManager sharedPurchaseManager] getProducts];
     

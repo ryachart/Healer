@@ -117,8 +117,13 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 }
 
 - (void)saveRemotePlayer {
+#if ANDROID
+#else
     NSString *className = @"player";
 #if TARGET_IPHONE_SIMULATOR
+    className = @"test_player";
+#endif
+#if DEBUG
     className = @"test_player";
 #endif
     NSInteger backgroundExceptionIdentifer = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{}];
@@ -146,6 +151,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         }
         [[UIApplication sharedApplication] endBackgroundTask:backgroundExceptionIdentifer];
     });
+#endif
 }
 
 - (id)initAsLocalPlayer
@@ -850,6 +856,8 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (void)checkStamina
 {
+#if ANDROID
+#else
     NSString *remoteObjectId = [self remoteObjectId];
     if (remoteObjectId) {
         [PFCloud callFunctionInBackground:@"getStamina" withParameters:[NSDictionary dictionaryWithObject:remoteObjectId forKey:@"playerId"] block:^(id object, NSError *error) {
@@ -862,10 +870,13 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
             self.stamina = stamina; //Must be last for notification purposes
         }];
     }
+#endif
 }
 
 - (void)staminaUsedWithCompletion:(SpendStaminaResultBlock)block
 {
+#if ANDROID
+#else
     NSString *remoteObjectId = [self remoteObjectId];
     if (remoteObjectId) {
         [PFCloud callFunctionInBackground:@"spendStamina" withParameters:[NSDictionary dictionaryWithObject:remoteObjectId forKey:@"playerId"] block:^(id object, NSError *error) {
@@ -879,6 +890,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
             }
         }];
     }
+#endif
 }
 
 - (NSTimeInterval)secondsUntilNextStamina

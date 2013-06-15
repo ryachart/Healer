@@ -320,7 +320,7 @@
                 [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self withOverhealing:overheal asCritical:critical];
             } else {
                 //This is boss damage in the form of dots
-                [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:amount] andEventType:eventType]];
+                [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:finalAmount] andEventType:eventType]];
             }
         }
     }
@@ -1407,7 +1407,6 @@
 - (float)damageTakenMultiplierAdjustment
 {
     float base = [super damageTakenMultiplierAdjustment];
-    NSLog(@"Damage Taken Reduced by %1.2f", base * (1.0 - (self.timeApplied / self.duration)));
     return base * (1.0 - (self.timeApplied / self.duration));
 }
 @end

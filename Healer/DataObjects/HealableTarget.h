@@ -27,7 +27,10 @@
 @property (nonatomic, readonly) float damageTakenMultiplierAdjustment;
 @property (nonatomic, readonly) float healingReceivedMultiplierAdjustment;
 
+//Health Accessors
 - (void)passiveHealForAmount:(NSInteger)amount;
+
+
 - (NSInteger)effectCountOfType:(EffectType)type;
 - (void)didReceiveHealing:(NSInteger)amount andOverhealing:(NSInteger)amount;
 - (void)setHealth:(NSInteger)newHealth;

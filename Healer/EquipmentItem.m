@@ -16,7 +16,8 @@ static float stat_atoms[StatTypeMaximum] = {
     0.5, //Healing
     0.5, //Regen
     0.75, //Crit
-    0.5}; //Speed
+    0.5 //Speed
+};
 
 @implementation EquipmentItem
 

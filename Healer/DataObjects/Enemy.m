@@ -703,16 +703,21 @@
         [self.announcer playAudioForTitle:@"wolvesgrowling.mp3"];
         [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:-1.0 offset:CGPointMake(0, -100)]; //Lower this because it's a 10 man...kind of awful
         for (RaidMember *member in raid.raidMembers){
+            NSInteger damage = -(arc4random() % 10 + 5);
+            if (self.difficulty == 5) {
+                damage *= .5;
+            }
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegativeInvisible];
             [rhe setOwner:self];
             [rhe setTitle:@"fungal-ravager-mist"];
-            [rhe setValuePerTick:-(arc4random() % 10 + 5)];
+            [rhe setValuePerTick:damage];
             [member addEffect:rhe];
             [rhe release];
         }
     }
     
     if (percentage == 99.0){
+        float damageBonus = 1.25;
         [self.announcer announce:@"The final Ravager glows with rage."];
         [self.announcer playAudioForTitle:@"wolvesgrowling.mp3"];
         AbilityDescriptor *rage = [[[AbilityDescriptor alloc] init] autorelease];
@@ -724,7 +729,7 @@
         [enragedEffect setIsIndependent:YES];
         [enragedEffect setTarget:self];
         [enragedEffect setOwner:self];
-        [enragedEffect setDamageDoneMultiplierAdjustment:1.25];
+        [enragedEffect setDamageDoneMultiplierAdjustment:damageBonus];
         [self addEffect:enragedEffect];
         [enragedEffect release];
     }
@@ -779,7 +784,7 @@
             [wse setAilmentType:AilmentTrauma];
             [wse setTitle:@"pred-fungus-effect"];
             [wse setSpriteName:@"plague.png"];
-            [wse setValuePerTick:-self.autoAttack.abilityValue * .75];
+            [wse setValuePerTick:-self.autoAttack.abilityValue * .5];
             [wse setOwner:self];
             [target addEffect:wse];
         }

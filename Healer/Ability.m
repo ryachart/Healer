@@ -274,9 +274,10 @@
     if (![target raidMemberShouldDodgeAttack:self.dodgeChanceAdjustment]){
         [self willDamageTarget:target];
         int thisDamage = damage;
-        
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:thisDamage] andEventType:CombatEventTypeDamage]];
+        NSInteger preHealth = target.health;
         [target setHealth:[target health] - thisDamage];
+        NSInteger finalDamage = target.health - preHealth;
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:finalDamage] andEventType:CombatEventTypeDamage]];
         if (thisDamage > 0 && self.attackParticleEffectName){
             [self.owner.announcer displayParticleSystemWithName:self.attackParticleEffectName onTarget:target];
         }

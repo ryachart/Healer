@@ -925,7 +925,7 @@
     }
     
     if (levelNumber == 21) {
-        EquipmentItem *soulLegend = [[[EquipmentItem alloc] initWithName:@"Aravon's Scepter" health:40 regen:5.0 speed:0 crit:9.0 healing:5.0 slot:SlotTypeWeapon rarity:ItemRarityLegendary specialKey:@"aravon1" quality:10 uniqueId:301] autorelease];
+        EquipmentItem *soulLegend = [[[EquipmentItem alloc] initWithName:@"Aravon's Scepter" health:40 regen:6.0 speed:5.0 crit:0 healing:5.0 slot:SlotTypeWeapon rarity:ItemRarityLegendary specialKey:@"aravon1" quality:10 uniqueId:301] autorelease];
         [array addObject:soulLegend];
     }
     

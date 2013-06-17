@@ -178,6 +178,42 @@
     _health = MAX(0,MIN(self.maximumHealth,_health + amount));
 }
 
+- (void)healForAmount:(NSInteger)amount
+{
+    if (amount < 0) {
+#if DEBUG
+        NSAssert(nil, @"Heal for a negative amount");
+#else
+      return;
+#endif
+    }
+    
+    if (self.hasDied){
+        return;
+    }
+
+    NSInteger preHealth = _health;
+    NSInteger modifiedAmount = amount * self.healingReceivedMultiplierAdjustment;
+    NSInteger newHealth = MAX(0, MIN(self.maximumHealth, _health + modifiedAmount));
+    NSInteger healthDelta = newHealth - preHealth;
+    
+    for (HealthAdjustmentModifier* ham in self.healthAdjustmentModifiers){
+		[ham willChangeHealthFrom:&_health toNewHealth:&newHealth];
+	}
+	_health = newHealth;
+	for (HealthAdjustmentModifier* ham in self.healthAdjustmentModifiers){
+		[ham didChangeHealthFrom:preHealth toNewHealth:newHealth];
+	}
+    
+    
+
+}
+
+- (void)damageForAmount:(NSInteger)amount fromSource:(Agent*)source
+{
+    
+}
+
 - (void)didReceiveHealing:(NSInteger)amount andOverhealing:(NSInteger)overAmount{
     
 }

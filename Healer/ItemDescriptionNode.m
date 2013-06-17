@@ -15,6 +15,7 @@
 @property (nonatomic, assign) CCLabelTTFShadow *infoLabel;
 @property (nonatomic, assign) CCLabelTTFShadow *slotTypeLabel;
 @property (nonatomic, assign) CCSprite *background;
+@property (nonatomic, assign) CCSprite *itemSprite;
 @end
 
 @implementation ItemDescriptionNode
@@ -28,29 +29,35 @@
 - (id)init
 {
     if (self = [super init]) {
-        self.background = [CCSprite spriteWithSpriteFrameName:@"spell_info_node_bg.png"];
+        self.background = [CCSprite spriteWithSpriteFrameName:@"icon_card_back.png"];
         [self addChild:self.background];
         
+        
         self.titleLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(300, 50) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
-        self.titleLabel.position = CGPointMake(2, 46);
+        self.titleLabel.position = CGPointMake(52, 26);
         self.titleLabel.shadowOffset = CGPointMake(-1, -1);
         [self addChild:self.titleLabel];
         
-        self.descriptionLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(300, 60) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
-        self.descriptionLabel.position = CGPointMake(0, 8);
+        self.descriptionLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(300, 40) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
+        self.descriptionLabel.position = CGPointMake(52, 8);
         self.descriptionLabel.shadowOffset = CGPointMake(-1, -1);
         [self addChild:self.descriptionLabel];
         
-        self.infoLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(300, 34) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
-        self.infoLabel.position = CGPointMake(2, -self.background.contentSize.height / 2 + 24);
+        self.infoLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(300, 40) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
+        self.infoLabel.position = CGPointMake(52, -30);
         self.infoLabel.shadowOffset = CGPointMake(-1, -1);
+        self.infoLabel.color = ccYELLOW;
         [self addChild:self.infoLabel];
         
-        self.slotTypeLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(300, 50) hAlignment:kCCTextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:16.0];
+        self.slotTypeLabel = [CCLabelTTFShadow labelWithString:@"" fontName:@"TrebuchetMS-Bold" fontSize:16.0];
+        [self.slotTypeLabel setHorizontalAlignment:kCCTextAlignmentRight];
         self.slotTypeLabel.color = ccGRAY;
-        self.slotTypeLabel.position = CGPointMake(2, 20);
         self.slotTypeLabel.shadowOffset = CGPointMake(-1, -1);
         [self addChild:self.slotTypeLabel];
+        
+        self.itemSprite = [CCSprite node];
+        [self.itemSprite setPosition:CGPointMake(52, 51)];
+        [self.background addChild:self.itemSprite];
     }
     return self;
 }
@@ -81,20 +88,24 @@
 {
     if (self.item) {
         CGFloat fontSize = 24.0;
-//        if (self.item.name.length > 20) {
-//            fontSize = 20.0;
-//        }
+        if (self.item.name.length > 15) {
+            fontSize = 20.0;
+        }
         self.titleLabel.fontSize = fontSize;
         self.titleLabel.string = self.item.name;
         self.titleLabel.color = [ItemDescriptionNode colorForRarity:self.item.rarity];
         self.descriptionLabel.string = [self statsLineForItem:self.item];
         self.infoLabel.string = self.item.info;
         self.slotTypeLabel.string = self.item.slotTypeName;
+        
+        self.slotTypeLabel.position = CGPointMake(self.background.contentSize.width / 2 - self.slotTypeLabel.contentSize.width + 4, self.background.contentSize.height / 2 - self.slotTypeLabel.contentSize.height + 4);
+        [self.itemSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:self.item.itemSpriteName]];
     } else {
         self.titleLabel.string = @"";
         self.descriptionLabel.string = @"";
         self.infoLabel.string = @"";
         self.slotTypeLabel.string = @"";
+        [self.itemSprite setDisplayFrame:nil];
     }
 }
 

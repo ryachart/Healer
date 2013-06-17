@@ -5,7 +5,7 @@
 	<key>angle</key>
 	<real>273.23806762695312</real>
 	<key>angleVariance</key>
-	<real>25.071956634521484</real>
+	<real>33.435443878173828</real>
 	<key>blendFuncDestination</key>
 	<integer>771</integer>
 	<key>blendFuncSource</key>
@@ -17,11 +17,11 @@
 	<key>finishColorAlpha</key>
 	<real>0.2623697817325592</real>
 	<key>finishColorBlue</key>
-	<real>0.0</real>
+	<real>0.5</real>
 	<key>finishColorGreen</key>
-	<real>0.0</real>
+	<real>0.5</real>
 	<key>finishColorRed</key>
-	<real>0.0</real>
+	<real>0.5</real>
 	<key>finishColorVarianceAlpha</key>
 	<real>0.0</real>
 	<key>finishColorVarianceBlue</key>
@@ -57,7 +57,7 @@
 	<key>rotatePerSecond</key>
 	<real>0.0</real>
 	<key>rotatePerSecondVariance</key>
-	<real>0.0</real>
+	<real>40</real>
 	<key>rotationEnd</key>
 	<real>0.0</real>
 	<key>rotationEndVariance</key>
@@ -81,11 +81,11 @@
 	<key>startColorAlpha</key>
 	<real>1</real>
 	<key>startColorBlue</key>
-	<real>0.4889322817325592</real>
+	<real>0.05000000074505806</real>
 	<key>startColorGreen</key>
-	<real>0.14000000059604645</real>
+	<real>0.05000000074505806</real>
 	<key>startColorRed</key>
-	<real>0.576171875</real>
+	<real>0.05000000074505806</real>
 	<key>startColorVarianceAlpha</key>
 	<real>0.0</real>
 	<key>startColorVarianceBlue</key>

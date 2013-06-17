@@ -45,6 +45,7 @@
 		38B0BB28165779BC00D31540 /* ViewTalentChoiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 38B0BB27165779BC00D31540 /* ViewTalentChoiceLayer.m */; };
 		38F1B45C15CA30D8008B2D99 /* backgrounds in Resources */ = {isa = PBXBuildFile; fileRef = 38F1B45B15CA30D8008B2D99 /* backgrounds */; };
 		BF0022BE163EE94C00384882 /* EncounterCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0022BD163EE94C00384882 /* EncounterCard.m */; };
+		BF002377176F852A00445998 /* PlayerSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF002376176F852A00445998 /* PlayerSprite.m */; };
 		BF03E26B1725CA2900F3A429 /* Collectible.m in Sources */ = {isa = PBXBuildFile; fileRef = BF03E26A1725CA2900F3A429 /* Collectible.m */; };
 		BF03E26F1725CE6700F3A429 /* CollectibleLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF03E26E1725CE6700F3A429 /* CollectibleLayer.m */; };
 		BF03E2AE172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png in Resources */ = {isa = PBXBuildFile; fileRef = BF03E2AD172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png */; };
@@ -540,20 +541,6 @@
 			remoteGlobalIDString = E0EA56A5134B9CA800F212C8;
 			remoteInfo = Bug1159;
 		};
-		BFF6B23E176A70560014640C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFD8EAFB160ED1FC00BAF83A /* cocos2d-ios.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 5018F24C0DFDEAC400C013A5;
-			remoteInfo = cocos2d;
-		};
-		BFF6B240176A705B0014640C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFD8EAFB160ED1FC00BAF83A /* cocos2d-ios.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = A04A1FEA13B826B300ABAFB7;
-			remoteInfo = kazmath;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -650,6 +637,8 @@
 		38F1B45B15CA30D8008B2D99 /* backgrounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = backgrounds; sourceTree = SOURCE_ROOT; };
 		BF0022BC163EE94C00384882 /* EncounterCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncounterCard.h; sourceTree = "<group>"; };
 		BF0022BD163EE94C00384882 /* EncounterCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EncounterCard.m; sourceTree = "<group>"; };
+		BF002375176F852A00445998 /* PlayerSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerSprite.h; sourceTree = "<group>"; };
+		BF002376176F852A00445998 /* PlayerSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerSprite.m; sourceTree = "<group>"; };
 		BF03E2691725CA2900F3A429 /* Collectible.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Collectible.h; sourceTree = "<group>"; };
 		BF03E26A1725CA2900F3A429 /* Collectible.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Collectible.m; sourceTree = "<group>"; };
 		BF03E26D1725CE6700F3A429 /* CollectibleLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectibleLayer.h; sourceTree = "<group>"; };
@@ -1205,6 +1194,7 @@
 		38F0504413C2618900BCADCB /* View Objects */ = {
 			isa = PBXGroup;
 			children = (
+				BF00233D176F851C00445998 /* Player Sprite */,
 				BF13ADFA1751B5F500A613B1 /* Inventory Views */,
 				BF1DF45917220FE400046EB2 /* Tips */,
 				382C463F1648CD9000883CFA /* PreBattle */,
@@ -1219,6 +1209,15 @@
 				387E7B73145E28CA006D9266 /* GamePlay */,
 			);
 			name = "View Objects";
+			sourceTree = "<group>";
+		};
+		BF00233D176F851C00445998 /* Player Sprite */ = {
+			isa = PBXGroup;
+			children = (
+				BF002375176F852A00445998 /* PlayerSprite.h */,
+				BF002376176F852A00445998 /* PlayerSprite.m */,
+			);
+			name = "Player Sprite";
 			sourceTree = "<group>";
 		};
 		BF03E26C1725CE4500F3A429 /* Collectibles */ = {
@@ -1545,8 +1544,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				BFF6B241176A705B0014640C /* PBXTargetDependency */,
-				BFF6B23F176A70560014640C /* PBXTargetDependency */,
 			);
 			name = Healer;
 			productName = Healer;
@@ -2108,23 +2105,11 @@
 				BF13AE7D1758031E00A613B1 /* LootTable.m in Sources */,
 				BF13AE801759A26D00A613B1 /* EncounterDescriptionLayer.m in Sources */,
 				BFF6B202176926130014640C /* NSString+Obfuscation.m in Sources */,
+				BF002377176F852A00445998 /* PlayerSprite.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		BFF6B23F176A70560014640C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = cocos2d;
-			targetProxy = BFF6B23E176A70560014640C /* PBXContainerItemProxy */;
-		};
-		BFF6B241176A705B0014640C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = kazmath;
-			targetProxy = BFF6B240176A705B0014640C /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		38024F1513C2564E003D36F2 /* Debug */ = {

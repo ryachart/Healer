@@ -184,16 +184,16 @@ static float stat_atoms[StatTypeMaximum] = {
     NSString *raritySuffix = nil;
     switch (self.rarity) {
         case ItemRarityUncommon:
-            raritySuffix = @"-uncommon";
+            raritySuffix = @"uncommon";
             break;
         case ItemRarityRare:
-            raritySuffix = @"-rare";
+            raritySuffix = @"rare";
             break;
         case ItemRarityEpic:
-            raritySuffix = @"-epic";
+            raritySuffix = @"epic";
             break;
         case ItemRarityLegendary:
-            raritySuffix = @"-epic";
+            raritySuffix = @"legendary";
             break;
     }
     
@@ -206,22 +206,73 @@ static float stat_atoms[StatTypeMaximum] = {
             slotName = @"robe";
             break;
         case SlotTypeHead:
+            slotName = @"cowl";
+            break;
+        case SlotTypeLegs:
+            slotName = @"pants";
+            break;
+        case SlotTypeNeck:
+            slotName = @"neck";
+            break;
+        case SlotTypeWeapon:
+            slotName = @"tome";
+            break;
+        case SlotTypeMaximum:
+        default:
+            break;
+    }
+    NSInteger key = 1;
+    //Adjust key for specific items here
+    
+    return [NSString stringWithFormat:@"%@_%d_%@.png", slotName, key, raritySuffix];
+}
+
+- (NSString *)avatarItemName
+{
+    NSString *raritySuffix = nil;
+    switch (self.rarity) {
+        case ItemRarityUncommon:
+            raritySuffix = @"uncommon";
+            break;
+        case ItemRarityRare:
+            raritySuffix = @"rare";
+            break;
+        case ItemRarityEpic:
+            raritySuffix = @"epic";
+            break;
+        case ItemRarityLegendary:
+            raritySuffix = @"legendary";
+            break;
+    }
+    
+    NSString *slotName = nil;
+    switch (self.slot) {
+        case SlotTypeBoots:
+            slotName = @"boots";
+            break;
+        case SlotTypeChest:
+            slotName = @"chest";
+            break;
+        case SlotTypeHead:
             slotName = @"helm";
             break;
         case SlotTypeLegs:
             slotName = @"pants";
             break;
         case SlotTypeNeck:
-            slotName = @"necklace";
+            slotName = @"neck";
             break;
         case SlotTypeWeapon:
-            slotName = @"wand";
+            slotName = @"tome";
             break;
         case SlotTypeMaximum:
         default:
             break;
     }
-    return [NSString stringWithFormat:@"%@%@.png", slotName, raritySuffix];
+    NSInteger key = 1;
+    //Adjust key for specific items here
+    
+    return [NSString stringWithFormat:@"avatar_%@%d_%@.png", slotName, key, raritySuffix];
 }
 
 - (NSInteger)salePrice
@@ -330,7 +381,7 @@ static float stat_atoms[StatTypeMaximum] = {
 {
     switch (self.slot) {
         case SlotTypeWeapon:
-            return @"Weapon";
+            return @"Tome";
         case SlotTypeBoots:
             return @"Boots";
         case SlotTypeChest:

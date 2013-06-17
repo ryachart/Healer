@@ -19,8 +19,10 @@
 #import "GoldCounterSprite.h"
 #import "CCLabelTTFShadow.h"
 #import "Encounter.h"
+#import "PlayerSprite.h"
 
 @interface InventoryScene ()
+@property (nonatomic, assign) PlayerSprite *playerSprite;
 @property (nonatomic, assign) Slot *headSlot;
 @property (nonatomic, assign) Slot *weaponSlot;
 @property (nonatomic, assign) Slot *neckSlot;
@@ -65,45 +67,50 @@
         [self addChild:titleLabel];
         
         CCSprite *equipmentBack = [CCSprite spriteWithSpriteFrameName:@"equip_back.png"];
-        [equipmentBack setPosition:CGPointMake(260, 430)];
+        [equipmentBack setPosition:CGPointMake(260, 400)];
         [self addChild:equipmentBack];
+        
+        self.playerSprite = [[[PlayerSprite alloc] initWithEquippedItems:[PlayerDataManager localPlayer].equippedItems] autorelease];
+        [self.playerSprite setFlipX:YES];
+        [self.playerSprite setPosition:CGPointMake(190, 260)];
+        [equipmentBack addChild:self.playerSprite];
         
         CGPoint slotOffsets = CGPointMake(equipmentBack.position.x * equipmentBack.anchorPoint.x, equipmentBack.position.y * equipmentBack.anchorPoint.y);
         
         self.headSlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_head.png" andInhabitantOrNil:nil] autorelease];
         self.headSlot.slotType = SlotTypeHead;
         self.headSlot.scale = .75;
-        [self.headSlot setPosition:CGPointMake(124+slotOffsets.x, 380+slotOffsets.y)];
+        [self.headSlot setPosition:CGPointMake(slotOffsets.x, 390+slotOffsets.y)];
         [self addChild:self.headSlot];
         
         self.neckSlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_neck.png" andInhabitantOrNil:nil] autorelease];
         self.neckSlot.slotType = SlotTypeNeck;
         self.neckSlot.scale = .75;
-        [self.neckSlot setPosition:CGPointMake(10+slotOffsets.x, 280+slotOffsets.y)];
+        [self.neckSlot setPosition:CGPointMake(256+slotOffsets.x, 390+slotOffsets.y)];
         [self addChild:self.neckSlot];
         
         self.chestSlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_chest.png" andInhabitantOrNil:nil] autorelease];
         self.chestSlot.slotType = SlotTypeChest;
         self.chestSlot.scale = .75;
-        [self.chestSlot setPosition:CGPointMake(10+slotOffsets.x, 160+slotOffsets.y)];
+        [self.chestSlot setPosition:CGPointMake(slotOffsets.x, 160+slotOffsets.y)];
         [self addChild:self.chestSlot];
         
         self.legsSlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_legs.png" andInhabitantOrNil:nil] autorelease];
         self.legsSlot.slotType = SlotTypeLegs;
         self.legsSlot.scale = .75;
-        [self.legsSlot setPosition:CGPointMake(240+slotOffsets.x, 160+slotOffsets.y)];
+        [self.legsSlot setPosition:CGPointMake(slotOffsets.x, 54+slotOffsets.y)];
         [self addChild:self.legsSlot];
         
         self.bootsSlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_boots.png" andInhabitantOrNil:nil] autorelease];
         self.bootsSlot.scale = .75;
         self.bootsSlot.slotType = SlotTypeBoots;
-        [self.bootsSlot setPosition:CGPointMake(124+slotOffsets.x, 70+slotOffsets.y)];
+        [self.bootsSlot setPosition:CGPointMake(256 + slotOffsets.x, 54+slotOffsets.y)];
         [self addChild:self.bootsSlot];
         
         self.weaponSlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_weapon.png" andInhabitantOrNil:nil] autorelease];
         self.weaponSlot.scale = .75;
         self.weaponSlot.slotType = SlotTypeWeapon;
-        [self.weaponSlot setPosition:CGPointMake(240+slotOffsets.x, 280+slotOffsets.y)];
+        [self.weaponSlot setPosition:CGPointMake(256+slotOffsets.x, 160+slotOffsets.y)];
         [self addChild:self.weaponSlot];
         
         [self configureEquippedSlots];
@@ -138,12 +145,13 @@
         [backButton setPosition:BACK_BUTTON_POS];
         [self addChild:backButton z:100];
         
-//        CCMenu *freeItem = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(freeItem)];
-//        [freeItem setPosition:CGPointMake(512, 725)];
-//        [self addChild:freeItem z:100];
+        CCMenu *freeItem = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(freeItem)];
+        [freeItem setPosition:CGPointMake(512, 725)];
+        [self addChild:freeItem z:100];
         
         self.itemDescriptionNode = [[[ItemDescriptionNode alloc] init] autorelease];
         self.itemDescriptionNode.position = CGPointMake(696, 590);
+        self.itemDescriptionNode.visible = NO;
         [self addChild:self.itemDescriptionNode];
         
         self.sellDrop = [[[SellDropSprite alloc] init] autorelease];
@@ -151,7 +159,7 @@
         [self addChild:self.sellDrop];
         
         CCSprite *statsBack = [CCSprite spriteWithSpriteFrameName:@"stats_back.png"];
-        [statsBack setPosition:CGPointMake(260, 120)];
+        [statsBack setPosition:CGPointMake(260, 80)];
         [self addChild:statsBack];
         
         CCLabelTTFShadow *statsTitleLabel = [CCLabelTTFShadow labelWithString:@"Stats:" fontName:@"TrebuchetMS-Bold" fontSize:28.0];
@@ -274,14 +282,15 @@
 
 - (void)freeItem
 {
-    [[PlayerDataManager localPlayer] staminaUsedWithCompletion:^(BOOL success) {
-        if (success) {
+    
+//    [[PlayerDataManager localPlayer] staminaUsedWithCompletion:^(BOOL success) {
+//        if (success) {
             Encounter *encounter = [Encounter encounterForLevel:arc4random() % 21 + 1 isMultiplayer:NO];
             EquipmentItem *randomItem = encounter.randomLootReward;
             [[PlayerDataManager localPlayer] playerEarnsItem:randomItem];
             [self configureInventory];
-        }
-    }];
+//        }
+//    }];
 }
 
 - (NSArray *)allSlots
@@ -327,12 +336,13 @@
                     [self.draggingSprite setPosition:slotChild.position];
                     self.draggingSprite.scale = .75;
                     self.itemDescriptionNode.item = self.draggingSprite.item;
+                    self.itemDescriptionNode.visible = YES;
                     self.lastSelectedSlot = slotChild;
                 }
             }
         }
     }
-    
+    [self.playerSprite setEquippedItems:[PlayerDataManager localPlayer].equippedItems];
     return YES;
 }
 
@@ -431,6 +441,7 @@
     }
     
     self.statsLabel.string = [self statsString];
+    [self.playerSprite setEquippedItems:[PlayerDataManager localPlayer].equippedItems];
 }
 
 - (NSString *)titleForSlotType:(SlotType)type
@@ -476,6 +487,7 @@
     [self configureInventory];
     [self configureEquippedSlots];
     [self.itemDescriptionNode setItem:nil];
+    [self.itemDescriptionNode setVisible:NO];
     [self.lastSelectedSlot setIsSelected:NO];
 }
 

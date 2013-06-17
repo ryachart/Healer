@@ -29,7 +29,8 @@
 
 //Health Accessors
 - (void)passiveHealForAmount:(NSInteger)amount;
-
+- (void)healForAmount:(NSInteger)amount fromSource:(Agent*)source;
+- (void)damageForAmount:(NSInteger)amount fromSource:(Agent*)source;
 
 - (NSInteger)effectCountOfType:(EffectType)type;
 - (void)didReceiveHealing:(NSInteger)amount andOverhealing:(NSInteger)amount;

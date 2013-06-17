@@ -31,6 +31,7 @@
 #import "SimpleAudioEngine.h"
 #import "CollectibleLayer.h"
 #import "InventoryScene.h"
+#import "PlayerSprite.h"
 
 #define DEBUG_IMMUNITIES false
 #define DEBUG_PERFECT_HEALS false
@@ -64,7 +65,7 @@
 @property (nonatomic, retain) NSMutableArray *effectsPlayedThisSession;
 @property (nonatomic, assign) BackgroundSprite *sceneBackground;
 @property (nonatomic, assign) BackgroundSprite *mainBackground;
-@property (nonatomic, assign) CCSprite *healerPortrait;
+@property (nonatomic, assign) PlayerSprite *healerPortrait;
 @property (nonatomic, assign) CCParticleSystemQuad *castingEffect;
 
 @property (nonatomic, retain) NSDictionary *randomTitlesPresetDictionary;
@@ -203,7 +204,9 @@
         [self.castingEffect setPosition:CGPointMake(54, 280)];
         [self addChild:self.castingEffect];
         
-        self.healerPortrait = [CCSprite spriteWithSpriteFrameName:@"healer-portrait.png"];
+        self.healerPortrait = [[[PlayerSprite alloc] initWithEquippedItems:[PlayerDataManager localPlayer].equippedItems] autorelease];
+        [self.healerPortrait setScale:.75];
+        self.healerPortrait.flipX = YES;
         [self.healerPortrait setPosition:CGPointMake(130, 180)];
         [self addChild:self.healerPortrait];
         

@@ -1174,7 +1174,7 @@
 - (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
 {
     if (self = [super initWithDuration:dur andEffectType:type]) {
-        [self setTitle:@"Burning Insanity"];
+        [self setTitle:@"burning-insanity"];
         [self setValuePerTick:-7];
         [self setMaxStacks:3];
         [self setThreshold:.6];
@@ -1352,6 +1352,10 @@
     NSArray *excludedEffectTitles = @[@"inverted-healing",@"wracking-pain-eff",@"soul-burn"];
     
     float targetHealth = (int)round(self.target.maximumHealth * .98);
+    if ([self.target hasEffectWithTitle:@"burning-insanity"]) {
+        targetHealth = (int)round(self.target.maximumHealth * .48);
+    }
+    
     if (self.target.health < targetHealth) {
         BOOL skipHealing = NO;
         for (NSString *title in excludedEffectTitles) {

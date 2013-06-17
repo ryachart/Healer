@@ -1,79 +1,17 @@
 
 
 ASSETS_DIR=${PROJECT_DIR}/assets
-sprites_dir=${PROJECT_DIR}/sprites
-battle_sprites_dir=${PROJECT_DIR}/battle-sprites
-shop_sprites_dir=${PROJECT_DIR}/shop-sprites
-spell_sprites_dir=${PROJECT_DIR}/spell-sprites
-effect_sprites_dir=${PROJECT_DIR}/effect-sprites
-divinity_spires_dir=${PROJECT_DIR}/divinity-sprites
-shop_flavor_1_dir=${PROJECT_DIR}/shop-flavor-1
-shop_flavor_2_dir=${PROJECT_DIR}/shop-flavor-2
-post_battle_dir=${PROJECT_DIR}/postbattle
-map_icon_dir=${PROJECT_DIR}/map-icons
-items_dir=${PROJECT_DIR}/items
-inventory_dir=${PROJECT_DIR}/inventory
 
-asset=`basename $sprites_dir`
+declare -a sprite_atlas_dirs=(sprites battle-sprites shop-sprites spell-sprites effect-sprites divinity-sprites shop-flavor-1 shop-flavor-2 postbattle map-icons items inventory avatar)
+
 mkdir -p $ASSETS_DIR
-plist=$ASSETS_DIR/sprites-ipad-hd.plist
-sheet=$ASSETS_DIR/sprites-ipad-hd.pvr.ccz
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $plist --format cocos2d --sheet $sheet --auto-sd $sprites_dir/*.png
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $plist --format cocos2d --sheet $sheet $sprites_dir/*.png
 
-battle_plist=$ASSETS_DIR/battle-sprites-ipad-hd.plist
-battle_sheet=$ASSETS_DIR/battle-sprites-ipad-hd.pvr.ccz
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $battle_plist --format cocos2d --sheet $battle_sheet --auto-sd $battle_sprites_dir/*.png
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $battle_plist --format cocos2d --sheet $battle_sheet $battle_sprites_dir/*.png
 
-shop_plist=$ASSETS_DIR/shop-sprites-ipad-hd.plist
-shop_sheet=$ASSETS_DIR/shop-sprites-ipad-hd.pvr.ccz
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $shop_plist --format cocos2d --sheet $shop_sheet --auto-sd $shop_sprites_dir/*.png
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $shop_plist --format cocos2d --sheet $shop_sheet $shop_sprites_dir/*.png
-
-spell_plist=$ASSETS_DIR/spell-sprites-ipad-hd.plist
-spell_sheet=$ASSETS_DIR/spell-sprites-ipad-hd.pvr.ccz
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $spell_plist --format cocos2d --sheet $spell_sheet --auto-sd $spell_sprites_dir/*.png
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $spell_plist --format cocos2d --sheet $spell_sheet $spell_sprites_dir/*.png
-
-effect_plist=$ASSETS_DIR/effect-sprites-ipad-hd.plist
-effect_sheet=$ASSETS_DIR/effect-sprites-ipad-hd.pvr.ccz
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $effect_plist --format cocos2d --sheet $effect_sheet --auto-sd $effect_sprites_dir/*.png
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $effect_plist --format cocos2d --sheet $effect_sheet $effect_sprites_dir/*.png
-
-divinity_plist=$ASSETS_DIR/divinity-sprites-ipad-hd.plist
-divinity_sheet=$ASSETS_DIR/divinity-sprites-ipad-hd.pvr.ccz
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $divinity_plist --format cocos2d --sheet $divinity_sheet --auto-sd $divinity_spires_dir/*.png
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $divinity_plist --format cocos2d --sheet $divinity_sheet $divinity_spires_dir/*.png
-
-shop_flavor_1_plist=$ASSETS_DIR/shop-flavor-1-ipad-hd.plist
-shop_flavor_1_sheet=$ASSETS_DIR/shop-flavor-1-ipad-hd.pvr.ccz
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $shop_flavor_1_plist --format cocos2d --sheet $shop_flavor_1_sheet --auto-sd $shop_flavor_1_dir/*.png
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $shop_flavor_1_plist --format cocos2d --sheet $shop_flavor_1_sheet $shop_flavor_1_dir/*.png
-
-shop_flavor_2_plist=$ASSETS_DIR/shop-flavor-2-ipad-hd.plist
-shop_flavor_2_sheet=$ASSETS_DIR/shop-flavor-2-ipad-hd.pvr.ccz
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $shop_flavor_2_plist --format cocos2d --sheet $shop_flavor_2_sheet --auto-sd $shop_flavor_2_dir/*.png
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $shop_flavor_2_plist --format cocos2d --sheet $shop_flavor_2_sheet $shop_flavor_2_dir/*.png
-
-postbattle_plist=$ASSETS_DIR/postbattle-ipad-hd.plist
-postbattle_sheet=$ASSETS_DIR/postbattle-ipad-hd.pvr.ccz
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $postbattle_plist --format cocos2d --sheet $postbattle_sheet --auto-sd $post_battle_dir/*.png
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $postbattle_plist --format cocos2d --sheet $postbattle_sheet $post_battle_dir/*.png
-
-mapicon_plist=$ASSETS_DIR/mapicon-ipad-hd.plist
-mapicon_sheet=$ASSETS_DIR/mapicon-ipad-hd.pvr.ccz
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $mapicon_plist --format cocos2d --sheet $mapicon_sheet --auto-sd $map_icon_dir/*.png
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $mapicon_plist --format cocos2d --sheet $mapicon_sheet $map_icon_dir/*.png
-
-items_plist=$ASSETS_DIR/items-ipad-hd.plist
-items_sheet=$ASSETS_DIR/items-ipad-hd.pvr.ccz
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $items_plist --format cocos2d --sheet $items_sheet --auto-sd $items_dir/*.png
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $items_plist --format cocos2d --sheet $items_sheet $items_dir/*.png
-
-inventory_plist=$ASSETS_DIR/inventory-ipad-hd.plist
-inventory_sheet=$ASSETS_DIR/inventory-ipad-hd.pvr.ccz
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $inventory_plist --format cocos2d --sheet $inventory_sheet --auto-sd $inventory_dir/*.png
-/usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $inventory_plist --format cocos2d --sheet $inventory_sheet $inventory_dir/*.png
-
-sh ${PROJECT_DIR}/scripts/build-boss-assets.sh
+for folder_name in ${sprite_atlas_dirs[@]}
+do
+    folder_dir=${PROJECT_DIR}/$folder_name
+    plist=$ASSETS_DIR/${folder_name}-ipad-hd.plist
+    sheet=$ASSETS_DIR/${folder_name}-ipad-hd.pvr.ccz
+    /usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $plist --format cocos2d --sheet $sheet --auto-sd $folder_dir/*.png
+    /usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $plist --format cocos2d --sheet $sheet $folder_dir/*.png
+done

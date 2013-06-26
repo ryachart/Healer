@@ -10,5 +10,6 @@
 #import "IconDescriptionModalLayer.h"
 
 @interface InventoryScene : CCScene <CCTargetedTouchDelegate, IconDescriptorModalDelegate>
+@property (nonatomic, readwrite) BOOL returnsToMap;
 
 @end

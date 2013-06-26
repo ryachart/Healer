@@ -10,7 +10,7 @@
 #import "EquipmentItem.h"
 
 
-@interface ItemDescriptionNode : CCNode
+@interface ItemDescriptionNode : CCSprite
 @property (nonatomic, retain) EquipmentItem *item;
 
 + (ccColor3B)colorForRarity:(ItemRarity)rarity;

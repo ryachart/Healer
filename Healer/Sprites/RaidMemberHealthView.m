@@ -378,19 +378,26 @@
         }
     }
     
-    for (NSString *removeMe in particlesToRemove) {
-        CCParticleSystemQuad *pSystem = [self.particleEffects objectForKey:removeMe];
-        [pSystem removeFromParentAndCleanup:YES];
-    }
-    [self.particleEffects removeObjectsForKeys:particlesToRemove];
+    if (self.member.isDead) {
+        for (CCParticleSystemQuad *system in self.particleEffects.allValues) {
+            [system removeFromParentAndCleanup:YES];
+        }
+        [self.particleEffects removeAllObjects];
+    } else {
+        for (NSString *removeMe in particlesToRemove) {
+            CCParticleSystemQuad *pSystem = [self.particleEffects objectForKey:removeMe];
+            [pSystem removeFromParentAndCleanup:YES];
+        }
+        [self.particleEffects removeObjectsForKeys:particlesToRemove];
     
-    for (NSString *effectName in liveParticleEffects) {
-        if (![self.particleEffects objectForKey:effectName]) {
-            CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:effectName];
-            [collisionEffect setAutoRemoveOnFinish:YES];
-            [collisionEffect setPosition:CGPointMake(self.contentSize.width / 2, 0)];
-            [self.particleEffects setObject:collisionEffect forKey:effectName];
-            [self addChild:collisionEffect z:50];
+        for (NSString *effectName in liveParticleEffects) {
+            if (![self.particleEffects objectForKey:effectName]) {
+                CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:effectName];
+                [collisionEffect setAutoRemoveOnFinish:YES];
+                [collisionEffect setPosition:CGPointMake(self.contentSize.width / 2, 0)];
+                [self.particleEffects setObject:collisionEffect forKey:effectName];
+                [self addChild:collisionEffect z:50];
+            }
         }
     }
     

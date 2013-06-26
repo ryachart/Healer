@@ -24,6 +24,7 @@
 #import "TipsLayer.h"
 #import "InventoryScene.h"
 #import "StaminaCounterNode.h"
+#import "TreasureChest.h"
 
 
 @interface HealerStartScene ()
@@ -174,6 +175,7 @@
     if (![[SimpleAudioEngine sharedEngine] isBackgroundMusicPlaying]) {
         [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"sounds/theme.mp3" loop:YES];
     }
+    
 }
 
 

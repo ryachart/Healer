@@ -771,6 +771,7 @@
         for (Effect *eff in target.activeEffects) {
             [eff player:self causedHealing:amount];
         }
+        
     }
     
     if (overhealing > 0){

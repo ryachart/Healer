@@ -340,8 +340,10 @@
 
 - (void)targetWasSelectedByPlayer:(Player*)player
 {
-    for (Effect *eff in self.activeEffects) {
-        [eff targetWasSelectedByPlayer:player];
+    if (!player.isDead) {
+        for (Effect *eff in self.activeEffects) {
+            [eff targetWasSelectedByPlayer:player];
+        }
     }
 }
 @end

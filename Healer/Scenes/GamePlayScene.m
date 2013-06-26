@@ -545,9 +545,12 @@
     }
     
     if (destination == PostBattleLayerDestinationArmory) {
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[InventoryScene alloc] init] autorelease]]];
+        InventoryScene *is = [[[InventoryScene alloc] init] autorelease];
+        [is setReturnsToMap:YES];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:is]];
     }
 }
+
 -(void)battleEndWithSuccess:(BOOL)success{    
 //    if (success && !(self.isServer || self.isClient) && [NormalModeCompleteScene needsNormalModeCompleteSceneForLevelNumber:self.encounter.levelNumber]){
 //        //If we just beat the final boss for the first time, show the normal mode complete Scene

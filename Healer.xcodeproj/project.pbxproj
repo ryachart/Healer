@@ -115,6 +115,7 @@
 		BFA5464715AA0CED00F9B167 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464615AA0CED00F9B167 /* CFNetwork.framework */; };
 		BFA5464915AA0D3100F9B167 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */; };
 		BFA60E44160CD331005FFE1B /* NormalModeCompleteScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA60E43160CD331005FFE1B /* NormalModeCompleteScene.m */; };
+		BFA8B72D177A44380048BBB4 /* TreasureChest.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA8B72C177A44380048BBB4 /* TreasureChest.m */; };
 		BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */; };
 		BFAFA3F415F43C650052FCA5 /* GoldCounterSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */; };
 		BFAFA3F915F54BBD0052FCA5 /* TalentTierCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F815F54BBD0052FCA5 /* TalentTierCard.m */; };
@@ -757,6 +758,8 @@
 		BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		BFA60E42160CD331005FFE1B /* NormalModeCompleteScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NormalModeCompleteScene.h; sourceTree = "<group>"; };
 		BFA60E43160CD331005FFE1B /* NormalModeCompleteScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NormalModeCompleteScene.m; sourceTree = "<group>"; };
+		BFA8B72B177A44380048BBB4 /* TreasureChest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreasureChest.h; sourceTree = "<group>"; };
+		BFA8B72C177A44380048BBB4 /* TreasureChest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreasureChest.m; sourceTree = "<group>"; };
 		BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape~ipad.png"; path = "../Default-Landscape~ipad.png"; sourceTree = "<group>"; };
 		BFAFA3F215F43C650052FCA5 /* GoldCounterSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoldCounterSprite.h; sourceTree = "<group>"; };
 		BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoldCounterSprite.m; sourceTree = "<group>"; };
@@ -1194,15 +1197,16 @@
 		38F0504413C2618900BCADCB /* View Objects */ = {
 			isa = PBXGroup;
 			children = (
+				BFA8B6F1177A43FB0048BBB4 /* Post Battle */,
 				BF00233D176F851C00445998 /* Player Sprite */,
 				BF13ADFA1751B5F500A613B1 /* Inventory Views */,
 				BF1DF45917220FE400046EB2 /* Tips */,
 				382C463F1648CD9000883CFA /* PreBattle */,
 				BFD106F8163A2944002318CE /* Map Views */,
 				BFAFA3F615F54B8A0052FCA5 /* Talent Views */,
-				BF448C53154BA49E009401A6 /* UI Layers */,
+				BF448C53154BA49E009401A6 /* Widgets */,
 				BFB46409154A260D00503E30 /* Store Views */,
-				BF210746152AAACC001B93D7 /* UI */,
+				BF210746152AAACC001B93D7 /* UI Tools */,
 				BF210759152B5612001B93D7 /* Caches */,
 				BF05579C15268CEF006B4781 /* Descriptors */,
 				387E7B78145E291C006D9266 /* Wrappers */,
@@ -1306,7 +1310,7 @@
 			name = Animations;
 			sourceTree = "<group>";
 		};
-		BF210746152AAACC001B93D7 /* UI */ = {
+		BF210746152AAACC001B93D7 /* UI Tools */ = {
 			isa = PBXGroup;
 			children = (
 				BF210748152AAAEB001B93D7 /* Scale9Sprite.h */,
@@ -1320,7 +1324,7 @@
 				BF068CA41704F0BC00000C7F /* WidthScalingBackgroundSprite.h */,
 				BF068CA51704F0BC00000C7F /* WidthScalingBackgroundSprite.m */,
 			);
-			name = UI;
+			name = "UI Tools";
 			sourceTree = "<group>";
 		};
 		BF210759152B5612001B93D7 /* Caches */ = {
@@ -1332,7 +1336,7 @@
 			name = Caches;
 			sourceTree = "<group>";
 		};
-		BF448C53154BA49E009401A6 /* UI Layers */ = {
+		BF448C53154BA49E009401A6 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
 				BF13ADF6175189C300A613B1 /* Slots */,
@@ -1345,7 +1349,7 @@
 				38B0BB231657694300D31540 /* RatingCounterSprite.h */,
 				38B0BB241657694300D31540 /* RatingCounterSprite.m */,
 			);
-			name = "UI Layers";
+			name = Widgets;
 			sourceTree = "<group>";
 		};
 		BFA44C1416DC21A400F20C8A /* Deprecated */ = {
@@ -1385,6 +1389,15 @@
 				BFA44C1E16DC34FF00F20C8A /* EnemyHealthBar.m */,
 			);
 			name = Enemies;
+			sourceTree = "<group>";
+		};
+		BFA8B6F1177A43FB0048BBB4 /* Post Battle */ = {
+			isa = PBXGroup;
+			children = (
+				BFA8B72B177A44380048BBB4 /* TreasureChest.h */,
+				BFA8B72C177A44380048BBB4 /* TreasureChest.m */,
+			);
+			name = "Post Battle";
 			sourceTree = "<group>";
 		};
 		BFAFA3F615F54B8A0052FCA5 /* Talent Views */ = {
@@ -2106,6 +2119,7 @@
 				BF13AE801759A26D00A613B1 /* EncounterDescriptionLayer.m in Sources */,
 				BFF6B202176926130014640C /* NSString+Obfuscation.m in Sources */,
 				BF002377176F852A00445998 /* PlayerSprite.m in Sources */,
+				BFA8B72D177A44380048BBB4 /* TreasureChest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

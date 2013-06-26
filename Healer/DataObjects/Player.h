@@ -32,7 +32,7 @@ typedef int CastingDisabledReason;
 @class Spell;
 @class Effect;
 
-#define MINIMUM_AVATAR_TRIGGER_AMOUNT 25
+#define MINIMUM_AVATAR_TRIGGER_AMOUNT 200
 @protocol RedemptionDelegate;
 
 @interface Player : RaidMember <RedemptionDelegate> {

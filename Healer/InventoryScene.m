@@ -8,6 +8,7 @@
 
 #import "InventoryScene.h"
 #import "HealerStartScene.h"
+#import "LevelSelectMapScene.h"
 #import "BasicButton.h"
 #import "Slot.h"
 #import "BackgroundSprite.h"
@@ -43,6 +44,7 @@
 @property (nonatomic, assign) CCNode *allyHealthCostNode;
 @property (nonatomic, assign) BasicButton *allyHealthUpgradeButton;
 @property (nonatomic, assign) BasicButton *allyDamageUpgradeButton;
+@property (nonatomic, readwrite) BOOL isTouching;
 @end
 
 #define INVENTORY_ROW_SIZE 5
@@ -145,9 +147,9 @@
         [backButton setPosition:BACK_BUTTON_POS];
         [self addChild:backButton z:100];
         
-        CCMenu *freeItem = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(freeItem)];
-        [freeItem setPosition:CGPointMake(512, 725)];
-        [self addChild:freeItem z:100];
+//        CCMenu *freeItem = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(freeItem)];
+//        [freeItem setPosition:CGPointMake(512, 725)];
+//        [self addChild:freeItem z:100];
         
         self.itemDescriptionNode = [[[ItemDescriptionNode alloc] init] autorelease];
         self.itemDescriptionNode.position = CGPointMake(696, 590);
@@ -277,7 +279,11 @@
 
 -(void)back
 {
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
+    if (self.returnsToMap) {
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[LevelSelectMapScene alloc] init] autorelease]]];
+    } else {
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
+    }
 }
 
 - (void)freeItem
@@ -317,6 +323,9 @@
 }
 
 - (BOOL)ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event{
+    if (self.isTouching ) return NO;
+    self.isTouching = YES;
+    
     NSArray *allSlots = [self allSlots];
     for (CCNode *child in allSlots){
         if ([child isKindOfClass:[Slot class]]){
@@ -369,6 +378,7 @@
 }
 
 - (void)ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event {
+    self.isTouching = NO;
     BOOL droppedIntoSlot = NO;
     NSArray *allSlots = [self allSlots];
     EquipmentItem *droppedItem = self.draggingSprite.item;

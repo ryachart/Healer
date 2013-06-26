@@ -65,25 +65,22 @@
         NSArray *encounterLoot = [legendaries arrayByAddingObjectsFromArray:[Encounter epicItemsForLevelNumber:encounter.levelNumber]];
         NSInteger height = encounterInfo.position.y - 120;
         for (EquipmentItem *item in encounterLoot) {
-            CCSprite *icon = [CCSprite spriteWithSpriteFrameName:item.itemSpriteName];
-            [icon setPosition:CGPointMake(self.overpaper.contentSize.width / 4, height)];
-            [self.overpaper addChild:icon];
             ItemDescriptionNode *itemDesc = [[[ItemDescriptionNode alloc] init] autorelease];
             [itemDesc setItem:item];
-            [itemDesc setPosition:CGPointMake(self.overpaper.contentSize.width / 2 + 80, height)];
+            [itemDesc setPosition:CGPointMake(self.overpaper.contentSize.width / 2 + 20, height)];
             [self.overpaper addChild:itemDesc];
             height -= descriptionHeight;
         }
         
         ItemDescriptionNode *randomBlue = [[[ItemDescriptionNode alloc] init] autorelease];
         [randomBlue configureForRandomWithRarity:ItemRarityRare];
-        [randomBlue setPosition:CGPointMake(self.overpaper.contentSize.width / 2 + 80, height)];
+        [randomBlue setPosition:CGPointMake(self.overpaper.contentSize.width / 2 + 20, height)];
         [self.overpaper addChild:randomBlue];
         height -= descriptionHeight;
         
         ItemDescriptionNode *randomGreen = [[[ItemDescriptionNode alloc] init] autorelease];
         [randomGreen configureForRandomWithRarity:ItemRarityUncommon];
-        [randomGreen setPosition:CGPointMake(self.overpaper.contentSize.width / 2 + 80, height)];
+        [randomGreen setPosition:CGPointMake(self.overpaper.contentSize.width / 2 + 20, height)];
         [self.overpaper addChild:randomGreen];
         height -= descriptionHeight;
         

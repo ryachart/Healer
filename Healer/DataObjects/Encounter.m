@@ -791,7 +791,7 @@
     NSMutableArray *items = [NSMutableArray arrayWithCapacity:2];
     
     if (levelNumber == 2) {
-        EquipmentItem *trollEpic = [[[EquipmentItem alloc] initWithName:@"Cudgel of Subdued Rage" health:15 regen:1.0 speed:0 crit:0 healing:2.0 slot:SlotTypeWeapon rarity:ItemRarityEpic specialKey:@"burst1" quality:3 uniqueId:100] autorelease];
+        EquipmentItem *trollEpic = [[[EquipmentItem alloc] initWithName:@"Codex of Rage" health:15 regen:1.0 speed:0 crit:0 healing:2.0 slot:SlotTypeWeapon rarity:ItemRarityEpic specialKey:@"burst1" quality:3 uniqueId:100] autorelease];
         [items addObject:trollEpic];
     }
     
@@ -828,7 +828,7 @@
     if (levelNumber == 9) {
         EquipmentItem *councilEpic = [[[EquipmentItem alloc] initWithName:@"Amulet of the Ritualist" health:25 regen:0 speed:1.0 crit:0 healing:4.0 slot:SlotTypeNeck rarity:ItemRarityEpic specialKey:nil quality:5 uniqueId:107] autorelease];
         [items addObject:councilEpic];
-        EquipmentItem *councilEpic2 = [[[EquipmentItem alloc] initWithName:@"Cauterizing Wand" health:0 regen:3.5 speed:0.0 crit:0.0 healing:4.0 slot:SlotTypeWeapon rarity:ItemRarityEpic specialKey:@"purify1" quality:5 uniqueId:200] autorelease];
+        EquipmentItem *councilEpic2 = [[[EquipmentItem alloc] initWithName:@"Words of Warding" health:0 regen:3.5 speed:0.0 crit:0.0 healing:4.0 slot:SlotTypeWeapon rarity:ItemRarityEpic specialKey:@"purify1" quality:5 uniqueId:200] autorelease];
         [items addObject:councilEpic2];
     }
     
@@ -841,9 +841,9 @@
     }
     
     if (levelNumber == 11) {
-        EquipmentItem *baraghastEpic = [[[EquipmentItem alloc] initWithName:@"Rod of the Warlord" health:0 regen:1.5 speed:0.0 crit:2.25 healing:6.0 slot:SlotTypeWeapon rarity:ItemRarityEpic specialKey:@"raidheal1" quality:6 uniqueId:109] autorelease];
+        EquipmentItem *baraghastEpic = [[[EquipmentItem alloc] initWithName:@"Tome of the Warlord" health:0 regen:1.5 speed:0.0 crit:2.25 healing:6.0 slot:SlotTypeWeapon rarity:ItemRarityEpic specialKey:@"raidheal1" quality:6 uniqueId:109] autorelease];
         [items addObject:baraghastEpic];
-        EquipmentItem *baraghastEpic2 = [[[EquipmentItem alloc] initWithName:@"Hate-Imbued Wand" health:0 regen:3.0 speed:3.0 crit:0 healing:3.0 slot:SlotTypeWeapon rarity:ItemRarityEpic specialKey:@"blast1" quality:6 uniqueId:202] autorelease];
+        EquipmentItem *baraghastEpic2 = [[[EquipmentItem alloc] initWithName:@"Hate-Imbued Libram" health:0 regen:3.0 speed:3.0 crit:0 healing:3.0 slot:SlotTypeWeapon rarity:ItemRarityEpic specialKey:@"blast1" quality:6 uniqueId:202] autorelease];
         [items addObject:baraghastEpic2];
     }
     
@@ -868,7 +868,7 @@
     }
     
     if (levelNumber == 16) {
-        EquipmentItem *overseerEpic = [[[EquipmentItem alloc] initWithName:@"Staff of the Overseer" health:0 regen:3.0 speed:3.0 crit:4.5 healing:3.0 slot:SlotTypeWeapon rarity:ItemRarityEpic specialKey:@"healbuff1" quality:8 uniqueId:115] autorelease];
+        EquipmentItem *overseerEpic = [[[EquipmentItem alloc] initWithName:@"Tome of the Overseer" health:0 regen:3.0 speed:3.0 crit:4.5 healing:3.0 slot:SlotTypeWeapon rarity:ItemRarityEpic specialKey:@"healbuff1" quality:8 uniqueId:115] autorelease];
         [items addObject:overseerEpic];
     }
     
@@ -878,7 +878,7 @@
     }
     
     if (levelNumber == 18) {
-        EquipmentItem *rebornEpic = [[[EquipmentItem alloc] initWithName:@"Helm of the Reborn" health:25 regen:5.0 speed:2.5 crit:0 healing:5.0 slot:SlotTypeHead rarity:ItemRarityEpic specialKey:nil quality:9 uniqueId:116] autorelease];
+        EquipmentItem *rebornEpic = [[[EquipmentItem alloc] initWithName:@"Shawl of the Reborn" health:25 regen:5.0 speed:2.5 crit:0 healing:5.0 slot:SlotTypeHead rarity:ItemRarityEpic specialKey:nil quality:9 uniqueId:116] autorelease];
         [items addObject:rebornEpic];
     }
     
@@ -900,7 +900,7 @@
 {
     NSMutableArray *array = [NSMutableArray array];
     if (levelNumber == 12){
-        EquipmentItem *seerLegend = [[[EquipmentItem alloc] initWithName:@"Sandals of the Ancients" health:50 regen:5.0 speed:5.0 crit:0 healing:5.0 slot:SlotTypeBoots rarity:ItemRarityLegendary specialKey:nil quality:10 uniqueId:300] autorelease];
+        EquipmentItem *seerLegend = [[[EquipmentItem alloc] initWithName:@"Boots of the Ancients" health:50 regen:5.0 speed:5.0 crit:0 healing:5.0 slot:SlotTypeBoots rarity:ItemRarityLegendary specialKey:nil quality:10 uniqueId:300] autorelease];
         [array addObject:seerLegend];
     }
     
@@ -925,7 +925,7 @@
     }
     
     if (levelNumber == 21) {
-        EquipmentItem *soulLegend = [[[EquipmentItem alloc] initWithName:@"Aravon's Scepter" health:40 regen:6.0 speed:5.0 crit:0 healing:5.0 slot:SlotTypeWeapon rarity:ItemRarityLegendary specialKey:@"aravon1" quality:10 uniqueId:301] autorelease];
+        EquipmentItem *soulLegend = [[[EquipmentItem alloc] initWithName:@"Aravon's Lesson" health:40 regen:6.0 speed:5.0 crit:0 healing:5.0 slot:SlotTypeWeapon rarity:ItemRarityLegendary specialKey:@"aravon1" quality:10 uniqueId:301] autorelease];
         [array addObject:soulLegend];
     }
     

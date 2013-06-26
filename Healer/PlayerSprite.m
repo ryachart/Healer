@@ -140,6 +140,21 @@
         self.helmSprite.displayFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"avatar_helm1_none.png"];
         self.helmSprite.visible = YES;
     }
+    
+    if ([self requiresBaseChest]) {
+        self.chestSprite.displayFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"avatar_chest1_none.png"];
+        self.chestSprite.visible = YES;
+    }
+    
+    if ([self requiresBaseTome]) {
+        self.tomeSprite.displayFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"avatar_tome1_none.png"];
+        self.tomeSprite.visible = YES;
+    }
+    
+    if ([self requiresBaseBoots]) {
+        self.bootsSprite.displayFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"avatar_boots1_none.png"];
+        self.bootsSprite.visible = YES;
+    }
 }
 
 - (void)setEquippedItems:(NSArray *)equippedItems
@@ -152,6 +167,32 @@
 - (BOOL)requiresBaseHead
 {
     return !self.helmSprite.visible;
+}
+
+- (BOOL)requiresBaseChest
+{
+    return !self.chestSprite.visible;
+}
+
+- (BOOL)requiresBaseTome
+{
+    return !self.tomeSprite.visible;
+}
+
+- (BOOL)requiresBaseBoots
+{
+    return !self.bootsSprite.visible;
+}
+
+- (void)setOpacity:(GLubyte)opacity
+{
+    [super setOpacity:opacity];
+    [self.baseSprite setOpacity:opacity];
+    [self.tomeSprite setOpacity:opacity];
+    [self.pantsSprite setOpacity:opacity];
+    [self.bootsSprite setOpacity:opacity];
+    [self.chestSprite setOpacity:opacity];
+    [self.helmSprite setOpacity:opacity];
 }
 
 @end

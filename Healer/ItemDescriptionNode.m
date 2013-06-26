@@ -84,6 +84,11 @@
     return ccWHITE;
 }
 
+- (void)configureSlotLabelPosition
+{
+    self.slotTypeLabel.position = CGPointMake(self.background.contentSize.width / 2 - self.slotTypeLabel.contentSize.width + 4, self.background.contentSize.height / 2 - self.slotTypeLabel.contentSize.height + 4);
+}
+
 - (void)configureForItem
 {
     if (self.item) {
@@ -98,7 +103,7 @@
         self.infoLabel.string = self.item.info;
         self.slotTypeLabel.string = self.item.slotTypeName;
         
-        self.slotTypeLabel.position = CGPointMake(self.background.contentSize.width / 2 - self.slotTypeLabel.contentSize.width + 4, self.background.contentSize.height / 2 - self.slotTypeLabel.contentSize.height + 4);
+        [self configureSlotLabelPosition];
         [self.itemSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:self.item.itemSpriteName]];
     } else {
         self.titleLabel.string = @"";
@@ -138,7 +143,7 @@
         [self formatString:statsLine forCount:statsCount];
     }
     if (item.crit > 0) {
-        [statsLine appendFormat:@"Crit: +%1.1f%%", item.crit];
+        [statsLine appendFormat:@"Crit: +%1.2f%%", item.crit];
         statsCount++;
         [self formatString:statsLine forCount:statsCount];
     }
@@ -151,13 +156,25 @@
     return statsLine;
 }
 
+- (void)setOpacity:(GLubyte)opacity
+{
+    [super setOpacity:opacity];
+    for (CCNode *child in self.children) {
+        if ([child conformsToProtocol:@protocol(CCRGBAProtocol)]) {
+            [(id<CCRGBAProtocol>)child setOpacity:opacity];
+        }
+    }
+    [self.itemSprite setOpacity:opacity];
+}
+
 - (void)configureForRandomWithRarity:(ItemRarity)rarity
 {
-    self.titleLabel.string = @"Random";
+    self.titleLabel.string = @"Random Item";
     self.titleLabel.color = [ItemDescriptionNode colorForRarity:rarity];
-    self.descriptionLabel.string = @"Health: +??\nHealing: +??%     Speed: +??%\nCrit: +??%     Mana Regen: +??%";
+    self.descriptionLabel.string = @"Health: +??     Healing: +??%\nSpeed: +??%     Crit: +??%\nMana Regen: +??%";
     self.slotTypeLabel.string = @"Random";
     self.infoLabel.string = @"";
+    [self configureSlotLabelPosition];
 }
 
 @end

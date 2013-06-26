@@ -133,6 +133,15 @@ static float stat_atoms[StatTypeMaximum] = {
     
     NSMutableArray *stats = [NSMutableArray arrayWithCapacity:StatTypeMaximum];
     
+    if (rarity == ItemRarityUncommon && slot == SlotTypeChest) {
+        //Uncommon Chests are really uninteresting because they have only health =/
+        totalStats++;
+        if (quality == 1) {
+            //Ridiculous, but QL1 chests just aren't interesting as they only have +health
+            quality = 2;
+        }
+    }
+    
     for (int i = 0; i < StatTypeMaximum; i++) {
         //Load up an array with all the possible stat types
         [stats addObject:[NSNumber numberWithInt:i]];
@@ -333,10 +342,10 @@ static float stat_atoms[StatTypeMaximum] = {
 }
 
 + (NSArray *)slotPrefixes{
-    NSArray *slotPrefix = @[@[@"Helm", @"Cover", @"Hood", @"Hat"], //Head
-                            @[@"Wand", @"Tome", @"Staff"], //Weapon
-                            @[@"Robe", @"Tunic", @"Garment", @"Vestment"], //Chest,
-                            @[@"Pants", @"Pantaloons", @"Trousers", @"Breeches"], //Legs,
+    NSArray *slotPrefix = @[@[@"Cover", @"Hood", @"Shawl", @"Mantle", @"Stole"], //Head
+                            @[@"Words", @"Tome", @"Book", @"Libram", @"Codex"], //Weapon
+                            @[@"Robe", @"Tunic", @"Garment", @"Vestment", @"Raiment"], //Chest,
+                            @[@"Pants", @"Pantaloons", @"Trousers", @"Breeches", @"Leggings"], //Legs,
                             @[@"Boots", @"Sandals", @"Slippers", @"Shoes"], //Boots,
                             @[@"Necklace", @"Pendant", @"Chain", @"Choker"] //Neck
                             ];
@@ -370,7 +379,7 @@ static float stat_atoms[StatTypeMaximum] = {
                            @"burst2" : @"On Use: Heals your target for 150.  15s Cooldown.",
                            @"raidheal1" : @"On Use: Heals all allies for 30 over 6 seconds. 30s Cooldown.",
                            @"healbuff1" : @"On Use: Increases your healing done by 25% for 6 seconds. 30s Cooldown.",
-                           @"purify1" : @"On Use: Removes all curses and poisons from an ally.",
+                           @"purify1" : @"On Use: Removes all curses and poisons from an ally.  10s Cooldown.",
                            @"armor1" : @"On Use: Reduces the damage taken of target ally by 10% for 5 seconds.  10s Cooldown",
                            @"blast1" : @"On Use: Fire a bolt of light at an enemy dealing 1000 damage. 15s Cooldown.",
                            @"aravon1" : @"On Use: Summons 4 Stars of Aravon from the Heavens.  15s Cooldown."};

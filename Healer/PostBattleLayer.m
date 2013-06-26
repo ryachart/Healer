@@ -20,7 +20,7 @@
 #import "StaminaCounterNode.h"
 #import "ItemDescriptionNode.h"
 #import "PurchaseManager.h"
-
+#import "TreasureChest.h"
 
 @interface PostBattleLayer ()
 @property (nonatomic, readwrite) BOOL isMultiplayer;
@@ -46,7 +46,7 @@
 @property (nonatomic, readwrite) PostBattleLayerDestination chosenDestination;
 
 //Loot Award Stuff
-@property (nonatomic, assign) CCSprite *chestSprite;
+@property (nonatomic, assign) TreasureChest *chestSprite;
 @property (nonatomic, assign) BasicButton *openChest;
 @property (nonatomic, assign) BasicButton *getKeys;
 @end
@@ -353,7 +353,7 @@
     [self.resultLabel removeFromParentAndCleanup:YES];
     [self.betterHighScoreLabel removeFromParentAndCleanup:YES];
     
-    self.chestSprite = [CCSprite spriteWithSpriteFrameName:@"treasure_chest.png"];
+    self.chestSprite = [[TreasureChest new] autorelease];
     [self.chestSprite setPosition:CGPointMake(512, 1600)];
     [self addChild:self.chestSprite];
     
@@ -380,7 +380,7 @@
         [openChestMenu addChild:self.getKeys];
         [openChestMenu alignItemsHorizontally];
     }
-    [openChestMenu setPosition:CGPointMake(512, 260)];
+    [openChestMenu setPosition:CGPointMake(512, 240)];
     [self addChild:openChestMenu];
 }
 
@@ -392,21 +392,15 @@
 - (void)lootChestWithStaminaRequirement:(BOOL)staminaRequirement
 {
     self.openChest.visible = NO;
-    [self.chestSprite runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCRotateTo actionWithDuration:.33 angle:-30.0], [CCRotateTo actionWithDuration:.33 angle:30.0], nil]]];
+    [self.chestSprite runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCRotateTo actionWithDuration:.33 angle:-5.0], [CCRotateTo actionWithDuration:.33 angle:5.0], nil]]];
     SpendStaminaResultBlock spendStamina = ^(BOOL success){
         [self.chestSprite setRotation:0.0];
         [self.chestSprite stopAllActions];
         if (success) {
-            [self.chestSprite runAction:[CCSpawn actionOne:[CCFadeOut actionWithDuration:1.0] two:[CCScaleTo actionWithDuration:1.0 scale:3.0]]];
-            [self runAction:[CCSequence actions:[CCDelayTime actionWithDuration:1.0], [CCCallBlock actionWithBlock:^{
-                EquipmentItem *itemLooted = self.encounter.randomLootReward;
-                [[PlayerDataManager localPlayer] playerEarnsItem:itemLooted];
-                ItemDescriptionNode *itemDesc = [[[ItemDescriptionNode alloc] init] autorelease];
-                [itemDesc setItem:itemLooted];
-                [itemDesc setPosition:CGPointMake(512, 344)];
-                [self addChild:itemDesc];
-                self.isLootSequencedCompleted = YES;
-            }], nil]];
+            EquipmentItem *itemLooted = self.encounter.randomLootReward;
+            [self.chestSprite openWithItem:itemLooted];
+            [[PlayerDataManager localPlayer] playerEarnsItem:itemLooted];
+            self.isLootSequencedCompleted = YES;
         } else {
             self.openChest.visible = YES;
             if ([PlayerDataManager localPlayer].stamina == 0) {
@@ -418,7 +412,6 @@
         [[PlayerDataManager localPlayer] staminaUsedWithCompletion:spendStamina];
     } else {
         spendStamina(YES);
-        self.isLootSequencedCompleted = YES;
     }
 }
 

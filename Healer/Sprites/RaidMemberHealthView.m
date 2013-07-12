@@ -27,6 +27,7 @@
 @property (nonatomic, assign) CCSprite *classIcon;
 
 @property (nonatomic, assign) CCProgressTimer *absorptionBar;
+@property (nonatomic, assign) CCProgressTimer *negativeAbsorptionBar;
 
 @property (nonatomic, readwrite) NSInteger lastHealth;
 
@@ -92,13 +93,24 @@
         self.absorptionBar = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"raidframe_fill.png"]];
         [self.absorptionBar setAnchorPoint:CGPointZero];
         [self.absorptionBar setColor:ccc3(0, 70, 140)];
-        [self.absorptionBar setOpacity:155];
+        [self.absorptionBar setOpacity:255];
         self.absorptionBar.position = CGPointMake(1.33, 1);
         [self.absorptionBar setScale:frameScale];
         self.absorptionBar.midpoint = CGPointMake(.5, 0);
         self.absorptionBar.barChangeRate = CGPointMake(0, 1.0);
         self.absorptionBar.type = kCCProgressTimerTypeBar;
         [self addChild:self.absorptionBar z:2];
+        
+        self.negativeAbsorptionBar = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"raidframe_fill_abs_heal.png"]];
+        [self.negativeAbsorptionBar setAnchorPoint:CGPointZero];
+        [self.negativeAbsorptionBar setColor:ccc3(180, 0, 0)];
+        [self.negativeAbsorptionBar setOpacity:255];
+        self.negativeAbsorptionBar.position = CGPointMake(1.33, 1);
+        [self.negativeAbsorptionBar setScale:frameScale];
+        self.negativeAbsorptionBar.midpoint = CGPointMake(.5, 0);
+        self.negativeAbsorptionBar.barChangeRate = CGPointMake(0, 1.0);
+        self.negativeAbsorptionBar.type = kCCProgressTimerTypeBar;
+        [self addChild:self.negativeAbsorptionBar z:3];
         
         self.isFocusedLabel = [CCLabelTTFShadow labelWithString:@"" fontName:@"Marion-Bold" fontSize:18.0f];
         [self.isFocusedLabel setPosition:CGPointMake(frameScale *self.raidFrameTexture.contentSize.width / 2, frameScale *self.raidFrameTexture.contentSize.height - 14.0)];
@@ -338,8 +350,11 @@
         ccColor3B colorForPerc = [self colorForPercentage:(((float)self.member.health) / self.member.maximumHealth)];
         [self.healthBar setColor:colorForPerc];
         
-        float absorbPercentage = self.member.absorb / (float)self.member.maximumHealth;
+        float absorbPercentage = MIN(1.0,self.member.absorb / (float)self.member.maximumHealth);
         [self.absorptionBar setPercentage:absorbPercentage * 100];
+        
+        float negativeAbsorbPerentage = MIN(1.0, self.member.healingAbsorb / (float)self.member.maximumHealth);
+        [self.negativeAbsorptionBar setPercentage:negativeAbsorbPerentage * 100.0];
 	}
 	else {
 		healthText = @"Dead";
@@ -347,6 +362,7 @@
         self.healthLabel.shadowColor = ccBLACK;
         [self.healthBar runAction:[CCProgressFromTo actionWithDuration:.33 from:lastHealthPercentage * 100 to:0]];
         [self.absorptionBar setPercentage:0];
+        [self.negativeAbsorptionBar setPercentage:0];
 	}
 	
     Effect *negativeEffect = nil;

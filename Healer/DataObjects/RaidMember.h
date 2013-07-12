@@ -37,7 +37,7 @@ typedef enum {
 @property (nonatomic, readwrite) float lastAttack;
 @property (nonatomic, readwrite) float dodgeChance;
 @property (nonatomic, readwrite) float criticalChance;
-@property (nonatomic, readonly) Positioning positioning;
+@property (nonatomic, readwrite) Positioning positioning;
 @property (nonatomic, readwrite) ccColor3B classColor;
 @property (nonatomic, readwrite) BOOL isStunned;
 @property (nonatomic, readwrite) float stunDuration;

@@ -120,10 +120,11 @@
     copied.causesReactiveDodge = self.causesReactiveDodge;
     copied.causesBlind = self.causesBlind;
     copied.particleEffectName = self.particleEffectName;
+    copied.ignoresDispels = self.ignoresDispels;
     return copied;
 }
 
-- (void)targetDidCastSpell:(Spell*)spell {
+- (void)targetDidCastSpell:(Spell*)spell onTarget:(HealableTarget *)target{
     
 }
 
@@ -248,10 +249,19 @@
 #pragma mark - Shipping Spell Effects
 @implementation RepeatedHealthEffect
 
+- (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
+{
+    if (self = [super initWithDuration:dur andEffectType:type]) {
+        self.infiniteDurationTickFrequency = 1.0;
+    }
+    return self;
+}
+
 -(id)copy{
     RepeatedHealthEffect *copy = [super copy];
     [copy setNumOfTicks:self.numOfTicks];
     [copy setValuePerTick:self.valuePerTick];
+    [copy setInfiniteDurationTickFrequency:self.infiniteDurationTickFrequency];
     return copy;
 }
 
@@ -282,7 +292,7 @@
 	} else if (duration == -1.0) {
         //For infinite durations, tick once a second.
         lastTick += timeDelta;
-        if (lastTick >= 1.0) {
+        if (lastTick >= self.infiniteDurationTickFrequency) {
             [self tick];
             lastTick = 0.0;
         }
@@ -292,7 +302,7 @@
 
 -(void)tick{
     self.numHasTicked++;
-    if (!self.target.isDead){
+    if (!self.target.isDead && self.valuePerTick != 0){
         if (self.shouldFail){
             
         } else {
@@ -312,13 +322,13 @@
             
             CombatEventType eventType = amount > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
             float modifier = amount > 0 ? self.owner.healingDoneMultiplier : self.owner.damageDoneMultiplier;
-            NSInteger preHealth = self.target.health;
+            NSInteger preHealth = self.target.health - self.target.healingAbsorb;
             [self.target setHealth:[self.target health] + amount * modifier * self.stacks];
-            NSInteger finalAmount = self.target.health - preHealth;
-            if (owningPlayer){
+            NSInteger finalAmount = (self.target.health - self.target.healingAbsorb) - preHealth;
+            if (owningPlayer && finalAmount > 0){
                 NSInteger overheal = amount - finalAmount;
                 [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self withOverhealing:overheal asCritical:critical];
-            } else {
+            } else if (amount < 0) {
                 //This is boss damage in the form of dots
                 [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:finalAmount] andEventType:eventType]];
             }
@@ -473,9 +483,9 @@
             if (critical && owningPlayer) {
                 amount *= owningPlayer.criticalBonusMultiplier;
             }
-            NSInteger preHealth = self.target.health;
+            NSInteger preHealth = (self.target.health - self.target.healingAbsorb);
             [self.target setHealth:self.target.health + amount * self.stacks];
-            NSInteger finalAmount = self.target.health - preHealth;
+            NSInteger finalAmount = (self.target.health - self.target.healingAbsorb) - preHealth;
             if (owningPlayer){
                 NSInteger overheal = amount - finalAmount;
                 [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self withOverhealing:overheal asCritical:critical];
@@ -718,7 +728,7 @@
     }else {
         candidate = [self.raid randomLivingMember];
     }
-    if (candidate != self.target && candidate != nil){
+    if (candidate != self.target && candidate != nil && ![candidate hasEffectWithTitle:self.title]){
         [self retain];
         [self.target removeEffect:self];
         [candidate addEffect:self];
@@ -1040,7 +1050,7 @@
     [copy setEnergyChangePerCast:self.energyChangePerCast];
     return copy;
 }
-- (void)targetDidCastSpell:(Spell *)spell {
+- (void)targetDidCastSpell:(Spell *)spell onTarget:(HealableTarget *)target{
     if ([self.target isMemberOfClass:[Player class]]){
         Player *targettedPlayer = (Player*)self.target;
         [targettedPlayer setEnergy:targettedPlayer.energy - self.energyChangePerCast * self.stacks];
@@ -1069,7 +1079,7 @@
     return self;
 }
 
-- (void)targetDidCastSpell:(Spell *)spell
+- (void)targetDidCastSpell:(Spell *)spell onTarget:(HealableTarget *)target
 {
     if (self.ignoresInstantSpells && spell.castTime == 0.0) {
         
@@ -1299,13 +1309,21 @@
 
 
 @implementation SpiritBarrier
+
+- (id)copy
+{
+    SpiritBarrier *copy = [super copy];
+    [copy setDamageReduction:self.damageReduction];
+    return copy;
+}
+
 - (void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
 {
     if (self.healingToAbsorb <= 0) {
         [self.owner.announcer displayParticleSystemOnRaidWithName:@"purple_pulse.plist" delay:0.0];
         for (RaidMember *member in raid.livingMembers) {
             Effect *damageReduction = [[[Effect alloc] initWithDuration:8 andEffectType:EffectTypePositive] autorelease];
-            [damageReduction setDamageTakenMultiplierAdjustment:-.80];
+            [damageReduction setDamageTakenMultiplierAdjustment:-self.damageReduction];
             [damageReduction setSpriteName:@"spirit_shell.png"];
             [damageReduction setOwner:self.owner];
             [damageReduction setTitle:@"spirit-shell-eff"];
@@ -1373,7 +1391,7 @@
             
             healing = self.target.health - preHealth;
             
-            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:healing] andEventType:CombatEventTypeHeal]];
+            [(Player*)self.owner playerDidHealFor:healing onTarget:(RaidMember*)self.target fromEffect:self withOverhealing:0 asCritical:NO];
         }
     }
 }
@@ -1399,7 +1417,7 @@
     return copy;
 }
 
-- (void)targetDidCastSpell:(Spell *)spell
+- (void)targetDidCastSpell:(Spell *)spell onTarget:(HealableTarget *)target
 {
     [self.target setHealth:self.target.health - self.damage * self.owner.damageDoneMultiplier];
     [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.damage * self.owner.damageDoneMultiplier] andEventType:CombatEventTypeDamage]];
@@ -1430,5 +1448,224 @@
 - (void)targetWasSelectedByPlayer:(Player *)player
 {
     self.isExpired = YES;
+}
+@end
+
+@implementation SoulCorruptionEffect
+- (id)init
+{
+    if (self = [super init]) {
+        self.damageTakenMultiplierAdjustment = .25;
+    }
+    return self;
+}
+
+- (void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
+{
+    if (self.healingToAbsorb <= 0) {
+        for (Player *player in players) {
+            Effect *healingBooster = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositive] autorelease];
+            [healingBooster setTitle:@"healing-boost-ps"];
+            [healingBooster setVisibilityPriority:-10];
+            [healingBooster setMaxStacks:50];
+            [healingBooster setHealingDoneMultiplierAdjustment:.10];
+            [healingBooster setOwner:player];
+            [healingBooster setSpriteName:@"purified_soul.png"];
+            [healingBooster setIgnoresDispels:YES];
+            [player addEffect:healingBooster];
+        }
+        
+        for (RaidMember *member in raid.livingMembers) {
+            Effect *maximumHealthBooster = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
+            [maximumHealthBooster setTitle:@"max-health-boost-ps"];
+            [maximumHealthBooster setMaxStacks:50];
+            [maximumHealthBooster setMaximumHealthMultiplierAdjustment:.10];
+            [maximumHealthBooster setOwner:[players objectAtIndex:0]];
+            [member addEffect:maximumHealthBooster];
+        }
+        [self.owner.announcer displayParticleSystemOnRaidWithName:@"purple_pulse.plist" delay:0.0];
+    }
+}
+@end
+
+
+@implementation IncreasingRHEAbsorbsHealingEffect
+-(id)copy{
+    IncreasingRHEAbsorbsHealingEffect *copy = [super copy];
+    [copy setIncreasePerTick:self.increasePerTick];
+    return copy;
+}
+-(void)tick{
+    [super tick];
+    self.valuePerTick *= (1 + _increasePerTick);
+}
+@end
+
+@implementation TormentEffect
+- (id)copy {
+    TormentEffect *copy = [super copy];
+    [copy setAppliesBleedEffect:self.appliesBleedEffect];
+    [copy setAppliesDamageTakenEffect:self.appliesDamageTakenEffect];
+    [copy setAppliesHealingReducedEffect:self.appliesHealingReducedEffect];
+    [copy setAppliesHealingDebuffRecoil:self.appliesHealingDebuffRecoil];
+    [copy setAppliesBleedRecoil:self.appliesBleedRecoil];
+    return copy;
+}
+
+- (void)tick {
+    [super tick];
+    if (self.appliesDamageTakenEffect) {
+        Effect *damageTaken = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+        [damageTaken setOwner:self.owner];
+        [damageTaken setTitle:@"obs-torment-dt-eff"];
+        [damageTaken setDamageTakenMultiplierAdjustment:.03];
+        [damageTaken setMaxStacks:25];
+        [damageTaken setSpriteName:@"angry_spirit.png"];
+        [self.target addEffect:damageTaken];
+    }
+    if (self.appliesBleedEffect) {
+        RepeatedHealthEffect *bleed = [[[RepeatedHealthEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+        [bleed setValuePerTick:-40];
+        [bleed setOwner:self.owner];
+        [bleed setTitle:@"obs-torment-bld-eff"];
+        [bleed setSpriteName:@"bleeding.png"];
+        [bleed setMaxStacks:25];
+        [self.target addEffect:bleed];
+    }
+    if (self.appliesHealingReducedEffect) {
+        Effect *healingReducedEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+        [healingReducedEffect setSpriteName:@"toxic_inversion.png"];
+        [healingReducedEffect setHealingReceivedMultiplierAdjustment:-.03];
+        [healingReducedEffect setTitle:@"torment-heal-red-eff"];
+        [healingReducedEffect setMaxStacks:30];
+        [healingReducedEffect setOwner:self.owner];
+        [self.target addEffect:healingReducedEffect];
+    }
+}
+
+- (void)player:(Player *)player causedHealing:(NSInteger)healing
+{
+    if (self.appliesBleedRecoil) {
+        RepeatedHealthEffect *reducedHealing = [[[RepeatedHealthEffect alloc] initWithDuration:6.0 andEffectType:EffectTypeNegative] autorelease];
+        [reducedHealing setOwner:self.owner];
+        [reducedHealing setValuePerTick:-50];
+        [reducedHealing setNumOfTicks:3];
+        [reducedHealing setMaxStacks:10];
+        [reducedHealing setTitle:@"obs-torment-bleedrec"];
+        [reducedHealing setSpriteName:@"bleeding.png"];
+        [player addEffect:reducedHealing];
+    }
+    
+    if (self.appliesHealingDebuffRecoil) {
+        Effect *reducedHealing = [[[Effect alloc] initWithDuration:16.0 andEffectType:EffectTypeNegative] autorelease];
+        [reducedHealing setOwner:self.owner];
+        [reducedHealing setHealingDoneMultiplierAdjustment:-0.05];
+        [reducedHealing setMaxStacks:10];
+        [reducedHealing setTitle:@"obs-torment-hred"];
+        [reducedHealing setSpriteName:@"curse.png"];
+        [player addEffect:reducedHealing];
+    }
+}
+@end
+
+@implementation PercentageDamageTimeBasedEffect
+- (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
+{
+    if (self = [super initWithDuration:dur andEffectType:type]) {
+        self.ailmentType = AilmentCurse;
+    }
+    return self;
+}
+
+- (void)dealTerminationDamage
+{
+    float percentTimeRemaining = (self.duration - self.timeApplied) / self.duration;
+    if (percentTimeRemaining <= 0.0) {
+        percentTimeRemaining = 1.5;
+    }
+    NSInteger damage = self.target.maximumHealth * percentTimeRemaining;
+    NSInteger preHealth = self.target.health;
+    self.target.health -= damage;
+    NSInteger postHealth = self.target.health;
+    [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:preHealth - postHealth] andEventType:CombatEventTypeDamage]];
+}
+
+- (NSInteger)stacks
+{
+    NSInteger time = 100 * (self.duration - self.timeApplied) / self.duration;
+    return 1 + time / 10;
+}
+
+- (void)combatUpdateForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
+{
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
+    if (self.isExpired) {
+        self.timeApplied = self.duration;
+        [self dealTerminationDamage];
+    }
+}
+
+- (void)effectWillBeDispelled:(Raid *)raid player:(Player *)player enemies:(NSArray *)enemies
+{
+    [self dealTerminationDamage];
+}
+@end
+
+@implementation IncreasingDamageTakenReappliedEffect
+
+- (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
+{
+    if (self = [super initWithDuration:dur andEffectType:type]) {
+        self.valuePerTick = -1;
+        self.title = @"inc-dmg-taken-re-eff";
+        self.spriteName = @"red_curse.png";
+        self.infiniteDurationTickFrequency = 3.0;
+        self.visibilityPriority = 15;
+    }
+    return self;
+}
+
+- (void)tick
+{
+    [super tick];
+    Effect *damageTakenEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+    [damageTakenEffect setDamageTakenMultiplierAdjustment:.01];
+    [damageTakenEffect setSpriteName:@"red_curse.png"];
+    [damageTakenEffect setOwner:self.owner];
+    [damageTakenEffect setTitle:@"idtre-eff-dmg-tkn"];
+    [damageTakenEffect setMaxStacks:99];
+    [damageTakenEffect setVisibilityPriority:0];
+    [self.target addEffect:damageTakenEffect];
+}
+
+- (void)player:(Player *)player causedHealing:(NSInteger)healing
+{
+    self.isExpired = YES;
+    AppliesIDTREEffect *eff = [[[AppliesIDTREEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+    [eff setOwner:self.owner];
+    [player addEffect:eff];
+}
+
+@end
+
+@implementation AppliesIDTREEffect
+- (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
+{
+    if (self = [super initWithDuration:dur andEffectType:type]) {
+        self.title = @"applies-idtre";
+        self.spriteName = @"blood_aura.png";
+        self.visibilityPriority = 15;
+    }
+    return self;
+}
+
+- (void)targetDidCastSpell:(Spell *)spell onTarget:(HealableTarget *)target
+{
+    if (![target isKindOfClass:[Player class]]) {
+        self.isExpired = YES;
+        IncreasingDamageTakenReappliedEffect *eff = [[[IncreasingDamageTakenReappliedEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+        [eff setOwner:self.owner];
+        [target addEffect:eff];
+    }
 }
 @end

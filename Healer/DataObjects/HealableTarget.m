@@ -83,6 +83,18 @@
     return (float)self.health/(float)self.maximumHealth;
 }
 
+- (NSInteger)healingAbsorb
+{
+    NSInteger totalHealingAbsorb = 0;
+    for (Effect *eff in self.activeEffects) {
+        if ([eff isKindOfClass:[AbsorbsHealingEffect class]]) {
+            AbsorbsHealingEffect *ahe = (AbsorbsHealingEffect*)eff;
+            totalHealingAbsorb += ahe.healingToAbsorb;
+        }
+    }
+    return totalHealingAbsorb;
+}
+
 -(NSInteger)maximumAbsorbtion
 {
     NSInteger baseAbsorbtion = 0;

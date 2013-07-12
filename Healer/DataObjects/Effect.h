@@ -63,6 +63,7 @@ typedef enum {
 @property (nonatomic, readwrite) float dodgeChanceAdjustment;
 @property (nonatomic, readwrite) float healingReceivedMultiplierAdjustment;
 @property (nonatomic, readwrite) BOOL causesStun;
+@property (nonatomic, readwrite) BOOL ignoresDispels;
 @property (readwrite) BOOL isIndependent; //Max Stacks doesnt apply and other effects are never the same as this effect
 @property (nonatomic, readwrite) BOOL considerDodgeForDamage;
 @property (nonatomic, readwrite) NSInteger visibilityPriority;
@@ -84,7 +85,7 @@ typedef enum {
 - (void)expireForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 - (void)effectWillBeDispelled:(Raid*)raid player:(Player*)player enemies:(NSArray *)enemies;
 - (void)player:(Player*)player causedHealing:(NSInteger)healing;
-- (void)targetDidCastSpell:(Spell*)spell;
+- (void)targetDidCastSpell:(Spell*)spell onTarget:(HealableTarget*)target;
 - (void)targetWasSelectedByPlayer:(Player*)player;
 
 //Multiplayer
@@ -115,6 +116,7 @@ typedef enum {
 @property (readwrite) NSInteger numHasTicked;
 @property (readwrite) NSInteger numOfTicks;
 @property (readwrite) NSInteger valuePerTick;
+@property (nonatomic, readwrite) float infiniteDurationTickFrequency; //Defaults to 1.0
 -(void)tick;
 @end
 
@@ -282,7 +284,7 @@ typedef enum {
 @end
 
 @interface SpiritBarrier : AbsorbsHealingEffect
-
+@property (nonatomic, readwrite) float damageReduction;
 @end
 
 @interface CorruptedMind : RepeatedHealthEffect
@@ -308,4 +310,28 @@ typedef enum {
 @end
 
 @interface DispelsWhenSelectedRepeatedHealthEffect : RepeatedHealthEffect
+@end
+
+@interface SoulCorruptionEffect : AbsorbsHealingEffect
+@end
+
+@interface IncreasingRHEAbsorbsHealingEffect : AbsorbsHealingEffect
+@property (nonatomic, readwrite) float increasePerTick;
+@end
+
+@interface TormentEffect : IncreasingRHEAbsorbsHealingEffect
+@property (nonatomic, readwrite) BOOL appliesDamageTakenEffect;
+@property (nonatomic, readwrite) BOOL appliesHealingReducedEffect;
+@property (nonatomic, readwrite) BOOL appliesBleedEffect;
+@property (nonatomic, readwrite) BOOL appliesHealingDebuffRecoil;
+@property (nonatomic, readwrite) BOOL appliesBleedRecoil;
+@end
+
+@interface PercentageDamageTimeBasedEffect : Effect
+@end
+
+@interface IncreasingDamageTakenReappliedEffect : RepeatedHealthEffect
+@end
+
+@interface AppliesIDTREEffect : Effect
 @end

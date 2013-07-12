@@ -263,7 +263,7 @@
 - (void)spellFinishedCastingForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
 	if ([self targets] <= 1){
-        int currentTargetHealth = [self.owner spellTarget].health;
+        int currentTargetHealth = [self.owner spellTarget].health - self.owner.spellTarget.healingAbsorb;
         NSInteger amount = [self healingAmount];
         BOOL critical = [self checkCritical];
         if (critical) {
@@ -271,7 +271,7 @@
         }
         [self willHealTarget:self.owner.spellTarget inRaid:raid withEnemies:enemies andPlayers:players forAmount:amount];
 		[[self.owner spellTarget] setHealth:[[self.owner spellTarget] health] + amount];
-        int newHealth = [self.owner spellTarget].health;
+        int newHealth = [self.owner spellTarget].health - self.owner.spellTarget.healingAbsorb;
         NSInteger finalAmount = newHealth - currentTargetHealth;
         [self didHealTarget:self.owner.spellTarget inRaid:raid withEnemies:enemies andPlayers:players forAmount:amount];
         NSInteger overheal = amount - finalAmount;
@@ -288,14 +288,14 @@
 			if ([currentTarget isDead]) continue;
 			else{
 				double PercentageThisTarget = [[[self percentagesPerTarget] objectAtIndex:i] doubleValue];
-                int currentTargetHealth = currentTarget.health;
+                int currentTargetHealth = currentTarget.health - currentTarget.healingAbsorb;
                 NSInteger amount = ([self healingAmount]*PercentageThisTarget);
                 if (critical) {
                     amount *= self.owner.criticalBonusMultiplier;
                 }
                 [self willHealTarget:currentTarget inRaid:raid withEnemies:enemies andPlayers:players forAmount:amount];
 				[currentTarget setHealth:[[self.owner spellTarget] health] + amount];
-                int newTargetHealth = currentTarget.health;
+                int newTargetHealth = currentTarget.health - currentTarget.healingAbsorb;
                 NSInteger finalAmount = newTargetHealth - currentTargetHealth;
                 [self didHealTarget:currentTarget inRaid:raid withEnemies:enemies andPlayers:players forAmount:finalAmount];
                 NSInteger overheal = amount - finalAmount;
@@ -424,14 +424,14 @@
     NSArray *myTargets = [raid lowestHealthTargets:totalTargets withRequiredTarget:self.owner.spellTarget];
     BOOL critical = [self checkCritical];
     for (RaidMember *healableTarget in myTargets){
-        int currentTargetHealth = healableTarget.health;
+        int currentTargetHealth = healableTarget.health - healableTarget.healingAbsorb;
         NSInteger amount = [self healingAmount];
         if (critical) {
             amount *= self.owner.criticalBonusMultiplier;
         }
         [self willHealTarget:healableTarget inRaid:raid withEnemies:enemies andPlayers:players forAmount:amount];
 		[healableTarget setHealth:[healableTarget health] + amount];
-        int newHealth = healableTarget.health;
+        int newHealth = healableTarget.health - healableTarget.healingAbsorb;
         NSInteger finalAmount = newHealth - currentTargetHealth;
         [self didHealTarget:healableTarget inRaid:raid withEnemies:enemies andPlayers:players forAmount:amount];
         NSInteger overheal = amount - finalAmount;
@@ -662,14 +662,14 @@
     BOOL critical = [self checkCritical];
 
     for (RaidMember *healableTarget in myTargets){
-        int currentTargetHealth = healableTarget.health;
+        int currentTargetHealth = healableTarget.health - healableTarget.healingAbsorb;
         NSInteger amount = [self healingAmount];
         if (critical) {
             amount *= self.owner.criticalBonusMultiplier;
         }
         [self willHealTarget:healableTarget inRaid:raid withEnemies:enemies andPlayers:players forAmount:amount];
 		[healableTarget setHealth:[healableTarget health] + amount];
-        int newHealth = healableTarget.health;
+        int newHealth = healableTarget.health - healableTarget.healingAbsorb;
         NSInteger finalAmount = newHealth - currentTargetHealth;
         [self didHealTarget:healableTarget inRaid:raid withEnemies:enemies andPlayers:players forAmount:amount];
         NSInteger overheal = amount - finalAmount;

@@ -30,6 +30,7 @@
         self.duration = duration;
         self.delegates = [NSMutableArray arrayWithCapacity:5];
         self.timeApplied = 0;
+        self.scale = 1.0;
     }
     return self;
 }

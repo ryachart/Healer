@@ -24,6 +24,7 @@
 @end
 
 @implementation Player
+@synthesize energy=_energy;
 
 -(void)dealloc{
     [_activeSpells release]; _activeSpells = nil;
@@ -52,11 +53,12 @@
         self.isCasting = NO;
         self.lastEnergyRegen = 0.0f;
         self.statusText = @"";
+        self.positioning = Ranged;
         self.maxChannelTime = 5;
         self.castStart = 0.0f;
         self.cooldownAdjustment = 1.0;
         self.castTimeAdjustment = 1.0;
-        self.spellCriticalChance = .1; //10% Base chance to crit
+        self.spellCriticalChance = .05; //5% Base chance to crit
         self.criticalBonusMultiplier = 1.5; //50% more on a crit
         self.damageDealt = 1000;
         self.equippedItems = [NSArray array];
@@ -87,6 +89,14 @@
         base += (item.speed / 100.0);
     }
     return base;
+}
+
+- (float)energy
+{
+    if (self.isDead) {
+        return 0;
+    }
+    return _energy;
 }
 
 - (float)spellCriticalChance
@@ -485,7 +495,7 @@
             }
 			[self.spellBeingCast spellFinishedCastingForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
             for (Effect *eff in self.activeEffects){
-                [eff targetDidCastSpell:self.spellBeingCast];
+                [eff targetDidCastSpell:self.spellBeingCast onTarget:self.spellTarget];
             }
 			self.spellTarget = nil;
 			self.spellBeingCast = nil;
@@ -784,7 +794,8 @@
 - (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical{
     if (amount > 0){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:amount] eventType:CombatEventTypeHeal critical:critical]];
-        for (Effect *eff in target.activeEffects) {
+        NSArray *copiedEffects = [NSArray arrayWithArray:target.activeEffects];
+        for (Effect *eff in copiedEffects) {
             [eff player:self causedHealing:amount];
         }
     }

@@ -16,7 +16,8 @@ typedef enum {
 typedef enum {
     CollectibleEntranceTypeAppear,
     CollectibleEntranceTypeSpew,
-    CollectibleEntranceTypeFall
+    CollectibleEntranceTypeFall,
+    CollectibleEntranceTypeSpewPlayer
 } CollectibleEntranceType;
 
 @class Collectible, Player, Raid;
@@ -27,6 +28,7 @@ typedef enum {
 
 @interface Collectible : NSObject
 @property (nonatomic, retain) NSString *spriteName;
+@property (nonatomic, readwrite) float scale;
 @property (nonatomic, readwrite) NSTimeInterval duration;
 @property (nonatomic, readonly) NSTimeInterval timeApplied;
 @property (nonatomic, readwrite) CGPoint movementVector;

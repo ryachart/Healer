@@ -35,6 +35,10 @@
 
 #define DEBUG_IMMUNITIES false
 #define DEBUG_PERFECT_HEALS false
+#define DEBUG_HIGH_HPS true
+
+#define DEBUG_HPS 250
+#define DEBUG_DAMAGE 0.0
 
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812
@@ -313,9 +317,20 @@
 #if DEBUG_PERFECT_HEALS
         for (RaidMember *member in self.raid.livingMembers) {
             PerfectHeal *immunity = [[[PerfectHeal alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
-            //[immunity setDamageDoneMultiplierAdjustment:5];
+            [immunity setDamageDoneMultiplierAdjustment:DEBUG_DAMAGE];
             [immunity setOwner:self.player];
             [member addEffect:immunity];
+        }
+#endif
+        
+#if DEBUG_HIGH_HPS
+        for (int i = 0; i < 5; i++) {
+            WanderingSpiritEffect *hot = [[[WanderingSpiritEffect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
+            [hot setOwner:self.player];
+            [hot setTitle:[NSString stringWithFormat:@"wse-high-hps-%d", i]];
+            [hot setValuePerTick:DEBUG_HPS];
+            [hot setDamageDoneMultiplierAdjustment:DEBUG_DAMAGE];
+            [[self.raid randomLivingMember] addEffect:hot];
         }
 #endif
         

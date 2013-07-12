@@ -79,6 +79,7 @@
 @property (nonatomic, retain) NSString *damageAudioName;
 - (RaidMember *)targetFromRaid:(Raid*)raid;
 - (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd;
++ (Attack *)appliesEffectNonMeleeAttackWithEffect:(Effect*)effect;
 @end
 
 @interface FocusedAttack : Attack
@@ -334,4 +335,30 @@ typedef enum {
 @end
 
 @interface BoneStorm : InterruptedByFullHealthTargets
+@end
+
+@interface ConsumeMagic : Ability
+@end
+
+@interface SlimeOrbs : Ability
+#define SLIME_REQUIRED_FOR_ENRAGE 7
+@property (nonatomic, readwrite) NSInteger orbCount;
+@property (nonatomic, readwrite) BOOL hasEmpowered;
+@end
+
+@interface SoulSwap : Ability
+@end
+
+@interface AvatarOfTormentSubmerge : Ability
+- (void)emergeForRaid:(Raid*)theRaid;
+@end
+
+@interface RainOfFire : Ability
+@end
+
+@interface ChannelledRaidProjectileAttack : ProjectileAttack
+@property (nonatomic, readwrite) NSInteger tickCount;
+@end
+
+@interface ManaDrain : Ability
 @end

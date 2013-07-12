@@ -24,6 +24,7 @@
 @property (nonatomic, readonly) float healthPercentage;
 @property (nonatomic, readonly) NSInteger maximumAbsorbtion;
 @property (nonatomic, readwrite) NSInteger absorb;
+@property (nonatomic, readonly) NSInteger healingAbsorb;
 @property (nonatomic, readonly) float damageTakenMultiplierAdjustment;
 @property (nonatomic, readonly) float healingReceivedMultiplierAdjustment;
 

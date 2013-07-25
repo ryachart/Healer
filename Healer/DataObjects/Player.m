@@ -775,6 +775,8 @@
         [target addEffect:sunlight];
     }
     
+    
+    
     if (amount > 0){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:loggedAmount] eventType:CombatEventTypeHeal critical:critical]];
         

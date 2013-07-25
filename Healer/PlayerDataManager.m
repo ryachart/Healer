@@ -856,6 +856,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (void)checkStamina
 {
+    return;
 #if ANDROID
 #else
     NSString *remoteObjectId = [self remoteObjectId];
@@ -880,13 +881,18 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     NSString *remoteObjectId = [self remoteObjectId];
     if (remoteObjectId) {
         [PFCloud callFunctionInBackground:@"spendStamina" withParameters:[NSDictionary dictionaryWithObject:remoteObjectId forKey:@"playerId"] block:^(id object, NSError *error) {
-            NSDictionary *result = (NSDictionary*)object;
-            NSInteger newStamina = [[result objectForKey:@"stamina"] intValue];
-            BOOL success = [[result objectForKey:@"success"] boolValue];
-            self.stamina = newStamina;
-            block(success);
-            if (success) {
-                [[PlayerDataManager localPlayer] checkStamina];
+            if (error) {
+                block(NO);
+            } else {
+                NSDictionary *result = (NSDictionary*)object;
+                NSInteger newStamina = [[result objectForKey:@"stamina"] intValue];
+                BOOL success = [[result objectForKey:@"success"] boolValue];
+                self.stamina = newStamina;
+                success = NO;
+                block(success);
+                if (success) {
+                    [[PlayerDataManager localPlayer] checkStamina];
+                }
             }
         }];
     }

@@ -101,6 +101,13 @@
     //Override with a subclass
 }
 
+- (void)notifySpellTargetEffectsOfCompletion
+{
+    for (Effect *eff in self.owner.spellTarget.activeEffects) {
+        [eff playerDidCastSpellOnEffectedTarget:self.owner];
+    }
+}
+
 - (NSInteger)healingFromAppliedEffects
 {
     NSInteger mod = 0;
@@ -307,6 +314,8 @@
 		[self.owner setEnergy:[self.owner energy] - [self energyCost]];
 	}
     
+    [self notifySpellTargetEffectsOfCompletion];
+    
     if (self.cooldown > 0.0){
         [[self.owner spellsOnCooldown] addObject:self];
         self.cooldownRemaining = self.cooldown * self.owner.cooldownAdjustment;
@@ -336,7 +345,7 @@
 @end
 
 
-#pragma mark - Simple Game Spells
+#pragma mark - Shipping Spells
 @implementation Heal
 - (id)initWithTitle:(NSString *)ttle healAmnt:(NSInteger)healAmnt energyCost:(NSInteger)nrgyCost castTime:(float)time andCooldown:(float)cd {
     if (self = [super initWithTitle:ttle healAmnt:healAmnt energyCost:nrgyCost castTime:time andCooldown:cd]){
@@ -438,6 +447,7 @@
         [self.owner playerDidHealFor:finalAmount onTarget:healableTarget fromSpell:self withOverhealing:overheal asCritical:critical];
     }
     
+    [self notifySpellTargetEffectsOfCompletion];
     NSInteger cost = [self energyCost];
     [self.owner setEnergy:[self.owner energy] - cost];
     
@@ -676,6 +686,7 @@
         [self.owner playerDidHealFor:finalAmount onTarget:healableTarget fromSpell:self withOverhealing:overheal asCritical:critical];
     }
     
+    [self notifySpellTargetEffectsOfCompletion];
     [self.owner setEnergy:[self.owner energy] - [self energyCost]];
 
     if (self.cooldown > 0.0){

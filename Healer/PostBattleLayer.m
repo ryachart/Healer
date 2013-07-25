@@ -44,6 +44,7 @@
 @property (nonatomic, assign) CCSprite *resultLabel;
 @property (nonatomic, assign) CCSprite *betterHighScoreLabel;
 @property (nonatomic, readwrite) PostBattleLayerDestination chosenDestination;
+@property (nonatomic, assign) CCLabelTTFShadow *errorLabel;
 
 //Loot Award Stuff
 @property (nonatomic, assign) TreasureChest *chestSprite;
@@ -368,7 +369,6 @@
 {
     self.openChest = [BasicButton basicButtonWithTarget:self andSelector:@selector(lootChest) andTitle:@"Open Chest"];
     if ([PlayerDataManager localPlayer].stamina == 0) {
-        [self.openChest setIsEnabled:NO];
         self.getKeys = [BasicButton basicButtonWithTarget:self andSelector:@selector(buyKeys) andTitle:@"Buy A Key"];
     }
     
@@ -389,6 +389,13 @@
     [self lootChestWithStaminaRequirement:YES];
 }
 
+- (void)displayNetworkErrorModal
+{
+    IconDescriptionModalLayer *networkError = [[[IconDescriptionModalLayer alloc] initWithIconName:nil title:@"Connection Required" andDescription:@"An Internet Connection is required to loot chests.  Please verify your connection and try again."] autorelease];
+    [networkError setDelegate:self];
+    [self addChild:networkError z:1000];
+}
+
 - (void)lootChestWithStaminaRequirement:(BOOL)staminaRequirement
 {
     self.openChest.visible = NO;
@@ -405,6 +412,10 @@
             self.openChest.visible = YES;
             if ([PlayerDataManager localPlayer].stamina == 0) {
                 self.getKeys.visible = YES;
+            }
+            
+            if ([PlayerDataManager localPlayer].stamina == STAMINA_NOT_LOADED) {
+                [self displayNetworkErrorModal];
             }
         }
     };

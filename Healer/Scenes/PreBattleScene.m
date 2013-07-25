@@ -201,6 +201,35 @@
     }
 }
 
+- (void)displayNetworkErrorModal
+{
+    IconDescriptionModalLayer *networkError = [[[IconDescriptionModalLayer alloc] initAsConfirmationDialogueWithDescription:@"An Internet connection is required to loot chests.  You can fight this battle, but you may not be able to loot the chest at the end without a connection."]autorelease];
+    [networkError setDelegate:self];
+    [self addChild:networkError z:1000];
+}
+
+- (void)beginEncounter
+{
+    [self.encounter encounterWillBegin];
+    
+    float playerDamageUpgradesAdjustment = [[PlayerDataManager localPlayer] allyDamageUpgrades] / 100.0f;
+    float playerHealthUpgradesAdjustment = [[PlayerDataManager localPlayer] allyHealthUpgrades] / 100.0f;
+    
+    for (RaidMember *member in self.encounter.raid.raidMembers) {
+        Effect *playerUpgradeEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [playerUpgradeEffect setOwner:self.player];
+        [playerUpgradeEffect setTitle:@"player-upgrade-eff"];
+        [playerUpgradeEffect setDamageDoneMultiplierAdjustment:playerDamageUpgradesAdjustment];
+        [playerUpgradeEffect setMaximumHealthMultiplierAdjustment:playerHealthUpgradesAdjustment];
+        [member addEffect:playerUpgradeEffect];
+        member.health = member.maximumHealth;
+    }
+    
+    [[SimpleAudioEngine sharedEngine] crossFadeBackgroundMusic:self.encounter.battleTrackTitle forDuration:1.5];
+    GamePlayScene *gps = [[[GamePlayScene alloc] initWithEncounter:self.encounter player:self.player] autorelease];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.5 scene:gps]];
+}
+
 -(void)doneButton{
     if (!self.changingSpells){
         if (self.encounter.levelNumber >= 22 && self.encounter.difficulty == 5) {
@@ -209,24 +238,7 @@
             [modalLayer setDelegate:self];
             [self addChild:modalLayer];
         } else {
-            [self.encounter encounterWillBegin];
-            
-            float playerDamageUpgradesAdjustment = [[PlayerDataManager localPlayer] allyDamageUpgrades] / 100.0f;
-            float playerHealthUpgradesAdjustment = [[PlayerDataManager localPlayer] allyHealthUpgrades] / 100.0f;
-            
-            for (RaidMember *member in self.encounter.raid.raidMembers) {
-                Effect *playerUpgradeEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
-                [playerUpgradeEffect setOwner:self.player];
-                [playerUpgradeEffect setTitle:@"player-upgrade-eff"];
-                [playerUpgradeEffect setDamageDoneMultiplierAdjustment:playerDamageUpgradesAdjustment];
-                [playerUpgradeEffect setMaximumHealthMultiplierAdjustment:playerHealthUpgradesAdjustment];
-                [member addEffect:playerUpgradeEffect];
-                member.health = member.maximumHealth;
-            }
-            
-            [[SimpleAudioEngine sharedEngine] crossFadeBackgroundMusic:self.encounter.battleTrackTitle forDuration:1.5];
-            GamePlayScene *gps = [[[GamePlayScene alloc] initWithEncounter:self.encounter player:self.player] autorelease];
-            [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.5 scene:gps]];
+            [self beginEncounter];
         }
     }
 }
@@ -266,6 +278,10 @@
 {
     IconDescriptionModalLayer *completedModal = (IconDescriptionModalLayer*)modal;
     [completedModal removeFromParentAndCleanup:YES];
+    
+    if (completedModal.isConfirmed) {
+        [self beginEncounter];
+    }
 }
 
 #pragma mark - Notifications

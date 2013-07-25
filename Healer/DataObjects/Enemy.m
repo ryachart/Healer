@@ -2920,16 +2920,7 @@ typedef enum {
 {
     [super configureBossForDifficultyLevel:difficulty];
     if (self.difficulty == 5) {
-        IncreasingDamageTakenReappliedEffect *idtre = [[[IncreasingDamageTakenReappliedEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
         
-        Attack *torment = [Attack appliesEffectNonMeleeAttackWithEffect:idtre];
-        [torment setIgnoresPlayers:YES];
-        [torment setInfo:@"Applies an effect that increases damage taken by 1% per tick.  This effect jumps to the healer when the target is healed and is reapplied to the next healed target."];
-        [torment setTitle:@"Unending Torment"];
-        [torment setIconName:@"temper.png"];
-        [torment setKey:@"unending-torment"];
-        [torment setCooldown:kAbilityRequiresTrigger];
-        [self addAbility:torment];
     }
 }
 
@@ -2984,11 +2975,11 @@ typedef enum {
 
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
-    if (percentage == 99.0) {
-        [[self abilityWithKey:@"unending-torment"] activateAbility];
+    
+    if (self.difficulty == 5) {
     }
+    
     if (percentage == 99.0 || percentage == 95.0 || percentage == 90.0 || percentage == 85.0 || percentage == 45.0 || percentage == 37.0 || percentage == 28.0 || percentage == 20.0) {
-        //Every 10 percent that isn't 100%...
         [self raidDamageToRaid:raid forPlayers:players];
     }
     

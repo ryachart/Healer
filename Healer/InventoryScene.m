@@ -50,6 +50,8 @@
 #define INVENTORY_ROW_SIZE 5
 #define INVENTORY_SLOT_TYPE -9999
 
+#define FREE_ITEM 0
+
 @implementation InventoryScene
 
 - (void)dealloc
@@ -147,9 +149,11 @@
         [backButton setPosition:BACK_BUTTON_POS];
         [self addChild:backButton z:100];
         
-//        CCMenu *freeItem = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(freeItem)];
-//        [freeItem setPosition:CGPointMake(512, 725)];
-//        [self addChild:freeItem z:100];
+#if FREE_ITEM
+        CCMenu *freeItem = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(freeItem)];
+        [freeItem setPosition:CGPointMake(512, 725)];
+        [self addChild:freeItem z:100];
+#endif
         
         self.itemDescriptionNode = [[[ItemDescriptionNode alloc] init] autorelease];
         self.itemDescriptionNode.position = CGPointMake(696, 590);
@@ -292,6 +296,7 @@
 //    [[PlayerDataManager localPlayer] staminaUsedWithCompletion:^(BOOL success) {
 //        if (success) {
             Encounter *encounter = [Encounter encounterForLevel:arc4random() % 21 + 1 isMultiplayer:NO];
+            encounter.difficulty = 5;
             EquipmentItem *randomItem = encounter.randomLootReward;
             [[PlayerDataManager localPlayer] playerEarnsItem:randomItem];
             [self configureInventory];

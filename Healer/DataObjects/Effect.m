@@ -186,6 +186,11 @@
     
 }
 
+- (void)playerDidCastSpellOnEffectedTarget:(Player*)player
+{
+    
+}
+
 - (void)setStacks:(NSInteger)stacks
 {
     if (stacks > self.maxStacks) {
@@ -290,7 +295,7 @@
 			isExpired = YES;
 		}
 	} else if (duration == -1.0) {
-        //For infinite durations, tick once a second.
+        //For infinite durations.
         lastTick += timeDelta;
         if (lastTick >= self.infiniteDurationTickFrequency) {
             [self tick];
@@ -1558,6 +1563,7 @@
     
     if (self.appliesHealingDebuffRecoil) {
         Effect *reducedHealing = [[[Effect alloc] initWithDuration:16.0 andEffectType:EffectTypeNegative] autorelease];
+        [reducedHealing setAilmentType:AilmentCurse];
         [reducedHealing setOwner:self.owner];
         [reducedHealing setHealingDoneMultiplierAdjustment:-0.05];
         [reducedHealing setMaxStacks:10];
@@ -1617,12 +1623,24 @@
 {
     if (self = [super initWithDuration:dur andEffectType:type]) {
         self.valuePerTick = -1;
-        self.title = @"inc-dmg-taken-re-eff";
-        self.spriteName = @"red_curse.png";
+        self.title = @"idtre";
+        self.spriteName = @"temper.png";
         self.infiniteDurationTickFrequency = 3.0;
         self.visibilityPriority = 15;
     }
     return self;
+}
+
+- (void)combatUpdateForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
+{
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
+    if (self.target.isDead) {
+        Player *player = [players objectAtIndex:0];
+        if (!player.isDead) {
+            [self moveEffectToPlayer:player];
+            self.isExpired = YES;
+        }
+    }
 }
 
 - (void)tick
@@ -1636,14 +1654,19 @@
     [damageTakenEffect setMaxStacks:99];
     [damageTakenEffect setVisibilityPriority:0];
     [self.target addEffect:damageTakenEffect];
+    self.infiniteDurationTickFrequency = MAX(self.infiniteDurationTickFrequency - .05, .05);
 }
 
-- (void)player:(Player *)player causedHealing:(NSInteger)healing
-{
-    self.isExpired = YES;
+- (void)moveEffectToPlayer:(Player*)player {
     AppliesIDTREEffect *eff = [[[AppliesIDTREEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
     [eff setOwner:self.owner];
     [player addEffect:eff];
+}
+
+- (void)playerDidCastSpellOnEffectedTarget:(Player*)player
+{
+    self.isExpired = YES;
+    [self moveEffectToPlayer:player];
 }
 
 @end
@@ -1659,9 +1682,15 @@
     return self;
 }
 
+- (void)combatUpdateForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
+{
+    [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
+    self.isActivated = YES;
+}
+
 - (void)targetDidCastSpell:(Spell *)spell onTarget:(HealableTarget *)target
 {
-    if (![target isKindOfClass:[Player class]]) {
+    if (![target isKindOfClass:[Player class]] && self.isActivated) {
         self.isExpired = YES;
         IncreasingDamageTakenReappliedEffect *eff = [[[IncreasingDamageTakenReappliedEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
         [eff setOwner:self.owner];

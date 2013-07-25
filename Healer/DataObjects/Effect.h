@@ -85,6 +85,7 @@ typedef enum {
 - (void)expireForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 - (void)effectWillBeDispelled:(Raid*)raid player:(Player*)player enemies:(NSArray *)enemies;
 - (void)player:(Player*)player causedHealing:(NSInteger)healing;
+- (void)playerDidCastSpellOnEffectedTarget:(Player*)player;
 - (void)targetDidCastSpell:(Spell*)spell onTarget:(HealableTarget*)target;
 - (void)targetWasSelectedByPlayer:(Player*)player;
 
@@ -334,4 +335,5 @@ typedef enum {
 @end
 
 @interface AppliesIDTREEffect : Effect
+@property (nonatomic, readwrite) BOOL isActivated; //This prevents multi-target heals from instantly reapplying the effect
 @end

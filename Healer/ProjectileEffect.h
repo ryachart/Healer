@@ -5,7 +5,6 @@
 //  Created by Ryan Hart on 3/30/12.
 //
 
-#import <Foundation/Foundation.h>
 #import "cocos2d.h"
 
 @class RaidMember;

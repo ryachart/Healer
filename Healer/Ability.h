@@ -330,6 +330,7 @@ typedef enum {
 @end
 
 @interface InterruptedByFullHealthTargets : Ability
+@property (nonatomic, readwrite) NSInteger requiredTicks;
 @property (nonatomic, readwrite) NSInteger requiredNumberOfTargets;
 @property (nonatomic, retain) NSString *channelTickRaidParticleEffectName;
 @end

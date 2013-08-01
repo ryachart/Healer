@@ -36,11 +36,11 @@
 	if ([self.raidMembers count] < MAXIMUM_RAID_MEMBERS_ALLOWED && ![self.raidMembers containsObject:member]){
 		[_members addObject:member];
         
-        if (member.battleID){
-            [self.raidMemberBattleIDDictionary setObject:member forKey:member.battleID];
+        if (member.networkId){
+            [self.raidMemberBattleIDDictionary setObject:member forKey:member.networkId];
         }else{
-            member.battleID = [NSString stringWithFormat:@"%@%i",  NSStringFromClass([member class]), self.raidMembers.count];
-            [self.raidMemberBattleIDDictionary setObject:member forKey:member.battleID];
+            member.networkId = [NSString stringWithFormat:@"%@%i",  NSStringFromClass([member class]), self.raidMembers.count];
+            [self.raidMemberBattleIDDictionary setObject:member forKey:member.networkId];
 
         }
 	}

@@ -2323,7 +2323,7 @@
     [oozeTwo setIconName:@"slime.png"];
     [oozeTwo setExecutionSound:@"slimespraying.mp3"];
     [oozeTwo setActivationTime:1.0];
-    [oozeTwo setAbilityValue:450];
+    [oozeTwo setAbilityValue:200];
     [oozeTwo setCooldown:17.0];
     [oozeTwo setKey:@"ooze-two"];
     [boss addAbility:oozeTwo];
@@ -2642,7 +2642,8 @@ typedef enum {
     [self addAbility:projectileAttack];
     
     TormentEffect *tormentEffect = [[[TormentEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
-    [tormentEffect setValuePerTick:-100];
+    [tormentEffect setInfiniteDurationTickFrequency:1.5];
+    [tormentEffect setValuePerTick:-200];
     [tormentEffect setHealingToAbsorb:600 * self.damageDoneMultiplier];
     
     switch (form) {
@@ -2758,6 +2759,14 @@ typedef enum {
         [self configureAvatarForFormType:AvatarBlood];
         [self configureAvatarForFormType:AvatarFire];
         [self configureAvatarForFormType:AvatarShadow];
+        if (self.difficulty <= 2) {
+            Effect *reducedDamage = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypeNegativeInvisible] autorelease];
+            [reducedDamage setOwner:self];
+            [reducedDamage setTitle:@"normal-dmg-nerf"];
+            [reducedDamage setDamageDoneMultiplierAdjustment:-.3];
+            [self addEffect:reducedDamage];
+            //A bit too hard with all the stuff going on =)
+        }
         self.abilityDescriptors = [NSMutableArray array];
     }
 }

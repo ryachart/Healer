@@ -67,10 +67,10 @@
 }
 
 -(NSString*)networkID{
-    return [NSString stringWithFormat:@"R-%@", self.battleID];
+    return [NSString stringWithFormat:@"R-%@", self.networkId];
 }
 -(NSString *)sourceName {
-    return [NSString stringWithFormat:@"%@:%@", self.title, self.battleID];
+    return [NSString stringWithFormat:@"%@:%@", self.title, self.networkId];
 }
 
 -(NSString*)targetName{
@@ -162,7 +162,7 @@
 
 
 -(NSString*)asNetworkMessage{
-    NSMutableString* message = [NSMutableString stringWithFormat:@"RDMBR|%@|%i|%i|%i|%i", self.battleID, self.health, self.isFocused, self.absorb, self.maximumAbsorbtion];
+    NSMutableString* message = [NSMutableString stringWithFormat:@"RDMBR|%@|%i|%i|%i|%i", self.networkId, self.health, self.isFocused, self.absorb, self.maximumAbsorbtion];
     for (Effect*effect in self.activeEffects){
         [message appendFormat:@"#%@", effect.asNetworkMessage];
     }
@@ -300,7 +300,7 @@
         for (RaidMember *member in raid.livingMembers) {
             Effect *damageNerf = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
             [damageNerf setOwner:self];
-            [damageNerf setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.battleID]];
+            [damageNerf setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.networkId]];
             [damageNerf setDamageDoneMultiplierAdjustment:-.2];
             [member addEffect:damageNerf];
             self.deathEffectApplied = YES;
@@ -401,7 +401,7 @@
         Enemy *theBoss = (Enemy*)[enemies objectAtIndex:0];
         Effect *damageImprovement = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
         [damageImprovement setOwner:self];
-        [damageImprovement setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.battleID]];
+        [damageImprovement setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.networkId]];
         [damageImprovement setDamageDoneMultiplierAdjustment:.2];
         [theBoss addEffect:damageImprovement];
         self.deathEffectApplied = YES;

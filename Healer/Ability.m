@@ -1473,7 +1473,11 @@
         self.hasAppliedDrain = YES;
         for (Player *player in players) {
             EnergyAdjustmentPerCastEffect *shadowDrain = [[EnergyAdjustmentPerCastEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegativeInvisible];
-            [shadowDrain setEnergyChangePerCast:10];
+            NSInteger drainPerCast = 10;
+            if (self.difficulty == 5) {
+                drainPerCast = 5;
+            }
+            [shadowDrain setEnergyChangePerCast:drainPerCast];
             [shadowDrain setOwner:self.owner];
             [shadowDrain setTitle:@"shadow-drain"];
             [player addEffect:shadowDrain];
@@ -1536,11 +1540,10 @@
     numApplications = MIN(numApplications, self.difficulty + 1);
 
     for (RaidMember *target in targets){
-        [self damageTarget:target];
         for (int i = 0; i < numApplications; i++){
             NSTimeInterval delay = 0.25 + (i * 1.5);
             DelayedHealthEffect *delayedSlime = [[DelayedHealthEffect alloc] initWithDuration:delay andEffectType:EffectTypeNegativeInvisible];
-            [delayedSlime setValue:-70];
+            [delayedSlime setValue:-self.abilityValue];
             [delayedSlime setIsIndependent:YES];
             [delayedSlime setTitle:@"delayed-slime"];
             [delayedSlime setOwner:self.owner];
@@ -2605,6 +2608,7 @@
 @end
 
 @implementation InterruptedByFullHealthTargets
+
 - (void)dealloc
 {
     [_channelTickRaidParticleEffectName release];
@@ -2626,11 +2630,12 @@
 {
     [super triggerAbilityForRaid:theRaid players:players enemies:enemies];
     [self startChannel:20.0 withTicks:8.0];
+    self.requiredTicks = 1;
 }
 
 - (void)channelTickForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
 {
-    if ([self fullHealthTargetsInRaid:theRaid] >= self.requiredNumberOfTargets) {
+    if (self.requiredTicks == 0 && [self fullHealthTargetsInRaid:theRaid] >= self.requiredNumberOfTargets) {
         [self interrupt];
     } else {
         for (RaidMember *member in theRaid.livingMembers) {
@@ -2639,6 +2644,7 @@
         if (self.channelTickRaidParticleEffectName) {
             [self.owner.announcer displayParticleSystemOnRaidWithName:self.channelTickRaidParticleEffectName delay:0.0];
         }
+        self.requiredTicks = MAX(0, self.requiredTicks - 1);
     }
 }
 @end

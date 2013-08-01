@@ -85,8 +85,7 @@
 		BF2D1C1C16968A14006DCA9A /* CCLabelTTFShadow.m in Sources */ = {isa = PBXBuildFile; fileRef = BF2D1C1B16968A14006DCA9A /* CCLabelTTFShadow.m */; };
 		BF448C57154BA4D1009401A6 /* AddRemoveSpellLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */; };
 		BF448C5A154BB04A009401A6 /* SpellInfoNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C59154BB04A009401A6 /* SpellInfoNode.m */; };
-		BF4CD1C91642D61600EB2336 /* DebugViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BF4CD1C71642D61500EB2336 /* DebugViewController.m */; };
-		BF4CD1CA1642D61600EB2336 /* DebugViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BF4CD1C81642D61600EB2336 /* DebugViewController.xib */; };
+		BF46DA1717A96A8500471A04 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5463A15AA097800F9B167 /* Parse.framework */; };
 		BF4E508D155C9C4400FC4EE0 /* Ability.m in Sources */ = {isa = PBXBuildFile; fileRef = BF4E508C155C9C4400FC4EE0 /* Ability.m */; };
 		BF68CBA61537364B0096B6CF /* ClippingNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF68CBA51537364B0096B6CF /* ClippingNode.m */; };
 		BF69866C154C7B5F0016F25E /* BackgroundSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF69866B154C7B5F0016F25E /* BackgroundSprite.m */; };
@@ -128,6 +127,9 @@
 		BFD106F7163A282D002318CE /* LevelSelectMapScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106F6163A282D002318CE /* LevelSelectMapScene.m */; };
 		BFD106FB163A2956002318CE /* LevelSelectMapNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106FA163A2956002318CE /* LevelSelectMapNode.m */; };
 		BFD106FE163A29D5002318CE /* LevelSelectSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106FD163A29D5002318CE /* LevelSelectSprite.m */; };
+		BFD1B7E617A969C200DD1DC7 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD1B77617A9674D00DD1DC7 /* SenTestingKit.framework */; };
+		BFD1B7E717A969C200DD1DC7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38024DB913C2564D003D36F2 /* UIKit.framework */; };
+		BFD1B7E817A969C200DD1DC7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38024DBB13C2564D003D36F2 /* Foundation.framework */; };
 		BFD804F51530D17400570A0A /* Encounter.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD804F41530D17400570A0A /* Encounter.m */; };
 		BFD8EC59160ED2E100BAF83A /* libChipmunk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB70160ED1FF00BAF83A /* libChipmunk.a */; };
 		BFD8EC5A160ED2E100BAF83A /* libcocos2d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB72160ED1FF00BAF83A /* libcocos2d.a */; };
@@ -706,9 +708,6 @@
 		BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddRemoveSpellLayer.m; sourceTree = "<group>"; };
 		BF448C58154BB04A009401A6 /* SpellInfoNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellInfoNode.h; sourceTree = "<group>"; };
 		BF448C59154BB04A009401A6 /* SpellInfoNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpellInfoNode.m; sourceTree = "<group>"; };
-		BF4CD1C61642D61500EB2336 /* DebugViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugViewController.h; sourceTree = "<group>"; };
-		BF4CD1C71642D61500EB2336 /* DebugViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugViewController.m; sourceTree = "<group>"; };
-		BF4CD1C81642D61600EB2336 /* DebugViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DebugViewController.xib; sourceTree = "<group>"; };
 		BF4E508B155C9C4400FC4EE0 /* Ability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ability.h; sourceTree = "<group>"; };
 		BF4E508C155C9C4400FC4EE0 /* Ability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Ability.m; sourceTree = "<group>"; };
 		BF68CBA41537364B0096B6CF /* ClippingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClippingNode.h; sourceTree = "<group>"; };
@@ -784,6 +783,12 @@
 		BFD106FA163A2956002318CE /* LevelSelectMapNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelSelectMapNode.m; sourceTree = "<group>"; };
 		BFD106FC163A29D5002318CE /* LevelSelectSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelSelectSprite.h; sourceTree = "<group>"; };
 		BFD106FD163A29D5002318CE /* LevelSelectSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelSelectSprite.m; sourceTree = "<group>"; };
+		BFD1B77617A9674D00DD1DC7 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		BFD1B77817A9674D00DD1DC7 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		BFD1B77B17A9674D00DD1DC7 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		BFD1B77C17A9674D00DD1DC7 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		BFD1B77D17A9674D00DD1DC7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		BFD1B7E517A969C200DD1DC7 /* HealerTest.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HealerTest.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFD240CC16AC8E09007010D0 /* bosses */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bosses; sourceTree = SOURCE_ROOT; };
 		BFD804F31530D17400570A0A /* Encounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Encounter.h; path = DataObjects/Encounter.h; sourceTree = "<group>"; };
 		BFD804F41530D17400570A0A /* Encounter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Encounter.m; path = DataObjects/Encounter.m; sourceTree = "<group>"; };
@@ -837,6 +842,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BFD1B7E117A969C200DD1DC7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF46DA1717A96A8500471A04 /* Parse.framework in Frameworks */,
+				BFD1B7E617A969C200DD1DC7 /* SenTestingKit.framework in Frameworks */,
+				BFD1B7E717A969C200DD1DC7 /* UIKit.framework in Frameworks */,
+				BFD1B7E817A969C200DD1DC7 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -853,6 +869,7 @@
 			isa = PBXGroup;
 			children = (
 				38024DAB13C2564D003D36F2 /* Healer.app */,
+				BFD1B7E517A969C200DD1DC7 /* HealerTest.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -886,6 +903,9 @@
 				38024DB913C2564D003D36F2 /* UIKit.framework */,
 				38024DBB13C2564D003D36F2 /* Foundation.framework */,
 				38024DBD13C2564D003D36F2 /* CoreGraphics.framework */,
+				BFD1B77617A9674D00DD1DC7 /* SenTestingKit.framework */,
+				BFD1B77817A9674D00DD1DC7 /* Cocoa.framework */,
+				BFD1B77A17A9674D00DD1DC7 /* Other Frameworks */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -944,6 +964,10 @@
 		382C463F1648CD9000883CFA /* PreBattle */ = {
 			isa = PBXGroup;
 			children = (
+				BF448C58154BB04A009401A6 /* SpellInfoNode.h */,
+				BF448C59154BB04A009401A6 /* SpellInfoNode.m */,
+				BF448C55154BA4D1009401A6 /* AddRemoveSpellLayer.h */,
+				BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */,
 				382C46401648CDA400883CFA /* ChallengeRatingStepper.h */,
 				382C46411648CDA400883CFA /* ChallengeRatingStepper.m */,
 				BF8249D51526D7C2000B554B /* RaidMemberPreBattleCard.h */,
@@ -959,7 +983,7 @@
 			children = (
 				BF13ADF51751831F00A613B1 /* Items */,
 				BFB4640E154A267100503E30 /* Shop */,
-				387E7B77145E290A006D9266 /* Game States */,
+				387E7B77145E290A006D9266 /* Levels */,
 				387E7B75145E28F5006D9266 /* Groups */,
 				387E7B71145E288B006D9266 /* Manipulators */,
 				387E7B70145E284F006D9266 /* Agents */,
@@ -1029,9 +1053,6 @@
 			children = (
 				38024F0B13C2564E003D36F2 /* AppDelegate.h */,
 				38024F0C13C2564E003D36F2 /* AppDelegate.m */,
-				BF4CD1C61642D61500EB2336 /* DebugViewController.h */,
-				BF4CD1C71642D61500EB2336 /* DebugViewController.m */,
-				BF4CD1C81642D61600EB2336 /* DebugViewController.xib */,
 			);
 			name = "App Init";
 			sourceTree = "<group>";
@@ -1173,7 +1194,7 @@
 			name = Groups;
 			sourceTree = "<group>";
 		};
-		387E7B77145E290A006D9266 /* Game States */ = {
+		387E7B77145E290A006D9266 /* Levels */ = {
 			isa = PBXGroup;
 			children = (
 				BFD804F31530D17400570A0A /* Encounter.h */,
@@ -1182,7 +1203,7 @@
 				386747A81520073D0057A8C9 /* CombatEvent.m */,
 				BF80764C1522DACC001EB2B3 /* Announcer.h */,
 			);
-			name = "Game States";
+			name = Levels;
 			sourceTree = "<group>";
 		};
 		387E7B78145E291C006D9266 /* Wrappers */ = {
@@ -1340,10 +1361,6 @@
 			isa = PBXGroup;
 			children = (
 				BF13ADF6175189C300A613B1 /* Slots */,
-				BF448C55154BA4D1009401A6 /* AddRemoveSpellLayer.h */,
-				BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */,
-				BF448C58154BB04A009401A6 /* SpellInfoNode.h */,
-				BF448C59154BB04A009401A6 /* SpellInfoNode.m */,
 				BF865F2A15A031FB007F5DBF /* BasicButton.h */,
 				BF865F2B15A031FB007F5DBF /* BasicButton.m */,
 				38B0BB231657694300D31540 /* RatingCounterSprite.h */,
@@ -1446,6 +1463,16 @@
 				BF0022BD163EE94C00384882 /* EncounterCard.m */,
 			);
 			name = "Map Views";
+			sourceTree = "<group>";
+		};
+		BFD1B77A17A9674D00DD1DC7 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BFD1B77B17A9674D00DD1DC7 /* AppKit.framework */,
+				BFD1B77C17A9674D00DD1DC7 /* CoreData.framework */,
+				BFD1B77D17A9674D00DD1DC7 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
 		BFD8EAFC160ED1FC00BAF83A /* Products */ = {
@@ -1563,6 +1590,24 @@
 			productReference = 38024DAB13C2564D003D36F2 /* Healer.app */;
 			productType = "com.apple.product-type.application";
 		};
+		BFD1B7E417A969C200DD1DC7 /* HealerTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BFD1B7F317A969C200DD1DC7 /* Build configuration list for PBXNativeTarget "HealerTest" */;
+			buildPhases = (
+				BFD1B7E017A969C200DD1DC7 /* Sources */,
+				BFD1B7E117A969C200DD1DC7 /* Frameworks */,
+				BFD1B7E217A969C200DD1DC7 /* Resources */,
+				BFD1B7E317A969C200DD1DC7 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HealerTest;
+			productName = HealerTest;
+			productReference = BFD1B7E517A969C200DD1DC7 /* HealerTest.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1593,6 +1638,7 @@
 				38024DAA13C2564D003D36F2 /* Healer */,
 				BF0557C11526BD39006B4781 /* MakeAssets */,
 				BFFF991A169437E1007AF447 /* MakeBosses */,
+				BFD1B7E417A969C200DD1DC7 /* HealerTest */,
 			);
 		};
 /* End PBXProject section */
@@ -2014,7 +2060,6 @@
 				BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */,
 				BF87D85B1601ABFB00BEAD5B /* tips.plist in Resources */,
 				BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */,
-				BF4CD1CA1642D61600EB2336 /* DebugViewController.xib in Resources */,
 				BFE66EDF16D9749800B9FBEE /* fonts in Resources */,
 				BF1DDBAD1711F52C0008C946 /* README.md in Resources */,
 				BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */,
@@ -2023,7 +2068,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BFD1B7E217A969C200DD1DC7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		BFD1B7E317A969C200DD1DC7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		38024DA713C2564D003D36F2 /* Sources */ = {
@@ -2090,7 +2158,6 @@
 				BFD106FB163A2956002318CE /* LevelSelectMapNode.m in Sources */,
 				BFD106FE163A29D5002318CE /* LevelSelectSprite.m in Sources */,
 				BF0022BE163EE94C00384882 /* EncounterCard.m in Sources */,
-				BF4CD1C91642D61600EB2336 /* DebugViewController.m in Sources */,
 				382C46421648CDA400883CFA /* ChallengeRatingStepper.m in Sources */,
 				387E82A4164F1648009F11E6 /* SettingsScene.m in Sources */,
 				BF95CF79165736190058FB85 /* CCNumberChangeAction.m in Sources */,
@@ -2120,6 +2187,13 @@
 				BFF6B202176926130014640C /* NSString+Obfuscation.m in Sources */,
 				BF002377176F852A00445998 /* PlayerSprite.m in Sources */,
 				BFA8B72D177A44380048BBB4 /* TreasureChest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BFD1B7E017A969C200DD1DC7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2377,6 +2451,80 @@
 			};
 			name = "Ad Hoc";
 		};
+		BFD1B7F417A969C200DD1DC7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(SRCROOT)\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "HealerTest/HealerTest-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "HealerTest/HealerTest-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		BFD1B7F517A969C200DD1DC7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(SRCROOT)\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "HealerTest/HealerTest-Prefix.pch";
+				INFOPLIST_FILE = "HealerTest/HealerTest-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+		BFD1B7F617A969C200DD1DC7 /* Ad Hoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(SRCROOT)\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "HealerTest/HealerTest-Prefix.pch";
+				INFOPLIST_FILE = "HealerTest/HealerTest-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = "Ad Hoc";
+		};
 		BFFF991C169437E1007AF447 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2483,6 +2631,16 @@
 				BF0557C31526BD39006B4781 /* Debug */,
 				BF0557C41526BD39006B4781 /* Release */,
 				BF0557C51526BD39006B4781 /* Ad Hoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BFD1B7F317A969C200DD1DC7 /* Build configuration list for PBXNativeTarget "HealerTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BFD1B7F417A969C200DD1DC7 /* Debug */,
+				BFD1B7F517A969C200DD1DC7 /* Release */,
+				BFD1B7F617A969C200DD1DC7 /* Ad Hoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

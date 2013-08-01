@@ -1,9 +1,9 @@
 //
-//  PersistantDataManager.h
-//  RaidLeader
+//  PlayerDataManager.h
+//  Healer
 //
 //  Created by Ryan Hart on 4/29/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

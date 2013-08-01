@@ -39,7 +39,7 @@
 
 //PRTEFF|TARGET|SPRITE|COLPARTNAME|R|G|B|TIME|TYPE|isFailed
 -(NSString*)asNetworkMessage{
-    return [NSString stringWithFormat:@"PRJEFF|%@|%@|%@|%i|%i|%i|%f|%i|%i|%@|%i", ((RaidMember*)self.target).battleID, self.spriteName, self.collisionParticleName, self.spriteColor.r, self.spriteColor.g, self.spriteColor.b, self.collisionTime + self.delay, self.type, self.isFailed, self.sourceAgent.networkID, self.frameCount];
+    return [NSString stringWithFormat:@"PRJEFF|%@|%@|%@|%i|%i|%i|%f|%i|%i|%@|%i", ((RaidMember*)self.target).networkId, self.spriteName, self.collisionParticleName, self.spriteColor.r, self.spriteColor.g, self.spriteColor.b, self.collisionTime + self.delay, self.type, self.isFailed, self.sourceAgent.networkID, self.frameCount];
 }
 
 -(id)initWithNetworkMessage:(NSString*)message raid:(Raid*)raid enemies:(NSArray *)enemies{

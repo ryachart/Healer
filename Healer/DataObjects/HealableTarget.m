@@ -13,7 +13,7 @@
 @implementation HealableTarget
 
 -(void)dealloc{
-    [_battleID release]; _battleID = nil;
+    [_networkId release]; _networkId = nil;
     [_activeEffects release]; _activeEffects = nil;
     [_healthAdjustmentModifiers release]; _healthAdjustmentModifiers = nil;
     [super dealloc];
@@ -21,7 +21,7 @@
 
 -(id)init{
     if (self = [super init]){
-        self.battleID = nil;
+        self.networkId = nil;
         _activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
     }
     return self;

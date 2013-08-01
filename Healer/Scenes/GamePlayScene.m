@@ -36,7 +36,7 @@
 #define DEBUG_IMMUNITIES false
 #define DEBUG_PERFECT_HEALS false
 #define DEBUG_HIGH_HPS false
-#define DEBUG_WIN_IMMEDIATELY true
+#define DEBUG_WIN_IMMEDIATELY false
 
 #define DEBUG_HPS 250
 #define DEBUG_DAMAGE 0.0
@@ -709,7 +709,7 @@
                 NSMutableString *message = [NSMutableString string];
                 [message appendFormat:@"BGNSPELL|%@", [[spell spellData] spellID]];
                 for (RaidMember *target in targets){
-                    [message appendFormat:@"|%@", target.battleID];
+                    [message appendFormat:@"|%@", target.networkId];
                 }
                 [self.match sendDataToAllPlayers:[message dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
             }
@@ -951,7 +951,7 @@
 - (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target withOffset:(CGPoint)offset delay:(NSTimeInterval)delay
 {
     if (self.isServer){
-        NSString* networkMessage = [NSString stringWithFormat:@"STMTGT|%@|%@", name, target.battleID];
+        NSString* networkMessage = [NSString stringWithFormat:@"STMTGT|%@|%@", name, target.networkId];
         [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
     }
     CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:name];

@@ -17,7 +17,7 @@
 @interface HealableTarget : Agent
 @property (nonatomic, readwrite) NSInteger maximumHealth;
 @property (nonatomic, retain) NSMutableArray *healthAdjustmentModifiers;
-@property (nonatomic, retain) NSString* battleID;
+@property (nonatomic, retain) NSString* networkId;
 @property (nonatomic, readwrite) BOOL hasDied;
 @property (nonatomic, readwrite) NSInteger health;
 @property (nonatomic, retain) NSMutableArray *activeEffects;

@@ -233,18 +233,18 @@
 }
 @end
 
-#pragma mark - Divinity Effects
+#pragma mark - Talent Effects
 
-@implementation DivinityEffect
-@synthesize divinityKey;
+@implementation TalentEffect
+@synthesize talentKey;
 - (void)dealloc {
-    [divinityKey release];
+    [talentKey release];
     [super dealloc];
 }
-- (id)initWithDivinityKey:(NSString *)divKey {
-    if (self=[super initWithDuration:-1 andEffectType:EffectTypeDivinity]){
-        self.divinityKey = divKey;
-        self.title = divKey;
+- (id)initWithTalentKey:(NSString*)newTalentKey {
+    if (self=[super initWithDuration:-1 andEffectType:EffectTypeTalent]){
+        self.talentKey = newTalentKey;
+        self.title = newTalentKey;
     }
     return self;
 }

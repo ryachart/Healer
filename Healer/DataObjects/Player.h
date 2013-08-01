@@ -1,9 +1,9 @@
 //
 //  Player.h
-//  RaidLeader
+//  Healer
 //
 //  Created by Ryan Hart on 4/21/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,21 +11,15 @@
 #import "Announcer.h"
 
 /* The Player class contains the necessary information for managing a player while
-	the game is taking place.  The Player is not a data type that persists between games
+	the simulation is taking place.  The Player is not a data type that persists between games
 	to track data (such as high scores, progression, learned spells, etc).  
 */
 
-enum CastingDisabledReason {
+typedef enum {
 	CastingDisabledReasonMoving = 0,
 	CastingDisabledReasonChanneling = 1,
 	CastingDisabledReasonTotal = 2
-};
-
-typedef int CastingDisabledReason;
-
-#define MAXIMUM_SPELLS_ALLOWED 4
-#define CHANNELING_SPELL_TITLE @"PlayerChanneling"
-#define OUT_OF_MANA_TITLE @"OutOfMana"
+} CastingDisabledReason;
 
 @class Enemy;
 @class Raid;
@@ -41,7 +35,7 @@ typedef int CastingDisabledReason;
 @property (nonatomic, retain) NSArray *spellsFromEquipment;
 @property (nonatomic, retain) NSArray *activeSpells;
 @property (nonatomic, retain, readonly) NSMutableSet *spellsOnCooldown;
-@property (nonatomic, retain) NSDictionary *divinityConfig;
+@property (nonatomic, retain) NSDictionary *talentConfig;
 @property (nonatomic, retain) Spell *spellBeingCast;
 @property (nonatomic, readwrite) float energy;
 @property (nonatomic, retain) NSArray* additionalTargets;
@@ -94,16 +88,15 @@ typedef int CastingDisabledReason;
 - (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical;
 - (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical;
 
-- (BOOL)hasDivinityEffectWithTitle:(NSString*)title;
+- (BOOL)hasTalentEffectWithTitle:(NSString*)title;
 
 - (void)configureForRecommendedSpells:(NSArray*)recommendSpells withLastUsedSpells:(NSArray*)lastUsedSpells;
 
 //Multiplayer
 @property (nonatomic, retain) NSString* playerID;
-@property (nonatomic, readwrite) BOOL isLocalPlayer; //Turn off other sounds, this is sort of a buggy thing...;
+@property (nonatomic, readwrite) BOOL isLocalPlayer;
 @property (nonatomic, readonly) NSString* spellsAsNetworkMessage;
 
-- (NSString*)initialStateMessage; //For notifying servers what our player state looks like
 - (NSString*)asNetworkMessage;
 - (void)updateWithNetworkMessage:(NSString*)message;
 @end

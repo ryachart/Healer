@@ -1,9 +1,9 @@
 //
 //  Boss.m
-//  RaidLeader
+//  Healer
 //
 //  Created by Ryan Hart on 4/22/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
 
 #import "Enemy.h"
@@ -24,7 +24,7 @@
 
 @implementation Enemy
 
--(void)dealloc{
+- (void)dealloc {
     [_abilities release];
     [_title release];
     [_queuedAbilitiesToAdd release];
@@ -206,8 +206,8 @@
     [self.abilities removeObject:ab];
 }
 
--(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses {
-    if (self = [super init]){
+- (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses {
+    if (self = [super init]) {
         self.maximumHealth = hlth;
         self.health = hlth;
         self.title = @"";
@@ -294,15 +294,15 @@
     [self updateEffects:enemies raid:raid players:players time:timeDelta];
 }
 
-+(id)defaultBoss
++ (id)defaultBoss
 {
 	return nil;
 }
 
--(NSString*)sourceName{
+- (NSString*)sourceName{
     return self.title;
 }
--(NSString*)targetName{
+- (NSString*)targetName{
     return self.title;
 }
 

@@ -255,7 +255,7 @@
     }
 }
 
-- (void)checkDivinity {
+- (void)checkTalents {
     //For subclass overrides
 }
 

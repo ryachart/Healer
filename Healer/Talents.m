@@ -11,7 +11,7 @@
 #import "PlayerDataManager.h"
 
 
-static NSDictionary *divinityInfo = nil;
+static NSDictionary *talentInfo = nil;
 
 @implementation Talents
 
@@ -61,14 +61,14 @@ static NSDictionary *divinityInfo = nil;
 
 + (void)loadDivinityInfo {
     NSString *pathToDict = [[NSBundle mainBundle] pathForResource:@"talents" ofType:@"plist"];
-    divinityInfo = [[NSDictionary dictionaryWithContentsOfFile:pathToDict] retain];
+    talentInfo = [[NSDictionary dictionaryWithContentsOfFile:pathToDict] retain];
 }
 
 + (NSString*)descriptionForChoice:(NSString *)choice {
-    if (!divinityInfo){
+    if (!talentInfo){
         [self loadDivinityInfo];
     }
-    NSString* desc = [divinityInfo objectForKey:[Talents choiceTitleToKey:choice]];
+    NSString* desc = [talentInfo objectForKey:[Talents choiceTitleToKey:choice]];
     
     if (!desc){
         return @"Unfinished!";
@@ -82,7 +82,7 @@ static NSDictionary *divinityInfo = nil;
         NSString *tierChoice = [configuration objectForKey:[NSString stringWithFormat:@"tier-%i", i]];
         if (tierChoice){
             NSString *tierChoiceKey = [self choiceTitleToKey:tierChoice];
-            DivinityEffect *divEff = [[DivinityEffect alloc] initWithDivinityKey:[Talents choiceTitleToKey:tierChoice]];
+            TalentEffect *divEff = [[TalentEffect alloc] initWithTalentKey:[Talents choiceTitleToKey:tierChoice]];
             [effects addObject:[divEff autorelease]];
             
             if ([tierChoiceKey isEqualToString:@"healing-hands"]) {

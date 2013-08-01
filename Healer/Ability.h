@@ -3,12 +3,8 @@
 //  Healer
 //
 //  Created by Ryan Hart on 5/10/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
-//
-//
+//  Copyright (c) 2012 Ryan Hart Games. All rights reserved.
 
-
-#import <Foundation/Foundation.h>
 #import "RaidMember.h"
 #import "ProjectileEffect.h"
 #import "Collectible.h"

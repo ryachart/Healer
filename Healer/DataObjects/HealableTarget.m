@@ -1,9 +1,9 @@
 //
 //  HealableTarget.m
-//  RaidLeader
+//  Healer
 //
 //  Created by Ryan Hart on 4/26/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
 
 #import "HealableTarget.h"
@@ -12,17 +12,17 @@
 
 @implementation HealableTarget
 
--(void)dealloc{
+- (void)dealloc{
     [_networkId release]; _networkId = nil;
     [_activeEffects release]; _activeEffects = nil;
     [_healthAdjustmentModifiers release]; _healthAdjustmentModifiers = nil;
     [super dealloc];
 }
 
--(id)init{
+- (id)init{
     if (self = [super init]){
         self.networkId = nil;
-        _activeEffects = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS];
+        self.activeEffects = [[[NSMutableArray alloc] initWithCapacity:MAXIMUM_STATUS_EFFECTS] autorelease];
     }
     return self;
 }
@@ -60,7 +60,7 @@
     return MAX(0,multiplier);
 }
 
--(float)healingDoneMultiplier{
+- (float)healingDoneMultiplier{
     float base = [super healingDoneMultiplier];
     
     for (Effect *eff in self.activeEffects){
@@ -70,7 +70,7 @@
     return MAX(0, base);
 }
 
--(float)damageDoneMultiplier{
+- (float)damageDoneMultiplier{
     float base = [super damageDoneMultiplier];
     
     for (Effect *eff in self.activeEffects){
@@ -79,7 +79,7 @@
     return MAX(0,base);
 }
 
--(float)healthPercentage{
+- (float)healthPercentage{
     return (float)self.health/(float)self.maximumHealth;
 }
 
@@ -95,7 +95,7 @@
     return totalHealingAbsorb;
 }
 
--(NSInteger)maximumAbsorbtion
+- (NSInteger)maximumAbsorbtion
 {
     NSInteger baseAbsorbtion = 0;
     for (Effect *eff in self.activeEffects){
@@ -120,7 +120,7 @@
     
 }
 
--(void)setHealth:(NSInteger)newHealth
+- (void)setHealth:(NSInteger)newHealth
 {
     NSInteger overHealing = 0;
     NSInteger totalHealing = 0;
@@ -190,41 +190,6 @@
     _health = MAX(0,MIN(self.maximumHealth,_health + amount));
 }
 
-- (void)healForAmount:(NSInteger)amount
-{
-    if (amount < 0) {
-#if DEBUG
-        NSAssert(nil, @"Heal for a negative amount");
-#else
-      return;
-#endif
-    }
-    
-    if (self.hasDied){
-        return;
-    }
-
-    NSInteger preHealth = _health;
-    NSInteger modifiedAmount = amount * self.healingReceivedMultiplierAdjustment;
-    NSInteger newHealth = MAX(0, MIN(self.maximumHealth, _health + modifiedAmount));
-    NSInteger healthDelta = newHealth - preHealth;
-    
-    for (HealthAdjustmentModifier* ham in self.healthAdjustmentModifiers){
-		[ham willChangeHealthFrom:&_health toNewHealth:&newHealth];
-	}
-	_health = newHealth;
-	for (HealthAdjustmentModifier* ham in self.healthAdjustmentModifiers){
-		[ham didChangeHealthFrom:preHealth toNewHealth:newHealth];
-	}
-    
-    
-
-}
-
-- (void)damageForAmount:(NSInteger)amount fromSource:(Agent*)source
-{
-    
-}
 
 - (void)didReceiveHealing:(NSInteger)amount andOverhealing:(NSInteger)overAmount{
     
@@ -256,7 +221,7 @@
     return nil;
 }
 
--(void)addEffect:(Effect*)theEffect
+- (void)addEffect:(Effect*)theEffect
 {
 	if (self.activeEffects){
         BOOL didUpdateSimilarEffect = NO;
@@ -319,7 +284,7 @@
     }
 }
 
--(void)addHealthAdjustmentModifier:(HealthAdjustmentModifier*)hamod{
+-(void)addHealthAdjustmentModifier:(HealthAdjustmentModifier*)hamod {
 	if (self.healthAdjustmentModifiers == nil){
 		self.healthAdjustmentModifiers = [[[NSMutableArray alloc] initWithCapacity:5] autorelease];
 	}
@@ -327,15 +292,15 @@
 	[self.healthAdjustmentModifiers addObject:hamod];
 }
 
--(BOOL)isDead
-{
+-(BOOL)isDead {
 	return self.health <= 0;
 }
 
--(NSString*)sourceName{
+- (NSString*)sourceName {
     return [[self class] description];
 }
--(NSString*)targetName{
+
+- (NSString*)targetName {
     return [[self class] description];
 }
 

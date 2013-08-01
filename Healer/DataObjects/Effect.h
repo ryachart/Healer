@@ -22,7 +22,7 @@ typedef enum {
 	EffectTypeNegative, 
     EffectTypePositiveInvisible,
     EffectTypeNegativeInvisible, 
-    EffectTypeDivinity
+    EffectTypeTalent
 } EffectType;
 
 typedef enum {
@@ -102,11 +102,11 @@ typedef enum {
 
 @end
 
-#pragma mark - Divinity Effects
+#pragma mark - Talent Effects
 
-@interface DivinityEffect : Effect
-@property (nonatomic, retain) NSString* divinityKey;
-- (id)initWithDivinityKey:(NSString*)divinityKey;
+@interface TalentEffect : Effect
+@property (nonatomic, retain) NSString* talentKey;
+- (id)initWithTalentKey:(NSString*)talentKey;
 @end
 
 #pragma mark - Shipping Spell Effects

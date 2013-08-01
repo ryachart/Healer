@@ -65,7 +65,7 @@ typedef enum {
 
 
 //Subclass overrides
-- (void)checkDivinity;
+- (void)checkTalents;
 - (void)willHealTarget:(RaidMember*)target inRaid:(Raid*)raid withEnemies:(NSArray*)enemies andPlayers:(NSArray*)players forAmount:(NSInteger)amount;
 - (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withEnemies:(NSArray*)enemies andPlayers:(NSArray*)players forAmount:(NSInteger)amount;
 @end

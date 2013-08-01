@@ -49,7 +49,7 @@
         if (components.count < 10){
             NSLog(@"MALFORMED PROJECTILE MESSAGE");
         }
-        self.target = [raid memberForBattleID:[components objectAtIndex:1]];
+        self.target = [raid memberForNetworkId:[components objectAtIndex:1]];
         self.collisionParticleName = [components objectAtIndex:3];
         self.spriteName = [components objectAtIndex:2];
         self.spriteColor = ccc3([[components objectAtIndex:4] intValue], [[components objectAtIndex:5] intValue], [[components objectAtIndex:6] intValue]);

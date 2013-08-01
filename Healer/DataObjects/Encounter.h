@@ -6,8 +6,6 @@
 //  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 @class Raid;
 @class Enemy;
 @class Player;

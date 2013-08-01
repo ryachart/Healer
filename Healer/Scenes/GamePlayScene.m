@@ -1509,7 +1509,7 @@
             
             NSString* battleID = [messageComponents objectAtIndex:1];
 
-            [[self.raid memberForBattleID:battleID] updateWithNetworkMessage:message];
+            [[self.raid memberForNetworkId:battleID] updateWithNetworkMessage:message];
         }
         
         if ([message hasPrefix:@"ANNC|"]){
@@ -1530,7 +1530,7 @@
         
         if ([message hasPrefix:@"STMTGT|"]){
             NSArray *components = [message componentsSeparatedByString:@"|"];
-            [self displayParticleSystemWithName:[components objectAtIndex:1] onTarget:[self.raid memberForBattleID:[components objectAtIndex:2]]];
+            [self displayParticleSystemWithName:[components objectAtIndex:1] onTarget:[self.raid memberForNetworkId:[components objectAtIndex:2]]];
         }
         
         if ([message hasPrefix:@"SPRTOV|"]){
@@ -1588,7 +1588,7 @@
     NSMutableArray *targets = [NSMutableArray arrayWithCapacity:3];
     if (messageComponents.count > 2){
         for (int i = 2; i < messageComponents.count; i++){
-            RaidMember *member = [self.raid memberForBattleID:[messageComponents objectAtIndex:i]];
+            RaidMember *member = [self.raid memberForNetworkId:[messageComponents objectAtIndex:i]];
             if (member){
                 [targets addObject:member];
             }else{

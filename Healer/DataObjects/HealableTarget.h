@@ -1,9 +1,9 @@
 //
 //  HealableTarget.h
-//  RaidLeader
+//  Healer
 //
 //  Created by Ryan Hart on 4/26/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -28,11 +28,7 @@
 @property (nonatomic, readonly) float damageTakenMultiplierAdjustment;
 @property (nonatomic, readonly) float healingReceivedMultiplierAdjustment;
 
-//Health Accessors
-- (void)passiveHealForAmount:(NSInteger)amount;
-- (void)healForAmount:(NSInteger)amount fromSource:(Agent*)source;
-- (void)damageForAmount:(NSInteger)amount fromSource:(Agent*)source;
-
+- (void)passiveHealForAmount:(NSInteger)amount; //For healing that doesn't behave like normal healing
 - (NSInteger)effectCountOfType:(EffectType)type;
 - (void)didReceiveHealing:(NSInteger)amount andOverhealing:(NSInteger)amount;
 - (void)setHealth:(NSInteger)newHealth;

@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 5/10/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
+//  Copyright (c) 2012 Ryan Hart Games. All rights reserved.
 //
 
 #import "Ability.h"
@@ -49,7 +49,7 @@
     [ab setActivationSound:self.activationSound];
     return ab;
 }
-- (void)dealloc{
+- (void)dealloc {
     [_info release];
     [_title release];
     [_key release];
@@ -60,8 +60,7 @@
     [super dealloc];
 }
 
-- (void)interrupt
-{
+- (void)interrupt {
     self.channelTimeRemaining = 0;
     self.maxChannelTime = 0;
     self.numChannelTicks = 0;
@@ -71,18 +70,15 @@
     }
 }
 
-- (void)collectible:(Collectible *)col wasCollectedByPlayer:(Player *)player forRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
-{
+- (void)collectible:(Collectible *)col wasCollectedByPlayer:(Player *)player forRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
     
 }
 
-- (void)collectibleDidExpire:(Collectible *)col forRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
-{
+- (void)collectibleDidExpire:(Collectible *)col forRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies {
     
 }
 
-- (void)dispelBeneficialEffectsOnTarget:(RaidMember*)target
-{
+- (void)dispelBeneficialEffectsOnTarget:(RaidMember*)target {
     for (Effect *effect in target.activeEffects){
         if (effect.effectType == EffectTypePositive && !effect.ignoresDispels){
             [effect setIsExpired:YES];
@@ -90,13 +86,11 @@
     }
 }
 
-- (BOOL)isDisabled
-{
+- (BOOL)isDisabled {
     return _isDisabled || self.owner.isDead;
 }
 
-- (AbilityDescriptor *)descriptor
-{
+- (AbilityDescriptor *)descriptor {
     if (self.title && self.info) {
         AbilityDescriptor *ad = [[[AbilityDescriptor alloc] init] autorelease];
         [ad setAbilityName:self.title];
@@ -107,29 +101,25 @@
     return nil;
 }
 
-- (BOOL)isChanneling
-{
+- (BOOL)isChanneling {
     return self.channelTimeRemaining > 0;
 }
 
-- (void)setChannelTimeRemaining:(float)channelTimeRemaining
-{
+- (void)setChannelTimeRemaining:(float)channelTimeRemaining {
     _channelTimeRemaining = MAX(0, channelTimeRemaining);
 }
 
-- (void)startChannel:(float)channel
-{
+- (void)startChannel:(float)channel {
     [self startChannel:channel withTicks:0];
 }
 
-- (void)startChannel:(float)channel withTicks:(NSInteger)numTicks
-{
+- (void)startChannel:(float)channel withTicks:(NSInteger)numTicks {
     self.channelTimeRemaining = channel;
     self.maxChannelTime = channel;
     self.numChannelTicks = numTicks;
 }
 
-- (BOOL)checkFailed{
+- (BOOL)checkFailed {
     BOOL failed = arc4random() % 100 < (100 * self.failureChance);
     if (failed){
         return YES;
@@ -137,13 +127,11 @@
     return NO;
 }
 
-- (void)abilityDidFailToActivateForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
-{
+- (void)abilityDidFailToActivateForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
     
 }
 
-- (NSTimeInterval)cooldown
-{
+- (NSTimeInterval)cooldown {
     return self.activationTime + _cooldown;
 }
 
@@ -193,14 +181,12 @@
     self.channelTimeRemaining -= timeDelta;
 }
 
-- (void)channelTickForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
-{
+- (void)channelTickForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
     //Subclass for desired effect
     [self.owner ownerDidChannelTickForAbility:self];
 }
 
-- (void)activateAbility
-{
+- (void)activateAbility {
     self.timeApplied = _cooldown;
     self.isActivating = YES;
     [self.owner ownerDidBeginAbility:self];
@@ -209,52 +195,41 @@
     }
 }
 
-- (NSTimeInterval)remainingActivationTime
-{
+- (NSTimeInterval)remainingActivationTime {
     if (self.isActivating) {
         return  (self.cooldown - self.timeApplied);
     }
     return 0.0; //Not activating
 }
 
-- (float)remainingActivationPercentage
-{
+- (float)remainingActivationPercentage {
     if (self.isActivating) {
         return self.remainingActivationTime / self.activationTime;
     }
     return 0.0; //Not activating
 }
 
-- (RaidMember*)targetWithoutEffectWithTitle:(NSString*)ttle inRaid:(Raid*)theRaid{
+- (RaidMember*)targetWithoutEffectWithTitle:(NSString*)ttle inRaid:(Raid*)theRaid {
     return [self targetWithoutEffectsTitled:[NSArray arrayWithObject:ttle] inRaid:theRaid];
 }
 
 - (RaidMember*)targetWithoutEffectsTitled:(NSArray*)effects inRaid:(Raid*)theRaid {
-    RaidMember *target = nil;
-    int safety = 0;
-    BOOL isInvalidTarget = NO;
-    do {
-        isInvalidTarget = NO;
-        target = [theRaid randomLivingMember];
-        if (safety >= 25){
-            break;
-        }
-        safety++;
-        for (NSString *effTitle in effects){
-            if ([target hasEffectWithTitle:effTitle]){
-                isInvalidTarget = YES;
-                break;
+    return [theRaid randomMemberSatisfyingComparator:^BOOL (RaidMember *member) {
+        for (NSString *effectTitle in effects) {
+            if ([member hasEffectWithTitle:effectTitle]) {
+                return NO;
             }
         }
-    } while (isInvalidTarget);
-    return target;
+        return YES;
+    
+    }];
 }
 
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
 
 }
 
-- (int)damageDealt{
+- (int)damageDealt {
     float multiplyModifier = self.owner.damageDoneMultiplier;
     int additiveModifier = 0;
     
@@ -268,8 +243,7 @@
     return FUZZ(finalDamageValue, 30.0);
 }
 
-- (void)damageTarget:(RaidMember *)target forDamage:(NSInteger)damage
-{
+- (void)damageTarget:(RaidMember *)target forDamage:(NSInteger)damage {
     if (![target raidMemberShouldDodgeAttack:self.dodgeChanceAdjustment]){
         [self willDamageTarget:target];
         int thisDamage = damage;
@@ -280,13 +254,12 @@
         if (thisDamage > 0 && self.attackParticleEffectName){
             [self.owner.announcer displayParticleSystemWithName:self.attackParticleEffectName onTarget:target];
         }
-        
-    }else{
+    } else {
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:0 andEventType:CombatEventTypeDodge]];
     }
 }
 
--(void)damageTarget:(RaidMember*)target {
+- (void)damageTarget:(RaidMember*)target {
     [self damageTarget:target forDamage:[self damageDealt]];
 }
 
@@ -330,7 +303,7 @@
     return copy;
 }
 
-- (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd{
+- (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd {
     if (self = [super init]){
         self.abilityValue = dmg;
         self.cooldown = cd;
@@ -342,9 +315,9 @@
     return self;
 }
 
-- (RaidMember*)targetFromRaid:(Raid*)raid{
+- (RaidMember*)targetFromRaid:(Raid*)raid {
     
-    RaidMember *target = [raid randomMemberWithComparator:^BOOL(RaidMember *member) {
+    RaidMember *target = [raid randomMemberSatisfyingComparator:^BOOL(RaidMember *member) {
             if (member.isDead || (self.ignoresGuardians && [member isKindOfClass:[Guardian class]]) || (self.prefersTargetsWithoutVisibleEffects && [member effectCountOfType:EffectTypeNegative] > 0) || (self.ignoresPlayers && [member isKindOfClass:[Player class]])) {
                 return false;
             }
@@ -352,7 +325,7 @@
         }];
     
     if (!target) {
-        target = [raid randomMemberWithComparator:^BOOL(RaidMember *member) {
+        target = [raid randomMemberSatisfyingComparator:^BOOL(RaidMember *member) {
             if (member.isDead || (self.ignoresGuardians && [member isKindOfClass:[Guardian class]]) || (self.ignoresPlayers && [member isKindOfClass:[Player class]])) {
                 return false;
             }
@@ -403,8 +376,7 @@
     [super dealloc];
 }
 
-- (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd
-{
+- (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd {
     if (self = [super initWithDamage:dmg andCooldown:cd]) {
         self.currentAttacksRemaining = arc4random() % 3 + 2;
         self.damageAudioName = @"thud.mp3";
@@ -412,8 +384,7 @@
     return self;
 }
 
-- (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
-{
+- (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
     self.currentAttacksRemaining--;
     RaidMember *target = [self targetFromRaid:theRaid];
     NSInteger preHealth = target.health;
@@ -424,16 +395,14 @@
     }
 }
 
-- (void)setFocusTarget:(RaidMember *)focusTarget
-{
+- (void)setFocusTarget:(RaidMember *)focusTarget {
     [_focusTarget setIsFocused:NO];
     [_focusTarget release];
     _focusTarget = [focusTarget retain];
     [_focusTarget setIsFocused:YES];
 }
 
-- (RaidMember*)targetFromRaid:(Raid *)raid
-{
+- (RaidMember*)targetFromRaid:(Raid *)raid {
     if (self.currentAttacksRemaining <= 0){
         self.currentAttacksRemaining = arc4random() % 3 + 2;
         self.focusTarget = nil;
@@ -458,7 +427,7 @@
 
 @implementation FocusedAttack
 
-- (void)dealloc{
+- (void)dealloc {
     [_focusTarget release];
     [super dealloc];
 }
@@ -2480,7 +2449,7 @@
 
 - (RaidMember *)targetFromRaid:(Raid *)raid
 {
-    RaidMember *target = [raid randomMemberWithComparator:^BOOL(RaidMember *member){
+    RaidMember *target = [raid randomMemberSatisfyingComparator:^BOOL(RaidMember *member){
         if (!member.isDead && [member isKindOfClass:[Player class]]) {
             return YES;
         }

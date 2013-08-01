@@ -74,7 +74,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 {
     Player *basicPlayer = [[[Player alloc] initWithHealth:1400 energy:1000 energyRegen:10] autorelease];
     if ([[PlayerDataManager localPlayer] isTalentsUnlocked]){
-        [basicPlayer setDivinityConfig:[[PlayerDataManager localPlayer] localTalentConfig]];
+        [basicPlayer setTalentConfig:[[PlayerDataManager localPlayer] localTalentConfig]];
     }
     if ([PlayerDataManager localPlayer].equippedItems.count > 0) {
         [basicPlayer setEquippedItems:[PlayerDataManager localPlayer].equippedItems];

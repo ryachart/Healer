@@ -7,6 +7,7 @@
 //
 
 #import "AbilityDescriptor.h"
+#import "Effect.h"
 
 @implementation AbilityDescriptor
 
@@ -15,6 +16,14 @@
         return @"unknown_ability.png";
     }
     return _iconName;
+}
+
+- (NSInteger)stacks
+{
+    if (self.monitoredEffect) {
+        return self.monitoredEffect.stacks;
+    }
+    return 0;
 }
 
 @end

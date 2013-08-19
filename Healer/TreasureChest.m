@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 6/25/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
 #import "TreasureChest.h"
@@ -57,7 +57,8 @@
     CCAnimation *openingAnimation = [TreasureChest openingAnimation];
     
     __block TreasureChest *blockSelf = self;
-    [self.itemIconSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:openingAnimation.duration], [CCFadeTo actionWithDuration:1.0 opacity:255], [CCEaseBackIn actionWithAction:[CCMoveBy actionWithDuration:.75 position:CGPointMake(0, 60)]], [CCCallBlockN actionWithBlock:^(CCNode *node){
+    [self.top runAction:[CCAnimate actionWithAnimation:openingAnimation]];
+    [self.itemIconSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:openingAnimation.duration + .1], [CCFadeTo actionWithDuration:.5 opacity:255], [CCEaseBackIn actionWithAction:[CCMoveBy actionWithDuration:.75 position:CGPointMake(0, 60)]], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [blockSelf reorderChild:blockSelf.itemIconSprite z:BASE_Z+1];
     }], [CCEaseIn actionWithAction:[CCMoveBy actionWithDuration:.75 position:CGPointMake(0, -60)] rate:1.0],
         [CCCallBlockN actionWithBlock:^(CCNode *node){
@@ -69,8 +70,6 @@
         [blockSelf.itemDescNode runAction:[CCFadeTo actionWithDuration:1.0 opacity:255]];
     }],
     nil]];
-    
-    [self.top runAction:[CCAnimate actionWithAnimation:openingAnimation]];
 }
 
 + (CCAnimation *)openingAnimation
@@ -81,7 +80,7 @@
         [animationFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"treasurechest_top%02d.png", i+1]]];
     }
     
-    CCAnimation *openAnimation = [CCAnimation animationWithSpriteFrames:animationFrames delay:2.0/60.0];
+    CCAnimation *openAnimation = [CCAnimation animationWithSpriteFrames:animationFrames delay:4.0/60.0];
     openAnimation.restoreOriginalFrame = NO;
     return openAnimation;
 }

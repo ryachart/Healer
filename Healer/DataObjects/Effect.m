@@ -92,6 +92,38 @@
 {
 }
 
+- (NSInteger)adjustHealthWithAdjustment:(NSInteger)adjustment forTarget:(HealableTarget *)target
+{
+    BOOL critical = NO;
+    Player *owningPlayer = nil;
+    if ([self.owner isKindOfClass:[Player class]]) {
+        owningPlayer = (Player*)self.owner;
+        if (arc4random() % 100 < owningPlayer.spellCriticalChance * 100) {
+            critical = YES;
+        }
+    }
+    
+    NSInteger amount = FUZZ(adjustment, 15.0);
+    if (critical && owningPlayer) {
+        amount *= owningPlayer.criticalBonusMultiplier;
+    }
+    
+    CombatEventType eventType = amount > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
+    float modifier = amount > 0 ? self.owner.healingDoneMultiplier : self.owner.damageDoneMultiplier;
+    NSInteger preHealth = self.target.health - self.target.healingAbsorb;
+    [self.target setHealth:[self.target health] + amount * modifier * self.stacks];
+    NSInteger finalAmount = (self.target.health - self.target.healingAbsorb) - preHealth;
+    if (owningPlayer && finalAmount > 0){
+        NSInteger overheal = amount - finalAmount;
+        [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self withOverhealing:overheal asCritical:critical];
+    } else if (amount < 0) {
+        //This is boss damage
+        [(Enemy*)self.owner ownerDidDamageTarget:(RaidMember*)self.target withEffect:self forDamage:finalAmount];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:finalAmount] andEventType:eventType]];
+    }
+    return finalAmount;
+}
+
 -(id)copy{
     Effect *copied = [[[self class] alloc] initWithDuration:self.duration andEffectType:self.effectType];
     copied.maxStacks = maxStacks;
@@ -308,35 +340,8 @@
 -(void)tick{
     self.numHasTicked++;
     if (!self.target.isDead && self.valuePerTick != 0){
-        if (self.shouldFail){
-            
-        } else {
-            BOOL critical = NO;
-            Player *owningPlayer = nil;
-            if ([self.owner isKindOfClass:[Player class]]) {
-                owningPlayer = (Player*)self.owner;
-                if (arc4random() % 100 < owningPlayer.spellCriticalChance * 100) {
-                    critical = YES;
-                }
-            }
-            
-            NSInteger amount = FUZZ(self.valuePerTick, 15.0);
-            if (critical && owningPlayer) {
-                amount *= owningPlayer.criticalBonusMultiplier;
-            }
-            
-            CombatEventType eventType = amount > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
-            float modifier = amount > 0 ? self.owner.healingDoneMultiplier : self.owner.damageDoneMultiplier;
-            NSInteger preHealth = self.target.health - self.target.healingAbsorb;
-            [self.target setHealth:[self.target health] + amount * modifier * self.stacks];
-            NSInteger finalAmount = (self.target.health - self.target.healingAbsorb) - preHealth;
-            if (owningPlayer && finalAmount > 0){
-                NSInteger overheal = amount - finalAmount;
-                [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self withOverhealing:overheal asCritical:critical];
-            } else if (amount < 0) {
-                //This is boss damage in the form of dots
-                [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:finalAmount] andEventType:eventType]];
-            }
+        if (!self.shouldFail){
+            [self adjustHealthWithAdjustment:self.valuePerTick forTarget:self.target];
         }
     }
 }
@@ -474,29 +479,7 @@
         if (self.shouldFail){
             [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:0 andEventType:CombatEventTypeDodge]];
         }else{
-            CombatEventType eventType = self.value > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
-            Player *owningPlayer = nil;
-            BOOL critical = NO;
-            if ([self.owner isKindOfClass:[Player class]]) {
-                owningPlayer = (Player*)self.owner;
-                if (arc4random() % 100 < owningPlayer.spellCriticalChance * 100) {
-                    critical = YES;
-                }
-            }
-            float modifier = self.value > 0 ? self.owner.healingDoneMultiplier : self.owner.damageDoneMultiplier;
-            NSInteger amount = self.value * modifier;
-            if (critical && owningPlayer) {
-                amount *= owningPlayer.criticalBonusMultiplier;
-            }
-            NSInteger preHealth = (self.target.health - self.target.healingAbsorb);
-            [self.target setHealth:self.target.health + amount * self.stacks];
-            NSInteger finalAmount = (self.target.health - self.target.healingAbsorb) - preHealth;
-            if (owningPlayer){
-                NSInteger overheal = amount - finalAmount;
-                [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self withOverhealing:overheal asCritical:critical];
-            }else {
-                [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]];
-            }
+            [self adjustHealthWithAdjustment:self.value forTarget:self.target];
             if (self.appliedEffect){
                 Effect *applyThis = [[self.appliedEffect copy] autorelease];
                 [applyThis setOwner:self.owner];
@@ -622,8 +605,7 @@
 
 -(void)effectWillBeDispelled:(Raid *)raid player:(Player *)player enemies:(NSArray *)enemies{
     for (RaidMember*member in raid.raidMembers){
-        [member setHealth:member.health + (self.dispelDamageValue * self.owner.damageDoneMultiplier)];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:self.dispelDamageValue * self.owner.damageDoneMultiplier] andEventType:CombatEventTypeDamage]];
+        [self adjustHealthWithAdjustment:(self.dispelDamageValue * self.owner.damageDoneMultiplier) forTarget:member];
     }
     [self.owner.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0];
     [self.owner.announcer playAudioForTitle:@"explosion2.wav"];
@@ -695,9 +677,7 @@
 
 -(void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta{
     if (self.target.healthPercentage <= effectivePercentage && !self.target.isDead){
-        CombatEventType eventType = self.value > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
-        [self.target setHealth:self.target.health + self.value];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.value] andEventType:eventType]];
+        [self adjustHealthWithAdjustment:self.value forTarget:self.target];
         [self.owner.announcer playAudioForTitle:@"largeaxe.mp3"];
     }
 }
@@ -957,8 +937,7 @@
 - (void)healRaidWithPulse:(Raid*)theRaid{
     NSArray* raid = [theRaid livingMembers];
     for (RaidMember* member in raid){
-        [member setHealth:member.health + 20];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:@20 andEventType:CombatEventTypeHeal]];
+        [self adjustHealthWithAdjustment:20 forTarget:member];
     }
 }
 
@@ -966,8 +945,7 @@
     NSArray *possibleTargets = [theRaid lowestHealthTargets:3 withRequiredTarget:nil];
     
     RaidMember *target = [possibleTargets objectAtIndex:arc4random() % possibleTargets.count];
-    [target setHealth:target.health + (target.maximumHealth * .25)];
-    [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:(target.maximumHealth * .25)] andEventType:CombatEventTypeHeal]];
+    [self adjustHealthWithAdjustment:(target.maximumHealth * .25) forTarget:target];
 }
 
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
@@ -996,10 +974,9 @@
     [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     if (self.needsDetonation && !self.isExpired){
         NSArray *aliveMembers = [raid livingMembers];
-        NSInteger damageDealt = 350 * (self.owner.damageDoneMultiplier);
+        NSInteger damageDealt = -350 * (self.owner.damageDoneMultiplier);
         for (RaidMember *member in aliveMembers){
-            [member setHealth:member.health - damageDealt];
-            [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:damageDealt] andEventType:CombatEventTypeDamage]];
+            [self adjustHealthWithAdjustment:damageDealt forTarget:member];
         }
         self.needsDetonation = NO;
         self.isExpired = YES;
@@ -1424,8 +1401,7 @@
 
 - (void)targetDidCastSpell:(Spell *)spell onTarget:(HealableTarget *)target
 {
-    [self.target setHealth:self.target.health - self.damage * self.owner.damageDoneMultiplier];
-    [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:self.damage * self.owner.damageDoneMultiplier] andEventType:CombatEventTypeDamage]];
+    [self adjustHealthWithAdjustment:self.damage * self.owner.damageDoneMultiplier forTarget:self.target];
 }
 
 @end

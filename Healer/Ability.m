@@ -28,6 +28,7 @@
     if (self = [super init]){
         self.isActivating = NO;
         self.iconName = @"unknown_ability.png";
+        self.requiresDamageToApplyEffect = YES;
     }
     return self;
 }
@@ -47,6 +48,8 @@
     [ab setIconName:self.iconName];
     [ab setExecutionSound:self.executionSound];
     [ab setActivationSound:self.activationSound];
+    [ab setRequiresDamageToApplyEffect:self.requiresDamageToApplyEffect];
+    [ab setAppliedEffect:self.appliedEffect];
     return ab;
 }
 - (void)dealloc {
@@ -57,6 +60,7 @@
     [_attackParticleEffectName release];
     [_activationSound release];
     [_executionSound release];
+    [_appliedEffect release];
     [super dealloc];
 }
 
@@ -251,8 +255,17 @@
         [target setHealth:[target health] - thisDamage];
         NSInteger finalDamage = target.health - preHealth;
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:finalDamage] andEventType:CombatEventTypeDamage]];
-        if (thisDamage > 0 && self.attackParticleEffectName){
-            [self.owner.announcer displayParticleSystemWithName:self.attackParticleEffectName onTarget:target];
+        [self.owner ownerDidDamageTarget:target withAbility:self forDamage:finalDamage];
+        if (thisDamage > 0 || !self.requiresDamageToApplyEffect){
+            if (self.appliedEffect){
+                Effect *applyThis = [[self.appliedEffect copy] autorelease];
+                [applyThis setOwner:self.owner];
+                [applyThis setSpriteName:self.iconName];
+                [target addEffect:applyThis];
+            }
+            if (self.attackParticleEffectName) {
+                [self.owner.announcer displayParticleSystemWithName:self.attackParticleEffectName onTarget:target];
+            }
         }
     } else {
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:0 andEventType:CombatEventTypeDodge]];
@@ -283,7 +296,6 @@
 }
 
 - (void)dealloc {
-    [_appliedEffect release];
     [_damageAudioName release];
     [super dealloc];
 }
@@ -356,14 +368,6 @@
         }
         if (self.removesPositiveEffects) {
             [self dispelBeneficialEffectsOnTarget:target];
-        }
-        if (self.appliedEffect && (causedDamage || !self.requiresDamageToApplyEffect) ){
-            //Only apply the effect if we actually did damaww ge.
-            Effect *applyThis = [self.appliedEffect copy];
-            [applyThis setSpriteName:self.iconName];
-            [applyThis setOwner:self.owner];
-            [target addEffect:applyThis];
-            [applyThis release];
         }
     }
 }
@@ -500,11 +504,6 @@
     if (causedDamage && self.damageAudioName) {
         [self.owner.announcer playAudioForTitle:self.damageAudioName];
     }
-    if (self.appliedEffect && (causedDamage || !self.requiresDamageToApplyEffect)){
-        Effect *applyThis = [[self.appliedEffect copy] autorelease];
-        [applyThis setOwner:self.owner];
-        [target addEffect:applyThis];
-    }
     if (self.focusTarget.isDead){
         self.focusTarget = [self targetFromRaid:theRaid];
         if (!self.enrageApplied && ![self.focusTarget isKindOfClass:[Guardian class]]){
@@ -548,7 +547,6 @@
     [_spriteName release];
     [_explosionParticleName release];
     [_explosionSoundName release];
-    [_appliedEffect release];
     [super dealloc];
 }
 
@@ -717,6 +715,7 @@
         self.title = @"Warlord's Roar";
         [self setActivationTime:1.0];
         self.abilityValue = 90;
+        self.dodgeChanceAdjustment = -100.0f;
     }
     return self;
 }
@@ -739,8 +738,7 @@
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:player value:[NSNumber numberWithFloat:2.0]  andEventType:CombatEventTypePlayerInterrupted]];
     }
     for (RaidMember *member in theRaid.raidMembers){
-        [member setHealth:member.health - (self.abilityValue * self.owner.damageDoneMultiplier)];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(self.abilityValue * self.owner.damageDoneMultiplier)]  andEventType:CombatEventTypeDamage]];
+        [self damageTarget:member];
         [self dispelBeneficialEffectsOnTarget:member];
     }
     
@@ -772,8 +770,7 @@
         [debilitateEffect setSpriteName:@"bleeding.png"];
         [target addEffect:debilitateEffect];
         [debilitateEffect release];
-        [target setHealth:target.health * (self.abilityValue * self.owner.damageDoneMultiplier)];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:(self.abilityValue * self.owner.damageDoneMultiplier)] andEventType:CombatEventTypeDamage]]; 
+        [self damageTarget:target]; 
     }
 }
 @end
@@ -818,6 +815,7 @@
         self.iconName = @"deathwave.png";
         self.abilityValue = 10000;
         self.executionSound = @"explosion2.wav";
+        self.dodgeChanceAdjustment = -100.0f;
         [self setActivationTime:3.5];
 
     }
@@ -832,8 +830,7 @@
         NSInteger deathWaveDamage = (int)round((float)self.abilityValue / livingMemberCount);
         deathWaveDamage *= (arc4random() % 50 + 50) / 100.0;
         deathWaveDamage *= self.owner.damageDoneMultiplier;
-        [member setHealth:member.health - deathWaveDamage];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:deathWaveDamage] andEventType:CombatEventTypeDamage]];
+        [self damageTarget:member forDamage:deathWaveDamage];
     }
 }
 @end
@@ -1053,25 +1050,11 @@
 
 @implementation RaidDamage
 
-- (void)dealloc
-{
-    [_appliedEffect release];
-    [super dealloc];
-}
-
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
     NSArray *livingMembers = theRaid.livingMembers;
     
     for (RaidMember *member in livingMembers){
-        NSInteger damage = self.abilityValue * self.owner.damageDoneMultiplier;
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member  value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
-        [member setHealth:member.health - damage];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member  value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
-        if (self.appliedEffect){
-            Effect *applyThis = [[self.appliedEffect copy] autorelease];
-            [applyThis setOwner:self.owner];
-            [member addEffect:applyThis];
-        }
+        [self damageTarget:member];
     }
 }
 @end
@@ -1129,11 +1112,9 @@
     [finishHimEffect setSpriteName:self.iconName];
     [finishHimEffect setVisibilityPriority:2];
     
-    NSInteger damage = self.abilityValue * self.owner.damageDoneMultiplier;
-    [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target  value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
-    [target setHealth:target.health - damage];
+    [self damageTarget:target];
     [finishHimEffect setAilmentType:AilmentTrauma];
-    [finishHimEffect setValue: -1 * damage * .4];
+    [finishHimEffect setValue: -1 * self.abilityValue * self.owner.damageDoneMultiplier * .4];
     [finishHimEffect setOwner:self.owner];
     [finishHimEffect setTitle:@"impale-finisher"];
     [target addEffect:finishHimEffect];
@@ -1173,12 +1154,6 @@
     NSArray *targets = [self targetsFromRaid:theRaid];
     for (RaidMember *target in targets) {
         [self damageTarget:target];
-        if (self.appliedEffect) {
-            Effect *eff = [[self.appliedEffect copy] autorelease];
-            [eff setOwner:self.owner];
-            [eff setSpriteName:self.iconName];
-            [target addEffect:eff];
-        }
     }
 }
 @end
@@ -1471,10 +1446,7 @@
 @end
 
 @implementation RaidApplyEffect
-- (void)dealloc {
-    [_appliedEffect release];
-    [super dealloc];
-}
+
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
     for (RaidMember *member in theRaid.livingMembers){
         Effect *appliedEffect = [[self.appliedEffect copy] autorelease];

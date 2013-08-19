@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 3/20/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
 #import "PostBattleLayer.h"
@@ -67,7 +67,7 @@
         NSInteger score = self.encounter.score;
         NSInteger numDead = self.encounter.raid.deadCount;
         NSTimeInterval fightDuration = duration;
-        BOOL willAwardLoot = self.encounter.levelNumber > 1 && self.isVictory;
+        BOOL willAwardLoot = self.encounter.levelNumber > 1 && self.isVictory && ![PlayerDataManager localPlayer].isInventoryFull;
         
         self.showsFirstLevelFTUE = [PlayerDataManager localPlayer].ftueState == FTUEStateBattle1Finished && ![[PlayerDataManager localPlayer] hasSpell:[GreaterHeal defaultSpell]];
         
@@ -396,6 +396,13 @@
     [self addChild:networkError z:1000];
 }
 
+- (void)displayNeedKeysModal
+{
+    IconDescriptionModalLayer *needKeysModal = [[[IconDescriptionModalLayer alloc] initWithIconName:nil title:@"Key Required" andDescription:@"You are all out of keys.  Wait for more keys or buy a key to open this chest."] autorelease];
+    [needKeysModal setDelegate:self];
+    [self addChild:needKeysModal z:1000];
+}
+
 - (void)lootChestWithStaminaRequirement:(BOOL)staminaRequirement
 {
     self.openChest.visible = NO;
@@ -416,6 +423,8 @@
             
             if ([PlayerDataManager localPlayer].stamina == STAMINA_NOT_LOADED) {
                 [self displayNetworkErrorModal];
+            } else if ([PlayerDataManager localPlayer].stamina == 0) {
+                [self displayNeedKeysModal];
             }
         }
     };

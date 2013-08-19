@@ -933,10 +933,9 @@
 
 - (void)spellFinishedCastingForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta {
     [super spellFinishedCastingForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
-    NSInteger totalTargets = 4;
     
     NSArray *starTargets = [raid lowestHealthTargets:2 withRequiredTarget:self.owner.spellTarget];
-    NSArray *randomTargets = [raid randomTargets:totalTargets - 2 withPositioning:Any excludingTargets:starTargets];
+    NSArray *randomTargets = [raid randomTargets:2 withPositioning:Any excludingTargets:starTargets];
     
     NSArray *finalTargets = [starTargets arrayByAddingObjectsFromArray:randomTargets];
     

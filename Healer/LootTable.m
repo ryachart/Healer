@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 5/30/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
 #import "LootTable.h"

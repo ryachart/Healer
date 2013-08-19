@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 4/1/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
+//  Copyright (c) 2012 Ryan Hart Games. All rights reserved.
 //
 
 #import "CCShakeScreen.h"

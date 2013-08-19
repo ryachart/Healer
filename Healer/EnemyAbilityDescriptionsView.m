@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 8/8/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
+//  Copyright (c) 2012 Ryan Hart Games. All rights reserved.
 //
 
 #import "EnemyAbilityDescriptionsView.h"
@@ -45,8 +45,10 @@
                 [self addChild:newIcon];
                 [newIcon release];
             }
-            [[self.descriptorIcons objectAtIndex:i] setAnchorPoint:CGPointZero];
-            [[self.descriptorIcons objectAtIndex:i] setPosition:CGPointMake(50 * i, 0)];
+            EnemyAbilityDescriptorIcon *currentIcon = [self.descriptorIcons objectAtIndex:i];
+            [currentIcon setAnchorPoint:CGPointZero];
+            [currentIcon setPosition:CGPointMake(50 * i, 0)];
+            [currentIcon updateStacks];
 
         }
         

@@ -237,6 +237,10 @@
             IconDescriptionModalLayer *modalLayer = [[[IconDescriptionModalLayer alloc] initWithIconName:nil title:@"Unavailable" andDescription:@"This battle is unavailable on Brutal difficulty.  Please check back in a future update."] autorelease];
             [modalLayer setDelegate:self];
             [self addChild:modalLayer];
+        } else if ([PlayerDataManager localPlayer].isInventoryFull) {
+            IconDescriptionModalLayer *fullInventory = [[[IconDescriptionModalLayer alloc] initAsConfirmationDialogueWithDescription:@"Your inventory is full and you will be unable to receive loot."]autorelease];
+            [fullInventory setDelegate:self];
+            [self addChild:fullInventory z:1000];
         } else {
             [self beginEncounter];
         }

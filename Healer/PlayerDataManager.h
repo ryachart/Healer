@@ -133,6 +133,7 @@ extern NSString* const MainGameContentKey;
 @property (nonatomic, readonly) NSArray *equippedItems;
 @property (nonatomic, readonly) NSInteger totalItemsEarned;
 
+- (BOOL)isInventoryFull;
 - (EquipmentItem*)itemForSlot:(SlotType)slotType;
 - (void)playerEarnsItem:(EquipmentItem*)item;
 - (BOOL)playerCanEquipItem:(EquipmentItem*)item;

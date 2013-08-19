@@ -688,6 +688,11 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     return 15;
 }
 
+- (BOOL)isInventoryFull
+{
+    return self.inventory.count >= self.maximumInventorySize;
+}
+
 - (NSInteger)totalItemsEarned
 {
     return [[self.playerData objectForKey:PlayerTotalItemsEarnedKey] integerValue];
@@ -856,7 +861,6 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (void)checkStamina
 {
-    return;
 #if ANDROID
 #else
     NSString *remoteObjectId = [self remoteObjectId];
@@ -888,7 +892,6 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
                 NSInteger newStamina = [[result objectForKey:@"stamina"] intValue];
                 BOOL success = [[result objectForKey:@"success"] boolValue];
                 self.stamina = newStamina;
-                success = NO;
                 block(success);
                 if (success) {
                     [[PlayerDataManager localPlayer] checkStamina];

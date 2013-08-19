@@ -1615,7 +1615,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0460;
-				ORGANIZATIONNAME = Apple;
+				ORGANIZATIONNAME = "Ryan Hart Games";
 			};
 			buildConfigurationList = 38024DA513C2564D003D36F2 /* Build configuration list for PBXProject "Healer" */;
 			compatibilityVersion = "Xcode 3.2";

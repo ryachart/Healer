@@ -160,7 +160,7 @@
 
 - (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos excludingTargets:(NSArray*)exclTargets {
     NSMutableArray *candidates = [NSMutableArray arrayWithArray:[self membersSatisfyingComparator:^BOOL (RaidMember *member) {
-        if ([exclTargets containsObject:member] || member.positioning != pos) {
+        if ([exclTargets containsObject:member] || (member.positioning != pos && pos != Any)) {
             return NO;
         }
         return YES;

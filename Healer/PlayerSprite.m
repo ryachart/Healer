@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 6/17/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
 #import "PlayerSprite.h"
@@ -193,6 +193,7 @@
     [self.bootsSprite setOpacity:opacity];
     [self.chestSprite setOpacity:opacity];
     [self.helmSprite setOpacity:opacity];
+    [self.neckSprite setOpacity:opacity];
 }
 
 @end

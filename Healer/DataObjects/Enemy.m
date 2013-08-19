@@ -161,11 +161,22 @@
     
 }
 
-- (void)ownerWillExecuteAbility:(Ability *)ability {
+- (void)ownerWillExecuteAbility:(Ability *)ability
+{
     
 }
 
 - (void)ownerDidChannelTickForAbility:(Ability *)ability
+{
+    
+}
+
+- (void)ownerDidDamageTarget:(RaidMember*)target withAbility:(Ability*)ability forDamage:(NSInteger)damage
+{
+    
+}
+
+- (void)ownerDidDamageTarget:(RaidMember*)target withEffect:(Effect*)effect forDamage:(NSInteger)damage
 {
     
 }
@@ -2925,12 +2936,40 @@ typedef enum {
     return [boss autorelease];
 }
 
+- (void)ownerDidDamageTarget:(RaidMember *)target withAbility:(Ability *)ability forDamage:(NSInteger)damage
+{
+    if (self.difficulty == 5) {
+        if (target.health - damage > target.maximumHealth * .5 && target.health < target.maximumHealth * .5)
+        {
+            [self.announcer announce:@"Torment grows..."];
+            Effect *enrage = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositive] autorelease];
+            [enrage setDamageDoneMultiplierAdjustment:.02];
+            [enrage setMaxStacks:99];
+            [enrage setTitle:@"sot-enrage-stack"];
+            [self addEffect:enrage];
+            
+            if (!self.hasAddedGrowingTorment) {
+                self.hasAddedGrowingTorment = YES;
+                
+                AbilityDescriptor *growingTorment = [[[AbilityDescriptor alloc] init] autorelease];
+                [growingTorment setAbilityDescription:@"Whenever the Soul of Torment reduces an ally's health below 50%, The Soul deals 2% additional damage for the rest of the battle."];
+                [growingTorment setAbilityName:@"Absorb Torment"];
+                [growingTorment setIconName:@"temper.png"];
+                [growingTorment setMonitoredEffect:enrage];
+                [self addAbilityDescriptor:growingTorment];
+            }
+        }
+    }
+}
+
+- (void)ownerDidDamageTarget:(RaidMember*)target withEffect:(Effect*)effect forDamage:(NSInteger)damage
+{
+    [self ownerDidDamageTarget:target withAbility:nil forDamage:damage];
+}
+
 - (void)configureBossForDifficultyLevel:(NSInteger)difficulty
 {
     [super configureBossForDifficultyLevel:difficulty];
-    if (self.difficulty == 5) {
-        
-    }
 }
 
 - (float)challengeDamageDoneModifier

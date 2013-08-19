@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 1/3/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
 #import "CCLabelTTFShadow.h"

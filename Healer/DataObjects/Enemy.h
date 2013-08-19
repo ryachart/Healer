@@ -54,6 +54,7 @@
 - (void)configureBossForDifficultyLevel:(NSInteger)difficulty;
 
 - (void)stunForDuration:(NSTimeInterval)duration;
+- (void)ownerDidDamageTarget:(RaidMember*)target withEffect:(Effect*)effect forDamage:(NSInteger)damage;
 
 #pragma Ability Methods
 - (void)addAbility:(Ability*)ability;
@@ -62,6 +63,7 @@
 - (void)clearExtraDescriptors;
 - (Ability*)abilityWithKey:(NSString*)ability;
 
+- (void)ownerDidDamageTarget:(RaidMember*)target withAbility:(Ability*)ability forDamage:(NSInteger)damage;
 - (void)ownerWillExecuteAbility:(Ability*)ability;
 - (void)ownerDidExecuteAbility:(Ability*)ability;
 - (void)ownerDidBeginAbility:(Ability*)ability;
@@ -167,6 +169,7 @@
 @end
 
 @interface SoulOfTorment : Enemy
+@property (nonatomic, readwrite) BOOL hasAddedGrowingTorment;
 @end
 
 @interface TheEndlessVoid : Enemy

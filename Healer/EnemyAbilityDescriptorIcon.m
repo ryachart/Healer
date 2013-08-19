@@ -3,17 +3,19 @@
 //  Healer
 //
 //  Created by Ryan Hart on 8/8/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
+//  Copyright (c) 2012 Ryan Hart Games. All rights reserved.
 //
 
 #import "EnemyAbilityDescriptorIcon.h"
 #import "AbilityDescriptor.h"
+#import "CCLabelTTFShadow.h"
 
 @interface EnemyAbilityDescriptorIcon ()
 @property (nonatomic, assign) CCMenuItemSprite *iconSpriteMenuItem;
 @property (nonatomic, assign) CCMenu *menu;
 @property (nonatomic, assign) id target;
 @property (nonatomic, assign) SEL selector;
+@property (nonatomic, assign) CCLabelTTFShadow *stacksLabel;
 @end
 
 @implementation EnemyAbilityDescriptorIcon
@@ -49,6 +51,21 @@
     self.menu = [CCMenu menuWithItems:self.iconSpriteMenuItem, nil];
     self.menu.position = CGPointMake(0, 0);
     [self addChild:self.menu];
+    
+    if (!self.stacksLabel) {
+        self.stacksLabel = [CCLabelTTFShadow labelWithString:@"0" fontName:@"TrebuchetMS-Bold" fontSize:36.0];
+        [self.stacksLabel setPosition:CGPointMake(0, normalSprite.contentSize.height / -4)];
+        [self addChild:self.stacksLabel z:5];
+    }
+    [self updateStacks];
+
+}
+
+- (void)updateStacks
+{
+    NSInteger stacks = self.ability.stacks;
+    NSString *stacksString = stacks > 0 ? [NSString stringWithFormat:@"%d", stacks] : nil;
+    [self.stacksLabel setString:stacksString];
 }
 
 - (void)setAbility:(AbilityDescriptor *)newAbility {

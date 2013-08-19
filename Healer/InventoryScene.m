@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 5/25/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
 #import "InventoryScene.h"
@@ -252,7 +252,7 @@
         [slot inhabitantRemovedForDragging]; //Clear all the inhabitants
     }
     
-    for (int i = 0; i < MIN(10,inventory.count); i++) {
+    for (int i = 0; i < MIN([PlayerDataManager localPlayer].maximumInventorySize,inventory.count); i++) {
         EquipmentItem *currentItem = [inventory objectAtIndex:i];
         DraggableItemIcon *itemSprite = [[[DraggableItemIcon alloc] initWithEquipmentItem:currentItem] autorelease];
         [[self.inventorySlots objectAtIndex:i] dropInhabitant:itemSprite];

@@ -35,6 +35,8 @@
 @property (nonatomic, readonly) BOOL isChanneling;
 @property (nonatomic, readwrite) BOOL ignoresBusy; //This ability will trigger even when the owner is busy.
 @property (nonatomic, readwrite) float dodgeChanceAdjustment;
+@property (nonatomic, readwrite) BOOL requiresDamageToApplyEffect;
+@property (nonatomic, retain) Effect *appliedEffect;
 
 //Activation Times
 @property (nonatomic, readwrite) BOOL isActivating;
@@ -68,8 +70,6 @@
 @property (nonatomic, readwrite) NSInteger numberOfTargets; //Default 1
 @property (nonatomic, readwrite) BOOL ignoresGuardians;
 @property (nonatomic, readwrite) BOOL ignoresPlayers;
-@property (nonatomic, retain) Effect *appliedEffect;
-@property (nonatomic, readwrite) BOOL requiresDamageToApplyEffect;
 @property (nonatomic, readwrite) BOOL removesPositiveEffects;
 @property (nonatomic, readwrite) BOOL prefersTargetsWithoutVisibleEffects;
 @property (nonatomic, retain) NSString *damageAudioName;
@@ -94,7 +94,6 @@
 @interface ProjectileAttack : Ability
 @property (nonatomic, readwrite) BOOL ignoresGuardians;
 @property (nonatomic, readwrite) NSInteger attacksPerTrigger; //Defaults to 1
-@property (nonatomic, retain) Effect *appliedEffect;
 @property (nonatomic, retain) NSString* spriteName;
 @property (nonatomic, retain) NSString* explosionParticleName;
 @property (nonatomic, retain) NSString* explosionSoundName;
@@ -163,7 +162,6 @@ typedef enum {
 @end
 
 @interface RaidDamage : Ability
-@property (nonatomic, retain) Effect *appliedEffect;
 @end
 
 @interface Grip : Ability
@@ -178,7 +176,6 @@ typedef enum {
 @interface TargetTypeAttack : Ability
 @property (nonatomic, readwrite) Positioning targetPositioningType;
 @property (nonatomic, readwrite) NSInteger numTargets;
-@property (nonatomic, retain) Effect *appliedEffect;
 @end
 
 @interface AlternatingFlame : TargetTypeAttack
@@ -201,7 +198,6 @@ typedef enum {
 @end
 
 @interface RaidApplyEffect : Ability
-@property (nonatomic, retain) Effect *appliedEffect;
 @end
 
 @interface OozeRaid : RaidApplyEffect

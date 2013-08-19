@@ -90,15 +90,15 @@ typedef enum {
 - (void)targetWasSelectedByPlayer:(Player*)player;
 
 //Multiplayer
--(NSString*)asNetworkMessage;
--(id)initWithNetworkMessage:(NSString*)message;
+- (NSString*)asNetworkMessage;
+- (id)initWithNetworkMessage:(NSString*)message;
 @end
 
 @protocol HealthAdjustmentModifier
 
 @required
--(void)willChangeHealthFrom:(NSInteger*)currentHealth toNewHealth:(NSInteger*)newHealth;
--(void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth;
+- (void)willChangeHealthFrom:(NSInteger*)currentHealth toNewHealth:(NSInteger*)newHealth;
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth;
 
 @end
 
@@ -118,7 +118,7 @@ typedef enum {
 @property (readwrite) NSInteger numOfTicks;
 @property (readwrite) NSInteger valuePerTick;
 @property (nonatomic, readwrite) float infiniteDurationTickFrequency; //Defaults to 1.0
--(void)tick;
+- (void)tick;
 @end
 
 @interface SwirlingLightEffect : RepeatedHealthEffect <HealthAdjustmentModifier>

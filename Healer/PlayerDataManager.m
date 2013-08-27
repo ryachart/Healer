@@ -17,6 +17,7 @@
 @property (nonatomic, readwrite) NSInteger stamina;
 @property (nonatomic, readwrite, retain) NSDate *nextStamina;
 @property (nonatomic, readwrite) NSInteger maxStamina;
+@property (nonatomic, readwrite) NSTimeInterval secondsPerStamina;
 @end
 
 static dispatch_queue_t parse_queue = nil;
@@ -66,6 +67,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     if (!_localPlayer) {
         _localPlayer = [[PlayerDataManager alloc] initAsLocalPlayer];
         _localPlayer.stamina = STAMINA_NOT_LOADED;
+        _localPlayer.secondsPerStamina = STAMINA_NOT_LOADED;
     }
     return _localPlayer;
 }
@@ -870,6 +872,8 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
             NSInteger stamina = [[result objectForKey:@"stamina"] intValue];
             NSInteger maxStamina = [[result objectForKey:@"maxStamina"] intValue];
             NSInteger secondsUntil = [[result objectForKey:@"secondsUntilNextStamina"] intValue];
+            NSTimeInterval secondsPerStamina = [[result objectForKey:@"secondsPerStamina"] intValue];
+            self.secondsPerStamina = secondsPerStamina;
             self.maxStamina = maxStamina;
             self.nextStamina = [NSDate dateWithTimeIntervalSinceNow:secondsUntil];
             self.stamina = stamina; //Must be last for notification purposes
@@ -890,8 +894,12 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
             } else {
                 NSDictionary *result = (NSDictionary*)object;
                 NSInteger newStamina = [[result objectForKey:@"stamina"] intValue];
+                NSTimeInterval secondsPerStamina = [[result objectForKey:@"secondsPerStamina"] intValue];
+                NSInteger secondsUntil = [[result objectForKey:@"secondsUntilNextStamina"] intValue];
+                self.secondsPerStamina = secondsPerStamina;
                 BOOL success = [[result objectForKey:@"success"] boolValue];
                 self.stamina = newStamina;
+                self.nextStamina = [NSDate dateWithTimeIntervalSinceNow:secondsUntil];
                 block(success);
                 if (success) {
                     [[PlayerDataManager localPlayer] checkStamina];

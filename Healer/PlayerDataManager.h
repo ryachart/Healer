@@ -162,6 +162,7 @@ extern NSString* const MainGameContentKey;
 @property (nonatomic, readonly) NSInteger maxStamina;
 @property (nonatomic, readonly, retain) NSDate *nextStamina;
 @property (nonatomic, readonly) NSTimeInterval secondsUntilNextStamina;
+@property (nonatomic, readonly) NSTimeInterval secondsPerStamina;
 - (void)staminaUsedWithCompletion:(SpendStaminaResultBlock)block;
 - (void)checkStamina;
 @end

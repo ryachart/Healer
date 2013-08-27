@@ -112,9 +112,34 @@
 	[[CCDirector sharedDirector] stopAnimation];
     [[PlayerDataManager localPlayer] saveLocalPlayer];
     [[PlayerDataManager localPlayer] saveRemotePlayer];
+    
+    [self scheduleLocalNotifs];
 }
 
--(void) applicationWillEnterForeground:(UIApplication*)application {
+- (void)scheduleLocalNotifs
+{
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    
+    if ([PlayerDataManager localPlayer].secondsPerStamina != STAMINA_NOT_LOADED && [PlayerDataManager localPlayer].stamina != STAMINA_NOT_LOADED && [PlayerDataManager localPlayer].stamina != [PlayerDataManager localPlayer].maxStamina) {
+        UILocalNotification *fullKeysNotif = [[[UILocalNotification alloc] init] autorelease];
+        
+        NSDate *fireDate = [PlayerDataManager localPlayer].nextStamina;
+        NSInteger staminaFromMax = [PlayerDataManager localPlayer].maxStamina - [PlayerDataManager localPlayer].stamina - 1;
+        if (staminaFromMax > 0) {
+            fireDate = [fireDate dateByAddingTimeInterval:staminaFromMax * [PlayerDataManager localPlayer].secondsPerStamina];
+            
+        }
+        
+        [fullKeysNotif setFireDate:fireDate];
+        [fullKeysNotif setAlertBody:@"Healer! Your keys have been forged. Defeat a boss to unlock powerful treasures!"];
+        [fullKeysNotif setAlertAction:@"Keys full!"];
+        
+        
+        [[UIApplication sharedApplication] scheduleLocalNotification:fullKeysNotif];
+    }
+}
+
+- (void) applicationWillEnterForeground:(UIApplication*)application {
 	[[CCDirector sharedDirector] startAnimation];
 }
 
@@ -129,6 +154,7 @@
     
     [[PlayerDataManager localPlayer] saveLocalPlayer];
     [[PlayerDataManager localPlayer] saveRemotePlayer];
+    [self scheduleLocalNotifs];
 }
 
 - (void)applicationSignificantTimeChange:(UIApplication *)application {
@@ -143,7 +169,6 @@
     [_window release];
 	[super dealloc];
 }
-
 
 - (void)showDebugViewController {
     

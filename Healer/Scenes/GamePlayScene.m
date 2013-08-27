@@ -36,7 +36,7 @@
 #define DEBUG_IMMUNITIES false
 #define DEBUG_PERFECT_HEALS false
 #define DEBUG_HIGH_HPS false
-#define DEBUG_WIN_IMMEDIATELY false
+#define DEBUG_WIN_IMMEDIATELY true
 
 #define DEBUG_HPS 250
 #define DEBUG_DAMAGE 0.0

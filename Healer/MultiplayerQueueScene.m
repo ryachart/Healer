@@ -23,17 +23,12 @@
 @end
 
 @implementation MultiplayerQueueScene
-@synthesize presentingViewController;
-@synthesize matchStarted;
-@synthesize authenticationAttempted;
-@synthesize match;
-@synthesize serverPlayerId;
-@synthesize currentActivityLabel;
+
 
 - (void)dealloc {
-    [presentingViewController release];
-    [serverPlayerId release];
-    [match release];
+    [_presentingViewController release];
+    [_serverPlayerId release];
+    [_match release];
     [super dealloc];
 }
 
@@ -85,7 +80,7 @@
 - (void)queueRandom {
     GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
     if (![localPlayer isAuthenticated]){
-        if (authenticationAttempted){
+        if (self.authenticationAttempted){
             return;
         }
         [localPlayer authenticateWithCompletionHandler:^(NSError *error){
@@ -119,33 +114,37 @@
 
 
 - (void)matchmakerViewControllerWasCancelled:(GKMatchmakerViewController *)viewController {
+    NSLog(@"MMVC Was Cancelled");
     [self.presentingViewController dismissViewControllerAnimated:NO completion:nil];
     [[CCDirector sharedDirector] resume];
 }
 
 // Matchmaking has failed with an error
 - (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFailWithError:(NSError *)error {
-    [self.presentingViewController dismissViewControllerAnimated:NO completion:nil];    [[CCDirector sharedDirector] resume];
+    [self.presentingViewController dismissViewControllerAnimated:NO completion:nil];
+    [[CCDirector sharedDirector] resume];
     NSLog(@"Error finding match: %@", error.localizedDescription);    
 }
 
 // A peer-to-peer match has been found, the game should start
 - (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFindMatch:(GKMatch *)theMatch {
+    self.match = theMatch;
+    self.match.delegate = self;
     [self.presentingViewController dismissViewControllerAnimated:NO completion:nil];
     [[CCDirector sharedDirector] resume];
     
-    //    theMatch.delegate = self;
     if (!self.matchStarted && theMatch.expectedPlayerCount == 0) {
         NSLog(@"Ready to start match!");
     }
-    
-    self.match = theMatch;
-    self.match.delegate = self;
+
+    if (self.match.playerIDs.count > 0) {
+        NSLog(@"GOT PLAYERS: %d. EXPECTED: %d", self.match.playerIDs.count, self.match.expectedPlayerCount);
+    }
 }
 
 // The player state changed (eg. connected or disconnected)
 - (void)match:(GKMatch *)theMatch player:(NSString *)playerID didChangeState:(GKPlayerConnectionState)state {   
-    if (match != theMatch) return;
+    if (self.match != theMatch) return;
     
     switch (state) {
         case GKPlayerStateConnected: 
@@ -159,11 +158,11 @@
                 }else{
                     self.serverPlayerId = [[theMatch playerIDs] objectAtIndex:0];
                 }
-                [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ACKSERVER: %@", self.serverPlayerId] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+                [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"ACKSERVER: %@", self.serverPlayerId] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
                 
                 if ([self.serverPlayerId isEqualToString:localPlayerID]) {
                     NSInteger encounterNumber = [Encounter randomMultiplayerEncounter].levelNumber;
-                    [match sendDataToAllPlayers:[[NSString stringWithFormat:@"LEVELNUM|%i", encounterNumber] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
+                    [self.match sendDataToAllPlayers:[[NSString stringWithFormat:@"LEVELNUM|%i", encounterNumber] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
                     
                     MultiplayerSetupScene *mpss = [[MultiplayerSetupScene alloc] initWithPreconfiguredMatch:self.match andServerID:self.serverPlayerId andLevelNumber:encounterNumber];
                     self.match.delegate = mpss;
@@ -183,7 +182,7 @@
 
 // The match received data sent from the player.
 - (void)match:(GKMatch *)theMatch didReceiveData:(NSData *)data fromPlayer:(NSString *)playerID {    
-    if (match != theMatch) return;
+    if (self.match != theMatch) return;
     
     NSString* message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"message: %@", message);

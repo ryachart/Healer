@@ -992,6 +992,7 @@
         [unstableToxin setKey:@"unstable"];
         [unstableToxin setTimeApplied:10.0];
         unstableToxin.failureChance = 0.0;
+        unstable.dodgeChanceAdjustment = -100.0f;
         [unstableToxin setActivationTime:1.5];
         [unstableToxin setRequiresDamageToApplyEffect:NO];
         [unstableToxin setTitle:@"Unstable Toxin"];

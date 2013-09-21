@@ -243,7 +243,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 }
 
 - (BOOL)isMultiplayerUnlocked {
-    return NO;
+    return YES;
     return [self highestLevelCompleted] >= 6;
 }
 

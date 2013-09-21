@@ -92,7 +92,12 @@
 {
 }
 
-- (NSInteger)adjustHealthWithAdjustment:(NSInteger)adjustment forTarget:(HealableTarget *)target
+- (NSInteger)adjustHealthWithAdjustment:(NSInteger)adjustment forTarget:(HealableTarget *)trgt
+{
+    return [self adjustHealthWithAdjustment:adjustment forTarget:trgt ignoresStacks:NO];
+}
+
+- (NSInteger)adjustHealthWithAdjustment:(NSInteger)adjustment forTarget:(HealableTarget *)trgt ignoresStacks:(BOOL)ignoresStacks
 {
     BOOL critical = NO;
     Player *owningPlayer = nil;
@@ -110,16 +115,19 @@
     
     CombatEventType eventType = amount > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
     float modifier = amount > 0 ? self.owner.healingDoneMultiplier : self.owner.damageDoneMultiplier;
-    NSInteger preHealth = self.target.health - self.target.healingAbsorb;
-    [self.target setHealth:[self.target health] + amount * modifier * self.stacks];
-    NSInteger finalAmount = (self.target.health - self.target.healingAbsorb) - preHealth;
+    NSInteger preHealth = trgt.health - trgt.healingAbsorb;
+    if (!ignoresStacks) {
+        modifier *= self.stacks;
+    }
+    [trgt setHealth:[trgt health] + amount * modifier];
+    NSInteger finalAmount = (trgt.health - trgt.healingAbsorb) - preHealth;
     if (owningPlayer && finalAmount > 0){
         NSInteger overheal = amount - finalAmount;
-        [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)self.target fromEffect:self withOverhealing:overheal asCritical:critical];
+        [(Player*)self.owner playerDidHealFor:finalAmount onTarget:(RaidMember*)trgt fromEffect:self withOverhealing:overheal asCritical:critical];
     } else if (amount < 0) {
         //This is boss damage
-        [(Enemy*)self.owner ownerDidDamageTarget:(RaidMember*)self.target withEffect:self forDamage:finalAmount];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:[NSNumber numberWithInt:finalAmount] andEventType:eventType]];
+        [(Enemy*)self.owner ownerDidDamageTarget:(RaidMember*)trgt withEffect:self forDamage:finalAmount];
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:trgt value:[NSNumber numberWithInt:finalAmount] andEventType:eventType]];
     }
     return finalAmount;
 }
@@ -605,7 +613,7 @@
 
 -(void)effectWillBeDispelled:(Raid *)raid player:(Player *)player enemies:(NSArray *)enemies{
     for (RaidMember*member in raid.raidMembers){
-        [self adjustHealthWithAdjustment:(self.dispelDamageValue * self.owner.damageDoneMultiplier) forTarget:member];
+        [self adjustHealthWithAdjustment:self.dispelDamageValue forTarget:member ignoresStacks:YES];
     }
     [self.owner.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0];
     [self.owner.announcer playAudioForTitle:@"explosion2.wav"];
@@ -1401,7 +1409,7 @@
 
 - (void)targetDidCastSpell:(Spell *)spell onTarget:(HealableTarget *)target
 {
-    [self adjustHealthWithAdjustment:self.damage * self.owner.damageDoneMultiplier forTarget:self.target];
+    [self adjustHealthWithAdjustment:self.damage forTarget:self.target];
 }
 
 @end

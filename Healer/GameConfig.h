@@ -1,6 +1,6 @@
 //
 //  GameConfig.h
-//  RaidLeader
+//  Healer
 //
 //  Created by Ryan Hart on 7/4/11.
 //

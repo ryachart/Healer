@@ -1,9 +1,9 @@
 //
 //  Raid.h
-//  RaidLeader
+//  Healer
 //
 //  Created by Ryan Hart on 4/22/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -23,19 +23,22 @@ typedef BOOL (^RaidMemberComparator)(RaidMember*);
 - (void)addRaidMember:(RaidMember*)member;
 - (NSArray*)livingMembers;
 - (NSInteger)deadCount;
-- (NSArray *)livingMembersWithPositioning:(Positioning)pos;
 
+- (NSArray*)membersSatisfyingComparator:(RaidMemberComparator)comparator;
+
+//Conveniece Methods for querying members
+- (RaidMember*)randomMemberSatisfyingComparator:(RaidMemberComparator)comparator;
+- (NSArray *)livingMembersWithPositioning:(Positioning)pos;
 - (RaidMember*)lowestHealthMember;
 - (RaidMember*)randomLivingMember;
 - (RaidMember*)randomNonGuardianLivingMember;
 - (RaidMember*)randomNonPlayerLivingMember;
 - (RaidMember*)randomNonPlayerNonGuardianLivingMember;
-- (RaidMember*)randomMemberWithComparator:(RaidMemberComparator)comparator;
 - (RaidMember*)randomLivingMemberWithPositioning:(Positioning)pos;
 - (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos;
 - (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos excludingTargets:(NSArray*)targets;
 - (NSArray*)lowestHealthTargets:(NSInteger)numTargets withRequiredTarget:(RaidMember*)reqTarget;
 
 //Multiplayer
-- (RaidMember*)memberForBattleID:(NSString*)battleID;
+- (RaidMember*)memberForNetworkId:(NSString*)battleID;
 @end

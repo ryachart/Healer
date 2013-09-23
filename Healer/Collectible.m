@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 4/22/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
 #import "Collectible.h"
@@ -30,6 +30,7 @@
         self.duration = duration;
         self.delegates = [NSMutableArray arrayWithCapacity:5];
         self.timeApplied = 0;
+        self.scale = 1.0;
     }
     return self;
 }

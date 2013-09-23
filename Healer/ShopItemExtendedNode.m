@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 5/22/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
+//  Copyright (c) 2012 Ryan Hart Games. All rights reserved.
 //
 
 #import "ShopItemExtendedNode.h"

@@ -81,7 +81,7 @@
             if (![self.usedSpells containsObject:spell]){
                 inhabitant = [[[DraggableSpellIcon alloc] initWithSpell:spell] autorelease];
             }
-            Slot *spellSlot = [[[Slot alloc] initWithInhabitantOrNil:inhabitant] autorelease];
+            Slot *spellSlot = [[[Slot alloc] initWithSpriteFrameName:@"spell_icon_back.png" andInhabitantOrNil:inhabitant] autorelease];
             spellSlot.scale = iconScale;
             CCSpriteFrame *spellIcon = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:spell.spriteFrameName];
             if (!spellIcon){
@@ -105,7 +105,10 @@
                 Spell *spell = [self.usedSpells objectAtIndex:i];
                 inhabitant = [[[DraggableSpellIcon alloc] initWithSpell:spell] autorelease];
             }
-            Slot *spellSlot = [[[Slot alloc] initWithInhabitantOrNil:inhabitant] autorelease];
+            Slot *spellSlot = [[[Slot alloc] initWithSpriteFrameName:@"spell_icon_back.png"andInhabitantOrNil:inhabitant] autorelease];
+            if (i >= [[PlayerDataManager localPlayer] maximumStandardSpellSlots]) {
+                [spellSlot setIsLocked:YES];
+            }
             spellSlot.scale = iconScale;
             [spellSlot setDelegate:self];
             [spellSlot setPosition:CGPointMake(695, 553.5 - (95 * i))];

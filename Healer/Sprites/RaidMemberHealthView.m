@@ -7,7 +7,7 @@
 //
 
 #import "RaidMemberHealthView.h"
-
+#import "ParticleSystemCache.h"
 
 #define HEALTH_BAR_BORDER 6
 #define FRAME_SCALE .6
@@ -27,6 +27,7 @@
 @property (nonatomic, assign) CCSprite *classIcon;
 
 @property (nonatomic, assign) CCProgressTimer *absorptionBar;
+@property (nonatomic, assign) CCProgressTimer *negativeAbsorptionBar;
 
 @property (nonatomic, readwrite) NSInteger lastHealth;
 
@@ -42,12 +43,15 @@
 @property (nonatomic, assign) CCProgressTimer *negativeEffectProgress;
 
 @property (nonatomic, readwrite) NSTimeInterval alertTextCooldown;
+
+@property (nonatomic, retain) NSMutableDictionary *particleEffects;
 @end
 
 @implementation RaidMemberHealthView
 
 - (void)dealloc {
     [_healthLabel release];
+    [_particleEffects release];
     [super dealloc];
 }
 
@@ -58,6 +62,8 @@
         self.contentSize = frame.size;
         
         self.lastHealth = 0;
+        
+        self.particleEffects = [NSMutableDictionary dictionaryWithCapacity:5];
         
         float frameScale = FRAME_SCALE;
         
@@ -87,13 +93,24 @@
         self.absorptionBar = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"raidframe_fill.png"]];
         [self.absorptionBar setAnchorPoint:CGPointZero];
         [self.absorptionBar setColor:ccc3(0, 70, 140)];
-        [self.absorptionBar setOpacity:155];
+        [self.absorptionBar setOpacity:255];
         self.absorptionBar.position = CGPointMake(1.33, 1);
         [self.absorptionBar setScale:frameScale];
         self.absorptionBar.midpoint = CGPointMake(.5, 0);
         self.absorptionBar.barChangeRate = CGPointMake(0, 1.0);
         self.absorptionBar.type = kCCProgressTimerTypeBar;
         [self addChild:self.absorptionBar z:2];
+        
+        self.negativeAbsorptionBar = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"raidframe_fill_abs_heal.png"]];
+        [self.negativeAbsorptionBar setAnchorPoint:CGPointZero];
+        [self.negativeAbsorptionBar setColor:ccc3(180, 0, 0)];
+        [self.negativeAbsorptionBar setOpacity:255];
+        self.negativeAbsorptionBar.position = CGPointMake(1.33, 1);
+        [self.negativeAbsorptionBar setScale:frameScale];
+        self.negativeAbsorptionBar.midpoint = CGPointMake(.5, 0);
+        self.negativeAbsorptionBar.barChangeRate = CGPointMake(0, 1.0);
+        self.negativeAbsorptionBar.type = kCCProgressTimerTypeBar;
+        [self addChild:self.negativeAbsorptionBar z:3];
         
         self.isFocusedLabel = [CCLabelTTFShadow labelWithString:@"" fontName:@"Marion-Bold" fontSize:18.0f];
         [self.isFocusedLabel setPosition:CGPointMake(frameScale *self.raidFrameTexture.contentSize.width / 2, frameScale *self.raidFrameTexture.contentSize.height - 14.0)];
@@ -237,7 +254,7 @@
 }
 
 #define BLINK_ACTION_TAG 32432
--(void)updateHealthForInterval:(ccTime)timeDelta
+- (void)updateHealthForInterval:(ccTime)timeDelta
 {
     NSInteger healthDelta = abs(self.member.health - self.lastHealth);
     float lastHealthPercentage = self.lastHealth / (float)self.member.maximumHealth;
@@ -333,8 +350,11 @@
         ccColor3B colorForPerc = [self colorForPercentage:(((float)self.member.health) / self.member.maximumHealth)];
         [self.healthBar setColor:colorForPerc];
         
-        float absorbPercentage = self.member.absorb / (float)self.member.maximumHealth;
+        float absorbPercentage = MIN(1.0,self.member.absorb / (float)self.member.maximumHealth);
         [self.absorptionBar setPercentage:absorbPercentage * 100];
+        
+        float negativeAbsorbPerentage = MIN(1.0, self.member.healingAbsorb / (float)self.member.maximumHealth);
+        [self.negativeAbsorptionBar setPercentage:negativeAbsorbPerentage * 100.0];
 	}
 	else {
 		healthText = @"Dead";
@@ -342,10 +362,13 @@
         self.healthLabel.shadowColor = ccBLACK;
         [self.healthBar runAction:[CCProgressFromTo actionWithDuration:.33 from:lastHealthPercentage * 100 to:0]];
         [self.absorptionBar setPercentage:0];
+        [self.negativeAbsorptionBar setPercentage:0];
 	}
 	
     Effect *negativeEffect = nil;
     Effect *positiveEffect = nil;
+    
+    NSMutableArray *liveParticleEffects = [NSMutableArray arrayWithCapacity:self.member.activeEffects.count];
     
 	for (Effect *eff in self.member.activeEffects){
         if ([eff effectType] == EffectTypePositive){
@@ -358,7 +381,41 @@
                 negativeEffect = eff;
             }
         }
+        if (eff.particleEffectName) {
+            [liveParticleEffects addObject:eff.particleEffectName];
+        }
 	}
+    
+    NSMutableArray *particlesToRemove = [NSMutableArray arrayWithCapacity:self.particleEffects.allKeys.count];
+    //Remove any particleEffects we are running that are no longer existing
+    for (NSString *effectName in self.particleEffects.allKeys) {
+        if (![liveParticleEffects containsObject:effectName]) {
+            [particlesToRemove addObject:effectName];
+        }
+    }
+    
+    if (self.member.isDead) {
+        for (CCParticleSystemQuad *system in self.particleEffects.allValues) {
+            [system removeFromParentAndCleanup:YES];
+        }
+        [self.particleEffects removeAllObjects];
+    } else {
+        for (NSString *removeMe in particlesToRemove) {
+            CCParticleSystemQuad *pSystem = [self.particleEffects objectForKey:removeMe];
+            [pSystem removeFromParentAndCleanup:YES];
+        }
+        [self.particleEffects removeObjectsForKeys:particlesToRemove];
+    
+        for (NSString *effectName in liveParticleEffects) {
+            if (![self.particleEffects objectForKey:effectName]) {
+                CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:effectName];
+                [collisionEffect setAutoRemoveOnFinish:YES];
+                [collisionEffect setPosition:CGPointMake(self.contentSize.width / 2, 0)];
+                [self.particleEffects setObject:collisionEffect forKey:effectName];
+                [self addChild:collisionEffect z:50];
+            }
+        }
+    }
     
     if (positiveEffect && positiveEffect.spriteName && !self.member.isDead){
         [self.priorityPositiveEffectSprite setDisplayFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:positiveEffect.spriteName]];
@@ -401,7 +458,7 @@
 	}
 }
 
--(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     if (self.confusionTriggered) return; //You can't select me while you're confused
     

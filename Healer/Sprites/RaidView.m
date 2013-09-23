@@ -10,7 +10,6 @@
 
 
 @interface RaidView ()
-@property (nonatomic, assign) CCSprite *backgroundSprite;
 @property (nonatomic, readwrite) NSTimeInterval confusionCooldown;
 @property (nonatomic, readwrite) NSInteger nextRectToUse;
 @end
@@ -24,10 +23,9 @@
 }
 
 - (id)init {
-    if (self = [super init]){
-        self.backgroundSprite = [CCNode node];
-        
+    if (self = [super init]){        
         self.raidViews = [NSMutableArray arrayWithCapacity:20];
+        self.numColumns = 5;
     }
     return self;
 }
@@ -45,7 +43,7 @@
     }
 }
 
--(BOOL)addRaidMemberHealthView:(RaidMemberHealthView*)healthView
+- (BOOL)addRaidMemberHealthView:(RaidMemberHealthView*)healthView
 {
 	if (self.nextRectToUse - 1 < MAXIMUM_RAID_MEMBERS_ALLOWED){
 		[self addChild:healthView];
@@ -56,7 +54,7 @@
 }
 
 
--(CGPoint)randomMissedProjectileDestination {
+- (CGPoint)randomMissedProjectileDestination {
     CGPoint returnPoint = CGPointZero;
     NSInteger otherPos = arc4random() % 600 + 200;
     
@@ -66,7 +64,7 @@
     return returnPoint;
 }
 
--(CGPoint)frameCenterForMember:(RaidMember*)raidMember{
+- (CGPoint)frameCenterForMember:(RaidMember*)raidMember{
     for (RaidMemberHealthView *rmhv in self.raidViews){
         if (rmhv.member == raidMember){
             CGPoint framePosition = rmhv.position;
@@ -76,7 +74,7 @@
     return CGPointZero;
 }
 
--(void)updateRaidHealthWithPlayer:(Player*)player andTimeDelta:(ccTime)delta
+- (void)updateRaidHealthWithPlayer:(Player*)player andTimeDelta:(ccTime)delta
 {
     if (player.isConfused){
         self.confusionCooldown += delta;
@@ -98,13 +96,13 @@
 	}
 }
 
--(NSMutableArray*)rectsToUse{
+- (NSMutableArray*)rectsToUse{
 	if (!_rectsToUse ){
 		_rectsToUse = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];
-		int numCols = 5;
+		int numCols = self.numColumns;
 		int numRows = 4;
 	
-		float cellWidth = (self.contentSize.width) / numCols;
+		float cellWidth = (self.contentSize.width) / 5;
 		float cellHeight = (self.contentSize.height) / numRows ;
 		float borderWidthSize = 0;
 		float borderHeightSize = 0;
@@ -128,14 +126,14 @@
 	return _rectsToUse;
 }
 
--(CGRect)nextUsableRect
+- (CGRect)nextUsableRect
 {
 	CGRect rect = [[self.rectsToUse objectAtIndex:self.nextRectToUse] frame];
 	self.nextRectToUse++;
 	return rect;
 }
 
--(RaidMemberHealthView*)healthViewForMember:(RaidMember*)raidMember
+- (RaidMemberHealthView*)healthViewForMember:(RaidMember*)raidMember
 {
     for (RaidMemberHealthView *rmhv in self.raidViews){
         if (rmhv.member == raidMember){

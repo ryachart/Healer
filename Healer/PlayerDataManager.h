@@ -1,21 +1,32 @@
 //
-//  PersistantDataManager.h
-//  RaidLeader
+//  PlayerDataManager.h
+//  Healer
 //
 //  Created by Ryan Hart on 4/29/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+
+#if ANDROID
+#else
 #import <Parse/Parse.h>
+#endif
 #import "Shop.h"
 #import "Player.h"
+#import "EquipmentItem.h"
 
 #define MAX_CHARACTERS 5
 
 #define END_FREE_ENCOUNTER_LEVEL 7
 
-#define END_FREE_STRING @"Purchase The Legacy of Torment Expansion to unlock new bosses, the Cleric's Archives, and the Sage Vault!"
+#define STAMINA_NOT_LOADED -9999
+
+#define MAXIMUM_ALLY_UPGRADES 99999
+
+typedef void (^SpendStaminaResultBlock)(BOOL success);
+
+#define END_FREE_STRING @"Purchase The Legacy of Torment Expansion to unlock new bosses, an additional spell slot, the Cleric's Archives, and the Sage Vault!"
 
 typedef enum {
     FTUEStateFresh = 1,
@@ -31,13 +42,19 @@ extern NSString* const PlayerHighestLevelCompleted;
 extern NSString* const PlayerRemoteObjectIdKey;
 extern NSString* const PlayerGold;
 extern NSString* const PlayerGoldDidChangeNotification;
+extern NSString* const PlayerStaminaDidChangeNotification;
 
 extern NSString* const MainGameContentKey;
 
 @class ShopItem, Spell;
 
+#if ANDROID
+@class PFObject;
+#endif
+
 @interface PlayerDataManager : NSObject
 @property (nonatomic, readonly) NSInteger gold;
+@property (nonatomic, readonly) NSInteger maximumStandardSpellSlots;
 @property (nonatomic, readonly) NSArray* allOwnedSpells;
 @property (nonatomic, readwrite) FTUEState ftueState;
 
@@ -110,6 +127,29 @@ extern NSString* const MainGameContentKey;
 
 - (void)setPlayerObjectInformation:(PFObject*)obj;
 
+#pragma mark - Items
+@property (nonatomic, readonly) NSArray *inventory;
+@property (nonatomic, readonly) NSInteger maximumInventorySize;
+@property (nonatomic, readonly) NSArray *equippedItems;
+@property (nonatomic, readonly) NSInteger totalItemsEarned;
+
+- (BOOL)isInventoryFull;
+- (EquipmentItem*)itemForSlot:(SlotType)slotType;
+- (void)playerEarnsItem:(EquipmentItem*)item;
+- (BOOL)playerCanEquipItem:(EquipmentItem*)item;
+- (void)playerEquipsItem:(EquipmentItem*)item;
+- (void)playerUnequipsItemInSlot:(SlotType)slot;
+- (void)playerSellsItem:(EquipmentItem*)item;
+
+#pragma mark - Ally Upgrades
+@property (nonatomic, readonly) NSInteger nextAllyDamageUpgradeCost;
+@property (nonatomic, readonly) NSInteger nextAllyHealthUpgradeCost;
+@property (nonatomic, readonly) NSInteger allyDamageUpgrades;
+@property (nonatomic, readonly) NSInteger allyHealthUpgrades;
+
+- (void)purchaseAllyDamageUpgrade;
+- (void)purchaseAllyHealthUpgrade;
+
 #pragma mark - Settings
 @property (nonatomic, readwrite) BOOL musicDisabled;
 @property (nonatomic, readwrite) BOOL effectsDisabled;
@@ -117,4 +157,12 @@ extern NSString* const MainGameContentKey;
 - (void)resetPlayer;
 - (void)unlockAll;
 
+#pragma mark - Stamina
+@property (nonatomic, readonly) NSInteger stamina;
+@property (nonatomic, readonly) NSInteger maxStamina;
+@property (nonatomic, readonly, retain) NSDate *nextStamina;
+@property (nonatomic, readonly) NSTimeInterval secondsUntilNextStamina;
+@property (nonatomic, readonly) NSTimeInterval secondsPerStamina;
+- (void)staminaUsedWithCompletion:(SpendStaminaResultBlock)block;
+- (void)checkStamina;
 @end

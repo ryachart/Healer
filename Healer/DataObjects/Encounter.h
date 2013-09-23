@@ -1,16 +1,15 @@
 //
 //  Encounter.h
-//  RaidLeader
+//  Healer
 //
 //  Created by Ryan Hart on 5/1/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
-
-#import <Foundation/Foundation.h>
 
 @class Raid;
 @class Enemy;
 @class Player;
+@class EquipmentItem;
 
 #define ENDLESS_VOID_ENCOUNTER_NUMBER 992342
 @interface Encounter : NSObject
@@ -28,6 +27,7 @@
 
 //PostBattle
 @property (nonatomic, readonly) NSInteger reward;
+@property (nonatomic, readonly) EquipmentItem *randomLootReward;
 @property (nonatomic, readonly) NSInteger score;
 @property (nonatomic, readonly) NSInteger healingDone;
 @property (nonatomic, readonly) NSInteger overhealingDone;
@@ -44,8 +44,11 @@
 + (Encounter*)randomMultiplayerEncounter;
 + (Encounter*)survivalEncounterIsMultiplayer:(BOOL)multiplayer;
 + (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer;
++ (Encounter*)pocketEncounterForLevel:(NSInteger)level;
 + (NSInteger)goldForLevelNumber:(NSInteger)levelNumber;
 + (NSInteger)goldRewardForSurvivalEncounterWithDuration:(NSTimeInterval)duration;
++ (NSArray *)epicItemsForLevelNumber:(NSInteger)levelNumber;
++ (NSArray *)legendaryItemsForLevelNumber:(NSInteger)levelNumber;
 
 + (NSString *)backgroundPathForEncounter:(NSInteger)encounter;
 @end

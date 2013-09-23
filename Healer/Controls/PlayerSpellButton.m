@@ -83,6 +83,9 @@
     [self.spellTitle setColor:ccc3(25, 25, 25)];
     [self addChild:self.spellTitle z:9];
     
+    if (self.spellData.isItem) {
+        [self.spellTitle setVisible:NO];
+    }
 }
 
 -(void)setSpellData:(Spell*)theSpell{

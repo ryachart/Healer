@@ -12,4 +12,6 @@
 @interface SpellInfoNode : CCSprite
 - (id)initWithSpell:(Spell*)spell;
 - (id)initAsEmpty;
+- (id)initAsEmpty:(BOOL)locked;
+- (void)setupUnlockButton;
 @end

@@ -1,9 +1,9 @@
 //
-//  PersistantDataManager.m
-//  RaidLeader
+//  PlayerDataManager.m
+//  Healer
 //
 //  Created by Ryan Hart on 4/29/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
 
 #import "PlayerDataManager.h"
@@ -14,6 +14,10 @@
 
 @interface PlayerDataManager ()
 @property (nonatomic, retain) NSMutableDictionary *playerData;
+@property (nonatomic, readwrite) NSInteger stamina;
+@property (nonatomic, readwrite, retain) NSDate *nextStamina;
+@property (nonatomic, readwrite) NSInteger maxStamina;
+@property (nonatomic, readwrite) NSTimeInterval secondsPerStamina;
 @end
 
 static dispatch_queue_t parse_queue = nil;
@@ -31,7 +35,6 @@ NSString* const PlayerLastUsedSpellsKey = @"com.healer.lastUsedSpells";
 NSString* const PlayerNormalModeCompleteShown = @"com.healer.nmcs";
 NSString* const PlayerLevelDifficultyLevelsKey = @"com.healer.diffLevels";
 NSString* const PlayerGold = @"com.healer.playerId";
-NSString* const PlayerGoldDidChangeNotification = @"com.healer.goldDidChangeNotif";
 NSString* const DivinityConfig = @"com.healer.divinityConfig";
 NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
 NSString* const PlayerLastSelectedLevelKey = @"com.healer.plsl";
@@ -41,7 +44,14 @@ NSString* const MusicDisabledKey = @"com.healer.musicDisabled";
 NSString* const EffectsDisabledKey = @"com.healer.effectsDisabled";
 NSString* const HasRequestedAppStoreReviewKey = @"com.healer.requestedAppStoreReview";
 NSString* const GamePurchasedCheckedKey = @"com.healer.gpck";
+NSString* const PlayerInventoryKey = @"com.healer.ou1";
+NSString* const PlayerSlotKey = @"com.healer.eslot";
+NSString* const PlayerAllyDamageUpgradesKey = @"com.healer.paduk";
+NSString* const PlayerAllyHealthUpgradesKey = @"com.healer.pahuk";
+NSString* const PlayerTotalItemsEarnedKey = @"com.healer.ptie";
 
+NSString* const PlayerStaminaDidChangeNotification = @"com.healer.staminaDidChangeNotif";
+NSString* const PlayerGoldDidChangeNotification = @"com.healer.goldDidChangeNotif";
 //Content Keys
 NSString* const MainGameContentKey = @"com.healer.c1key";
 
@@ -49,12 +59,18 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (void)dealloc {
     [_playerData release];
+    [_nextStamina release];
     [super dealloc];
 }
 
 + (PlayerDataManager *)localPlayer {
     if (!_localPlayer) {
         _localPlayer = [[PlayerDataManager alloc] initAsLocalPlayer];
+        _localPlayer.stamina = STAMINA_NOT_LOADED;
+        _localPlayer.secondsPerStamina = STAMINA_NOT_LOADED;
+        if (!IS_IPAD) {
+            _localPlayer.ftueState = FTUEStateBattle1Finished;
+        }
     }
     return _localPlayer;
 }
@@ -63,7 +79,18 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 {
     Player *basicPlayer = [[[Player alloc] initWithHealth:1400 energy:1000 energyRegen:10] autorelease];
     if ([[PlayerDataManager localPlayer] isTalentsUnlocked]){
-        [basicPlayer setDivinityConfig:[[PlayerDataManager localPlayer] localTalentConfig]];
+        [basicPlayer setTalentConfig:[[PlayerDataManager localPlayer] localTalentConfig]];
+    }
+    if ([PlayerDataManager localPlayer].equippedItems.count > 0) {
+        [basicPlayer setEquippedItems:[PlayerDataManager localPlayer].equippedItems];
+        NSMutableArray *spellsFromItems = [NSMutableArray arrayWithCapacity:2];
+        for (EquipmentItem *item in basicPlayer.equippedItems) {
+            Spell *spell = item.spellFromItem;
+            if (spell) {
+                [spellsFromItems addObject:spell];
+            }
+        }
+        [basicPlayer setSpellsFromEquipment:spellsFromItems];
     }
     return basicPlayer;
 }
@@ -85,23 +112,36 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         NSString *appFile = [PlayerDataManager localPlayerSavePath];
         NSData *dataFromPlayerData = [NSPropertyListSerialization dataFromPropertyList:self.playerData format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
         [dataFromPlayerData writeToFile:appFile atomically:YES];
-        [self saveRemotePlayer];
         [[UIApplication sharedApplication] endBackgroundTask:backgroundExceptionIdentifer];
     });
 }
 
+- (NSString *)remoteObjectId
+{
+    return [[NSUserDefaults standardUserDefaults] objectForKey:PlayerRemoteObjectIdKey];
+}
+
 - (void)saveRemotePlayer {
+#if ANDROID
+#else
+    NSString *className = @"player";
+#if TARGET_IPHONE_SIMULATOR
+    className = @"test_player";
+#endif
+#if DEBUG
+    className = @"test_player";
+#endif
     NSInteger backgroundExceptionIdentifer = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{}];
     dispatch_async([PlayerDataManager parseQueue], ^{
-        NSString* playerObjectID = [[NSUserDefaults standardUserDefaults] objectForKey:PlayerRemoteObjectIdKey];
+        NSString* playerObjectID = [self remoteObjectId];
         if (playerObjectID){
-            PFQuery *playerObjectQuery = [PFQuery queryWithClassName:@"player"];
+            PFQuery *playerObjectQuery = [PFQuery queryWithClassName:className];
             PFObject *playerObject = [playerObjectQuery getObjectWithId:playerObjectID];
             [self setPlayerObjectInformation:playerObject];
             [playerObject saveEventually];
         } else {
             @try {
-                PFObject *newPlayerObject = [PFObject objectWithClassName:@"player"];
+                PFObject *newPlayerObject = [PFObject objectWithClassName:className];
                 [self setPlayerObjectInformation:newPlayerObject];
                 if ([newPlayerObject save]) {
                     if (newPlayerObject.objectId){
@@ -116,6 +156,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         }
         [[UIApplication sharedApplication] endBackgroundTask:backgroundExceptionIdentifer];
     });
+#endif
 }
 
 - (id)initAsLocalPlayer
@@ -205,7 +246,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 }
 
 - (BOOL)isMultiplayerUnlocked {
-    return NO;
+    return YES;
     return [self highestLevelCompleted] >= 6;
 }
 
@@ -250,7 +291,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 - (void)completeLevel:(NSInteger)level {
     BOOL isFirstWin = level > [self highestLevelCompleted];
     if (isFirstWin){
-        [self.playerData setValue:[NSNumber numberWithInt:level] forKey:PlayerHighestLevelCompleted ];
+        [self.playerData setValue:[NSNumber numberWithInt:level] forKey:PlayerHighestLevelCompleted];
     }
 }
 
@@ -346,6 +387,16 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         }
     }
     return spells;
+}
+
+- (NSInteger)maximumStandardSpellSlots
+{
+    NSInteger totalSlots = 3; //Default is 3.
+    
+    if ([self hasPurchasedContentWithKey:MainGameContentKey]) {
+        totalSlots ++;
+    }
+    return totalSlots;
 }
 
 #pragma mark - Normal Mode Completion
@@ -522,8 +573,8 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     if (!isFreshInstall) {
         [self purchaseContentWithKey:MainGameContentKey];
     }
-    
     [self.playerData setObject:[NSNumber numberWithBool:YES] forKey:GamePurchasedCheckedKey];
+    [self saveLocalPlayer];
 }
 
 - (void)purchaseContentWithKey:(NSString*)key
@@ -535,7 +586,6 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     }
     [contentKeys addObject:key];
     [self.playerData setObject:contentKeys forKey:ContentKeys];
-    [self saveLocalPlayer];
 }
 
 - (BOOL)hasPurchasedContentWithKey:(NSString*)key
@@ -613,5 +663,261 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         return YES;
     }
     return NO;
+}
+
+#pragma mark - Items
+
+- (NSString *)slotKeyForSlot:(SlotType)slot
+{
+    return [NSString stringWithFormat:@"%@-%i",PlayerSlotKey, slot];
+}
+
+- (NSArray*)inventory
+{
+    NSArray *inventory = [self.playerData objectForKey:PlayerInventoryKey];
+    if (!inventory) {
+        return [NSArray array];
+    }
+    NSMutableArray *decodedInventory = [NSMutableArray arrayWithCapacity:inventory.count];
+    for (NSString *cacheString in inventory) {
+        EquipmentItem *item = [[[EquipmentItem alloc] initWithItemCacheString:cacheString] autorelease];
+        if (item){
+            [decodedInventory addObject:item];
+        }
+    }
+    return decodedInventory;
+}
+
+- (NSInteger)maximumInventorySize
+{
+    return 15;
+}
+
+- (BOOL)isInventoryFull
+{
+    return self.inventory.count >= self.maximumInventorySize;
+}
+
+- (NSInteger)totalItemsEarned
+{
+    return [[self.playerData objectForKey:PlayerTotalItemsEarnedKey] integerValue];
+}
+
+- (void)playerEarnsItem:(EquipmentItem *)item
+{
+    NSInteger newTotal = self.totalItemsEarned + 1;
+    [item itemEarnedWithId:newTotal];
+    [self.playerData setObject:[NSNumber numberWithInt:newTotal] forKey:PlayerTotalItemsEarnedKey];
+    
+    NSArray *inventory = [self.playerData objectForKey:PlayerInventoryKey];
+    if (!inventory) {
+        inventory = [NSArray array];
+    }
+    NSArray *newInventory = [inventory arrayByAddingObject:item.cacheString];
+    [self.playerData setObject:newInventory forKey:PlayerInventoryKey];
+    [self saveLocalPlayer];
+}
+
+- (void)playerEquipsItem:(EquipmentItem*)item
+{
+    NSArray *inventory = [self inventory];
+    EquipmentItem *thisItem = nil;
+    
+    for (EquipmentItem *inventoryItem in inventory) {
+        if (inventoryItem.earnedItemId == item.earnedItemId) {
+            thisItem = inventoryItem;
+            break;
+        }
+    }
+    if (thisItem) {
+        [self playerRemovesItemFromInventory:thisItem];
+        [self.playerData setObject:thisItem.cacheString forKey:[self slotKeyForSlot:thisItem.slot]];
+    }
+    
+    [self saveLocalPlayer];
+}
+
+- (void)playerUnequipsItemInSlot:(SlotType)slot
+{
+    EquipmentItem *item = [[[EquipmentItem alloc] initWithItemCacheString:[self.playerData objectForKey:[self slotKeyForSlot:slot]]] autorelease];
+    if (item) {
+        [item retain];
+        [self.playerData removeObjectForKey:[self slotKeyForSlot:slot]];
+        [self playerEarnsItem:item];
+        [item release];
+    }
+}
+
+- (BOOL)playerCanEquipItem:(EquipmentItem*)item
+{
+    return [self itemForSlot:item.slot] == nil;
+}
+
+- (EquipmentItem*)itemForSlot:(SlotType)slotType
+{
+    NSString *cacheString = [self.playerData objectForKey:[self slotKeyForSlot:slotType]];
+    if (cacheString) {
+        return [[[EquipmentItem alloc] initWithItemCacheString:cacheString] autorelease];
+    }
+    return nil;
+}
+
+- (NSArray *)equippedItems
+{
+    NSMutableArray *items = [NSMutableArray arrayWithCapacity:6];
+    
+    for (int i = 0; i < SlotTypeMaximum; i++) {
+        if ([self itemForSlot:i]) {
+            [items addObject:[self itemForSlot:i]];
+        }
+    }
+    return [NSArray arrayWithArray:items];
+}
+
+- (void)playerSellsItem:(EquipmentItem *)item
+{
+    if ([[self itemForSlot:item.slot] isEarnedItem:item]) {
+        [self playerUnequipsItemInSlot:item.slot];
+    }
+    NSInteger sellPrice = [item salePrice];
+    [self playerRemovesItemFromInventory:item];
+    [self playerEarnsGold:sellPrice];
+}
+
+- (void)playerRemovesItemFromInventory:(EquipmentItem *)item
+{
+    NSArray *inventory = [self inventory];
+    EquipmentItem *thisItem = nil;
+    
+    //Find the item in the inventory if exists
+    for (EquipmentItem *inventoryItem in inventory) {
+        if ([item isEarnedItem:inventoryItem]) {
+            thisItem = inventoryItem;
+            break;
+        }
+    }
+    
+    if (thisItem) {
+        [thisItem retain];
+        NSMutableArray *newInventory = [NSMutableArray arrayWithArray:[self.playerData objectForKey:PlayerInventoryKey]];
+        [newInventory removeObject:thisItem.cacheString];
+        
+        [self.playerData setObject:newInventory forKey:PlayerInventoryKey];
+        [thisItem release];
+    }
+}
+
+#pragma mark - Ally Upgrades
+- (NSInteger)nextAllyDamageUpgradeCost
+{
+    return 200 + [self allyDamageUpgrades] * 50;
+}
+
+- (NSInteger)nextAllyHealthUpgradeCost
+{
+    if (self.allyHealthUpgrades >= 25) {
+        return MAXIMUM_ALLY_UPGRADES;
+    }
+    return 200 + [self allyHealthUpgrades] * 50;
+}
+
+- (NSInteger)allyDamageUpgrades
+{
+    return [[self.playerData objectForKey:PlayerAllyDamageUpgradesKey] integerValue];
+}
+
+- (NSInteger)allyHealthUpgrades
+{
+    return [[self.playerData objectForKey:PlayerAllyHealthUpgradesKey] integerValue];
+}
+
+- (void)purchaseAllyDamageUpgrade
+{
+    NSInteger cost = self.nextAllyDamageUpgradeCost;
+    if (self.gold >= cost) {
+        NSInteger numUpgrades = [[self.playerData objectForKey:PlayerAllyDamageUpgradesKey] integerValue];
+        numUpgrades++;
+        [self.playerData setObject:[NSNumber numberWithInt:numUpgrades] forKey:PlayerAllyDamageUpgradesKey];
+        [self playerLosesGold:cost];
+    }
+}
+
+- (void)purchaseAllyHealthUpgrade
+{
+    NSInteger cost = self.nextAllyHealthUpgradeCost;
+    if (self.gold >= cost) {
+        NSInteger numUpgrades = [[self.playerData objectForKey:PlayerAllyHealthUpgradesKey] integerValue];
+        numUpgrades++;
+        [self.playerData setObject:[NSNumber numberWithInt:numUpgrades] forKey:PlayerAllyHealthUpgradesKey];
+        [self playerLosesGold:cost];
+    }
+}
+
+#pragma mark - Stamina
+
+- (void)setStamina:(NSInteger)stamina
+{
+    BOOL willChange = stamina != _stamina;
+    _stamina = stamina;
+    if (willChange) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:PlayerStaminaDidChangeNotification object:nil userInfo:nil];
+    }
+}
+
+- (void)checkStamina
+{
+#if ANDROID
+#else
+    NSString *remoteObjectId = [self remoteObjectId];
+    if (remoteObjectId) {
+        [PFCloud callFunctionInBackground:@"getStamina" withParameters:[NSDictionary dictionaryWithObject:remoteObjectId forKey:@"playerId"] block:^(id object, NSError *error) {
+            NSDictionary *result = (NSDictionary*)object;
+            NSInteger stamina = [[result objectForKey:@"stamina"] intValue];
+            NSInteger maxStamina = [[result objectForKey:@"maxStamina"] intValue];
+            NSInteger secondsUntil = [[result objectForKey:@"secondsUntilNextStamina"] intValue];
+            NSTimeInterval secondsPerStamina = [[result objectForKey:@"secondsPerStamina"] intValue];
+            self.secondsPerStamina = secondsPerStamina;
+            self.maxStamina = maxStamina;
+            self.nextStamina = [NSDate dateWithTimeIntervalSinceNow:secondsUntil];
+            self.stamina = stamina; //Must be last for notification purposes
+        }];
+    }
+#endif
+}
+
+- (void)staminaUsedWithCompletion:(SpendStaminaResultBlock)block
+{
+#if ANDROID
+#else
+    NSString *remoteObjectId = [self remoteObjectId];
+    if (remoteObjectId) {
+        [PFCloud callFunctionInBackground:@"spendStamina" withParameters:[NSDictionary dictionaryWithObject:remoteObjectId forKey:@"playerId"] block:^(id object, NSError *error) {
+            if (error) {
+                block(NO);
+            } else {
+                NSDictionary *result = (NSDictionary*)object;
+                NSInteger newStamina = [[result objectForKey:@"stamina"] intValue];
+                NSTimeInterval secondsPerStamina = [[result objectForKey:@"secondsPerStamina"] intValue];
+                NSInteger secondsUntil = [[result objectForKey:@"secondsUntilNextStamina"] intValue];
+                self.secondsPerStamina = secondsPerStamina;
+                BOOL success = [[result objectForKey:@"success"] boolValue];
+                self.stamina = newStamina;
+                self.nextStamina = [NSDate dateWithTimeIntervalSinceNow:secondsUntil];
+                block(success);
+                if (success) {
+                    [[PlayerDataManager localPlayer] checkStamina];
+                }
+            }
+        }];
+    }
+#endif
+}
+
+- (NSTimeInterval)secondsUntilNextStamina
+{
+    if (!self.nextStamina) {
+        return STAMINA_NOT_LOADED;
+    }
+    return self.nextStamina.timeIntervalSince1970 - [[NSDate date] timeIntervalSince1970];
 }
 @end

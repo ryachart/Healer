@@ -5,24 +5,27 @@
 //  Created by Ryan Hart on 7/4/11.
 //
 
-#import <cocos2d.h>
-
 #import "AppDelegate.h"
 #import "GameConfig.h"
+#if ANDROID
+#else
 #import "TestFlight.h"
-#import "Parse/Parse.h"
+#import <Parse/Parse.h>
+#endif
 #import "PlayerDataManager.h"
 #import "LaunchScene.h"
 #import "Talents.h"
 #import "PurchaseManager.h"
+#import <FacebookSDK/FacebookSDK.h>
 
+#define TestFlightToken @"e0959a56-31b4-4303-8734-69eec008ccd8"
+#define Facebook_App_ID @"397451217035067"
 #if IS_POCKET
     #import "HealerStartScene_iPhone.h"
 #else
 
 #endif
 
-#define TestFlightToken @"6352fe22-b170-4fd7-a38a-60ae0ac77d39"
 
 @implementation AppDelegate
 
@@ -33,11 +36,14 @@
     
     BOOL isFreshInstall = [PlayerDataManager isFreshInstall];
     
+#if ANDROID
+#else
     [TestFlight takeOff:TestFlightToken];
-    
+    [FBSettings publishInstall:Facebook_App_ID];
     [Parse setApplicationId:@"BajbrSl60Pz6ukDojWg8CAaUdCU7FoWr7UJCiJPs"
                   clientKey:@"2CSX0jPgh7K4X7PfWbmfPdyo3G8OfCqSa41JW4BZ"];
-    
+    [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
+#endif
     
     [[PurchaseManager sharedPurchaseManager] getProducts];
     
@@ -93,6 +99,8 @@
         [[PlayerDataManager localPlayer] performGamePurchaseCheckForFreshInstall:isFreshInstall];
     }
     
+    [[PlayerDataManager localPlayer] checkStamina];
+    
     self.navController = [[[UINavigationController alloc] initWithRootViewController:director] autorelease];
     self.navController.navigationBarHidden = YES;
     
@@ -118,9 +126,35 @@
 -(void) applicationDidEnterBackground:(UIApplication*)application {
 	[[CCDirector sharedDirector] stopAnimation];
     [[PlayerDataManager localPlayer] saveLocalPlayer];
+    [[PlayerDataManager localPlayer] saveRemotePlayer];
+    
+    [self scheduleLocalNotifs];
 }
 
--(void) applicationWillEnterForeground:(UIApplication*)application {
+- (void)scheduleLocalNotifs
+{
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    
+    if ([PlayerDataManager localPlayer].secondsPerStamina != STAMINA_NOT_LOADED && [PlayerDataManager localPlayer].stamina != STAMINA_NOT_LOADED && [PlayerDataManager localPlayer].stamina != [PlayerDataManager localPlayer].maxStamina) {
+        UILocalNotification *fullKeysNotif = [[[UILocalNotification alloc] init] autorelease];
+        
+        NSDate *fireDate = [PlayerDataManager localPlayer].nextStamina;
+        NSInteger staminaFromMax = [PlayerDataManager localPlayer].maxStamina - [PlayerDataManager localPlayer].stamina - 1;
+        if (staminaFromMax > 0) {
+            fireDate = [fireDate dateByAddingTimeInterval:staminaFromMax * [PlayerDataManager localPlayer].secondsPerStamina];
+            
+        }
+        
+        [fullKeysNotif setFireDate:fireDate];
+        [fullKeysNotif setAlertBody:@"Healer! Your keys have been forged. Defeat a boss to unlock powerful treasures!"];
+        [fullKeysNotif setAlertAction:@"Keys full!"];
+        
+        
+        [[UIApplication sharedApplication] scheduleLocalNotification:fullKeysNotif];
+    }
+}
+
+- (void) applicationWillEnterForeground:(UIApplication*)application {
 	[[CCDirector sharedDirector] startAnimation];
 }
 
@@ -134,6 +168,8 @@
 	[director end];	
     
     [[PlayerDataManager localPlayer] saveLocalPlayer];
+    [[PlayerDataManager localPlayer] saveRemotePlayer];
+    [self scheduleLocalNotifs];
 }
 
 - (void)applicationSignificantTimeChange:(UIApplication *)application {
@@ -148,7 +184,6 @@
     [_window release];
 	[super dealloc];
 }
-
 
 - (void)showDebugViewController {
     

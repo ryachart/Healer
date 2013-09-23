@@ -3,16 +3,27 @@
 //  Healer
 //
 //  Created by Ryan Hart on 5/16/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
 #import "PurchaseManager.h"
 #import "PlayerDataManager.h"
+#if ANDROID
+#else
+#import <Parse/Parse.h>
+#endif
 
 #define LEGACY_OF_TORMENT_EXPAC_ID @"torment_expac"
 #define GOLD_ONE_ID @"gold_one"
+#define CHEST_KEY @"chest_key"
+
+NSString *const PlayerDidPurchaseExpansionNotification = @"com.healer.playerDidPurchaseExpac";
 
 static PurchaseManager *_sharedPurchaseManager;
+
+@interface PurchaseManager ()
+@property (nonatomic, copy) ChestKeyPurchaseCompletion completion;
+@end
 
 @implementation PurchaseManager
 
@@ -34,7 +45,7 @@ static PurchaseManager *_sharedPurchaseManager;
 
 - (void)getProducts
 {
-    SKProductsRequest *productsReq = [[[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObjects:LEGACY_OF_TORMENT_EXPAC_ID, GOLD_ONE_ID, nil]] autorelease];
+    SKProductsRequest *productsReq = [[[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObjects:LEGACY_OF_TORMENT_EXPAC_ID, GOLD_ONE_ID,CHEST_KEY, nil]] autorelease];
     [productsReq setDelegate:self];
     [productsReq start];
 }
@@ -47,6 +58,11 @@ static PurchaseManager *_sharedPurchaseManager;
 - (SKProduct *)goldOneProduct
 {
     return [self productWithIdentifier:GOLD_ONE_ID];
+}
+
+- (SKProduct *)chestKeyProduct
+{
+    return [self productWithIdentifier:CHEST_KEY];
 }
 
 - (SKProduct *)productWithIdentifier:(NSString *)identifier
@@ -93,29 +109,86 @@ static PurchaseManager *_sharedPurchaseManager;
     return NO;
 }
 
+- (void)purchaseChestKeyWithCompletion:(ChestKeyPurchaseCompletion)completion
+{
+    self.completion = completion;
+    SKProduct *reqProduct = [self chestKeyProduct];
+    if (!reqProduct) return;
+    [self startPurchaseForProduct:reqProduct];
+}
+
 - (void)restorePurchases
 {
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
+- (void)saveRemotePurchase:(SKPaymentTransaction*)transaction
+{
+#if ANDROID
+#else
+    PFObject *purchaseObject = [PFObject objectWithClassName:@"purchase"];
+    NSString* playerObjectID = [[NSUserDefaults standardUserDefaults] objectForKey:PlayerRemoteObjectIdKey];
+    [purchaseObject setObject:playerObjectID forKey:@"playerObjectId"];
+    [purchaseObject setObject:transaction.payment.productIdentifier forKey:@"productId"];
+    [purchaseObject setObject:transaction.transactionIdentifier forKey:@"transactionId"];
+    [purchaseObject saveEventually];
+#endif
+}
+
 - (void)completeTransaction:(SKPaymentTransaction*)transaction
 {
-    if (transaction.transactionState == SKPaymentTransactionStatePurchased || transaction.transactionState == SKPaymentTransactionStateRestored) {
-        NSLog(@"User Finished Purchasing: %@", transaction.payment.productIdentifier);
-        if ([transaction.payment.productIdentifier isEqualToString:GOLD_ONE_ID]) {
-            [[PlayerDataManager localPlayer] playerEarnsGold:1000];
-        } else if ([transaction.payment.productIdentifier isEqualToString:LEGACY_OF_TORMENT_EXPAC_ID]) {
-            [[PlayerDataManager localPlayer] purchaseContentWithKey:MainGameContentKey];
+    if (transaction.transactionState == SKPaymentTransactionStateFailed) {
+        [self transactionFailed:transaction];
+        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    } else if (transaction.transactionState == SKPaymentTransactionStatePurchased) {
+#if ANDROID
+        [self awardPurchase:transaction];
+#else
+        [PFPurchase downloadAssetForTransaction:transaction completion:^(NSString *filepath, NSError *error) {
+            if (!error) {
+                [self awardPurchase:transaction];
+            } else {
+                //This is probably a Parse Timeout
+                [self completeTransaction:transaction]; //Infinite Retry
+            }
+        }];
+#endif
+    } else if (transaction.transactionState == SKPaymentTransactionStateRestored) {
+        [self awardPurchase:transaction];
+    }
+}
+
+- (void)transactionFailed:(SKPaymentTransaction *)transaction
+{
+    UIAlertView *failedTransaction = [[[UIAlertView alloc] initWithTitle:@"Purchase Failed" message:@"The purchase failed.  You have not been charged.  Please check your internet connection and try again." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
+    [failedTransaction show];
+    if (self.completion) {
+        self.completion(NO);
+        self.completion = nil;
+    }
+}
+
+- (void)awardPurchase:(SKPaymentTransaction *)transaction
+{
+    if ([transaction.payment.productIdentifier isEqualToString:GOLD_ONE_ID]) {
+        [[PlayerDataManager localPlayer] playerEarnsGold:1000];
+        [self saveRemotePurchase:transaction];
+    } else if ([transaction.payment.productIdentifier isEqualToString:LEGACY_OF_TORMENT_EXPAC_ID]) {
+        [[PlayerDataManager localPlayer] purchaseContentWithKey:MainGameContentKey];
+        [[PlayerDataManager localPlayer] saveLocalPlayer];
+        [self saveRemotePurchase:transaction];
+        [[NSNotificationCenter defaultCenter] postNotificationName:PlayerDidPurchaseExpansionNotification object:nil];
+    } else if ([transaction.payment.productIdentifier isEqualToString:CHEST_KEY]){
+        if (self.completion) {
+            self.completion(YES);
+            self.completion = nil;
         }
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-        UIAlertView *thankYou = [[[UIAlertView alloc] initWithTitle:@"Thank you!" message:@"Thank you for your purchase." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil] autorelease];
-        [thankYou show];
-    } else if (transaction.transactionState == SKPaymentTransactionStateFailed) {
-        NSLog(@"Transaction has entered a failed state.");
-        UIAlertView *failedTransaction = [[[UIAlertView alloc] initWithTitle:@"Purchase Failed" message:@"The purchase failed.  You have not been charged.  Please check your internet connection and try again." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
-        [failedTransaction show];
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        return; //Dont show the thank you for the chests
     }
+    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    UIAlertView *thankYou = [[[UIAlertView alloc] initWithTitle:@"Thank you!" message:@"Thank you for your purchase." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil] autorelease];
+    [thankYou show];
 }
 
 #pragma mark - SKRequestDelegate

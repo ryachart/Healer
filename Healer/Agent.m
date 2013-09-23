@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 4/18/12.
-//
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 
 #import "Agent.h"
 

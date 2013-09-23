@@ -60,7 +60,7 @@
 
         BackgroundSprite *book = [[[BackgroundSprite alloc] initWithAssetName:@"shop_book"] autorelease];
         [book setPosition:ccp(38, 110)];
-        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"shop-bg"] autorelease] z:-100];
+        [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"curtain-bg"] autorelease] z:-100];
         [self addChild:book z:BOOK_Z];
         
         self.itemsTable = [[[CCScrollView alloc] initWithViewSize:CGSizeMake(500, 430)] autorelease];

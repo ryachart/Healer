@@ -3,10 +3,9 @@
 //  Healer
 //
 //  Created by Ryan Hart on 4/22/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 
 typedef enum {
     CollectibleMovementTypeStatic,
@@ -16,7 +15,8 @@ typedef enum {
 typedef enum {
     CollectibleEntranceTypeAppear,
     CollectibleEntranceTypeSpew,
-    CollectibleEntranceTypeFall
+    CollectibleEntranceTypeFall,
+    CollectibleEntranceTypeSpewPlayer
 } CollectibleEntranceType;
 
 @class Collectible, Player, Raid;
@@ -27,6 +27,7 @@ typedef enum {
 
 @interface Collectible : NSObject
 @property (nonatomic, retain) NSString *spriteName;
+@property (nonatomic, readwrite) float scale;
 @property (nonatomic, readwrite) NSTimeInterval duration;
 @property (nonatomic, readonly) NSTimeInterval timeApplied;
 @property (nonatomic, readwrite) CGPoint movementVector;

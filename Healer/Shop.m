@@ -54,7 +54,7 @@ static NSArray *shopItems = nil;
         case ShopCategoryArchives:
             return 8;
         case ShopCategoryVault:
-            return 10;
+            return 11;
     }
     return 0;
 }
@@ -68,7 +68,7 @@ static NSArray *shopItems = nil;
     if (totalPurchases >= [Shop purchasesForCategory:ShopCategoryArchives]){
         category = ShopCategoryArchives;
     }
-    if (totalPurchases > [Shop purchasesForCategory:ShopCategoryVault]){
+    if (totalPurchases >= [Shop purchasesForCategory:ShopCategoryVault]){
         category = ShopCategoryVault;
     }
     return category;
@@ -79,15 +79,6 @@ static NSArray *shopItems = nil;
     NSInteger totalPurchases = [[PlayerDataManager localPlayer] allOwnedSpells].count;
     NSInteger requiredForCategory = [Shop purchasesForCategory:category];
     return requiredForCategory - totalPurchases;
-}
-
-+ (NSInteger)numPurchasesUntilNextCategory {
-    NSInteger totalPurchases = [[PlayerDataManager localPlayer] allOwnedSpells].count;
-    ShopCategory highestCategory = [Shop highestCategoryUnlocked];
-    if (highestCategory == ShopCategoryVault){
-        return 0;
-    }
-    return [Shop purchasesForCategory:highestCategory] - totalPurchases;
 }
 
 + (NSArray*)essentialsShopItems {
@@ -104,7 +95,6 @@ static NSArray *shopItems = nil;
 
     ShopItem *forkedHeal = [[ShopItem alloc] initWithSpell:[ForkedHeal defaultSpell]];
     [items addObject:[forkedHeal autorelease]];
-
 
     return [Shop costSortedItemsArray:items];
 }
@@ -127,8 +117,8 @@ static NSArray *shopItems = nil;
     [items addObject:[barrier autorelease]];
 
     return [Shop costSortedItemsArray:items];
-    
 }
+
 + (NSArray*)archivesShopItems {
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
     
@@ -152,6 +142,7 @@ static NSArray *shopItems = nil;
 
     return [Shop costSortedItemsArray:items];
 }
+
 + (NSArray*)vaultShopItems {
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:20];
     
@@ -169,9 +160,6 @@ static NSArray *shopItems = nil;
 
     ShopItem *wardOfAncients = [[ShopItem alloc] initWithSpell:[WardOfAncients defaultSpell]];
     [items addObject:[wardOfAncients autorelease]];
-    return [Shop costSortedItemsArray:items];
-    
+    return [Shop costSortedItemsArray:items];    
 }
-
-
 @end

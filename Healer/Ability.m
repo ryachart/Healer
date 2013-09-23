@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 5/10/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
+//  Copyright (c) 2012 Ryan Hart Games. All rights reserved.
 //
 
 #import "Ability.h"
@@ -26,9 +26,9 @@
 
 - (id)init {
     if (self = [super init]){
-        self.attackParticleEffectName = @"pow.plist";
         self.isActivating = NO;
         self.iconName = @"unknown_ability.png";
+        self.requiresDamageToApplyEffect = YES;
     }
     return self;
 }
@@ -48,9 +48,11 @@
     [ab setIconName:self.iconName];
     [ab setExecutionSound:self.executionSound];
     [ab setActivationSound:self.activationSound];
+    [ab setRequiresDamageToApplyEffect:self.requiresDamageToApplyEffect];
+    [ab setAppliedEffect:self.appliedEffect];
     return ab;
 }
-- (void)dealloc{
+- (void)dealloc {
     [_info release];
     [_title release];
     [_key release];
@@ -58,11 +60,11 @@
     [_attackParticleEffectName release];
     [_activationSound release];
     [_executionSound release];
+    [_appliedEffect release];
     [super dealloc];
 }
 
-- (void)interrupt
-{
+- (void)interrupt {
     self.channelTimeRemaining = 0;
     self.maxChannelTime = 0;
     self.numChannelTicks = 0;
@@ -72,32 +74,27 @@
     }
 }
 
-- (void)collectible:(Collectible *)col wasCollectedByPlayer:(Player *)player forRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
-{
+- (void)collectible:(Collectible *)col wasCollectedByPlayer:(Player *)player forRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
     
 }
 
-- (void)collectibleDidExpire:(Collectible *)col forRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
-{
+- (void)collectibleDidExpire:(Collectible *)col forRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies {
     
 }
 
-- (void)dispelBeneficialEffectsOnTarget:(RaidMember*)target
-{
+- (void)dispelBeneficialEffectsOnTarget:(RaidMember*)target {
     for (Effect *effect in target.activeEffects){
-        if (effect.effectType == EffectTypePositive){
+        if (effect.effectType == EffectTypePositive && !effect.ignoresDispels){
             [effect setIsExpired:YES];
         }
     }
 }
 
-- (BOOL)isDisabled
-{
+- (BOOL)isDisabled {
     return _isDisabled || self.owner.isDead;
 }
 
-- (AbilityDescriptor *)descriptor
-{
+- (AbilityDescriptor *)descriptor {
     if (self.title && self.info) {
         AbilityDescriptor *ad = [[[AbilityDescriptor alloc] init] autorelease];
         [ad setAbilityName:self.title];
@@ -108,29 +105,25 @@
     return nil;
 }
 
-- (BOOL)isChanneling
-{
+- (BOOL)isChanneling {
     return self.channelTimeRemaining > 0;
 }
 
-- (void)setChannelTimeRemaining:(float)channelTimeRemaining
-{
+- (void)setChannelTimeRemaining:(float)channelTimeRemaining {
     _channelTimeRemaining = MAX(0, channelTimeRemaining);
 }
 
-- (void)startChannel:(float)channel
-{
+- (void)startChannel:(float)channel {
     [self startChannel:channel withTicks:0];
 }
 
-- (void)startChannel:(float)channel withTicks:(NSInteger)numTicks
-{
+- (void)startChannel:(float)channel withTicks:(NSInteger)numTicks {
     self.channelTimeRemaining = channel;
     self.maxChannelTime = channel;
     self.numChannelTicks = numTicks;
 }
 
-- (BOOL)checkFailed{
+- (BOOL)checkFailed {
     BOOL failed = arc4random() % 100 < (100 * self.failureChance);
     if (failed){
         return YES;
@@ -138,13 +131,11 @@
     return NO;
 }
 
-- (void)abilityDidFailToActivateForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
-{
+- (void)abilityDidFailToActivateForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
     
 }
 
-- (NSTimeInterval)cooldown
-{
+- (NSTimeInterval)cooldown {
     return self.activationTime + _cooldown;
 }
 
@@ -194,14 +185,12 @@
     self.channelTimeRemaining -= timeDelta;
 }
 
-- (void)channelTickForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
-{
+- (void)channelTickForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
     //Subclass for desired effect
     [self.owner ownerDidChannelTickForAbility:self];
 }
 
-- (void)activateAbility
-{
+- (void)activateAbility {
     self.timeApplied = _cooldown;
     self.isActivating = YES;
     [self.owner ownerDidBeginAbility:self];
@@ -210,52 +199,41 @@
     }
 }
 
-- (NSTimeInterval)remainingActivationTime
-{
+- (NSTimeInterval)remainingActivationTime {
     if (self.isActivating) {
         return  (self.cooldown - self.timeApplied);
     }
     return 0.0; //Not activating
 }
 
-- (float)remainingActivationPercentage
-{
+- (float)remainingActivationPercentage {
     if (self.isActivating) {
         return self.remainingActivationTime / self.activationTime;
     }
     return 0.0; //Not activating
 }
 
-- (RaidMember*)targetWithoutEffectWithTitle:(NSString*)ttle inRaid:(Raid*)theRaid{
+- (RaidMember*)targetWithoutEffectWithTitle:(NSString*)ttle inRaid:(Raid*)theRaid {
     return [self targetWithoutEffectsTitled:[NSArray arrayWithObject:ttle] inRaid:theRaid];
 }
 
 - (RaidMember*)targetWithoutEffectsTitled:(NSArray*)effects inRaid:(Raid*)theRaid {
-    RaidMember *target = nil;
-    int safety = 0;
-    BOOL isInvalidTarget = NO;
-    do {
-        isInvalidTarget = NO;
-        target = [theRaid randomLivingMember];
-        if (safety >= 25){
-            break;
-        }
-        safety++;
-        for (NSString *effTitle in effects){
-            if ([target hasEffectWithTitle:effTitle]){
-                isInvalidTarget = YES;
-                break;
+    return [theRaid randomMemberSatisfyingComparator:^BOOL (RaidMember *member) {
+        for (NSString *effectTitle in effects) {
+            if ([member hasEffectWithTitle:effectTitle]) {
+                return NO;
             }
         }
-    } while (isInvalidTarget);
-    return target;
+        return YES;
+    
+    }];
 }
 
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
 
 }
 
-- (int)damageDealt{
+- (int)damageDealt {
     float multiplyModifier = self.owner.damageDoneMultiplier;
     int additiveModifier = 0;
     
@@ -269,24 +247,32 @@
     return FUZZ(finalDamageValue, 30.0);
 }
 
-- (void)damageTarget:(RaidMember *)target forDamage:(NSInteger)damage
-{
+- (void)damageTarget:(RaidMember *)target forDamage:(NSInteger)damage {
     if (![target raidMemberShouldDodgeAttack:self.dodgeChanceAdjustment]){
         [self willDamageTarget:target];
         int thisDamage = damage;
-        
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:thisDamage] andEventType:CombatEventTypeDamage]];
+        NSInteger preHealth = target.health;
         [target setHealth:[target health] - thisDamage];
-        if (thisDamage > 0 && self.attackParticleEffectName){
-            [self.owner.announcer displayParticleSystemWithName:self.attackParticleEffectName onTarget:target];
+        NSInteger finalDamage = target.health - preHealth;
+        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:finalDamage] andEventType:CombatEventTypeDamage]];
+        [self.owner ownerDidDamageTarget:target withAbility:self forDamage:finalDamage];
+        if (thisDamage > 0 || !self.requiresDamageToApplyEffect){
+            if (self.appliedEffect){
+                Effect *applyThis = [[self.appliedEffect copy] autorelease];
+                [applyThis setOwner:self.owner];
+                [applyThis setSpriteName:self.iconName];
+                [target addEffect:applyThis];
+            }
+            if (self.attackParticleEffectName) {
+                [self.owner.announcer displayParticleSystemWithName:self.attackParticleEffectName onTarget:target];
+            }
         }
-        
-    }else{
+    } else {
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:0 andEventType:CombatEventTypeDodge]];
     }
 }
 
--(void)damageTarget:(RaidMember*)target {
+- (void)damageTarget:(RaidMember*)target {
     [self damageTarget:target forDamage:[self damageDealt]];
 }
 
@@ -296,8 +282,20 @@
 @end
 
 @implementation Attack
+
++ (Attack *)appliesEffectNonMeleeAttackWithEffect:(Effect*)effect
+{
+    Attack *theAttack = [[[Attack alloc] initWithDamage:0 andCooldown:10.0] autorelease];
+    [theAttack setFailureChance:0.0];
+    [theAttack setDodgeChanceAdjustment:-100.0];
+    [theAttack setPrefersTargetsWithoutVisibleEffects:YES];
+    [theAttack setRequiresDamageToApplyEffect:NO];
+    [theAttack setIgnoresGuardians:YES];
+    [theAttack setAppliedEffect:effect];
+    return theAttack;
+}
+
 - (void)dealloc {
-    [_appliedEffect release];
     [_damageAudioName release];
     [super dealloc];
 }
@@ -317,20 +315,21 @@
     return copy;
 }
 
-- (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd{
+- (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd {
     if (self = [super init]){
         self.abilityValue = dmg;
         self.cooldown = cd;
         self.failureChance = .05;
         self.cooldownVariance = .1;
         self.numberOfTargets = 1;
+        self.attackParticleEffectName = @"pow.plist";
     }
     return self;
 }
 
-- (RaidMember*)targetFromRaid:(Raid*)raid{
+- (RaidMember*)targetFromRaid:(Raid*)raid {
     
-    RaidMember *target = [raid randomMemberWithComparator:^BOOL(RaidMember *member) {
+    RaidMember *target = [raid randomMemberSatisfyingComparator:^BOOL(RaidMember *member) {
             if (member.isDead || (self.ignoresGuardians && [member isKindOfClass:[Guardian class]]) || (self.prefersTargetsWithoutVisibleEffects && [member effectCountOfType:EffectTypeNegative] > 0) || (self.ignoresPlayers && [member isKindOfClass:[Player class]])) {
                 return false;
             }
@@ -338,7 +337,7 @@
         }];
     
     if (!target) {
-        target = [raid randomMemberWithComparator:^BOOL(RaidMember *member) {
+        target = [raid randomMemberSatisfyingComparator:^BOOL(RaidMember *member) {
             if (member.isDead || (self.ignoresGuardians && [member isKindOfClass:[Guardian class]]) || (self.ignoresPlayers && [member isKindOfClass:[Player class]])) {
                 return false;
             }
@@ -370,14 +369,6 @@
         if (self.removesPositiveEffects) {
             [self dispelBeneficialEffectsOnTarget:target];
         }
-        if (self.appliedEffect && (causedDamage || !self.requiresDamageToApplyEffect) ){
-            //Only apply the effect if we actually did damaww ge.
-            Effect *applyThis = [self.appliedEffect copy];
-            [applyThis setSpriteName:self.iconName];
-            [applyThis setOwner:self.owner];
-            [target addEffect:applyThis];
-            [applyThis release];
-        }
     }
 }
 
@@ -389,8 +380,7 @@
     [super dealloc];
 }
 
-- (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd
-{
+- (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd {
     if (self = [super initWithDamage:dmg andCooldown:cd]) {
         self.currentAttacksRemaining = arc4random() % 3 + 2;
         self.damageAudioName = @"thud.mp3";
@@ -398,8 +388,7 @@
     return self;
 }
 
-- (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies
-{
+- (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
     self.currentAttacksRemaining--;
     RaidMember *target = [self targetFromRaid:theRaid];
     NSInteger preHealth = target.health;
@@ -410,16 +399,14 @@
     }
 }
 
-- (void)setFocusTarget:(RaidMember *)focusTarget
-{
+- (void)setFocusTarget:(RaidMember *)focusTarget {
     [_focusTarget setIsFocused:NO];
     [_focusTarget release];
     _focusTarget = [focusTarget retain];
     [_focusTarget setIsFocused:YES];
 }
 
-- (RaidMember*)targetFromRaid:(Raid *)raid
-{
+- (RaidMember*)targetFromRaid:(Raid *)raid {
     if (self.currentAttacksRemaining <= 0){
         self.currentAttacksRemaining = arc4random() % 3 + 2;
         self.focusTarget = nil;
@@ -444,7 +431,7 @@
 
 @implementation FocusedAttack
 
-- (void)dealloc{
+- (void)dealloc {
     [_focusTarget release];
     [super dealloc];
 }
@@ -517,11 +504,6 @@
     if (causedDamage && self.damageAudioName) {
         [self.owner.announcer playAudioForTitle:self.damageAudioName];
     }
-    if (self.appliedEffect && (causedDamage || !self.requiresDamageToApplyEffect)){
-        Effect *applyThis = [[self.appliedEffect copy] autorelease];
-        [applyThis setOwner:self.owner];
-        [target addEffect:applyThis];
-    }
     if (self.focusTarget.isDead){
         self.focusTarget = [self targetFromRaid:theRaid];
         if (!self.enrageApplied && ![self.focusTarget isKindOfClass:[Guardian class]]){
@@ -541,6 +523,7 @@
 - (id)init{
     if (self = [super init]) {
         self.damageAudioName = @"thud.mp3";
+        self.attackParticleEffectName = @"pow.plist";
     }
     return self;
 }
@@ -564,7 +547,6 @@
     [_spriteName release];
     [_explosionParticleName release];
     [_explosionSoundName release];
-    [_appliedEffect release];
     [super dealloc];
 }
 
@@ -733,6 +715,7 @@
         self.title = @"Warlord's Roar";
         [self setActivationTime:1.0];
         self.abilityValue = 90;
+        self.dodgeChanceAdjustment = -100.0f;
     }
     return self;
 }
@@ -755,8 +738,7 @@
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:player value:[NSNumber numberWithFloat:2.0]  andEventType:CombatEventTypePlayerInterrupted]];
     }
     for (RaidMember *member in theRaid.raidMembers){
-        [member setHealth:member.health - (self.abilityValue * self.owner.damageDoneMultiplier)];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:(self.abilityValue * self.owner.damageDoneMultiplier)]  andEventType:CombatEventTypeDamage]];
+        [self damageTarget:member];
         [self dispelBeneficialEffectsOnTarget:member];
     }
     
@@ -788,8 +770,7 @@
         [debilitateEffect setSpriteName:@"bleeding.png"];
         [target addEffect:debilitateEffect];
         [debilitateEffect release];
-        [target setHealth:target.health * (self.abilityValue * self.owner.damageDoneMultiplier)];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target value:[NSNumber numberWithInt:(self.abilityValue * self.owner.damageDoneMultiplier)] andEventType:CombatEventTypeDamage]]; 
+        [self damageTarget:target]; 
     }
 }
 @end
@@ -834,6 +815,7 @@
         self.iconName = @"deathwave.png";
         self.abilityValue = 10000;
         self.executionSound = @"explosion2.wav";
+        self.dodgeChanceAdjustment = -100.0f;
         [self setActivationTime:3.5];
 
     }
@@ -848,8 +830,7 @@
         NSInteger deathWaveDamage = (int)round((float)self.abilityValue / livingMemberCount);
         deathWaveDamage *= (arc4random() % 50 + 50) / 100.0;
         deathWaveDamage *= self.owner.damageDoneMultiplier;
-        [member setHealth:member.health - deathWaveDamage];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member value:[NSNumber numberWithInt:deathWaveDamage] andEventType:CombatEventTypeDamage]];
+        [self damageTarget:member forDamage:deathWaveDamage];
     }
 }
 @end
@@ -1069,25 +1050,11 @@
 
 @implementation RaidDamage
 
-- (void)dealloc
-{
-    [_appliedEffect release];
-    [super dealloc];
-}
-
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
     NSArray *livingMembers = theRaid.livingMembers;
     
     for (RaidMember *member in livingMembers){
-        NSInteger damage = self.abilityValue * self.owner.damageDoneMultiplier;
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member  value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
-        [member setHealth:member.health - damage];
-        [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:member  value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
-        if (self.appliedEffect){
-            Effect *applyThis = [[self.appliedEffect copy] autorelease];
-            [applyThis setOwner:self.owner];
-            [member addEffect:applyThis];
-        }
+        [self damageTarget:member];
     }
 }
 @end
@@ -1145,11 +1112,9 @@
     [finishHimEffect setSpriteName:self.iconName];
     [finishHimEffect setVisibilityPriority:2];
     
-    NSInteger damage = self.abilityValue * self.owner.damageDoneMultiplier;
-    [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:target  value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
-    [target setHealth:target.health - damage];
+    [self damageTarget:target];
     [finishHimEffect setAilmentType:AilmentTrauma];
-    [finishHimEffect setValue: -1 * damage * .4];
+    [finishHimEffect setValue: -1 * self.abilityValue * self.owner.damageDoneMultiplier * .4];
     [finishHimEffect setOwner:self.owner];
     [finishHimEffect setTitle:@"impale-finisher"];
     [target addEffect:finishHimEffect];
@@ -1189,12 +1154,6 @@
     NSArray *targets = [self targetsFromRaid:theRaid];
     for (RaidMember *target in targets) {
         [self damageTarget:target];
-        if (self.appliedEffect) {
-            Effect *eff = [[self.appliedEffect copy] autorelease];
-            [eff setOwner:self.owner];
-            [eff setSpriteName:self.iconName];
-            [target addEffect:eff];
-        }
     }
 }
 @end
@@ -1273,7 +1232,7 @@
     NSTimeInterval quakeTime = 3.0;
     
     for (RaidMember *member in members) {
-        RepeatedHealthEffect *bonequakeDot = [[[RepeatedHealthEffect alloc] initWithDuration:quakeTime andEffectType:EffectTypeNegative] autorelease];
+        RepeatedHealthEffect *bonequakeDot = [[[RepeatedHealthEffect alloc] initWithDuration:quakeTime andEffectType:EffectTypeNegativeInvisible] autorelease];
         [bonequakeDot setNumOfTicks:3];
         [bonequakeDot setValuePerTick:-(arc4random() % 50 + 10)];
         [bonequakeDot setTitle:@"bonequake-dot"];
@@ -1458,7 +1417,11 @@
         self.hasAppliedDrain = YES;
         for (Player *player in players) {
             EnergyAdjustmentPerCastEffect *shadowDrain = [[EnergyAdjustmentPerCastEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegativeInvisible];
-            [shadowDrain setEnergyChangePerCast:10];
+            NSInteger drainPerCast = 10;
+            if (self.difficulty == 5) {
+                drainPerCast = 5;
+            }
+            [shadowDrain setEnergyChangePerCast:drainPerCast];
             [shadowDrain setOwner:self.owner];
             [shadowDrain setTitle:@"shadow-drain"];
             [player addEffect:shadowDrain];
@@ -1483,10 +1446,7 @@
 @end
 
 @implementation RaidApplyEffect
-- (void)dealloc {
-    [_appliedEffect release];
-    [super dealloc];
-}
+
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
     for (RaidMember *member in theRaid.livingMembers){
         Effect *appliedEffect = [[self.appliedEffect copy] autorelease];
@@ -1521,11 +1481,10 @@
     numApplications = MIN(numApplications, self.difficulty + 1);
 
     for (RaidMember *target in targets){
-        [self damageTarget:target];
         for (int i = 0; i < numApplications; i++){
             NSTimeInterval delay = 0.25 + (i * 1.5);
             DelayedHealthEffect *delayedSlime = [[DelayedHealthEffect alloc] initWithDuration:delay andEffectType:EffectTypeNegativeInvisible];
-            [delayedSlime setValue:-70];
+            [delayedSlime setValue:-self.abilityValue];
             [delayedSlime setIsIndependent:YES];
             [delayedSlime setTitle:@"delayed-slime"];
             [delayedSlime setOwner:self.owner];
@@ -1655,7 +1614,7 @@
 }
 - (void)triggerAbilityForRaid:(Raid*)theRaid players:(NSArray*)players enemies:(NSArray*)enemies {
     for (Player *player in players){
-        Effect *confusionEffect = [[[Effect alloc] initWithDuration:self.abilityValue andEffectType:EffectTypeNegative] autorelease];
+        Effect *confusionEffect = [[[Effect alloc] initWithDuration:self.abilityValue andEffectType:EffectTypeNegativeInvisible] autorelease];
         [confusionEffect setTitle:@"confusion-eff"];
         [confusionEffect setCausesConfusion:YES];
         [confusionEffect setOwner:self.owner];
@@ -2383,6 +2342,7 @@
         [shatter setHealingReceivedMultiplierAdjustment:-.25];
         [shatter setSpriteName:self.iconName];
         [shatter setOwner:self.owner];
+        [shatter setVisibilityPriority:16];
         [player addEffect:shatter];
     }
 }
@@ -2461,7 +2421,7 @@
 
 - (RaidMember *)targetFromRaid:(Raid *)raid
 {
-    RaidMember *target = [raid randomMemberWithComparator:^BOOL(RaidMember *member){
+    RaidMember *target = [raid randomMemberSatisfyingComparator:^BOOL(RaidMember *member){
         if (!member.isDead && [member isKindOfClass:[Player class]]) {
             return YES;
         }
@@ -2569,4 +2529,297 @@
         self.ownerEffect.stacks++;
     }
 }
+@end
+
+@implementation UndyingFlame
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    if (self.appliedEffect) {
+        self.appliedEffect.title = @"undying-flame-eff";
+    }
+    [super triggerAbilityForRaid:theRaid players:players enemies:enemies];
+    for (RaidMember *member in theRaid.livingMembers) {
+        Effect *eff = [member effectWithTitle:self.appliedEffect.title];
+        if (eff) {
+            eff.stacks = eff.maxStacks;
+        }
+    }
+    
+}
+@end
+
+@implementation InterruptedByFullHealthTargets
+
+- (void)dealloc
+{
+    [_channelTickRaidParticleEffectName release];
+    [super dealloc];
+}
+
+- (NSInteger)fullHealthTargetsInRaid:(Raid*)theRaid
+{
+    NSInteger total = 0;
+    for (RaidMember *member in theRaid.livingMembers) {
+        if (member.health == member.maximumHealth) {
+            total++;
+        }
+    }
+    return total;
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    [super triggerAbilityForRaid:theRaid players:players enemies:enemies];
+    [self startChannel:20.0 withTicks:8.0];
+    self.requiredTicks = 1;
+}
+
+- (void)channelTickForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    if (self.requiredTicks == 0 && [self fullHealthTargetsInRaid:theRaid] >= self.requiredNumberOfTargets) {
+        [self interrupt];
+    } else {
+        for (RaidMember *member in theRaid.livingMembers) {
+            [self damageTarget:member];
+        }
+        if (self.channelTickRaidParticleEffectName) {
+            [self.owner.announcer displayParticleSystemOnRaidWithName:self.channelTickRaidParticleEffectName delay:0.0];
+        }
+        self.requiredTicks = MAX(0, self.requiredTicks - 1);
+    }
+}
+@end
+
+@implementation ConsumeMagic
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    NSInteger periodicEffectCount = 0;
+    for (RaidMember *member in theRaid.livingMembers) {
+        for (Effect *eff in member.activeEffects) {
+            if (eff.effectType == EffectTypePositive && [eff isKindOfClass:[RepeatedHealthEffect class]]) {
+                eff.isExpired = YES;
+                periodicEffectCount++;
+                Effect *consumed = [[[Effect alloc] initWithDuration:1.5 andEffectType:EffectTypePositive] autorelease];
+                [consumed setTitle:@"consumed"];
+                [consumed setOwner:self.owner];
+                [consumed setSpriteName:self.iconName];
+                [member addEffect:consumed];
+            }
+        }
+    }
+
+    self.owner.health += self.owner.maximumHealth * (periodicEffectCount / 100.0);
+    
+}
+@end
+
+@implementation SlimeOrbs
+
+- (id)init
+{
+    if (self = [super init]) {
+        self.attackParticleEffectName = nil;
+        self.dodgeChanceAdjustment = -100.0;
+    }
+    return self;
+}
+
+- (void)collectible:(Collectible *)col wasCollectedByPlayer:(Player *)player forRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    self.orbCount--;
+    for (RaidMember *member in theRaid.livingMembers) {
+        NSInteger damage = self.abilityValue;
+        EngulfingSlimeEffect *eseff = (EngulfingSlimeEffect*)[member effectWithTitle:[[EngulfingSlimeEffect defaultEffect] title]];
+        NSInteger stackCount = 0;
+        if (eseff) {
+            stackCount = eseff.stacks;
+        }
+        damage *= pow(.5, stackCount);
+        [self damageTarget:member forDamage:damage];
+        
+    }
+}
+
+- (void)collectibleDidExpire:(Collectible *)col forRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    self.orbCount--;
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    NSInteger numOrbs = arc4random() % 2 + 1;
+    for (int i = 0; i < numOrbs; i++) {
+        Collectible *manaOrb = [[[Collectible alloc] initWithSpriteName:@"slime_orb.png" andDuration:99999] autorelease];
+        manaOrb.movementVector = CGPointMake(0, arc4random() % 15 + 10);
+        manaOrb.movementType = CollectibleMovementTypeFloat;
+        manaOrb.entranceType = CollectibleEntranceTypeSpew;
+        [manaOrb registerDelegate:self];
+        [self.owner.announcer displayCollectible:manaOrb];
+    }
+    self.orbCount+= numOrbs;
+    if (self.orbCount >= SLIME_REQUIRED_FOR_ENRAGE && !self.hasEmpowered) {
+        self.hasEmpowered = YES;
+        [self.owner.announcer announce:@"The Unspeakable becomes empowered by overflowing slime."];
+        OozeRaid *oozeAll = (OozeRaid*)[self.owner abilityWithKey:@"apply-ooze-all"];
+        [oozeAll setCooldown:1.0];
+        [oozeAll setOriginalCooldown:1.0];
+        self.cooldown = 1;
+    }
+}
+
+@end
+
+@implementation SoulSwap
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    RaidMember *highestMember = [theRaid.livingMembers objectAtIndex:0];
+    RaidMember *lowestMember = [theRaid.livingMembers objectAtIndex:0];
+    
+    for (RaidMember *member in theRaid.livingMembers) {
+        if (member.healthPercentage < lowestMember.healthPercentage) {
+            lowestMember = member;
+        }
+        
+        if (member.healthPercentage > highestMember.healthPercentage) {
+            highestMember = member;
+        }
+    }
+    
+    if (highestMember != lowestMember) {    
+        float temp = highestMember.healthPercentage;
+        highestMember.health = lowestMember.healthPercentage * highestMember.maximumHealth;
+        lowestMember.health = lowestMember.maximumHealth * temp;
+    }
+
+}
+@end
+
+
+@implementation AvatarOfTormentSubmerge
+
+- (id)init
+{
+    if (self = [super init]) {
+        self.dodgeChanceAdjustment = -100.0f;
+        self.abilityValue = 250;
+        self.cooldown = kAbilityRequiresTrigger;
+        self.title = @"Submerge";
+    }
+    return self;
+}
+
+- (void)emergeForRaid:(Raid*)theRaid
+{
+    [self.owner.announcer announce:@"Torment erupts from the pool blasting lava onto your allies!"];
+    [self.owner.announcer displayParticleSystemOnRaidWithName:@"magma_blast.plist" delay:0.0];
+    for (RaidMember *member in theRaid.livingMembers) {
+        [self damageTarget:member forDamage:self.abilityValue * 1.5];
+    }
+    [self.owner.announcer displayScreenShakeForDuration:2.0];
+    [self.owner.announcer playAudioForTitle:@"eruption.wav"];
+    [self.owner.announcer playAudioForTitle:@"demon_roar.wav"];
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    NSTimeInterval channelDuration = 6.0;
+    Effect *immunityEffect = [[[Effect alloc] initWithDuration:channelDuration andEffectType:EffectTypePositive] autorelease];
+    [immunityEffect setDamageTakenMultiplierAdjustment:-1.0];
+    [immunityEffect setOwner:self.owner];
+    [immunityEffect setTitle:@"submerge-immunity"];
+    [self.owner addEffect:immunityEffect];
+    [self startChannel:channelDuration withTicks:1];
+    [self.owner.announcer announce:@"Torment submerges and splashes magma onto your allies!"];
+    [self.owner.announcer displayParticleSystemOnRaidWithName:@"magma_blast.plist" delay:0.0];
+    [self.owner.announcer playAudioForTitle:@"submerge.mp3"];
+    
+    for (RaidMember *member in theRaid.livingMembers) {
+        [self damageTarget:member];
+    }
+}
+
+- (void)channelTickForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    [self emergeForRaid:theRaid];
+}
+@end
+
+@implementation RainOfFire
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    float channelDuration = 5.0;
+    [self startChannel:channelDuration withTicks:20];
+    [self.owner.announcer displayParticleSystemOnRaidWithName:@"rain_of_fire.plist" forDuration:channelDuration offset:CGPointMake(0, 150)];
+    [self.owner.announcer playAudioForTitle:@"fire_crackling_8.mp3"];
+}
+
+- (void)channelTickForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    for (RaidMember *member in theRaid.livingMembers) {
+        [self damageTarget:member forDamage:self.abilityValue / 20.0];
+    }
+}
+@end
+
+@implementation ChannelledRaidProjectileAttack
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    self.tickCount = 0;
+    NSTimeInterval channelDuration = 5.0;
+    [self startChannel:channelDuration withTicks:20];
+}
+
+- (void)channelTickForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    RaidMember *target = nil;
+    NSArray *livingMembers = theRaid.livingMembers;
+    
+    if (livingMembers.count > self.tickCount) {
+        target = [theRaid.livingMembers objectAtIndex:self.tickCount];
+    } else {
+        target = [theRaid randomLivingMember];
+    }
+    [self fireAtTarget:target];
+    self.tickCount++;
+    
+}
+@end
+
+@implementation ManaDrain
+- (id)init
+{
+    if (self = [super init]) {
+        self.attackParticleEffectName = nil;
+        self.dodgeChanceAdjustment = -100.0;
+    }
+    return self;
+}
+
+- (void)collectible:(Collectible *)col wasCollectedByPlayer:(Player *)player forRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    player.energy += player.maximumEnergy * .1;
+}
+
+- (void)collectibleDidExpire:(Collectible *)col forRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+}
+
+- (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
+{
+    Player *thePlayer = [players objectAtIndex:0];
+    NSInteger numOrbs = (int)round(10 * (thePlayer.energy / thePlayer.maximumEnergy));
+    thePlayer.energy = 0;
+    for (int i = 0; i < numOrbs; i++) {
+        Collectible *manaOrb = [[[Collectible alloc] initWithSpriteName:@"energy_orb.png" andDuration:3.0] autorelease];
+        manaOrb.scale = .5;
+        manaOrb.movementVector = CGPointMake(0, arc4random() % 15 + 10);
+        manaOrb.movementType = CollectibleMovementTypeFloat;
+        manaOrb.entranceType = CollectibleEntranceTypeSpewPlayer;
+        [manaOrb registerDelegate:self];
+        [self.owner.announcer displayCollectible:manaOrb];
+    }
+}
+
 @end

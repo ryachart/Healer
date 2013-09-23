@@ -30,9 +30,17 @@
 #import "TalentScene.h"
 #import "SimpleAudioEngine.h"
 #import "CollectibleLayer.h"
+#import "InventoryScene.h"
+#import "PlayerSprite.h"
+#import "PostBattleLayer_iPhone.h"
 
 #define DEBUG_IMMUNITIES false
 #define DEBUG_PERFECT_HEALS false
+#define DEBUG_HIGH_HPS false
+#define DEBUG_WIN_IMMEDIATELY false
+
+#define DEBUG_HPS 250
+#define DEBUG_DAMAGE 0.0
 
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812
@@ -61,6 +69,10 @@
 @property (nonatomic, readwrite) ALuint ambientBattleKey;
 @property (nonatomic, assign) CollectibleLayer *collectibleLayer;
 @property (nonatomic, retain) NSMutableArray *effectsPlayedThisSession;
+@property (nonatomic, assign) BackgroundSprite *sceneBackground;
+@property (nonatomic, assign) BackgroundSprite *mainBackground;
+@property (nonatomic, assign) PlayerSprite *healerPortrait;
+@property (nonatomic, assign) CCParticleSystemQuad *castingEffect;
 
 @property (nonatomic, retain) NSDictionary *randomTitlesPresetDictionary;
 @end
@@ -72,6 +84,7 @@
     [_spellView2 release];
     [_spellView3 release];
     [_spellView4 release];
+    [_weaponSpell release];
     [_raidView release];
     [_bossHealthView release];
     [_playerStatusView release];
@@ -135,15 +148,24 @@
         
         NSAssert(self.players.count > 0, @"A Battle with no players was initiated.");
         
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/battle-sprites.plist"];
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/effect-sprites.plist"];
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/postbattle.plist"];
+        NSString *assets_directory_prefix = @"assets";
+        if (!IS_IPAD) {
+            assets_directory_prefix = @"assets-iphone";
+        }
         
-        BackgroundSprite *bg = [[[BackgroundSprite alloc] initWithJPEGAssetName:[Encounter backgroundPathForEncounter:self.encounter.levelNumber]] autorelease];
-        [bg setPosition:CGPointMake(0, 408)];
-        [self addChild:bg];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:[NSString stringWithFormat:@"%@/battle-sprites.plist", assets_directory_prefix]];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:[NSString stringWithFormat:@"%@/effect-sprites.plist", assets_directory_prefix]];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:[NSString stringWithFormat:@"%@/postbattle.plist", assets_directory_prefix]];
         
-        [self addChild:[[[BackgroundSprite alloc] initWithAssetName:@"battle_back_main"] autorelease]];
+        
+        self.sceneBackground = [[[BackgroundSprite alloc] initWithJPEGAssetName:[Encounter backgroundPathForEncounter:self.encounter.levelNumber]] autorelease];
+        [self.sceneBackground setPosition:IS_IPAD ? CGPointMake(0, 408) : CGPointMake(0, 336)];
+        [self addChild:self.sceneBackground];
+        
+        if (IS_IPAD) {
+            self.mainBackground = [[[BackgroundSprite alloc] initWithAssetName:@"battle_back_main"] autorelease];
+            [self addChild:self.mainBackground];
+        }
 
         if (self.players.count > 1) {
             for (int i = 1; i < self.players.count; i++){
@@ -180,26 +202,43 @@
             raidViewLoc = CGPointMake(260, 120);
         }
         
+        if (!IS_IPAD) {
+            raidViewLoc = CGPointMake(-50, 80);
+        }
+        
         self.raidView = [[[RaidView alloc] init] autorelease];
+        [self.raidView setNumColumns: IS_IPAD ? 5 : 4];
         [self.raidView setPosition:raidViewLoc];
         [self.raidView setContentSize:CGSizeMake(500, 320)];
         [self addChild:self.raidView z:RAID_Z];
         
+        if (!IS_IPAD) {
+            self.raidView.scale = .75;
+        }
+        
         self.enemiesLayer = [[[EnemiesLayer alloc] initWithEnemies:self.encounter.enemies] autorelease];
         [self.enemiesLayer setDelegate:self];
-        [self.enemiesLayer setPosition:CGPointMake(0, 408)];
+        [self.enemiesLayer setPosition:IS_IPAD ? CGPointMake(0, 408) : CGPointMake(0, 336)];
         [self.enemiesLayer setAreAbilitiesVisible:NO];
         [self addChild:self.enemiesLayer];
         
-        CCParticleSystemQuad *castingEffect = [[ParticleSystemCache sharedCache] systemForKey:@"swirly_casty.png"];
-        [castingEffect setPosition:CGPointMake(54, 280)];
-        [self addChild:castingEffect];
-        
-        CCSprite *playerView = [CCSprite spriteWithSpriteFrameName:@"healer-portrait.png"];
-        [playerView setPosition:CGPointMake(130, 180)];
-        [self addChild:playerView];
+        if (IS_IPAD) {
+            self.castingEffect = [[ParticleSystemCache sharedCache] systemForKey:@"swirly_casty.png"];
+            [self.castingEffect setPosition:CGPointMake(54, 280)];
+            [self addChild:self.castingEffect];
+            
+            self.healerPortrait = [[[PlayerSprite alloc] initWithEquippedItems:[PlayerDataManager localPlayer].equippedItems] autorelease];
+            [self.healerPortrait setScale:.75];
+            self.healerPortrait.flipX = YES;
+            [self.healerPortrait setPosition:CGPointMake(130, 180)];
+            [self addChild:self.healerPortrait];
+        }
         
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(322,350, 400, 50)] autorelease];
+        if (!IS_IPAD) {
+            self.playerCastBar.position = CGPointMake(-30, 296);
+            self.playerCastBar.scale = .75;
+        }
         [self.playerCastBar setPlayer:self.player];
         self.playerStatusView = [[[PlayerStatusView alloc] init] autorelease];
         [self.playerStatusView setPosition:CGPointMake(130, 100)];
@@ -226,55 +265,56 @@
         //CACHE SOUNDS
         [[SimpleAudioEngine sharedEngine] preloadEffect:AMBIENT_BATTLE_LOOP];
         
-        for (int i = 0; i < 4; i++){
-            switch (i) {
-                case 0:
-                    self.spellView1 = [[[PlayerSpellButton alloc] init] autorelease];
-                    [self.spellView1 setPosition:CGPointMake(910, 295)];
-                    if (self.player.activeSpells.count > i) {
-                        Spell *spell = [[self.player activeSpells] objectAtIndex:i];
-                        [self.spellView1 setSpellData:spell];
-                        [self.spellView1 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
-                        [self.spellView1 setPlayer:self.player];
-                    }
-                    [self addChild:self.spellView1];
-                    break;
-                case 1:
-                    self.spellView2 = [[[PlayerSpellButton alloc] init] autorelease];
-                    [self.spellView2 setPosition:CGPointMake(910, 200)];
-                    if (self.player.activeSpells.count > i) {
-                        Spell *spell = [[self.player activeSpells] objectAtIndex:i];
-                        [self.spellView2 setSpellData:spell];
-                        [self.spellView2 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
-                        [self.spellView2 setPlayer:self.player];
-                    }
-                    [self addChild:self.spellView2];
-                    break;
-                case 2:
-                    self.spellView3 = [[[PlayerSpellButton alloc] init] autorelease];
-                    [self.spellView3 setPosition:CGPointMake(910, 105)];
-                    if (self.player.activeSpells.count > i) {
-                        Spell *spell = [[self.player activeSpells] objectAtIndex:i];
-                        [self.spellView3 setSpellData:spell];
-                        [self.spellView3 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
-                        [self.spellView3 setPlayer:self.player];
-                    }
-                    [self addChild:self.spellView3];
-                    break;
-                case 3:
-                    self.spellView4 = [[[PlayerSpellButton alloc] init] autorelease];
-                    [self.spellView4 setPosition:CGPointMake(910, 10)];
-                    if (self.player.activeSpells.count > i) {
-                        Spell *spell = [[self.player activeSpells] objectAtIndex:i];
-                        [self.spellView4 setSpellData:spell];
-                        [self.spellView4 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
-                        [self.spellView4 setPlayer:self.player];
-                    }
-                    [self addChild:self.spellView4];
-                    break;
-                default:
-                    break;
-            }
+        self.spellView1 = [[[PlayerSpellButton alloc] init] autorelease];
+        [self.spellView1 setPosition:IS_IPAD ? CGPointMake(910, 295) : CGPointMake(10, 0)];
+        Spell *spell = [[self.player activeSpells] objectAtIndex:0];
+        [self.spellView1 setSpellData:spell];
+        [self.spellView1 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+        [self.spellView1 setPlayer:self.player];
+        [self addChild:self.spellView1];
+        
+        self.spellView2 = [[[PlayerSpellButton alloc] init] autorelease];
+        [self.spellView2 setPosition:IS_IPAD ? CGPointMake(910, 200) : CGPointMake(82, 0)];
+        if (self.player.activeSpells.count > 0) {
+            Spell *spell = [[self.player activeSpells] objectAtIndex:1];
+            [self.spellView2 setSpellData:spell];
+            [self.spellView2 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+            [self.spellView2 setPlayer:self.player];
+        }
+        [self addChild:self.spellView2];
+        self.spellView3 = [[[PlayerSpellButton alloc] init] autorelease];
+        [self.spellView3 setPosition:IS_IPAD ? CGPointMake(910, 105) : CGPointMake(154, 0)];
+        if (self.player.activeSpells.count > 1) {
+            Spell *spell = [[self.player activeSpells] objectAtIndex:2];
+            [self.spellView3 setSpellData:spell];
+            [self.spellView3 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+            [self.spellView3 setPlayer:self.player];
+        }
+        [self addChild:self.spellView3];
+        self.spellView4 = [[[PlayerSpellButton alloc] init] autorelease];
+        [self.spellView4 setPosition:IS_IPAD ? CGPointMake(910, 10) : CGPointMake(226, 0)];
+        if (self.player.activeSpells.count > 2) {
+            Spell *spell = [[self.player activeSpells] objectAtIndex:3];
+            [self.spellView4 setSpellData:spell];
+            [self.spellView4 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+            [self.spellView4 setPlayer:self.player];
+        }
+        [self addChild:self.spellView4];
+        
+        if (!IS_IPAD) {
+            self.spellView1.scale = .75;
+            self.spellView2.scale = .75;
+            self.spellView3.scale = .75;
+            self.spellView4.scale = .75;
+        }
+        
+        if (self.player.spellsFromEquipment.count > 0) {
+            self.weaponSpell = [[[PlayerSpellButton alloc] init] autorelease];
+            [self.weaponSpell setPosition:CGPointMake(815, 10)];
+            [self.weaponSpell setSpellData:[self.player.spellsFromEquipment objectAtIndex:0]];
+            [self.weaponSpell setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+            [self.weaponSpell setPlayer:self.player];
+            [self addChild:self.weaponSpell];
         }
         
         for (Player *player in self.players) {
@@ -293,9 +333,20 @@
 #if DEBUG_PERFECT_HEALS
         for (RaidMember *member in self.raid.livingMembers) {
             PerfectHeal *immunity = [[[PerfectHeal alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
-            [immunity setDamageDoneMultiplierAdjustment:1];
+            [immunity setDamageDoneMultiplierAdjustment:DEBUG_DAMAGE];
             [immunity setOwner:self.player];
             [member addEffect:immunity];
+        }
+#endif
+        
+#if DEBUG_HIGH_HPS
+        for (int i = 0; i < 5; i++) {
+            WanderingSpiritEffect *hot = [[[WanderingSpiritEffect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
+            [hot setOwner:self.player];
+            [hot setTitle:[NSString stringWithFormat:@"wse-high-hps-%d", i]];
+            [hot setValuePerTick:DEBUG_HPS];
+            [hot setDamageDoneMultiplierAdjustment:DEBUG_DAMAGE];
+            [[self.raid randomLivingMember] addEffect:hot];
         }
 #endif
         
@@ -318,6 +369,10 @@
         CCMenuItemSprite *pauseButtonItem = [CCMenuItemSprite itemWithNormalSprite:pause selectedSprite:pauseDown target:self selector:@selector(showPauseMenu)];
         self.pauseButton = [CCMenu menuWithItems:pauseButtonItem, nil];
         [self.pauseButton setPosition:CGPointMake(50, [CCDirector sharedDirector].winSize.height * .9325)];
+        if (!IS_IPAD) {
+            self.pauseButton.scale = .75;
+            self.pauseButton.position = CGPointMake(0, SCREEN_HEIGHT - pause.contentSize.height);
+        }
         [self addChild:self.pauseButton];
         
         self.collectibleLayer = [[[CollectibleLayer alloc] initWithOwningPlayer:self.player encounter:self.encounter players:self.players] autorelease];
@@ -477,6 +532,23 @@
 }
 
 #pragma mark - Battle Completion
+- (void)postBattleLayerWillAwardLoot
+{
+    //We need to clear out the UI and center the scene
+    [self.raidView endBattleWithSuccess:YES];
+    [self.sceneBackground runAction:[CCMoveTo actionWithDuration:1.0 position:CGPointMake(0, 200)]];
+    [self.mainBackground runAction:[CCFadeOut actionWithDuration:1.0]];
+    [self.healerPortrait runAction:[CCFadeOut actionWithDuration:1.0]];
+    [self.castingEffect removeFromParentAndCleanup:YES];
+    [self.playerCastBar removeFromParentAndCleanup:YES];
+    [self.playerStatusView removeFromParentAndCleanup:YES];
+    [self.spellView1 removeFromParentAndCleanup:YES];
+    [self.spellView2 removeFromParentAndCleanup:YES];
+    [self.spellView3 removeFromParentAndCleanup:YES];
+    [self.spellView4 removeFromParentAndCleanup:YES];
+    [self.weaponSpell removeFromParentAndCleanup:YES];
+}
+
 - (void)postBattleLayerDidTransitionToScene:(PostBattleLayerDestination)destination asVictory:(BOOL)victory
 {
     if (destination == PostBattleLayerDestinationMap) {
@@ -484,7 +556,7 @@
         if (self.encounter.levelNumber >= 5) {
             [qps setComingFromVictory:victory];
         }
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:qps]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:qps]];
     }
     
     if (destination == PostBattleLayerDestinationShop) {
@@ -500,13 +572,20 @@
         } else {
             [shopScene setReturnsToMap:YES];
         }
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:shopScene]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:shopScene]];
     }
     
     if (destination == PostBattleLayerDestinationTalents) {
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[TalentScene alloc] init] autorelease]]];
     }
+    
+    if (destination == PostBattleLayerDestinationArmory) {
+        InventoryScene *is = [[[InventoryScene alloc] init] autorelease];
+        [is setReturnsToMap:YES];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:is]];
+    }
 }
+
 -(void)battleEndWithSuccess:(BOOL)success{    
 //    if (success && !(self.isServer || self.isClient) && [NormalModeCompleteScene needsNormalModeCompleteSceneForLevelNumber:self.encounter.levelNumber]){
 //        //If we just beat the final boss for the first time, show the normal mode complete Scene
@@ -558,7 +637,13 @@
 }
 
 - (void)transitionToPostBattleWithSuccess:(BOOL)success {
-    PostBattleLayer *pbl = [[[PostBattleLayer alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer andDuration:self.encounter.duration] autorelease];
+    PostBattleLayer *pbl;
+    if (IS_IPAD) {
+        pbl = [[[PostBattleLayer alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer andDuration:self.encounter.duration] autorelease];
+    } else {
+        pbl = [[[PostBattleLayer_iPhone alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer andDuration:self.encounter.duration] autorelease];
+    }
+    
     pbl.delegate = self;
     if (self.isServer || self.isClient){
         [pbl setServerPlayerId:self.serverPlayerID];
@@ -578,6 +663,7 @@
 		[self.selectedRaidMembers addObject:hv];
 		[hv setSelectionState:RaidViewSelectionStateSelected];
         [self checkForFtueSelectionForHealthView:hv];
+        [hv.member targetWasSelectedByPlayer:self.player];
 	}
 	else if ([self.selectedRaidMembers objectAtIndex:0] == hv){
 		//Here we do nothing because the already selected object has been reselected
@@ -593,6 +679,7 @@
 			[self.selectedRaidMembers removeObjectAtIndex:0];
 			[self.selectedRaidMembers insertObject:hv atIndex:0];
             [hv setSelectionState:RaidViewSelectionStateSelected];
+            [hv.member targetWasSelectedByPlayer:self.player];
             [self checkForFtueSelectionForHealthView:hv];
 		}
 		
@@ -647,7 +734,7 @@
                 NSMutableString *message = [NSMutableString string];
                 [message appendFormat:@"BGNSPELL|%@", [[spell spellData] spellID]];
                 for (RaidMember *target in targets){
-                    [message appendFormat:@"|%@", target.battleID];
+                    [message appendFormat:@"|%@", target.networkId];
                 }
                 [self.match sendDataToAllPlayers:[message dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
             }
@@ -889,7 +976,7 @@
 - (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target withOffset:(CGPoint)offset delay:(NSTimeInterval)delay
 {
     if (self.isServer){
-        NSString* networkMessage = [NSString stringWithFormat:@"STMTGT|%@|%@", name, target.battleID];
+        NSString* networkMessage = [NSString stringWithFormat:@"STMTGT|%@|%@", name, target.networkId];
         [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
     }
     CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
@@ -1370,6 +1457,10 @@
         areAllEnemiesDefeated &= enemy.isDead;
     }
     
+    if (DEBUG_WIN_IMMEDIATELY) {
+        areAllEnemiesDefeated = YES;
+    }
+    
     if (!self.isClient){
         if (survivors == 0)
         {
@@ -1392,6 +1483,7 @@
 	[self.spellView2 updateUI];
 	[self.spellView3 updateUI];
 	[self.spellView4 updateUI];
+    [self.weaponSpell updateUI];
     [self.enemiesLayer update];
     [self.collectibleLayer updateAllCollectibles:deltaT];
 }
@@ -1442,7 +1534,7 @@
             
             NSString* battleID = [messageComponents objectAtIndex:1];
 
-            [[self.raid memberForBattleID:battleID] updateWithNetworkMessage:message];
+            [[self.raid memberForNetworkId:battleID] updateWithNetworkMessage:message];
         }
         
         if ([message hasPrefix:@"ANNC|"]){
@@ -1463,7 +1555,7 @@
         
         if ([message hasPrefix:@"STMTGT|"]){
             NSArray *components = [message componentsSeparatedByString:@"|"];
-            [self displayParticleSystemWithName:[components objectAtIndex:1] onTarget:[self.raid memberForBattleID:[components objectAtIndex:2]]];
+            [self displayParticleSystemWithName:[components objectAtIndex:1] onTarget:[self.raid memberForNetworkId:[components objectAtIndex:2]]];
         }
         
         if ([message hasPrefix:@"SPRTOV|"]){
@@ -1521,7 +1613,7 @@
     NSMutableArray *targets = [NSMutableArray arrayWithCapacity:3];
     if (messageComponents.count > 2){
         for (int i = 2; i < messageComponents.count; i++){
-            RaidMember *member = [self.raid memberForBattleID:[messageComponents objectAtIndex:i]];
+            RaidMember *member = [self.raid memberForNetworkId:[messageComponents objectAtIndex:i]];
             if (member){
                 [targets addObject:member];
             }else{

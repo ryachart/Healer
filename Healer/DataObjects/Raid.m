@@ -1,59 +1,57 @@
 //
 //  Raid.m
-//  RaidLeader
+//  Healer
 //
 //  Created by Ryan Hart on 4/22/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
 
 #import "Raid.h"
 #import "Player.h"
 
 @interface Raid ()
-@property (nonatomic, retain) NSMutableDictionary *raidMemberBattleIDDictionary;
+@property (nonatomic, retain) NSMutableDictionary *raidMemberNetworkIds;
 @end
 
 @implementation Raid
 
--(void)dealloc{
+- (void)dealloc {
     [_players release]; _players = nil;
     [_members release]; _members = nil;
-    [_raidMemberBattleIDDictionary release]; _raidMemberBattleIDDictionary = nil;
+    [_raidMemberNetworkIds release]; _raidMemberNetworkIds = nil;
     [super dealloc];
 }
 
--(id)init{
+- (id)init {
     if (self = [super init]){
         _members = [[NSMutableArray alloc] initWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];
-        self.raidMemberBattleIDDictionary = [NSMutableDictionary dictionaryWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];
+        self.raidMemberNetworkIds = [NSMutableDictionary dictionaryWithCapacity:MAXIMUM_RAID_MEMBERS_ALLOWED];
         _players = [[NSMutableArray arrayWithCapacity:2] retain];
 	}
 	return self;
 }
 
--(void)addRaidMember:(RaidMember*)member
-{
+- (void)addRaidMember:(RaidMember*)member {
 	if ([self.raidMembers count] < MAXIMUM_RAID_MEMBERS_ALLOWED && ![self.raidMembers containsObject:member]){
 		[_members addObject:member];
         
-        if (member.battleID){
-            [self.raidMemberBattleIDDictionary setObject:member forKey:member.battleID];
+        if (member.networkId){
+            [self.raidMemberNetworkIds setObject:member forKey:member.networkId];
         }else{
-            member.battleID = [NSString stringWithFormat:@"%@%i",  NSStringFromClass([member class]), self.raidMembers.count];
-            [self.raidMemberBattleIDDictionary setObject:member forKey:member.battleID];
+            member.networkId = [NSString stringWithFormat:@"%@%i",  NSStringFromClass([member class]), self.raidMembers.count];
+            [self.raidMemberNetworkIds setObject:member forKey:member.networkId];
 
         }
 	}
 }
 
-- (void)addPlayer:(Player *)player
-{
+- (void)addPlayer:(Player *)player {
     if (![self.players containsObject:player]) {
         [self.players addObject:player];
     }
 }
 
--(NSInteger)deadCount{
+- (NSInteger)deadCount {
     NSInteger deadCount = 0;
     
     for (HealableTarget *member in self.raidMembers){
@@ -64,10 +62,30 @@
     return deadCount;
 }
 
+- (RaidMember*)memberForNetworkId:(NSString *)battleID {
+    return [self.raidMemberNetworkIds objectForKey:battleID];
+}
+
 - (NSArray *)raidMembers
 {
     NSArray *members = [self.players arrayByAddingObjectsFromArray:_members];
     return members;
+}
+
+- (NSArray*)membersSatisfyingComparator:(RaidMemberComparator)comparator
+{
+    NSMutableArray *satisfyingMembers = [NSMutableArray arrayWithCapacity:self.raidMembers.count];
+    for (RaidMember *member in self.raidMembers) {
+        if (comparator(member)) {
+            [satisfyingMembers addObject:member];
+        }
+    }
+    
+    if (satisfyingMembers.count == 0) {
+        return nil;
+    }
+    
+    return satisfyingMembers;
 }
 
 -(NSArray*)livingMembers
@@ -83,40 +101,25 @@
 	return aliveMembers;
 }
 
-- (RaidMember*)randomMemberWithComparator:(RaidMemberComparator)comparator
-{
-    NSMutableArray *satisfyingMembers = [NSMutableArray arrayWithCapacity:self.raidMembers.count];
-    for (RaidMember *member in self.raidMembers) {
-        if (comparator(member)) {
-            [satisfyingMembers addObject:member];
-        }
-    }
-    
-    if (satisfyingMembers.count == 0) {
+- (RaidMember*)randomMemberSatisfyingComparator:(RaidMemberComparator)comparator {
+    NSArray *candidates = [self membersSatisfyingComparator:comparator];
+    if (candidates.count == 0) {
         return nil;
     }
-    
-    return [satisfyingMembers objectAtIndex:arc4random() % satisfyingMembers.count];
+    return [candidates objectAtIndex:arc4random() % candidates.count];
 }
 
 - (RaidMember*)randomLivingMemberWithPositioning:(Positioning)pos {
-    RaidMember *selectedMember = nil;
-    int safety = 0;
-    do {
-        selectedMember = [self randomLivingMember];
-        if (pos != Any && selectedMember.positioning != pos){
-            selectedMember = nil;
+    return [self randomMemberSatisfyingComparator:^BOOL (RaidMember *member) {
+        if (member.isDead || member.positioning != pos) {
+            return NO;
         }
-        safety++;
-        if (safety > 25){
-            break;
-        }
-    }while (!selectedMember);
-    return selectedMember;
+        return YES;
+    }];
 }
 
--(RaidMember*)randomLivingMember{
-    return [self randomMemberWithComparator:^BOOL(RaidMember *member) {
+- (RaidMember*)randomLivingMember {
+    return [self randomMemberSatisfyingComparator:^BOOL(RaidMember *member) {
         if (member.isDead) {
             return false;
         }
@@ -124,9 +127,8 @@
     }];
 }
 
-- (RaidMember*)randomNonPlayerLivingMember
-{
-    return [self randomMemberWithComparator:^BOOL(RaidMember *member) {
+- (RaidMember*)randomNonPlayerLivingMember {
+    return [self randomMemberSatisfyingComparator:^BOOL(RaidMember *member) {
         if (member.isDead && ![member isKindOfClass:[Player class]]) {
             return false;
         }
@@ -134,9 +136,8 @@
     }];
 }
 
-- (RaidMember*)randomNonGuardianLivingMember
-{
-    return [self randomMemberWithComparator:^BOOL(RaidMember *member) {
+- (RaidMember*)randomNonGuardianLivingMember {
+    return [self randomMemberSatisfyingComparator:^BOOL(RaidMember *member) {
         if (member.isDead && ![member isKindOfClass:[Guardian class]]) {
             return false;
         }
@@ -144,9 +145,8 @@
     }];
 }
 
-- (RaidMember*)randomNonPlayerNonGuardianLivingMember
-{
-    return [self randomMemberWithComparator:^BOOL(RaidMember *member) {
+- (RaidMember*)randomNonPlayerNonGuardianLivingMember {
+    return [self randomMemberSatisfyingComparator:^BOOL(RaidMember *member) {
         if (member.isDead && ![member isKindOfClass:[Player class]] && ![member isKindOfClass:[Guardian class]]) {
             return false;
         }
@@ -158,32 +158,24 @@
     return [self randomTargets:numTargets withPositioning:pos excludingTargets:[NSArray array]];
 }
 
-
 - (NSArray*)randomTargets:(NSInteger)numTargets withPositioning:(Positioning)pos excludingTargets:(NSArray*)exclTargets {
+    NSMutableArray *candidates = [NSMutableArray arrayWithArray:[self membersSatisfyingComparator:^BOOL (RaidMember *member) {
+        if ([exclTargets containsObject:member] || (member.positioning != pos && pos != Any)) {
+            return NO;
+        }
+        return YES;
+    }]];
     
     NSMutableArray *targets = [NSMutableArray arrayWithCapacity:numTargets];
     
-    int safety = 0;
-    while (targets.count < numTargets){
-        RaidMember *candidate = [self randomLivingMemberWithPositioning:pos];
-        if (candidate) {
-            if (![targets containsObject:candidate] && ![exclTargets containsObject:candidate]){
-                [targets addObject:candidate];
-            }
-        }
-        if (safety >= 25){
-            break;
-        }
-        safety++;
+    for (int i = 0; i < MIN(numTargets, candidates.count); i++) {
+        [targets addObject:[candidates objectAtIndex:arc4random() % candidates.count]];
     }
+    
     return targets;
 }
 
--(RaidMember*)memberForBattleID:(NSString *)battleID{
-    return [self.raidMemberBattleIDDictionary objectForKey:battleID];
-}
-
--(RaidMember*)lowestHealthRaidMemberSet:(NSArray*)raid{
+-(RaidMember*)lowestHealthRaidMemberInSet:(NSArray*)raid{
     if (raid.count == 0){
         return nil;
     }
@@ -199,6 +191,8 @@
     }
     
     if (candidate.healthPercentage == 1.0){
+        //If the lowest health raid member is full health, choose a random member because this behaves
+        //better for abilities that target lowest health raid members
         return [raid objectAtIndex:arc4random() % raid.count];
     }
     
@@ -221,7 +215,7 @@
         possibleTargets = aliveMembers;
     }
     for (int i = 0; i < possibleTargets; i++){
-        RaidMember *lowestHealthTarget = [self lowestHealthRaidMemberSet:candidates];
+        RaidMember *lowestHealthTarget = [self lowestHealthRaidMemberInSet:candidates];
         if (lowestHealthTarget){
             [finalTargets addObject:lowestHealthTarget];
             [candidates removeObject:lowestHealthTarget];
@@ -235,15 +229,12 @@
 }
 
 - (NSArray *)livingMembersWithPositioning:(Positioning)pos {
-    NSMutableArray *targets = [NSMutableArray arrayWithCapacity:20];
-    NSArray *candidates = [self livingMembers];
-    
-    for (RaidMember *member in candidates) {
-        if (member.positioning == pos) {
-            [targets addObject:member];
+    return [self membersSatisfyingComparator:^BOOL (RaidMember *member){
+        if (member.positioning != pos) {
+            return NO;
         }
-    }
-    return targets;
+        return YES;
+    }];
 }
 
 @end

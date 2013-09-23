@@ -3,10 +3,11 @@
 //  Healer
 //
 //  Created by Ryan Hart on 3/20/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
 #import "cocos2d.h"
+#import "IconDescriptionModalLayer.h"
 #import <GameKit/GameKit.h>
 
 @class Encounter;
@@ -14,16 +15,19 @@
 typedef enum {
     PostBattleLayerDestinationMap,
     PostBattleLayerDestinationShop,
-    PostBattleLayerDestinationTalents
+    PostBattleLayerDestinationTalents,
+    PostBattleLayerDestinationArmory
 } PostBattleLayerDestination;
+
 
 @protocol PostBattleLayerDelegate
 
+- (void)postBattleLayerWillAwardLoot;
 - (void)postBattleLayerDidTransitionToScene:(PostBattleLayerDestination)destination asVictory:(BOOL)victory;
 
 @end
 
-@interface PostBattleLayer : CCLayerColor
+@interface PostBattleLayer : CCLayerColor <IconDescriptorModalDelegate>
 
 - (id)initWithVictory:(BOOL)victory encounter:(Encounter*)enc andIsMultiplayer:(BOOL)isMult andDuration:(NSTimeInterval)duration;
 

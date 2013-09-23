@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 2/25/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
 #import "EnemySprite.h"
@@ -15,6 +15,7 @@
 @property (nonatomic, assign) EnemyCastBar *castBar;
 @property (nonatomic, assign) EnemyHealthBar *healthBar;
 @property (nonatomic, assign) CCSprite *enemySprite;
+@property (nonatomic, assign) CCNode *statusNode;
 @end
 
 @implementation EnemySprite
@@ -32,9 +33,8 @@
         self.enemySprite = [CCSprite spriteWithSpriteFrame:enemySpriteFrame];
         [self addChild:self.enemySprite];
         
-        
         CGPoint enemySpritePositionFix = CGPointZero;
-        CGPoint center = CGPointMake(0, -150.0);
+        CGPoint center = IS_IPAD ? CGPointMake(0, -150.0) : CGPointMake(0, -50);
         
         //Gross visual hotfixes
         if ([enemy.spriteName isEqualToString:@"twinchampions_battle_portrait.png"]) {
@@ -50,20 +50,30 @@
         
         [self.enemySprite setPosition:enemySpritePositionFix];
         
+        self.statusNode = [CCNode node];
+        [self.statusNode setPosition:center];
+        [self addChild:self.statusNode];
+        
         self.castBar = [[[EnemyCastBar alloc] init] autorelease];
         [self.castBar setEnemy:enemy];
-        [self.castBar setPosition:CGPointMake(center.x, center.y + 6)];
-        [self addChild:self.castBar];
+        [self.castBar setPosition:CGPointMake(0, 6)];
+        [self.statusNode addChild:self.castBar];
         
         self.healthBar = [[[EnemyHealthBar alloc] init] autorelease];
         [self.healthBar setEnemy:enemy];
-        [self.healthBar setPosition:CGPointMake(center.x, center.y + 40)];
-        [self addChild:self.healthBar];
+        [self.healthBar setPosition:CGPointMake(0, 40)];
+        [self.statusNode addChild:self.healthBar];
         
         self.abilitiesView = [[[EnemyAbilityDescriptionsView alloc] initWithBoss:self.enemy] autorelease];
-        [self.abilitiesView setPosition:CGPointMake(center.x - 128, center.y + 84)];
+        [self.abilitiesView setPosition:CGPointMake(-128, 84)];
         [self.abilitiesView setDelegate:self];
-        [self addChild:self.abilitiesView];
+        [self.statusNode addChild:self.abilitiesView];
+        
+        
+        if (!IS_IPAD) {
+            self.enemySprite.scale = .4;
+            self.statusNode.scale = .5;
+        }
         
         [self checkInactive];
     }

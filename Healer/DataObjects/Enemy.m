@@ -1,9 +1,9 @@
 //
 //  Boss.m
-//  RaidLeader
+//  Healer
 //
 //  Created by Ryan Hart on 4/22/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
 
 #import "Enemy.h"
@@ -24,7 +24,7 @@
 
 @implementation Enemy
 
--(void)dealloc{
+- (void)dealloc {
     [_abilities release];
     [_title release];
     [_queuedAbilitiesToAdd release];
@@ -161,11 +161,22 @@
     
 }
 
-- (void)ownerWillExecuteAbility:(Ability *)ability {
+- (void)ownerWillExecuteAbility:(Ability *)ability
+{
     
 }
 
 - (void)ownerDidChannelTickForAbility:(Ability *)ability
+{
+    
+}
+
+- (void)ownerDidDamageTarget:(RaidMember*)target withAbility:(Ability*)ability forDamage:(NSInteger)damage
+{
+    
+}
+
+- (void)ownerDidDamageTarget:(RaidMember*)target withEffect:(Effect*)effect forDamage:(NSInteger)damage
 {
     
 }
@@ -206,8 +217,8 @@
     [self.abilities removeObject:ab];
 }
 
--(id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses {
-    if (self = [super init]){
+- (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses {
+    if (self = [super init]) {
         self.maximumHealth = hlth;
         self.health = hlth;
         self.title = @"";
@@ -294,15 +305,15 @@
     [self updateEffects:enemies raid:raid players:players time:timeDelta];
 }
 
-+(id)defaultBoss
++ (id)defaultBoss
 {
 	return nil;
 }
 
--(NSString*)sourceName{
+- (NSString*)sourceName{
     return self.title;
 }
--(NSString*)targetName{
+- (NSString*)targetName{
     return self.title;
 }
 
@@ -703,16 +714,21 @@
         [self.announcer playAudioForTitle:@"wolvesgrowling.mp3"];
         [self.announcer displayParticleSystemOnRaidWithName:@"green_mist.plist" forDuration:-1.0 offset:CGPointMake(0, -100)]; //Lower this because it's a 10 man...kind of awful
         for (RaidMember *member in raid.raidMembers){
+            NSInteger damage = -(arc4random() % 10 + 5);
+            if (self.difficulty == 5) {
+                damage *= .5;
+            }
             RepeatedHealthEffect *rhe = [[RepeatedHealthEffect alloc] initWithDuration:-1.0 andEffectType:EffectTypeNegativeInvisible];
             [rhe setOwner:self];
             [rhe setTitle:@"fungal-ravager-mist"];
-            [rhe setValuePerTick:-(arc4random() % 10 + 5)];
+            [rhe setValuePerTick:damage];
             [member addEffect:rhe];
             [rhe release];
         }
     }
     
     if (percentage == 99.0){
+        float damageBonus = 1.25;
         [self.announcer announce:@"The final Ravager glows with rage."];
         [self.announcer playAudioForTitle:@"wolvesgrowling.mp3"];
         AbilityDescriptor *rage = [[[AbilityDescriptor alloc] init] autorelease];
@@ -724,7 +740,7 @@
         [enragedEffect setIsIndependent:YES];
         [enragedEffect setTarget:self];
         [enragedEffect setOwner:self];
-        [enragedEffect setDamageDoneMultiplierAdjustment:1.25];
+        [enragedEffect setDamageDoneMultiplierAdjustment:damageBonus];
         [self addEffect:enragedEffect];
         [enragedEffect release];
     }
@@ -779,7 +795,7 @@
             [wse setAilmentType:AilmentTrauma];
             [wse setTitle:@"pred-fungus-effect"];
             [wse setSpriteName:@"plague.png"];
-            [wse setValuePerTick:-self.autoAttack.abilityValue];
+            [wse setValuePerTick:-self.autoAttack.abilityValue * .5];
             [wse setOwner:self];
             [target addEffect:wse];
         }
@@ -976,6 +992,7 @@
         [unstableToxin setKey:@"unstable"];
         [unstableToxin setTimeApplied:10.0];
         unstableToxin.failureChance = 0.0;
+        unstable.dodgeChanceAdjustment = -100.0f;
         [unstableToxin setActivationTime:1.5];
         [unstableToxin setRequiresDamageToApplyEffect:NO];
         [unstableToxin setTitle:@"Unstable Toxin"];
@@ -1342,6 +1359,7 @@
         [wp setInfo:@"Teritha covers your allies in a malicious curse that deals damage until their health is reduced to 35% or less."];
         
         RaidDamagePulse *pulse = [[[RaidDamagePulse alloc] init] autorelease];
+        [pulse setInfo:@"When you begin fighting Teritha she starts a dark ritual.  All hope is lost if you and your allies cannot defeat her before she gains Ultimate Corruption."];
         [pulse setIconName:@"poison_explosion.png"];
         [pulse setActivationTime:2.0];
         [pulse setTitle:@"Ultimate Corruption"];
@@ -1349,7 +1367,7 @@
         [pulse setAbilityValue:2500];
         [pulse setNumTicks:4];
         [pulse setDuration:12.0];
-        [pulse setCooldown:200.0];
+        [pulse setCooldown:220.0];
         [self addAbility:pulse];
     }
 }
@@ -1911,16 +1929,55 @@
     [boss.tailLash setAbilityValue:320];
     [boss.tailLash setCooldown:17.5];
     
+    [boss addAbilityDescriptor:[(SkeletalDragon*)boss flyingDescriptor]];
+    
     return [boss autorelease];
 }
 
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .35;
+        default:
+            return 0.0;
+    }
+}
+
+- (AbilityDescriptor *)flyingDescriptor
+{
+    AbilityDescriptor *flying= [[[AbilityDescriptor alloc] init] autorelease];
+    [flying setIconName:@"flying.png"];
+    [flying setAbilityDescription:@"The Skeletal Dragon is flying above you and your allies."];
+    [flying setAbilityName:@"Flying"];
+    return flying;
+}
+
+- (AbilityDescriptor *)groundedDescriptor
+{
+    AbilityDescriptor *grounded = [[[AbilityDescriptor alloc] init] autorelease];
+    [grounded setIconName:@"grounded.png"];
+    [grounded setAbilityName:@"Grounded"];
+    [grounded setAbilityDescription:@"The Skeletal Dragon has landed and will thrash your enemies with its claws."];
+    return grounded;
+}
+
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
+    
     if (percentage == 99.0){
         [self.announcer announce:@"The Skeletal Dragon hovers angrily above your allies."];
         [self.announcer playAudioForTitle:@"dragonwings.mp3"];
+        
     }
     
     if (percentage == 66.0){
+        [self clearExtraDescriptors];
+        [self addAbilityDescriptor:[self groundedDescriptor]];
         [self.announcer playAudioForTitle:@"stomp.wav"];
         [self.announcer displayScreenShakeForDuration:.33];
         [self.announcer announce:@"The Skeletal Dragon lands and begins to thrash your allies"];
@@ -1931,6 +1988,8 @@
     }
     
     if (percentage == 33.0){
+        [self clearExtraDescriptors];
+        [self addAbilityDescriptor:[self flyingDescriptor]];
         [self.announcer announce:@"The Skeletal Dragon soars off into the air."];
         [self.announcer playAudioForTitle:@"dragonwings.mp3"];
         [self.sweepingFlame setCooldown:14.5];
@@ -1941,6 +2000,8 @@
     }
 
     if (percentage == 5.0){
+        [self clearExtraDescriptors];
+        [self addAbilityDescriptor:[self groundedDescriptor]];
         [self.announcer displayScreenShakeForDuration:.66];
         [self.announcer playAudioForTitle:@"stomp1.wav"];
         [self.announcer announce:@"The Skeletal Dragon crashes down onto your allies from the sky."];
@@ -1967,6 +2028,31 @@
 - (void)ownerDidExecuteAbility:(Ability *)ability {
     if (ability == self.tailLash) {
         [self.announcer displayScreenShakeForDuration:.25];
+    }
+}
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    if (difficulty == 5) {
+        UndyingFlameEffect *flames = [[[UndyingFlameEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+        [flames setTitle:@"undying-flames-eff"];
+        [flames setValuePerTick:-20];
+        [flames setStacks:5];
+        [flames setMaxStacks:5];
+        [flames setVisibilityPriority:100];
+        
+        UndyingFlame *undyingFlame = [[[UndyingFlame alloc] initWithDamage:1 andCooldown:15.0] autorelease];
+        [undyingFlame setActivationTime:1.25];
+        [undyingFlame setAttackParticleEffectName:@"flame_spawn.plist"];
+        [undyingFlame setExecutionSound:@"dragonroar2.mp3"];
+        [undyingFlame setRequiresDamageToApplyEffect:NO];
+        [undyingFlame setPrefersTargetsWithoutVisibleEffects:YES];
+        [undyingFlame setInfo:@"A target is covered in flames.  The flame starts with 5 stacks but a stack is removed each time the target is healed.  Whenever the dragon applies this flame all flames are reignited."];
+        [undyingFlame setIconName:@"soul_burn.png"];
+        [undyingFlame setTitle:@"Undying Flame"];
+        [undyingFlame setAppliedEffect:flames];
+        [self addAbility:undyingFlame];
     }
 }
 @end
@@ -2015,11 +2101,46 @@
     return [cob autorelease];
 }
 
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .35;
+        default:
+            return 0.0;
+    }
+}
+
 - (void)ownerDidExecuteAbility:(Ability *)ability {
     if (ability == self.boneQuake){
         [self.announcer displayScreenShakeForDuration:3.0];
         float boneQuakeCD = arc4random() % 15 + 15;
         [self.boneQuake setCooldown:boneQuakeCD];
+    }
+}
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    
+    if (difficulty == 5) {
+        InterruptedByFullHealthTargets *boneStorm = [[[InterruptedByFullHealthTargets alloc] init] autorelease];
+        [boneStorm setAttackParticleEffectName:nil];
+        [boneStorm setInfo:@"The Colossus summons a storm of bones to crush his enemies.  This ability is interrupted if the Colossus detects 3 full health enemies."];
+        [boneStorm setTitle:@"Bonestorm"];
+        [boneStorm setIconName:@"bonestorm.png"];
+        [boneStorm setChannelTickRaidParticleEffectName:@"bonestorm.plist"];
+        [boneStorm setRequiredNumberOfTargets:3];
+        [boneStorm setActivationTime:1.5];
+        [boneStorm setCooldown:60.0];
+        [boneStorm setAbilityValue:65];
+        [boneStorm setTimeApplied:20.0];
+        [self addAbility:boneStorm];
     }
 }
 
@@ -2030,6 +2151,21 @@
     [_projectilesAbility release];
     [_demonAbilities release];
     [super dealloc];
+}
+
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .35;
+        default:
+            return 0.0;
+    }
 }
 
 + (id)defaultBoss {
@@ -2049,19 +2185,19 @@
     
     boss.demonAbilities = [NSMutableArray arrayWithCapacity:3];
     
-    BloodMinion *bm = [[BloodMinion alloc] init];
-    [bm setKey:@"blood-minion"];
-    [bm setCooldown:10.0];
-    [bm setAbilityValue:90];
-    [boss.demonAbilities addObject:bm];
-    [bm release];
-    
     FireMinion *fm = [[FireMinion alloc] init];
     [fm setKey:@"fire-minion"];
     [fm setCooldown:15.0];
     [fm setAbilityValue:315];
     [boss.demonAbilities addObject:fm];
     [fm release];
+    
+    BloodMinion *bm = [[BloodMinion alloc] init];
+    [bm setKey:@"blood-minion"];
+    [bm setCooldown:10.0];
+    [bm setAbilityValue:90];
+    [boss.demonAbilities addObject:bm];
+    [bm release];
     
     ShadowMinion *sm = [[ShadowMinion alloc] init];
     [sm setKey:@"shadow-minion"];
@@ -2076,6 +2212,10 @@
 - (void)addRandomDemonAbility {
     NSInteger indexToAdd = arc4random() % self.demonAbilities.count;
     
+    if (self.difficulty == 5) {
+        indexToAdd = 0;
+    }
+    
     Ability *addedAbility = [self.demonAbilities objectAtIndex:indexToAdd];
     [self addAbility:addedAbility];
     [self.demonAbilities removeObjectAtIndex:indexToAdd];
@@ -2084,7 +2224,7 @@
     if ([addedAbility.key isEqualToString:@"shadow-minion"]) {
         minionTitle = @"Aura of Shadow";
     } else if ([addedAbility.key isEqualToString:@"fire-minion"]) {
-        minionTitle = @"Aura of Fire";
+        minionTitle = @"Aura of Flame";
     } else if ([addedAbility.key isEqualToString:@"blood-minion"]) {
         minionTitle = @"Aura of Blood";
     }
@@ -2116,12 +2256,52 @@
         self.projectilesAbility.isDisabled = NO;
     }
 }
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    if (difficulty == 5) {
+        DispelsWhenSelectedRepeatedHealthEffect *consumingShadows = [[[DispelsWhenSelectedRepeatedHealthEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegativeInvisible] autorelease];
+        [consumingShadows setValuePerTick:-170];
+        [consumingShadows setTitle:@"consuming-shadows-eff"];
+        [consumingShadows setAilmentType:AilmentCurse];
+        [consumingShadows setParticleEffectName:@"consuming_shadows.plist"];
+        
+        Attack *swellingDarkness = [[[Attack alloc] initWithDamage:1 andCooldown:30] autorelease];
+        [swellingDarkness setTimeApplied:28.0];
+        [swellingDarkness setNumberOfTargets:5];
+        [swellingDarkness setAttackParticleEffectName:nil];
+        [swellingDarkness setInfo:@"The Overseer covers several allies in shadows, but your radiance will remove the shadows by simply targeting the ally."];
+        [swellingDarkness setTitle:@"Consuming Shadows"];
+        [swellingDarkness setIconName:@"shadow_prison.png"];
+        [swellingDarkness setRequiresDamageToApplyEffect:NO];
+        [swellingDarkness setKey:@"consuming-shadows"];
+        [swellingDarkness setFailureChance:0];
+        [swellingDarkness setAppliedEffect:consumingShadows];
+        [self addAbility:swellingDarkness];
+    }
+}
 @end
 
 @implementation TheUnspeakable
 - (void)dealloc {
     [_oozeAll release];
     [super dealloc];
+}
+
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .35;
+        default:
+            return 0.0;
+    }
 }
 
 + (id)defaultBoss {
@@ -2155,7 +2335,7 @@
     [oozeTwo setIconName:@"slime.png"];
     [oozeTwo setExecutionSound:@"slimespraying.mp3"];
     [oozeTwo setActivationTime:1.0];
-    [oozeTwo setAbilityValue:450];
+    [oozeTwo setAbilityValue:200];
     [oozeTwo setCooldown:17.0];
     [oozeTwo setKey:@"ooze-two"];
     [boss addAbility:oozeTwo];
@@ -2178,6 +2358,35 @@
         [(OozeRaid*)self.oozeAll setOriginalCooldown:[(OozeRaid*)self.oozeAll originalCooldown] - reduction];
     }
 }
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    if (difficulty == 5) {
+        ConsumeMagic *cMagic = [[[ConsumeMagic alloc] init] autorelease];
+        [cMagic setTitle:@"Consume Magic"];
+        [cMagic setInfo:@"When the Unspeakable detects periodic healing effects on its enemies, it consumes them and heals itself for 1% for each periodic healing effect consumed."];
+        [cMagic setIconName:@"toxic_inversion.png"];
+        [cMagic setCooldown:.5];
+        [self addAbility:cMagic];
+        
+        SlimeOrbs *sOrbs = [[[SlimeOrbs alloc] init] autorelease];
+        [sOrbs setTitle:@"Overflowing Slime"];
+        [sOrbs setInfo:@"Bubbles of slime burst forth.  Healers may pop the bubbles by tapping on them.  Popped bubbles deal less damage for each stack of Engulfing Slime on the target."];
+        [sOrbs setIconName:@"pus_burst.png"];
+        [sOrbs setCooldown:12.0];
+        [sOrbs setCooldownVariance:.25];
+        [sOrbs setAbilityValue:200];
+        [self addAbility:sOrbs];
+        
+        AbilityDescriptor *overflowingSlimeEnrage = [[[AbilityDescriptor alloc] init] autorelease];
+        [overflowingSlimeEnrage setIconName:@"poison_explosion.png"];
+        [overflowingSlimeEnrage setAbilityDescription:[NSString stringWithFormat:@"If there are ever %d bubbles of slime present on the battlefield, The Unspeakable will become empowered", SLIME_REQUIRED_FOR_ENRAGE]];
+        [overflowingSlimeEnrage setAbilityName:@"Overcome with Slime"];
+        [self addAbilityDescriptor:overflowingSlimeEnrage];
+        
+    }
+}
 @end
 
 @implementation BaraghastReborn
@@ -2185,6 +2394,22 @@
     [_deathwave release];
     [super dealloc];
 }
+
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .45;
+        default:
+            return 0.0;
+    }
+}
+
 + (id)defaultBoss {
     BaraghastReborn *boss = [[BaraghastReborn alloc] initWithHealth:3289000 damage:500 targets:1 frequency:2.25 choosesMT:YES ];
     boss.autoAttack.failureChance = .30;
@@ -2218,6 +2443,34 @@
     if (self.difficulty <= 3) {
         self.deathwave.abilityValue = 9000;
     }
+    
+    if (self.difficulty == 5) {
+        StackingEnrage *strengthen = [[[StackingEnrage alloc] init] autorelease];
+        [strengthen setActivationTime:1.5];
+        [strengthen setAbilityValue:20];
+        [strengthen setCooldown:kAbilityRequiresTrigger];
+        [strengthen setKey:@"strengthen"];
+        [strengthen setTitle:@"Strengthen"];
+        [self addAbility:strengthen];
+        
+        SoulCorruptionEffect *sce = [[[SoulCorruptionEffect alloc] initWithDuration:5 andEffectType:EffectTypeNegative] autorelease];
+        [sce setHealingToAbsorb:400];
+        [sce setTitle:@"soul-corruption-eff"];
+        
+        Attack *applySoulCorruption = [[[Attack alloc] initWithDamage:0 andCooldown:19.0] autorelease];
+        [applySoulCorruption setRequiresDamageToApplyEffect:NO];
+        [applySoulCorruption setTitle:@"Soul Corruption"];
+        [applySoulCorruption setDodgeChanceAdjustment:-100.0];
+        [applySoulCorruption setAttackParticleEffectName:nil];
+        [applySoulCorruption setPrefersTargetsWithoutVisibleEffects:YES];
+        [applySoulCorruption setFailureChance:0.0];
+        [applySoulCorruption setActivationTime:1.5];
+        [applySoulCorruption setIconName:@"curse.png"];
+        [applySoulCorruption setKey:@"soul-corruption"];
+        [applySoulCorruption setInfo:@"Absorbs 400 Healing and increases damage taken by 25%.  When the absorb is broken the healer gains 10% more healing done and all allies gain 10% more maximum health."];
+        [applySoulCorruption setAppliedEffect:sce];
+        [self addAbility:applySoulCorruption];
+    }
 }
 
 - (void)ownerDidExecuteAbility:(Ability *)ability {
@@ -2232,6 +2485,10 @@
 }
 
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta{
+    
+    if (self.difficulty == 5 && (int)percentage % 10 == 0 && percentage != 100.0) {
+        [[self abilityWithKey:@"strengthen"] activateAbility];
+    }
     
     if (percentage == 99.0 || percentage == 90.0 || percentage == 10.0){
         [self.deathwave triggerAbilityForRaid:raid players:players enemies:enemies];
@@ -2299,130 +2556,240 @@
         [se triggerAbilityForRaid:raid players:players enemies:enemies];
     }
     
+    if (percentage == 1.0) {
+        [self.announcer announce:@"I AM REBORN!"];
+        self.health = self.maximumHealth * .1;
+    }
+    
 }
 @end
 
+typedef enum {
+    AvatarFire,
+    AvatarBlood,
+    AvatarShadow
+} AvatarFormType;
+
 @implementation AvatarOfTorment1
+
+#define SUBMERGE_KEY @"submerge"
 + (id)defaultBoss {
     AvatarOfTorment1 *boss = [[AvatarOfTorment1 alloc] initWithHealth:2304000 damage:0 targets:0 frequency:0.0 choosesMT:NO];
     [boss setTitle:@"The Avatar of Torment"];
     [boss setNamePlateTitle:@"Torment"];
     [boss setSpriteName:@"avataroftorment_battle_portrait.png"];
     
-    DisruptionCloud *dcAbility = [[DisruptionCloud alloc] init];
-    [dcAbility setExecutionSound:@"gas_impact.mp3"];
-    [dcAbility setKey:@"dis-cloud"];
-    [dcAbility setCooldown:23.0];
-    [dcAbility setAbilityValue:20];
-    [dcAbility setTimeApplied:20.0];
-    [boss addAbility:dcAbility];
-    [dcAbility release];
-    
-    AbilityDescriptor *spDescriptor = [[[AbilityDescriptor alloc] init] autorelease];
-    [spDescriptor setIconName:@"soul_prison.png"];
-    [spDescriptor setAbilityName:@"Soul Prison"];
-    [spDescriptor setAbilityDescription:@"Emprisons an ally's soul in unimaginable torment reducing them to just shy of death but preventing all damage done to them."];
-    [boss addAbilityDescriptor:spDescriptor];
-    
-    ProjectileAttack *projectileAttack = [[[ProjectileAttack alloc] init] autorelease];
-    [projectileAttack setExecutionSound:@"fireball.mp3"];
-    [projectileAttack setExplosionSoundName:@"liquid_impact.mp3"];
-    [projectileAttack setSpriteName:@"shadowbolt.png"];
-    [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
-    [projectileAttack setAbilityValue:-200];
-    [projectileAttack setCooldown:2.5];
-    [projectileAttack setFailureChance:.35];
-    [boss addAbility:projectileAttack];
-    
-    ProjectileAttack *projectileAttack2 = [[[ProjectileAttack alloc] init] autorelease];
-    [projectileAttack2 setExecutionSound:@"fireball.mp3"];
-    [projectileAttack2 setExplosionSoundName:@"liquid_impact.mp3"];
-    [projectileAttack2 setSpriteName:@"shadowbolt.png"];
-    [projectileAttack2 setExplosionParticleName:@"shadow_burst.plist"];
-    [projectileAttack2 setAbilityValue:-400];
-    [projectileAttack2 setCooldown:2.5];
-    [projectileAttack setTimeApplied:2.0];
-    [projectileAttack2 setFailureChance:.7];
-    [boss addAbility:projectileAttack2];
+    AvatarOfTormentSubmerge *submerge = [[AvatarOfTormentSubmerge new] autorelease];
+    [submerge setKey:SUBMERGE_KEY];
+    [boss addAbility:submerge];
     
     return [boss autorelease];
 }
 
-- (void)soulPrisonAll:(Raid *)raid
+- (void)configureAvatarForFormType:(AvatarFormType)form
 {
-    [self.announcer announce:@"YOUR SOULS BELONG TO THE ABYSS"];
-    [self.announcer playAudioForTitle:@"bang2.mp3"];
-    for (RaidMember *member in raid.livingMembers) {
-        SoulPrisonEffect *spe = [[[SoulPrisonEffect alloc] initWithDuration:35.0 - (self.difficulty - 1.0 * 2) andEffectType:EffectTypeNegative] autorelease];
-        [spe setOwner:self];
-        NSInteger damage = member.health - 1;
-        [self.logger logEvent:[CombatEvent eventWithSource:self target:member value:[NSNumber numberWithInt:damage] andEventType:CombatEventTypeDamage]];
-        [member setHealth:1];
-        [member addEffect:spe];
+    NSString *projectileExecutionSoundName = @"fireball.mp3";
+    NSString *projectileExplosionSoundName = @"explosion2.wav";
+    NSString *projectileExplosionParticleName = @"fire_explosion.plist";
+    NSString *projectileSpriteName = @"fireball.png";
+    NSString *tormentInfo = @"Encases an enemy in obsidian causing periodic damage until the prison is broken.  The prison absorbs healing and breaks when it has absorbed too much healing.";
+    NSString *tormentIcon = @"obsidian_torment.png";
+    NSString *tormentTitle = @"Obsidian Torment";
+    
+    if (form == AvatarBlood) {
+        tormentTitle = @"Sanguine Torment";
+        tormentIcon = @"gushing_wound.png";
+        tormentInfo = @"Surrounds an ally in horrific gore dealing damage over time and absorbing healing.  Each time the target is healed the healer begins bleeding.";
+        projectileExplosionSoundName = @"liquid_impact.mp3";
+        projectileExplosionParticleName = @"blood_spurt.plist";
+        projectileSpriteName = @"bloodbolt.png";
+        
+        
+        ChannelledRaidProjectileAttack *bloodSpray = [[[ChannelledRaidProjectileAttack alloc] init] autorelease];
+        [bloodSpray setTitle:@"Blood Spray"];
+        [bloodSpray setIconName:@"blood_bolt.png"];
+        [bloodSpray setCooldown:35.0];
+        [bloodSpray setAbilityValue:150];
+        [bloodSpray setSpriteName:@"bloodbolt.png"];
+        [bloodSpray setExplosionParticleName:@"blood_spurt.plist"];
+        [bloodSpray setExecutionSound:@"fireball.mp3"];
+        [bloodSpray setExplosionSoundName:@"liquid_impact.mp3"];
+        [self addAbility:bloodSpray];
+    } else if (form == AvatarShadow) {
+        tormentTitle = @"Penumbral Torment";
+        tormentInfo = @"Surrounds an enemy in shadows dealing damage over time and absorbing healing.  When the target is healed, the healer is cursed doing 5% less healing for 16.0 seconds.";
+        tormentIcon = @"shadow_prison.png";
+        projectileExplosionParticleName = @"shadow_burst.plist";
+        projectileSpriteName = @"shadowbolt.png";
+        projectileExplosionSoundName = @"explosion_pulse.wav";
+        
+        WaveOfTorment *wot = [[[WaveOfTorment alloc] init] autorelease];
+        [wot setDodgeChanceAdjustment:-100];
+        [wot setIconName:@"deathwave.png"];
+        [wot setCooldown:40.0];
+        [wot setAbilityValue:80];
+        [wot setKey:@"wot"];
+        [wot setTitle:@"Waves of Torment"];
+        [self addAbility:wot];
+    } else {
+        
+        RainOfFire *rof = [[[RainOfFire alloc] init] autorelease];
+        [rof setDodgeChanceAdjustment:-100];
+        [rof setTitle:@"Rain of Fire"];
+        [rof setIconName:@"fireball.png"];
+        [rof setCooldown:27.0];
+        [rof setAbilityValue:250];
+        [rof setKey:@"rain-of-fire"];
+        [self addAbility:rof];
+        
     }
+    
+    ProjectileAttack *projectileAttack = [[[ProjectileAttack alloc] init] autorelease];
+    [projectileAttack setExecutionSound:projectileExecutionSoundName];
+    [projectileAttack setExplosionSoundName:projectileExplosionSoundName];
+    [projectileAttack setSpriteName:projectileSpriteName];
+    [projectileAttack setExplosionParticleName:projectileExplosionParticleName];
+    [projectileAttack setAbilityValue:-300];
+    [projectileAttack setCooldown:2.5];
+    [self addAbility:projectileAttack];
+    
+    TormentEffect *tormentEffect = [[[TormentEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
+    [tormentEffect setInfiniteDurationTickFrequency:1.5];
+    [tormentEffect setValuePerTick:-200];
+    [tormentEffect setHealingToAbsorb:600 * self.damageDoneMultiplier];
+    
+    switch (form) {
+        case AvatarBlood:
+            [tormentEffect setAppliesBleedRecoil:YES];
+            if (self.difficulty == 5) {
+                [tormentEffect setAppliesBleedEffect:YES];
+                AbilityDescriptor *fear = [[[AbilityDescriptor alloc] init] autorelease];
+                [fear setIconName:@"bleeding.png"];
+                [fear setAbilityName:@"Fear of Blood"];
+                [fear setAbilityDescription:@"Each time Sanguine Torment causes damage the target bleeds for the rest of the encounter."];
+                [self addAbilityDescriptor:fear];
+            }
+            break;
+        case AvatarShadow:
+            [tormentEffect setAppliesHealingDebuffRecoil:YES];
+            if (self.difficulty == 5) {
+                [tormentEffect setAppliesHealingReducedEffect:YES];
+                AbilityDescriptor *fear = [[[AbilityDescriptor alloc] init] autorelease];
+                [fear setIconName:@"toxic_inversion.png"];
+                [fear setAbilityName:@"Fear of Darkness"];
+                [fear setAbilityDescription:@"Each time Penumbral Torment causes damage the target receives 3% less healing for the rest of the encounter."];
+                [self addAbilityDescriptor:fear];
+            }
+            break;
+        case AvatarFire:
+            [tormentEffect setIncreasePerTick:.8];
+            if (self.difficulty == 5) {
+                [tormentEffect setAppliesDamageTakenEffect:YES];
+                AbilityDescriptor *fear = [[[AbilityDescriptor alloc] init] autorelease];
+                [fear setIconName:@"angry_spirit.png"];
+                [fear setAbilityName:@"Fear of Flame"];
+                [fear setAbilityDescription:@"Each time Obsidian Torment causes damage the target takes 3% additional damage for the rest of the encounter."];
+                [self addAbilityDescriptor:fear];
+            }
+        default:
+            break;
+    }
+    
+    Attack *obsidianTorment = [Attack appliesEffectNonMeleeAttackWithEffect:tormentEffect];
+    [obsidianTorment setIgnoresPlayers:YES];
+    [obsidianTorment setCooldown:12.0];
+    [obsidianTorment setExecutionSound:@"curse.png"];
+    [obsidianTorment setTimeApplied:20.0];
+    [obsidianTorment setKey:[NSString stringWithFormat:@"torment-%d",form]];
+    [obsidianTorment setTitle:tormentTitle];
+    [obsidianTorment setInfo:tormentInfo];
+    [obsidianTorment setIconName:tormentIcon];
+    [self addAbility:obsidianTorment];
+}
+
+- (void)clearAbilitiesForSubmerge
+{
+    NSMutableArray *removeAbilities = [NSMutableArray arrayWithCapacity:2];
+    for (Ability *ability in self.abilities) {
+        if (![ability.key isEqualToString:SUBMERGE_KEY]) {
+            [removeAbilities addObject:ability];
+        }
+    }
+    
+    for (Ability *ability in removeAbilities) {
+        [self removeAbility:ability];
+    }
+    
+    self.abilityDescriptors = [NSMutableArray array];
+}
+
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .45;
+        default:
+            return 0.0;
+    }
+}
+
+- (void)submerge
+{
+    [[self abilityWithKey:@"submerge"] activateAbility];
+    [self clearAbilitiesForSubmerge];
+}
+
+- (void)emergeForRaid:(Raid*)theRaid
+{
+    [(AvatarOfTormentSubmerge*)[self abilityWithKey:@"submerge"] emergeForRaid:theRaid];
 }
 
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
-    if (percentage == 92.0) {
-        [self.announcer announce:@"Your mortal souls will shatter beneath the power of torment!"];
+    if (percentage == 100.0) {
+        [self configureAvatarForFormType:AvatarFire];
+        [self emergeForRaid:raid];
     }
     
-    if (percentage == 52.0) {
-        [self.announcer announce:@"Your pain shall be unending!"];
+    if (percentage == 75.0) {
+        [self submerge];
+        [self configureAvatarForFormType:AvatarShadow];
     }
     
-    if (percentage == 90.0 || percentage == 50.0 || percentage == 70.0) {
-        [self soulPrisonAll:raid];
-    }
-    
-    if (percentage == 72.0) {
-        [self.announcer announce:@"The Avatar of Torment cackles maniacally and pulses with power."];
-    }
-    
-    if (percentage == 70.0) {
-        WaveOfTorment *wot = [[[WaveOfTorment alloc] init] autorelease];
-        [wot setIconName:@"deathwave.png"];
-        [wot setKey:@"wot"];
-        [wot setTitle:@"Waves of Torment"];
-        [wot setCooldown:40.0];
-        [wot setTimeApplied:0];
-        [wot setAbilityValue:72];
-        [self addAbility:wot];
-    }
-    
-    if (percentage == 40.0) {
-        [self.announcer announce:@"The Avatar of Torment drains your mind"];
-        for (Player *player in players) {
-            [player setEnergy:0];
-        }
-        [[self abilityWithKey:@"wot"] setTimeApplied:-20.0];
+    if (percentage == 50.0) {
+        [self submerge];
+        [self configureAvatarForFormType:AvatarBlood];
     }
     
     if (percentage == 25.0) {
-        [self.announcer announce:@"Your pain fills me with such power!"];
-        GainAbility *gainAbility = [[[GainAbility alloc] init] autorelease];
-        [gainAbility setCooldown:20.0];
-        
-        ProjectileAttack *projectileAttack = [[[ProjectileAttack alloc] init] autorelease];
-        [projectileAttack setExecutionSound:@"fireball.mp3"];
-        [projectileAttack setExplosionSoundName:@"liquid_impact.mp3"];
-        [projectileAttack setSpriteName:@"shadowbolt.png"];
-        [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
-        [projectileAttack setAbilityValue:-230];
-        [projectileAttack setCooldown:1.2];
-        [projectileAttack setFailureChance:.2];
-        [gainAbility setAbilityToGain:projectileAttack];
-        
-        [self addAbility:projectileAttack];
-        [projectileAttack fireAtRaid:raid];
-        [projectileAttack setAbilityValue:-65];
-        [projectileAttack setFailureChance:.7];
-        [self removeAbility:projectileAttack];
-        
-        [self addAbility:gainAbility];
+        [self submerge];
+        [self configureAvatarForFormType:AvatarBlood];
+        [self configureAvatarForFormType:AvatarFire];
+        [self configureAvatarForFormType:AvatarShadow];
+        if (self.difficulty <= 2) {
+            Effect *reducedDamage = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypeNegativeInvisible] autorelease];
+            [reducedDamage setOwner:self];
+            [reducedDamage setTitle:@"normal-dmg-nerf"];
+            [reducedDamage setDamageDoneMultiplierAdjustment:-.3];
+            [self addEffect:reducedDamage];
+            //A bit too hard with all the stuff going on =)
+        }
+        self.abilityDescriptors = [NSMutableArray array];
     }
 }
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    if (self.difficulty == 5) {
+    }
+}
+
 @end
 
 @implementation AvatarOfTorment2
@@ -2444,7 +2811,7 @@
     
     ProjectileAttack *projectileAttack = [[ProjectileAttack alloc] init];
     [projectileAttack setExecutionSound:@"fireball.mp3"];
-    [projectileAttack setExplosionSoundName:@"liquid_impact.mp3"];
+    [projectileAttack setExplosionSoundName:@"explosion_pulse.wav"];
     [projectileAttack setSpriteName:@"shadowbolt.png"];
     [projectileAttack setExplosionParticleName:@"shadow_burst.plist"];
     [projectileAttack setAbilityValue:-400];
@@ -2455,9 +2822,9 @@
     
     ProjectileAttack *projectileAttack2 = [[ProjectileAttack alloc] init];
     [projectileAttack2 setExecutionSound:@"fireball.mp3"];
-    [projectileAttack2 setExplosionSoundName:@"liquid_impact.mp3"];
-    [projectileAttack2 setSpriteName:@"shadowbolt.png"];
-    [projectileAttack2 setExplosionParticleName:@"shadow_burst.plist"];
+    [projectileAttack2 setExplosionSoundName:@"explosion2.wav"];
+    [projectileAttack2 setSpriteName:@"fireball.png"];
+    [projectileAttack2 setExplosionParticleName:@"fire_explosion.plist"];
     [projectileAttack2 setAbilityValue:-400];
     [projectileAttack2 setCooldown:.83];
     [projectileAttack2 setFailureChance:.85];
@@ -2465,10 +2832,10 @@
     [projectileAttack2 release];
     
     ProjectileAttack *projectileAttack3 = [[ProjectileAttack alloc] init];
-    [projectileAttack2 setExecutionSound:@"fireball.mp3"];
-    [projectileAttack2 setExplosionSoundName:@"liquid_impact.mp3"];
-    [projectileAttack3 setSpriteName:@"shadowbolt.png"];
-    [projectileAttack3 setExplosionParticleName:@"shadow_burst.plist"];
+    [projectileAttack3 setSpriteName:@"bloodbolt.png"];
+    [projectileAttack3 setExplosionParticleName:@"blood_spurt.plist"];
+    [projectileAttack3 setExecutionSound:@"fireball.mp3"];
+    [projectileAttack3 setExplosionSoundName:@"liquid_impact.mp3"];
     [projectileAttack3 setAbilityValue:-320];
     [projectileAttack3 setCooldown:2.5];
     [projectileAttack3 setFailureChance:.2];
@@ -2476,6 +2843,21 @@
     [projectileAttack3 release];
     
     return [boss autorelease];
+}
+
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .45;
+        default:
+            return 0.0;
+    }
 }
 
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
@@ -2508,12 +2890,37 @@
     }
     
     if (percentage == 20.0) {
-        [self.announcer announce:@"The Avatar becomes enraged."];
+        [self.announcer announce:@"The Avatar begins growing stronger."];
         StackingEnrage *se = [[[StackingEnrage alloc] init] autorelease];
         [se setAbilityValue:10];
         [se setCooldown:10];
         [self addAbility:se];
         [se triggerAbilityForRaid:raid players:players enemies:enemies];
+    }
+}
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+    if (difficulty == 5) {
+        PercentageDamageTimeBasedEffect *deathsDoorEffect = [[[PercentageDamageTimeBasedEffect alloc] initWithDuration:10 andEffectType:EffectTypeNegative] autorelease];
+        [deathsDoorEffect setTitle:@"deaths-door"];
+        
+        Attack *deathsDoor = [Attack appliesEffectNonMeleeAttackWithEffect:deathsDoorEffect];
+        [deathsDoor setCooldown:20.0];
+        [deathsDoor setIconName:@"blind.png"];
+        [deathsDoor setTitle:@"Death's Door"];
+        [deathsDoor setInfo:@"Applies a curse that deals 150% of the target's maximum health in damage when it ends.  If it is purified, the target takes damage equal to the time remaining."];
+        [self addAbility:deathsDoor];
+        
+        ManaDrain *manaDrain = [[[ManaDrain alloc] init] autorelease];
+        [manaDrain setInfo:@"The Avatar draws all mana from the Healers into orbs on the battlefield that last for a short time before dispersing."];
+        [manaDrain setTitle:@"Mana Drain"];
+        [manaDrain setIconName:@"corrupt_mind.png"];
+        [manaDrain setCooldown:40.0];
+        [manaDrain setTimeApplied:25.0];
+        [manaDrain setCooldownVariance:.33];
+        [self addAbility:manaDrain];
     }
 }
 @end
@@ -2530,6 +2937,57 @@
     return [boss autorelease];
 }
 
+- (void)ownerDidDamageTarget:(RaidMember *)target withAbility:(Ability *)ability forDamage:(NSInteger)damage
+{
+    if (self.difficulty == 5) {
+        if (target.health - damage > target.maximumHealth * .5 && target.health < target.maximumHealth * .5)
+        {
+            [self.announcer announce:@"Torment grows..."];
+            Effect *enrage = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositive] autorelease];
+            [enrage setDamageDoneMultiplierAdjustment:.02];
+            [enrage setMaxStacks:99];
+            [enrage setTitle:@"sot-enrage-stack"];
+            [self addEffect:enrage];
+            
+            if (!self.hasAddedGrowingTorment) {
+                self.hasAddedGrowingTorment = YES;
+                
+                AbilityDescriptor *growingTorment = [[[AbilityDescriptor alloc] init] autorelease];
+                [growingTorment setAbilityDescription:@"Whenever the Soul of Torment reduces an ally's health below 50%, The Soul deals 2% additional damage for the rest of the battle."];
+                [growingTorment setAbilityName:@"Absorb Torment"];
+                [growingTorment setIconName:@"temper.png"];
+                [growingTorment setMonitoredEffect:enrage];
+                [self addAbilityDescriptor:growingTorment];
+            }
+        }
+    }
+}
+
+- (void)ownerDidDamageTarget:(RaidMember*)target withEffect:(Effect*)effect forDamage:(NSInteger)damage
+{
+    [self ownerDidDamageTarget:target withAbility:nil forDamage:damage];
+}
+
+- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
+{
+    [super configureBossForDifficultyLevel:difficulty];
+}
+
+- (float)challengeDamageDoneModifier
+{
+    switch (self.difficulty) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return [super challengeDamageDoneModifier];
+        case 5:
+            return .45;
+        default:
+            return 0.0;
+    }
+}
+
 - (void)gainSoulDrain
 {
     [self.announcer announce:@"The Soul of Torment hungers for souls"];
@@ -2538,6 +2996,7 @@
     [soulDrainEffect setMaxStacks:25];
     [soulDrainEffect setValuePerTick:-14];
     [soulDrainEffect setNumOfTicks:10];
+    [soulDrainEffect setVisibilityPriority:1];
     [soulDrainEffect setSpriteName:@"curse.png"];
     [soulDrainEffect setTitle:@"soul-drain-eff"];
     
@@ -2565,8 +3024,11 @@
 
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
+    
+    if (self.difficulty == 5) {
+    }
+    
     if (percentage == 99.0 || percentage == 95.0 || percentage == 90.0 || percentage == 85.0 || percentage == 45.0 || percentage == 37.0 || percentage == 28.0 || percentage == 20.0) {
-        //Every 10 percent that isn't 100%...
         [self raidDamageToRaid:raid forPlayers:players];
     }
     
@@ -2597,7 +3059,7 @@
         ContagiousEffect *contagious = [[[ContagiousEffect alloc] initWithDuration:10.0 andEffectType:EffectTypeNegative] autorelease];
         [contagious setTitle:@"contagion"];
         [contagious setNumOfTicks:10];
-        [contagious setVisibilityPriority:10];
+        [contagious setVisibilityPriority:16];
         [contagious setValuePerTick:-20];
         [contagious setAilmentType:AilmentPoison];
         [attack setIconName:@"plague.png"];
@@ -2625,30 +3087,41 @@
             }
         }
         
+        float damageReduction = .8;
+        if (self.difficulty == 5) {
+            damageReduction = .99;
+        }
+        
         SpiritBarrier *barrier = [[[SpiritBarrier alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
         [barrier setTitle:@"spirit-barrier"];
         [barrier setValuePerTick:-20];
         [barrier setNumOfTicks:20];
         [barrier setHealingToAbsorb:400];
+        [barrier setVisibilityPriority:16];
+        [barrier setDamageReduction:damageReduction];
         
-        Attack *spiritBlock = [[[Attack alloc] initWithDamage:0 andCooldown:40.0] autorelease];
+        Attack *spiritBlock = [Attack appliesEffectNonMeleeAttackWithEffect:barrier];
+        [spiritBlock setCooldown:40.0];
         [spiritBlock setExecutionSound:@"curse.png"];
-        [spiritBlock setPrefersTargetsWithoutVisibleEffects:YES];
         [spiritBlock setTimeApplied:20.0];
-        [spiritBlock setIgnoresGuardians:YES];
         [spiritBlock setKey:@"spirit-barrier"];
         [spiritBlock setTitle:@"Spirit Barrier"];
-        [spiritBlock setInfo:@"Hex's a player absorbing the next 400 healing cast on them.  When this absorption is depleted the barrier erupts reducing damage taken for all units by 80%."];
+        [spiritBlock setInfo:[NSString stringWithFormat:@"Hex's a player absorbing the next 400 healing cast on them.  When this absorption is depleted the barrier erupts reducing damage taken for all units by %1.0f.", damageReduction]];
         [spiritBlock setIconName:@"hex.png"];
-        [spiritBlock setAppliedEffect:barrier];
         [self addAbility:spiritBlock];
+        
+        NSInteger cataclysmDamage = 1800;
+        
+        if (self.difficulty == 1) {
+            cataclysmDamage = 1200;
+        }
         
         RaidDamage *cataclysm = [[[RaidDamage alloc] init] autorelease];
         [cataclysm setExecutionSound:@"gasexplosion.png"];
         [cataclysm setKey:@"cataclysm"];
         [cataclysm setCooldown:35.0];
         [cataclysm setActivationTime:8.0];
-        [cataclysm setAbilityValue:1800];
+        [cataclysm setAbilityValue:cataclysmDamage];
         [cataclysm setAttackParticleEffectName:nil];
         [cataclysm setTitle:@"Cataclysm"];
         [cataclysm setIconName:@"choking_cloud.png"];
@@ -2669,6 +3142,7 @@
     }
     
     if (percentage == 20.0) {
+        [[self abilityWithKey:@"unending-torment"] setCooldown:20];
         [[self abilityWithKey:@"cataclysm"] setIsDisabled:YES];
         [[self abilityWithKey:@"spirit-barrier"] setIsDisabled:YES];
         for (Ability *ability in self.abilities) {
@@ -2707,14 +3181,23 @@
 @implementation TheEndlessVoid
 
 - (void)setHealth:(NSInteger)newHealth {
-    if (self.healthPercentage > .5){
+    if (self.healthPercentage > 0.5f){
         [super setHealth:newHealth];
+    } else {
+        [super setHealth:self.maximumHealth];
+        [self triggerRandomAbility];
     }
 }
 
+- (void)triggerRandomAbility
+{
+    [[self abilityWithKey:@"random-abilities"] activateAbility];
+}
+
 +(id)defaultBoss {
-    TheEndlessVoid *endlessVoid = [[TheEndlessVoid alloc] initWithHealth:99999999 damage:400 targets:4 frequency:2.0 choosesMT:NO];
+    TheEndlessVoid *endlessVoid = [[TheEndlessVoid alloc] initWithHealth:500000 damage:400 targets:4 frequency:2.0 choosesMT:NO];
     [endlessVoid setTitle:@"The Endless Void"];
+    [endlessVoid setSpriteName:@"endlessvoid_battle_portrait.png"];
     endlessVoid.autoAttack.failureChance = .25;
     
     StackingDamage *damageStacker = [[StackingDamage alloc] init];
@@ -2724,8 +3207,7 @@
     [damageStacker release];
     
     RandomAbilityGenerator *rag = [[RandomAbilityGenerator alloc] init];
-    [rag setCooldown:60];
-    [rag setTimeApplied:55.0];
+    [rag setCooldown:kAbilityRequiresTrigger];
     [rag setKey:@"random-abilities"];
     [endlessVoid addAbility:rag];
     [rag release];

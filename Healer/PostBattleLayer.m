@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 3/20/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
 #import "PostBattleLayer.h"
@@ -12,12 +12,15 @@
 #import "Encounter.h"
 #import "Raid.h"
 #import "PlayerDataManager.h"
-#import "TestFlight.h"
 #import "BackgroundSprite.h"
 #import "BasicButton.h"
 #import "CCNumberChangeAction.h"
 #import "Enemy.h"
 #import "SimpleAudioEngine.h"
+#import "StaminaCounterNode.h"
+#import "ItemDescriptionNode.h"
+#import "PurchaseManager.h"
+#import "TreasureChest.h"
 
 @interface PostBattleLayer ()
 @property (nonatomic, readwrite) BOOL isMultiplayer;
@@ -26,6 +29,7 @@
 @property (nonatomic, readwrite) BOOL localPlayerHasQueued;
 @property (nonatomic, readwrite) BOOL isNewBestScore;
 @property (nonatomic, readwrite) BOOL showsFirstLevelFTUE;
+@property (nonatomic, readwrite) BOOL isLootSequencedCompleted;
 @property (nonatomic, assign) CCLabelTTFShadow *healingDoneLabel;
 @property (nonatomic, assign) CCLabelTTFShadow *overhealingDoneLabel;
 @property (nonatomic, assign) CCLabelTTFShadow *damageTakenLabel;
@@ -35,6 +39,17 @@
 @property (nonatomic, retain) Encounter *encounter;
 @property (nonatomic, assign) GoldCounterSprite *goldCounter;
 @property (nonatomic, readwrite) NSInteger reward;
+@property (nonatomic, assign) CCSprite *statsContainer;
+@property (nonatomic, assign) CCMenu *advanceMenu;
+@property (nonatomic, assign) CCSprite *resultLabel;
+@property (nonatomic, assign) CCSprite *betterHighScoreLabel;
+@property (nonatomic, readwrite) PostBattleLayerDestination chosenDestination;
+@property (nonatomic, assign) CCLabelTTFShadow *errorLabel;
+
+//Loot Award Stuff
+@property (nonatomic, assign) TreasureChest *chestSprite;
+@property (nonatomic, assign) BasicButton *openChest;
+@property (nonatomic, assign) BasicButton *getKeys;
 @end
 
 @implementation PostBattleLayer
@@ -52,6 +67,7 @@
         NSInteger score = self.encounter.score;
         NSInteger numDead = self.encounter.raid.deadCount;
         NSTimeInterval fightDuration = duration;
+        BOOL willAwardLoot = self.encounter.levelNumber > 1 && self.isVictory && ![PlayerDataManager localPlayer].isInventoryFull;
         
         self.showsFirstLevelFTUE = [PlayerDataManager localPlayer].ftueState == FTUEStateBattle1Finished && ![[PlayerDataManager localPlayer] hasSpell:[GreaterHeal defaultSpell]];
         
@@ -105,33 +121,26 @@
             [self.scoreLabel setAnchorPoint:CGPointZero];
         }
         
-        NSString* doneLabelString = self.isMultiplayer ? @"Leave Group" : @"Adventure";
-        CCMenuItem *done = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneMap) andTitle:doneLabelString];
-        CCMenuItem *academy = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneAcademy) andTitle:@"Academy"];
-        CCMenu *menu = [CCMenu menuWithItems:academy, nil];
-        menu.position = CGPointMake(890, 470);
-        menu.anchorPoint = CGPointMake(0, 0);
-        [self addChild:menu];
         
+        if (willAwardLoot) {
+            BasicButton *continueToLoot = [BasicButton basicButtonWithTarget:self andSelector:@selector(awardLoot) andTitle:@"Continue"];
+            self.advanceMenu = [CCMenu menuWithItems:continueToLoot, nil];
+            self.advanceMenu.position = CGPointMake(890, 470);
+            self.advanceMenu.anchorPoint = CGPointMake(0, 0);
+            [self addChild:self.advanceMenu];
+        } else {
+            [self configureAdvanceMenu];
+            self.advanceMenu.position = CGPointMake(890, 470);
+            self.isLootSequencedCompleted = YES;
         
-        if (!self.showsFirstLevelFTUE) {
-            [done setPosition:CGPointMake(0, 76)];
-            [menu addChild:done];
-            
-            if ([[PlayerDataManager localPlayer] numUnspentTalentChoices]) {
-                CCMenuItem *talentButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneTalents) andTitle:@"Talents" andAlertPip:YES];
-                [talentButton setPosition:CGPointMake(0, 152)];
-                [menu addChild:talentButton];
-            }
         }
         
-        
-        CCSprite *statsContainer = [CCSprite spriteWithSpriteFrameName:@"stats_container.png"];
-        [statsContainer setPosition:CGPointMake(190, 520)];
-        [self addChild:statsContainer];
+        self.statsContainer = [CCSprite spriteWithSpriteFrameName:@"stats_container.png"];
+        [self.statsContainer setPosition:CGPointMake(190, 520)];
+        [self addChild:self.statsContainer];
         
         if (self.scoreLabel) {
-            [statsContainer addChild:self.scoreLabel];
+            [self.statsContainer addChild:self.scoreLabel];
         }
         
         if (reward > 0){
@@ -162,17 +171,17 @@
         [playersLostLabel setPosition:CGPointMake(12, 50 + failureAdjustment)];
         [playersLostLabel setAnchorPoint:CGPointZero];
         
-        [statsContainer addChild:self.healingDoneLabel];
-        [statsContainer addChild:self.overhealingDoneLabel];
-        [statsContainer addChild:self.damageTakenLabel];
-        [statsContainer addChild:playersLostLabel];
+        [self.statsContainer addChild:self.healingDoneLabel];
+        [self.statsContainer addChild:self.overhealingDoneLabel];
+        [self.statsContainer addChild:self.damageTakenLabel];
+        [self.statsContainer addChild:playersLostLabel];
         
         NSString *durationText = [@"Duration: " stringByAppendingString:[self timeStringForTimeInterval:fightDuration]];
         
         CCLabelTTFShadow *durationLabel = [CCLabelTTFShadow labelWithString:durationText dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [durationLabel setPosition:CGPointMake(12, 168 + failureAdjustment)];
         [durationLabel setAnchorPoint:CGPointZero];
-        [statsContainer addChild:durationLabel];
+        [self.statsContainer addChild:durationLabel];
         
 #if DEBUG
         [self.encounter saveCombatLog];
@@ -218,18 +227,18 @@
     
     CGPoint textLocation = CGPointMake(512, 680);
     
-    CCSprite *victoryLabel = nil;
+    self.resultLabel = nil;
     if (self.isVictory){
-        victoryLabel = [CCSprite spriteWithSpriteFrameName:@"victory_text.png"];
+        self.resultLabel = [CCSprite spriteWithSpriteFrameName:@"victory_text.png"];
     } else {
-        victoryLabel = [CCSprite spriteWithSpriteFrameName:@"defeated_text.png"];
+        self.resultLabel = [CCSprite spriteWithSpriteFrameName:@"defeated_text.png"];
     }
-    [victoryLabel setPosition:textLocation];
-    [self addChild:victoryLabel];
+    [self.resultLabel setPosition:textLocation];
+    [self addChild:self.resultLabel];
     
-    victoryLabel.scale = 3.0;
-    victoryLabel.opacity = 0;
-    [victoryLabel runAction:[CCSpawn actionOne:[CCScaleTo actionWithDuration:.5 scale:1.0] two:[CCFadeTo actionWithDuration:.5 opacity:255]]];
+    self.resultLabel.scale = 3.0;
+    self.resultLabel.opacity = 0;
+    [self.resultLabel runAction:[CCSpawn actionOne:[CCScaleTo actionWithDuration:.5 scale:1.0] two:[CCFadeTo actionWithDuration:.5 opacity:255]]];
     
     NSInteger finalScore = self.encounter.score;
     
@@ -257,10 +266,10 @@
 
 - (void)completeStatAnimations {
     if (self.isNewBestScore && !self.isMultiplayer){
-        CCSprite *newHighScore = [CCSprite spriteWithSpriteFrameName:@"new_high_score_text.png"];
-        [newHighScore setPosition:CGPointMake(190, 640)];
-        [self addChild:newHighScore];
-        [newHighScore runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
+        self.betterHighScoreLabel = [CCSprite spriteWithSpriteFrameName:@"new_high_score_text.png"];
+        [self.betterHighScoreLabel setPosition:CGPointMake(190, 640)];
+        [self addChild:self.betterHighScoreLabel];
+        [self.betterHighScoreLabel runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo  actionWithDuration:.75 scale:1.2], [CCScaleTo actionWithDuration:.75 scale:1.0], nil]]];
     }
     if (self.isVictory) {
         CCNumberChangeAction *numberChangeAction = [CCNumberChangeAction actionWithDuration:2.5 fromNumber:0 toNumber:self.reward];
@@ -269,9 +278,15 @@
         
         CCNumberChangeAction *countDown = [CCNumberChangeAction actionWithDuration:2.0 fromNumber:self.reward toNumber:0];
         [countDown setPrefix:@"Gold Earned: "];
-        [self.goldLabel runAction:[CCSequence actions:[CCSpawn actions:[CCScaleTo actionWithDuration:.5 scale:1.0], [CCFadeTo actionWithDuration:.5 opacity:255], nil], numberChangeAction, [CCDelayTime  actionWithDuration:.5], [CCCallFunc actionWithTarget:self selector:@selector(finishGoldCountUp)], countDown,[CCFadeTo actionWithDuration:.5 opacity:0], [CCCallBlockN actionWithBlock:^(CCNode *node){ [node removeFromParentAndCleanup:YES];}], nil]];
+        [self.goldLabel runAction:[CCSequence actions:[CCSpawn actions:[CCScaleTo actionWithDuration:.5 scale:1.0], [CCFadeTo actionWithDuration:.5 opacity:255], nil], numberChangeAction, [CCDelayTime  actionWithDuration:.5], [CCCallFunc actionWithTarget:self selector:@selector(finishGoldCountUp)], countDown,[CCFadeTo actionWithDuration:.5 opacity:0], [CCCallFunc actionWithTarget:self selector:@selector(finishGoldLabel)], nil]];
         
     }
+}
+
+- (void)finishGoldLabel
+{
+    [self.goldLabel removeFromParentAndCleanup:YES];
+    self.goldLabel = nil;
 }
 
 - (void)finishGoldCountUp
@@ -280,25 +295,212 @@
     [self.goldCounter updateGoldAnimated:YES toGold:[PlayerDataManager localPlayer].gold];
 }
 
+- (void)showConfirmationDialog
+{
+    IconDescriptionModalLayer *confirmDialog = [[[IconDescriptionModalLayer alloc] initAsConfirmationDialogueWithDescription:@"Are you sure you want to abandon this loot?"] autorelease];
+    [confirmDialog setDelegate:self];
+    [self addChild:confirmDialog z:1000];
+}
+
 - (void)doneAcademy
 {
-    [self.delegate postBattleLayerDidTransitionToScene:PostBattleLayerDestinationShop asVictory:self.isVictory];
+    self.chosenDestination = PostBattleLayerDestinationShop;
+    if (self.isLootSequencedCompleted) {
+        [self.delegate postBattleLayerDidTransitionToScene:self.chosenDestination asVictory:self.isVictory];
+    } else {
+        [self showConfirmationDialog];
+    }
 }
 
 - (void)doneMap
 {
-    [self.delegate postBattleLayerDidTransitionToScene:PostBattleLayerDestinationMap asVictory:self.isVictory];
+    self.chosenDestination = PostBattleLayerDestinationMap;
+    if (self.isLootSequencedCompleted) {
+        [self.delegate postBattleLayerDidTransitionToScene:self.chosenDestination asVictory:self.isVictory];
+    } else {
+        [self showConfirmationDialog];
+    }
 }
 
 - (void)doneTalents
 {
-    [self.delegate postBattleLayerDidTransitionToScene:PostBattleLayerDestinationTalents asVictory:self.isVictory];
+    self.chosenDestination = PostBattleLayerDestinationTalents;
+    if (self.isLootSequencedCompleted) {
+        [self.delegate postBattleLayerDidTransitionToScene:self.chosenDestination asVictory:self.isVictory];
+    } else {
+        [self showConfirmationDialog];
+    }
+}
+
+- (void)doneArmory
+{
+    self.chosenDestination = PostBattleLayerDestinationArmory;
+    if (self.isLootSequencedCompleted) {
+        [self.delegate postBattleLayerDidTransitionToScene:self.chosenDestination asVictory:self.isVictory];
+    } else {
+        [self showConfirmationDialog];
+    }
+}
+
+- (void)awardLoot
+{
+    [self.delegate postBattleLayerWillAwardLoot];
+    
+    [self.advanceMenu removeFromParentAndCleanup:YES];
+    self.advanceMenu = nil;
+    [self.goldCounter removeFromParentAndCleanup:YES];
+    [self.goldLabel removeFromParentAndCleanup:YES];
+    [self.statsContainer removeFromParentAndCleanup:YES];
+    [self.resultLabel removeFromParentAndCleanup:YES];
+    [self.betterHighScoreLabel removeFromParentAndCleanup:YES];
+    
+    self.chestSprite = [[TreasureChest new] autorelease];
+    [self.chestSprite setPosition:CGPointMake(512, 1600)];
+    [self addChild:self.chestSprite];
+    
+    StaminaCounterNode *stamina = [[[StaminaCounterNode alloc] init] autorelease];
+    [stamina setPosition:CGPointMake(512, 50)];
+    [self addChild:stamina];
+    
+    [self.chestSprite runAction:[CCSequence actions:[CCDelayTime actionWithDuration:1.25], [CCMoveTo actionWithDuration:.5 position:CGPointMake(512, 344)], [CCCallFunc actionWithTarget:self selector:@selector(fadeInLootChoiceButtons)], nil]];
+}
+
+- (void)fadeInLootChoiceButtons
+{
+    self.openChest = [BasicButton basicButtonWithTarget:self andSelector:@selector(lootChest) andTitle:@"Open Chest"];
+    if ([PlayerDataManager localPlayer].stamina == 0) {
+        self.getKeys = [BasicButton basicButtonWithTarget:self andSelector:@selector(buyKeys) andTitle:@"Buy A Key"];
+    }
+    
+    [self configureAdvanceMenu];
+    [self.advanceMenu setPosition:CGPointMake(890, 60)];
+    
+    CCMenu *openChestMenu = [CCMenu menuWithItems:self.openChest,nil];
+    if (self.getKeys) {
+        [openChestMenu addChild:self.getKeys];
+        [openChestMenu alignItemsHorizontally];
+    }
+    [openChestMenu setPosition:CGPointMake(512, 240)];
+    [self addChild:openChestMenu];
+}
+
+- (void)lootChest
+{
+    [self lootChestWithStaminaRequirement:YES];
+}
+
+- (void)displayNetworkErrorModal
+{
+    IconDescriptionModalLayer *networkError = [[[IconDescriptionModalLayer alloc] initWithIconName:nil title:@"Connection Required" andDescription:@"An Internet Connection is required to loot chests.  Please verify your connection and try again."] autorelease];
+    [networkError setDelegate:self];
+    [self addChild:networkError z:1000];
+}
+
+- (void)displayNeedKeysModal
+{
+    IconDescriptionModalLayer *needKeysModal = [[[IconDescriptionModalLayer alloc] initWithIconName:nil title:@"Key Required" andDescription:@"You are all out of keys.  Wait for more keys or buy a key to open this chest."] autorelease];
+    [needKeysModal setDelegate:self];
+    [self addChild:needKeysModal z:1000];
+}
+
+- (void)lootChestWithStaminaRequirement:(BOOL)staminaRequirement
+{
+    self.openChest.visible = NO;
+    [self.chestSprite runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCRotateTo actionWithDuration:.33 angle:-5.0], [CCRotateTo actionWithDuration:.33 angle:5.0], nil]]];
+    SpendStaminaResultBlock spendStamina = ^(BOOL success){
+        [self.chestSprite setRotation:0.0];
+        [self.chestSprite stopAllActions];
+        if (success) {
+            EquipmentItem *itemLooted = self.encounter.randomLootReward;
+            [self.chestSprite openWithItem:itemLooted];
+            [[PlayerDataManager localPlayer] playerEarnsItem:itemLooted];
+            self.isLootSequencedCompleted = YES;
+        } else {
+            self.openChest.visible = YES;
+            if ([PlayerDataManager localPlayer].stamina == 0) {
+                self.getKeys.visible = YES;
+            }
+            
+            if ([PlayerDataManager localPlayer].stamina == STAMINA_NOT_LOADED) {
+                [self displayNetworkErrorModal];
+            } else if ([PlayerDataManager localPlayer].stamina == 0) {
+                [self displayNeedKeysModal];
+            }
+        }
+    };
+    if (staminaRequirement) {
+        [[PlayerDataManager localPlayer] staminaUsedWithCompletion:spendStamina];
+    } else {
+        spendStamina(YES);
+    }
+}
+
+- (void)buyKeys
+{
+    self.openChest.visible = NO;
+    self.getKeys.visible = NO;
+    [[PurchaseManager sharedPurchaseManager] purchaseChestKeyWithCompletion:^(BOOL success){
+        if (success) {
+            self.getKeys.visible = NO;
+            [self lootChestWithStaminaRequirement:NO];
+        } else {
+            self.openChest.visible = YES;
+            self.getKeys.visible = YES;
+        }
+    
+    }];
+}
+
+- (void)configureAdvanceMenu
+{
+    if (self.advanceMenu) {
+        [self.advanceMenu removeFromParentAndCleanup:YES];
+        self.advanceMenu = nil;
+    }
+    
+    int totalOptions = 1;
+    int buttonHeight = 76;
+    NSString* doneLabelString = self.isMultiplayer ? @"Leave Group" : @"Adventure";
+    CCMenuItem *done = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneMap) andTitle:doneLabelString];
+    CCMenuItem *academy = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneAcademy) andTitle:@"Academy"];
+    CCMenuItem *armory = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneArmory) andTitle:@"Armory"];
+    self.advanceMenu = [CCMenu menuWithItems:academy, nil];
+    self.advanceMenu.anchorPoint = CGPointMake(0, 0);
+    [self addChild:self.advanceMenu];
+    
+    
+    if (!self.showsFirstLevelFTUE) {
+        [done setPosition:CGPointMake(0, totalOptions * buttonHeight)];
+        [self.advanceMenu addChild:done];
+        totalOptions++;
+        
+        [armory setPosition:CGPointMake(0, totalOptions * buttonHeight)];
+        [self.advanceMenu addChild:armory];
+        totalOptions++;
+        
+        if ([[PlayerDataManager localPlayer] numUnspentTalentChoices]) {
+            CCMenuItem *talentButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneTalents) andTitle:@"Talents" andAlertPip:YES];
+            [talentButton setPosition:CGPointMake(0, totalOptions * buttonHeight)];
+            [self.advanceMenu addChild:talentButton];
+            totalOptions++;
+        }
+    }
+
 }
 
 -(void)setMatch:(GKMatch *)mtch{
     [_match release];
     _match = [mtch retain];
     //[self.match setDelegate:self];
+}
+
+- (void)iconDescriptionModalDidComplete:(id)modal
+{
+    IconDescriptionModalLayer *completedModal = (IconDescriptionModalLayer*)modal;
+    if (completedModal.isConfirmed) {
+        [self.delegate postBattleLayerDidTransitionToScene:self.chosenDestination asVictory:self.isVictory];
+    }
+    [completedModal removeFromParentAndCleanup:YES];
 }
 
 @end

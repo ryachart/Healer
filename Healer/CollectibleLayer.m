@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 4/22/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
 #import "CollectibleLayer.h"
@@ -36,7 +36,10 @@
 - (void)beginMovement
 {
     if (self.collectible.movementType == CollectibleMovementTypeFloat) {
-        CCRepeatForever *floatAction = [CCRepeatForever actionWithAction:[CCSequence actions:[CCMoveBy actionWithDuration:1.0 position:self.collectible.movementVector], [CCMoveBy actionWithDuration:1.0 position:CGPointMake(-self.collectible.movementVector.x, -self.collectible.movementVector.y)], nil]];
+        CCRepeatForever *floatAction = [CCRepeatForever actionWithAction:
+                                        [CCSequence actions:
+                                         [CCMoveBy actionWithDuration:1.0 position:self.collectible.movementVector],
+                                         [CCMoveBy actionWithDuration:1.0 position:CGPointMake(-self.collectible.movementVector.x, -self.collectible.movementVector.y)], nil]];
         [self runAction:floatAction];
     }
 }
@@ -74,6 +77,7 @@
     CollectibleSprite *colSprite = [CollectibleSprite spriteWithSpriteFrameName:collectible.spriteName];
     [colSprite setCollectible:collectible];
     [colSprite setPosition:CGPointMake(512, 500)];
+    [colSprite setScale:collectible.scale];
 //    [colSprite setOpacity:0];
     [self addChild:colSprite z:5];
     [self.collectibles addObject:colSprite];
@@ -89,6 +93,11 @@
     } else if (collectible.entranceType == CollectibleEntranceTypeSpew) {
         NSInteger randomWidth = (arc4random() % 2 ? 1 : -1) * (arc4random() % 300);
         CCJumpBy *spewAction = [CCJumpBy actionWithDuration:.33 + delay position:CGPointMake(randomWidth, -140) height:50 jumps:1];
+        [actions addObject:spewAction];
+    } else if (collectible.entranceType == CollectibleEntranceTypeSpewPlayer) {
+        [colSprite setPosition:CGPointMake(130, 100)];
+        NSInteger randomWidth = 200 + (arc4random() % 300);
+        CCJumpBy *spewAction = [CCJumpBy actionWithDuration:.33 + delay position:CGPointMake(randomWidth, 260) height:200 jumps:1];
         [actions addObject:spewAction];
     }
     

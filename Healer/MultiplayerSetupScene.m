@@ -147,7 +147,7 @@
 -(void)serverAddRaidMember:(RaidMember*)member{
     if (self.isServer){
         int i = self.raid.raidMembers.count;
-        [member setBattleID:[NSString stringWithFormat:@"%@%i", [member class], i]];
+        [member setNetworkId:[NSString stringWithFormat:@"%@%i", [member class], i]];
         [self.raid addRaidMember:member];
         [match sendDataToAllPlayers:[[NSString stringWithFormat:@"ADDRM|%@|%@%i",[member class], [member class], i] dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKMatchSendDataReliable error:nil];
     }
@@ -177,7 +177,7 @@
     }
     
     RaidMember *member = [[NSClassFromString(className) alloc] init];
-    [member setBattleID:battleID];
+    [member setNetworkId:battleID];
     [self.raid addRaidMember:member];
     [member release];
     

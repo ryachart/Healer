@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 9/13/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
+//  Copyright (c) 2012 Ryan Hart Games. All rights reserved.
 //
 
 #import "cocos2d.h"
@@ -15,6 +15,5 @@
 @property (nonatomic, retain) Spell *spell;
 
 - (id)initWithSpell:(Spell*)spell;
-- (CCSprite*)draggableSprite;
 
 @end

@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 4/19/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
 #import "TipsLayer.h"

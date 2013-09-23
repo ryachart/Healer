@@ -36,6 +36,7 @@
         self.isTouched = NO;
         
         CCSprite *energyBack = [CCSprite spriteWithSpriteFrameName:@"bar_back_small.png"];
+        [energyBack setPosition:IS_IPAD ? CGPointMake(0, 0) : CGPointMake(30, 0)];
         [self addChild:energyBack];
         
         CCLabelTTFShadow *manaLabel = [CCLabelTTFShadow labelWithString:@"Mana" dimensions:energyBack.contentSize hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:18.0f];
@@ -55,31 +56,34 @@
         self.energyBar.barChangeRate = CGPointMake(1.0, 0);
         self.energyBar.type = kCCProgressTimerTypeBar;
         [self.energyBar setPercentage:100];
+        [self.energyBar setPosition:energyBack.position];
         [self addChild:self.energyBar];
         
-        CCSprite *healthBack = [CCSprite spriteWithSpriteFrameName:@"bar_back_small.png"];
-        [healthBack setPosition:CGPointMake(0, 34)];
-        [self addChild:healthBack];
-        
-        self.healthBar = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"bar_fill_small.png"]];
-        [self.healthBar setColor:ccc3(0, 255, 0)];
-        self.healthBar.midpoint = CGPointMake(0, .5);
-        self.healthBar.barChangeRate = CGPointMake(1.0, 0);
-        self.healthBar.type = kCCProgressTimerTypeBar;
-        [self.healthBar setPercentage:100];
-        [self.healthBar setPosition:healthBack.position];
-        [self addChild:self.healthBar];
-        
-        CCLabelTTFShadow *healthWordLabel = [CCLabelTTFShadow labelWithString:@"Health" dimensions:healthBack.contentSize hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:18.0f];
-        [healthWordLabel setShadowOffset:CGPointMake(-1, -1)];
-        [healthWordLabel setPosition:ccpAdd(healthBack.position,CGPointMake(10, -6))];
-        [self addChild:healthWordLabel z:100];
-        
-        self.healthLabel = [CCLabelTTFShadow labelWithString:@"100%" dimensions:healthBack.contentSize hAlignment:kCCTextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:18.0];
-        [self.healthLabel setShadowOffset:CGPointMake(-1,-1)];
-        [self.healthLabel setColor:ccc3(230, 230, 230)];
-        self.healthLabel.position = ccpAdd(healthBack.position, CGPointMake(-8, -6));
-        [self addChild:self.healthLabel z:100];
+        if (IS_IPAD) {
+            CCSprite *healthBack = [CCSprite spriteWithSpriteFrameName:@"bar_back_small.png"];
+            [healthBack setPosition:CGPointMake(0, 34)];
+            [self addChild:healthBack];
+            
+            self.healthBar = [CCProgressTimer progressWithSprite:[CCSprite spriteWithSpriteFrameName:@"bar_fill_small.png"]];
+            [self.healthBar setColor:ccc3(0, 255, 0)];
+            self.healthBar.midpoint = CGPointMake(0, .5);
+            self.healthBar.barChangeRate = CGPointMake(1.0, 0);
+            self.healthBar.type = kCCProgressTimerTypeBar;
+            [self.healthBar setPercentage:100];
+            [self.healthBar setPosition:healthBack.position];
+            [self addChild:self.healthBar];
+            
+            CCLabelTTFShadow *healthWordLabel = [CCLabelTTFShadow labelWithString:@"Health" dimensions:healthBack.contentSize hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:18.0f];
+            [healthWordLabel setShadowOffset:CGPointMake(-1, -1)];
+            [healthWordLabel setPosition:ccpAdd(healthBack.position,CGPointMake(10, -6))];
+            [self addChild:healthWordLabel z:100];
+            
+            self.healthLabel = [CCLabelTTFShadow labelWithString:@"100%" dimensions:healthBack.contentSize hAlignment:kCCTextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:18.0];
+            [self.healthLabel setShadowOffset:CGPointMake(-1,-1)];
+            [self.healthLabel setColor:ccc3(230, 230, 230)];
+            self.healthLabel.position = ccpAdd(healthBack.position, CGPointMake(-8, -6));
+            [self addChild:self.healthLabel z:100];
+        }
     }
     return self;
 }

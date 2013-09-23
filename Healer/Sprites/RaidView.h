@@ -19,18 +19,19 @@
 @interface RaidView : CCLayer
 @property (nonatomic, retain) NSMutableArray *rectsToUse;
 @property (nonatomic, retain) NSMutableArray *raidViews;
+@property (nonatomic, readwrite) NSInteger numColumns; //Default to 5
 
 - (void)setPaused:(BOOL)paused;
 
 //Returns Yes is successful, no otherwise.
--(BOOL)addRaidMemberHealthView:(RaidMemberHealthView*)healthView;
+- (BOOL)addRaidMemberHealthView:(RaidMemberHealthView*)healthView;
 
--(CGPoint)frameCenterForMember:(RaidMember*)raidMember;
--(RaidMemberHealthView*)healthViewForMember:(RaidMember*)raidMember;
--(CGPoint)randomMissedProjectileDestination;
--(CGRect)nextUsableRect;
+- (CGPoint)frameCenterForMember:(RaidMember*)raidMember;
+- (RaidMemberHealthView*)healthViewForMember:(RaidMember*)raidMember;
+- (CGPoint)randomMissedProjectileDestination;
+- (CGRect)nextUsableRect;
 
--(void)updateRaidHealthWithPlayer:(Player*)player andTimeDelta:(ccTime)delta;
+- (void)updateRaidHealthWithPlayer:(Player*)player andTimeDelta:(ccTime)delta;
 
 - (void)endBattleWithSuccess:(BOOL)success;
 

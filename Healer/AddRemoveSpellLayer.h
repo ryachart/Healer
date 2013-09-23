@@ -5,7 +5,7 @@
 //  Created by Ryan Hart on 4/27/12.
 //
 
-#import <cocos2d.h>
+#import "cocos2d.h"
 #import "Slot.h"
 @class Spell;
 

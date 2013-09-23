@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 9/13/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
+//  Copyright (c) 2012 Ryan Hart Games. All rights reserved.
 //
 
 #import "DraggableSpellIcon.h"
@@ -21,9 +21,5 @@
         [self setDisplayFrame:spellFrame];
     }
     return self;
-}
-
-- (CCSprite*)draggableSprite{
-    return nil;
 }
 @end

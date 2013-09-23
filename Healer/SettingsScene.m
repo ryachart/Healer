@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 11/10/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
+//  Copyright (c) 2012 Ryan Hart Games. All rights reserved.
 //
 
 #import "SettingsScene.h"

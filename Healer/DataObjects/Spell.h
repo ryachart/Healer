@@ -42,6 +42,8 @@ typedef enum {
 @property (nonatomic, retain) Effect* appliedEffect;
 @property (nonatomic, readwrite) BOOL isExclusiveEffectTarget;
 @property (nonatomic, readwrite) BOOL isMultitouch;
+@property (nonatomic, readwrite) BOOL isItem;
+@property (nonatomic, retain) NSString *itemSpriteName;
 
 @property (nonatomic, readonly) NSString* spellTypeDescription;
 @property (nonatomic, readwrite) SpellType spellType;
@@ -63,7 +65,7 @@ typedef enum {
 
 
 //Subclass overrides
-- (void)checkDivinity;
+- (void)checkTalents;
 - (void)willHealTarget:(RaidMember*)target inRaid:(Raid*)raid withEnemies:(NSArray*)enemies andPlayers:(NSArray*)players forAmount:(NSInteger)amount;
 - (void)didHealTarget:(RaidMember*)target inRaid:(Raid*)raid withEnemies:(NSArray*)enemies andPlayers:(NSArray*)players forAmount:(NSInteger)amount;
 @end
@@ -95,6 +97,7 @@ typedef enum {
 @end
 
 @interface Barrier : Spell //Fast cast expensive Absorb
+@property (nonatomic, readwrite) NSInteger absorbAmount;
 @end
 
 @interface HealingBurst : Spell //Instant cast short cooldown heal
@@ -140,6 +143,15 @@ typedef enum {
 @end
 
 @interface Attunement : Spell
+@end
+
+@interface RaidHeal : Spell
+@end
+
+@interface HealBuff : Spell
+@end
+
+@interface LightBolt : Spell
 @end
 ////RITUALIST SPELLS/////
 @interface HastyBrew : Spell <Chargable>{

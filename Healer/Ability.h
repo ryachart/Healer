@@ -3,12 +3,8 @@
 //  Healer
 //
 //  Created by Ryan Hart on 5/10/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
-//
-//
+//  Copyright (c) 2012 Ryan Hart Games. All rights reserved.
 
-
-#import <Foundation/Foundation.h>
 #import "RaidMember.h"
 #import "ProjectileEffect.h"
 #import "Collectible.h"
@@ -39,6 +35,8 @@
 @property (nonatomic, readonly) BOOL isChanneling;
 @property (nonatomic, readwrite) BOOL ignoresBusy; //This ability will trigger even when the owner is busy.
 @property (nonatomic, readwrite) float dodgeChanceAdjustment;
+@property (nonatomic, readwrite) BOOL requiresDamageToApplyEffect;
+@property (nonatomic, retain) Effect *appliedEffect;
 
 //Activation Times
 @property (nonatomic, readwrite) BOOL isActivating;
@@ -72,13 +70,12 @@
 @property (nonatomic, readwrite) NSInteger numberOfTargets; //Default 1
 @property (nonatomic, readwrite) BOOL ignoresGuardians;
 @property (nonatomic, readwrite) BOOL ignoresPlayers;
-@property (nonatomic, retain) Effect *appliedEffect;
-@property (nonatomic, readwrite) BOOL requiresDamageToApplyEffect;
 @property (nonatomic, readwrite) BOOL removesPositiveEffects;
 @property (nonatomic, readwrite) BOOL prefersTargetsWithoutVisibleEffects;
 @property (nonatomic, retain) NSString *damageAudioName;
 - (RaidMember *)targetFromRaid:(Raid*)raid;
 - (id)initWithDamage:(NSInteger)dmg andCooldown:(NSTimeInterval)cd;
++ (Attack *)appliesEffectNonMeleeAttackWithEffect:(Effect*)effect;
 @end
 
 @interface FocusedAttack : Attack
@@ -97,7 +94,6 @@
 @interface ProjectileAttack : Ability
 @property (nonatomic, readwrite) BOOL ignoresGuardians;
 @property (nonatomic, readwrite) NSInteger attacksPerTrigger; //Defaults to 1
-@property (nonatomic, retain) Effect *appliedEffect;
 @property (nonatomic, retain) NSString* spriteName;
 @property (nonatomic, retain) NSString* explosionParticleName;
 @property (nonatomic, retain) NSString* explosionSoundName;
@@ -166,7 +162,6 @@ typedef enum {
 @end
 
 @interface RaidDamage : Ability
-@property (nonatomic, retain) Effect *appliedEffect;
 @end
 
 @interface Grip : Ability
@@ -181,7 +176,6 @@ typedef enum {
 @interface TargetTypeAttack : Ability
 @property (nonatomic, readwrite) Positioning targetPositioningType;
 @property (nonatomic, readwrite) NSInteger numTargets;
-@property (nonatomic, retain) Effect *appliedEffect;
 @end
 
 @interface AlternatingFlame : TargetTypeAttack
@@ -204,7 +198,6 @@ typedef enum {
 @end
 
 @interface RaidApplyEffect : Ability
-@property (nonatomic, retain) Effect *appliedEffect;
 @end
 
 @interface OozeRaid : RaidApplyEffect
@@ -323,4 +316,42 @@ typedef enum {
 @interface OrbsOfFury : Ability
 @property (nonatomic, readwrite) float particleEffectCooldown;
 @property (nonatomic, retain) Effect *ownerEffect;
+@end
+
+@interface UndyingFlame : Attack
+@end
+
+@interface InterruptedByFullHealthTargets : Ability
+@property (nonatomic, readwrite) NSInteger requiredTicks;
+@property (nonatomic, readwrite) NSInteger requiredNumberOfTargets;
+@property (nonatomic, retain) NSString *channelTickRaidParticleEffectName;
+@end
+
+@interface BoneStorm : InterruptedByFullHealthTargets
+@end
+
+@interface ConsumeMagic : Ability
+@end
+
+@interface SlimeOrbs : Ability
+#define SLIME_REQUIRED_FOR_ENRAGE 7
+@property (nonatomic, readwrite) NSInteger orbCount;
+@property (nonatomic, readwrite) BOOL hasEmpowered;
+@end
+
+@interface SoulSwap : Ability
+@end
+
+@interface AvatarOfTormentSubmerge : Ability
+- (void)emergeForRaid:(Raid*)theRaid;
+@end
+
+@interface RainOfFire : Ability
+@end
+
+@interface ChannelledRaidProjectileAttack : ProjectileAttack
+@property (nonatomic, readwrite) NSInteger tickCount;
+@end
+
+@interface ManaDrain : Ability
 @end

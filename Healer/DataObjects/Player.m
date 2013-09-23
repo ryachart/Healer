@@ -1,9 +1,9 @@
 //
 //  Player.m
-//  RaidLeader
+//  Healer
 //
 //  Created by Ryan Hart on 4/21/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
 
 #import "Player.h"
@@ -11,6 +11,7 @@
 #import <GameKit/GameKit.h>
 #import "Talents.h"
 #import "CombatEvent.h"
+#import "EquipmentItem.h"
 
 @interface Player ()
 @property (nonatomic, readwrite) NSTimeInterval redemptionTimeApplied;
@@ -19,24 +20,27 @@
 @property (nonatomic, readwrite) NSTimeInterval godstouchTimeApplied;
 @property (nonatomic, readwrite) NSTimeInterval currentSpellCastTime;
 @property (nonatomic, readwrite) float dodgeRemaining;
+@property (nonatomic, readwrite) NSInteger maximumHealth;
 @end
 
 @implementation Player
+@synthesize energy=_energy;
 
--(void)dealloc{
+-(void)dealloc {
     [_activeSpells release]; _activeSpells = nil;
     [_spellBeingCast release]; _spellBeingCast = nil;
     [_statusText release]; _statusText = nil;
     [_playerID release]; _playerID = nil;
     [_spellsOnCooldown release]; _spellsOnCooldown = nil;
     [_additionalTargets release]; _additionalTargets = nil;
-    [_divinityConfig release]; _divinityConfig = nil;
+    [_talentConfig release]; _talentConfig = nil;
+    [_equippedItems release]; _equippedItems = nil;
     [super dealloc];
 }
 
--(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen
-{
+-(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen {
     if (self = [super init]){
+        self.spellsFromEquipment = [NSArray array];
         self.isLocalPlayer = YES;
         self.maximumHealth = hlth;
         self.health = hlth;
@@ -48,13 +52,15 @@
         self.isCasting = NO;
         self.lastEnergyRegen = 0.0f;
         self.statusText = @"";
+        self.positioning = Ranged;
         self.maxChannelTime = 5;
         self.castStart = 0.0f;
         self.cooldownAdjustment = 1.0;
         self.castTimeAdjustment = 1.0;
-        self.spellCriticalChance = .1; //10% Base chance to crit
+        self.spellCriticalChance = .05; //5% Base chance to crit
         self.criticalBonusMultiplier = 1.5; //50% more on a crit
         self.damageDealt = 1000;
+        self.equippedItems = [NSArray array];
         _spellsOnCooldown = [[NSMutableSet setWithCapacity:4] retain];
         
         for (int i = 0; i < CastingDisabledReasonTotal; i++){
@@ -65,34 +71,61 @@
 	return self;
 }
 
-- (NSString *)title
-{
+- (NSString *)title {
     return @"Healer";
 }
 
-- (float)cooldownAdjustment
-{
+- (float)cooldownAdjustment {
     float base = _cooldownAdjustment;
     
     for (Effect *eff in self.activeEffects) {
         base += eff.cooldownMultiplierAdjustment;
     }
+    
+    for (EquipmentItem *item in self.equippedItems) {
+        base += (item.speed / 100.0);
+    }
     return base;
 }
 
-- (float)spellCriticalChance
-{
+- (float)energy {
+    if (self.isDead) {
+        return 0;
+    }
+    return _energy;
+}
+
+- (float)spellCriticalChance {
     float base = _spellCriticalChance;
     
     for (Effect *eff in self.activeEffects) {
         base += eff.criticalChanceAdjustment;
     }
     
+    for (EquipmentItem *item in self.equippedItems) {
+        base += (item.crit / 100.0);
+    }
+    
     return base;
 }
 
-- (void)setHealth:(NSInteger)newHealth
-{
+- (NSInteger)maximumHealth {
+    NSInteger base = [super maximumHealth];
+    NSInteger adjustment = 0;
+    float multiplier = 1;
+    
+    for (EquipmentItem *item in self.equippedItems) {
+        adjustment += item.health;
+    }
+    
+    for (Effect *eff in self.activeEffects) {
+        multiplier += eff.maximumHealthMultiplierAdjustment;
+    }
+    
+    return base + adjustment * multiplier;
+}
+
+- (void)setHealth:(NSInteger)newHealth {
     NSInteger prehealth = self.health;
     [super setHealth:newHealth];
     NSInteger healthDelta = prehealth - self.health;
@@ -109,8 +142,7 @@
     }
 }
 
-- (void)setEnergy:(float)newEnergy
-{
+- (void)setEnergy:(float)newEnergy {
     _energy = newEnergy;
     if (_energy < 0) _energy = 0;
 	if (_energy > _maximumEnergy) _energy = _maximumEnergy;
@@ -120,7 +152,7 @@
     if (!self.isLocalPlayer){
         return NO;
     }
-    if ([self hasDivinityEffectWithTitle:@"redemption"]){
+    if ([self hasTalentEffectWithTitle:@"redemption"]){
         if (self.redemptionTimeApplied == 0.0){
             return YES;
         }
@@ -143,8 +175,7 @@
     return NO;
 }
 
-- (BOOL)isBlinded
-{
+- (BOOL)isBlinded {
     BOOL blinded = NO;
     for (Effect *effect in self.activeEffects){
         if (effect.causesBlind){
@@ -160,7 +191,7 @@
     [self.announcer announce:@"The light has redeemed a soul."];
 }
 
-- (void)triggerAvatar{
+- (void)triggerAvatar {
     if (arc4random() % 100 <= 3){
         [self.announcer announce:@"An Avatar comes to your aid!"];
         AvatarEffect *avatar = [[[AvatarEffect alloc] initWithDuration:15 andEffectType:EffectTypePositiveInvisible] autorelease];
@@ -171,19 +202,33 @@
     
 }
 
-- (float)castTimeAdjustmentForSpell:(Spell*)spell{
+- (float)castTimeAdjustmentForSpell:(Spell*)spell {
     float adjustment = [self castTimeAdjustment];
     return adjustment;
 }
 
-- (float)spellCostAdjustmentForSpell:(Spell*)spell{
+- (float)spellCostAdjustmentForSpell:(Spell*)spell {
     float adjustment = [self spellCostAdjustment];
     return adjustment;
 }
 
-- (float)healingDoneMultiplierForSpell:(Spell*)spell{
+- (float)healingDoneMultiplierForSpell:(Spell*)spell {
     float adjustment = [self healingDoneMultiplier];
     return adjustment;
+}
+
+-(float)healingDoneMultiplier{
+    float base = 1.0;
+    
+    for (Effect *eff in self.activeEffects){
+        base += [eff healingDoneMultiplierAdjustment];
+    }
+    
+    for (EquipmentItem *item in self.equippedItems) {
+        base += (item.healing / 100.0);
+    }
+    
+    return MAX(0, base);
 }
 
 - (float)spellCostAdjustment {
@@ -196,7 +241,10 @@
 
 - (void)initializeForCombat {
     for (Spell *spell in self.activeSpells) {
-        [spell checkDivinity];
+        [spell checkTalents];
+    }
+    for (Spell *spell in self.spellsFromEquipment) {
+        [spell checkTalents];
     }
 }
 
@@ -207,24 +255,28 @@
         adjustment -= effect.castTimeAdjustment;
     }
     
+    for (EquipmentItem *item in self.equippedItems) {
+        adjustment -= (item.speed / 100.0);
+    }
+    
     adjustment = MAX(adjustment, .5);
     self.castTimeAdjustment = adjustment;
 }
 
-- (void)setDivinityConfig:(NSDictionary *)divCnfg {
-    [_divinityConfig release];
-    _divinityConfig = [divCnfg retain];
+- (void)setTalentConfig:(NSDictionary *)talentConfiguration {
+    [_talentConfig release];
+    _talentConfig = [talentConfiguration retain];
     
-    NSMutableArray *divinityEffectsToRemove = [NSMutableArray arrayWithCapacity:5];
+    NSMutableArray *talentEffectsToRemove = [NSMutableArray arrayWithCapacity:5];
     for (Effect *effect in self.activeEffects){
-        if (effect.effectType == EffectTypeDivinity){
-            [divinityEffectsToRemove addObject:effect];
+        if (effect.effectType == EffectTypeTalent){
+            [talentEffectsToRemove addObject:effect];
         }
     }
-    for (Effect* effect in divinityEffectsToRemove){
+    for (Effect* effect in talentEffectsToRemove){
         [self.activeEffects removeObject:effect];
     }
-    NSArray *newDivinityEffects = [Talents effectsForConfiguration:_divinityConfig];
+    NSArray *newDivinityEffects = [Talents effectsForConfiguration:_talentConfig];
     for (Effect *effect in newDivinityEffects){
         [self addEffect:effect];
     }
@@ -232,11 +284,11 @@
     
 }
 
-- (BOOL)hasDivinityEffectWithTitle:(NSString*)title {
-    if (self.divinityConfig){
+- (BOOL)hasTalentEffectWithTitle:(NSString*)title {
+    if (self.talentConfig){
         for (Effect *eff in self.activeEffects){
-            if (eff.effectType == EffectTypeDivinity){
-                if ([[(DivinityEffect*)eff divinityKey] isEqualToString:title]){
+            if (eff.effectType == EffectTypeTalent){
+                if ([[(TalentEffect*)eff talentKey] isEqualToString:title]){
                     return YES;
                 }
             }
@@ -263,6 +315,15 @@
     _activeSpells = [actSpells retain];
 }
 
+- (void)setSpellsFromEquipment:(NSArray *)spellsFromEquipment
+{
+    for (Spell* spell in spellsFromEquipment) {
+        [spell setOwner:self];
+    }
+    [_spellsFromEquipment release];
+    _spellsFromEquipment = [spellsFromEquipment retain];
+}
+
 - (void)configureForRecommendedSpells:(NSArray *)recommendSpells withLastUsedSpells:(NSArray *)lastUsedSpells {
     NSMutableArray *actSpells = [NSMutableArray arrayWithCapacity:4];
     
@@ -271,23 +332,21 @@
     }else {
         for (Spell *spell in recommendSpells){
             if ([[PlayerDataManager localPlayer] hasSpell:spell]){
-                [actSpells addObject:[[spell class] defaultSpell]];
+                if (actSpells.count < [[PlayerDataManager localPlayer] maximumStandardSpellSlots]) {
+                    [actSpells addObject:[[spell class] defaultSpell]];
+                }
             }
         }
     }
     //Add other spells the player has
     for (Spell *spell in [[PlayerDataManager localPlayer] allOwnedSpells]){
-        if (actSpells.count < 4){
+        if (actSpells.count < [[PlayerDataManager localPlayer] maximumStandardSpellSlots]){
             if (![actSpells containsObject:spell]){
                 [actSpells addObject:[[spell class] defaultSpell]];
             }
         }
     }
     [self setActiveSpells:(NSArray*)actSpells];
-}
-
-- (NSString*)initialStateMessage{
-    return @"ERRR:UNIMPL";
 }
 
 - (NSString*)networkID{
@@ -302,11 +361,12 @@
     return spellsMessage;
 }
 
-- (NSString*)asNetworkMessage{
+- (NSString*)asNetworkMessage {
     NSString *message = [NSString stringWithFormat:@"PLYR|%@|%i|%f|%1.3f|%i", self.playerID, self.health, self.energy, self.castTimeAdjustment, self.isConfused];
     return message;
 }
-- (void)updateWithNetworkMessage:(NSString*)message{
+ 
+- (void)updateWithNetworkMessage:(NSString*)message {
     NSArray *components = [message componentsSeparatedByString:@"|"];
     if ([self.playerID isEqualToString:[components objectAtIndex:1]]){
         self.health = [[components objectAtIndex:2] intValue];
@@ -314,12 +374,11 @@
         self.castTimeAdjustment = [[components objectAtIndex:4] floatValue];
         self.isConfused = [[components objectAtIndex:5] boolValue];
     }else{
-        NSLog(@"IM BEING UPDATED WITH A DIFFERENT PLAYER OBJECT.");
+        NSAssert(nil, @"PLAYER BEING UPDATED WITH A DIFFERENT PLAYER OBJECT.");
     }
 }
 
-- (void)performAttackIfAbleOnTarget:(Enemy *)target
-{
+- (void)performAttackIfAbleOnTarget:(Enemy *)target {
     if (self.shouldAttack) {
         [super performAttackIfAbleOnTarget:target];
     }
@@ -330,8 +389,7 @@
     [self cacheCastTimeAdjustment];
 }
 
-- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
-{
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     [super combatUpdateForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     
     if (self.isStunned && self.isCasting) {
@@ -339,7 +397,7 @@
     }
     
     if (!self.isRedemptionApplied){
-        if ([self hasDivinityEffectWithTitle:@"redemption"]){
+        if ([self hasTalentEffectWithTitle:@"redemption"]){
             for (RaidMember *member in raid.livingMembers){
                 RedemptionEffect *redemp = [[RedemptionEffect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible];
                 [redemp setRedemptionDelegate:self];
@@ -352,7 +410,7 @@
         self.isRedemptionApplied = YES;
     }
     
-    if ([self hasDivinityEffectWithTitle:@"godstouch"]) {
+    if ([self hasTalentEffectWithTitle:@"godstouch"]) {
         if (!self.isGodstouchApplied) {
             for (RaidMember *member in raid.livingMembers) {
                 Effect *godsTouchEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
@@ -381,7 +439,7 @@
     }
     
     if (self.overhealingToDistribute > 150) {
-        //For the divinity choice that distributes overhealing
+        //For the talent choice that distributes overhealing
         NSArray *targets = [raid lowestHealthTargets:5 withRequiredTarget:nil];
         NSInteger perTarget = MAX(2,self.overhealingToDistribute / 5);
         for (RaidMember *member in targets) {
@@ -423,7 +481,7 @@
             }
 			[self.spellBeingCast spellFinishedCastingForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
             for (Effect *eff in self.activeEffects){
-                [eff targetDidCastSpell:self.spellBeingCast];
+                [eff targetDidCastSpell:self.spellBeingCast onTarget:self.spellTarget];
             }
 			self.spellTarget = nil;
 			self.spellBeingCast = nil;
@@ -447,6 +505,10 @@
             energyRegenAdjustment += [eff energyRegenAdjustment];
         }
         
+        for (EquipmentItem *item in self.equippedItems) {
+            energyRegenAdjustment += (item.regen / 100);
+        }
+        
         [self setEnergy:_energy + (_energyRegenPerSecond * energyRegenAdjustment * tickFactor) + [self channelingBonus]];
         self.lastEnergyRegen = 0.0;
     }
@@ -465,7 +527,7 @@
 	
 }
 
-- (void)interrupt{
+- (void)interrupt {
     if (self.spellBeingCast) {
         if (self.isLocalPlayer){
             [self.spellBeingCast spellInterrupted];
@@ -479,8 +541,7 @@
     }
 }
 
-- (BOOL)canDodge
-{
+- (BOOL)canDodge {
     for (Effect *eff in self.activeEffects) {
         if (eff.causesReactiveDodge)
             return YES;
@@ -488,23 +549,19 @@
     return NO;
 }
 
-- (BOOL)hasDodged
-{
+- (BOOL)hasDodged {
     return self.dodgeRemaining > 0;
 }
 
-- (void)dodge
-{
+- (void)dodge {
     self.dodgeRemaining = 5.0;
 }
 
-- (void)setDodgeRemaining:(float)dodgeRemaining
-{
+- (void)setDodgeRemaining:(float)dodgeRemaining {
     _dodgeRemaining = MAX(0, dodgeRemaining);
 }
 
--(NSTimeInterval) remainingCastTime
-{
+- (NSTimeInterval) remainingCastTime {
 	if (self.castStart != 0.0 && self.isCasting){
 		return self.currentSpellCastTime - self.castStart;
 	}
@@ -513,7 +570,7 @@
 	}
 }
 
--(BOOL)canCast{
+- (BOOL)canCast {
 	BOOL cast = NO;
 	for (int i = 0; i < CastingDisabledReasonTotal; i++){
 		cast = cast || castingDisabledReasons[i];
@@ -521,18 +578,18 @@
 	return !cast && !self.isDead;
 }
 
--(void)enableCastingWithReason:(CastingDisabledReason)reason{
+- (void)enableCastingWithReason:(CastingDisabledReason)reason {
 	castingDisabledReasons[reason] = NO;
 	
 }
--(void)disableCastingWithReason:(CastingDisabledReason)reason{
+
+- (void)disableCastingWithReason:(CastingDisabledReason)reason {
 	castingDisabledReasons[reason] = YES;
     [self interrupt];
 }
 
 
--(void)beginCasting:(Spell*)theSpell withTargets:(NSArray*)targets
-{
+- (void)beginCasting:(Spell*)theSpell withTargets:(NSArray*)targets {
 	if (![self canCast]){
 		return;
 	}
@@ -564,7 +621,7 @@
 	
 }
 
--(int)channelingBonus{
+- (int)channelingBonus {
 	
 	if ([self channelingTime] >= self.maxChannelTime){
 		return 10;
@@ -580,17 +637,17 @@
 	return 0;
 }
 
--(void)startChanneling{
+- (void)startChanneling {
 	self.channelingStartTime = 0.0001;
 	[self disableCastingWithReason:CastingDisabledReasonChanneling];
 }
 
--(void)stopChanneling{
+- (void)stopChanneling {
 	self.channelingStartTime = 0.0;
 	[self enableCastingWithReason:CastingDisabledReasonChanneling];
 }
 
--(NSTimeInterval)channelingTime{
+- (NSTimeInterval)channelingTime {
 	if (self.channelingStartTime != 0.0){
 		return self.channelingStartTime;
 	}
@@ -598,22 +655,22 @@
 	return 0.0;
 }
 
--(NSString*)sourceName{
+- (NSString*)sourceName {
     return [NSString stringWithFormat:@"PLAYER:%@", self.playerID];
 }
 
--(NSString*)targetName{
+- (NSString*)targetName {
     return [self sourceName];
 }
 
--(BOOL)isDead{
+- (BOOL)isDead {
 	return self.health <= 0;
 }
 
-- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical{
+- (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember*)target fromSpell:(Spell*)spell withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical {
     NSInteger loggedAmount = amount;
     
-    if ([self hasDivinityEffectWithTitle:@"avatar"]){
+    if ([self hasTalentEffectWithTitle:@"avatar"]){
         if (amount >= MINIMUM_AVATAR_TRIGGER_AMOUNT){
             [self triggerAvatar];
         }else{
@@ -625,7 +682,7 @@
         }
     }
     
-    if ((amount + overhealing) > 0 && [self hasDivinityEffectWithTitle:@"after-light"]) {
+    if ((amount + overhealing) > 0 && [self hasTalentEffectWithTitle:@"after-light"]) {
         NSInteger sum = amount + overhealing;
         NSInteger amountToShield = (int)round(sum * .10);
         NSString *effectTitle = @"al-div-eff";
@@ -649,7 +706,7 @@
         }
     }
     
-    if ([self hasDivinityEffectWithTitle:@"shining-aegis"]){
+    if ([self hasTalentEffectWithTitle:@"shining-aegis"]){
         DecayingDamageTakenEffect *armorEffect = [[[DecayingDamageTakenEffect alloc] initWithDuration:5 andEffectType:EffectTypePositive] autorelease];
         [armorEffect setOwner:self];
         [armorEffect setVisibilityPriority:-1];
@@ -667,11 +724,11 @@
         }
     }
     
-    if ([self hasDivinityEffectWithTitle:@"ancient-knowledge"]){
+    if ([self hasTalentEffectWithTitle:@"ancient-knowledge"]){
         self.overhealingToDistribute += (int)round(overhealing * .5);
     }
 
-    if ([self hasDivinityEffectWithTitle:@"searing-power"]){
+    if ([self hasTalentEffectWithTitle:@"searing-power"]){
         Effect *searingHealth = [[[Effect alloc] initWithDuration:60.0 andEffectType:EffectTypePositiveInvisible] autorelease];
         [searingHealth setMaximumHealthMultiplierAdjustment:.1];
         [searingHealth setDamageDoneMultiplierAdjustment:.1];
@@ -680,17 +737,17 @@
         [target addEffect:searingHealth];
     }
     
-    if ([self hasDivinityEffectWithTitle:@"repel-the-darkness"]){
+    if ([self hasTalentEffectWithTitle:@"repel-the-darkness"]){
         self.shouldAttack = YES;
     }
     
-    if ([self hasDivinityEffectWithTitle:@"arcane-blessing"]){
+    if ([self hasTalentEffectWithTitle:@"arcane-blessing"]){
         if (arc4random() % 1000 < 100) {
             self.needsArcaneBlessingShield = YES;
         }
     }
     
-    if ([self hasDivinityEffectWithTitle:@"sunlight"]){
+    if ([self hasTalentEffectWithTitle:@"sunlight"]){
         ReactiveHealEffect *sunlight = [[[ReactiveHealEffect alloc] initWithDuration:10.0 andEffectType:EffectTypePositiveInvisible] autorelease];
         [sunlight setAmountPerReaction:50];
         [sunlight setEffectCooldown:10.0];
@@ -699,12 +756,15 @@
         [target addEffect:sunlight];
     }
     
+    
+    
     if (amount > 0){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:loggedAmount] eventType:CombatEventTypeHeal critical:critical]];
         
         for (Effect *eff in target.activeEffects) {
             [eff player:self causedHealing:amount];
         }
+        
     }
     
     if (overhealing > 0){
@@ -717,7 +777,8 @@
 - (void)playerDidHealFor:(NSInteger)amount onTarget:(RaidMember *)target fromEffect:(Effect *)effect withOverhealing:(NSInteger)overhealing asCritical:(BOOL)critical{
     if (amount > 0){
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:amount] eventType:CombatEventTypeHeal critical:critical]];
-        for (Effect *eff in target.activeEffects) {
+        NSArray *copiedEffects = [NSArray arrayWithArray:target.activeEffects];
+        for (Effect *eff in copiedEffects) {
             [eff player:self causedHealing:amount];
         }
     }
@@ -725,7 +786,7 @@
         [self.logger logEvent:[CombatEvent eventWithSource:self target:target value:[NSNumber numberWithInt:overhealing] andEventType:CombatEventTypeOverheal]];
     }
     
-    if ((amount + overhealing) > 0 && [self hasDivinityEffectWithTitle:@"after-light"]) {
+    if ((amount + overhealing) > 0 && [self hasTalentEffectWithTitle:@"after-light"]) {
         NSInteger sum = amount + overhealing;
         NSInteger amountToShield = (int)round(sum * .10);
         NSString *effectTitle = @"al-div-eff";
@@ -749,11 +810,11 @@
         }
     }
     
-    if ([self hasDivinityEffectWithTitle:@"ancient-knowledge"]){
+    if ([self hasTalentEffectWithTitle:@"ancient-knowledge"]){
         self.overhealingToDistribute += (int)round(overhealing * .25);
     }
     
-    if ([self hasDivinityEffectWithTitle:@"avatar"]){
+    if ([self hasTalentEffectWithTitle:@"avatar"]){
         if (amount >= MINIMUM_AVATAR_TRIGGER_AMOUNT){
             
         }else{

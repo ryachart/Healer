@@ -3,10 +3,11 @@
 //  Healer
 //
 //  Created by Ryan Hart on 8/1/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
+//  Copyright (c) 2012 Ryan Hart Games. All rights reserved.
 //
 
 #import "AbilityDescriptor.h"
+#import "Effect.h"
 
 @implementation AbilityDescriptor
 
@@ -15,6 +16,14 @@
         return @"unknown_ability.png";
     }
     return _iconName;
+}
+
+- (NSInteger)stacks
+{
+    if (self.monitoredEffect) {
+        return self.monitoredEffect.stacks;
+    }
+    return 0;
 }
 
 @end

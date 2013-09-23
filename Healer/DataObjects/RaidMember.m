@@ -1,9 +1,9 @@
 //
 //  RaidMember.m
-//  RaidLeader
+//  Healer
 //
 //  Created by Ryan Hart on 4/21/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
 
 #import "RaidMember.h"
@@ -12,23 +12,21 @@
 #import "CombatEvent.h"
 
 @interface RaidMember ()
--(void)performAttackIfAbleOnTarget:(Enemy*)target;
+- (void)performAttackIfAbleOnTarget:(Enemy*)target;
 @end
 
 @implementation RaidMember
--(void)dealloc{
+- (void)dealloc {
     [_title release];
     [_info release];
     [super dealloc];
 }
 
-- (ccColor3B)classColor
-{
+- (ccColor3B)classColor {
     return ccWHITE;
 }
 
--(id)initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position
-{
+-(id)initWithHealth:(NSInteger)hlth damageDealt:(NSInteger)damage andDmgFrequency:(float)dmgFreq andPositioning:(Positioning)position {
     if (self = [super init]){
         self.maximumHealth = hlth;
         self.health = hlth;
@@ -44,13 +42,11 @@
 	return self;
 }
 
-- (BOOL)isInvalidAttackTarget
-{
+- (BOOL)isInvalidAttackTarget {
     return self.damageTakenMultiplierAdjustment == 0.0;
 }
 
-- (float)dodgeChance
-{
+- (float)dodgeChance {
     float base = _dodgeChance;
     for (Effect *eff in self.activeEffects) {
         base += eff.dodgeChanceAdjustment;
@@ -66,28 +62,27 @@
     }
 }
 
--(NSString*)networkID{
-    return [NSString stringWithFormat:@"R-%@", self.battleID];
+- (NSString*)networkID {
+    return [NSString stringWithFormat:@"R-%@", self.networkId];
 }
--(NSString *)sourceName {
-    return [NSString stringWithFormat:@"%@:%@", self.title, self.battleID];
+- (NSString *)sourceName {
+    return [NSString stringWithFormat:@"%@:%@", self.title, self.networkId];
 }
 
--(NSString*)targetName{
+- (NSString*)targetName {
     return self.sourceName;
 }
 
--(void)performAttackIfAbleOnTarget:(Enemy*)target{
-	if (_lastAttack >= _damageFrequency && !self.isDead && !self.isStunned){
-		_lastAttack = 0.0;
+- (void)performAttackIfAbleOnTarget:(Enemy*)target {
+	if (self.lastAttack >= self.damageFrequency && !self.isDead && !self.isStunned){
+		self.lastAttack = 0.0;
 		
 		[target setHealth:[target health] - (self.damageDealt * self.damageDoneMultiplier)];
         [self.announcer displayAttackFromRaidMember:self onTarget:target];
 	}
 }
 
-- (BOOL)isStunned
-{
+- (BOOL)isStunned {
     return self.stunDuration > 0;
 }
 
@@ -105,11 +100,11 @@
     
 }
 
--(float)dps{
-    return (float)self.damageDealt  / _damageFrequency;
+- (float)dps{
+    return (float)_damageDealt  / _damageFrequency;
 }
 
--(NSInteger)damageDealt{
+- (NSInteger)damageDealt{
     int finalAmount = _damageDealt;
     int fuzzRange = (int)round(_damageDealt * .05);
     int fuzz = arc4random() % (fuzzRange + 1);
@@ -121,13 +116,12 @@
         [self didPerformCriticalStrikeForAmount:finalAmount];
     }
     
-    //Health adjustment
-    finalAmount *= MAX(self.healthPercentage, 0.6);
+    finalAmount *= 1 - (.25 - .25 * self.healthPercentage);
     
     return finalAmount;
 }
 
--(BOOL)raidMemberShouldDodgeAttack:(float)modifer{
+- (BOOL)raidMemberShouldDodgeAttack:(float)modifer{
     return arc4random() % 10000 <= (10000 * (self.dodgeChance + modifer));
 }
 
@@ -151,8 +145,7 @@
     return highestPriority;
 }
 
-- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
-{
+- (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {
     self.lastAttack += timeDelta;
     Enemy *theBoss = [self highestPriorityEnemy:enemies];
     [self performAttackIfAbleOnTarget:theBoss];
@@ -161,15 +154,15 @@
 }
 
 
--(NSString*)asNetworkMessage{
-    NSMutableString* message = [NSMutableString stringWithFormat:@"RDMBR|%@|%i|%i|%i|%i", self.battleID, self.health, self.isFocused, self.absorb, self.maximumAbsorbtion];
-    for (Effect*effect in self.activeEffects){
+- (NSString*)asNetworkMessage {
+    NSMutableString* message = [NSMutableString stringWithFormat:@"RDMBR|%@|%i|%i|%i|%i", self.networkId, self.health, self.isFocused, self.absorb, self.maximumAbsorbtion];
+    for (Effect *effect in self.activeEffects){
         [message appendFormat:@"#%@", effect.asNetworkMessage];
     }
     return message;
 }
 
--(void)updateWithNetworkMessage:(NSString*)message{
+- (void)updateWithNetworkMessage:(NSString*)message {
     NSArray* effectComponents = [message componentsSeparatedByString:@"#"];
     
     NSArray* components = [[effectComponents objectAtIndex:0] componentsSeparatedByString:@"|"];
@@ -199,20 +192,20 @@
 @end
 
 @implementation  Guardian
-- (ccColor3B)classColor
-{
+- (ccColor3B)classColor {
     return ccc3(255,207,91);
 }
 
-+(Guardian*)defaultGuardian{
++ (Guardian*)defaultGuardian {
     return [[[Guardian alloc] init] autorelease];
 }
+
 - (void)didReceiveHealing:(NSInteger)amount andOverhealing:(NSInteger)overAmount{
     [super didReceiveHealing:amount andOverhealing:overAmount];
     self.absorb += (int)round(overAmount * 1.1);
 }
 
--(id)init{
+- (id)init {
     if (self = [super initWithHealth:1753 damageDealt:287 andDmgFrequency:1.25 andPositioning:Melee]){
         self.title = @"Guardian";
         self.dodgeChance = .15;
@@ -231,15 +224,15 @@
 
 
 @implementation Berserker
-- (ccColor3B)classColor
-{
+- (ccColor3B)classColor {
     return ccc3(255,70,70);
 }
 
-+(Berserker*)defaultBerserker{
++(Berserker*)defaultBerserker {
     return [[[Berserker alloc] init] autorelease];
 }
--(id)init{
+
+-(id)init {
     if (self = [super initWithHealth:1192 damageDealt:748 andDmgFrequency:.75 andPositioning:Melee]){
         self.title = @"Berserker";
         self.info = @"Deals very high damage";
@@ -249,20 +242,22 @@
     }
     return self;
 }
-- (void)didPerformCriticalStrikeForAmount:(NSInteger)amount{
+
+- (void)didPerformCriticalStrikeForAmount:(NSInteger)amount {
     [self healSelfForAmount:50];
 }
 @end
 
 @implementation  Archer
-- (ccColor3B)classColor
-{
+- (ccColor3B)classColor {
     return ccc3(29,167,18);
 }
-+(Archer*)defaultArcher{
+
++(Archer*)defaultArcher {
     return [[[Archer alloc] init] autorelease];
 }
--(id)init{
+
+-(id)init {
     if (self = [super initWithHealth:1013 damageDealt:1232 andDmgFrequency:1.2 andPositioning:Ranged]){
         self.title = @"Archer";
         self.info = @"Deals very high damage";
@@ -300,7 +295,7 @@
         for (RaidMember *member in raid.livingMembers) {
             Effect *damageNerf = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
             [damageNerf setOwner:self];
-            [damageNerf setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.battleID]];
+            [damageNerf setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.networkId]];
             [damageNerf setDamageDoneMultiplierAdjustment:-.2];
             [member addEffect:damageNerf];
             self.deathEffectApplied = YES;
@@ -332,7 +327,7 @@
     
     NSTimeInterval tickTime = 10.0;
     NSTimeInterval orbTravelTime = 1.5;
-    NSInteger energyGrant = 24;
+    NSInteger energyGrant = 20;
     NSInteger criticalGrantChance = 5;
     
     if (self.lastEnergyGrant > (tickTime - orbTravelTime) && !self.energyGrantAnnounced && !self.isDead) {
@@ -401,7 +396,7 @@
         Enemy *theBoss = (Enemy*)[enemies objectAtIndex:0];
         Effect *damageImprovement = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
         [damageImprovement setOwner:self];
-        [damageImprovement setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.battleID]];
+        [damageImprovement setTitle:[NSString stringWithFormat:@"%@-dmg-eff", self.networkId]];
         [damageImprovement setDamageDoneMultiplierAdjustment:.2];
         [theBoss addEffect:damageImprovement];
         self.deathEffectApplied = YES;

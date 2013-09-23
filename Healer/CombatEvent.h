@@ -5,9 +5,6 @@
 //  Created by Ryan Hart on 3/25/12.
 //
 
-#import <Foundation/Foundation.h>
-
-
 typedef enum {
     CombatEventTypeBegan,
     CombatEventTypeDodge,

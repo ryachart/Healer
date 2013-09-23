@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 2/25/13.
-//  Copyright (c) 2013 Apple. All rights reserved.
+//  Copyright (c) 2013 Ryan Hart Games. All rights reserved.
 //
 
 #import "EnemiesLayer.h"
@@ -45,25 +45,29 @@
 
 - (CGPoint)frameOriginForIndex:(NSInteger)index
 {
-    if (self.enemies.count == 1 || self.enemies.count == 3) {
-        //Just some hardcodes...
-        switch (index) {
-            case 0:
-                return CGPointMake(512, 180);
-            case 1:
-                return CGPointMake(190, 180);
-            case 2:
-                return CGPointMake(836, 180);
+    if (IS_IPAD) {
+        if (self.enemies.count == 1 || self.enemies.count == 3) {
+            //Just some hardcodes...
+            switch (index) {
+                case 0:
+                    return CGPointMake(512, 180);
+                case 1:
+                    return CGPointMake(190, 180);
+                case 2:
+                    return CGPointMake(836, 180);
+            }
         }
-    }
-    
-    if (self.enemies.count == 2) {
-        switch (index) {
-            case 0:
-                return CGPointMake(300, 200);
-            case 1:
-                return CGPointMake(700, 200);
+        
+        if (self.enemies.count == 2) {
+            switch (index) {
+                case 0:
+                    return CGPointMake(300, 200);
+                case 1:
+                    return CGPointMake(700, 200);
+            }
         }
+    } else {
+        return CGPointMake(160, 60);
     }
     
     return CGPointZero;

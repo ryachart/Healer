@@ -22,6 +22,9 @@
 #import "RatingCounterSprite.h"
 #import "SimpleAudioEngine.h"
 #import "TipsLayer.h"
+#import "InventoryScene.h"
+#import "StaminaCounterNode.h"
+#import "TreasureChest.h"
 
 
 @interface HealerStartScene ()
@@ -43,6 +46,8 @@
         //Perform Scene Setup   
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/sprites.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/spell-sprites.plist"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/items.plist"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/avatar.plist"];
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"homescreen-bg"] autorelease]];
         
         [[SimpleAudioEngine sharedEngine] preloadEffect:@"sounds/button1.mp3"];
@@ -54,13 +59,16 @@
         [SettingsScene configureAudioForUserSettings];
         //self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
         
+        
         self.quickPlayButton= [BasicButton basicButtonWithTarget:self andSelector:@selector(quickPlaySelected) andTitle:@"Play"];
         
         self.storeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(storeSelected) andTitle:@"Academy"];
         
+        BasicButton *armoryButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(armorySelected) andTitle:@"Armory"];
+        
         CCMenuItem *divinityButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(divinitySelected) andTitle:@"Talents" andAlertPip:[[PlayerDataManager localPlayer] numUnspentTalentChoices] showsLockForDisabled:![[PlayerDataManager localPlayer] isTalentsUnlocked]];
         
-        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, divinityButton, nil];
+        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, armoryButton, divinityButton, nil];
         
         [self.menu alignItemsVerticallyWithPadding:20.0];
         CGSize winSize = [CCDirector sharedDirector].winSize;
@@ -69,12 +77,16 @@
         [self.menu setColor:ccc3(255, 255, 255)];
         [self addChild:self.menu z:2];
         
+        StaminaCounterNode *stamina = [[[StaminaCounterNode alloc] init] autorelease];
+        [stamina setPosition:CGPointMake(620, 45)];
+        [self addChild:stamina];
+        
         GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
-        [goldCounter setPosition:CGPointMake(900, 45)];
+        [goldCounter setPosition:CGPointMake(920, 45)];
         [self addChild:goldCounter];
         
         RatingCounterSprite *ratingCounter = [[[RatingCounterSprite alloc] init] autorelease];
-        [ratingCounter setPosition:CGPointMake(750, 45)];
+        [ratingCounter setPosition:CGPointMake(770, 45)];
         [self addChild:ratingCounter];
         
         CCSprite *logoSprite = [CCSprite spriteWithSpriteFrameName:@"home_logo.png"];
@@ -164,6 +176,7 @@
     if (![[SimpleAudioEngine sharedEngine] isBackgroundMusicPlaying]) {
         [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"sounds/theme.mp3" loop:YES];
     }
+    
 }
 
 
@@ -186,6 +199,11 @@
         [modalLayer setDelegate:self];
         [self addChild:modalLayer z:1000];
     }
+}
+
+- (void)armorySelected {
+    InventoryScene *is = [[InventoryScene new] autorelease];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:is]];
 }
 
 - (void)twitterSelected

@@ -3,11 +3,12 @@
 //  Healer
 //
 //  Created by Ryan Hart on 11/16/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
+//  Copyright (c) 2012 Ryan Hart Games. All rights reserved.
 //
 
 #import "RatingCounterSprite.h"
 #import "PlayerDataManager.h"
+#import "CCLabelTTFShadow.h"
 
 @interface RatingCounterSprite ()
 @end
@@ -31,7 +32,7 @@
         [skullSprite setPosition:CGPointMake(30, 32)];
         [backgroundSprite addChild:skullSprite];
         
-        self.ratingAmountLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:[[CCSprite spriteWithSpriteFrameName:@"gold_bg.png"] contentSize] hAlignment:UITextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:32.0];
+        self.ratingAmountLabel = [CCLabelTTFShadow   labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:[[CCSprite spriteWithSpriteFrameName:@"gold_bg.png"] contentSize] hAlignment:UITextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:32.0];
         [self.ratingAmountLabel setPosition:CGPointMake(60, 20)];
         [backgroundSprite addChild:self.ratingAmountLabel];
     }

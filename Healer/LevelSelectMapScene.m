@@ -3,7 +3,7 @@
 //  Healer
 //
 //  Created by Ryan Hart on 10/25/12.
-//  Copyright (c) 2012 Apple. All rights reserved.
+//  Copyright (c) 2012 Ryan Hart Games. All rights reserved.
 //
 
 #import "LevelSelectMapScene.h"
@@ -88,7 +88,7 @@
         //Player hasn't unlocked this level yet! Wanna buy Legacy of Torment?
         IconDescriptionModalLayer *purchaseModal = [[[IconDescriptionModalLayer alloc] initAsMainContentSalesModal] autorelease];
         [purchaseModal setDelegate:self];
-        [self addChild:purchaseModal];
+        [self addChild:purchaseModal z:100];
         return;
     }
     

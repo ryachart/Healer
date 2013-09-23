@@ -20,8 +20,11 @@
 #import "ChallengeRatingStepper.h"
 #import "GoldCounterSprite.h"
 #import "SimpleAudioEngine.h"
+#import "PurchaseManager.h"
+#import "EncounterDescriptionLayer.h"
 
 #define SPELL_ITEM_TAG 43234
+#define ENCOUNTER_INFO_TAG 40328
 
 @interface PreBattleScene ()
 @property (nonatomic, readwrite) NSInteger maxPlayers;
@@ -30,6 +33,7 @@
 @property (nonatomic, assign) ChallengeRatingStepper *challengeStepper;
 @property (nonatomic, assign) CCMenu *backButton;
 @property (nonatomic, assign) CCMenu *changeButton;
+@property (nonatomic, assign) BasicButton *infoButton;
 @end
 
 @implementation PreBattleScene
@@ -38,6 +42,8 @@
     [_spellInfoNodes release];
     [_player release];
     [_encounter release];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
 }
 - (id)initWithEncounter:(Encounter*)enc andPlayer:(Player*)player {
@@ -68,7 +74,7 @@
         [self addChild:spellsLabel];
         
         if ([PlayerDataManager localPlayer].allOwnedSpells.count > 1) {
-            BasicButton *changeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(changeSpells) andTitle:@"Change"];
+            BasicButton *changeButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(changeSpells) andTitle:@"CHANGE"];
             [changeButton setScale:.6];
             self.changeButton = [CCMenu menuWithItems:changeButton, nil];
             [self.changeButton setPosition:CGPointMake(908, 632)];
@@ -143,7 +149,17 @@
             }
         }
         
+        self.infoButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(showInfo) andTitle:@"LOOT"];
+        [self.infoButton setScale:.75];
+        
+        if (self.encounter.levelNumber > 1 && [PlayerDataManager localPlayer].highestLevelCompleted >= 2) {
+            CCMenu *infoMenu = [CCMenu menuWithItems:self.infoButton, nil];
+            [infoMenu setPosition:CGPointMake(266, 38)];
+            [self addChild:infoMenu];
+        }
+        
         [[PlayerDataManager localPlayer] setLastSelectedLevel:enc.levelNumber];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(expansionPurchased) name:PlayerDidPurchaseExpansionNotification object:nil];
     }
     return self;
 }
@@ -159,7 +175,11 @@
     for (int i = 0; i < 4; i++) {
             SpellInfoNode *spellInfoNode = nil;
             if (inactives[i] == 1 || spellsUsedIndex >= self.player.activeSpells.count) {
-                spellInfoNode = [[SpellInfoNode alloc] initAsEmpty];
+                BOOL locked =  i >= [[PlayerDataManager localPlayer] maximumStandardSpellSlots];
+                spellInfoNode = [[SpellInfoNode alloc] initAsEmpty:locked];
+                if (locked && ([PlayerDataManager localPlayer].allOwnedSpells.count > 3)) {
+                    [spellInfoNode setupUnlockButton];
+                }
             } else {
                 Spell *activeSpell = [self.player.activeSpells objectAtIndex:spellsUsedIndex];
                 spellInfoNode = [[SpellInfoNode alloc] initWithSpell:activeSpell];
@@ -181,18 +201,48 @@
     }
 }
 
+- (void)displayNetworkErrorModal
+{
+    IconDescriptionModalLayer *networkError = [[[IconDescriptionModalLayer alloc] initAsConfirmationDialogueWithDescription:@"An Internet connection is required to loot chests.  You can fight this battle, but you may not be able to loot the chest at the end without a connection."]autorelease];
+    [networkError setDelegate:self];
+    [self addChild:networkError z:1000];
+}
+
+- (void)beginEncounter
+{
+    [self.encounter encounterWillBegin];
+    
+    float playerDamageUpgradesAdjustment = [[PlayerDataManager localPlayer] allyDamageUpgrades] / 100.0f;
+    float playerHealthUpgradesAdjustment = [[PlayerDataManager localPlayer] allyHealthUpgrades] / 100.0f;
+    
+    for (RaidMember *member in self.encounter.raid.raidMembers) {
+        Effect *playerUpgradeEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
+        [playerUpgradeEffect setOwner:self.player];
+        [playerUpgradeEffect setTitle:@"player-upgrade-eff"];
+        [playerUpgradeEffect setDamageDoneMultiplierAdjustment:playerDamageUpgradesAdjustment];
+        [playerUpgradeEffect setMaximumHealthMultiplierAdjustment:playerHealthUpgradesAdjustment];
+        [member addEffect:playerUpgradeEffect];
+        member.health = member.maximumHealth;
+    }
+    
+    [[SimpleAudioEngine sharedEngine] crossFadeBackgroundMusic:self.encounter.battleTrackTitle forDuration:1.5];
+    GamePlayScene *gps = [[[GamePlayScene alloc] initWithEncounter:self.encounter player:self.player] autorelease];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.5 scene:gps]];
+}
+
 -(void)doneButton{
     if (!self.changingSpells){
-        if (self.encounter.levelNumber >= 14 && self.encounter.difficulty == 5) {
+        if (self.encounter.levelNumber >= 22 && self.encounter.difficulty == 5) {
             //This encounter is unavailable on Brutal
             IconDescriptionModalLayer *modalLayer = [[[IconDescriptionModalLayer alloc] initWithIconName:nil title:@"Unavailable" andDescription:@"This battle is unavailable on Brutal difficulty.  Please check back in a future update."] autorelease];
             [modalLayer setDelegate:self];
             [self addChild:modalLayer];
+        } else if ([PlayerDataManager localPlayer].isInventoryFull) {
+            IconDescriptionModalLayer *fullInventory = [[[IconDescriptionModalLayer alloc] initAsConfirmationDialogueWithDescription:@"Your inventory is full and you will be unable to receive loot."]autorelease];
+            [fullInventory setDelegate:self];
+            [self addChild:fullInventory z:1000];
         } else {
-            [self.encounter encounterWillBegin];
-            [[SimpleAudioEngine sharedEngine] crossFadeBackgroundMusic:self.encounter.battleTrackTitle forDuration:1.5];
-            GamePlayScene *gps = [[[GamePlayScene alloc] initWithEncounter:self.encounter player:self.player] autorelease];
-            [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.5 scene:gps]];
+            [self beginEncounter];
         }
     }
 }
@@ -220,11 +270,30 @@
     [self.changeButton setVisible:YES];
 }
 
+- (void)showInfo
+{
+    EncounterDescriptionLayer *edl = [[[EncounterDescriptionLayer alloc] initWithEncounter:self.encounter] autorelease];
+    [self addChild:edl z:3 tag:ENCOUNTER_INFO_TAG];
+}
+
 #pragma mark - Icon Description Modal Layer
 
 - (void)iconDescriptionModalDidComplete:(id)modal
 {
-    [(IconDescriptionModalLayer*)modal removeFromParentAndCleanup:YES];
+    IconDescriptionModalLayer *completedModal = (IconDescriptionModalLayer*)modal;
+    [completedModal removeFromParentAndCleanup:YES];
+    
+    if (completedModal.isConfirmed) {
+        [self beginEncounter];
+    }
+}
+
+#pragma mark - Notifications
+
+- (void)expansionPurchased
+{
+    int noInactives[] = {0,0,0,0};
+    [self configureSpellsWithInactiveIndexes:noInactives];
 }
 
 @end

@@ -7,6 +7,10 @@
 
 #import "SpellInfoNode.h"
 #import "Spell.h"
+#import "IconDescriptionModalLayer.h"
+#import "BasicButton.h"
+#import "PreBattleScene.h"
+
 
 @interface SpellInfoNode ()
 @property (nonatomic, assign) CCSprite *spellIcon;
@@ -71,14 +75,42 @@
     return self;
 }
 
-- (id)initAsEmpty
+- (id)initAsEmpty{
+    return [self initAsEmpty:NO];
+}
+
+- (id)initAsEmpty:(BOOL)locked
 {
     if (self = [super initWithSpriteFrameName:@"spell_info_node_bg.png"]){
         CCSprite *spellIconBack = [CCSprite spriteWithSpriteFrameName:@"spell_icon_back.png"];
         [spellIconBack setPosition:CGPointMake(48, 45)];
         [spellIconBack setScale:.75];
         [self addChild:spellIconBack];
+        
+        if (locked) {
+            CCSprite *lockSprite = [CCSprite spriteWithSpriteFrameName:@"lock.png"];
+            [lockSprite setPosition:spellIconBack.position];
+            [self addChild:lockSprite];
+        }
     }
     return self;
+}
+
+- (void)setupUnlockButton
+{
+    BasicButton *button = [BasicButton basicButtonWithTarget:self andSelector:@selector(unlock) andTitle:@"Unlock"];
+    [button setScale:.75];
+    
+    CCMenu *menu = [CCMenu menuWithItems:button, nil];
+    [self addChild:menu];
+    [menu setPosition:CGPointMake(200, 45)];
+}
+
+- (void)unlock
+{
+    IconDescriptionModalLayer *modalLayer = [[[IconDescriptionModalLayer alloc] initAsMainContentSalesModal] autorelease];
+    [modalLayer setDelegate:(PreBattleScene*)self.parent];
+    [self.parent addChild:modalLayer z:100];
+    
 }
 @end

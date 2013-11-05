@@ -26,7 +26,7 @@
 @implementation Player
 @synthesize energy=_energy;
 
--(void)dealloc {
+- (void)dealloc {
     [_activeSpells release]; _activeSpells = nil;
     [_spellBeingCast release]; _spellBeingCast = nil;
     [_statusText release]; _statusText = nil;
@@ -38,7 +38,20 @@
     [super dealloc];
 }
 
--(id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen {
++ (Player *)playerWithPlayer:(Player *)player
+{
+    return [[[Player alloc] initWithPlayer:player] autorelease];
+}
+
+- (id)initWithPlayer:(Player *)player
+{
+    if (self = [self initWithHealth:player.maximumHealth energy:player.maximumEnergy energyRegen:player.energyRegenPerSecond]) {
+        self.activeSpells = player.activeSpells;
+    }
+    return self;
+}
+
+- (id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen {
     if (self = [super init]){
         self.spellsFromEquipment = [NSArray array];
         self.isLocalPlayer = YES;

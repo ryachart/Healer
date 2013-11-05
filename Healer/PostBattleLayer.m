@@ -54,22 +54,65 @@
 
 @implementation PostBattleLayer
 
-- (id)initWithVictory:(BOOL)victory encounter:(Encounter*)enc andIsMultiplayer:(BOOL)isMult andDuration:(NSTimeInterval)duration 
+- (void)processPlayerDataProgressionForMatch
+{
+    NSInteger oldScore = [[PlayerDataManager localPlayer] scoreForLevel:self.encounter.levelNumber];
+    NSInteger score = self.encounter.score;
+    NSInteger oldRating = 0;
+    NSInteger rating = 0;
+
+    if (self.isVictory) {
+        if (!self.isMultiplayer){
+            [[PlayerDataManager localPlayer] completeLevel:self.encounter.levelNumber];
+        }
+        self.reward = [self.encounter reward];
+        if (self.showsFirstLevelFTUE) {
+            self.reward = 25;
+        }
+        
+        oldRating = [[PlayerDataManager localPlayer] levelRatingForLevel:self.encounter.levelNumber];
+        rating = self.encounter.difficulty;
+        if (rating > oldRating && !self.isMultiplayer){
+            if (self.encounter.difficulty > 1 && self.encounter.levelNumber != 1) {
+                self.reward += 25; //Completing a new difficulty bonus, basically.
+            }
+            [[PlayerDataManager localPlayer] setLevelRating:rating forLevel:self.encounter.levelNumber];
+        }
+        
+        if (oldScore < score && !self.isMultiplayer) {
+            self.isNewBestScore = YES;
+            [[PlayerDataManager localPlayer] setScore:score forLevel:self.encounter.levelNumber];
+        }
+        
+        [[PlayerDataManager localPlayer] setLastSelectedLevel:-1]; //Clear it so it advances to the furthest level next time
+    } else {
+        [[PlayerDataManager localPlayer] failLevel:self.encounter.levelNumber];
+    }
+    
+    
+    if (self.reward > 0){
+        [[PlayerDataManager localPlayer] playerEarnsGold:self.reward];
+    }
+    [[PlayerDataManager localPlayer] saveLocalPlayer];
+}
+
+- (void)initializeDataForVictory:(BOOL)victory encounter:(Encounter *)encounter isMultiplayer:(BOOL)isMultiplayer duration:(NSTimeInterval)duration
+{
+    self.encounter = encounter;
+    self.isMultiplayer = isMultiplayer;
+    self.isVictory = victory;
+    self.reward = 0;
+    
+    self.showsFirstLevelFTUE = [PlayerDataManager localPlayer].ftueState == FTUEStateBattle1Finished && ![[PlayerDataManager localPlayer] hasSpell:[GreaterHeal defaultSpell]];
+}
+
+- (id)initWithVictory:(BOOL)victory encounter:(Encounter*)enc andIsMultiplayer:(BOOL)isMult andDuration:(NSTimeInterval)duration
 {
     if (self = [super initWithColor:ccc4(0, 0, 0, 0)]) {
-        self.encounter = enc;
-        self.isMultiplayer = isMult;
-        self.isVictory = victory;
-        NSInteger reward = 0;
-        NSInteger oldRating = 0;
-        NSInteger rating = 0;
-        NSInteger oldScore = [[PlayerDataManager localPlayer] scoreForLevel:self.encounter.levelNumber];
-        NSInteger score = self.encounter.score;
+        [self initializeDataForVictory:victory encounter:enc isMultiplayer:isMult duration:duration];
         NSInteger numDead = self.encounter.raid.deadCount;
         NSTimeInterval fightDuration = duration;
         BOOL willAwardLoot = self.encounter.levelNumber > 1 && self.isVictory && ![PlayerDataManager localPlayer].isInventoryFull;
-        
-        self.showsFirstLevelFTUE = [PlayerDataManager localPlayer].ftueState == FTUEStateBattle1Finished && ![[PlayerDataManager localPlayer] hasSpell:[GreaterHeal defaultSpell]];
         
         if (self.isVictory) {
             self.goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
@@ -78,49 +121,13 @@
             [self addChild:self.goldCounter z:100];
         }
         
-        if (victory){
-            if (!self.isMultiplayer){
-                [[PlayerDataManager localPlayer] completeLevel:self.encounter.levelNumber];
-            }
-            reward = [self.encounter reward];
-            if (self.showsFirstLevelFTUE) {
-                reward = 25;
-            }
-            
-            oldRating = [[PlayerDataManager localPlayer] levelRatingForLevel:self.encounter.levelNumber];
-            rating = self.encounter.difficulty;
-            if (rating > oldRating && !self.isMultiplayer){
-                if (self.encounter.difficulty > 1 && self.encounter.levelNumber != 1) {
-                    reward += 25; //Completing a new difficulty bonus, basically.
-                }
-                [[PlayerDataManager localPlayer] setLevelRating:rating forLevel:self.encounter.levelNumber];
-            }
-            
-            if (oldScore < score && !self.isMultiplayer) {
-                self.isNewBestScore = YES;
-                [[PlayerDataManager localPlayer] setScore:score forLevel:self.encounter.levelNumber];
-            }
-            
-            [[PlayerDataManager localPlayer] setLastSelectedLevel:-1]; //Clear it so it advances to the furthest level next time
-        }else {
-            [[PlayerDataManager localPlayer] failLevel:self.encounter.levelNumber];
-            //Partial Progress Reward
-            //10 % of the Reward per minute of encounter up to a maximum of 50% encounter reward
-        }
-        
-        if (reward > 0){
-            [[PlayerDataManager localPlayer] playerEarnsGold:reward];
-        }
-        
-        [[PlayerDataManager localPlayer] saveLocalPlayer];
-        
+        [self processPlayerDataProgressionForMatch];
         
         if (victory && enc.levelNumber != 1){
-            self.scoreLabel = [CCLabelTTFShadow labelWithString:@"Score: " dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+            self.scoreLabel = [CCLabelTTFShadow labelWithString:@"Score: " dimensions:CGSizeMake(250, 50) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
             [self.scoreLabel setPosition:CGPointMake(12, 130)];
             [self.scoreLabel setAnchorPoint:CGPointZero];
         }
-        
         
         if (willAwardLoot) {
             BasicButton *continueToLoot = [BasicButton basicButtonWithTarget:self andSelector:@selector(awardLoot) andTitle:@"Continue"];
@@ -143,7 +150,7 @@
             [self.statsContainer addChild:self.scoreLabel];
         }
         
-        if (reward > 0){
+        if (self.reward > 0){
             self.goldLabel = [CCLabelTTFShadow labelWithString:@"Gold Earned: 0" fontName:@"TrebuchetMS-Bold" fontSize:32.0];
             [self.goldLabel setColor:ccYELLOW];
             [self.goldLabel setHorizontalAlignment:kCCTextAlignmentCenter];
@@ -155,19 +162,19 @@
         
         NSInteger failureAdjustment = victory ? -64 : - 50;
         
-        self.healingDoneLabel = [CCLabelTTFShadow labelWithString:@"Healing Done: " dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        self.healingDoneLabel = [CCLabelTTFShadow labelWithString:@"Healing Done: " dimensions:CGSizeMake(250, 50) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [self.healingDoneLabel setPosition:CGPointMake(12, 140 + failureAdjustment)];
         [self.healingDoneLabel setAnchorPoint:CGPointZero];
         
-        self.overhealingDoneLabel = [CCLabelTTFShadow labelWithString:@"Overhealing: " dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        self.overhealingDoneLabel = [CCLabelTTFShadow labelWithString:@"Overhealing: " dimensions:CGSizeMake(250, 50) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [self.overhealingDoneLabel setPosition:CGPointMake(12, 110 + failureAdjustment)];
         [self.overhealingDoneLabel setAnchorPoint:CGPointZero];
         
-        self.damageTakenLabel = [CCLabelTTFShadow labelWithString:@"Damage Taken: " dimensions:CGSizeMake(280, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        self.damageTakenLabel = [CCLabelTTFShadow labelWithString:@"Damage Taken: " dimensions:CGSizeMake(280, 50) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [self.damageTakenLabel setPosition:CGPointMake(12, 80 + failureAdjustment)];
         [self.damageTakenLabel setAnchorPoint:CGPointZero];
         
-        CCLabelTTFShadow *playersLostLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"Allies Lost:  %i", numDead] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        CCLabelTTFShadow *playersLostLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"Allies Lost:  %i", numDead] dimensions:CGSizeMake(350, 50) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [playersLostLabel setPosition:CGPointMake(12, 50 + failureAdjustment)];
         [playersLostLabel setAnchorPoint:CGPointZero];
         
@@ -178,7 +185,7 @@
         
         NSString *durationText = [@"Duration: " stringByAppendingString:[self timeStringForTimeInterval:fightDuration]];
         
-        CCLabelTTFShadow *durationLabel = [CCLabelTTFShadow labelWithString:durationText dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        CCLabelTTFShadow *durationLabel = [CCLabelTTFShadow labelWithString:durationText dimensions:CGSizeMake(250, 50) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [durationLabel setPosition:CGPointMake(12, 168 + failureAdjustment)];
         [durationLabel setAnchorPoint:CGPointZero];
         [self.statsContainer addChild:durationLabel];
@@ -186,7 +193,6 @@
 #if DEBUG
         [self.encounter saveCombatLog];
 #endif
-        self.reward = reward;
     }
     return self;
 }

@@ -186,7 +186,7 @@
 + (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer{
     Raid *basicRaid = [[[Raid alloc] init] autorelease];
     NSMutableArray *enemies = [NSMutableArray arrayWithCapacity:3];
-    NSMutableArray *spells = nil;
+    NSArray *spells = nil;
     
     NSInteger numArcher = 0;
     NSInteger numGuardian = 0;
@@ -619,17 +619,63 @@
     
     if (level == 1) {    
         enemyForEncounter = [CorruptedTroll defaultBoss];
-        [enemyForEncounter setHealth:1000000];
+        bossKey = @"troll";
+    } else if (level == 2) {
+        enemyForEncounter = [Drake defaultBoss];
+        bossKey = @"drake";
+    } else if (level == 3){
+        enemyForEncounter = [MischievousImps defaultBoss];
+        bossKey = @"imps";
+    } else if (level == 4) {
+        enemyForEncounter = [BefouledTreant defaultBoss];
+        bossKey = @"treant";
+    } else if (level == 5) {
+        enemyForEncounter = [FinalRavager defaultBoss];
+        bossKey = @"fungalravagers";
+    } else if (level == 6) {
+        enemyForEncounter = [PlaguebringerColossus defaultBoss];
+        bossKey = @"plaguebringer";
+    } else if (level == 7) {
+        enemyForEncounter = [Trulzar defaultBoss];
+        bossKey = @"trulzar";
+    } else if (level == 8) {
+        enemyForEncounter = [Baraghast defaultBoss];
+        bossKey = @"baraghast";
+    } else if (level == 9) {
+        enemyForEncounter = [CrazedSeer defaultBoss];
+        bossKey = @"tyonath";
+    } else if (level == 10) {
+        enemyForEncounter = [GatekeeperDelsarn defaultBoss];
+        bossKey = @"gatekeeper";
+    } else if (level == 11) {
+        enemyForEncounter = [SkeletalDragon defaultBoss];
+        bossKey = @"skeletaldragon";
+    } else if (level == 12) {
+        enemyForEncounter = [ColossusOfBone defaultBoss];
+        bossKey = @"colossusbone";
+    } else if (level == 13) {
+        enemyForEncounter = [OverseerOfDelsarn defaultBoss];
+        bossKey = @"overseer";
     } else {
         enemyForEncounter = [TheEndlessVoid defaultBoss];
         info = @"The Endless Void";
         title = @"The Endless Void";
+        [(TheEndlessVoid*)enemyForEncounter setRequiredResets:level - 1];
         bossKey = @"endlessvoid";
     }
+    
+    [enemyForEncounter reconfigureMaximumHealth:780000];
+    [enemyForEncounter configureBossForDifficultyLevel:2];
+    
     [enemies addObject:enemyForEncounter];
     
     [spells addObject:[Heal defaultSpell]];
-    [spells addObject:[GreaterHeal defaultSpell]];
+    
+    if (level != 7) {
+        [spells addObject:[GreaterHeal defaultSpell]];
+    } else {
+        [spells addObject:[Purify defaultSpell]];
+    }
     [spells addObject:[Regrow defaultSpell]];
     [spells addObject:[ForkedHeal defaultSpell]];
     
@@ -659,6 +705,9 @@
     for (int i = 0; i < numGuardian; i++){
         [raid addRaidMember:[Guardian defaultGuardian]];
     }
+    
+    
+    
     
     Encounter *encToReturn = [[[Encounter alloc] initWithRaid:raid enemies:enemies andSpells:spells] autorelease];
     [encToReturn setInfo:info];
@@ -753,7 +802,7 @@
     NSString *background = @"kingdom-bg";
     switch (encounter) {
         case 1:
-            background = @"kingdom-bg";
+            background = IS_IPAD ? @"kingdom-bg" : @"cave-lava-bg";
             break;
         case 2:
         case 3:

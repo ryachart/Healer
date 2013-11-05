@@ -32,7 +32,7 @@
         [skullSprite setPosition:CGPointMake(30, 32)];
         [backgroundSprite addChild:skullSprite];
         
-        self.ratingAmountLabel = [CCLabelTTFShadow   labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:[[CCSprite spriteWithSpriteFrameName:@"gold_bg.png"] contentSize] hAlignment:UITextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:32.0];
+        self.ratingAmountLabel = [CCLabelTTFShadow   labelWithString:[NSString stringWithFormat:@"%i", rating] dimensions:[[CCSprite spriteWithSpriteFrameName:@"gold_bg.png"] contentSize] hAlignment:kCCTextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:32.0];
         [self.ratingAmountLabel setPosition:CGPointMake(60, 20)];
         [backgroundSprite addChild:self.ratingAmountLabel];
     }

@@ -61,11 +61,11 @@
             noIconDescAdjust = -26;
         }
         
-        CCLabelTTFShadow *nameLabel = [CCLabelTTFShadow labelWithString:title dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2, self.alertDialogBackground.contentSize.height / 4) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
+        CCLabelTTFShadow *nameLabel = [CCLabelTTFShadow labelWithString:title dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2, self.alertDialogBackground.contentSize.height / 4) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
         [nameLabel setPosition:CGPointMake(376 + noIconTitleAdjust, 276)];
         [self.alertDialogBackground addChild:nameLabel];
         
-        CCLabelTTFShadow *descLabel = [CCLabelTTFShadow labelWithString:description dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2.25, self.alertDialogBackground.contentSize.width / 2) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:14.0];
+        CCLabelTTFShadow *descLabel = [CCLabelTTFShadow labelWithString:description dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2.25, self.alertDialogBackground.contentSize.width / 2) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:14.0];
         [descLabel setPosition:CGPointMake(390 + noIconDescAdjust, 122)];
         [self.alertDialogBackground addChild:descLabel];
         
@@ -98,11 +98,11 @@
         BasicButton *sellButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(sellItem) andTitle:@"Sell"];
         [sellButton setScale:.75];
         
-        CCLabelTTFShadow *nameLabel = [CCLabelTTFShadow labelWithString:@"Are you sure you want to sell" dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2, self.alertDialogBackground.contentSize.height / 4) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        CCLabelTTFShadow *nameLabel = [CCLabelTTFShadow labelWithString:@"Are you sure you want to sell" dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2, self.alertDialogBackground.contentSize.height / 4) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [nameLabel setPosition:CGPointMake(356, 276)];
         [self.alertDialogBackground addChild:nameLabel];
         
-        CCLabelTTFShadow *itemNameLabel = [CCLabelTTFShadow labelWithString:item.name dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2, self.alertDialogBackground.contentSize.height / 4) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        CCLabelTTFShadow *itemNameLabel = [CCLabelTTFShadow labelWithString:item.name dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2, self.alertDialogBackground.contentSize.height / 4) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [itemNameLabel setPosition:CGPointMake(356, 246)];
         [itemNameLabel setColor:[ItemDescriptionNode colorForRarity:item.rarity]];
         [self.alertDialogBackground addChild:itemNameLabel];

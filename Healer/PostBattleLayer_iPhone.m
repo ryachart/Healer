@@ -13,10 +13,15 @@
 
 - (id)initWithVictory:(BOOL)victory encounter:(Encounter *)enc andIsMultiplayer:(BOOL)isMult andDuration:(NSTimeInterval)duration
 {
-    if (self = [super init]) {
+    if (self = [super initWithColor:ccc4(0, 0, 0, 0)]) {
+        [self initializeDataForVictory:victory encounter:enc isMultiplayer:isMult duration:duration];
         BasicButton *leave = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneMap) andTitle:@"Leave"];
-        [leave setPosition:CGPointMake(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 100)];
-        [self addChild:leave];
+        
+        CCMenu *leaveMenu = [CCMenu menuWithItems:leave, nil];
+        [leaveMenu setPosition:CGPointMake(SCREEN_WIDTH / 2, 380)];
+        [self addChild:leaveMenu];
+        
+        [self processPlayerDataProgressionForMatch];
     }
     return self;
 }

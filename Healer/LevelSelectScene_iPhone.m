@@ -27,13 +27,12 @@
         BackgroundSprite *bgSprite = [[[BackgroundSprite alloc] initWithJPEGAssetName:@"homescreen-bg"] autorelease];
         [self addChild:bgSprite];
         
-        
         CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
         [self addChild:backButton];
         [backButton setPosition:CGPointMake(85, SCREEN_HEIGHT * .92)];
         
         self.levelSelectTable = [[[CCTableView alloc] initWithViewSize:CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT - 80)] autorelease];
-        [self.levelSelectTable setPosition:CGPointMake(SCREEN_WIDTH * .1, 0)];
+        [self.levelSelectTable setPosition:CGPointMake(SCREEN_WIDTH * .14, 0)];
         [self addChild:self.levelSelectTable];
         self.levelSelectTable.contentSize = CGSizeMake(SCREEN_WIDTH, 2000);
         [self.levelSelectTable setDataSource:self];

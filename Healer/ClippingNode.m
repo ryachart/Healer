@@ -13,7 +13,6 @@
 @end
 
 @implementation ClippingNode
-@synthesize clippingRegion;
 
 -(void)preVisit{
     if (!self.visible)

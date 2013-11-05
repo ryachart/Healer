@@ -41,7 +41,7 @@
 - (id)init {
     if (self = [super init]){
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
-        CCMenuItemLabel *queueRandom = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Queue Random" dimensions:CGSizeMake(300, 50) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:36.0] target:self selector:@selector(queueRandom)];
+        CCMenuItemLabel *queueRandom = [CCMenuItemLabel itemWithLabel:[CCLabelTTF labelWithString:@"Queue Random" dimensions:CGSizeMake(300, 50) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:36.0] target:self selector:@selector(queueRandom)];
         
         CCMenu *queueMenu = [CCMenu menuWithItems:queueRandom, nil];
         [self addChild:queueMenu];
@@ -69,7 +69,7 @@
 
 - (void)gotActivity:(NSInteger)activity {
     if (!self.currentActivityLabel){
-        self.currentActivityLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Server Activity: %i", activity] dimensions:CGSizeMake(300, 50) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:28.0];
+        self.currentActivityLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Server Activity: %i", activity] dimensions:CGSizeMake(300, 50) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:28.0];
         [self.currentActivityLabel setPosition:CGPointMake(512, 40)];
         [self addChild:self.currentActivityLabel];
     }else {

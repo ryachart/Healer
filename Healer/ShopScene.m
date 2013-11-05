@@ -43,7 +43,6 @@
 @end
 
 @implementation ShopScene
-@synthesize darkenLayer;
 
 - (void)dealloc {
     [_selectedCategorySprite release];
@@ -53,7 +52,7 @@
     [super dealloc];
 }
 
--(id)init{
+- (id)init{
     if (self = [super init]){
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/shop-flavor-1.plist"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/shop-flavor-2.plist"];

@@ -46,6 +46,8 @@
 + (id)defaultBoss;
 - (id)initWithHealth:(NSInteger)hlth damage:(NSInteger)dmg targets:(NSInteger)trgets frequency:(float)freq choosesMT:(BOOL)chooses;
 
+- (void)reconfigureMaximumHealth:(NSInteger)newMaximumHealth;
+
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta;
 
 - (float)healthPercentage; //In Hundreds form
@@ -105,6 +107,9 @@
 
 @interface PlaguebringerColossus: Enemy
 @property (readwrite) NSInteger numBubblesPopped;
+@end
+
+@interface FungalRavager : Enemy
 @end
 
 @interface FinalRavager : Enemy
@@ -173,8 +178,6 @@
 @end
 
 @interface TheEndlessVoid : Enemy
-@end
-
-@interface FungalRavager : Enemy
+@property (nonatomic, readwrite) NSInteger requiredResets;
 @end
 

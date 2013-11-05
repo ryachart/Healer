@@ -44,12 +44,12 @@
         self.duration = duration;
         [self addChild:[[[BackgroundSprite alloc] initWithJPEGAssetName:@"default-background"] autorelease]];
         
-        CCLabelTTF *normalModeCompleteLabel = [CCLabelTTF labelWithString:@"Torment has been Vanquished!" dimensions:CGSizeMake(600, 200) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:64.0];
+        CCLabelTTF *normalModeCompleteLabel = [CCLabelTTF labelWithString:@"Torment has been Vanquished!" dimensions:CGSizeMake(600, 200) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:64.0];
         [normalModeCompleteLabel setPosition:CGPointMake(512, 600)];
         [self addChild:normalModeCompleteLabel];
         
         NSString* storyDesc = @"The Avatar of Torment has been silenced, and the demons pouring into your homeworld have receeded.  Peace fills your mind, but only for a moment.  Delsarn is but one terrible realm, and it is only a matter of time before more of these terrors find their way to your homeland.";
-        CCLabelTTF *storyDescLabel = [CCLabelTTF labelWithString:storyDesc dimensions:CGSizeMake(400, 400) hAlignment:UITextAlignmentCenter fontName:@"Arial" fontSize:20.0];
+        CCLabelTTF *storyDescLabel = [CCLabelTTF labelWithString:storyDesc dimensions:CGSizeMake(400, 400) hAlignment:kCCTextAlignmentCenter fontName:@"Arial" fontSize:20.0];
         [storyDescLabel setPosition:CGPointMake(512, 250)];
         [self addChild:storyDescLabel];
         

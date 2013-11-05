@@ -36,12 +36,8 @@
 @end
 
 @implementation HealerStartScene
-@synthesize menu;
-@synthesize multiplayerButton;
-@synthesize quickPlayButton;
-@synthesize storeButton;
-@synthesize authenticationAttempted;
--(id)init{
+
+- (id)init{
     if (self = [super init]){
         //Perform Scene Setup   
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/sprites.plist"];
@@ -58,7 +54,6 @@
         }
         [SettingsScene configureAudioForUserSettings];
         //self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
-        
         
         self.quickPlayButton= [BasicButton basicButtonWithTarget:self andSelector:@selector(quickPlaySelected) andTitle:@"Play"];
         
@@ -94,7 +89,6 @@
         [logoSprite setPosition:CGPointMake(590, 250)];
         [self addChild:logoSprite z:1];
         
-        
         CCMenuItem *settingsButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(settingsSelected) andTitle:@"Settings"];
         [settingsButton setScale:.4];
         
@@ -125,7 +119,6 @@
         [self addChild:socialMediaMenu];
         [socialMediaMenu alignItemsVertically];
         [socialMediaMenu setPosition:CGPointMake(35, 100)];
-        
     }
     return self;
 }
@@ -135,7 +128,7 @@
     [[CCDirector sharedDirector] replaceScene:[CCTransitionFade   transitionWithDuration:.5 scene:ss]];
 }
 
--(void)multiplayerSelected{
+- (void)multiplayerSelected{
     if (![[PlayerDataManager localPlayer] isMultiplayerUnlocked]){
         UIAlertView *mplayerNotUnlocked = [[UIAlertView alloc] initWithTitle:@"Multiplayer Unavailable!" message:@"Multiplayer is coming in an update soon!" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [mplayerNotUnlocked show];
@@ -180,18 +173,18 @@
 }
 
 
--(void)quickPlaySelected
+- (void)quickPlaySelected
 {
 	LevelSelectMapScene *qpS = [[LevelSelectMapScene new] autorelease];
 	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:qpS]];
 }
 
--(void)storeSelected{
+- (void)storeSelected{
     ShopScene *ss = [[ShopScene new] autorelease];
     [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:ss]];
 }
 
--(void)divinitySelected{
+- (void)divinitySelected{
     if ([[PlayerDataManager localPlayer] isTalentsUnlocked]){
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[TalentScene alloc] init] autorelease]]];
     } else {
@@ -214,10 +207,6 @@
 - (void)facebookSelected
 {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://m.facebook.com/healergame?_rdr"]];
-}
-
-- (void)dealloc {
-    [super dealloc];
 }
 
 - (void)iconDescriptionModalDidComplete:(id)modal

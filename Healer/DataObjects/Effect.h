@@ -32,11 +32,7 @@ typedef enum {
     AilmentCurse
 } AilmentType;
 
-@interface Effect : NSObject {
-	NSTimeInterval duration;
-	EffectType effectType;
-	BOOL isExpired;
-}
+@interface Effect : NSObject 
 @property (nonatomic, retain) NSString* spriteName;
 @property (nonatomic, retain) NSString* title; //Should be unique, I want to call this key...
 @property (nonatomic, readwrite) AilmentType ailmentType;

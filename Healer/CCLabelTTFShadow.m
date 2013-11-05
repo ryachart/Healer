@@ -13,8 +13,7 @@
 @end
 
 @implementation CCLabelTTFShadow
-@synthesize shadowOffset=_shadowOffset, shadowOpacity=_shadowOpacity;
-
+@synthesize shadowOffset=_shadowOffset;
 - (void)dealloc {
     [_shadowLabel release];
     [super dealloc];

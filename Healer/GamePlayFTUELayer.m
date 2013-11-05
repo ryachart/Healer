@@ -20,7 +20,7 @@
         [self.ftueArrow setOpacity:0];
         [self addChild:self.ftueArrow];
         
-        self.informationLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
+        self.informationLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
         [self.informationLabel setOpacity:0];
         [self.informationLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .62)];
         [self.informationLabel setColor:ccYELLOW];

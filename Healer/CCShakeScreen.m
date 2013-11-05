@@ -12,7 +12,6 @@
 @end
 
 @implementation CCShakeScreen
-@synthesize initialPosition;
 
 -(void)update:(ccTime)time{
     if (firstTick_){

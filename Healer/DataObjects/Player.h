@@ -66,6 +66,9 @@ typedef enum {
 @property (nonatomic, readwrite) NSTimeInterval maxChannelTime;
 
 - (id)initWithHealth:(NSInteger)hlth energy:(NSInteger)enrgy energyRegen:(NSInteger)energyRegen;
+- (id)initWithPlayer:(Player *)player;
++ (Player *)playerWithPlayer:(Player *)player;
+
 
 - (float)castTimeAdjustmentForSpell:(Spell*)spell;
 - (float)spellCostAdjustmentForSpell:(Spell*)spell;
@@ -91,6 +94,8 @@ typedef enum {
 - (BOOL)hasTalentEffectWithTitle:(NSString*)title;
 
 - (void)configureForRecommendedSpells:(NSArray*)recommendSpells withLastUsedSpells:(NSArray*)lastUsedSpells;
+
+
 
 //Multiplayer
 @property (nonatomic, retain) NSString* playerID;

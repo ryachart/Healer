@@ -52,7 +52,7 @@
 @property (nonatomic, retain) GKVoiceChat *matchVoiceChat;
 @property (nonatomic, retain) NSArray *players;
 
--(void)setIsClient:(BOOL)isClient forServerPlayerId:(NSString*)serverPlayerID;
+- (void)setIsClient:(BOOL)isClient forServerPlayerId:(NSString*)serverPlayerID;
 
 
 @end

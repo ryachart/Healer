@@ -39,11 +39,11 @@
         
         [self configureInhabitant];
         
-        self.titleLabel = [CCLabelTTFShadow    labelWithString:nil dimensions:CGSizeMake(self.contentSize.width, 40) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:16.0];
+        self.titleLabel = [CCLabelTTFShadow    labelWithString:nil dimensions:CGSizeMake(self.contentSize.width, 40) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:16.0];
         [self.titleLabel setPosition:CGPointMake(self.contentSize.width / 2, -20)];
         [self addChild:self.titleLabel];
         
-        self.accessoryLabel = [CCLabelTTFShadow labelWithString:nil dimensions:CGSizeMake(140, 70) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        self.accessoryLabel = [CCLabelTTFShadow labelWithString:nil dimensions:CGSizeMake(140, 70) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [self.accessoryLabel setPosition:CGPointMake(self.contentSize.width * 1.75, self.contentSize.height / 2 - 10)];
         [self addChild:self.accessoryLabel];
         

@@ -275,6 +275,8 @@
 		BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */; };
 		BFE3408B152D57A5008E84F1 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE3408A152D57A5008E84F1 /* GameKit.framework */; };
 		BFE66EDF16D9749800B9FBEE /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = BFE66EDE16D9749800B9FBEE /* fonts */; };
+		BFEC80F617FBDB2500B7E789 /* ShopScene_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BFEC80F517FBDB2500B7E789 /* ShopScene_iPhone.m */; };
+		BFEC80F717FBDB2500B7E789 /* ShopScene_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BFEC80F517FBDB2500B7E789 /* ShopScene_iPhone.m */; };
 		BFF4198C15A27CF700BC0453 /* talents.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFF4198B15A27CF700BC0453 /* talents.plist */; };
 		BFF6B202176926130014640C /* NSString+Obfuscation.m in Sources */ = {isa = PBXBuildFile; fileRef = BFF6B201176926130014640C /* NSString+Obfuscation.m */; };
 		BFFB58E6152D69C7005B760E /* MultiplayerSetupScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */; };
@@ -945,6 +947,8 @@
 		BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape@2x~ipad.png"; sourceTree = SOURCE_ROOT; };
 		BFE3408A152D57A5008E84F1 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		BFE66EDE16D9749800B9FBEE /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = SOURCE_ROOT; };
+		BFEC80F417FBDB2500B7E789 /* ShopScene_iPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopScene_iPhone.h; sourceTree = "<group>"; };
+		BFEC80F517FBDB2500B7E789 /* ShopScene_iPhone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopScene_iPhone.m; sourceTree = "<group>"; };
 		BFF4198B15A27CF700BC0453 /* talents.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = talents.plist; sourceTree = "<group>"; };
 		BFF6B200176926130014640C /* NSString+Obfuscation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Obfuscation.h"; sourceTree = "<group>"; };
 		BFF6B201176926130014640C /* NSString+Obfuscation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Obfuscation.m"; sourceTree = "<group>"; };
@@ -1094,7 +1098,6 @@
 		38024DBF13C2564D003D36F2 /* Healer */ = {
 			isa = PBXGroup;
 			children = (
-				BF9ACE381749CE9E00C05A61 /* Scenes iPhone */,
 				387E7AE0145E0A91006D9266 /* App Init */,
 				387E7AE5145E0F54006D9266 /* Constants */,
 				387E7AE4145E0D1B006D9266 /* Persistent Stores */,
@@ -1246,6 +1249,7 @@
 		387E7AE3145E0D09006D9266 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				BFEC80BA17FBDAD600B7E789 /* iPhone */,
 				387E7B44145E1382006D9266 /* HealerStartScene.h */,
 				387E7B45145E1382006D9266 /* HealerStartScene.m */,
 				BF80763115214A04001EB2B3 /* PreBattleScene.h */,
@@ -1557,17 +1561,6 @@
 			name = Widgets;
 			sourceTree = "<group>";
 		};
-		BF9ACE381749CE9E00C05A61 /* Scenes iPhone */ = {
-			isa = PBXGroup;
-			children = (
-				BF9ACE391749DE9E00C05A61 /* HealerStartScene_iPhone.h */,
-				BF9ACE3A1749DE9E00C05A61 /* HealerStartScene_iPhone.m */,
-				BF13AD70174AFE2800A613B1 /* LevelSelectScene_iPhone.h */,
-				BF13AD71174AFE2800A613B1 /* LevelSelectScene_iPhone.m */,
-			);
-			name = "Scenes iPhone";
-			sourceTree = "<group>";
-		};
 		BFA44C1416DC21A400F20C8A /* Deprecated */ = {
 			isa = PBXGroup;
 			children = (
@@ -1738,6 +1731,19 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		BFEC80BA17FBDAD600B7E789 /* iPhone */ = {
+			isa = PBXGroup;
+			children = (
+				BF9ACE391749DE9E00C05A61 /* HealerStartScene_iPhone.h */,
+				BF9ACE3A1749DE9E00C05A61 /* HealerStartScene_iPhone.m */,
+				BF13AD70174AFE2800A613B1 /* LevelSelectScene_iPhone.h */,
+				BF13AD71174AFE2800A613B1 /* LevelSelectScene_iPhone.m */,
+				BFEC80F417FBDB2500B7E789 /* ShopScene_iPhone.h */,
+				BFEC80F517FBDB2500B7E789 /* ShopScene_iPhone.m */,
+			);
+			name = iPhone;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXLegacyTarget section */
@@ -1858,7 +1864,7 @@
 		38024DA213C2564D003D36F2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Ryan Hart Games";
 				TargetAttributes = {
 					BF9ACD791749B2AA00C05A61 = {
@@ -2435,6 +2441,7 @@
 				BFD106FE163A29D5002318CE /* LevelSelectSprite.m in Sources */,
 				BF0022BE163EE94C00384882 /* EncounterCard.m in Sources */,
 				382C46421648CDA400883CFA /* ChallengeRatingStepper.m in Sources */,
+				BFEC80F617FBDB2500B7E789 /* ShopScene_iPhone.m in Sources */,
 				387E82A4164F1648009F11E6 /* SettingsScene.m in Sources */,
 				BF95CF79165736190058FB85 /* CCNumberChangeAction.m in Sources */,
 				38B0BB251657694300D31540 /* RatingCounterSprite.m in Sources */,
@@ -2509,6 +2516,7 @@
 				BF9ACD971749B2AA00C05A61 /* ParticleSystemCache.m in Sources */,
 				BF9ACD981749B2AA00C05A61 /* MultiplayerSetupScene.m in Sources */,
 				BF9ACD991749B2AA00C05A61 /* Encounter.m in Sources */,
+				BFEC80F717FBDB2500B7E789 /* ShopScene_iPhone.m in Sources */,
 				BF9ACD9A1749B2AA00C05A61 /* ClippingNode.m in Sources */,
 				BF9ACD9B1749B2AA00C05A61 /* Agent.m in Sources */,
 				BF9ACD9C1749B2AA00C05A61 /* ShopScene.m in Sources */,
@@ -2579,8 +2587,9 @@
 		38024F1513C2564E003D36F2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -2594,10 +2603,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				ONLY_ACTIVE_ARCH = YES;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 			};
@@ -2606,8 +2619,9 @@
 		38024F1613C2564E003D36F2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -2616,8 +2630,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
@@ -2710,8 +2727,9 @@
 		38F26A7F1522C5F700535C87 /* Ad Hoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -2720,8 +2738,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
@@ -2775,7 +2796,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUGGING_SYMBOLS = YES;
@@ -2803,7 +2823,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -2823,7 +2842,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -2843,7 +2861,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -2872,7 +2889,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -2893,7 +2909,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -2914,7 +2929,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -2943,7 +2957,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -2964,7 +2977,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -3005,7 +3017,7 @@
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = "HealerPocket-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				IS_POCKET = 1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3047,7 +3059,7 @@
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = "HealerPocket-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				IS_POCKET = 1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3091,7 +3103,7 @@
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = "HealerPocket-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				IS_POCKET = 1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3191,7 +3203,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -3222,7 +3233,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -3245,7 +3255,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;

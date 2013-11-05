@@ -18,7 +18,7 @@
 #import "PurchaseManager.h"
 #import <FacebookSDK/FacebookSDK.h>
 
-#define TestFlightToken @"e0959a56-31b4-4303-8734-69eec008ccd8"
+#define TestFlightToken @"f61995ee-f089-4504-97df-72ba466a1938"
 #define Facebook_App_ID @"397451217035067"
 #if IS_POCKET
     #import "HealerStartScene_iPhone.h"

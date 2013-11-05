@@ -15,22 +15,20 @@
 #import "RaidMember.h"
 
 @implementation Effect
-@synthesize duration, isExpired, target, effectType, timeApplied=_timeApplied, maxStacks, spriteName, title, ailmentType, owner, healingDoneMultiplierAdjustment, damageDoneMultiplierAdjustment, castTimeAdjustment;
-@synthesize needsOwnershipResolution, ownerNetworkID, failureChance; //HACKY
 
--(void)dealloc{
-    [spriteName release];
-    [title release];
-    [ownerNetworkID release];
+- (void)dealloc{
+    [_spriteName release];
+    [_title release];
+    [_ownerNetworkID release];
     [_particleEffectName release];
     [super dealloc];
 }
--(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
+- (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type
 {
     if (self = [super init]){
-        duration = dur;
-        isExpired = NO;
-        effectType = type;
+        _duration = dur;
+        _isExpired = NO;
+        _effectType = type;
         self.maxStacks = 1;
         self.stacks = 1;
         self.isIndependent = NO;
@@ -40,15 +38,15 @@
 }
 
 - (float)healingDoneMultiplierAdjustment {
-    return healingDoneMultiplierAdjustment * self.stacks;
+    return _healingDoneMultiplierAdjustment * self.stacks;
 }
 
 - (float)damageDoneMultiplierAdjustment {
-    return damageDoneMultiplierAdjustment * self.stacks;
+    return _damageDoneMultiplierAdjustment * self.stacks;
 }
 
 - (float)castTimeAdjustment {
-    return castTimeAdjustment * self.stacks;
+    return _castTimeAdjustment * self.stacks;
 }
 
 - (float)spellCostAdjustment {
@@ -79,11 +77,11 @@
     return _dodgeChanceAdjustment * self.stacks;
 }
 
--(BOOL)shouldFail{
-    return (arc4random() % 1000) <= (failureChance * 1000);
+- (BOOL)shouldFail{
+    return (arc4random() % 1000) <= (_failureChance * 1000);
 }
 
--(void)reset{
+- (void)reset{
     self.timeApplied = 0.0;
     self.isExpired = NO;
 }
@@ -132,17 +130,17 @@
     return finalAmount;
 }
 
--(id)copy{
+- (id)copy{
     Effect *copied = [[[self class] alloc] initWithDuration:self.duration andEffectType:self.effectType];
-    copied.maxStacks = maxStacks;
+    copied.maxStacks = _maxStacks;
     copied.spriteName = self.spriteName;
     copied.title = self.title;
     copied.owner = self.owner;
     copied.isIndependent = self.isIndependent;
     copied.ailmentType = self.ailmentType;
-    copied.damageDoneMultiplierAdjustment = damageDoneMultiplierAdjustment;
-    copied.healingDoneMultiplierAdjustment = healingDoneMultiplierAdjustment;
-    copied.castTimeAdjustment = castTimeAdjustment;
+    copied.damageDoneMultiplierAdjustment = _damageDoneMultiplierAdjustment;
+    copied.healingDoneMultiplierAdjustment = _healingDoneMultiplierAdjustment;
+    copied.castTimeAdjustment = _castTimeAdjustment;
     copied.spellCostAdjustment = _spellCostAdjustment;
     copied.failureChance = self.failureChance;
     copied.causesConfusion = self.causesConfusion;
@@ -168,7 +166,7 @@
     
 }
 
--(void)solveOwnershipResolutionForEnemies:(NSArray*)enemies andRaid:(Raid*)raid andPlayers:(NSArray*)players{
+- (void)solveOwnershipResolutionForEnemies:(NSArray*)enemies andRaid:(Raid*)raid andPlayers:(NSArray*)players{
     if (self.needsOwnershipResolution && self.ownerNetworkID){
         for (Player *player in players) {
             //For this network hack we only care if it's me or not me.
@@ -185,14 +183,14 @@
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     [self solveOwnershipResolutionForEnemies:enemies andRaid:raid andPlayers:players];
-	if (!isExpired && duration != -1)
+	if (!_isExpired && _duration != -1)
 	{
         self.timeApplied += timeDelta;
-		if (self.timeApplied >= duration ){
+		if (self.timeApplied >= _duration ){
 			//Here we do some effect, but we have to subclass Effects to decide what that is
 			//The one thing we always do here is expire the effect
 			self.timeApplied = 0.0;
-			isExpired = YES;			
+			_isExpired = YES;			
 		}
 		
 	}
@@ -200,8 +198,8 @@
 }
 
 -(NSString*)title{
-    if (title){
-        return title;
+    if (_title){
+        return _title;
     }
     return NSStringFromClass([self class]);
 }
@@ -213,11 +211,11 @@
     return NO;
 }
 
--(void)effectWillBeDispelled:(Raid*)raid player:(Player*)player enemies:(NSArray *)enemies{
+- (void)effectWillBeDispelled:(Raid*)raid player:(Player*)player enemies:(NSArray *)enemies{
     
 }
 
--(void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta {
+- (void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta {
     //This gets called when an effect is removed, not to cause an effect to expire
 }
 
@@ -245,12 +243,12 @@
 }
 
 //EFF|TARGET|TITLE|DURATION|TYPE|SPRITENAME|OWNER|HDM|DDM|Ind
--(NSString*)asNetworkMessage{
-    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@|%f|%f|%i|%f|%f|%i|%i|%i|%i|%i|%i", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner, healingDoneMultiplierAdjustment, damageDoneMultiplierAdjustment, self.isIndependent, castTimeAdjustment, _cooldownMultiplierAdjustment, _maximumAbsorbtionAdjustment, self.stacks, self.visibilityPriority, self.causesStun, self.causesBlind, self.causesConfusion];
+- (NSString*)asNetworkMessage{
+    NSString* message = [NSString stringWithFormat:@"EFF|%@|%f|%f|%i|%@|%@|%f|%f|%i|%f|%f|%i|%i|%i|%i|%i|%i", self.title, self.duration, self.timeApplied ,self.effectType, self.spriteName, self.owner, _healingDoneMultiplierAdjustment, _damageDoneMultiplierAdjustment, self.isIndependent, _castTimeAdjustment, _cooldownMultiplierAdjustment, _maximumAbsorbtionAdjustment, self.stacks, self.visibilityPriority, self.causesStun, self.causesBlind, self.causesConfusion];
     
     return message;
 }
--(id)initWithNetworkMessage:(NSString*)message{
+- (id)initWithNetworkMessage:(NSString*)message{
     NSArray *messageComponents = [message componentsSeparatedByString:@"|"];
     if (self = [self initWithDuration:[[messageComponents objectAtIndex:2] doubleValue] andEffectType:[[messageComponents objectAtIndex:4] intValue]]){
         self.title = [messageComponents objectAtIndex:1];
@@ -276,9 +274,8 @@
 #pragma mark - Talent Effects
 
 @implementation TalentEffect
-@synthesize talentKey;
 - (void)dealloc {
-    [talentKey release];
+    [_talentKey release];
     [super dealloc];
 }
 - (id)initWithTalentKey:(NSString*)newTalentKey {
@@ -302,7 +299,7 @@
     return self;
 }
 
--(id)copy{
+- (id)copy{
     RepeatedHealthEffect *copy = [super copy];
     [copy setNumOfTicks:self.numOfTicks];
     [copy setValuePerTick:self.valuePerTick];
@@ -310,7 +307,7 @@
     return copy;
 }
 
--(void)reset{
+- (void)reset{
     [super reset];
     lastTick = 0.0;
     self.numHasTicked = 0.0;
@@ -318,23 +315,23 @@
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     [self solveOwnershipResolutionForEnemies:enemies andRaid:raid andPlayers:players];
-	if (!isExpired && duration != -1)
+	if (!self.isExpired && self.duration != -1)
 	{
         self.timeApplied += timeDelta;
 		lastTick += timeDelta;
-		if (lastTick >= (duration/_numOfTicks)){
+		if (lastTick >= (self.duration/_numOfTicks)){
             [self tick];
 			lastTick = 0.0;
 		}
-		if (self.timeApplied >= duration){
+		if (self.timeApplied >= self.duration){
             if (self.numHasTicked < self.numOfTicks){
                 [self tick];
             }
 			//The one thing we always do here is expire the effect
 			self.timeApplied = 0.0;
-			isExpired = YES;
+			self.isExpired = YES;
 		}
-	} else if (duration == -1.0) {
+	} else if (self.duration == -1.0) {
         //For infinite durations.
         lastTick += timeDelta;
         if (lastTick >= self.infiniteDurationTickFrequency) {
@@ -345,7 +342,7 @@
 }
 
 
--(void)tick{
+- (void)tick{
     self.numHasTicked++;
     if (!self.target.isDead && self.valuePerTick != 0){
         if (!self.shouldFail){
@@ -358,7 +355,7 @@
 
 @implementation ShieldEffect
 
--(id)copy{
+- (id)copy{
     ShieldEffect *copy = [super copy];
     [copy setAmountToShield:self.amountToShield];
     return copy;
@@ -418,18 +415,18 @@
 @end
 
 @implementation ReactiveHealEffect
--(id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type{
+- (id)initWithDuration:(NSTimeInterval)dur andEffectType:(EffectType)type{
     if (self = [super initWithDuration:dur andEffectType:type]){
         self.effectCooldown = 1.0;
     }
     return self;
 }
--(void)setEffectCooldown:(float)effCD{
+- (void)setEffectCooldown:(float)effCD{
     _effectCooldown = effCD;
     self.triggerCooldown = self.effectCooldown;
     
 }
--(id)copy{
+- (id)copy{
     ReactiveHealEffect *copy = [super copy];
     [copy setAmountPerReaction:self.amountPerReaction];
     [copy setTriggerCooldown:self.triggerCooldown];
@@ -444,10 +441,10 @@
     }
 }
 
--(void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
     
 }
--(void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth{
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth{
     if (currentHealth > newHealth){
         if (self.triggerCooldown >= self.effectCooldown){
             self.triggerCooldown = 0.0;
@@ -526,7 +523,7 @@
 
 
 @implementation TrulzarPoison
--(void)tick{
+- (void)tick{
     if (!self.target.isDead){
         float percentComplete = self.timeApplied / self.duration;
         CombatEventType eventType = self.valuePerTick > 0 ? CombatEventTypeHeal : CombatEventTypeDamage;
@@ -538,20 +535,20 @@
 @end
 
 @implementation CouncilPoison
--(void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
     if (*currentHealth < *newHealth){
 		NSInteger healthDelta = *currentHealth - *newHealth;
 		NSInteger newHealthDelta = healthDelta * .5;
 		*newHealth = *currentHealth - newHealthDelta;
 	}
 }
--(void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth{
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth{
     
 }
 @end
 
 @implementation CouncilPoisonball
--(void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta {
+- (void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta {
     if (self.shouldFail){
         [self.owner.logger logEvent:[CombatEvent eventWithSource:self.owner target:self.target value:0 andEventType:CombatEventTypeDodge]];
     }else{
@@ -611,7 +608,7 @@
     return copy;
 }
 
--(void)effectWillBeDispelled:(Raid *)raid player:(Player *)player enemies:(NSArray *)enemies{
+- (void)effectWillBeDispelled:(Raid *)raid player:(Player *)player enemies:(NSArray *)enemies{
     for (RaidMember*member in raid.raidMembers){
         [self adjustHealthWithAdjustment:self.dispelDamageValue forTarget:member ignoresStacks:YES];
     }
@@ -623,34 +620,33 @@
 
 @implementation DarkCloudEffect 
 
--(void)setValuePerTick:(NSInteger)valPerTick{
+- (void)setValuePerTick:(NSInteger)valPerTick{
     if (self.baseValue == 0){
         self.baseValue = valPerTick;
     }
     [super setValuePerTick:valPerTick];
 }
--(void)tick{
+- (void)tick{
     self.valuePerTick = (2 - self.target.healthPercentage) * _baseValue;
     [super tick];
 }
--(void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
+- (void)willChangeHealthFrom:(NSInteger *)currentHealth toNewHealth:(NSInteger *)newHealth{
     if (*currentHealth < *newHealth){
 		NSInteger healthDelta = *currentHealth - *newHealth;
 		NSInteger newHealthDelta = healthDelta * .15;
 		*newHealth = *currentHealth - newHealthDelta;
 	}
 }
--(void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth{
+- (void)didChangeHealthFrom:(NSInteger)currentHealth toNewHealth:(NSInteger)newHealth{
     
 }
--(void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta{
+- (void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta{
     [super expireForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
 }
 @end
 
 @implementation  ExecutionEffect
-@synthesize effectivePercentage;
--(id)copy{
+- (id)copy{
     ExecutionEffect * copy = [super copy];
     [copy setEffectivePercentage:self.effectivePercentage];
     return copy;
@@ -684,7 +680,7 @@
 }
 
 -(void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta{
-    if (self.target.healthPercentage <= effectivePercentage && !self.target.isDead){
+    if (self.target.healthPercentage <= self.effectivePercentage && !self.target.isDead){
         [self adjustHealthWithAdjustment:self.value forTarget:self.target];
         [self.owner.announcer playAudioForTitle:@"largeaxe.mp3"];
     }
@@ -711,7 +707,7 @@
 
 - (void)reset{
     //Because WanderingSpirit Swaps targets we never want to reset it's time applied
-    isExpired = NO;
+    self.isExpired = NO;
 }
 - (void)tick{
     [super tick];

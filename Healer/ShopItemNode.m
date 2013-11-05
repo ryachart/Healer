@@ -26,19 +26,17 @@
 @property (nonatomic, assign) CCLabelTTF *itemCastTime;
 @property (nonatomic, assign) CCLabelTTF *itemCooldown;
 @property (nonatomic, assign) CCLabelTTF *itemSpellType;
--(void)nodeSelected;
+- (void)nodeSelected;
 @end
 
 @implementation ShopItemNode
-@synthesize item, target, selector;
-@synthesize background, titleLabel;
 
 - (void)dealloc {
-    [item release];
+    [_item release];
     [super dealloc];
 }
 
--(id)initWithShopItem:(ShopItem*)itm target:(id)tar selector:(SEL)selc{
+- (id)initWithShopItem:(ShopItem*)itm target:(id)tar selector:(SEL)selc{
     CCSprite *bg = [CCSprite spriteWithSpriteFrameName:@"spell-node-bg.png"];
     self = [super init];
     if (self){
@@ -47,16 +45,16 @@
         self.selector = selc;
         self.background = bg;
         
-        [self addChild:background];
+        [self addChild:self.background];
         
         CGFloat itemNameFontSize = 24.0;
         CGFloat titleVerticalAdjustment = 0;
         
-        self.titleLabel = [CCLabelTTF labelWithString:itm.title dimensions:CGSizeMake(200, 50) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:itemNameFontSize];
+        self.titleLabel = [CCLabelTTF labelWithString:itm.title dimensions:CGSizeMake(200, 50) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:itemNameFontSize];
         [self.titleLabel setColor:ccWHITE];
         [self.titleLabel setPosition:CGPointMake(184, 115 + titleVerticalAdjustment)];
-        [self.titleLabel setHorizontalAlignment:UITextAlignmentLeft];
-        [self.background addChild:titleLabel];
+        [self.titleLabel setHorizontalAlignment:kCCTextAlignmentLeft];
+        [self.background addChild:self.titleLabel];
         
         self.spellIcon = [CCSprite spriteWithSpriteFrameName:@"unknown-icon.png"];
         
@@ -78,16 +76,16 @@
         [self.buyButton setPosition:CGPointMake(332, 123)];
         [self.background addChild:self.buyButton];
         
-        self.itemCooldown = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cooldown: %1.2f%@",self.item.purchasedSpell.cooldown, @"s"] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+        self.itemCooldown = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cooldown: %1.2f%@",self.item.purchasedSpell.cooldown, @"s"] dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:12.0];
         
-        self.itemEnergyCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i Mana",self.item.purchasedSpell.energyCost] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+        self.itemEnergyCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i Mana",self.item.purchasedSpell.energyCost] dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:12.0];
         
         NSString *castTimeString = self.item.purchasedSpell.castTime == 0.0 ? @"Instant Cast" : [NSString stringWithFormat:@"Cast: %1.2f%@", self.item.purchasedSpell.castTime, @"s"];
         
-        self.itemCastTime = [CCLabelTTF labelWithString:castTimeString dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
-        self.itemDescription = [CCLabelTTF labelWithString:self.item.purchasedSpell.spellDescription dimensions:CGSizeMake(380, 80) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:15.0];
+        self.itemCastTime = [CCLabelTTF labelWithString:castTimeString dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+        self.itemDescription = [CCLabelTTF labelWithString:self.item.purchasedSpell.spellDescription dimensions:CGSizeMake(380, 80) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:15.0];
         
-        self.itemSpellType = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%@", self.item.purchasedSpell.spellTypeDescription] dimensions:CGSizeMake(200, 40) hAlignment:UITextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+        self.itemSpellType = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%@", self.item.purchasedSpell.spellTypeDescription] dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:12.0];
         
         self.itemEnergyCost.position = CGPointMake(185, 70);
         self.itemCastTime.position = CGPointMake(185, 85);
@@ -111,14 +109,88 @@
     return self;
 }
 
--(void)checkPlayerHasItem{
+- (id)initForIphoneWithShopItem:(ShopItem*)item
+{
+    if (self = [super init]){
+        CCSprite *bg = [CCSprite spriteWithSpriteFrameName:@"spell-node-bg.png"];
+        bg.scaleY = .5;
+        bg.scaleX = .7;
+        bg.position = CGPointMake(bg.contentSize.width / 2 * bg.scaleX, 0);
+        self.item = item;
+        self.background = bg;
+        
+        [self addChild:self.background];
+        
+        CGFloat itemNameFontSize = 24.0;
+        CGFloat titleVerticalAdjustment = 0;
+        
+        self.titleLabel = [CCLabelTTF labelWithString:self.item.title dimensions:CGSizeMake(200, 30) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:itemNameFontSize];
+        [self.titleLabel setColor:ccWHITE];
+        [self.titleLabel setPosition:CGPointMake(200, 0 + titleVerticalAdjustment)];
+        [self.titleLabel setHorizontalAlignment:kCCTextAlignmentLeft];
+        [self addChild:self.titleLabel];
+
+        self.spellIcon = [CCSprite spriteWithSpriteFrameName:@"unknown-icon.png"];
+        
+        CCSpriteFrame *spellSpriteFrame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[self.item.purchasedSpell spriteFrameName]];
+        if (spellSpriteFrame){
+            [self.spellIcon setDisplayFrame:spellSpriteFrame];
+        }
+        [self.spellIcon setPosition:CGPointMake(40, 0)];
+        [self.spellIcon setScale:.5];
+        [self addChild:self.spellIcon];
+//
+//        self.goldCostNode = [GoldCounterSprite goldCostNodeForCost:self.item.goldCost];
+//        [self.goldCostNode setPosition:CGPointMake(384, 73)];
+//        [self.background addChild:self.goldCostNode];
+//        
+//        self.buyButton = [CCMenu menuWithItems:[BasicButton basicButtonWithTarget:self andSelector:@selector(nodeSelected) andTitle:@"Learn"], nil];
+//        [self.buyButton setAnchorPoint:CGPointZero];
+//        [self.buyButton setScale:.5];
+//        [self.buyButton setPosition:CGPointMake(332, 123)];
+//        [self.background addChild:self.buyButton];
+//        
+//        self.itemCooldown = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Cooldown: %1.2f%@",self.item.purchasedSpell.cooldown, @"s"] dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+//        
+//        self.itemEnergyCost = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i Mana",self.item.purchasedSpell.energyCost] dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+//        
+//        NSString *castTimeString = self.item.purchasedSpell.castTime == 0.0 ? @"Instant Cast" : [NSString stringWithFormat:@"Cast: %1.2f%@", self.item.purchasedSpell.castTime, @"s"];
+//        
+//        self.itemCastTime = [CCLabelTTF labelWithString:castTimeString dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+//        self.itemDescription = [CCLabelTTF labelWithString:self.item.purchasedSpell.spellDescription dimensions:CGSizeMake(380, 80) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:15.0];
+//        
+//        self.itemSpellType = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%@", self.item.purchasedSpell.spellTypeDescription] dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentLeft fontName:@"Arial" fontSize:12.0];
+//        
+//        self.itemEnergyCost.position = CGPointMake(185, 70);
+//        self.itemCastTime.position = CGPointMake(185, 85);
+//        self.itemCooldown.position = CGPointMake(270, 70);
+//        self.itemDescription.position = CGPointMake(200, 23);
+//        self.itemSpellType.position = CGPointMake(270, 85);
+//        
+//        if (self.item.purchasedSpell.cooldown == 0.0) {
+//            [self.itemCooldown setVisible:NO];
+//        }
+//        
+//        [self.background addChild:self.itemEnergyCost];
+//        [self.background addChild:self.itemCooldown];
+//        [self.background addChild:self.itemCastTime];
+//        [self.background addChild:self.itemDescription];
+//        [self.background addChild:self.itemSpellType];
+        
+        
+        [self checkPlayerHasItem];
+    }
+    return self;
+}
+
+- (void)checkPlayerHasItem{
     if ([[PlayerDataManager localPlayer] hasShopItem:self.item]){
         [self.goldCostNode setVisible:NO];
         [self.buyButton setVisible:NO];
     }
 }
 
--(void)nodeSelected{
+- (void)nodeSelected{
     [self.target performSelector:self.selector withObject:self];
     [self checkPlayerHasItem];
 }

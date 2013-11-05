@@ -11,6 +11,7 @@
 #import "BackgroundSprite.h"
 #import "GoldCounterSprite.h"
 #import "LevelSelectScene_iPhone.h"
+#import "ShopScene_iPhone.h"
 
 @implementation HealerStartScene_iPhone
 
@@ -53,7 +54,7 @@
 
 - (void)academy
 {
-    
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[ShopScene_iPhone alloc] init] autorelease]]];
 }
 
 - (void)talents

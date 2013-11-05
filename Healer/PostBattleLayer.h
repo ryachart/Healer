@@ -16,7 +16,7 @@ typedef enum {
     PostBattleLayerDestinationMap,
     PostBattleLayerDestinationShop,
     PostBattleLayerDestinationTalents,
-    PostBattleLayerDestinationArmory
+    PostBattleLayerDestinationArmory,
 } PostBattleLayerDestination;
 
 
@@ -36,4 +36,6 @@ typedef enum {
 @property (nonatomic, retain) GKMatch* match;
 @property (nonatomic, retain) NSString* serverPlayerId;
 @property (nonatomic, retain) GKVoiceChat *matchVoiceChat;
+- (void)processPlayerDataProgressionForMatch;
+- (void)initializeDataForVictory:(BOOL)victory encounter:(Encounter *)encounter isMultiplayer:(BOOL)isMultiplayer duration:(NSTimeInterval)duration;
 @end

@@ -142,6 +142,12 @@
     self.health = self.maximumHealth;
 }
 
+- (void)reconfigureMaximumHealth:(NSInteger)newMaximumHealth
+{
+    self.maximumHealth = newMaximumHealth;
+    self.health = newMaximumHealth;
+}
+
 - (void)addAbilityDescriptor:(AbilityDescriptor*)descriptor {
     [(NSMutableArray*)_abilityDescriptors addObject:descriptor];
 }
@@ -3181,11 +3187,12 @@ typedef enum {
 @implementation TheEndlessVoid
 
 - (void)setHealth:(NSInteger)newHealth {
-    if (self.healthPercentage > 0.5f){
+    if (((float)newHealth / self.maximumHealth) >= 0.5f || self.requiredResets <= 0){
         [super setHealth:newHealth];
     } else {
         [super setHealth:self.maximumHealth];
         [self triggerRandomAbility];
+        self.requiredResets--;
     }
 }
 
@@ -3194,11 +3201,13 @@ typedef enum {
     [[self abilityWithKey:@"random-abilities"] activateAbility];
 }
 
-+(id)defaultBoss {
++ (id)defaultBoss
+{
     TheEndlessVoid *endlessVoid = [[TheEndlessVoid alloc] initWithHealth:500000 damage:400 targets:4 frequency:2.0 choosesMT:NO];
     [endlessVoid setTitle:@"The Endless Void"];
     [endlessVoid setSpriteName:@"endlessvoid_battle_portrait.png"];
     endlessVoid.autoAttack.failureChance = .25;
+    endlessVoid.requiredResets = 1;
     
     StackingDamage *damageStacker = [[StackingDamage alloc] init];
     [damageStacker setAbilityValue:1];

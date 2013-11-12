@@ -19,6 +19,7 @@
 
 @interface ShopScene_iPhone ()
 @property (nonatomic, assign) CCTableView *spellsTableView;
+@property (nonatomic, assign) CCMenu *backButton;
 @end
 
 @implementation ShopScene_iPhone
@@ -42,15 +43,16 @@
         BackgroundSprite *bgSprite = [[[BackgroundSprite alloc] initWithJPEGAssetName:@"homescreen-bg"] autorelease];
         [self addChild:bgSprite];
         
-        CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
-        [self addChild:backButton];
-        [backButton setPosition:CGPointMake(85, SCREEN_HEIGHT * .92)];
+        self.backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
+        [self addChild:self.backButton];
+        [self.backButton setPosition:CGPointMake(85, SCREEN_HEIGHT * .92)];
         
         GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
         [goldCounter setPosition:CGPointMake(240, SCREEN_HEIGHT * .92)];
         [self addChild:goldCounter];
         
         self.spellsTableView = [[[CCTableView alloc] initWithViewSize:CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT - 80)] autorelease];
+        self.spellsTableView.verticalFillOrder = SWTableViewFillTopDown;
         [self.spellsTableView setPosition:CGPointMake(SCREEN_WIDTH * .075, 0)];
         [self addChild:self.spellsTableView];
         self.spellsTableView.contentSize = CGSizeMake(SCREEN_WIDTH, 2000);
@@ -86,7 +88,7 @@
         availableCell = [[[CCTableViewSpriteCell alloc] init] autorelease];
     }
     
-    NSInteger spellNumber = [self numberOfCellsInTableView:table] - 1 - idx;
+    NSInteger spellNumber = idx;
     ShopItemNode *node = [[[ShopItemNode alloc] initForIphoneWithShopItem:[[Shop allShopItems] objectAtIndex:spellNumber]] autorelease];
     
     
@@ -101,8 +103,26 @@
 
 - (void)table:(CCTableView *)table cellTouched:(CCTableViewCell *)cell
 {
+    NSInteger spellNumber = cell.idx;
+    ShopItem *item = [[Shop allShopItems] objectAtIndex:spellNumber];
+    [table animateCellsOffscreenWithCompletion:^{
+        [self showSpellDescriptionLayerForShopItem:item];
+    }];
     
 }
 
+- (void)showSpellDescriptionLayerForShopItem:(ShopItem *)item
+{
+    SpellDescriptionLayer *descriptionLayer = [[[SpellDescriptionLayer alloc] initWithShopItem:item] autorelease];
+    [descriptionLayer setDelegate:self];
+    [self addChild:descriptionLayer];
+    self.backButton.visible = NO;
+}
 
+- (void)spellDescriptionLayerDidComplete:(SpellDescriptionLayer *)layer
+{
+    [self.spellsTableView restoreCells];
+    [layer removeFromParentAndCleanup:YES];
+    self.backButton.visible = YES;
+}
 @end

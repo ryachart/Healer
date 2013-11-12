@@ -46,6 +46,7 @@
 		38F1B45C15CA30D8008B2D99 /* backgrounds in Resources */ = {isa = PBXBuildFile; fileRef = 38F1B45B15CA30D8008B2D99 /* backgrounds */; };
 		BF0022BE163EE94C00384882 /* EncounterCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0022BD163EE94C00384882 /* EncounterCard.m */; };
 		BF002377176F852A00445998 /* PlayerSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF002376176F852A00445998 /* PlayerSprite.m */; };
+		BF0259B5182C8D9200D02DA3 /* SpellDescriptionLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0259B4182C8D9200D02DA3 /* SpellDescriptionLayer.m */; };
 		BF03E26B1725CA2900F3A429 /* Collectible.m in Sources */ = {isa = PBXBuildFile; fileRef = BF03E26A1725CA2900F3A429 /* Collectible.m */; };
 		BF03E26F1725CE6700F3A429 /* CollectibleLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF03E26E1725CE6700F3A429 /* CollectibleLayer.m */; };
 		BF03E2AE172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png in Resources */ = {isa = PBXBuildFile; fileRef = BF03E2AD172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png */; };
@@ -92,7 +93,6 @@
 		BF4E508D155C9C4400FC4EE0 /* Ability.m in Sources */ = {isa = PBXBuildFile; fileRef = BF4E508C155C9C4400FC4EE0 /* Ability.m */; };
 		BF68CBA61537364B0096B6CF /* ClippingNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF68CBA51537364B0096B6CF /* ClippingNode.m */; };
 		BF69866C154C7B5F0016F25E /* BackgroundSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF69866B154C7B5F0016F25E /* BackgroundSprite.m */; };
-		BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
 		BF730C4015ABC1BD00E09B81 /* MultiplayerQueueScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */; };
 		BF7660C216C0566600985F2E /* GradientBorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7660C116C0566600985F2E /* GradientBorderLayer.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
@@ -125,7 +125,6 @@
 		BF9ACD8B1749B2AA00C05A61 /* Enemy.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B58145E1701006D9266 /* Enemy.m */; };
 		BF9ACD8C1749B2AA00C05A61 /* PlayerMoveButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B5F145E177B006D9266 /* PlayerMoveButton.m */; };
 		BF9ACD8D1749B2AA00C05A61 /* PlayerSpellButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E7B61145E177B006D9266 /* PlayerSpellButton.m */; };
-		BF9ACD8E1749B2AA00C05A61 /* PostBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6CC5CF15022496000F1AFF /* PostBattleScene.m */; };
 		BF9ACD8F1749B2AA00C05A61 /* CombatEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 386747A81520073D0057A8C9 /* CombatEvent.m */; };
 		BF9ACD901749B2AA00C05A61 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
 		BF9ACD911749B2AA00C05A61 /* GamePlayFTUELayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */; };
@@ -160,7 +159,6 @@
 		BF9ACDAE1749B2AA00C05A61 /* TalentTierCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F815F54BBD0052FCA5 /* TalentTierCard.m */; };
 		BF9ACDAF1749B2AA00C05A61 /* DraggableSpellIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = BF261C341602C74F003307DF /* DraggableSpellIcon.m */; };
 		BF9ACDB01749B2AA00C05A61 /* Slot.m in Sources */ = {isa = PBXBuildFile; fileRef = BF261C371602C7A3003307DF /* Slot.m */; };
-		BF9ACDB11749B2AA00C05A61 /* NormalModeCompleteScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA60E43160CD331005FFE1B /* NormalModeCompleteScene.m */; };
 		BF9ACDB21749B2AA00C05A61 /* LaunchScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD8EF4B160F9F1C00BAF83A /* LaunchScene.m */; };
 		BF9ACDB31749B2AA00C05A61 /* LevelSelectMapScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106F6163A282D002318CE /* LevelSelectMapScene.m */; };
 		BF9ACDB41749B2AA00C05A61 /* LevelSelectMapNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106FA163A2956002318CE /* LevelSelectMapNode.m */; };
@@ -235,7 +233,6 @@
 		BFA5464515AA0C9D00F9B167 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */; };
 		BFA5464715AA0CED00F9B167 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464615AA0CED00F9B167 /* CFNetwork.framework */; };
 		BFA5464915AA0D3100F9B167 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */; };
-		BFA60E44160CD331005FFE1B /* NormalModeCompleteScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA60E43160CD331005FFE1B /* NormalModeCompleteScene.m */; };
 		BFA8B72D177A44380048BBB4 /* TreasureChest.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA8B72C177A44380048BBB4 /* TreasureChest.m */; };
 		BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */; };
 		BFAFA3F415F43C650052FCA5 /* GoldCounterSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */; };
@@ -781,6 +778,8 @@
 		BF0022BD163EE94C00384882 /* EncounterCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EncounterCard.m; sourceTree = "<group>"; };
 		BF002375176F852A00445998 /* PlayerSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerSprite.h; sourceTree = "<group>"; };
 		BF002376176F852A00445998 /* PlayerSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerSprite.m; sourceTree = "<group>"; };
+		BF0259B3182C8D9200D02DA3 /* SpellDescriptionLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellDescriptionLayer.h; sourceTree = "<group>"; };
+		BF0259B4182C8D9200D02DA3 /* SpellDescriptionLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpellDescriptionLayer.m; sourceTree = "<group>"; };
 		BF03E2691725CA2900F3A429 /* Collectible.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Collectible.h; sourceTree = "<group>"; };
 		BF03E26A1725CA2900F3A429 /* Collectible.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Collectible.m; sourceTree = "<group>"; };
 		BF03E26D1725CE6700F3A429 /* CollectibleLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectibleLayer.h; sourceTree = "<group>"; };
@@ -857,8 +856,6 @@
 		BF68CBA51537364B0096B6CF /* ClippingNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClippingNode.m; sourceTree = "<group>"; };
 		BF69866A154C7B5F0016F25E /* BackgroundSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundSprite.h; sourceTree = "<group>"; };
 		BF69866B154C7B5F0016F25E /* BackgroundSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackgroundSprite.m; sourceTree = "<group>"; };
-		BF6CC5CE15022496000F1AFF /* PostBattleScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostBattleScene.h; path = Scenes/PostBattleScene.h; sourceTree = "<group>"; };
-		BF6CC5CF15022496000F1AFF /* PostBattleScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostBattleScene.m; path = Scenes/PostBattleScene.m; sourceTree = "<group>"; };
 		BF730C3E15ABC1BD00E09B81 /* MultiplayerQueueScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiplayerQueueScene.h; sourceTree = "<group>"; };
 		BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiplayerQueueScene.m; sourceTree = "<group>"; };
 		BF7660C016C0566500985F2E /* GradientBorderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GradientBorderLayer.h; sourceTree = "<group>"; };
@@ -903,8 +900,6 @@
 		BFA5464415AA0C9D00F9B167 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		BFA5464615AA0CED00F9B167 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		BFA60E42160CD331005FFE1B /* NormalModeCompleteScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NormalModeCompleteScene.h; sourceTree = "<group>"; };
-		BFA60E43160CD331005FFE1B /* NormalModeCompleteScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NormalModeCompleteScene.m; sourceTree = "<group>"; };
 		BFA8B72B177A44380048BBB4 /* TreasureChest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreasureChest.h; sourceTree = "<group>"; };
 		BFA8B72C177A44380048BBB4 /* TreasureChest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreasureChest.m; sourceTree = "<group>"; };
 		BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape~ipad.png"; path = "../Default-Landscape~ipad.png"; sourceTree = "<group>"; };
@@ -1102,6 +1097,7 @@
 				387E7AE5145E0F54006D9266 /* Constants */,
 				387E7AE4145E0D1B006D9266 /* Persistent Stores */,
 				386DD03A145DFF2D0086763E /* Model Objects */,
+				BF025979182C8D2700D02DA3 /* Layers */,
 				38F0504413C2618900BCADCB /* View Objects */,
 				BF21072015292726001B93D7 /* Animations */,
 				387E7AE3145E0D09006D9266 /* Scenes */,
@@ -1155,14 +1151,10 @@
 			children = (
 				BF448C58154BB04A009401A6 /* SpellInfoNode.h */,
 				BF448C59154BB04A009401A6 /* SpellInfoNode.m */,
-				BF448C55154BA4D1009401A6 /* AddRemoveSpellLayer.h */,
-				BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */,
 				382C46401648CDA400883CFA /* ChallengeRatingStepper.h */,
 				382C46411648CDA400883CFA /* ChallengeRatingStepper.m */,
 				BF8249D51526D7C2000B554B /* RaidMemberPreBattleCard.h */,
 				BF8249D61526D7C2000B554B /* RaidMemberPreBattleCard.m */,
-				BF13AE7E1759A26D00A613B1 /* EncounterDescriptionLayer.h */,
-				BF13AE7F1759A26D00A613B1 /* EncounterDescriptionLayer.m */,
 			);
 			name = PreBattle;
 			sourceTree = "<group>";
@@ -1249,33 +1241,9 @@
 		387E7AE3145E0D09006D9266 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				BFFA25B9182C7A2100B04C29 /* Shared */,
+				BFFA257F182C7A1000B04C29 /* iPad */,
 				BFEC80BA17FBDAD600B7E789 /* iPhone */,
-				387E7B44145E1382006D9266 /* HealerStartScene.h */,
-				387E7B45145E1382006D9266 /* HealerStartScene.m */,
-				BF80763115214A04001EB2B3 /* PreBattleScene.h */,
-				BF80763215214A04001EB2B3 /* PreBattleScene.m */,
-				387E7B3E145E1382006D9266 /* GamePlayScene.h */,
-				387E7B3F145E1382006D9266 /* GamePlayScene.m */,
-				BF6CC5CE15022496000F1AFF /* PostBattleScene.h */,
-				BF6CC5CF15022496000F1AFF /* PostBattleScene.m */,
-				BFB46405154A25DD00503E30 /* ShopScene.h */,
-				BFB46406154A25DD00503E30 /* ShopScene.m */,
-				BFFB58E4152D69C7005B760E /* MultiplayerSetupScene.h */,
-				BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */,
-				BF865F27159F9C1E007F5DBF /* TalentScene.h */,
-				BF865F28159F9C1F007F5DBF /* TalentScene.m */,
-				BF730C3E15ABC1BD00E09B81 /* MultiplayerQueueScene.h */,
-				BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */,
-				BFA60E42160CD331005FFE1B /* NormalModeCompleteScene.h */,
-				BFA60E43160CD331005FFE1B /* NormalModeCompleteScene.m */,
-				BFD8EF4A160F9F1B00BAF83A /* LaunchScene.h */,
-				BFD8EF4B160F9F1C00BAF83A /* LaunchScene.m */,
-				BFD106F5163A282D002318CE /* LevelSelectMapScene.h */,
-				BFD106F6163A282D002318CE /* LevelSelectMapScene.m */,
-				387E82A2164F1648009F11E6 /* SettingsScene.h */,
-				387E82A3164F1648009F11E6 /* SettingsScene.m */,
-				BF13ADB617517EFF00A613B1 /* InventoryScene.h */,
-				BF13ADB717517EFF00A613B1 /* InventoryScene.m */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -1363,16 +1331,6 @@
 				BFA44C1516DC237F00F20C8A /* Raid */,
 				387E7B5B145E1756006D9266 /* Player */,
 				BFA44C1616DC239C00F20C8A /* Enemies */,
-				BF8A50F215236D6300BEC882 /* GamePlayFTUELayer.h */,
-				BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */,
-				BF21071A1527C271001B93D7 /* GamePlayPauseLayer.h */,
-				BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */,
-				BF98B18815D37EAE00017EA4 /* IconDescriptionModalLayer.h */,
-				BF98B18915D37EAE00017EA4 /* IconDescriptionModalLayer.m */,
-				BFB2C3FF16FA5B3F004C1AB1 /* PostBattleLayer.h */,
-				BFB2C40016FA5B3F004C1AB1 /* PostBattleLayer.m */,
-				BFC032EC17EE9A4000ACA936 /* PostBattleLayer_iPhone.h */,
-				BFC032ED17EE9A4000ACA936 /* PostBattleLayer_iPhone.m */,
 			);
 			name = GamePlay;
 			sourceTree = "<group>";
@@ -1413,7 +1371,6 @@
 				BFA8B6F1177A43FB0048BBB4 /* Post Battle */,
 				BF00233D176F851C00445998 /* Player Sprite */,
 				BF13ADFA1751B5F500A613B1 /* Inventory Views */,
-				BF1DF45917220FE400046EB2 /* Tips */,
 				382C463F1648CD9000883CFA /* PreBattle */,
 				BFD106F8163A2944002318CE /* Map Views */,
 				BFAFA3F615F54B8A0052FCA5 /* Talent Views */,
@@ -1435,6 +1392,33 @@
 				BF002376176F852A00445998 /* PlayerSprite.m */,
 			);
 			name = "Player Sprite";
+			sourceTree = "<group>";
+		};
+		BF025979182C8D2700D02DA3 /* Layers */ = {
+			isa = PBXGroup;
+			children = (
+				38B0BB26165779BC00D31540 /* ViewTalentChoiceLayer.h */,
+				38B0BB27165779BC00D31540 /* ViewTalentChoiceLayer.m */,
+				BF448C55154BA4D1009401A6 /* AddRemoveSpellLayer.h */,
+				BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */,
+				BF13AE7E1759A26D00A613B1 /* EncounterDescriptionLayer.h */,
+				BF13AE7F1759A26D00A613B1 /* EncounterDescriptionLayer.m */,
+				BF1DF45A17220FFC00046EB2 /* TipsLayer.h */,
+				BF1DF45B17220FFC00046EB2 /* TipsLayer.m */,
+				BF8A50F215236D6300BEC882 /* GamePlayFTUELayer.h */,
+				BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */,
+				BF21071A1527C271001B93D7 /* GamePlayPauseLayer.h */,
+				BF21071B1527C272001B93D7 /* GamePlayPauseLayer.m */,
+				BF98B18815D37EAE00017EA4 /* IconDescriptionModalLayer.h */,
+				BF98B18915D37EAE00017EA4 /* IconDescriptionModalLayer.m */,
+				BFB2C3FF16FA5B3F004C1AB1 /* PostBattleLayer.h */,
+				BFB2C40016FA5B3F004C1AB1 /* PostBattleLayer.m */,
+				BFC032EC17EE9A4000ACA936 /* PostBattleLayer_iPhone.h */,
+				BFC032ED17EE9A4000ACA936 /* PostBattleLayer_iPhone.m */,
+				BF0259B3182C8D9200D02DA3 /* SpellDescriptionLayer.h */,
+				BF0259B4182C8D9200D02DA3 /* SpellDescriptionLayer.m */,
+			);
+			name = Layers;
 			sourceTree = "<group>";
 		};
 		BF03E26C1725CE4500F3A429 /* Collectibles */ = {
@@ -1501,15 +1485,6 @@
 				BF1DDBAB1711F52C0008C946 /* TestFlight.h */,
 			);
 			path = TestFlight;
-			sourceTree = "<group>";
-		};
-		BF1DF45917220FE400046EB2 /* Tips */ = {
-			isa = PBXGroup;
-			children = (
-				BF1DF45A17220FFC00046EB2 /* TipsLayer.h */,
-				BF1DF45B17220FFC00046EB2 /* TipsLayer.m */,
-			);
-			name = Tips;
 			sourceTree = "<group>";
 		};
 		BF21072015292726001B93D7 /* Animations */ = {
@@ -1614,8 +1589,6 @@
 			children = (
 				BFAFA3F715F54BBD0052FCA5 /* TalentTierCard.h */,
 				BFAFA3F815F54BBD0052FCA5 /* TalentTierCard.m */,
-				38B0BB26165779BC00D31540 /* ViewTalentChoiceLayer.h */,
-				38B0BB27165779BC00D31540 /* ViewTalentChoiceLayer.m */,
 			);
 			name = "Talent Views";
 			sourceTree = "<group>";
@@ -1742,6 +1715,42 @@
 				BFEC80F517FBDB2500B7E789 /* ShopScene_iPhone.m */,
 			);
 			name = iPhone;
+			sourceTree = "<group>";
+		};
+		BFFA257F182C7A1000B04C29 /* iPad */ = {
+			isa = PBXGroup;
+			children = (
+				BF80763115214A04001EB2B3 /* PreBattleScene.h */,
+				BF80763215214A04001EB2B3 /* PreBattleScene.m */,
+				BFB46405154A25DD00503E30 /* ShopScene.h */,
+				BFB46406154A25DD00503E30 /* ShopScene.m */,
+				BFFB58E4152D69C7005B760E /* MultiplayerSetupScene.h */,
+				BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */,
+				BF865F27159F9C1E007F5DBF /* TalentScene.h */,
+				BF865F28159F9C1F007F5DBF /* TalentScene.m */,
+				BF730C3E15ABC1BD00E09B81 /* MultiplayerQueueScene.h */,
+				BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */,
+				BFD106F5163A282D002318CE /* LevelSelectMapScene.h */,
+				BFD106F6163A282D002318CE /* LevelSelectMapScene.m */,
+				387E82A2164F1648009F11E6 /* SettingsScene.h */,
+				387E82A3164F1648009F11E6 /* SettingsScene.m */,
+				BF13ADB617517EFF00A613B1 /* InventoryScene.h */,
+				BF13ADB717517EFF00A613B1 /* InventoryScene.m */,
+			);
+			name = iPad;
+			sourceTree = "<group>";
+		};
+		BFFA25B9182C7A2100B04C29 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				387E7B44145E1382006D9266 /* HealerStartScene.h */,
+				387E7B45145E1382006D9266 /* HealerStartScene.m */,
+				387E7B3E145E1382006D9266 /* GamePlayScene.h */,
+				387E7B3F145E1382006D9266 /* GamePlayScene.m */,
+				BFD8EF4A160F9F1B00BAF83A /* LaunchScene.h */,
+				BFD8EF4B160F9F1C00BAF83A /* LaunchScene.m */,
+			);
+			name = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2399,7 +2408,6 @@
 				387E7B59145E1701006D9266 /* Enemy.m in Sources */,
 				387E7B63145E177B006D9266 /* PlayerMoveButton.m in Sources */,
 				387E7B64145E177B006D9266 /* PlayerSpellButton.m in Sources */,
-				BF6CC5D015022496000F1AFF /* PostBattleScene.m in Sources */,
 				386747A91520073D0057A8C9 /* CombatEvent.m in Sources */,
 				BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */,
 				BF8A50F415236D6300BEC882 /* GamePlayFTUELayer.m in Sources */,
@@ -2434,7 +2442,6 @@
 				BFAFA3F915F54BBD0052FCA5 /* TalentTierCard.m in Sources */,
 				BF261C351602C74F003307DF /* DraggableSpellIcon.m in Sources */,
 				BF261C381602C7A4003307DF /* Slot.m in Sources */,
-				BFA60E44160CD331005FFE1B /* NormalModeCompleteScene.m in Sources */,
 				BFD8EF4C160F9F1C00BAF83A /* LaunchScene.m in Sources */,
 				BFD106F7163A282D002318CE /* LevelSelectMapScene.m in Sources */,
 				BFD106FB163A2956002318CE /* LevelSelectMapNode.m in Sources */,
@@ -2498,7 +2505,6 @@
 				BF9ACD8B1749B2AA00C05A61 /* Enemy.m in Sources */,
 				BF9ACD8C1749B2AA00C05A61 /* PlayerMoveButton.m in Sources */,
 				BF9ACD8D1749B2AA00C05A61 /* PlayerSpellButton.m in Sources */,
-				BF9ACD8E1749B2AA00C05A61 /* PostBattleScene.m in Sources */,
 				BF9ACD8F1749B2AA00C05A61 /* CombatEvent.m in Sources */,
 				BFC032E817ED5B7500ACA936 /* EquipmentItem.m in Sources */,
 				BFC032E317ED5B4700ACA936 /* ItemDescriptionNode.m in Sources */,
@@ -2534,6 +2540,7 @@
 				BF9ACDA61749B2AA00C05A61 /* TalentScene.m in Sources */,
 				BF9ACDA71749B2AA00C05A61 /* BasicButton.m in Sources */,
 				BF9ACDA81749B2AA00C05A61 /* MultiplayerQueueScene.m in Sources */,
+				BF0259B5182C8D9200D02DA3 /* SpellDescriptionLayer.m in Sources */,
 				BFC032EB17ED5C1500ACA936 /* DraggableItemIcon.m in Sources */,
 				BF9ACDA91749B2AA00C05A61 /* AbilityDescriptor.m in Sources */,
 				BF9ACDAA1749B2AA00C05A61 /* EnemyAbilityDescriptionsView.m in Sources */,
@@ -2543,7 +2550,6 @@
 				BF9ACDAE1749B2AA00C05A61 /* TalentTierCard.m in Sources */,
 				BF9ACDAF1749B2AA00C05A61 /* DraggableSpellIcon.m in Sources */,
 				BF9ACDB01749B2AA00C05A61 /* Slot.m in Sources */,
-				BF9ACDB11749B2AA00C05A61 /* NormalModeCompleteScene.m in Sources */,
 				BF9ACDB21749B2AA00C05A61 /* LaunchScene.m in Sources */,
 				BF9ACDB31749B2AA00C05A61 /* LevelSelectMapScene.m in Sources */,
 				BF9ACDB41749B2AA00C05A61 /* LevelSelectMapNode.m in Sources */,

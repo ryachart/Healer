@@ -32,6 +32,7 @@
         [backButton setPosition:CGPointMake(85, SCREEN_HEIGHT * .92)];
         
         self.levelSelectTable = [[[CCTableView alloc] initWithViewSize:CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT - 80)] autorelease];
+        self.levelSelectTable.verticalFillOrder = SWTableViewFillTopDown;
         [self.levelSelectTable setPosition:CGPointMake(SCREEN_WIDTH * .14, 0)];
         [self addChild:self.levelSelectTable];
         self.levelSelectTable.contentSize = CGSizeMake(SCREEN_WIDTH, 2000);
@@ -67,10 +68,10 @@
         availableCell = [[[CCTableViewSpriteCell alloc] init] autorelease];
     }
     
-    NSInteger levelNumber = [self numberOfCellsInTableView:table] - idx;
+    NSInteger levelNumber = idx + 1;
     
     CCSprite *cellSprite = [CCSprite spriteWithSpriteFrameName:@"button_home.png"];
-    CCLabelTTFShadow *levelNumberLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"%d", levelNumber] fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+    CCLabelTTFShadow *levelNumberLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"%@", [Encounter pocketEncounterForLevel:levelNumber].title] fontName:@"TrebuchetMS-Bold" fontSize:24.0];
     levelNumberLabel.position = CGPointMake(cellSprite.contentSize.width /2, cellSprite.contentSize.height / 2);
     [cellSprite addChild:levelNumberLabel];
     
@@ -86,7 +87,7 @@
 
 - (void)table:(CCTableView *)table cellTouched:(CCTableViewCell *)cell
 {
-    NSInteger levelNumber = [self numberOfCellsInTableView:table] - cell.idx;
+    NSInteger levelNumber = cell.idx + 1;
     Encounter *enc = [Encounter pocketEncounterForLevel:levelNumber];
     Player *player = [[[Player alloc] initWithHealth:1400 energy:1000 energyRegen:10] autorelease];
     [player setActiveSpells:enc.recommendedSpells];

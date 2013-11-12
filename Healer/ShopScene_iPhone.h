@@ -7,7 +7,9 @@
 //
 
 #import "cocos2d.h"
+#import "SpellDescriptionLayer.h"
 
-@interface ShopScene_iPhone : CCScene <CCTableViewDataSource, CCTableViewDelegate>
+
+@interface ShopScene_iPhone : CCScene <CCTableViewDataSource, CCTableViewDelegate, SpellDescriptionLayerDelegate>
 
 @end

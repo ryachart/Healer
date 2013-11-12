@@ -664,6 +664,8 @@
         bossKey = @"endlessvoid";
     }
     
+    title = bossKey;
+    
     [enemyForEncounter reconfigureMaximumHealth:780000];
     [enemyForEncounter configureBossForDifficultyLevel:2];
     
@@ -705,9 +707,6 @@
     for (int i = 0; i < numGuardian; i++){
         [raid addRaidMember:[Guardian defaultGuardian]];
     }
-    
-    
-    
     
     Encounter *encToReturn = [[[Encounter alloc] initWithRaid:raid enemies:enemies andSpells:spells] autorelease];
     [encToReturn setInfo:info];

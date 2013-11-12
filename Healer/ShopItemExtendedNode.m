@@ -24,12 +24,9 @@
 @end
 
 @implementation ShopItemExtendedNode
-@synthesize item;
-@synthesize itemCastTime, itemCost, itemCooldown, itemName, itemDescription, itemEnergyCost;
-@synthesize delegate;
 
 - (void)dealloc{
-    [item release];
+    [_item release];
     [super dealloc];
 }
 

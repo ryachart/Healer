@@ -10,7 +10,6 @@
 #import "RaidView.h"
 #import "PlayerSpellButton.h"
 #import "PlayerMoveButton.h"
-#import "PostBattleScene.h"
 #import "PlayerDataManager.h"
 #import "GamePlayPauseLayer.h"
 #import "CCShakeScreen.h"
@@ -20,7 +19,6 @@
 #import "PlayerStatusView.h"
 #import "PlayerCastBar.h"
 #import "BackgroundSprite.h"
-#import "NormalModeCompleteScene.h"
 #import "BasicButton.h"
 #import "CCLabelTTFShadow.h"
 #import "GradientBorderLayer.h"
@@ -599,15 +597,7 @@
     }
 }
 
--(void)battleEndWithSuccess:(BOOL)success{    
-//    if (success && !(self.isServer || self.isClient) && [NormalModeCompleteScene needsNormalModeCompleteSceneForLevelNumber:self.encounter.levelNumber]){
-//        //If we just beat the final boss for the first time, show the normal mode complete Scene
-//        NormalModeCompleteScene *nmcs = [[[NormalModeCompleteScene alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:NO andDuration:self.encounter.duration] autorelease];
-//        [self setPaused:YES];
-//        [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:nmcs]];
-//        return;
-//    }
-    
+-(void)battleEndWithSuccess:(BOOL)success{
     [[SimpleAudioEngine sharedEngine] crossFadeBackgroundMusic:nil forDuration:.5];
     if (success) {
         [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/victory.mp3"];

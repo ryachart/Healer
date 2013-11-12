@@ -26,3 +26,5 @@
 #define PLAY_BUTTON_CLICK [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/button3.mp3"]
 
 #define HEALER_BROWN ccc3(240, 181, 123)
+
+#define BACK_BUTTON_IPHONE CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)]; [self addChild:backButton];[backButton setPosition:CGPointMake(85, SCREEN_HEIGHT * .92)];

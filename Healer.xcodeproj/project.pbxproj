@@ -556,7 +556,6 @@
 		38024DB913C2564D003D36F2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		38024DBB13C2564D003D36F2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		38024DBD13C2564D003D36F2 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		38024DC113C2564D003D36F2 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = Resources/Default.png; sourceTree = "<group>"; };
 		38024DC313C2564D003D36F2 /* fps_images.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fps_images.png; path = Resources/fps_images.png; sourceTree = "<group>"; };
 		38024DD113C2564D003D36F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Resources/Info.plist; sourceTree = "<group>"; };
 		38024DD213C2564D003D36F2 /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; name = iTunesArtwork; path = Resources/iTunesArtwork; sourceTree = "<group>"; };
@@ -942,7 +941,6 @@
 				BF0557B41526BC02006B4781 /* assets */,
 				38F1B45B15CA30D8008B2D99 /* backgrounds */,
 				BF0557AC1526BBA6006B4781 /* build-spritesheet.sh */,
-				38024DC113C2564D003D36F2 /* Default.png */,
 				38024DC313C2564D003D36F2 /* fps_images.png */,
 				38024DD113C2564D003D36F2 /* Info.plist */,
 				38024DD213C2564D003D36F2 /* iTunesArtwork */,

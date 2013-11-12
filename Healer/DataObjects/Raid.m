@@ -230,7 +230,7 @@
 
 - (NSArray *)livingMembersWithPositioning:(Positioning)pos {
     return [self membersSatisfyingComparator:^BOOL (RaidMember *member){
-        if (member.positioning != pos) {
+        if (member.isDead || member.positioning != pos) {
             return NO;
         }
         return YES;

@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "Healer": {
+            "applicationId": "BajbrSl60Pz6ukDojWg8CAaUdCU7FoWr7UJCiJPs", 
+            "masterKey": "9H4r86IYJeuG8bjGOQFPxUZnCMbjK80x6ZldsScy"
+        }, 
+        "_default": {
+            "link": "Healer"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.2.7"
+    }
+}

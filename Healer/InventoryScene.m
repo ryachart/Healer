@@ -281,7 +281,7 @@
     [parent addChild:self.allyHealthCostNode];
 }
 
--(void)back
+- (void)back
 {
     if (self.returnsToMap) {
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[LevelSelectMapScene alloc] init] autorelease]]];

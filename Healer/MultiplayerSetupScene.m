@@ -30,8 +30,8 @@
 @property (nonatomic, readwrite) BOOL isPreconfiguredMatch;
 @property (nonatomic, readwrite) BOOL isCommittedToReady;
 
--(void)beginGame;
--(void)generateRaidMemberFromServerWithClass:(NSString*)className andBattleID:(NSString*)battleID;
+- (void)beginGame;
+- (void)generateRaidMemberFromServerWithClass:(NSString*)className andBattleID:(NSString*)battleID;
 @end
 
 @implementation MultiplayerSetupScene
@@ -98,8 +98,8 @@
 }
 
 - (void)doneButton{
-    if (!self.isServer && !self.isCommittedToReady){ 
-        [match sendData:[[NSString stringWithFormat:@"SPELLS%@", self.player.spellsAsNetworkMessage] dataUsingEncoding:NSUTF8StringEncoding] toPlayers:[NSArray arrayWithObject:self.serverPlayerID] withDataMode:GKSendDataReliable error:nil];
+    if (!self.isServer && !self.isCommittedToReady){
+        [match sendData:[[[PlayerDataManager localPlayer] playerMessage] dataUsingEncoding:NSUTF8StringEncoding] toPlayers:[NSArray arrayWithObject:self.serverPlayerID] withDataMode:GKSendDataReliable error:nil];
         self.isCommittedToReady = YES;
     }
     else if ([self canBegin]) {
@@ -120,12 +120,12 @@
         [gps setServerPlayerID:self.serverPlayerID];
         [gps setMatch:self.match];
         [gps setMatchVoiceChat:self.matchVoiceChat];
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionFlipAngular transitionWithDuration:.5 scene:gps]];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionCrossFade transitionWithDuration:.5 scene:gps]];
         [gps release];
     }
 }
 
--(void)onEnterTransitionDidFinish{
+- (void)onEnterTransitionDidFinish{
     [super onEnterTransitionDidFinish];
     if (self.isPreconfiguredMatch){
         if (!self.matchVoiceChat) {
@@ -144,7 +144,7 @@
     }
 }
 
--(void)serverAddRaidMember:(RaidMember*)member{
+- (void)serverAddRaidMember:(RaidMember*)member{
     if (self.isServer){
         int i = self.raid.raidMembers.count;
         [member setNetworkId:[NSString stringWithFormat:@"%@%i", [member class], i]];
@@ -153,7 +153,7 @@
     }
 }
 
--(void)beginGame{
+- (void)beginGame{
     [self.player setPlayerID:[GKLocalPlayer localPlayer].playerID];
     GamePlayScene *gps = [[GamePlayScene alloc] initWithEncounter:self.encounter player:self.player];
     [self.match setDelegate:gps];
@@ -164,14 +164,14 @@
     [gps release];
 }
 
--(BOOL)isServer{
+- (BOOL)isServer{
     if ([self.serverPlayerID isEqualToString:[GKLocalPlayer localPlayer].playerID]){
         return YES;
     }
     return NO;
 }
 
--(void)generateRaidMemberFromServerWithClass:(NSString*)className andBattleID:(NSString*)battleID{
+- (void)generateRaidMemberFromServerWithClass:(NSString*)className andBattleID:(NSString*)battleID{
     if (!self.raid){
         self.raid = [[[Raid alloc] init] autorelease];
     }
@@ -188,35 +188,18 @@
     if (match != theMatch) return;
     
     NSString* message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    NSLog(@"message: %@", message);
     
     if (self.isServer){
         if ([message isEqualToString:@"PLRDY"]){
             [self.waitingOnPlayers removeObject:playerID];
         }
         
-        if ([message hasPrefix:@"SPELLS"]) {
-            NSMutableArray *playerSpells = [NSMutableArray arrayWithCapacity:4];
-            NSArray *components = [message componentsSeparatedByString:@"|"];
-            for (int i = 1; i < components.count; i++){
-                NSString* spellClassName = [components objectAtIndex:i];
-                Class spellClass = NSClassFromString(spellClassName);
-                NSLog(@"Got a className: %@", spellClassName);
-                Spell *spellFromClass = [spellClass defaultSpell];
-                NSLog(@"Created a %@", spellFromClass);
-                if (spellFromClass){
-                    [playerSpells addObject:spellFromClass];
-                }else {
-                    NSLog(@"ERR: No spell by that name: %@", spellClassName);
-                }
-            }
+        if ([message hasPrefix:@"PLAYER|"]) {
+
             
-            Player *otherPlayer = [[Player alloc] initWithHealth:1400 energy:1000 energyRegen:10];
-            [otherPlayer setActiveSpells:playerSpells];
-            [self.otherPlayers setObject:otherPlayer forKey:playerID];
-            [otherPlayer release];
-            
-            
+            Player *player = [PlayerDataManager playerFromPlayerMessage:message];
+
+            [self.otherPlayers setObject:player forKey:playerID];
             if ([self canBegin]){
                 [self.continueButton setTitle:@"Battle!"];
             }

@@ -186,7 +186,7 @@
 + (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer{
     Raid *basicRaid = [[[Raid alloc] init] autorelease];
     NSMutableArray *enemies = [NSMutableArray arrayWithCapacity:3];
-    NSMutableArray *spells = nil;
+    NSArray *spells = nil;
     
     NSInteger numArcher = 0;
     NSInteger numGuardian = 0;
@@ -567,6 +567,10 @@
     if (enemies.count == 0){
         //If passed in an invalid level number and werent able to generate a boss...
         return nil;
+    }
+    
+    if (multiplayer) {
+        numWarlock--;
     }
     
     for (int i = 0; i < numWizard; i++){

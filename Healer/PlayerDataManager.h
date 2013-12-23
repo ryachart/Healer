@@ -59,8 +59,12 @@ extern NSString* const MainGameContentKey;
 @property (nonatomic, readwrite) FTUEState ftueState;
 
 + (PlayerDataManager *)localPlayer;
-
 + (Player*)playerFromLocalPlayer;
++ (Player *)playerFromData:(NSDictionary*)data;
+
+- (id)initWithPlayerData:(NSDictionary *)data;
+- (NSString *)playerMessage;
++ (Player *)playerFromPlayerMessage:(NSString *)playerMessage;
 
 - (BOOL)isAppStoreReviewRequested;
 - (void)appStoreReviewPerformed;
@@ -76,7 +80,7 @@ extern NSString* const MainGameContentKey;
 
 #pragma mark - Talents
 - (NSString*)selectedChoiceForTier:(NSInteger)tier;
-- (NSDictionary*)localTalentConfig;
+- (NSDictionary*)talentConfig;
 - (void)resetConfig;
 - (void)selectChoice:(NSString*)choice forTier:(NSInteger)tier;
 - (NSInteger)numUnspentTalentChoices;
@@ -165,4 +169,5 @@ extern NSString* const MainGameContentKey;
 @property (nonatomic, readonly) NSTimeInterval secondsPerStamina;
 - (void)staminaUsedWithCompletion:(SpendStaminaResultBlock)block;
 - (void)checkStamina;
+
 @end

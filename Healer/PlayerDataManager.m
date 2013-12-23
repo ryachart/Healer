@@ -35,7 +35,7 @@ NSString* const PlayerLastUsedSpellsKey = @"com.healer.lastUsedSpells";
 NSString* const PlayerNormalModeCompleteShown = @"com.healer.nmcs";
 NSString* const PlayerLevelDifficultyLevelsKey = @"com.healer.diffLevels";
 NSString* const PlayerGold = @"com.healer.playerId";
-NSString* const DivinityConfig = @"com.healer.divinityConfig";
+NSString* const TalentConfig = @"com.healer.divinityConfig";
 NSString* const DivinityTiersUnlocked = @"com.healer.divTiers";
 NSString* const PlayerLastSelectedLevelKey = @"com.healer.plsl";
 NSString* const ContentKeys = @"com.healer.contentKeys";
@@ -72,14 +72,48 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     return _localPlayer;
 }
 
-+ (Player*)playerFromLocalPlayer
++ (Player *)playerFromData:(NSDictionary*)data
+{
+    PlayerDataManager *dataManager = [[[PlayerDataManager alloc] initWithPlayerData:data] autorelease];
+    return [dataManager player];
+}
+
+- (id)initWithPlayerData:(NSDictionary *)data
+{
+    if (self = [super init]) {
+        if (data)
+            self.playerData = [NSMutableDictionary dictionaryWithDictionary:data];
+        
+        if (!self.playerData) {
+            self.playerData = [NSMutableDictionary dictionary];
+            self.ftueState = FTUEStateFresh;
+            [self saveLocalPlayer];
+        }
+        
+        if (self.ftueState < FTUEStateGreaterHealPurchased && [self hasSpell:[GreaterHeal defaultSpell]]) {
+            self.ftueState = FTUEStateGreaterHealPurchased;
+        }
+    }
+    return self;
+}
+
+- (id)initAsLocalPlayer
+{
+    NSMutableDictionary *dataDict = [NSMutableDictionary dictionaryWithContentsOfFile:[PlayerDataManager localPlayerSavePath]];
+    if (self = [self initWithPlayerData:dataDict]) {
+
+    }
+    return self;
+}
+
+- (Player *)player
 {
     Player *basicPlayer = [[[Player alloc] initWithHealth:1400 energy:1000 energyRegen:10] autorelease];
-    if ([[PlayerDataManager localPlayer] isTalentsUnlocked]){
-        [basicPlayer setTalentConfig:[[PlayerDataManager localPlayer] localTalentConfig]];
+    if ([self isTalentsUnlocked]){
+        [basicPlayer setTalentConfig:[self talentConfig]];
     }
-    if ([PlayerDataManager localPlayer].equippedItems.count > 0) {
-        [basicPlayer setEquippedItems:[PlayerDataManager localPlayer].equippedItems];
+    if (self.equippedItems.count > 0) {
+        [basicPlayer setEquippedItems:self.equippedItems];
         NSMutableArray *spellsFromItems = [NSMutableArray arrayWithCapacity:2];
         for (EquipmentItem *item in basicPlayer.equippedItems) {
             Spell *spell = item.spellFromItem;
@@ -89,7 +123,13 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         }
         [basicPlayer setSpellsFromEquipment:spellsFromItems];
     }
+    [basicPlayer configureForRecommendedSpells:nil withLastUsedSpells:self.lastUsedSpells];
     return basicPlayer;
+}
+
++ (Player *)playerFromLocalPlayer
+{
+    return [[PlayerDataManager localPlayer] player];
 }
 
 + (NSString *)localPlayerSavePath
@@ -104,6 +144,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 }
 
 - (void)saveLocalPlayer {
+    if (_localPlayer != self) return;
     NSInteger backgroundExceptionIdentifer = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{}];
     dispatch_async([PlayerDataManager savingQueue], ^{
         NSString *appFile = [PlayerDataManager localPlayerSavePath];
@@ -113,12 +154,43 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     });
 }
 
+- (NSData *)sharableData
+{
+    NSMutableDictionary *sharableDict = [NSMutableDictionary dictionary];
+    [sharableDict setObject:[self.playerData objectForKey:TalentConfig] forKey:TalentConfig];
+    for (int slotType = SlotTypeHead; slotType < SlotTypeMaximum; slotType++) {
+        [sharableDict setObject:[self.playerData objectForKey:[self slotKeyForSlot:slotType]] forKey:[self slotKeyForSlot:slotType]];
+    }
+    if ([self.playerData objectForKey:PlayerLastUsedSpellsKey]) {
+        [sharableDict setObject:[self.playerData objectForKey:PlayerLastUsedSpellsKey] forKey:PlayerLastUsedSpellsKey];
+    }
+    //TODO: Sharable keys
+    NSData *dataFromPlayerData = [NSPropertyListSerialization dataFromPropertyList:sharableDict format:NSPropertyListXMLFormat_v1_0 errorDescription:nil];
+    return dataFromPlayerData;
+}
+
+- (NSString *)playerMessage
+{
+    NSString* playerMessage = [[NSString alloc] initWithData:[[PlayerDataManager localPlayer] sharableData] encoding:NSUTF8StringEncoding];
+    return [NSString stringWithFormat:@"PLAYER|%@", playerMessage];
+}
+
++ (Player *)playerFromPlayerMessage:(NSString *)playerMessage
+{
+    NSString *playerMessageXML = [playerMessage substringFromIndex:7];
+    NSData *playerData = [playerMessageXML dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *playerDataDict = [NSPropertyListSerialization propertyListWithData:playerData options:NSPropertyListImmutable format:NULL error:nil];
+    return [PlayerDataManager playerFromData:playerDataDict];
+}
+
 - (NSString *)remoteObjectId
 {
+    if (_localPlayer != self) return nil;
     return [[NSUserDefaults standardUserDefaults] objectForKey:PlayerRemoteObjectIdKey];
 }
 
 - (void)saveRemotePlayer {
+    if (_localPlayer != self) return;
 #if ANDROID
 #else
     NSString *className = @"player";
@@ -154,25 +226,6 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         [[UIApplication sharedApplication] endBackgroundTask:backgroundExceptionIdentifer];
     });
 #endif
-}
-
-- (id)initAsLocalPlayer
-{
-    if (self = [super init]) {
-        
-        self.playerData = [NSMutableDictionary dictionaryWithContentsOfFile:[PlayerDataManager localPlayerSavePath]];
-        
-        if (!self.playerData) {
-            self.playerData = [NSMutableDictionary dictionary];
-            self.ftueState = FTUEStateFresh;
-            [self saveLocalPlayer];
-        }
-        
-        if (self.ftueState < FTUEStateGreaterHealPurchased && [self hasSpell:[GreaterHeal defaultSpell]]) {
-            self.ftueState = FTUEStateGreaterHealPurchased;
-        }
-    }
-    return self;
 }
 
 + (BOOL)isFreshInstall
@@ -457,6 +510,14 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     return allSpells;
 }
 
+- (void)postGoldChangedNotification
+{
+    if (_localPlayer == self) {
+        NSInteger currentGold = [[self.playerData objectForKey:PlayerGold] intValue];
+        [[NSNotificationCenter defaultCenter] postNotificationName:PlayerGoldDidChangeNotification object:nil userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold]];
+    }
+}
+
 - (void)playerEarnsGold:(NSInteger)gold{
     if (gold <= 0)
         return;
@@ -464,7 +525,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     currentGold += gold;
     [self.playerData setObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold];
     [self saveLocalPlayer];
-    [[NSNotificationCenter defaultCenter] postNotificationName:PlayerGoldDidChangeNotification object:nil userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold]];
+    [self postGoldChangedNotification];
 }
 
 -(void)playerLosesGold:(NSInteger)gold{
@@ -477,33 +538,33 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     }
     [self.playerData setObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold];
     [self saveLocalPlayer];
-    [[NSNotificationCenter defaultCenter] postNotificationName:PlayerGoldDidChangeNotification object:nil userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold]];
+    [self postGoldChangedNotification];
 }
 
 #pragma mark - Talents
 
 - (NSString*)selectedChoiceForTier:(NSInteger)tier {
-    NSDictionary *config =  (NSDictionary*)[self.playerData objectForKey:DivinityConfig];
+    NSDictionary *config =  (NSDictionary*)[self.playerData objectForKey:TalentConfig];
     return [config objectForKey:[NSString stringWithFormat:@"tier-%i", tier]];
 }
 
-- (NSDictionary*)localTalentConfig {
-    return (NSDictionary*)[self.playerData objectForKey:DivinityConfig];
+- (NSDictionary*)talentConfig {
+    return (NSDictionary*)[self.playerData objectForKey:TalentConfig];
 }
 
 - (void)resetConfig {
-    [self.playerData setObject:[NSDictionary dictionary] forKey:DivinityConfig];
+    [self.playerData setObject:[NSDictionary dictionary] forKey:TalentConfig];
 }
 
 - (void)selectChoice:(NSString*)choice forTier:(NSInteger)tier{
-    NSDictionary *divinityConfig = (NSDictionary*)[self.playerData objectForKey:DivinityConfig];
+    NSDictionary *divinityConfig = (NSDictionary*)[self.playerData objectForKey:TalentConfig];
     if (!divinityConfig){
         divinityConfig = [NSDictionary dictionary];
     }
     NSMutableDictionary *newConfig = [NSMutableDictionary dictionaryWithDictionary:divinityConfig];
     
     [newConfig setObject:choice forKey:[NSString stringWithFormat:@"tier-%i", tier]];
-    [self.playerData setObject:newConfig forKey:DivinityConfig];
+    [self.playerData setObject:newConfig forKey:TalentConfig];
     [self saveLocalPlayer];
 }
 
@@ -592,7 +653,6 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     }
     return NO;
 }
-
 
 #pragma mark - Settings 
 
@@ -760,6 +820,9 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (NSArray *)equippedItems
 {
+    if (self != _localPlayer) {
+        NSLog(@"Derp");
+    }
     NSMutableArray *items = [NSMutableArray arrayWithCapacity:6];
     
     for (int i = 0; i < SlotTypeMaximum; i++) {

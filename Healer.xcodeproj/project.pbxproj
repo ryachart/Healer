@@ -2291,12 +2291,12 @@
 					"\"$(SDKROOT)/usr/lib/system\"",
 					"\"$(SRCROOT)/TestFlight\"",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
 				PROVISIONING_PROFILE = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				TARGETED_DEVICE_FAMILY = 2;
-				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2325,6 +2325,7 @@
 					"\"$(SDKROOT)/usr/lib/system\"",
 					"\"$(SRCROOT)/TestFlight\"",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
 				PROVISIONING_PROFILE = "";
@@ -2332,7 +2333,6 @@
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -2388,6 +2388,7 @@
 					"\"$(SDKROOT)/usr/lib/system\"",
 					"\"$(SRCROOT)/TestFlight\"",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = Healer;
 				PROVISIONING_PROFILE = "";
@@ -2395,7 +2396,6 @@
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Ad Hoc";

@@ -630,7 +630,15 @@
 
 #pragma mark - Control Input
 
--(void)thisMemberSelected:(RaidMemberHealthView*)hv
+- (void)notifyServerOfTargetSelection:(RaidMember *)target
+{
+    if (self.isClient) {
+        NSString *networkMessage = [NSString stringWithFormat:@"TRGTSEL|%@", target.networkID];
+        [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
+    }
+}
+
+- (void)thisMemberSelected:(RaidMemberHealthView*)hv
 {
 	if ([[hv member] isDead]) return;
     if ([PlayerDataManager localPlayer].ftueState == FTUEStateTargetSelected) return;
@@ -639,6 +647,7 @@
 		[hv setSelectionState:RaidViewSelectionStateSelected];
         [self checkForFtueSelectionForHealthView:hv];
         [hv.member targetWasSelectedByPlayer:self.player];
+        [self notifyServerOfTargetSelection:hv.member];
 	}
 	else if ([self.selectedRaidMembers objectAtIndex:0] == hv){
 		//Here we do nothing because the already selected object has been reselected
@@ -655,6 +664,7 @@
 			[self.selectedRaidMembers insertObject:hv atIndex:0];
             [hv setSelectionState:RaidViewSelectionStateSelected];
             [hv.member targetWasSelectedByPlayer:self.player];
+            [self notifyServerOfTargetSelection:hv.member];
             [self checkForFtueSelectionForHealthView:hv];
 		}
 		
@@ -671,7 +681,7 @@
     }
 }
 
--(void)thisMemberUnselected:(RaidMemberHealthView*)hv
+- (void)thisMemberUnselected:(RaidMemberHealthView*)hv
 {
     if ([[hv member] isDead]) return;
 	if (hv != [self.selectedRaidMembers objectAtIndex:0]){
@@ -681,7 +691,7 @@
 	
 }
 
--(void)spellButtonSelected:(PlayerSpellButton*)spell
+- (void)spellButtonSelected:(PlayerSpellButton*)spell
 {
     if ([[spell spellData] cooldownRemaining] > 0.0){
         return;
@@ -717,7 +727,7 @@
 	}
 }
 
--(void)spellButtonUnselected:(PlayerSpellButton*)spell{
+- (void)spellButtonUnselected:(PlayerSpellButton*)spell{
     if ([[spell spellData] cooldownRemaining] > 0.0){
         return;
     }
@@ -774,21 +784,25 @@
 
 #pragma mark - Announcer Behaviors
 
--(float)lengthOfVector:(CGPoint)vec{
+- (float)lengthOfVector:(CGPoint)vec{
     return sqrt(pow(vec.x, 2) + pow(vec.y, 2));
 }
 
--(float)rotationFromPoint:(CGPoint)a toPoint:(CGPoint)b{
+- (float)rotationFromPoint:(CGPoint)a toPoint:(CGPoint)b{
     CGPoint aToBVector = CGPointMake(b.x - a.x, a.y - b.y);
     return CC_RADIANS_TO_DEGREES(atan2(aToBVector.y, aToBVector.x));
 }
 
--(void)displayScreenShakeForDuration:(float)duration{
+- (void)displayScreenShakeForDuration:(float)duration{
     [self displayScreenShakeForDuration:duration afterDelay:0.0];
 }
 
 - (void)displayScreenShakeForDuration:(float)duration afterDelay:(float)delay
 {
+    if (self.isServer) {
+        NSString* networkMessage = [NSString stringWithFormat:@"SCRNSHK|%1.4f|%1.4f", duration, delay];
+        [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
+    }
     if (delay > 0) {
         [self runAction:[CCSequence actions:[CCDelayTime actionWithDuration:delay], [CCShakeScreen actionWithDuration:duration], [CCCallBlockN actionWithBlock:^(CCNode *node){
             [node setPosition:CGPointMake(0, 0)];
@@ -800,14 +814,19 @@
     }
 }
 
--(void)displayParticleSystemOnRaidWithName:(NSString*)name forDuration:(float)duration
+- (void)displayParticleSystemOnRaidWithName:(NSString*)name forDuration:(float)duration
 {
     [self displayParticleSystemOnRaidWithName:name forDuration:duration offset:CGPointZero];
 }
 
+- (void)displayParticleSystemOnRaidWithName:(NSString*)name delay:(float)delay
+{
+    [self displayParticleSystemOnRaidWithName:name delay:delay offset:CGPointZero];
+}
+
 -(void)displayParticleSystemOnRaidWithName:(NSString*)name forDuration:(float)duration offset:(CGPoint)offset{
     if (self.isServer){
-        NSString* networkMessage = [NSString stringWithFormat:@"STMON|%@", name];
+        NSString* networkMessage = [NSString stringWithFormat:@"STMON|%@|%1.4f|%1.2f|%1.2f", name, duration, offset.x, offset.y];
         [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
     }
     CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
@@ -820,11 +839,6 @@
     [collisionEffect setAutoRemoveOnFinish:YES];
     [self addChild:collisionEffect z:100 tag:PAUSEABLE_TAG];
     
-}
-
-- (void)displayParticleSystemOnRaidWithName:(NSString*)name delay:(float)delay
-{
-    [self displayParticleSystemOnRaidWithName:name delay:delay offset:CGPointZero];
 }
 
 - (void)displayParticleSystemOnRaidWithName:(NSString*)name delay:(float)delay offset:(CGPoint)offset
@@ -951,7 +965,7 @@
 - (void)displayParticleSystemWithName:(NSString*)name onTarget:(RaidMember*)target withOffset:(CGPoint)offset delay:(NSTimeInterval)delay
 {
     if (self.isServer){
-        NSString* networkMessage = [NSString stringWithFormat:@"STMTGT|%@|%@", name, target.networkId];
+        NSString* networkMessage = [NSString stringWithFormat:@"STMTGT|%@|%@|%1.2f|%1.2f|%1.4f", name, target.networkId, offset.x, offset.y, delay];
         [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
     }
     CCParticleSystemQuad *collisionEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
@@ -976,7 +990,8 @@
 
 - (void)displayBreathEffectOnRaidForDuration:(float)duration withName:(NSString *)name {
     if (self.isServer) {
-        //TODO: network this shit
+        NSString* networkMessage = [NSString stringWithFormat:@"BRTHEFF|%1.4f|%@", duration, name];
+        [self.match sendDataToAllPlayers:[networkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
     }
     CCParticleSystemQuad *breathEffect = [[ParticleSystemCache sharedCache] systemForKey:name];
     [breathEffect setDuration:duration];
@@ -1407,7 +1422,6 @@
                 [self.match sendData:[[clientPlayer asNetworkMessage] dataUsingEncoding:NSUTF8StringEncoding]  toPlayers:playerToNotify withDataMode:GKMatchSendDataReliable error:nil];
             }
         }
-        
     }
     
     [self updateUIForTime:deltaT];
@@ -1497,7 +1511,7 @@
             [self battleEndWithSuccess:[[message substringToIndex:10] boolValue]];
         }
         if ([message hasPrefix:@"BOSSHEALTH|"]){
-//            self.boss.health = [[message substringFromIndex:11] intValue];
+            //TODO: Handle bosses with network pointers
         }
         
         if ([message hasPrefix:@"PLYR"]){
@@ -1525,12 +1539,14 @@
         }
         
         if ([message hasPrefix:@"STMON|"]){
-            [self displayParticleSystemOnRaidWithName:[message substringFromIndex:6] forDuration:-1.0];
+            NSArray *components = [message componentsSeparatedByString:@"|"];
+
+            [self displayParticleSystemOnRaidWithName:[components objectAtIndex:1] forDuration:[[components objectAtIndex:2] floatValue] offset:CGPointMake([[components objectAtIndex:3] floatValue], [[components objectAtIndex:4] floatValue])];
         }
         
         if ([message hasPrefix:@"STMTGT|"]){
             NSArray *components = [message componentsSeparatedByString:@"|"];
-            [self displayParticleSystemWithName:[components objectAtIndex:1] onTarget:[self.raid memberForNetworkId:[components objectAtIndex:2]]];
+            [self displayParticleSystemWithName:[components objectAtIndex:1] onTarget:[self.raid memberForNetworkId:[components objectAtIndex:2]] withOffset:CGPointMake([[components objectAtIndex:3] floatValue], [[components objectAtIndex:4] floatValue]) delay:[[components objectAtIndex:5] floatValue]];
         }
         
         if ([message hasPrefix:@"SPRTOV|"]){
@@ -1545,6 +1561,16 @@
             }
             [self.player interrupt];
         }
+        
+        if ([message hasPrefix:@"BRTHEFF"]) {
+            NSArray *components = [message componentsSeparatedByString:@"|"];
+            [self displayBreathEffectOnRaidForDuration:[[components objectAtIndex:1] floatValue] withName:[components objectAtIndex:2]];
+        }
+        
+        if ([message hasPrefix:@"SCRNSHK"]) {
+            NSArray *components = [message componentsSeparatedByString:@"|"];
+            [self displayScreenShakeForDuration:[[components objectAtIndex:1] floatValue] afterDelay:[[components objectAtIndex:2] floatValue]];
+        }
     }
     
     if (self.isServer){
@@ -1552,28 +1578,37 @@
             //A client has told us they started casting a spell
             [self handleSpellBeginMessage:message fromPlayer:playerID];
         }
+        
+        if ([message hasPrefix:@"TRGTSEL"]) {
+            NSArray *components = [message componentsSeparatedByString:@"|"];
+
+            RaidMember *member = [self.raid memberForNetworkId:[components objectAtIndex:1]];
+            [member targetWasSelectedByPlayer:[self playerForPlayerId:playerID]];
+        }
     }
     [message release];
 }
 
--(void)handleProjectileEffectMessage:(NSString*)message{
+- (Player *)playerForPlayerId:(NSString *)playerId
+{
+    for (Player *candidate in self.players){
+        if ([candidate.playerID isEqualToString:playerId]){
+            return candidate;
+        }
+    }
+    
+    NSLog(@"FAILED TO FIND SENDER! =(");
+    return nil;
+}
+
+- (void)handleProjectileEffectMessage:(NSString*)message{
     ProjectileEffect *effect = [[[ProjectileEffect alloc] initWithNetworkMessage:message raid:self.raid enemies:self.encounter.enemies] autorelease];
     [self displayProjectileEffect:effect];
 }
 
-
--(void)handleSpellBeginMessage:(NSString*)message fromPlayer:(NSString*)playerID{
+- (void)handleSpellBeginMessage:(NSString*)message fromPlayer:(NSString*)playerID{
     NSArray *messageComponents = [message componentsSeparatedByString:@"|"];
-    Player *sender = nil;
-    for (Player *candidate in self.players){
-        if ([candidate.playerID isEqualToString:playerID]){
-            sender = candidate; break;
-        }
-    }
-    
-    if (!sender){
-        NSLog(@"FAILED TO FIND SENDER! =(");
-    }
+    Player *sender = [self playerForPlayerId:playerID];
     Spell *chosenSpell = nil;
     
     for (Spell *candidate in sender.activeSpells){

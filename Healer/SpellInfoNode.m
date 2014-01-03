@@ -31,7 +31,7 @@
         self.titleLabel = [CCLabelTTF labelWithString:spell.title dimensions:CGSizeMake(200, 40) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:itemNameFontSize];
         [self.titleLabel setColor:ccWHITE];
         [self.titleLabel setPosition:CGPointMake(190, 65)];
-        [self.titleLabel setHorizontalAlignment:UITextAlignmentLeft];
+        [self.titleLabel setHorizontalAlignment:kCCTextAlignmentLeft];
         [self addChild:self.titleLabel];
         
         CCSprite *spellIconBack = [CCSprite spriteWithSpriteFrameName:@"spell_icon_back.png"];

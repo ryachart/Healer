@@ -45,13 +45,13 @@
         fontSize = 18.0;
         labelPosition = CGPointMake(basicButton.contentSize.width / 2, basicButton.contentSize.height / 6);
     }
-    CCLabelTTF *titleLabel = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize hAlignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
+    CCLabelTTF *titleLabel = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize hAlignment:kCCTextAlignmentCenter fontName:fontName fontSize:fontSize];
     [titleLabel setColor:HEALER_BROWN];
     [titleLabel setPosition:labelPosition];
-    CCLabelTTF *titleLabelSelected = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize hAlignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
+    CCLabelTTF *titleLabelSelected = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize hAlignment:kCCTextAlignmentCenter fontName:fontName fontSize:fontSize];
     [titleLabelSelected setColor:HEALER_BROWN];
     [titleLabelSelected setPosition:labelPosition];
-    CCLabelTTF *titleLabelDisabled = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize hAlignment:UITextAlignmentCenter fontName:fontName fontSize:fontSize];
+    CCLabelTTF *titleLabelDisabled = [CCLabelTTF labelWithString:title dimensions:basicButton.contentSize hAlignment:kCCTextAlignmentCenter fontName:fontName fontSize:fontSize];
     [titleLabelDisabled setColor:HEALER_BROWN];
     [titleLabelDisabled setPosition:labelPosition];
     

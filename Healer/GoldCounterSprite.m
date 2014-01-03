@@ -63,7 +63,7 @@
 
 + (CCLabelTTFShadow*)goldCostLabelWithCost:(NSInteger)cost andFontSize:(CGFloat)fontSize{
     NSString *labelText = [NSString stringWithFormat:@"%i", cost];
-    CCLabelTTFShadow *goldLabel = [CCLabelTTFShadow labelWithString:labelText dimensions:[[CCSprite spriteWithSpriteFrameName:@"gold_bg.png"] contentSize] hAlignment:UITextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:fontSize];
+    CCLabelTTFShadow *goldLabel = [CCLabelTTFShadow labelWithString:labelText dimensions:[[CCSprite spriteWithSpriteFrameName:@"gold_bg.png"] contentSize] hAlignment:kCCTextAlignmentRight fontName:@"TrebuchetMS-Bold" fontSize:fontSize];
     [goldLabel setColor:ccc3(241, 181, 123)];
     return goldLabel;
 }
@@ -72,7 +72,7 @@
 {
     CCNode *node = [CCNode node];
     CCLabelTTF *goldLabel = [GoldCounterSprite goldCostLabelWithCost:cost andFontSize:32.0];
-    [goldLabel setHorizontalAlignment:UITextAlignmentLeft];
+    [goldLabel setHorizontalAlignment:kCCTextAlignmentLeft];
     [node addChild:goldLabel];
     
     CCSprite *goldSprite = [CCSprite spriteWithSpriteFrameName:@"gold_coin.png"];

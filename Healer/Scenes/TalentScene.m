@@ -129,7 +129,7 @@
             [choiceSprite setPosition:choicePosition];
             [self addChild:choiceSprite];
             
-            CCLabelTTF *choiceTitleLabel = [CCLabelTTF labelWithString:choice.uppercaseString dimensions:CGSizeMake(2.0 * choiceSprite.contentSize.width, 30) hAlignment:UITextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+            CCLabelTTF *choiceTitleLabel = [CCLabelTTF labelWithString:choice.uppercaseString dimensions:CGSizeMake(2.0 * choiceSprite.contentSize.width, 30) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:24.0];
             [choiceTitleLabel setPosition:CGPointMake(choiceSprite.contentSize.width / 2, -20)];
             [choiceSprite addChild:choiceTitleLabel];
             

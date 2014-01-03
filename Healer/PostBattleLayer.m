@@ -167,7 +167,7 @@
         [self.damageTakenLabel setPosition:CGPointMake(12, 80 + failureAdjustment)];
         [self.damageTakenLabel setAnchorPoint:CGPointZero];
         
-        CCLabelTTFShadow *playersLostLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"Allies Lost:  %i", numDead] dimensions:CGSizeMake(350, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        CCLabelTTFShadow *playersLostLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"Allies Lost:  %i", numDead] dimensions:CGSizeMake(350, 50) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [playersLostLabel setPosition:CGPointMake(12, 50 + failureAdjustment)];
         [playersLostLabel setAnchorPoint:CGPointZero];
         
@@ -178,7 +178,7 @@
         
         NSString *durationText = [@"Duration: " stringByAppendingString:[self timeStringForTimeInterval:fightDuration]];
         
-        CCLabelTTFShadow *durationLabel = [CCLabelTTFShadow labelWithString:durationText dimensions:CGSizeMake(250, 50) hAlignment:UITextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+        CCLabelTTFShadow *durationLabel = [CCLabelTTFShadow labelWithString:durationText dimensions:CGSizeMake(250, 50) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:24.0];
         [durationLabel setPosition:CGPointMake(12, 168 + failureAdjustment)];
         [durationLabel setAnchorPoint:CGPointZero];
         [self.statsContainer addChild:durationLabel];

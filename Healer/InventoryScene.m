@@ -79,6 +79,12 @@
         [self.playerSprite setPosition:CGPointMake(190, 260)];
         [equipmentBack addChild:self.playerSprite];
         
+        if ([PlayerDataManager localPlayer].playerName && [PlayerDataManager localPlayer].playerName.length > 0) {
+            CCLabelTTFShadow *playerNameLabel = [CCLabelTTFShadow labelWithString:[PlayerDataManager localPlayer].playerName fontName:@"TrebuchetMS-Bold"fontSize:32.0];
+            [playerNameLabel setPosition:CGPointMake(190, 480)];
+            [equipmentBack addChild:playerNameLabel];
+        }
+        
         CGPoint slotOffsets = CGPointMake(equipmentBack.position.x * equipmentBack.anchorPoint.x, equipmentBack.position.y * equipmentBack.anchorPoint.y);
         
         self.headSlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_head.png" andInhabitantOrNil:nil] autorelease];

@@ -219,7 +219,7 @@
         Effect *playerUpgradeEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
         [playerUpgradeEffect setOwner:self.player];
         [playerUpgradeEffect setTitle:@"player-upgrade-eff"];
-        [playerUpgradeEffect setDamageDoneMultiplierAdjustment:playerDamageUpgradesAdjustment];
+        //[playerUpgradeEffect setDamageDoneMultiplierAdjustment:playerDamageUpgradesAdjustment];
         [playerUpgradeEffect setMaximumHealthMultiplierAdjustment:playerHealthUpgradesAdjustment];
         [member addEffect:playerUpgradeEffect];
         member.health = member.maximumHealth;

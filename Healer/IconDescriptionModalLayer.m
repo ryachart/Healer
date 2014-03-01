@@ -277,6 +277,8 @@
 
 - (BOOL)isNameValid:(NSString *)name
 {
+    if (name.length == 0) return false;
+    if (name.length > 20) return false;
     NSCharacterSet *alphaSet = [NSCharacterSet alphanumericCharacterSet];
     BOOL valid = [[name stringByTrimmingCharactersInSet:alphaSet] isEqualToString:@""];
     return valid;

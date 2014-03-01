@@ -29,7 +29,7 @@ NSString* const PlayerHighestLevelAttempted = @"com.healer.playerHighestLevelAtt
 NSString* const PlayerHighestLevelCompleted = @"com.healer.playerHighestLevelCompleted";
 NSString* const PlayerLevelFailed = @"com.healer.playerLevelFailed1";
 NSString* const PlayerLevelRatingKeyPrefix = @"com.healer.playerLevelRatingForLevel1";
-NSString* const PlayerLevelScoreKeyPrefix = @"com.healer.playerScoreForLevel";
+NSString* const PlayerLevelScoreKeyPrefix = @"com.healer.playerScoreForLevel2";
 NSString* const PlayerRemoteObjectIdKey = @"com.healer.playerRemoteObjectID3";
 NSString* const PlayerLastUsedSpellsKey = @"com.healer.lastUsedSpells";
 NSString* const PlayerNormalModeCompleteShown = @"com.healer.nmcs";
@@ -49,6 +49,7 @@ NSString* const PlayerSlotKey = @"com.healer.eslot";
 NSString* const PlayerAllyDamageUpgradesKey = @"com.healer.paduk";
 NSString* const PlayerAllyHealthUpgradesKey = @"com.healer.pahuk";
 NSString* const PlayerTotalItemsEarnedKey = @"com.healer.ptie";
+NSString* const PlayerName = @"com.healer.playerName";
 
 NSString* const PlayerStaminaDidChangeNotification = @"com.healer.staminaDidChangeNotif";
 NSString* const PlayerGoldDidChangeNotification = @"com.healer.goldDidChangeNotif";
@@ -217,6 +218,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
                         [[NSUserDefaults standardUserDefaults] setObject:newPlayerObject.objectId forKey:PlayerRemoteObjectIdKey];
                         [[NSUserDefaults standardUserDefaults] synchronize];
                     }
+                    [self checkStamina];
                 }
             } @catch (NSException *e) {
                 NSLog(@"Failed to create a new player remote object");
@@ -330,6 +332,15 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     return [[self.playerData objectForKey:PlayerHighestLevelAttempted] intValue];
 }
 
+- (NSString *)playerName {
+    return [self.playerData objectForKey:PlayerName];
+}
+
+- (void)setPlayerName:(NSString *)playerName
+{
+    [self.playerData setObject:playerName forKey:PlayerName];
+}
+
 - (void)failLevel:(NSInteger)level {
     NSString *failedKey = [PlayerLevelFailed stringByAppendingFormat:@"-%i", level];
     NSInteger failedTimes = [[self.playerData objectForKey:failedKey] intValue];
@@ -349,6 +360,9 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     [obj setObject:[NSNumber numberWithInt:[self highestLevelCompleted]] forKey:@"HLCompleted"];
     [obj setObject:[NSNumber numberWithInt:self.gold] forKey:@"Gold"];
     [obj setObject:[NSNumber numberWithInt:numVisits+1] forKey:@"saves"];
+    if (self.playerName) {
+        [obj setObject:self.playerName forKey:@"PlayerName"];
+    }
     
     NSMutableArray *talents = [NSMutableArray arrayWithCapacity:5];
     
@@ -942,6 +956,58 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         }];
     }
 #endif
+}
+
+#pragma mark - Score
+
+- (void)submitScore:(NSInteger)score forLevel:(NSInteger)level onDifficulty:(NSInteger)difficulty andDuration:(NSTimeInterval)duration
+{
+    if (_localPlayer != self) return;
+#if ANDROID
+#else
+    NSString *playerClassName = @"player";
+    NSString *className = @"scoreboard";
+#if TARGET_IPHONE_SIMULATOR
+    className = @"test_scoreboard";
+    playerClassName = @"test_player";
+#endif
+#if DEBUG
+    className = @"test_scoreboard";
+    playerClassName = @"test_player";
+#endif
+    NSInteger backgroundExceptionIdentifer = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{}];
+    dispatch_async([PlayerDataManager parseQueue], ^{
+        NSString* playerObjectID = [self remoteObjectId];
+        if (playerObjectID){
+            @try {
+                PFQuery *playerObjectQuery = [PFQuery queryWithClassName:playerClassName];
+                NSArray *objects = [playerObjectQuery findObjects];
+                PFObject *playerObject;
+                if (objects.count > 0) {
+                    playerObject = [objects objectAtIndex:0];
+                    PFObject *newScoreboardObject = [PFObject objectWithClassName:className];
+                    [newScoreboardObject setObject:[NSNumber numberWithInteger:score] forKey:@"score"];
+                    [newScoreboardObject setObject:playerObject forKey:@"playerId"];
+                    [newScoreboardObject setObject:[NSNumber numberWithInteger:level] forKey:@"levelNumber"];
+                    [newScoreboardObject setObject:[NSNumber numberWithInteger:difficulty] forKey:@"difficulty"];
+                    [newScoreboardObject setObject:[NSNumber numberWithInteger:duration] forKey:@"duration"];
+                    if (![newScoreboardObject save]) {
+                        NSLog(@"Failed to submit score because the save failed");
+                    }
+                } else {
+                    NSLog(@"Player object not found");
+                }
+            } @catch (NSException *e) {
+                NSLog(@"Failed to submit score due to an exception: %@", e.description);
+            }
+        } else {
+
+            
+        }
+        [[UIApplication sharedApplication] endBackgroundTask:backgroundExceptionIdentifer];
+    });
+#endif
+
 }
 
 - (void)staminaUsedWithCompletion:(SpendStaminaResultBlock)block

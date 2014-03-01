@@ -24,6 +24,8 @@
 @property (nonatomic, assign) BackgroundSprite *alertDialogBackground;
 @property (nonatomic, assign) CCMenu *menu;
 @property (nonatomic, retain) EquipmentItem *item;
+@property (nonatomic, assign) CCLabelTTFShadow *dataEntryLabel;
+@property (nonatomic, assign) UITextField *dataEntryTextField;
 @end
 
 @implementation IconDescriptionModalLayer
@@ -168,6 +170,28 @@
     return self;
 }
 
+- (id)initAsNamingDialog
+{
+    if (self = [self initWithBase]) {
+        BasicButton *confirmButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(nameHealer) andTitle:@"Okay"];
+        [confirmButton setScale:.75];
+        
+        CCLabelTTFShadow *descLabel = [CCLabelTTFShadow labelWithString:@"Name your Healer:" dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2.25, self.alertDialogBackground.contentSize.width / 2) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:20.0];
+        [descLabel setPosition:CGPointMake(356, 162)];
+        [self.alertDialogBackground addChild:descLabel];
+        
+        self.dataEntryLabel = [CCLabelTTFShadow labelWithString:[PlayerDataManager localPlayer].playerName dimensions:CGSizeMake(self.alertDialogBackground.contentSize.width / 2.25, self.alertDialogBackground.contentSize.width / 2) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:20.0];
+        [self.dataEntryLabel setPosition:CGPointMake(356, 110)];
+        [self.alertDialogBackground addChild:self.dataEntryLabel];
+        
+        self.menu = [CCMenu menuWithItems:confirmButton, nil];
+        [self.menu setPosition:CGPointMake(356, 190)];
+        [self.menu alignItemsHorizontallyWithPadding:4];
+        [self.alertDialogBackground addChild:self.menu];
+    }
+    return self;
+}
+
 - (void)onEnter {
     [super onEnter];
     
@@ -179,6 +203,15 @@
     
     if (self.menu) {
         [[CCDirectorIOS sharedDirector].touchDispatcher setPriority:kCCMenuHandlerPriority - 2 forDelegate:self.menu];
+    }
+    
+    if (self.dataEntryLabel) {
+        self.dataEntryTextField = [[[UITextField alloc] init] autorelease];
+        self.dataEntryTextField.text = self.dataEntryLabel.string;
+        [self.dataEntryTextField setDelegate:self];
+        [[[CCDirector sharedDirector] view] addSubview:self.dataEntryTextField];
+        [self.dataEntryTextField becomeFirstResponder];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidChange) name:UITextFieldTextDidChangeNotification object:self.dataEntryTextField];
     }
 }
 
@@ -197,6 +230,14 @@
 - (void)purchaseMainContent
 {
     [[PurchaseManager sharedPurchaseManager] purchaseLegacyOfTorment];
+}
+
+- (void)nameHealer
+{
+    NSString *playerName = self.dataEntryLabel.string;
+    [[PlayerDataManager localPlayer] setPlayerName:playerName];
+    [[PlayerDataManager localPlayer] saveLocalPlayer];
+    [self shouldDismiss];
 }
 
 - (void)shouldDismiss {
@@ -219,4 +260,29 @@
 {
     return YES;
 }
+
+#pragma mark - Text Field Delegate
+
+- (BOOL)textFieldShouldReturn:(UITextField*)textField {
+    //Terminate editing
+    [textField resignFirstResponder];
+    return YES;
+}
+
+- (void)textFieldDidEndEditing:(UITextField*)textField {
+    if (textField==self.dataEntryTextField) {
+        [self.dataEntryTextField endEditing:YES];
+        [self.dataEntryTextField removeFromSuperview];
+        // here is where you should do something with the data they entered
+        NSString *result = self.dataEntryTextField.text;
+        self.dataEntryLabel.string = result;
+        [self nameHealer];
+    }
+}
+
+- (void)textFieldDidChange
+{
+    self.dataEntryLabel.string = self.dataEntryTextField.text;
+}
+
 @end

@@ -35,12 +35,12 @@
         
         BasicButton *resetGame = [BasicButton basicButtonWithTarget:self andSelector:@selector(resetGame) andTitle:@"Erase Data"];
         BasicButton *feedback = [BasicButton basicButtonWithTarget:self andSelector:@selector(feedback) andTitle:@"Feedback"];
-        
+        BasicButton *renameCharacter = [BasicButton basicButtonWithTarget:self andSelector:@selector(renameCharacter) andTitle:@"Rename"];
         BasicButton *restorePurchases = [BasicButton basicButtonWithTarget:self andSelector:@selector(restorePurchases) andTitle:@"Restore Purchases"];
         
-        CCMenu *settingsMenu = [CCMenu menuWithItems:feedback, resetGame, restorePurchases, nil];
-        [settingsMenu setPosition:CGPointMake(250, 235)];
-        [settingsMenu alignItemsVerticallyWithPadding:20.0];
+        CCMenu *settingsMenu = [CCMenu menuWithItems:feedback, resetGame, renameCharacter, restorePurchases, nil];
+        [settingsMenu setPosition:CGPointMake(250, 200)];
+        [settingsMenu alignItemsVerticallyWithPadding:16.0];
         [self addChild:settingsMenu];
         
         self.effectsToggleLabel = [CCLabelTTF labelWithString:@"On" fontName:@"TrebuchetMS-Bold" fontSize:32.0];
@@ -192,6 +192,19 @@
 - (void)restorePurchases
 {
     [[PurchaseManager sharedPurchaseManager] restorePurchases];
+}
+
+#pragma mark - Renaming
+- (void)renameCharacter
+{
+    IconDescriptionModalLayer *namingModal = [[[IconDescriptionModalLayer alloc] initAsNamingDialog] autorelease];
+    [namingModal setDelegate:self];
+    [self addChild:namingModal];
+}
+
+- (void)iconDescriptionModalDidComplete:(id)modal
+{
+    [(IconDescriptionModalLayer*)modal removeFromParentAndCleanup:YES];
 }
 
 - (void)back

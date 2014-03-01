@@ -36,12 +36,7 @@
 @end
 
 @implementation HealerStartScene
-@synthesize menu;
-@synthesize multiplayerButton;
-@synthesize quickPlayButton;
-@synthesize storeButton;
-@synthesize authenticationAttempted;
--(id)init{
+- (id)init{
     if (self = [super init]){
         //Perform Scene Setup   
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/sprites.plist"];
@@ -58,7 +53,7 @@
         }
         [SettingsScene configureAudioForUserSettings];
 
-        self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
+//        self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
         
         self.quickPlayButton= [BasicButton basicButtonWithTarget:self andSelector:@selector(quickPlaySelected) andTitle:@"Play"];
         
@@ -68,7 +63,7 @@
         
         CCMenuItem *divinityButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(divinitySelected) andTitle:@"Talents" andAlertPip:[[PlayerDataManager localPlayer] numUnspentTalentChoices] showsLockForDisabled:![[PlayerDataManager localPlayer] isTalentsUnlocked]];
         
-        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, armoryButton, divinityButton, self.multiplayerButton,nil];
+        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, armoryButton, divinityButton, /*self.multiplayerButton,*/nil];
         
         [self.menu alignItemsVerticallyWithPadding:20.0];
         CGSize winSize = [CCDirector sharedDirector].winSize;
@@ -93,7 +88,6 @@
         [logoSprite setAnchorPoint:CGPointMake(0, 0)];
         [logoSprite setPosition:CGPointMake(590, 250)];
         [self addChild:logoSprite z:1];
-        
         
         CCMenuItem *settingsButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(settingsSelected) andTitle:@"Settings"];
         [settingsButton setScale:.4];
@@ -176,14 +170,24 @@
     if (![[SimpleAudioEngine sharedEngine] isBackgroundMusicPlaying]) {
         [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"sounds/theme.mp3" loop:YES];
     }
-    
 }
 
 
--(void)quickPlaySelected
+- (void)showNamingModal
 {
-	LevelSelectMapScene *qpS = [[LevelSelectMapScene new] autorelease];
-	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:qpS]];
+    IconDescriptionModalLayer *namingModal = [[[IconDescriptionModalLayer alloc] initAsNamingDialog] autorelease];
+    [namingModal setDelegate:self];
+    [self addChild:namingModal];
+}
+
+- (void)quickPlaySelected
+{
+    if (![PlayerDataManager localPlayer].playerName && [PlayerDataManager localPlayer].highestLevelCompleted > 3) {
+        [self showNamingModal];
+    } else {
+        LevelSelectMapScene *qpS = [[LevelSelectMapScene new] autorelease];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:qpS]];
+    }
 }
 
 -(void)storeSelected{
@@ -214,10 +218,6 @@
 - (void)facebookSelected
 {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://m.facebook.com/healergame?_rdr"]];
-}
-
-- (void)dealloc {
-    [super dealloc];
 }
 
 - (void)iconDescriptionModalDidComplete:(id)modal

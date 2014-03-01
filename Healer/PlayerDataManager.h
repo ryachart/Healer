@@ -57,6 +57,7 @@ extern NSString* const MainGameContentKey;
 @property (nonatomic, readonly) NSInteger maximumStandardSpellSlots;
 @property (nonatomic, readonly) NSArray* allOwnedSpells;
 @property (nonatomic, readwrite) FTUEState ftueState;
+@property (nonatomic, readwrite) NSString *playerName;
 
 + (PlayerDataManager *)localPlayer;
 + (Player*)playerFromLocalPlayer;
@@ -153,6 +154,9 @@ extern NSString* const MainGameContentKey;
 
 - (void)purchaseAllyDamageUpgrade;
 - (void)purchaseAllyHealthUpgrade;
+
+#pragma mark - Score
+- (void)submitScore:(NSInteger)score forLevel:(NSInteger)level onDifficulty:(NSInteger)difficulty andDuration:(NSTimeInterval)duration;
 
 #pragma mark - Settings
 @property (nonatomic, readwrite) BOOL musicDisabled;

@@ -38,6 +38,7 @@
 
 - (id)initWithRaid:(Raid*)raid enemies:(NSArray*)enemies andSpells:(NSArray*)spells;
 - (void)encounterWillBegin;
+- (void)scoreTick:(float)deltaTime;
 
 - (void)saveCombatLog;
 

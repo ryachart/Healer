@@ -576,6 +576,8 @@
 //        return;
 //    }
     
+    [[PlayerDataManager localPlayer] submitScore:self.encounter.score forLevel:self.encounter.levelNumber onDifficulty:self.encounter.difficulty andDuration:self.encounter.duration];
+    
     [[SimpleAudioEngine sharedEngine] crossFadeBackgroundMusic:nil forDuration:.5];
     if (success) {
         [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/victory.mp3"];
@@ -1395,6 +1397,8 @@
             [self.player enableCastingWithReason:CastingDisabledReasonMoving];
         }
     }
+    
+    [self.encounter scoreTick:deltaT];
     
     if (self.isServer){
         if (isNetworkUpdate){

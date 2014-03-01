@@ -12,11 +12,12 @@
 #import "Announcer.h"
 #import "GamePlayFTUELayer.h"
 #import "GamePlayPauseLayer.h"
-#import <GameKit/GameKit.h>
 #import "BossHealthView.h"
 #import "IconDescriptionModalLayer.h"
 #import "EnemyAbilityDescriptionsView.h"
 #import "PostBattleLayer.h"
+
+#import <GameKit/GameKit.h>
 
 @class PlayerSpellButton;
 @class RaidView;

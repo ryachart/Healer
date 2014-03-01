@@ -83,6 +83,7 @@
 		BF261C381602C7A4003307DF /* Slot.m in Sources */ = {isa = PBXBuildFile; fileRef = BF261C371602C7A3003307DF /* Slot.m */; };
 		BF26BFC615CA0B5D00B7132D /* AbilityDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = BF26BFC515CA0B5D00B7132D /* AbilityDescriptor.m */; };
 		BF2D1C1C16968A14006DCA9A /* CCLabelTTFShadow.m in Sources */ = {isa = PBXBuildFile; fileRef = BF2D1C1B16968A14006DCA9A /* CCLabelTTFShadow.m */; };
+		BF42FF0818C0585B00E33EFE /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF42FF0718C0585B00E33EFE /* GameKit.framework */; };
 		BF448C57154BA4D1009401A6 /* AddRemoveSpellLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */; };
 		BF448C5A154BB04A009401A6 /* SpellInfoNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C59154BB04A009401A6 /* SpellInfoNode.m */; };
 		BF46DA1717A96A8500471A04 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5463A15AA097800F9B167 /* Parse.framework */; };
@@ -136,7 +137,6 @@
 		BFD8EC5B160ED2E100BAF83A /* libkazmath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB78160ED1FF00BAF83A /* libkazmath.a */; };
 		BFD8EF4C160F9F1C00BAF83A /* LaunchScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD8EF4B160F9F1C00BAF83A /* LaunchScene.m */; };
 		BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */; };
-		BFE3408B152D57A5008E84F1 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE3408A152D57A5008E84F1 /* GameKit.framework */; };
 		BFE66EDF16D9749800B9FBEE /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = BFE66EDE16D9749800B9FBEE /* fonts */; };
 		BFF4198C15A27CF700BC0453 /* talents.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFF4198B15A27CF700BC0453 /* talents.plist */; };
 		BFF6B202176926130014640C /* NSString+Obfuscation.m in Sources */ = {isa = PBXBuildFile; fileRef = BFF6B201176926130014640C /* NSString+Obfuscation.m */; };
@@ -703,6 +703,7 @@
 		BF26BFC515CA0B5D00B7132D /* AbilityDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbilityDescriptor.m; sourceTree = "<group>"; };
 		BF2D1C1A16968A14006DCA9A /* CCLabelTTFShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCLabelTTFShadow.h; sourceTree = "<group>"; };
 		BF2D1C1B16968A14006DCA9A /* CCLabelTTFShadow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCLabelTTFShadow.m; sourceTree = "<group>"; };
+		BF42FF0718C0585B00E33EFE /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		BF448C55154BA4D1009401A6 /* AddRemoveSpellLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddRemoveSpellLayer.h; sourceTree = "<group>"; };
 		BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddRemoveSpellLayer.m; sourceTree = "<group>"; };
 		BF448C58154BB04A009401A6 /* SpellInfoNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellInfoNode.h; sourceTree = "<group>"; };
@@ -795,7 +796,6 @@
 		BFD8EF4A160F9F1B00BAF83A /* LaunchScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LaunchScene.h; path = Scenes/LaunchScene.h; sourceTree = "<group>"; };
 		BFD8EF4B160F9F1C00BAF83A /* LaunchScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LaunchScene.m; path = Scenes/LaunchScene.m; sourceTree = "<group>"; };
 		BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape@2x~ipad.png"; sourceTree = SOURCE_ROOT; };
-		BFE3408A152D57A5008E84F1 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		BFE66EDE16D9749800B9FBEE /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = SOURCE_ROOT; };
 		BFF4198B15A27CF700BC0453 /* talents.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = talents.plist; sourceTree = "<group>"; };
 		BFF6B200176926130014640C /* NSString+Obfuscation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Obfuscation.h"; sourceTree = "<group>"; };
@@ -811,6 +811,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF42FF0818C0585B00E33EFE /* GameKit.framework in Frameworks */,
 				BF13ADB2174DB57E00A613B1 /* Social.framework in Frameworks */,
 				BF1079371745565E0077DBBD /* StoreKit.framework in Frameworks */,
 				BF1DF41F1722057300046EB2 /* MessageUI.framework in Frameworks */,
@@ -827,7 +828,6 @@
 				BFA5464715AA0CED00F9B167 /* CFNetwork.framework in Frameworks */,
 				BFA5464515AA0C9D00F9B167 /* SystemConfiguration.framework in Frameworks */,
 				BFA5464315AA0C3600F9B167 /* Security.framework in Frameworks */,
-				BFE3408B152D57A5008E84F1 /* GameKit.framework in Frameworks */,
 				38024DB013C2564D003D36F2 /* QuartzCore.framework in Frameworks */,
 				38024DB213C2564D003D36F2 /* OpenGLES.framework in Frameworks */,
 				38024DB413C2564D003D36F2 /* OpenAL.framework in Frameworks */,
@@ -876,6 +876,7 @@
 		38024DAE13C2564D003D36F2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF42FF0718C0585B00E33EFE /* GameKit.framework */,
 				BF13ADB1174DB57E00A613B1 /* Social.framework */,
 				BF13AD76174D6F7200A613B1 /* FacebookSDK.framework */,
 				BF1079361745565E0077DBBD /* StoreKit.framework */,
@@ -893,7 +894,6 @@
 				BFA5463A15AA097800F9B167 /* Parse.framework */,
 				386DD204145E07100086763E /* FontLabel */,
 				386DD210145E07100086763E /* TouchJSON */,
-				BFE3408A152D57A5008E84F1 /* GameKit.framework */,
 				38024DAF13C2564D003D36F2 /* QuartzCore.framework */,
 				38024DB113C2564D003D36F2 /* OpenGLES.framework */,
 				38024DB313C2564D003D36F2 /* OpenAL.framework */,
@@ -1617,6 +1617,11 @@
 				TargetAttributes = {
 					38024DAA13C2564D003D36F2 = {
 						DevelopmentTeam = 9TD52XBFDL;
+						SystemCapabilities = {
+							com.apple.GameCenter = {
+								enabled = 0;
+							};
+						};
 					};
 				};
 			};

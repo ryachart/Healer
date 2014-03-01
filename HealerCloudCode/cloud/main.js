@@ -66,6 +66,22 @@ function check_stamina_owed(tick_time, last_tick) {
     return 0;
 }
 
+function sum_ratings(player_object) {
+    var ratingsArray = player_object.get("levelRatings");
+    var total = 0;
+    ratingsArray.forEach(function(entry) {
+        total += entry;
+    });
+    player_object.set("totalRatings", total);
+    player_object.save(null, {
+      success: function(player_object) {
+        
+      },
+      error: function(gameScore, error) {
+      }
+    });
+}
+
 Parse.Cloud.define("getStamina", function(request, response) {
     var query = new Parse.Query("stamina");
     query.equalTo("playerId", request.params.playerId);
@@ -146,6 +162,14 @@ Parse.Cloud.define("spendStamina", function(request, response) {
         });
 });
 
+Parse.Cloud.job("sum_all_ratings", function(request, status) {
+    var query = new Parse.Query("player");
+    query.each(function(player){
+        sum_ratings(player);
+    });
+});
+
+
 Parse.Cloud.afterSave("player", function(request) {
     var query = new Parse.Query("tier1progress")
     query.equalTo("playerId", request.object.id);
@@ -154,7 +178,10 @@ Parse.Cloud.afterSave("player", function(request) {
             var object;
             if (results.length > 0) {
                 object = results[0];
-            } else {
+                sum_ratings(object);
+            } 
+            
+            /*else {
                 object = new Parse.Object("tier1progress");
                 object.set("playerId", request.object.id);
             }
@@ -176,7 +203,7 @@ Parse.Cloud.afterSave("player", function(request) {
                 success : function(res) {
                 }, error : function(res, error) {
                 }
-            });
+            });*/
         },
         error : function () {
             

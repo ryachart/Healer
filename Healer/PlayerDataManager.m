@@ -209,6 +209,18 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
             PFObject *playerObject = [playerObjectQuery getObjectWithId:playerObjectID];
             [self setPlayerObjectInformation:playerObject];
             [playerObject saveEventually];
+            
+            if (playerObject) {
+                PFQuery *playerVouchersQuery = [PFQuery queryWithClassName:@"voucher"];
+                [playerVouchersQuery whereKey:@"player" equalTo:playerObject];
+                [playerVouchersQuery whereKey:@"isConsumed" equalTo:[NSNumber numberWithBool:false]];
+                NSArray *vouchers = [playerVouchersQuery findObjects];
+                if (vouchers.count > 0) {
+                    for (PFObject *voucherObject in vouchers) {
+                        [self awardVoucher:voucherObject];
+                    }
+                }
+            }
         } else {
             @try {
                 PFObject *newPlayerObject = [PFObject objectWithClassName:className];
@@ -229,6 +241,26 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     });
 #endif
 }
+
+#if ANDROID
+- (void)awardVoucher:(id)voucher
+{
+}
+#else
+- (void)awardVoucher:(PFObject*)voucher
+{
+    NSInteger gold = [[voucher objectForKey:@"goldGrant"] integerValue];
+    NSString *contentKey = [voucher objectForKey:@"contentKey"];
+    [self purchaseContentWithKey:contentKey];
+    [self playerEarnsGold:gold];
+    [voucher setObject:[NSDate date] forKey:@"dateConsumed"];
+    [voucher setObject:[NSNumber numberWithBool:true] forKey:@"isConsumed"];
+    if ([voucher save]) {
+        [self saveLocalPlayer];
+    }
+
+}
+#endif
 
 + (BOOL)isFreshInstall
 {

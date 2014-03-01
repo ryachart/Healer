@@ -173,6 +173,7 @@
 - (id)initAsNamingDialog
 {
     if (self = [self initWithBase]) {
+        self.alertDialogBackground.position = CGPointMake(self.alertDialogBackground.position.x, self.alertDialogBackground.position.y + 150);
         BasicButton *confirmButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(nameHealer) andTitle:@"Okay"];
         [confirmButton setScale:.75];
         
@@ -207,6 +208,8 @@
     
     if (self.dataEntryLabel) {
         self.dataEntryTextField = [[[UITextField alloc] init] autorelease];
+        self.dataEntryTextField.center = CGPointMake(-1000, -1000);
+        self.dataEntryTextField.autocorrectionType = UITextAutocorrectionTypeNo;
         self.dataEntryTextField.text = self.dataEntryLabel.string;
         [self.dataEntryTextField setDelegate:self];
         [[[CCDirector sharedDirector] view] addSubview:self.dataEntryTextField];
@@ -235,9 +238,18 @@
 - (void)nameHealer
 {
     NSString *playerName = self.dataEntryLabel.string;
+    if ([self isNameValid:playerName]) {
+        [self.dataEntryTextField resignFirstResponder];
+    } else {
+        [self.dataEntryTextField becomeFirstResponder];
+    }
+}
+
+- (void)saveHealerName
+{
+    NSString *playerName = self.dataEntryLabel.string;
     [[PlayerDataManager localPlayer] setPlayerName:playerName];
     [[PlayerDataManager localPlayer] saveLocalPlayer];
-    [self shouldDismiss];
 }
 
 - (void)shouldDismiss {
@@ -263,9 +275,25 @@
 
 #pragma mark - Text Field Delegate
 
+- (BOOL)isNameValid:(NSString *)name
+{
+    NSCharacterSet *alphaSet = [NSCharacterSet alphanumericCharacterSet];
+    BOOL valid = [[name stringByTrimmingCharactersInSet:alphaSet] isEqualToString:@""];
+    return valid;
+}
+
 - (BOOL)textFieldShouldReturn:(UITextField*)textField {
+    if (![self isNameValid:textField.text]) return NO;
     //Terminate editing
     [textField resignFirstResponder];
+    return YES;
+}
+
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField
+{
+    if (textField == self.dataEntryTextField){
+        return [self isNameValid:self.dataEntryTextField.text];
+    }
     return YES;
 }
 
@@ -276,7 +304,8 @@
         // here is where you should do something with the data they entered
         NSString *result = self.dataEntryTextField.text;
         self.dataEntryLabel.string = result;
-        [self nameHealer];
+        [self saveHealerName];
+        [self shouldDismiss];
     }
 }
 

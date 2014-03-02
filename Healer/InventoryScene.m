@@ -285,6 +285,16 @@
     self.allyHealthCostNode = [GoldCounterSprite goldCostNodeForCost:[PlayerDataManager localPlayer].nextAllyHealthUpgradeCost];
     [self.allyHealthCostNode setPosition:position];
     [parent addChild:self.allyHealthCostNode];
+    
+    if ([PlayerDataManager localPlayer].nextAllyHealthUpgradeCost == -1) {
+        self.allyHealthCostNode.visible = false;
+        [self.allyHealthUpgradeButton setTitle:@"MAXED"];
+        self.allyHealthUpgradeButton.isEnabled = false;
+    } else {
+        self.allyHealthCostNode.visible = true;
+        [self.allyHealthUpgradeButton setTitle:@"UPGRADE"];
+        self.allyHealthUpgradeButton.isEnabled = true;
+    }
 }
 
 - (void)back

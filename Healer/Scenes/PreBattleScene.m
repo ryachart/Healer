@@ -212,10 +212,11 @@
 {
     [self.encounter encounterWillBegin];
     
-    float playerDamageUpgradesAdjustment = [[PlayerDataManager localPlayer] allyDamageUpgrades] / 100.0f;
+    //float playerDamageUpgradesAdjustment = [[PlayerDataManager localPlayer] allyDamageUpgrades] / 100.0f;
     float playerHealthUpgradesAdjustment = [[PlayerDataManager localPlayer] allyHealthUpgrades] / 100.0f;
     
     for (RaidMember *member in self.encounter.raid.raidMembers) {
+        //We dont check to see that we dont buff the player here, because the player isnt added to the raid yet
         Effect *playerUpgradeEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypePositiveInvisible] autorelease];
         [playerUpgradeEffect setOwner:self.player];
         [playerUpgradeEffect setTitle:@"player-upgrade-eff"];

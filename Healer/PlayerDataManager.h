@@ -22,7 +22,7 @@
 
 #define STAMINA_NOT_LOADED -9999
 
-#define MAXIMUM_ALLY_UPGRADES 99999
+#define MAXIMUM_ALLY_UPGRADES 50
 
 typedef void (^SpendStaminaResultBlock)(BOOL success);
 
@@ -46,7 +46,7 @@ extern NSString* const PlayerStaminaDidChangeNotification;
 
 extern NSString* const MainGameContentKey;
 
-@class ShopItem, Spell;
+@class ShopItem, Spell, Encounter;
 
 #if ANDROID
 @class PFObject;
@@ -57,7 +57,7 @@ extern NSString* const MainGameContentKey;
 @property (nonatomic, readonly) NSInteger maximumStandardSpellSlots;
 @property (nonatomic, readonly) NSArray* allOwnedSpells;
 @property (nonatomic, readwrite) FTUEState ftueState;
-@property (nonatomic, readwrite) NSString *playerName;
+@property (nonatomic, assign, readwrite) NSString *playerName;
 
 + (PlayerDataManager *)localPlayer;
 + (Player*)playerFromLocalPlayer;
@@ -156,7 +156,7 @@ extern NSString* const MainGameContentKey;
 - (void)purchaseAllyHealthUpgrade;
 
 #pragma mark - Score
-- (void)submitScore:(NSInteger)score forLevel:(NSInteger)level onDifficulty:(NSInteger)difficulty andDuration:(NSTimeInterval)duration;
+- (void)submitScore:(Encounter*)encounter player:(Player*)player;
 
 #pragma mark - Settings
 @property (nonatomic, readwrite) BOOL musicDisabled;

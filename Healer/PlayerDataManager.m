@@ -11,6 +11,7 @@
 #import "Spell.h"
 #import "Talents.h"
 #import "ShopItem.h"
+#import "Encounter.h"
 
 @interface PlayerDataManager ()
 @property (nonatomic, retain) NSMutableDictionary *playerData;
@@ -387,6 +388,19 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     }
 }
 
+- (NSArray *)lastUsedTalentsTitles
+{
+    NSMutableArray *talents = [NSMutableArray arrayWithCapacity:5];
+    
+    for (int i = 0; i < 5; i++) {
+        NSString *choice = [self selectedChoiceForTier:i];
+        if (choice) {
+            [talents addObject:choice];
+        }
+    }
+    return talents;
+}
+
 - (void)setPlayerObjectInformation:(PFObject*)obj {
     NSInteger numVisits = [[obj objectForKey:@"saves"] intValue];
     [obj setObject:[NSNumber numberWithInt:[self highestLevelCompleted]] forKey:@"HLCompleted"];
@@ -396,15 +410,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         [obj setObject:self.playerName forKey:@"PlayerName"];
     }
     
-    NSMutableArray *talents = [NSMutableArray arrayWithCapacity:5];
-    
-    for (int i = 0; i < 5; i++) {
-        NSString *choice = [self selectedChoiceForTier:i];
-        if (choice) {
-            [talents addObject:choice];
-        }
-    }
-    [obj setObject:talents forKey:@"talents"];
+    [obj setObject:[self lastUsedTalentsTitles] forKey:@"talents"];
     
     if ([self lastUsedSpellTitles]){
         [obj setObject:[self lastUsedSpellTitles] forKey:@"lastUsedSpells"];
@@ -920,8 +926,8 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (NSInteger)nextAllyHealthUpgradeCost
 {
-    if (self.allyHealthUpgrades >= 25) {
-        return MAXIMUM_ALLY_UPGRADES;
+    if (self.allyHealthUpgrades >= MAXIMUM_ALLY_UPGRADES) {
+        return -1;
     }
     return 200 + [self allyHealthUpgrades] * 50;
 }
@@ -933,7 +939,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (NSInteger)allyHealthUpgrades
 {
-    return [[self.playerData objectForKey:PlayerAllyHealthUpgradesKey] integerValue];
+    return MIN(MAXIMUM_ALLY_UPGRADES, [[self.playerData objectForKey:PlayerAllyHealthUpgradesKey] integerValue]);
 }
 
 - (void)purchaseAllyDamageUpgrade
@@ -952,9 +958,11 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     NSInteger cost = self.nextAllyHealthUpgradeCost;
     if (self.gold >= cost) {
         NSInteger numUpgrades = [[self.playerData objectForKey:PlayerAllyHealthUpgradesKey] integerValue];
-        numUpgrades++;
-        [self.playerData setObject:[NSNumber numberWithInt:numUpgrades] forKey:PlayerAllyHealthUpgradesKey];
-        [self playerLosesGold:cost];
+        if (numUpgrades < MAXIMUM_ALLY_UPGRADES){
+            numUpgrades++;
+            [self.playerData setObject:[NSNumber numberWithInt:numUpgrades] forKey:PlayerAllyHealthUpgradesKey];
+            [self playerLosesGold:cost];
+        }
     }
 }
 
@@ -992,7 +1000,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 #pragma mark - Score
 
-- (void)submitScore:(NSInteger)score forLevel:(NSInteger)level onDifficulty:(NSInteger)difficulty andDuration:(NSTimeInterval)duration
+- (void)submitScore:(Encounter*)encounter player:(Player*)player
 {
     if (_localPlayer != self) return;
 #if ANDROID
@@ -1016,13 +1024,37 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
                 NSArray *objects = [playerObjectQuery findObjects];
                 PFObject *playerObject;
                 if (objects.count > 0) {
+                    NSInteger health = 0;
+                    float regen = 0;
+                    float crit = 0;
+                    float healing = 0;
+                    float speed = 0;
+                    
+                    for (EquipmentItem *itm in player.equippedItems) {
+                        health += itm.health;
+                        regen += itm.regen;
+                        crit += itm.crit;
+                        healing += itm.healing;
+                        speed += itm.speed;
+                    }
                     playerObject = [objects objectAtIndex:0];
                     PFObject *newScoreboardObject = [PFObject objectWithClassName:className];
-                    [newScoreboardObject setObject:[NSNumber numberWithInteger:score] forKey:@"score"];
+                    [newScoreboardObject setObject:[NSNumber numberWithInteger:encounter.score] forKey:@"score"];
                     [newScoreboardObject setObject:playerObject forKey:@"playerId"];
-                    [newScoreboardObject setObject:[NSNumber numberWithInteger:level] forKey:@"levelNumber"];
-                    [newScoreboardObject setObject:[NSNumber numberWithInteger:difficulty] forKey:@"difficulty"];
-                    [newScoreboardObject setObject:[NSNumber numberWithInteger:duration] forKey:@"duration"];
+                    [newScoreboardObject setObject:[NSNumber numberWithInteger:encounter.levelNumber] forKey:@"levelNumber"];
+                    [newScoreboardObject setObject:[NSNumber numberWithInteger:encounter.difficulty] forKey:@"difficulty"];
+                    [newScoreboardObject setObject:[NSNumber numberWithInteger:encounter.duration] forKey:@"duration"];
+                    [newScoreboardObject setObject:[NSNumber numberWithInteger:encounter.healingDone] forKey:@"healingDone"];
+                    [newScoreboardObject setObject:[NSNumber numberWithInteger:encounter.overhealingDone] forKey:@"overhealingDone"];
+                    [newScoreboardObject setObject:[NSNumber numberWithInteger:self.allyHealthUpgrades] forKey:@"allyHealthUpgrades"];
+                    [newScoreboardObject setObject:[self lastUsedSpellTitles] forKey:@"spells"];
+                    [newScoreboardObject setObject:[self lastUsedTalentsTitles] forKey:@"talents"];
+                    [newScoreboardObject setObject:[NSNumber numberWithInteger:health] forKey:@"health"];
+                    [newScoreboardObject setObject:[NSNumber numberWithFloat:regen] forKey:@"regen"];
+                    [newScoreboardObject setObject:[NSNumber numberWithFloat:crit] forKey:@"crit"];
+                    [newScoreboardObject setObject:[NSNumber numberWithFloat:health] forKey:@"healingPower"];
+                    [newScoreboardObject setObject:[NSNumber numberWithFloat:speed] forKey:@"speed"];
+                    
                     if (![newScoreboardObject save]) {
                         NSLog(@"Failed to submit score because the save failed");
                     }
@@ -1032,9 +1064,6 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
             } @catch (NSException *e) {
                 NSLog(@"Failed to submit score due to an exception: %@", e.description);
             }
-        } else {
-
-            
         }
         [[UIApplication sharedApplication] endBackgroundTask:backgroundExceptionIdentifer];
     });

@@ -15,21 +15,21 @@ static ParticleSystemCache *_sharedCache = nil;
 @implementation ParticleSystemCache
 @synthesize particleSystems;
 
--(id)init{
+- (id)init{
     if (self=[super init]){
         self.particleSystems = [NSMutableDictionary dictionaryWithCapacity:5];
     }
     return self;
 }
 
-+(ParticleSystemCache*)sharedCache{
++ (ParticleSystemCache*)sharedCache{
     if (!_sharedCache){
         _sharedCache = [[ParticleSystemCache alloc] init];
     }
     return _sharedCache;
 }
 
--(CCParticleSystemQuad*)systemForKey:(NSString*)key{
+- (CCParticleSystemQuad*)systemForKey:(NSString*)key{
     NSDictionary *systemInfo = [self.particleSystems objectForKey:key];
     if (!systemInfo){
         NSString *systemPath = [[NSBundle mainBundle] pathForResource:[key stringByDeletingPathExtension] ofType:@"plist" inDirectory:@"emitters"];   

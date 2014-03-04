@@ -22,7 +22,7 @@
 
 #define STAMINA_NOT_LOADED -9999
 
-#define MAXIMUM_ALLY_UPGRADES 99999
+#define MAXIMUM_ALLY_UPGRADES 50
 
 typedef void (^SpendStaminaResultBlock)(BOOL success);
 
@@ -46,7 +46,7 @@ extern NSString* const PlayerStaminaDidChangeNotification;
 
 extern NSString* const MainGameContentKey;
 
-@class ShopItem, Spell;
+@class ShopItem, Spell, Encounter;
 
 #if ANDROID
 @class PFObject;
@@ -57,10 +57,15 @@ extern NSString* const MainGameContentKey;
 @property (nonatomic, readonly) NSInteger maximumStandardSpellSlots;
 @property (nonatomic, readonly) NSArray* allOwnedSpells;
 @property (nonatomic, readwrite) FTUEState ftueState;
+@property (nonatomic, assign, readwrite) NSString *playerName;
 
 + (PlayerDataManager *)localPlayer;
-
 + (Player*)playerFromLocalPlayer;
++ (Player *)playerFromData:(NSDictionary*)data;
+
+- (id)initWithPlayerData:(NSDictionary *)data;
+- (NSString *)playerMessage;
++ (Player *)playerFromPlayerMessage:(NSString *)playerMessage;
 
 - (BOOL)isAppStoreReviewRequested;
 - (void)appStoreReviewPerformed;
@@ -76,7 +81,7 @@ extern NSString* const MainGameContentKey;
 
 #pragma mark - Talents
 - (NSString*)selectedChoiceForTier:(NSInteger)tier;
-- (NSDictionary*)localTalentConfig;
+- (NSDictionary*)talentConfig;
 - (void)resetConfig;
 - (void)selectChoice:(NSString*)choice forTier:(NSInteger)tier;
 - (NSInteger)numUnspentTalentChoices;
@@ -150,6 +155,9 @@ extern NSString* const MainGameContentKey;
 - (void)purchaseAllyDamageUpgrade;
 - (void)purchaseAllyHealthUpgrade;
 
+#pragma mark - Score
+- (void)submitScore:(Encounter*)encounter player:(Player*)player;
+
 #pragma mark - Settings
 @property (nonatomic, readwrite) BOOL musicDisabled;
 @property (nonatomic, readwrite) BOOL effectsDisabled;
@@ -165,4 +173,5 @@ extern NSString* const MainGameContentKey;
 @property (nonatomic, readonly) NSTimeInterval secondsPerStamina;
 - (void)staminaUsedWithCompletion:(SpendStaminaResultBlock)block;
 - (void)checkStamina;
+
 @end

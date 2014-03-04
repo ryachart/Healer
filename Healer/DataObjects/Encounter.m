@@ -21,6 +21,7 @@
 
 @interface Encounter ()
 @property (nonatomic, readwrite) NSInteger levelNumber;
+@property (nonatomic, readwrite) double scoreTally;
 @end
 
 @implementation Encounter
@@ -48,13 +49,16 @@
     return self;
 }
 
+- (void)scoreTick:(float)deltaTime
+{
+    for (RaidMember *member in self.raid.raidMembers) {
+        self.scoreTally += member.healthPercentage * deltaTime;
+    }
+}
+
 - (NSInteger)score
 {
-    if (self.levelNumber == 1) {
-        return 0; //No score for level 1
-    }
-    NSInteger score = self.difficulty * (1400 * self.healingDone / self.damageTaken + 1400 * self.raid.livingMembers.count / self.raid.raidMembers.count) ;
-    return score;
+    return (self.scoreTally * 1000 + (200 * self.difficulty)) / self.duration;
 }
 
 - (NSInteger)damageTaken
@@ -567,6 +571,10 @@
     if (enemies.count == 0){
         //If passed in an invalid level number and werent able to generate a boss...
         return nil;
+    }
+    
+    if (multiplayer) {
+        numWarlock--;
     }
     
     for (int i = 0; i < numWizard; i++){

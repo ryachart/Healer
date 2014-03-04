@@ -53,7 +53,8 @@
             [[SimpleAudioEngine sharedEngine] preloadBackgroundMusic:@"sounds/theme.mp3"];
         }
         [SettingsScene configureAudioForUserSettings];
-        //self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
+
+//        self.multiplayerButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(multiplayerSelected) andTitle:@"Multiplayer"];
         
         self.quickPlayButton= [BasicButton basicButtonWithTarget:self andSelector:@selector(quickPlaySelected) andTitle:@"Play"];
         
@@ -63,7 +64,7 @@
         
         CCMenuItem *divinityButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(divinitySelected) andTitle:@"Talents" andAlertPip:[[PlayerDataManager localPlayer] numUnspentTalentChoices] showsLockForDisabled:![[PlayerDataManager localPlayer] isTalentsUnlocked]];
         
-        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, armoryButton, divinityButton, nil];
+        self.menu = [CCMenu menuWithItems:self.quickPlayButton, self.storeButton, armoryButton, divinityButton, /*self.multiplayerButton,*/nil];
         
         [self.menu alignItemsVerticallyWithPadding:20.0];
         CGSize winSize = [CCDirector sharedDirector].winSize;
@@ -169,14 +170,24 @@
     if (![[SimpleAudioEngine sharedEngine] isBackgroundMusicPlaying]) {
         [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"sounds/theme.mp3" loop:YES];
     }
-    
 }
 
 
+- (void)showNamingModal
+{
+    IconDescriptionModalLayer *namingModal = [[[IconDescriptionModalLayer alloc] initAsNamingDialog] autorelease];
+    [namingModal setDelegate:self];
+    [self addChild:namingModal];
+}
+
 - (void)quickPlaySelected
 {
-	LevelSelectMapScene *qpS = [[LevelSelectMapScene new] autorelease];
-	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:qpS]];
+    if (![PlayerDataManager localPlayer].playerName && [PlayerDataManager localPlayer].highestLevelCompleted > 3) {
+        [self showNamingModal];
+    } else {
+        LevelSelectMapScene *qpS = [[LevelSelectMapScene new] autorelease];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:qpS]];
+    }
 }
 
 - (void)storeSelected{

@@ -1051,7 +1051,7 @@
     
     if (percentage == 7.0){
         [self.announcer announce:@"Trulzar cackles as the room fills with noxious poison."];
-        [self.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0.0];
+        [self.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0.0 offset:CGPointZero];
         [self.poisonNova setIsDisabled:YES];
         [self.announcer playAudioForTitle:@"gas_impact.wav"];
         
@@ -1069,7 +1069,7 @@
 - (void)ownerDidChannelTickForAbility:(Ability *)ability
 {
     if (ability == self.poisonNova || [ability.key isEqualToString:@"emp-poison-nova"]) {
-        [self.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0.0];
+        [self.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0.0 offset:CGPointZero];
     }
 }
 
@@ -3178,7 +3178,7 @@ typedef enum {
 - (void)ownerDidExecuteAbility:(Ability *)ability
 {
     if ([ability.key isEqualToString:@"cataclysm"]) {
-        [self.announcer displayParticleSystemOnRaidWithName:@"shadow_raid_burst.plist" delay:0];
+        [self.announcer displayParticleSystemOnRaidWithName:@"shadow_raid_burst.plist" delay:0 offset:CGPointZero];
         [self.announcer displayScreenShakeForDuration:1.5];
     }
 }

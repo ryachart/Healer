@@ -79,6 +79,12 @@
         [self.playerSprite setPosition:CGPointMake(190, 260)];
         [equipmentBack addChild:self.playerSprite];
         
+        if ([PlayerDataManager localPlayer].playerName && [PlayerDataManager localPlayer].playerName.length > 0) {
+            CCLabelTTFShadow *playerNameLabel = [CCLabelTTFShadow labelWithString:[PlayerDataManager localPlayer].playerName fontName:@"TrebuchetMS-Bold"fontSize:32.0];
+            [playerNameLabel setPosition:CGPointMake(190, 480)];
+            [equipmentBack addChild:playerNameLabel];
+        }
+        
         CGPoint slotOffsets = CGPointMake(equipmentBack.position.x * equipmentBack.anchorPoint.x, equipmentBack.position.y * equipmentBack.anchorPoint.y);
         
         self.headSlot = [[[Slot alloc] initWithSpriteFrameName:@"slot_head.png" andInhabitantOrNil:nil] autorelease];
@@ -279,9 +285,19 @@
     self.allyHealthCostNode = [GoldCounterSprite goldCostNodeForCost:[PlayerDataManager localPlayer].nextAllyHealthUpgradeCost];
     [self.allyHealthCostNode setPosition:position];
     [parent addChild:self.allyHealthCostNode];
+    
+    if ([PlayerDataManager localPlayer].nextAllyHealthUpgradeCost == -1) {
+        self.allyHealthCostNode.visible = false;
+        [self.allyHealthUpgradeButton setTitle:@"MAXED"];
+        self.allyHealthUpgradeButton.isEnabled = false;
+    } else {
+        self.allyHealthCostNode.visible = true;
+        [self.allyHealthUpgradeButton setTitle:@"UPGRADE"];
+        self.allyHealthUpgradeButton.isEnabled = true;
+    }
 }
 
--(void)back
+- (void)back
 {
     if (self.returnsToMap) {
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[LevelSelectMapScene alloc] init] autorelease]]];

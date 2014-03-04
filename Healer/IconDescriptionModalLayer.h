@@ -16,7 +16,7 @@
 
 @end
 
-@interface IconDescriptionModalLayer : CCLayerColor <CCTargetedTouchDelegate>
+@interface IconDescriptionModalLayer : CCLayerColor <CCTargetedTouchDelegate, UITextFieldDelegate>
 @property (nonatomic, assign) id <IconDescriptorModalDelegate> delegate;
 @property (nonatomic, readwrite) BOOL isConfirmed; //For confirmation dialogs
 - (id)initWithAbilityDescriptor:(AbilityDescriptor*)descriptor;
@@ -24,5 +24,6 @@
 - (id)initAsMainContentSalesModal;
 - (id)initAsItemSellConfirmModalWithItem:(EquipmentItem*)item;
 - (id)initAsConfirmationDialogueWithDescription:(NSString *)description;
+- (id)initAsNamingDialog;
 @end
 

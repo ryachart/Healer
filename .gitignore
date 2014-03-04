@@ -3,3 +3,7 @@ assets/
 DerivedData
 */xcuserdata/*
 Healer.xcodeproj/project.xcworkspace/xcuserdata/ryachart.xcuserdatad/
+assets-iphone/
+fonts/
+raws/
+unused_sounds/

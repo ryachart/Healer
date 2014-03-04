@@ -612,7 +612,7 @@
     for (RaidMember*member in raid.raidMembers){
         [self adjustHealthWithAdjustment:self.dispelDamageValue forTarget:member ignoresStacks:YES];
     }
-    [self.owner.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0];
+    [self.owner.announcer displayParticleSystemOnRaidWithName:@"poison_raid_burst.plist" delay:0 offset:CGPointZero];
     [self.owner.announcer playAudioForTitle:@"explosion2.wav"];
 }
 @end 
@@ -1306,7 +1306,7 @@
 - (void)expireForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
 {
     if (self.healingToAbsorb <= 0) {
-        [self.owner.announcer displayParticleSystemOnRaidWithName:@"purple_pulse.plist" delay:0.0];
+        [self.owner.announcer displayParticleSystemOnRaidWithName:@"purple_pulse.plist" delay:0.0 offset:CGPointZero];
         for (RaidMember *member in raid.livingMembers) {
             Effect *damageReduction = [[[Effect alloc] initWithDuration:8 andEffectType:EffectTypePositive] autorelease];
             [damageReduction setDamageTakenMultiplierAdjustment:-self.damageReduction];
@@ -1468,7 +1468,7 @@
             [maximumHealthBooster setOwner:[players objectAtIndex:0]];
             [member addEffect:maximumHealthBooster];
         }
-        [self.owner.announcer displayParticleSystemOnRaidWithName:@"purple_pulse.plist" delay:0.0];
+        [self.owner.announcer displayParticleSystemOnRaidWithName:@"purple_pulse.plist" delay:0.0 offset:CGPointZero];
     }
 }
 @end

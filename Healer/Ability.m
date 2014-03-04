@@ -2583,7 +2583,7 @@
             [self damageTarget:member];
         }
         if (self.channelTickRaidParticleEffectName) {
-            [self.owner.announcer displayParticleSystemOnRaidWithName:self.channelTickRaidParticleEffectName delay:0.0];
+            [self.owner.announcer displayParticleSystemOnRaidWithName:self.channelTickRaidParticleEffectName delay:0.0 offset:CGPointZero];
         }
         self.requiredTicks = MAX(0, self.requiredTicks - 1);
     }
@@ -2711,7 +2711,7 @@
 - (void)emergeForRaid:(Raid*)theRaid
 {
     [self.owner.announcer announce:@"Torment erupts from the pool blasting lava onto your allies!"];
-    [self.owner.announcer displayParticleSystemOnRaidWithName:@"magma_blast.plist" delay:0.0];
+    [self.owner.announcer displayParticleSystemOnRaidWithName:@"magma_blast.plist" delay:0.0 offset:CGPointZero];
     for (RaidMember *member in theRaid.livingMembers) {
         [self damageTarget:member forDamage:self.abilityValue * 1.5];
     }
@@ -2730,7 +2730,7 @@
     [self.owner addEffect:immunityEffect];
     [self startChannel:channelDuration withTicks:1];
     [self.owner.announcer announce:@"Torment submerges and splashes magma onto your allies!"];
-    [self.owner.announcer displayParticleSystemOnRaidWithName:@"magma_blast.plist" delay:0.0];
+    [self.owner.announcer displayParticleSystemOnRaidWithName:@"magma_blast.plist" delay:0.0 offset:CGPointZero];
     [self.owner.announcer playAudioForTitle:@"submerge.mp3"];
     
     for (RaidMember *member in theRaid.livingMembers) {

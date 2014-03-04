@@ -116,6 +116,8 @@
 		BFA5464915AA0D3100F9B167 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFA5464815AA0D3000F9B167 /* MobileCoreServices.framework */; };
 		BFA60E44160CD331005FFE1B /* NormalModeCompleteScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA60E43160CD331005FFE1B /* NormalModeCompleteScene.m */; };
 		BFA8B72D177A44380048BBB4 /* TreasureChest.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA8B72C177A44380048BBB4 /* TreasureChest.m */; };
+		BFA9F2EF18C3221400075449 /* Healer_iTunesStore_Icon76x76.png in Resources */ = {isa = PBXBuildFile; fileRef = BFA9F2EE18C3221400075449 /* Healer_iTunesStore_Icon76x76.png */; };
+		BFA9F2F318C3227400075449 /* Healer_iTunesStore_Icon156x156.png in Resources */ = {isa = PBXBuildFile; fileRef = BFA9F2F218C3227400075449 /* Healer_iTunesStore_Icon156x156.png */; };
 		BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */; };
 		BFAFA3F415F43C650052FCA5 /* GoldCounterSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */; };
 		BFAFA3F915F54BBD0052FCA5 /* TalentTierCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BFAFA3F815F54BBD0052FCA5 /* TalentTierCard.m */; };
@@ -759,6 +761,8 @@
 		BFA60E43160CD331005FFE1B /* NormalModeCompleteScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NormalModeCompleteScene.m; sourceTree = "<group>"; };
 		BFA8B72B177A44380048BBB4 /* TreasureChest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreasureChest.h; sourceTree = "<group>"; };
 		BFA8B72C177A44380048BBB4 /* TreasureChest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreasureChest.m; sourceTree = "<group>"; };
+		BFA9F2EE18C3221400075449 /* Healer_iTunesStore_Icon76x76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Healer_iTunesStore_Icon76x76.png; path = ../../../../Desktop/Healer_iTunesStore_Icon76x76.png; sourceTree = "<group>"; };
+		BFA9F2F218C3227400075449 /* Healer_iTunesStore_Icon156x156.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Healer_iTunesStore_Icon156x156.png; path = ../../../../Desktop/Healer_iTunesStore_Icon156x156.png; sourceTree = "<group>"; };
 		BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape~ipad.png"; path = "../Default-Landscape~ipad.png"; sourceTree = "<group>"; };
 		BFAFA3F215F43C650052FCA5 /* GoldCounterSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoldCounterSprite.h; sourceTree = "<group>"; };
 		BFAFA3F315F43C650052FCA5 /* GoldCounterSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoldCounterSprite.m; sourceTree = "<group>"; };
@@ -928,6 +932,8 @@
 		38024DC013C2564D003D36F2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BFA9F2F218C3227400075449 /* Healer_iTunesStore_Icon156x156.png */,
+				BFA9F2EE18C3221400075449 /* Healer_iTunesStore_Icon76x76.png */,
 				BF03E2AF172A44F900F3A429 /* Healer_iTunesStore_Icon144x144.png */,
 				BF03E2AD172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png */,
 				BFB99F1A15257F6D007EE559 /* sounds */,
@@ -2059,6 +2065,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				38024DC413C2564D003D36F2 /* fps_images.png in Resources */,
+				BFA9F2EF18C3221400075449 /* Healer_iTunesStore_Icon76x76.png in Resources */,
 				38024DD313C2564D003D36F2 /* iTunesArtwork in Resources */,
 				BF0557B51526BC02006B4781 /* assets in Resources */,
 				BFA2F13D16CF02AE00E639A9 /* sounds in Resources */,
@@ -2073,6 +2080,7 @@
 				BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */,
 				BF03E2AE172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png in Resources */,
 				BF03E2B0172A44F900F3A429 /* Healer_iTunesStore_Icon144x144.png in Resources */,
+				BFA9F2F318C3227400075449 /* Healer_iTunesStore_Icon156x156.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

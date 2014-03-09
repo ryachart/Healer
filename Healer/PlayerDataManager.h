@@ -78,6 +78,7 @@ extern NSString* const MainGameContentKey;
 - (BOOL)canAffordShopItem:(ShopItem*)item;
 - (BOOL)hasShopItem:(ShopItem*)item;
 - (BOOL)hasSpell:(Spell*)spell;
+- (NSArray*)purchasedItems;
 
 #pragma mark - Talents
 - (NSString*)selectedChoiceForTier:(NSInteger)tier;

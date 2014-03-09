@@ -672,7 +672,7 @@
         bossKey = @"endlessvoid";
     }
     
-    title = bossKey;
+    title = enemyForEncounter.title;
     
     [enemyForEncounter reconfigureMaximumHealth:780000];
     [enemyForEncounter configureBossForDifficultyLevel:2];

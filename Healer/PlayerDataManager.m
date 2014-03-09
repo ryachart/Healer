@@ -176,7 +176,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (NSString *)playerMessage
 {
-    NSString* playerMessage = [[NSString alloc] initWithData:[[PlayerDataManager localPlayer] sharableData] encoding:NSUTF8StringEncoding];
+    NSString* playerMessage = [[[NSString alloc] initWithData:[[PlayerDataManager localPlayer] sharableData] encoding:NSUTF8StringEncoding] autorelease];
     return [NSString stringWithFormat:@"PLAYER|%@", playerMessage];
 }
 
@@ -543,7 +543,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     }
 }
 
--(NSArray*)purchasedItems{
+- (NSArray*)purchasedItems{
     NSMutableArray *purchasedItems = [NSMutableArray arrayWithCapacity:20];
     for (ShopItem *item in [Shop allShopItems]){
         if ([self hasShopItem:item]){
@@ -553,7 +553,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     return purchasedItems;
 }
 
--(NSArray*)allOwnedSpells{
+- (NSArray*)allOwnedSpells{
     NSMutableArray *allSpells = [NSMutableArray arrayWithCapacity:20];
     NSArray *allShopItems = [Shop allShopItems];
     NSArray *purchasedItems = [self purchasedItems];

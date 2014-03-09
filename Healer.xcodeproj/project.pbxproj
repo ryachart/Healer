@@ -103,6 +103,8 @@
 		BF87D85B1601ABFB00BEAD5B /* tips.plist in Resources */ = {isa = PBXBuildFile; fileRef = BF87D85A1601ABFB00BEAD5B /* tips.plist */; };
 		BF88E56718C58D7F0069D273 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF42FF0718C0585B00E33EFE /* GameKit.framework */; };
 		BF88E56818C58D840069D273 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF42FF0718C0585B00E33EFE /* GameKit.framework */; };
+		BF88E56B18C58E540069D273 /* AddRemoveSpellLayer_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BF88E56A18C58E540069D273 /* AddRemoveSpellLayer_iPhone.m */; };
+		BF88E56C18C58E540069D273 /* AddRemoveSpellLayer_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BF88E56A18C58E540069D273 /* AddRemoveSpellLayer_iPhone.m */; };
 		BF8A50F415236D6300BEC882 /* GamePlayFTUELayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */; };
 		BF95CF79165736190058FB85 /* CCNumberChangeAction.m in Sources */ = {isa = PBXBuildFile; fileRef = BF95CF78165736190058FB85 /* CCNumberChangeAction.m */; };
 		BF98B18215D3572700017EA4 /* EnemyAbilityDescriptionsView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF98B18115D3572700017EA4 /* EnemyAbilityDescriptionsView.m */; };
@@ -877,6 +879,8 @@
 		BF865F2A15A031FB007F5DBF /* BasicButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicButton.h; sourceTree = "<group>"; };
 		BF865F2B15A031FB007F5DBF /* BasicButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BasicButton.m; sourceTree = "<group>"; };
 		BF87D85A1601ABFB00BEAD5B /* tips.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = tips.plist; sourceTree = "<group>"; };
+		BF88E56918C58E540069D273 /* AddRemoveSpellLayer_iPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddRemoveSpellLayer_iPhone.h; sourceTree = "<group>"; };
+		BF88E56A18C58E540069D273 /* AddRemoveSpellLayer_iPhone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddRemoveSpellLayer_iPhone.m; sourceTree = "<group>"; };
 		BF8A50F215236D6300BEC882 /* GamePlayFTUELayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlayFTUELayer.h; sourceTree = "<group>"; };
 		BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlayFTUELayer.m; sourceTree = "<group>"; };
 		BF95CF77165736190058FB85 /* CCNumberChangeAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCNumberChangeAction.h; sourceTree = "<group>"; };
@@ -1423,6 +1427,8 @@
 				BFC032ED17EE9A4000ACA936 /* PostBattleLayer_iPhone.m */,
 				BF0259B3182C8D9200D02DA3 /* SpellDescriptionLayer.h */,
 				BF0259B4182C8D9200D02DA3 /* SpellDescriptionLayer.m */,
+				BF88E56918C58E540069D273 /* AddRemoveSpellLayer_iPhone.h */,
+				BF88E56A18C58E540069D273 /* AddRemoveSpellLayer_iPhone.m */,
 			);
 			name = Layers;
 			sourceTree = "<group>";
@@ -2457,6 +2463,7 @@
 				BF261C381602C7A4003307DF /* Slot.m in Sources */,
 				BFD8EF4C160F9F1C00BAF83A /* LaunchScene.m in Sources */,
 				BFD106F7163A282D002318CE /* LevelSelectMapScene.m in Sources */,
+				BF88E56B18C58E540069D273 /* AddRemoveSpellLayer_iPhone.m in Sources */,
 				BFD106FB163A2956002318CE /* LevelSelectMapNode.m in Sources */,
 				BFD106FE163A29D5002318CE /* LevelSelectSprite.m in Sources */,
 				BF0022BE163EE94C00384882 /* EncounterCard.m in Sources */,
@@ -2568,6 +2575,7 @@
 				BF9ACDB41749B2AA00C05A61 /* LevelSelectMapNode.m in Sources */,
 				BF9ACDB51749B2AA00C05A61 /* LevelSelectSprite.m in Sources */,
 				BF9ACDB61749B2AA00C05A61 /* EncounterCard.m in Sources */,
+				BF88E56C18C58E540069D273 /* AddRemoveSpellLayer_iPhone.m in Sources */,
 				BF9ACDB71749B2AA00C05A61 /* (null) in Sources */,
 				BF9ACDB81749B2AA00C05A61 /* ChallengeRatingStepper.m in Sources */,
 				BF9ACDB91749B2AA00C05A61 /* SettingsScene.m in Sources */,

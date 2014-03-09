@@ -112,6 +112,13 @@
     return [BasicButton spriteButtonWithSpriteFrameName:@"button_back.png" target:target andSelector:selector];
 }
 
++ (CCMenu *)basicButtonMenuWithTarget:(id)target selector:(SEL)selector title:(NSString *)title scale:(float)scale
+{
+    BasicButton *menuButton = [BasicButton basicButtonWithTarget:target andSelector:selector andTitle:title];
+    [menuButton setScale:scale];
+    return [CCMenu menuWithItems:menuButton, nil];
+}
+
 - (void)setTitle:(NSString *)title {
     for (CCNode *node in self.disabledImage.children) {
         if ([node isKindOfClass:[CCLabelTTF class]]){

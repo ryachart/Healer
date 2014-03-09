@@ -21,6 +21,7 @@
 @property (nonatomic, retain) NSMutableDictionary *ownedSpellSlots;
 @property (nonatomic, assign) CCMenu *dismissButton;
 @property (nonatomic, assign) BackgroundSprite *unusedBoard;
+
 @end
 
 @implementation AddRemoveSpellLayer

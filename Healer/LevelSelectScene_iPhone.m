@@ -14,22 +14,37 @@
 #import "BackgroundSprite.h"
 #import "Encounter.h"
 #import "GamePlayScene.h"
+#import "AddRemoveSpellLayer_iPhone.h"
 
 @interface LevelSelectScene_iPhone ()
 @property (nonatomic, assign) CCTableView *levelSelectTable;
+@property (nonatomic, assign) AddRemoveSpellLayer_iPhone *spellsLayer;
 @end
 
 @implementation LevelSelectScene_iPhone
 
+- (void)dealloc
+{
+    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFramesFromFile:@"assets-iphone/shop-sprites.plist"];
+    [super dealloc];
+}
+
 - (id)init
 {
     if (self = [super init]) {
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets-iphone/shop-sprites.plist"];
+        
         BackgroundSprite *bgSprite = [[[BackgroundSprite alloc] initWithJPEGAssetName:@"homescreen-bg"] autorelease];
         [self addChild:bgSprite];
         
         CCMenu *backButton = [BasicButton defaultBackButtonWithTarget:self andSelector:@selector(back)];
         [self addChild:backButton];
         [backButton setPosition:CGPointMake(85, SCREEN_HEIGHT * .92)];
+        
+        CCMenu *spellButton = [BasicButton basicButtonMenuWithTarget:self selector:@selector(spellsToggle) title:@"Spells" scale:.5f];
+        [self addChild:spellButton];
+        
+        [spellButton setPosition:CGPointMake(250, SCREEN_HEIGHT * .95)];
         
         self.levelSelectTable = [[[CCTableView alloc] initWithViewSize:CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT - 80)] autorelease];
         self.levelSelectTable.verticalFillOrder = SWTableViewFillTopDown;
@@ -43,6 +58,11 @@
     return self;
 }
 
+- (void)configureActiveSpellsView
+{
+    
+}
+
 - (void)back
 {
     [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[HealerStartScene_iPhone alloc] init] autorelease]]];
@@ -53,6 +73,17 @@
     [super onEnter];
     [self.levelSelectTable reloadData];
     [self.levelSelectTable scrollToTopAnimated:NO];
+}
+
+- (void)spellsToggle
+{
+    if (self.spellsLayer) {
+        [self.spellsLayer removeFromParentAndCleanup:YES];
+        
+    } else {
+        self.spellsLayer = [[[AddRemoveSpellLayer_iPhone alloc] init] autorelease];
+        [self addChild:self.spellsLayer];
+    }
 }
 
 - (CGSize)cellSizeForTable:(CCTableView *)table
@@ -71,7 +102,7 @@
     NSInteger levelNumber = idx + 1;
     
     CCSprite *cellSprite = [CCSprite spriteWithSpriteFrameName:@"button_home.png"];
-    CCLabelTTFShadow *levelNumberLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"%@", [Encounter pocketEncounterForLevel:levelNumber].title] fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+    CCLabelTTFShadow *levelNumberLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"%@", [Encounter pocketEncounterForLevel:levelNumber].title] fontName:@"TrebuchetMS-Bold" fontSize:16.0];
     levelNumberLabel.position = CGPointMake(cellSprite.contentSize.width /2, cellSprite.contentSize.height / 2);
     [cellSprite addChild:levelNumberLabel];
     

@@ -285,7 +285,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (void)setFtueState:(FTUEState)ftueState
 {
-    [self.playerData setObject:[NSNumber numberWithInt:ftueState] forKey:PlayerFTUEState];
+    [self.playerData setObject:[NSNumber numberWithLong:ftueState] forKey:PlayerFTUEState];
 }
 
 - (FTUEState)ftueState
@@ -326,7 +326,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 - (void)difficultySelected:(NSInteger)challenge forLevelNumber:(NSInteger)levelNum
 {
     NSMutableArray *difficultyLevels = [self difficultyLevels];
-    [difficultyLevels replaceObjectAtIndex:levelNum withObject:[NSNumber numberWithInt:challenge]];
+    [difficultyLevels replaceObjectAtIndex:levelNum withObject:[NSNumber numberWithLong:challenge]];
     [self.playerData setObject:difficultyLevels forKey:PlayerLevelDifficultyLevelsKey];
 }
 
@@ -335,14 +335,14 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 }
 
 - (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level {
-    [self.playerData setValue:[NSNumber numberWithInt:rating] forKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%d", level]];
+    [self.playerData setValue:[NSNumber numberWithLong:rating] forKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%ld", (long)level]];
 }
 
 - (NSInteger)levelRatingForLevel:(NSInteger)level {
     if (level == 1) {
         return 0; //You can't get rating from the tutorial level
     }
-    NSInteger rating = [[self.playerData objectForKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%d", level]] intValue];
+    NSInteger rating = [[self.playerData objectForKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%ld", (long)level]] intValue];
     if (rating > 5) { //Gross Migration code
         rating /= 2;
     }
@@ -350,11 +350,11 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 }
 
 - (void)setScore:(NSInteger)score forLevel:(NSInteger)level {
-    [self.playerData setValue:[NSNumber numberWithInt:score] forKey:[PlayerLevelScoreKeyPrefix stringByAppendingFormat:@"%d", level]];
+    [self.playerData setValue:[NSNumber numberWithLong:score] forKey:[PlayerLevelScoreKeyPrefix stringByAppendingFormat:@"%ld", (long)level]];
 }
 
 - (NSInteger)scoreForLevel:(NSInteger)level {
-    return [[self.playerData objectForKey:[PlayerLevelScoreKeyPrefix stringByAppendingFormat:@"%d", level]] intValue];
+    return [[self.playerData objectForKey:[PlayerLevelScoreKeyPrefix stringByAppendingFormat:@"%ld", (long)level]] intValue];
 }
 
 - (NSInteger)highestLevelCompleted {
@@ -375,16 +375,16 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 }
 
 - (void)failLevel:(NSInteger)level {
-    NSString *failedKey = [PlayerLevelFailed stringByAppendingFormat:@"-%i", level];
+    NSString *failedKey = [PlayerLevelFailed stringByAppendingFormat:@"-%li", (long)level];
     NSInteger failedTimes = [[self.playerData objectForKey:failedKey] intValue];
     failedTimes++;
-    [self.playerData setObject:[NSNumber numberWithInt:failedTimes] forKey:failedKey];
+    [self.playerData setObject:[NSNumber numberWithLong:failedTimes] forKey:failedKey];
 }
 
 - (void)completeLevel:(NSInteger)level {
     BOOL isFirstWin = level > [self highestLevelCompleted];
     if (isFirstWin){
-        [self.playerData setValue:[NSNumber numberWithInt:level] forKey:PlayerHighestLevelCompleted];
+        [self.playerData setValue:[NSNumber numberWithLong:level] forKey:PlayerHighestLevelCompleted];
     }
 }
 
@@ -403,9 +403,9 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (void)setPlayerObjectInformation:(PFObject*)obj {
     NSInteger numVisits = [[obj objectForKey:@"saves"] intValue];
-    [obj setObject:[NSNumber numberWithInt:[self highestLevelCompleted]] forKey:@"HLCompleted"];
-    [obj setObject:[NSNumber numberWithInt:self.gold] forKey:@"Gold"];
-    [obj setObject:[NSNumber numberWithInt:numVisits+1] forKey:@"saves"];
+    [obj setObject:[NSNumber numberWithLong:[self highestLevelCompleted]] forKey:@"HLCompleted"];
+    [obj setObject:[NSNumber numberWithLong:self.gold] forKey:@"Gold"];
+    [obj setObject:[NSNumber numberWithLong:numVisits+1] forKey:@"saves"];
     if (self.playerName) {
         [obj setObject:self.playerName forKey:@"PlayerName"];
     }
@@ -424,7 +424,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     NSMutableArray *levelRatings = [NSMutableArray arrayWithCapacity:highestLevelCompleted];
     for (int i = 1; i <= highestLevelCompleted; i++){
         NSInteger rating =  [self levelRatingForLevel:i];
-        NSNumber *numberObj = [NSNumber numberWithInt:rating];
+        NSNumber *numberObj = [NSNumber numberWithLong:rating];
         [levelRatings addObject:numberObj];
     }
     
@@ -433,7 +433,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     NSMutableArray *levelScores = [NSMutableArray arrayWithCapacity:highestLevelCompleted];
     for (int i = 1; i <= highestLevelCompleted; i++){
         NSInteger score =  [self scoreForLevel:i];
-        NSNumber *numberObj = [NSNumber numberWithInt:score];
+        NSNumber *numberObj = [NSNumber numberWithLong:score];
         [levelScores addObject:numberObj];
     }
     
@@ -443,7 +443,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     for (int i = 1; i <= highestLevelCompleted + 1; i++){
         NSString *failedKey = [PlayerLevelFailed stringByAppendingFormat:@"-%i", i];
         NSInteger failedTimes = [[self.playerData objectForKey:failedKey] intValue];
-        NSNumber *numberObj = [NSNumber numberWithInt:failedTimes];
+        NSNumber *numberObj = [NSNumber numberWithLong:failedTimes];
         [levelFails addObject:numberObj];
     }
     [obj setObject:levelFails forKey:@"levelFails"];
@@ -471,7 +471,11 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 }
 
 - (NSArray*)lastUsedSpellTitles{
-    return (NSArray*)[self.playerData objectForKey:PlayerLastUsedSpellsKey];
+    NSArray *lastUsedSpells = (NSArray*)[self.playerData objectForKey:PlayerLastUsedSpellsKey];
+    if (!lastUsedSpells) {
+        lastUsedSpells = [NSArray array];
+    }
+    return lastUsedSpells;
 }
 
 - (NSArray*)lastUsedSpells {
@@ -566,7 +570,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 {
     if (_localPlayer == self) {
         NSInteger currentGold = [[self.playerData objectForKey:PlayerGold] intValue];
-        [[NSNotificationCenter defaultCenter] postNotificationName:PlayerGoldDidChangeNotification object:nil userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold]];
+        [[NSNotificationCenter defaultCenter] postNotificationName:PlayerGoldDidChangeNotification object:nil userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithLong:currentGold] forKey:PlayerGold]];
     }
 }
 
@@ -575,7 +579,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         return;
     NSInteger currentGold = [[self.playerData objectForKey:PlayerGold] intValue];
     currentGold += gold;
-    [self.playerData setObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold];
+    [self.playerData setObject:[NSNumber numberWithLong:currentGold] forKey:PlayerGold];
     [self saveLocalPlayer];
     [self postGoldChangedNotification];
 }
@@ -588,7 +592,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     if (currentGold < 0){
         currentGold = 0; //MAX GOLD
     }
-    [self.playerData setObject:[NSNumber numberWithInt:currentGold] forKey:PlayerGold];
+    [self.playerData setObject:[NSNumber numberWithLong:currentGold] forKey:PlayerGold];
     [self saveLocalPlayer];
     [self postGoldChangedNotification];
 }
@@ -597,7 +601,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (NSString*)selectedChoiceForTier:(NSInteger)tier {
     NSDictionary *config =  (NSDictionary*)[self.playerData objectForKey:TalentConfig];
-    return [config objectForKey:[NSString stringWithFormat:@"tier-%i", tier]];
+    return [config objectForKey:[NSString stringWithFormat:@"tier-%li", (long)tier]];
 }
 
 - (NSDictionary*)talentConfig {
@@ -615,7 +619,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     }
     NSMutableDictionary *newConfig = [NSMutableDictionary dictionaryWithDictionary:divinityConfig];
     
-    [newConfig setObject:choice forKey:[NSString stringWithFormat:@"tier-%i", tier]];
+    [newConfig setObject:choice forKey:[NSString stringWithFormat:@"tier-%li", (long)tier]];
     [self.playerData setObject:newConfig forKey:TalentConfig];
     [self saveLocalPlayer];
 }
@@ -653,7 +657,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 #pragma mark - Cached Selections
 
 - (void)setLastSelectedLevel:(NSInteger)lastSelectedLevel {
-    [self.playerData setObject:[NSNumber numberWithInt:lastSelectedLevel] forKey:PlayerLastSelectedLevelKey];
+    [self.playerData setObject:[NSNumber numberWithLong:lastSelectedLevel] forKey:PlayerLastSelectedLevelKey];
 }
 
 - (NSInteger)lastSelectedLevel {
@@ -815,7 +819,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 {
     NSInteger newTotal = self.totalItemsEarned + 1;
     [item itemEarnedWithId:newTotal];
-    [self.playerData setObject:[NSNumber numberWithInt:newTotal] forKey:PlayerTotalItemsEarnedKey];
+    [self.playerData setObject:[NSNumber numberWithLong:newTotal] forKey:PlayerTotalItemsEarnedKey];
     
     NSArray *inventory = [self.playerData objectForKey:PlayerInventoryKey];
     if (!inventory) {
@@ -948,7 +952,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     if (self.gold >= cost) {
         NSInteger numUpgrades = [[self.playerData objectForKey:PlayerAllyDamageUpgradesKey] integerValue];
         numUpgrades++;
-        [self.playerData setObject:[NSNumber numberWithInt:numUpgrades] forKey:PlayerAllyDamageUpgradesKey];
+        [self.playerData setObject:[NSNumber numberWithLong:numUpgrades] forKey:PlayerAllyDamageUpgradesKey];
         [self playerLosesGold:cost];
     }
 }
@@ -960,7 +964,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         NSInteger numUpgrades = [[self.playerData objectForKey:PlayerAllyHealthUpgradesKey] integerValue];
         if (numUpgrades < MAXIMUM_ALLY_UPGRADES){
             numUpgrades++;
-            [self.playerData setObject:[NSNumber numberWithInt:numUpgrades] forKey:PlayerAllyHealthUpgradesKey];
+            [self.playerData setObject:[NSNumber numberWithLong:numUpgrades] forKey:PlayerAllyHealthUpgradesKey];
             [self playerLosesGold:cost];
         }
     }
@@ -1021,6 +1025,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         if (playerObjectID){
             @try {
                 PFQuery *playerObjectQuery = [PFQuery queryWithClassName:playerClassName];
+                [playerObjectQuery whereKey:@"objectId" equalTo:playerObjectID];
                 NSArray *objects = [playerObjectQuery findObjects];
                 PFObject *playerObject;
                 if (objects.count > 0) {

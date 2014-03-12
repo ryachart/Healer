@@ -173,12 +173,12 @@ Parse.Cloud.job("sum_all_ratings", function(request, status) {
 Parse.Cloud.afterSave("player", function(request) {
     var query = new Parse.Query("tier1progress")
     query.equalTo("playerId", request.object.id);
+    sum_ratings(request.object);
     query.find({
         success : function(results) {
             var object;
             if (results.length > 0) {
                 object = results[0];
-                sum_ratings(object);
             } 
             
             /*else {

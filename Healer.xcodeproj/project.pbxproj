@@ -139,7 +139,6 @@
 		BFD8EC5B160ED2E100BAF83A /* libkazmath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB78160ED1FF00BAF83A /* libkazmath.a */; };
 		BFD8EF4C160F9F1C00BAF83A /* LaunchScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD8EF4B160F9F1C00BAF83A /* LaunchScene.m */; };
 		BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */; };
-		BFE66EDF16D9749800B9FBEE /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = BFE66EDE16D9749800B9FBEE /* fonts */; };
 		BFF4198C15A27CF700BC0453 /* talents.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFF4198B15A27CF700BC0453 /* talents.plist */; };
 		BFF6B202176926130014640C /* NSString+Obfuscation.m in Sources */ = {isa = PBXBuildFile; fileRef = BFF6B201176926130014640C /* NSString+Obfuscation.m */; };
 		BFFB58E6152D69C7005B760E /* MultiplayerSetupScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFFB58E5152D69C7005B760E /* MultiplayerSetupScene.m */; };
@@ -2075,7 +2074,6 @@
 				BFABD58E15EC506100A30F07 /* Default-Landscape~ipad.png in Resources */,
 				BF87D85B1601ABFB00BEAD5B /* tips.plist in Resources */,
 				BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */,
-				BFE66EDF16D9749800B9FBEE /* fonts in Resources */,
 				BF1DDBAD1711F52C0008C946 /* README.md in Resources */,
 				BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */,
 				BF03E2AE172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png in Resources */,

@@ -576,7 +576,9 @@
 //        return;
 //    }
     
-    [[PlayerDataManager localPlayer] submitScore:self.encounter player:self.player];
+    if (self.encounter.difficulty >= 4) {
+        [[PlayerDataManager localPlayer] submitScore:self.encounter player:self.player];
+    }
     
     [[SimpleAudioEngine sharedEngine] crossFadeBackgroundMusic:nil forDuration:.5];
     if (success) {

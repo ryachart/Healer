@@ -456,6 +456,14 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     
     [obj setObject:ownedSpellTitles forKey:@"Spells"];
     
+    
+    for (int i = 0; i < SlotTypeMaximum; i++) {
+        EquipmentItem *item = [self itemForSlot:i];
+        if (item != nil) {
+            [obj setObject:item.baseString forKey:item.slotTypeName];
+        }
+    }
+    
 }
 
 #pragma mark - Last Used Spells

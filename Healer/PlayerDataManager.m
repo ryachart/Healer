@@ -12,6 +12,7 @@
 #import "Talents.h"
 #import "ShopItem.h"
 #import "Encounter.h"
+#import "NSString+Obfuscation.h"
 
 @interface PlayerDataManager ()
 @property (nonatomic, retain) NSMutableDictionary *playerData;
@@ -252,7 +253,13 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 {
     NSInteger gold = [[voucher objectForKey:@"goldGrant"] integerValue];
     NSString *contentKey = [voucher objectForKey:@"contentKey"];
-    [self purchaseContentWithKey:contentKey];
+    if (contentKey)
+        [self purchaseContentWithKey:contentKey];
+    NSString *itemGrantKey = [voucher objectForKey:@"itemGrant"];
+    if (itemGrantKey){
+        EquipmentItem *grantedItem = [[[EquipmentItem alloc] initWithItemCacheString:itemGrantKey.obfuscatedString] autorelease];
+        [self playerEarnsItem:grantedItem];
+    }
     [self playerEarnsGold:gold];
     [voucher setObject:[NSDate date] forKey:@"dateConsumed"];
     [voucher setObject:[NSNumber numberWithBool:true] forKey:@"isConsumed"];

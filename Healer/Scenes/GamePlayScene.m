@@ -576,7 +576,7 @@
 //        return;
 //    }
     
-    if (self.encounter.difficulty >= 4) {
+    if (self.encounter.difficulty >= 4 && success) {
         [[PlayerDataManager localPlayer] submitScore:self.encounter player:self.player];
     }
     

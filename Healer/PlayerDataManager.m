@@ -117,6 +117,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     }
     if (self.equippedItems.count > 0) {
         [basicPlayer setEquippedItems:self.equippedItems];
+        [basicPlayer setHealth:basicPlayer.maximumHealth];
         NSMutableArray *spellsFromItems = [NSMutableArray arrayWithCapacity:2];
         for (EquipmentItem *item in basicPlayer.equippedItems) {
             Spell *spell = item.spellFromItem;
@@ -930,7 +931,13 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     if (thisItem) {
         [thisItem retain];
         NSMutableArray *newInventory = [NSMutableArray arrayWithArray:[self.playerData objectForKey:PlayerInventoryKey]];
-        [newInventory removeObject:thisItem.cacheString];
+        
+        NSUInteger objectIndexToRemove = [newInventory indexOfObject:thisItem.cacheString];
+        if (objectIndexToRemove != NSNotFound) {
+            [newInventory removeObjectAtIndex:objectIndexToRemove];
+        } else {
+            NSAssert(objectIndexToRemove != NSNotFound, @"Couldn't find an item to remove.");
+        }
         
         [self.playerData setObject:newInventory forKey:PlayerInventoryKey];
         [thisItem release];

@@ -2595,18 +2595,24 @@
 {
     NSInteger periodicEffectCount = 0;
     for (RaidMember *member in theRaid.livingMembers) {
+        BOOL effectAdded = false;
+
         for (Effect *eff in member.activeEffects) {
             if (eff.effectType == EffectTypePositive && [eff isKindOfClass:[RepeatedHealthEffect class]]) {
                 eff.isExpired = YES;
                 periodicEffectCount++;
-                Effect *consumed = [[[Effect alloc] initWithDuration:1.5 andEffectType:EffectTypePositive] autorelease];
-                [consumed setTitle:@"consumed"];
-                [consumed setOwner:self.owner];
-                [consumed setSpriteName:self.iconName];
-                [member addEffect:consumed];
+                effectAdded = true;
             }
         }
+        if (effectAdded) {
+            Effect *consumed = [[[Effect alloc] initWithDuration:1.5 andEffectType:EffectTypePositive] autorelease];
+            [consumed setTitle:@"consumed"];
+            [consumed setOwner:self.owner];
+            [consumed setSpriteName:self.iconName];
+            [member addEffect:consumed];
+        }
     }
+
 
     self.owner.health += self.owner.maximumHealth * (periodicEffectCount / 100.0);
     

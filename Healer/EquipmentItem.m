@@ -109,11 +109,15 @@ static float stat_atoms[StatTypeMaximum] = {
     return self;
 }
 
-- (NSString *)cacheString
+- (NSString *)baseString
 {
     NSString *baseString = [NSString stringWithFormat:@"%@|%i|%1.3f|%1.3f|%1.3f|%1.3f|%i|%i|%@|%i|%i|%i", self.name, self.health, self.regen, self.speed, self.crit, self.healing, self.slot, self.rarity, self.specialKey, self.quality, self.uniqueId, self.earnedItemId];
-    
-    return baseString.obfuscatedString;
+    return baseString;
+}
+
+- (NSString *)cacheString
+{   
+    return self.baseString.obfuscatedString;
 }
 
 + (NSString *)randomItemNameForSlot:(SlotType)slot

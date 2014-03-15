@@ -7,6 +7,7 @@
 
 #import "RaidMemberPreBattleCard.h"
 #import "RaidMember.h"
+#import "PlayerDataManager.h"
 
 @interface RaidMemberPreBattleCard ()
 @property (nonatomic, retain) RaidMember *raidMember;
@@ -37,7 +38,7 @@
         [classNameLabel setPosition:ccp(78, 48)];
         [self addChild:classNameLabel];
         
-        CCLabelTTF *healthLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i HP", self.raidMember.maximumHealth] dimensions:CGSizeMake(120, 25) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0f];
+        CCLabelTTF *healthLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i HP", (int)round(self.raidMember.maximumHealth * (1 + [PlayerDataManager localPlayer].allyHealthUpgrades * .01))] dimensions:CGSizeMake(120, 25) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0f];
         [healthLabel setPosition:ccp(98, 28)];
         [self addChild:healthLabel];
         

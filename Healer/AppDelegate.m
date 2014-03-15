@@ -19,7 +19,6 @@
 #import <FacebookSDK/FacebookSDK.h>
 
 #define TestFlightToken @"f61995ee-f089-4504-97df-72ba466a1938"
-#define Facebook_App_ID @"397451217035067"
 #if IS_POCKET
     #import "HealerStartScene_iPhone.h"
 #else
@@ -39,7 +38,7 @@
 #if ANDROID
 #else
     [TestFlight takeOff:TestFlightToken];
-    [FBSettings publishInstall:Facebook_App_ID];
+    [FBAppEvents activateApp];
     [Parse setApplicationId:@"BajbrSl60Pz6ukDojWg8CAaUdCU7FoWr7UJCiJPs"
                   clientKey:@"2CSX0jPgh7K4X7PfWbmfPdyo3G8OfCqSa41JW4BZ"];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];

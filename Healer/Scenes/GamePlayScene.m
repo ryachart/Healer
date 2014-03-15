@@ -30,8 +30,11 @@
 #import "CollectibleLayer.h"
 #import "InventoryScene.h"
 #import "PlayerSprite.h"
+
+#if IS_POCKET
 #import "PostBattleLayer_iPhone.h"
 #import "LevelSelectScene_iPhone.h"
+#endif 
 
 #define DEBUG_IMMUNITIES false
 #define DEBUG_PERFECT_HEALS false
@@ -273,33 +276,41 @@
         [self.spellView1 setPlayer:self.player];
         [self addChild:self.spellView1];
         
-        self.spellView2 = [[[PlayerSpellButton alloc] init] autorelease];
-        [self.spellView2 setPosition:IS_IPAD ? CGPointMake(910, 200) : CGPointMake(82, 36)];
-        if (self.player.activeSpells.count > 0) {
-            Spell *spell = [[self.player activeSpells] objectAtIndex:1];
-            [self.spellView2 setSpellData:spell];
-            [self.spellView2 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
-            [self.spellView2 setPlayer:self.player];
+        if (self.player.activeSpells.count > 1){
+            self.spellView2 = [[[PlayerSpellButton alloc] init] autorelease];
+            [self.spellView2 setPosition:IS_IPAD ? CGPointMake(910, 200) : CGPointMake(82, 36)];
+            if (self.player.activeSpells.count > 0) {
+                Spell *spell = [[self.player activeSpells] objectAtIndex:1];
+                [self.spellView2 setSpellData:spell];
+                [self.spellView2 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                [self.spellView2 setPlayer:self.player];
+            }
+            [self addChild:self.spellView2];
         }
-        [self addChild:self.spellView2];
-        self.spellView3 = [[[PlayerSpellButton alloc] init] autorelease];
-        [self.spellView3 setPosition:IS_IPAD ? CGPointMake(910, 105) : CGPointMake(154, 36)];
-        if (self.player.activeSpells.count > 1) {
-            Spell *spell = [[self.player activeSpells] objectAtIndex:2];
-            [self.spellView3 setSpellData:spell];
-            [self.spellView3 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
-            [self.spellView3 setPlayer:self.player];
+        
+        if (self.player.activeSpells.count > 2 ){
+            self.spellView3 = [[[PlayerSpellButton alloc] init] autorelease];
+            [self.spellView3 setPosition:IS_IPAD ? CGPointMake(910, 105) : CGPointMake(154, 36)];
+            if (self.player.activeSpells.count > 1) {
+                Spell *spell = [[self.player activeSpells] objectAtIndex:2];
+                [self.spellView3 setSpellData:spell];
+                [self.spellView3 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                [self.spellView3 setPlayer:self.player];
+            }
+            [self addChild:self.spellView3];
         }
-        [self addChild:self.spellView3];
-        self.spellView4 = [[[PlayerSpellButton alloc] init] autorelease];
-        [self.spellView4 setPosition:IS_IPAD ? CGPointMake(910, 10) : CGPointMake(226, 36)];
-        if (self.player.activeSpells.count > 2) {
-            Spell *spell = [[self.player activeSpells] objectAtIndex:3];
-            [self.spellView4 setSpellData:spell];
-            [self.spellView4 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
-            [self.spellView4 setPlayer:self.player];
+        
+        if (self.player.activeSpells.count > 3){
+            self.spellView4 = [[[PlayerSpellButton alloc] init] autorelease];
+            [self.spellView4 setPosition:IS_IPAD ? CGPointMake(910, 10) : CGPointMake(226, 36)];
+            if (self.player.activeSpells.count > 2) {
+                Spell *spell = [[self.player activeSpells] objectAtIndex:3];
+                [self.spellView4 setSpellData:spell];
+                [self.spellView4 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
+                [self.spellView4 setPlayer:self.player];
+            }
+            [self addChild:self.spellView4];
         }
-        [self addChild:self.spellView4];
         
         if (!IS_IPAD) {
             self.spellView1.scale = .75;
@@ -565,8 +576,10 @@
             }
             [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:qps]];
         } else {
+#if IS_POCKET
             LevelSelectScene_iPhone* scene = [[[LevelSelectScene_iPhone alloc] init] autorelease];
             [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:scene]];
+#endif
         }
     }
     
@@ -597,8 +610,19 @@
     }
 }
 
--(void)battleEndWithSuccess:(BOOL)success{
-	[[PlayerDataManager localPlayer] submitScore:self.encounter player:self.player];
+- (void)battleEndWithSuccess:(BOOL)success{
+//    if (success && !(self.isServer || self.isClient) && [NormalModeCompleteScene needsNormalModeCompleteSceneForLevelNumber:self.encounter.levelNumber]){
+//        //If we just beat the final boss for the first time, show the normal mode complete Scene
+//        NormalModeCompleteScene *nmcs = [[[NormalModeCompleteScene alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:NO andDuration:self.encounter.duration] autorelease];
+//        [self setPaused:YES];
+//        [[CCDirector sharedDirector] replaceScene:[CCTransitionMoveInT transitionWithDuration:1.0 scene:nmcs]];
+//        return;
+//    }
+    
+    if (self.encounter.difficulty >= 4 && success) {
+        [[PlayerDataManager localPlayer] submitScore:self.encounter player:self.player];
+    }
+    
     [[SimpleAudioEngine sharedEngine] crossFadeBackgroundMusic:nil forDuration:.5];
     if (success) {
         [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/victory.mp3"];
@@ -645,7 +669,9 @@
     if (IS_IPAD) {
         pbl = [[[PostBattleLayer alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer andDuration:self.encounter.duration] autorelease];
     } else {
+#if IS_POCKET
         pbl = [[[PostBattleLayer_iPhone alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer andDuration:self.encounter.duration] autorelease];
+#endif
     }
     
     pbl.delegate = self;

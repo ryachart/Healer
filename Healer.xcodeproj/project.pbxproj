@@ -103,7 +103,6 @@
 		BF87D85B1601ABFB00BEAD5B /* tips.plist in Resources */ = {isa = PBXBuildFile; fileRef = BF87D85A1601ABFB00BEAD5B /* tips.plist */; };
 		BF88E56718C58D7F0069D273 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF42FF0718C0585B00E33EFE /* GameKit.framework */; };
 		BF88E56818C58D840069D273 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF42FF0718C0585B00E33EFE /* GameKit.framework */; };
-		BF88E56B18C58E540069D273 /* AddRemoveSpellLayer_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BF88E56A18C58E540069D273 /* AddRemoveSpellLayer_iPhone.m */; };
 		BF88E56C18C58E540069D273 /* AddRemoveSpellLayer_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BF88E56A18C58E540069D273 /* AddRemoveSpellLayer_iPhone.m */; };
 		BF8A50F415236D6300BEC882 /* GamePlayFTUELayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8A50F315236D6300BEC882 /* GamePlayFTUELayer.m */; };
 		BF95CF79165736190058FB85 /* CCNumberChangeAction.m in Sources */ = {isa = PBXBuildFile; fileRef = BF95CF78165736190058FB85 /* CCNumberChangeAction.m */; };
@@ -168,7 +167,6 @@
 		BF9ACDB41749B2AA00C05A61 /* LevelSelectMapNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106FA163A2956002318CE /* LevelSelectMapNode.m */; };
 		BF9ACDB51749B2AA00C05A61 /* LevelSelectSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106FD163A29D5002318CE /* LevelSelectSprite.m */; };
 		BF9ACDB61749B2AA00C05A61 /* EncounterCard.m in Sources */ = {isa = PBXBuildFile; fileRef = BF0022BD163EE94C00384882 /* EncounterCard.m */; };
-		BF9ACDB71749B2AA00C05A61 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		BF9ACDB81749B2AA00C05A61 /* ChallengeRatingStepper.m in Sources */ = {isa = PBXBuildFile; fileRef = 382C46411648CDA400883CFA /* ChallengeRatingStepper.m */; };
 		BF9ACDB91749B2AA00C05A61 /* SettingsScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 387E82A3164F1648009F11E6 /* SettingsScene.m */; };
 		BF9ACDBA1749B2AA00C05A61 /* CCNumberChangeAction.m in Sources */ = {isa = PBXBuildFile; fileRef = BF95CF78165736190058FB85 /* CCNumberChangeAction.m */; };
@@ -220,7 +218,6 @@
 		BF9ACDEC1749B2AA00C05A61 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */; };
 		BF9ACDED1749B2AA00C05A61 /* tips.plist in Resources */ = {isa = PBXBuildFile; fileRef = BF87D85A1601ABFB00BEAD5B /* tips.plist */; };
 		BF9ACDEE1749B2AA00C05A61 /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */; };
-		BF9ACDF11749B2AA00C05A61 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = BFE66EDE16D9749800B9FBEE /* fonts */; };
 		BF9ACDF21749B2AA00C05A61 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBA91711F52C0008C946 /* README.md */; };
 		BF9ACDF31749B2AA00C05A61 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1DDBAA1711F52C0008C946 /* release_notes.md */; };
 		BF9ACDF41749B2AA00C05A61 /* Healer_iTunesStore_Icon72x72.png in Resources */ = {isa = PBXBuildFile; fileRef = BF03E2AD172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png */; };
@@ -260,7 +257,6 @@
 		BFC032E917ED5B7700ACA936 /* LootTable.m in Sources */ = {isa = PBXBuildFile; fileRef = BF13AE7C1758031E00A613B1 /* LootTable.m */; };
 		BFC032EA17ED5BAD00ACA936 /* InventoryScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF13ADB717517EFF00A613B1 /* InventoryScene.m */; };
 		BFC032EB17ED5C1500ACA936 /* DraggableItemIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = BF13ADF8175189D800A613B1 /* DraggableItemIcon.m */; };
-		BFC032EE17EE9A4000ACA936 /* PostBattleLayer_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BFC032ED17EE9A4000ACA936 /* PostBattleLayer_iPhone.m */; };
 		BFC032EF17EE9A4000ACA936 /* PostBattleLayer_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BFC032ED17EE9A4000ACA936 /* PostBattleLayer_iPhone.m */; };
 		BFC1022F153F90BA00884677 /* Agent.m in Sources */ = {isa = PBXBuildFile; fileRef = BFC1022E153F90BA00884677 /* Agent.m */; };
 		BFD106F7163A282D002318CE /* LevelSelectMapScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD106F6163A282D002318CE /* LevelSelectMapScene.m */; };
@@ -276,8 +272,6 @@
 		BFD8EC5B160ED2E100BAF83A /* libkazmath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFD8EB78160ED1FF00BAF83A /* libkazmath.a */; };
 		BFD8EF4C160F9F1C00BAF83A /* LaunchScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BFD8EF4B160F9F1C00BAF83A /* LaunchScene.m */; };
 		BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */; };
-		BFE66EDF16D9749800B9FBEE /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = BFE66EDE16D9749800B9FBEE /* fonts */; };
-		BFEC80F617FBDB2500B7E789 /* ShopScene_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BFEC80F517FBDB2500B7E789 /* ShopScene_iPhone.m */; };
 		BFEC80F717FBDB2500B7E789 /* ShopScene_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BFEC80F517FBDB2500B7E789 /* ShopScene_iPhone.m */; };
 		BFF4198C15A27CF700BC0453 /* talents.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFF4198B15A27CF700BC0453 /* talents.plist */; };
 		BFF6B202176926130014640C /* NSString+Obfuscation.m in Sources */ = {isa = PBXBuildFile; fileRef = BFF6B201176926130014640C /* NSString+Obfuscation.m */; };
@@ -2346,7 +2340,6 @@
 				BF87D85B1601ABFB00BEAD5B /* tips.plist in Resources */,
 				BFD8EF4E160FA76000BAF83A /* Default-Landscape@2x~ipad.png in Resources */,
 				BFD240CD16AC8E09007010D0 /* bosses in Resources */,
-				BFE66EDF16D9749800B9FBEE /* fonts in Resources */,
 				BF1DDBAD1711F52C0008C946 /* README.md in Resources */,
 				BF1DDBAE1711F52C0008C946 /* release_notes.md in Resources */,
 				BF03E2AE172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png in Resources */,
@@ -2367,7 +2360,6 @@
 				BF9ACDEC1749B2AA00C05A61 /* Default-Landscape~ipad.png in Resources */,
 				BF9ACDED1749B2AA00C05A61 /* tips.plist in Resources */,
 				BF9ACDEE1749B2AA00C05A61 /* Default-Landscape@2x~ipad.png in Resources */,
-				BF9ACDF11749B2AA00C05A61 /* fonts in Resources */,
 				BF9ACDF21749B2AA00C05A61 /* README.md in Resources */,
 				BF9ACDF31749B2AA00C05A61 /* release_notes.md in Resources */,
 				BF9ACDF41749B2AA00C05A61 /* Healer_iTunesStore_Icon72x72.png in Resources */,
@@ -2463,12 +2455,10 @@
 				BF261C381602C7A4003307DF /* Slot.m in Sources */,
 				BFD8EF4C160F9F1C00BAF83A /* LaunchScene.m in Sources */,
 				BFD106F7163A282D002318CE /* LevelSelectMapScene.m in Sources */,
-				BF88E56B18C58E540069D273 /* AddRemoveSpellLayer_iPhone.m in Sources */,
 				BFD106FB163A2956002318CE /* LevelSelectMapNode.m in Sources */,
 				BFD106FE163A29D5002318CE /* LevelSelectSprite.m in Sources */,
 				BF0022BE163EE94C00384882 /* EncounterCard.m in Sources */,
 				382C46421648CDA400883CFA /* ChallengeRatingStepper.m in Sources */,
-				BFEC80F617FBDB2500B7E789 /* ShopScene_iPhone.m in Sources */,
 				387E82A4164F1648009F11E6 /* SettingsScene.m in Sources */,
 				BF95CF79165736190058FB85 /* CCNumberChangeAction.m in Sources */,
 				38B0BB251657694300D31540 /* RatingCounterSprite.m in Sources */,
@@ -2497,7 +2487,6 @@
 				BFF6B202176926130014640C /* NSString+Obfuscation.m in Sources */,
 				BF002377176F852A00445998 /* PlayerSprite.m in Sources */,
 				BFA8B72D177A44380048BBB4 /* TreasureChest.m in Sources */,
-				BFC032EE17EE9A4000ACA936 /* PostBattleLayer_iPhone.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2576,7 +2565,6 @@
 				BF9ACDB51749B2AA00C05A61 /* LevelSelectSprite.m in Sources */,
 				BF9ACDB61749B2AA00C05A61 /* EncounterCard.m in Sources */,
 				BF88E56C18C58E540069D273 /* AddRemoveSpellLayer_iPhone.m in Sources */,
-				BF9ACDB71749B2AA00C05A61 /* (null) in Sources */,
 				BF9ACDB81749B2AA00C05A61 /* ChallengeRatingStepper.m in Sources */,
 				BF9ACDB91749B2AA00C05A61 /* SettingsScene.m in Sources */,
 				BF9ACDBA1749B2AA00C05A61 /* CCNumberChangeAction.m in Sources */,
@@ -2694,7 +2682,7 @@
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				IS_POCKET = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2733,7 +2721,7 @@
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				IS_POCKET = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2746,6 +2734,7 @@
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
@@ -2801,7 +2790,7 @@
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/cocos2d-iphone/**";
 				INFOPLIST_FILE = Healer/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				IS_POCKET = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2814,6 +2803,7 @@
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
@@ -3069,7 +3059,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3113,7 +3103,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (

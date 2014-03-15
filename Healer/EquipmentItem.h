@@ -56,6 +56,7 @@ typedef enum {
 @property (nonatomic, readonly) NSString *slotTypeName;
 @property (nonatomic, readonly) NSInteger earnedItemId;
 @property (nonatomic, readonly) NSString *avatarItemName;
+@property (nonatomic, readonly) NSString *baseString;
 
 - (id)initWithName:(NSString *)name health:(NSInteger)health regen:(float)regen speed:(float)speed crit:(float)crit healing:(float)healing slot:(SlotType)slot rarity:(ItemRarity)rarity specialKey:(NSString *)specialKey quality:(NSInteger)quality uniqueId:(NSInteger)uniqueId;
 - (id)initWithItemCacheString:(NSString *)string;

@@ -11,10 +11,12 @@
 #import "Shop.h"
 #import "ShopItem.h"
 #import "ShopItemNode.h"
+#import "BasicButton.h"
 
 @interface AddRemoveSpellLayer_iPhone ()
 @property (nonatomic, assign) CCTableView *spellsTableView;
 @property (nonatomic, retain) NSMutableArray *activeSpellSprites;
+@property (nonatomic, assign) CCMenu *closeMenu;
 
 @end
 
@@ -29,10 +31,14 @@
 - (id)init
 {
     if (self = [super init]) {
+        self.closeMenu = [BasicButton basicButtonMenuWithTarget:self selector:@selector(dismiss) title:@"CLOSE" scale:.75];
+        [self.closeMenu setPosition:CGPointMake(160, SCREEN_HEIGHT - 35)];
+        [self addChild:self.closeMenu];
+        
         CCLayerColor *backdrop = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 255)];
         [self addChild:backdrop z:-99];
         
-        self.spellsTableView = [[[CCTableView alloc] initWithViewSize:CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT - 80)] autorelease];
+        self.spellsTableView = [[[CCTableView alloc] initWithViewSize:CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT - 100)] autorelease];
         self.spellsTableView.verticalFillOrder = SWTableViewFillTopDown;
         [self.spellsTableView setPosition:CGPointMake(SCREEN_WIDTH * .075, 0)];
         [self addChild:self.spellsTableView];
@@ -45,6 +51,11 @@
     return self;
 }
 
+- (void)dismiss
+{
+    [[PlayerDataManager localPlayer] saveLocalPlayer];
+    [self removeFromParentAndCleanup:YES];
+}
 
 - (void)onEnter
 {
@@ -53,6 +64,7 @@
     [self.spellsTableView scrollToTopAnimated:NO];
     
     [[CCDirectorIOS sharedDirector].touchDispatcher addTargetedDelegate:self priority:kCCMenuHandlerPriority -1 swallowsTouches:YES];
+    [self.closeMenu setHandlerPriority:kCCMenuHandlerPriority - 2];
 }
 
 - (void)onExit{
@@ -74,7 +86,7 @@
         CCSprite *spellSprite = [CCSprite spriteWithSpriteFrameName:spell.spriteFrameName];
         [self addChild:spellSprite];
         [spellSprite setScale:scale];
-        [spellSprite setPosition:CGPointMake(70 * spellCount + 50, SCREEN_HEIGHT * .90)];
+        [spellSprite setPosition:CGPointMake(70 * spellCount + 50, SCREEN_HEIGHT - 100)];
         [self.activeSpellSprites addObject:spellSprite];
         spellCount ++;
     }
@@ -84,7 +96,7 @@
         CCSprite *emptySlotSprite = [CCSprite spriteWithSpriteFrameName:@"spell_icon_back.png"];
         [self addChild:emptySlotSprite];
         [emptySlotSprite setScale:scale];
-        [emptySlotSprite setPosition:CGPointMake(70 * spellCount + 50, SCREEN_HEIGHT * .90)];
+        [emptySlotSprite setPosition:CGPointMake(70 * spellCount + 50, SCREEN_HEIGHT - 100)];
         [self.activeSpellSprites addObject:emptySlotSprite];
         spellCount++;
     }
@@ -135,7 +147,25 @@
 - (void)table:(CCTableView *)table cellTouched:(CCTableViewCell *)cell
 {
     NSInteger spellNumber = cell.idx;
+    Spell *selectedSpell = [[[[PlayerDataManager localPlayer] purchasedItems] objectAtIndex:spellNumber] purchasedSpell];
+    NSMutableArray *usedSpells = [NSMutableArray arrayWithArray:[PlayerDataManager localPlayer].lastUsedSpells];
     
+    NSArray *currentPlayersActiveSpells = [PlayerDataManager localPlayer].lastUsedSpells;
+    BOOL removed = false;
+    for (Spell *spell in currentPlayersActiveSpells) {
+        if ([spell.spellID isEqualToString:selectedSpell.spellID]) {
+            [usedSpells removeObject:spell];
+            removed = true;
+        }
+    }
+    
+    if (!removed &&  usedSpells.count < [PlayerDataManager localPlayer].maximumStandardSpellSlots) {
+        [usedSpells addObject:selectedSpell];
+    }
+    [[PlayerDataManager localPlayer] setUsedSpells:usedSpells];
+    
+    
+    [self configureActiveSpells];
 }
 
 @end

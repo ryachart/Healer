@@ -40,6 +40,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>203</string>
+	<key>FacebookAppID</key>
+	<string>397451217035067</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIPrerenderedIcon</key>

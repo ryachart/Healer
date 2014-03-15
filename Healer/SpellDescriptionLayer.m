@@ -10,6 +10,7 @@
 #import "BasicButton.h"
 #import "ShopItem.h"
 #import "PlayerDataManager.h"
+#import "SimpleAudioEngine.h"
 
 @interface SpellDescriptionLayer ()
 @property (nonatomic, retain) ShopItem *item;
@@ -82,7 +83,11 @@
 
 - (void)purchase
 {
-    
+    if ([[PlayerDataManager localPlayer] canAffordShopItem:self.item] && ![[PlayerDataManager localPlayer] hasShopItem:self.item]){
+        [[PlayerDataManager localPlayer] purchaseItem:self.item];
+        [[SimpleAudioEngine sharedEngine] playEffect:@"sounds/coinschest.mp3"];
+        [self back];
+    }
 }
 
 

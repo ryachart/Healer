@@ -18,7 +18,6 @@
 
 @interface LevelSelectScene_iPhone ()
 @property (nonatomic, assign) CCTableView *levelSelectTable;
-@property (nonatomic, assign) AddRemoveSpellLayer_iPhone *spellsLayer;
 @end
 
 @implementation LevelSelectScene_iPhone
@@ -58,11 +57,6 @@
     return self;
 }
 
-- (void)configureActiveSpellsView
-{
-    
-}
-
 - (void)back
 {
     [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[HealerStartScene_iPhone alloc] init] autorelease]]];
@@ -77,13 +71,7 @@
 
 - (void)spellsToggle
 {
-    if (self.spellsLayer) {
-        [self.spellsLayer removeFromParentAndCleanup:YES];
-        
-    } else {
-        self.spellsLayer = [[[AddRemoveSpellLayer_iPhone alloc] init] autorelease];
-        [self addChild:self.spellsLayer];
-    }
+    [self addChild:[[[AddRemoveSpellLayer_iPhone alloc] init] autorelease]];
 }
 
 - (CGSize)cellSizeForTable:(CCTableView *)table
@@ -103,7 +91,7 @@
     
     CCSprite *cellSprite = [CCSprite spriteWithSpriteFrameName:@"button_home.png"];
     CCLabelTTFShadow *levelNumberLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"%@", [Encounter pocketEncounterForLevel:levelNumber].title] fontName:@"TrebuchetMS-Bold" fontSize:16.0];
-    levelNumberLabel.position = CGPointMake(cellSprite.contentSize.width /2, cellSprite.contentSize.height / 2);
+    levelNumberLabel.position = CGPointMake(cellSprite.contentSize.width / 2, cellSprite.contentSize.height / 2);
     [cellSprite addChild:levelNumberLabel];
     
     
@@ -121,7 +109,7 @@
     NSInteger levelNumber = cell.idx + 1;
     Encounter *enc = [Encounter pocketEncounterForLevel:levelNumber];
     Player *player = [[[Player alloc] initWithHealth:1400 energy:1000 energyRegen:10] autorelease];
-    [player setActiveSpells:enc.recommendedSpells];
+    [player configureForRecommendedSpells:enc.recommendedSpells withLastUsedSpells:[PlayerDataManager localPlayer].lastUsedSpells];
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:[NSString stringWithFormat:@"assets-iphone/%@.plist", enc.bossKey]];
     GamePlayScene *scene = [[[GamePlayScene alloc] initWithEncounter:enc andPlayers:[NSArray arrayWithObject:player]] autorelease];
     [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:scene]];

@@ -1093,11 +1093,11 @@
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     if (self.isSpread) {
-        for (int i = 0; i < self.numberSpreads; i++) {
+        NSArray *spreadTargets = [raid randomTargets:self.numberSpreads withPositioning:Any excludingTargets:[NSArray arrayWithObject:self.target]];
+        for (RaidMember *member in spreadTargets){
             ContagiousEffect *spreadEffect = [self.copy autorelease];
-            [spreadEffect setValuePerTick:spreadEffect.valuePerTick * 1.05];
-            RaidMember *randomTarget = [raid randomLivingMember];
-            [randomTarget addEffect:spreadEffect];
+            [spreadEffect setValuePerTick:self.valuePerTick * 1.05];
+            [member addEffect:spreadEffect];
         }
         self.isSpread = NO;
     }

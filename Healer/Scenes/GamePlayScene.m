@@ -238,10 +238,10 @@
         }
         
         self.playerCastBar = [[[PlayerCastBar alloc] initWithFrame:CGRectMake(322,350, 400, 50)] autorelease];
-        if (!IS_IPAD) {
-            self.playerCastBar.position = CGPointMake(-30, 296);
-            self.playerCastBar.scale = .75;
-        }
+#if IS_POCKET
+        self.playerCastBar.position = CGPointMake(-30, 296);
+        self.playerCastBar.scale = .75;
+#endif
         [self.playerCastBar setPlayer:self.player];
         self.playerStatusView = [[[PlayerStatusView alloc] init] autorelease];
         [self.playerStatusView setPosition:IS_IPAD ? CGPointMake(130, 100) : CGPointMake(130, 20)];
@@ -254,6 +254,11 @@
         [self.announcementLabel setPosition:CGPointMake(512, 440)];
         [self.announcementLabel setColor:ccYELLOW];
         [self.announcementLabel setVisible:NO];
+#if IS_POCKET
+        self.announcementLabel.fontSize = 18.0;
+        self.announcementLabel.dimensions = CGSizeMake(200, 150);
+        self.announcementLabel.position = CGPointMake(SCREEN_WIDTH / 2, SCREEN_HEIGHT * .8);
+#endif
         
         self.errAnnouncementLabel = [CCLabelTTFShadow labelWithString:@"" dimensions:CGSizeMake(500, 300) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:32.0];
         [self.errAnnouncementLabel setPosition:CGPointMake([CCDirector sharedDirector].winSize.width * .5, [CCDirector sharedDirector].winSize.height * .62)];

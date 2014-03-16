@@ -46,7 +46,7 @@
         [spellButton setPosition:CGPointMake(250, SCREEN_HEIGHT * .95)];
         
         self.levelSelectTable = [[[CCTableView alloc] initWithViewSize:CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT - 80)] autorelease];
-        self.levelSelectTable.verticalFillOrder = SWTableViewFillTopDown;
+        self.levelSelectTable.verticalFillOrder = SWTableViewFillBottomUp;
         [self.levelSelectTable setPosition:CGPointMake(SCREEN_WIDTH * .14, 0)];
         [self addChild:self.levelSelectTable];
         self.levelSelectTable.contentSize = CGSizeMake(SCREEN_WIDTH, 2000);
@@ -108,8 +108,6 @@
 {
     NSInteger levelNumber = cell.idx + 1;
     Encounter *enc = [Encounter pocketEncounterForLevel:levelNumber];
-    NSLog(@"Clicked : %@", enc.bossKey);
-    return;
     Player *player = [[[Player alloc] initWithHealth:1400 energy:1000 energyRegen:10] autorelease];
     [player configureForRecommendedSpells:enc.recommendedSpells withLastUsedSpells:[PlayerDataManager localPlayer].lastUsedSpells];
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:[NSString stringWithFormat:@"assets-iphone/%@.plist", enc.bossKey]];

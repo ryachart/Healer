@@ -108,6 +108,8 @@
 {
     NSInteger levelNumber = cell.idx + 1;
     Encounter *enc = [Encounter pocketEncounterForLevel:levelNumber];
+    NSLog(@"Clicked : %@", enc.bossKey);
+    return;
     Player *player = [[[Player alloc] initWithHealth:1400 energy:1000 energyRegen:10] autorelease];
     [player configureForRecommendedSpells:enc.recommendedSpells withLastUsedSpells:[PlayerDataManager localPlayer].lastUsedSpells];
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:[NSString stringWithFormat:@"assets-iphone/%@.plist", enc.bossKey]];

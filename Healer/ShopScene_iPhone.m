@@ -49,7 +49,7 @@
         
         self.spellsTableView = [[[CCTableView alloc] initWithViewSize:CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT - 80)] autorelease];
         self.spellsTableView.verticalFillOrder = SWTableViewFillTopDown;
-        [self.spellsTableView setPosition:CGPointMake(SCREEN_WIDTH * .075, 0)];
+        [self.spellsTableView setPosition:CGPointMake(0, 0)];
         [self addChild:self.spellsTableView];
         self.spellsTableView.contentSize = CGSizeMake(SCREEN_WIDTH, 2000);
         [self.spellsTableView setDataSource:self];
@@ -85,10 +85,13 @@
     }
     
     NSInteger spellNumber = idx;
-    ShopItemNode *node = [[[ShopItemNode alloc] initForIphoneWithShopItem:[[Shop allShopItems] objectAtIndex:spellNumber]] autorelease];
+    ShopItem *item = [[Shop allShopItems] objectAtIndex:spellNumber];
     
-    
+    ShopItemNode *node = [[[ShopItemNode alloc] initForIphoneWithShopItem:item] autorelease];
     [availableCell setSprite:node];
+
+    //Must happen after setSprite because this tableview API is the worst
+    [node setPosition:CGPointMake(30, 0)];
     return availableCell;
 }
 

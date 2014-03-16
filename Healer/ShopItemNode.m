@@ -111,22 +111,15 @@
 
 - (id)initForIphoneWithShopItem:(ShopItem*)item
 {
-    if (self = [super init]){
-        CCSprite *bg = [CCSprite spriteWithSpriteFrameName:@"spell-node-bg.png"];
-        bg.scaleY = .5;
-        bg.scaleX = .7;
-        bg.position = CGPointMake(bg.contentSize.width / 2 * bg.scaleX, 0);
+    if (self = [super initWithSpriteFrameName:@"table_cell_bg.png"]){
         self.item = item;
-        self.background = bg;
-        
-        [self addChild:self.background];
+
         
         CGFloat itemNameFontSize = 24.0;
-        CGFloat titleVerticalAdjustment = 0;
         
         self.titleLabel = [CCLabelTTF labelWithString:self.item.title dimensions:CGSizeMake(200, 30) hAlignment:kCCTextAlignmentCenter fontName:@"TrebuchetMS-Bold" fontSize:itemNameFontSize];
         [self.titleLabel setColor:ccWHITE];
-        [self.titleLabel setPosition:CGPointMake(200, 0 + titleVerticalAdjustment)];
+        [self.titleLabel setPosition:CGPointMake(170, self.contentSize.height / 2)];
         [self.titleLabel setHorizontalAlignment:kCCTextAlignmentLeft];
         [self addChild:self.titleLabel];
 
@@ -136,7 +129,7 @@
         if (spellSpriteFrame){
             [self.spellIcon setDisplayFrame:spellSpriteFrame];
         }
-        [self.spellIcon setPosition:CGPointMake(40, 0)];
+        [self.spellIcon setPosition:CGPointMake(40, self.contentSize.height / 2)];
         [self.spellIcon setScale:.5];
         [self addChild:self.spellIcon];
 //
@@ -176,9 +169,6 @@
 //        [self.background addChild:self.itemCastTime];
 //        [self.background addChild:self.itemDescription];
 //        [self.background addChild:self.itemSpellType];
-        
-        
-        [self checkPlayerHasItem];
     }
     return self;
 }

@@ -40,7 +40,7 @@
         
         self.spellsTableView = [[[CCTableView alloc] initWithViewSize:CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT - 100)] autorelease];
         self.spellsTableView.verticalFillOrder = SWTableViewFillTopDown;
-        [self.spellsTableView setPosition:CGPointMake(SCREEN_WIDTH * .075, 0)];
+        [self.spellsTableView setPosition:CGPointMake(0, -50)];
         [self addChild:self.spellsTableView];
         self.spellsTableView.contentSize = CGSizeMake(SCREEN_WIDTH, 2000);
         [self.spellsTableView setDataSource:self];
@@ -91,7 +91,7 @@
         spellCount ++;
     }
     
-    int unusedSpellSlots = 4 - currentPlayersActiveSpells.count;
+    int unusedSpellSlots = [PlayerDataManager localPlayer].maximumStandardSpellSlots - currentPlayersActiveSpells.count;
     for (int i = 0; i < unusedSpellSlots; i++) {
         CCSprite *emptySlotSprite = [CCSprite spriteWithSpriteFrameName:@"spell_icon_back.png"];
         [self addChild:emptySlotSprite];
@@ -135,7 +135,7 @@
     ShopItemNode *node = [[[ShopItemNode alloc] initForIphoneWithShopItem:purchasedItem] autorelease];
     
     [availableCell setSprite:node];
-    
+    [node setPosition:CGPointMake(30, 0)];
     return availableCell;
 }
 

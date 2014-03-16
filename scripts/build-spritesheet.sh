@@ -10,8 +10,5 @@ mkdir -p $ASSETS_DIR
 for folder_name in ${sprite_atlas_dirs[@]}
 do
     folder_dir=${PROJECT_DIR}/$folder_name
-    plist=$ASSETS_DIR/${folder_name}-ipad-hd.plist
-    sheet=$ASSETS_DIR/${folder_name}-ipad-hd.pvr.ccz
-    /usr/local/bin/TexturePacker --smart-update --premultiply-alpha --opt RGBA8888 --disable-rotation --max-size 2048 --shape-padding 2 --data $plist --format cocos2d --sheet $sheet --variant .5 $folder_dir/*.png
-    /usr/local/bin/TexturePacker --smart-update --premultiply-alpha --dither-atkinson --opt RGBA4444 --disable-rotation --max-size 2048 --shape-padding 2 --data $plist --format cocos2d --sheet $sheet $folder_dir/*.png
+    /usr/local/bin/TexturePacker --variant 1:-ipad-hd --variant 0.5:-ipad --data ${folder_name}{v}.plist --sheet ${folder_name}{v}.png --format cocos2d $ASSETS_DIR
 done

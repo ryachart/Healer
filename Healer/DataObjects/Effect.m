@@ -1353,7 +1353,7 @@
 
 - (void)combatUpdateForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta
 {
-    NSArray *excludedEffectTitles = @[@"inverted-healing",@"wracking-pain-eff",@"soul-burn"];
+    NSArray *excludedEffectTitles = @[@"inverted-healing",@"wracking-pain-eff",@"soul-burn",@"contagious"];
     
     float targetHealth = (int)round(self.target.maximumHealth * .98);
     if ([self.target hasEffectWithTitle:@"burning-insanity"]) {

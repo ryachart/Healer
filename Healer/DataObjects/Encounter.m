@@ -1,9 +1,9 @@
 //
 //  Encounter.m
-//  RaidLeader
+//  Healer
 //
 //  Created by Ryan Hart on 5/1/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Copyright 2010 Ryan Hart Games. All rights reserved.
 //
 
 #import "Encounter.h"
@@ -625,45 +625,74 @@
     NSInteger numWizard = 0;
     NSInteger numBerserker = 0;
     
-    if (level == 1) {    
+    NSInteger overrideHealth = 0;
+    
+    if (level == 1) {
+        enemyForEncounter = [Ghoul defaultBoss];
+        bossKey = @"ghoul";
+    } else if (level == 2) {
         enemyForEncounter = [CorruptedTroll defaultBoss];
         bossKey = @"troll";
-    } else if (level == 2) {
+    } else if (level == 3) {
         enemyForEncounter = [Drake defaultBoss];
         bossKey = @"drake";
-    } else if (level == 3){
+    } else if (level == 4){
         enemyForEncounter = [MischievousImps defaultBoss];
         bossKey = @"imps";
-    } else if (level == 4) {
+    } else if (level == 5) {
         enemyForEncounter = [BefouledTreant defaultBoss];
         bossKey = @"treant";
-    } else if (level == 5) {
+    } else if (level == 6) {
         enemyForEncounter = [FinalRavager defaultBoss];
         bossKey = @"fungalravagers";
-    } else if (level == 6) {
+    } else if (level == 7) {
         enemyForEncounter = [PlaguebringerColossus defaultBoss];
         bossKey = @"plaguebringer";
-    } else if (level == 7) {
+    } else if (level == 8) {
         enemyForEncounter = [Trulzar defaultBoss];
         bossKey = @"trulzar";
-    } else if (level == 8) {
+    } else if (level == 9) {
+        enemyForEncounter = [Teritha defaultBoss];
+        bossKey = @"council";
+    } else if (level == 10) {
+        enemyForEncounter = [Sarroth defaultBoss];
+        bossKey = @"twinchampions";
+    } else if (level == 11) {
         enemyForEncounter = [Baraghast defaultBoss];
         bossKey = @"baraghast";
-    } else if (level == 9) {
+    } else if (level == 12) {
         enemyForEncounter = [CrazedSeer defaultBoss];
         bossKey = @"tyonath";
-    } else if (level == 10) {
+    } else if (level == 13) {
         enemyForEncounter = [GatekeeperDelsarn defaultBoss];
         bossKey = @"gatekeeper";
-    } else if (level == 11) {
+    } else if (level == 14) {
         enemyForEncounter = [SkeletalDragon defaultBoss];
         bossKey = @"skeletaldragon";
-    } else if (level == 12) {
+    } else if (level == 15) {
         enemyForEncounter = [ColossusOfBone defaultBoss];
         bossKey = @"colossusbone";
-    } else if (level == 13) {
+    } else if (level == 16) {
         enemyForEncounter = [OverseerOfDelsarn defaultBoss];
         bossKey = @"overseer";
+    } else if (level == 17) {
+        enemyForEncounter = [TheUnspeakable defaultBoss];
+        bossKey = @"unspeakable";
+    } else if (level == 18) {
+        enemyForEncounter = [BaraghastReborn defaultBoss];
+        bossKey = @"baraghastreborn";
+    } else if (level == 19) {
+        enemyForEncounter = [AvatarOfTorment1 defaultBoss];
+        bossKey = @"avataroftorment";
+    } else if (level == 20) {
+        enemyForEncounter = [AvatarOfTorment1 defaultBoss];
+        bossKey = @"avataroftorment";
+    } else if (level == 21) {
+        enemyForEncounter = [AvatarOfTorment2 defaultBoss];
+        bossKey = @"avataroftorment";
+    } else if (level == 20) {
+        enemyForEncounter = [SoulOfTorment defaultBoss];
+        bossKey = @"souloftorment";
     } else {
         enemyForEncounter = [TheEndlessVoid defaultBoss];
         info = @"The Endless Void";
@@ -674,7 +703,11 @@
     
     title = enemyForEncounter.title;
     
-    [enemyForEncounter reconfigureMaximumHealth:780000];
+    if (overrideHealth != 0) {
+        [enemyForEncounter reconfigureMaximumHealth:overrideHealth];
+    } else {
+        [enemyForEncounter reconfigureMaximumHealth:780000];
+    }
     [enemyForEncounter configureBossForDifficultyLevel:2];
     
     [enemies addObject:enemyForEncounter];
@@ -724,11 +757,14 @@
     return encToReturn;
 }
 
-+(NSInteger)goldForLevelNumber:(NSInteger)levelNumber{
++ (NSInteger)goldForLevelNumber:(NSInteger)levelNumber{
     NSInteger gold = 0;
     
     switch (levelNumber) {
         case 1:
+            if (IS_POCKET) {
+                return 25;
+            }
             return -25;
         case 2:
         case 3:

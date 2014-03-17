@@ -107,7 +107,6 @@
     [table animateCellsOffscreenWithCompletion:^{
         [self showSpellDescriptionLayerForShopItem:item];
     }];
-    
 }
 
 - (void)showSpellDescriptionLayerForShopItem:(ShopItem *)item

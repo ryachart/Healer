@@ -244,7 +244,6 @@
                 }];
                 NSArray *objectsToRemove = [[member activeEffects] objectsAtIndexes:similarEffectIndexes];
                 for (Effect *effToRemove in objectsToRemove) {
-                    NSLog(@"Removing similar effect because");
                     [member removeEffect:effToRemove];
                 }
             }

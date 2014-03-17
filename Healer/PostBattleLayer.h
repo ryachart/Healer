@@ -29,7 +29,7 @@ typedef enum {
 
 @interface PostBattleLayer : CCLayerColor <IconDescriptorModalDelegate>
 
-- (id)initWithVictory:(BOOL)victory encounter:(Encounter*)enc andIsMultiplayer:(BOOL)isMult andDuration:(NSTimeInterval)duration;
+- (id)initWithVictory:(BOOL)victory encounter:(Encounter*)enc andIsMultiplayer:(BOOL)isMult;
 
 @property (nonatomic, assign) id <PostBattleLayerDelegate> delegate;
 
@@ -37,5 +37,5 @@ typedef enum {
 @property (nonatomic, retain) NSString* serverPlayerId;
 @property (nonatomic, retain) GKVoiceChat *matchVoiceChat;
 - (void)processPlayerDataProgressionForMatch;
-- (void)initializeDataForVictory:(BOOL)victory encounter:(Encounter *)encounter isMultiplayer:(BOOL)isMultiplayer duration:(NSTimeInterval)duration;
+- (void)initializeDataForVictory:(BOOL)victory encounter:(Encounter *)encounter isMultiplayer:(BOOL)isMultiplayer;
 @end

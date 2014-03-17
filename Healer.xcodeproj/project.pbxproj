@@ -245,6 +245,8 @@
 		BFB4640C154A262800503E30 /* ShopItemNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB4640B154A262800503E30 /* ShopItemNode.m */; };
 		BFB46411154A268900503E30 /* Shop.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46410154A268900503E30 /* Shop.m */; };
 		BFB46414154A26A100503E30 /* ShopItem.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB46413154A26A100503E30 /* ShopItem.m */; };
+		BFBBEB5118D6406D00E08B02 /* IconDescriptionTableCellSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFBBEB5018D6406D00E08B02 /* IconDescriptionTableCellSprite.m */; };
+		BFBBEB5218D6731E00E08B02 /* IconDescriptionTableCellSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BFBBEB5018D6406D00E08B02 /* IconDescriptionTableCellSprite.m */; };
 		BFC032E017ED59A900ACA936 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF13AD76174D6F7200A613B1 /* FacebookSDK.framework */; };
 		BFC032E117ED5A2400ACA936 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF13ADB1174DB57E00A613B1 /* Social.framework */; };
 		BFC032E217ED5B4000ACA936 /* TreasureChest.m in Sources */ = {isa = PBXBuildFile; fileRef = BFA8B72C177A44380048BBB4 /* TreasureChest.m */; };
@@ -921,6 +923,8 @@
 		BFB46412154A26A100503E30 /* ShopItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopItem.h; sourceTree = "<group>"; };
 		BFB46413154A26A100503E30 /* ShopItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopItem.m; sourceTree = "<group>"; };
 		BFB99F1A15257F6D007EE559 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = SOURCE_ROOT; };
+		BFBBEB4F18D6406D00E08B02 /* IconDescriptionTableCellSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconDescriptionTableCellSprite.h; sourceTree = "<group>"; };
+		BFBBEB5018D6406D00E08B02 /* IconDescriptionTableCellSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconDescriptionTableCellSprite.m; sourceTree = "<group>"; };
 		BFC032EC17EE9A4000ACA936 /* PostBattleLayer_iPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostBattleLayer_iPhone.h; sourceTree = "<group>"; };
 		BFC032ED17EE9A4000ACA936 /* PostBattleLayer_iPhone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostBattleLayer_iPhone.m; sourceTree = "<group>"; };
 		BFC1022D153F90BA00884677 /* Agent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Agent.h; sourceTree = "<group>"; };
@@ -1372,6 +1376,7 @@
 		38F0504413C2618900BCADCB /* View Objects */ = {
 			isa = PBXGroup;
 			children = (
+				BFBBEB4B18D6403700E08B02 /* Ability Views */,
 				BFA8B6F1177A43FB0048BBB4 /* Post Battle */,
 				BF00233D176F851C00445998 /* Player Sprite */,
 				BF13ADFA1751B5F500A613B1 /* Inventory Views */,
@@ -1621,6 +1626,15 @@
 				BFB46413154A26A100503E30 /* ShopItem.m */,
 			);
 			name = Shop;
+			sourceTree = "<group>";
+		};
+		BFBBEB4B18D6403700E08B02 /* Ability Views */ = {
+			isa = PBXGroup;
+			children = (
+				BFBBEB4F18D6406D00E08B02 /* IconDescriptionTableCellSprite.h */,
+				BFBBEB5018D6406D00E08B02 /* IconDescriptionTableCellSprite.m */,
+			);
+			name = "Ability Views";
 			sourceTree = "<group>";
 		};
 		BFD106F8163A2944002318CE /* Map Views */ = {
@@ -2446,6 +2460,7 @@
 				BF865F2C15A031FB007F5DBF /* BasicButton.m in Sources */,
 				BF730C4015ABC1BD00E09B81 /* MultiplayerQueueScene.m in Sources */,
 				BF26BFC615CA0B5D00B7132D /* AbilityDescriptor.m in Sources */,
+				BFBBEB5218D6731E00E08B02 /* IconDescriptionTableCellSprite.m in Sources */,
 				BF98B18215D3572700017EA4 /* EnemyAbilityDescriptionsView.m in Sources */,
 				BF98B18615D3577A00017EA4 /* EnemyAbilityDescriptorIcon.m in Sources */,
 				BF98B18A15D37EAE00017EA4 /* IconDescriptionModalLayer.m in Sources */,
@@ -2576,6 +2591,7 @@
 				BF9ACDC01749B2AA00C05A61 /* EnemyCastBar.m in Sources */,
 				BF9ACDC11749B2AA00C05A61 /* EnemiesLayer.m in Sources */,
 				BF9ACDC21749B2AA00C05A61 /* EnemySprite.m in Sources */,
+				BFBBEB5118D6406D00E08B02 /* IconDescriptionTableCellSprite.m in Sources */,
 				BF9ACDC31749B2AA00C05A61 /* EnemyHealthBar.m in Sources */,
 				BF9ACDC41749B2AA00C05A61 /* PostBattleLayer.m in Sources */,
 				BF9ACDC51749B2AA00C05A61 /* WidthScalingBackgroundSprite.m in Sources */,
@@ -3047,7 +3063,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = HealerPocket;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "3338236F-0E56-4713-9345-AEBC8AFF5C7A";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = armv7;
@@ -3089,8 +3105,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = HealerPocket;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "12CDBC86-BCA6-4BD0-A721-6123003BEE43";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "12CDBC86-BCA6-4BD0-A721-6123003BEE43";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
@@ -3133,8 +3149,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = HealerPocket;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "12CDBC86-BCA6-4BD0-A721-6123003BEE43";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "12CDBC86-BCA6-4BD0-A721-6123003BEE43";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;

@@ -10,8 +10,10 @@
 #import "BasicButton.h"
 #import "BackgroundSprite.h"
 #import "GoldCounterSprite.h"
+#import "RatingCounterSprite.h"
 #import "LevelSelectScene_iPhone.h"
 #import "ShopScene_iPhone.h"
+#import "SettingsScene.h"
 
 @implementation HealerStartScene_iPhone
 
@@ -40,8 +42,14 @@
         [menu alignItemsVertically];
         
         GoldCounterSprite *goldCounter = [[[GoldCounterSprite alloc] init] autorelease];
-        [goldCounter setPosition:CGPointMake(234, 40)];
+        [goldCounter setPosition:CGPointMake(240, 40)];
         [self addChild:goldCounter];
+        
+        RatingCounterSprite *ratingCounter = [[[RatingCounterSprite alloc] init] autorelease];
+        [ratingCounter setPosition:CGPointMake(80, 40)];
+        [self addChild:ratingCounter];
+        
+        [SettingsScene configureAudioForUserSettings];
 
     }
     return self;

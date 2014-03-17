@@ -7,6 +7,8 @@
 
 #import "cocos2d.h"
 
+@class Encounter;
+
 @protocol PauseLayerDelegate <NSObject>
 
 - (void)pauseLayerDidFinish;
@@ -15,10 +17,9 @@
 
 @end
 
-@interface GamePlayPauseLayer : CCLayerColor
+@interface GamePlayPauseLayer : CCLayerColor <CCTableViewDataSource, CCTableViewDelegate>
 @property (nonatomic, assign) id delegate;
--(id)initWithDelegate:(id)delegate;
-
--(void)quit;
--(void)close;
+- (id)initWithDelegate:(id)delegate encounter:(Encounter*)encounter;
+- (void)quit;
+- (void)close;
 @end

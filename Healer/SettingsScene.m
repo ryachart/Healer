@@ -180,7 +180,7 @@
     [mailVC setSubject:@"Healer Feedback"];
     [mailVC setMailComposeDelegate:self];
     [mailVC setToRecipients:@[@"feedback@healergame.com"]];
-    [[CCDirectorIOS sharedDirector] presentModalViewController:mailVC animated:YES];
+    [[CCDirectorIOS sharedDirector] presentViewController:mailVC animated:YES completion:nil];
 }
 
 - (void)resetGame
@@ -222,6 +222,6 @@
 #pragma mark - Mail
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
-    [[CCDirectorIOS sharedDirector] dismissModalViewControllerAnimated:YES];
+    [[CCDirectorIOS sharedDirector] dismissViewControllerAnimated:YES completion:nil];
 }
 @end

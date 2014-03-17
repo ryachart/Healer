@@ -76,7 +76,6 @@
     [node addChild:goldLabel];
     
     CCSprite *goldSprite = [CCSprite spriteWithSpriteFrameName:@"gold_coin.png"];
-    [goldSprite setScale:.25];
     [goldSprite setPosition:CGPointMake(-90, 14)];
     [node addChild:goldSprite];
     return node;

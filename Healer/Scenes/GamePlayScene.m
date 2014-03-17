@@ -36,10 +36,10 @@
 #import "LevelSelectScene_iPhone.h"
 #endif 
 
-#define DEBUG_IMMUNITIES false
-#define DEBUG_PERFECT_HEALS false
-#define DEBUG_HIGH_HPS false
-#define DEBUG_WIN_IMMEDIATELY false
+#define DEBUG_IMMUNITIES false && TARGET_IPHONE_SIMULATOR
+#define DEBUG_PERFECT_HEALS true && TARGET_IPHONE_SIMULATOR
+#define DEBUG_HIGH_HPS false && TARGET_IPHONE_SIMULATOR
+#define DEBUG_WIN_IMMEDIATELY false && TARGET_IPHONE_SIMULATOR
 
 #define DEBUG_HPS 250
 #define DEBUG_DAMAGE 0.0
@@ -274,7 +274,7 @@
         [[SimpleAudioEngine sharedEngine] preloadEffect:AMBIENT_BATTLE_LOOP];
         
         self.spellView1 = [[[PlayerSpellButton alloc] init] autorelease];
-        [self.spellView1 setPosition:IS_IPAD ? CGPointMake(910, 295) : CGPointMake(10, 36)];
+        [self.spellView1 setPosition:IS_IPAD ? CGPointMake(910, 295) : CGPointMake(10, 34)];
         Spell *spell = [[self.player activeSpells] objectAtIndex:0];
         [self.spellView1 setSpellData:spell];
         [self.spellView1 setInteractionDelegate:(PlayerSpellButtonDelegate*)self];
@@ -283,7 +283,7 @@
         
         if (self.player.activeSpells.count > 1){
             self.spellView2 = [[[PlayerSpellButton alloc] init] autorelease];
-            [self.spellView2 setPosition:IS_IPAD ? CGPointMake(910, 200) : CGPointMake(82, 36)];
+            [self.spellView2 setPosition:IS_IPAD ? CGPointMake(910, 200) : CGPointMake(82, 34)];
             if (self.player.activeSpells.count > 0) {
                 Spell *spell = [[self.player activeSpells] objectAtIndex:1];
                 [self.spellView2 setSpellData:spell];
@@ -295,7 +295,7 @@
         
         if (self.player.activeSpells.count > 2 ){
             self.spellView3 = [[[PlayerSpellButton alloc] init] autorelease];
-            [self.spellView3 setPosition:IS_IPAD ? CGPointMake(910, 105) : CGPointMake(154, 36)];
+            [self.spellView3 setPosition:IS_IPAD ? CGPointMake(910, 105) : CGPointMake(154, 34)];
             if (self.player.activeSpells.count > 1) {
                 Spell *spell = [[self.player activeSpells] objectAtIndex:2];
                 [self.spellView3 setSpellData:spell];
@@ -307,7 +307,7 @@
         
         if (self.player.activeSpells.count > 3){
             self.spellView4 = [[[PlayerSpellButton alloc] init] autorelease];
-            [self.spellView4 setPosition:IS_IPAD ? CGPointMake(910, 10) : CGPointMake(226, 36)];
+            [self.spellView4 setPosition:IS_IPAD ? CGPointMake(910, 10) : CGPointMake(226, 34)];
             if (self.player.activeSpells.count > 2) {
                 Spell *spell = [[self.player activeSpells] objectAtIndex:3];
                 [self.spellView4 setSpellData:spell];
@@ -453,7 +453,7 @@
     [self setPaused:YES];
     
     if (!self.pauseMenuLayer){
-        self.pauseMenuLayer = [[[GamePlayPauseLayer alloc] initWithDelegate:self] autorelease];
+        self.pauseMenuLayer = [[[GamePlayPauseLayer alloc] initWithDelegate:self encounter:self.encounter] autorelease];
         self.pauseMenuLayer.delegate = self;
     }
     [self addChild:self.pauseMenuLayer z:10000];
@@ -672,10 +672,10 @@
 - (void)transitionToPostBattleWithSuccess:(BOOL)success {
     PostBattleLayer *pbl;
     if (IS_IPAD) {
-        pbl = [[[PostBattleLayer alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer andDuration:self.encounter.duration] autorelease];
+        pbl = [[[PostBattleLayer alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer] autorelease];
     } else {
 #if IS_POCKET
-        pbl = [[[PostBattleLayer_iPhone alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer andDuration:self.encounter.duration] autorelease];
+        pbl = [[[PostBattleLayer_iPhone alloc] initWithVictory:success encounter:self.encounter andIsMultiplayer:self.isClient || self.isServer] autorelease];
 #endif
     }
     
@@ -1507,9 +1507,12 @@
         areAllEnemiesDefeated &= enemy.isDead;
     }
     
-    if (DEBUG_WIN_IMMEDIATELY) {
-        areAllEnemiesDefeated = YES;
+#if DEBUG_WIN_IMMEDIATELY
+    for (Enemy *enemy in self.encounter.enemies) {
+        [enemy setHealth:0];
     }
+    areAllEnemiesDefeated = YES;
+#endif
     
     if (!self.isClient){
         if (survivors == 0)

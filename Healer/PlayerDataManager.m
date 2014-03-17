@@ -93,6 +93,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
         if (!self.playerData) {
             self.playerData = [NSMutableDictionary dictionary];
             self.ftueState = FTUEStateFresh;
+            [self playerEarnsGold:25];
             [self saveLocalPlayer];
         }
         
@@ -206,6 +207,9 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 #endif
 #if DEBUG
     className = @"test_player";
+#endif
+#if IS_POCKET
+    className = @"player_pocket";
 #endif
     NSInteger backgroundExceptionIdentifer = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{}];
     dispatch_async([PlayerDataManager parseQueue], ^{
@@ -521,9 +525,13 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 {
     NSInteger totalSlots = 3; //Default is 3.
     
+#if IS_POCKET
+    totalSlots = 4;
+#else
     if ([self hasPurchasedContentWithKey:MainGameContentKey]) {
         totalSlots ++;
     }
+#endif
     return totalSlots;
 }
 
@@ -743,6 +751,9 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (BOOL)musicDisabled
 {
+#if DEBUG
+    return true;
+#endif
     return [[self.playerData objectForKey:MusicDisabledKey] boolValue];
 }
 
@@ -754,6 +765,9 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 
 - (BOOL)effectsDisabled
 {
+#if DEBUG
+    return true;
+#endif
     return [[self.playerData objectForKey:EffectsDisabledKey] boolValue];
 }
 
@@ -1032,6 +1046,11 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 }
 
 #pragma mark - Score
+
+- (void)completeEncounter:(Encounter *)encounter
+{
+    
+}
 
 - (void)submitScore:(Encounter*)encounter player:(Player*)player
 {

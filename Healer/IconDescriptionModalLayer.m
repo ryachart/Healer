@@ -116,7 +116,6 @@
         
         CCSprite *coinSprite = [CCSprite spriteWithSpriteFrameName:@"gold_coin.png"];
         [coinSprite setPosition:CGPointMake(costLabel.position.x + costLabel.contentSize.width - 25, costLabel.position.y)];
-        [coinSprite setScale:.25];
         [self.alertDialogBackground addChild:coinSprite];
         
         self.menu = [CCMenu menuWithItems:cancelButton, sellButton, nil];

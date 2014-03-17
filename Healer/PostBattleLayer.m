@@ -96,7 +96,7 @@
     [[PlayerDataManager localPlayer] saveLocalPlayer];
 }
 
-- (void)initializeDataForVictory:(BOOL)victory encounter:(Encounter *)encounter isMultiplayer:(BOOL)isMultiplayer duration:(NSTimeInterval)duration
+- (void)initializeDataForVictory:(BOOL)victory encounter:(Encounter *)encounter isMultiplayer:(BOOL)isMultiplayer
 {
     self.encounter = encounter;
     self.isMultiplayer = isMultiplayer;
@@ -106,12 +106,12 @@
     self.showsFirstLevelFTUE = [PlayerDataManager localPlayer].ftueState == FTUEStateBattle1Finished && ![[PlayerDataManager localPlayer] hasSpell:[GreaterHeal defaultSpell]];
 }
 
-- (id)initWithVictory:(BOOL)victory encounter:(Encounter*)enc andIsMultiplayer:(BOOL)isMult andDuration:(NSTimeInterval)duration
+- (id)initWithVictory:(BOOL)victory encounter:(Encounter*)enc andIsMultiplayer:(BOOL)isMult
 {
     if (self = [super initWithColor:ccc4(0, 0, 0, 0)]) {
-        [self initializeDataForVictory:victory encounter:enc isMultiplayer:isMult duration:duration];
+        [self initializeDataForVictory:victory encounter:enc isMultiplayer:isMult];
         NSInteger numDead = self.encounter.raid.deadCount;
-        NSTimeInterval fightDuration = duration;
+        NSTimeInterval fightDuration = enc.duration;
         BOOL willAwardLoot = self.encounter.levelNumber > 1 && self.isVictory && ![PlayerDataManager localPlayer].isInventoryFull;
         
         if (self.isVictory) {

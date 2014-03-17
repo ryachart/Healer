@@ -188,20 +188,21 @@
     return [NSString stringWithFormat:@"Mana Cost : %i \n %@", _energyCost, _description];
 }
 
--(NSString*)spellDescription{
+- (NSString*)spellDescription{
     NSString *hString = [_description stringByReplacingOccurrencesOfString:@"|H|" withString:[NSString stringWithFormat:@"%i", [self listedHealingAmount]]];
     NSString *h2String = [hString stringByReplacingOccurrencesOfString:@"|H2|" withString:[NSString stringWithFormat:@"%i", [self listedSecondaryHealingAmount]]];
     NSString *dString = [h2String stringByReplacingOccurrencesOfString:@"|D|" withString:[NSString stringWithFormat:@"%1.0f", [self durationFromAppliedEffects]]];
 	return dString;
 }
 
--(NSInteger)healingAmount{
+- (NSInteger)healingAmount{
     int finalAmount = _healingAmount;
     int fuzzRange = (int)round(_healingAmount * .05);
     int fuzz = arc4random() % (fuzzRange + 1);
     
     finalAmount += fuzz * (arc4random() % 2 == 0 ? -1 : 1);
-    return finalAmount * [self.owner healingDoneMultiplierForSpell:self];
+    int finalFinalAmount =  finalAmount * [self.owner healingDoneMultiplierForSpell:self];
+    return finalFinalAmount;
 }
 
 -(BOOL)isInstant
@@ -546,6 +547,11 @@
     return self;
 }
 
+- (NSInteger)rawHealingAmount
+{
+    return [super listedHealingAmount];
+}
+
 - (NSInteger)listedHealingAmount
 {
     return [super listedHealingAmount] * 8;
@@ -557,7 +563,7 @@
     return [purify autorelease];
 }
 - (void)spellFinishedCastingForPlayers:(NSArray *)players enemies:(NSArray *)enemies theRaid:(Raid *)raid gameTime:(float)timeDelta {
-    NSInteger initialHealAmount = self.healingAmount;
+    NSInteger initialHealAmount = [self rawHealingAmount];
     Effect *effectToRemove = nil;
     for (Effect *effect in [self.owner.spellTarget activeEffects]){
         if (effect.effectType == EffectTypeNegative && (effect.ailmentType == AilmentCurse || effect.ailmentType == AilmentPoison)){
@@ -569,9 +575,7 @@
         self.healingAmount = initialHealAmount * 8;
     }
     [super spellFinishedCastingForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
-    
     self.healingAmount = initialHealAmount;
-    
     [effectToRemove effectWillBeDispelled:raid player:self.owner enemies:enemies];
     [effectToRemove expireForPlayers:players enemies:enemies theRaid:raid gameTime:timeDelta];
     [self.owner.spellTarget removeEffect:effectToRemove];

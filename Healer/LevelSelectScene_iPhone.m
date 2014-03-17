@@ -101,7 +101,8 @@
 
 - (NSUInteger)numberOfCellsInTableView:(CCTableView *)table
 {
-    return [PlayerDataManager localPlayer].highestLevelCompleted + 1;
+    NSUInteger numberOfCells = MIN(21,[PlayerDataManager localPlayer].highestLevelCompleted + 1);
+    return numberOfCells;
 }
 
 - (void)table:(CCTableView *)table cellTouched:(CCTableViewCell *)cell

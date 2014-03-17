@@ -1,5 +1,5 @@
 //
-//  MyCocos2DClass.h
+//  IconDescriptionTableCellSprite.h
 //  Healer
 //
 //  Created by Ryan Hart on 3/16/14.

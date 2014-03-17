@@ -373,11 +373,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 }
 
 - (NSInteger)highestLevelCompleted {
-#if TARGET_IPHONE_SIMULATOR && IS_POCKET
-    return 13;
-#else
     return [[self.playerData objectForKey:PlayerHighestLevelCompleted] intValue];
-#endif
 }
 
 - (NSInteger)highestLevelAttempted{

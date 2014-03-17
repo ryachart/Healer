@@ -313,6 +313,7 @@
 
 + (id)defaultBoss
 {
+    NSLog(@"Instantiating a boss for which there is no definition.");
 	return nil;
 }
 

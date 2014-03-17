@@ -93,6 +93,9 @@
 		BF4E508D155C9C4400FC4EE0 /* Ability.m in Sources */ = {isa = PBXBuildFile; fileRef = BF4E508C155C9C4400FC4EE0 /* Ability.m */; };
 		BF68CBA61537364B0096B6CF /* ClippingNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF68CBA51537364B0096B6CF /* ClippingNode.m */; };
 		BF69866C154C7B5F0016F25E /* BackgroundSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = BF69866B154C7B5F0016F25E /* BackgroundSprite.m */; };
+		BF6AA81818D6BCC10031DA00 /* TalentScene_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6AA81718D6BCC10031DA00 /* TalentScene_iPhone.m */; };
+		BF6AA85418D6BCD20031DA00 /* InventoryScene_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6AA85318D6BCD20031DA00 /* InventoryScene_iPhone.m */; };
+		BF6AA85718D6BCE00031DA00 /* TeamScene_iPhone.m in Sources */ = {isa = PBXBuildFile; fileRef = BF6AA85618D6BCE00031DA00 /* TeamScene_iPhone.m */; };
 		BF730C4015ABC1BD00E09B81 /* MultiplayerQueueScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */; };
 		BF7660C216C0566600985F2E /* GradientBorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7660C116C0566600985F2E /* GradientBorderLayer.m */; };
 		BF80763315214A05001EB2B3 /* PreBattleScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF80763215214A04001EB2B3 /* PreBattleScene.m */; };
@@ -857,6 +860,12 @@
 		BF68CBA51537364B0096B6CF /* ClippingNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClippingNode.m; sourceTree = "<group>"; };
 		BF69866A154C7B5F0016F25E /* BackgroundSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundSprite.h; sourceTree = "<group>"; };
 		BF69866B154C7B5F0016F25E /* BackgroundSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackgroundSprite.m; sourceTree = "<group>"; };
+		BF6AA81618D6BCC10031DA00 /* TalentScene_iPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TalentScene_iPhone.h; sourceTree = "<group>"; };
+		BF6AA81718D6BCC10031DA00 /* TalentScene_iPhone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TalentScene_iPhone.m; sourceTree = "<group>"; };
+		BF6AA85218D6BCD20031DA00 /* InventoryScene_iPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InventoryScene_iPhone.h; sourceTree = "<group>"; };
+		BF6AA85318D6BCD20031DA00 /* InventoryScene_iPhone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InventoryScene_iPhone.m; sourceTree = "<group>"; };
+		BF6AA85518D6BCE00031DA00 /* TeamScene_iPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TeamScene_iPhone.h; sourceTree = "<group>"; };
+		BF6AA85618D6BCE00031DA00 /* TeamScene_iPhone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TeamScene_iPhone.m; sourceTree = "<group>"; };
 		BF730C3E15ABC1BD00E09B81 /* MultiplayerQueueScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiplayerQueueScene.h; sourceTree = "<group>"; };
 		BF730C3F15ABC1BD00E09B81 /* MultiplayerQueueScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiplayerQueueScene.m; sourceTree = "<group>"; };
 		BF7660C016C0566500985F2E /* GradientBorderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GradientBorderLayer.h; sourceTree = "<group>"; };
@@ -1733,6 +1742,12 @@
 				BF13AD71174AFE2800A613B1 /* LevelSelectScene_iPhone.m */,
 				BFEC80F417FBDB2500B7E789 /* ShopScene_iPhone.h */,
 				BFEC80F517FBDB2500B7E789 /* ShopScene_iPhone.m */,
+				BF6AA81618D6BCC10031DA00 /* TalentScene_iPhone.h */,
+				BF6AA81718D6BCC10031DA00 /* TalentScene_iPhone.m */,
+				BF6AA85218D6BCD20031DA00 /* InventoryScene_iPhone.h */,
+				BF6AA85318D6BCD20031DA00 /* InventoryScene_iPhone.m */,
+				BF6AA85518D6BCE00031DA00 /* TeamScene_iPhone.h */,
+				BF6AA85618D6BCE00031DA00 /* TeamScene_iPhone.m */,
 			);
 			name = iPhone;
 			sourceTree = "<group>";
@@ -2540,10 +2555,12 @@
 				BF9ACD921749B2AA00C05A61 /* ProjectileEffect.m in Sources */,
 				BFC032E517ED5B4B00ACA936 /* StaminaCounterNode.m in Sources */,
 				BF9ACD931749B2AA00C05A61 /* RaidMemberPreBattleCard.m in Sources */,
+				BF6AA81818D6BCC10031DA00 /* TalentScene_iPhone.m in Sources */,
 				BF9ACD941749B2AA00C05A61 /* GamePlayPauseLayer.m in Sources */,
 				BF9ACD951749B2AA00C05A61 /* CCShakeScreen.m in Sources */,
 				BF9ACD961749B2AA00C05A61 /* Scale9Sprite.m in Sources */,
 				BF9ACD971749B2AA00C05A61 /* ParticleSystemCache.m in Sources */,
+				BF6AA85718D6BCE00031DA00 /* TeamScene_iPhone.m in Sources */,
 				BF9ACD981749B2AA00C05A61 /* MultiplayerSetupScene.m in Sources */,
 				BF9ACD991749B2AA00C05A61 /* Encounter.m in Sources */,
 				BFEC80F717FBDB2500B7E789 /* ShopScene_iPhone.m in Sources */,
@@ -2575,6 +2592,7 @@
 				BF9ACDAF1749B2AA00C05A61 /* DraggableSpellIcon.m in Sources */,
 				BF9ACDB01749B2AA00C05A61 /* Slot.m in Sources */,
 				BF9ACDB21749B2AA00C05A61 /* LaunchScene.m in Sources */,
+				BF6AA85418D6BCD20031DA00 /* InventoryScene_iPhone.m in Sources */,
 				BF9ACDB31749B2AA00C05A61 /* LevelSelectMapScene.m in Sources */,
 				BF9ACDB41749B2AA00C05A61 /* LevelSelectMapNode.m in Sources */,
 				BF9ACDB51749B2AA00C05A61 /* LevelSelectSprite.m in Sources */,

@@ -609,7 +609,6 @@
 
 + (Encounter*)pocketEncounterForLevel:(NSInteger)level
 {
-    
     Raid *raid = [[[Raid alloc] init] autorelease];
     Enemy *enemyForEncounter = nil;
     NSMutableArray *enemies = [NSMutableArray arrayWithCapacity:1];
@@ -630,6 +629,7 @@
     if (level == 1) {
         enemyForEncounter = [Ghoul defaultBoss];
         bossKey = @"ghoul";
+        overrideHealth = 200000;
     } else if (level == 2) {
         enemyForEncounter = [CorruptedTroll defaultBoss];
         bossKey = @"troll";
@@ -652,14 +652,18 @@
         enemyForEncounter = [Trulzar defaultBoss];
         bossKey = @"trulzar";
     } else if (level == 9) {
-        enemyForEncounter = [Teritha defaultBoss];
+        enemyForEncounter = [[[Teritha alloc] initWithHealth:1000000 damage:0 targets:0 frequency:0 choosesMT:NO] autorelease];
+        enemyForEncounter.title = @"Dark Summoner";
         bossKey = @"council";
     } else if (level == 10) {
-        enemyForEncounter = [Sarroth defaultBoss];
+        enemyForEncounter = [[[Sarroth alloc] initWithHealth:1250000 damage:760 targets:1 frequency:6.5 choosesMT:YES] autorelease];
+        enemyForEncounter.title = @"Sarroth";
+        enemyForEncounter.autoAttack.failureChance = .25;
         bossKey = @"twinchampions";
     } else if (level == 11) {
         enemyForEncounter = [Baraghast defaultBoss];
         bossKey = @"baraghast";
+        enemyForEncounter.title = @"Baraghast";
     } else if (level == 12) {
         enemyForEncounter = [CrazedSeer defaultBoss];
         bossKey = @"tyonath";
@@ -688,15 +692,11 @@
         enemyForEncounter = [AvatarOfTorment1 defaultBoss];
         bossKey = @"avataroftorment";
     } else if (level == 21) {
-        enemyForEncounter = [AvatarOfTorment2 defaultBoss];
-        bossKey = @"avataroftorment";
-    } else if (level == 20) {
         enemyForEncounter = [SoulOfTorment defaultBoss];
         bossKey = @"souloftorment";
     } else {
         enemyForEncounter = [TheEndlessVoid defaultBoss];
         info = @"The Endless Void";
-        title = @"The Endless Void";
         [(TheEndlessVoid*)enemyForEncounter setRequiredResets:level - 1];
         bossKey = @"endlessvoid";
     }

@@ -1,5 +1,5 @@
 //
-//  MyCocos2DClass.m
+//  IconDescriptionTableCellSprite.m
 //  Healer
 //
 //  Created by Ryan Hart on 3/16/14.
@@ -34,8 +34,8 @@
         self.titleLabel.shadowOffset = CGPointMake(-1, -1);
         [self addChild:self.titleLabel];
         
-        self.descriptionLabel = [CCLabelTTFShadow labelWithString:description dimensions:CGSizeMake(300, 40) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
-        self.descriptionLabel.position = CGPointMake(52, 8);
+        self.descriptionLabel = [CCLabelTTFShadow labelWithString:description dimensions:CGSizeMake(300, 80) hAlignment:kCCTextAlignmentLeft fontName:@"TrebuchetMS-Bold" fontSize:14.0];
+        self.descriptionLabel.position = CGPointMake(52, -12);
         self.descriptionLabel.shadowOffset = CGPointMake(-1, -1);
         [self addChild:self.descriptionLabel];
     }

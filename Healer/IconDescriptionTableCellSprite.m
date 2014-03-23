@@ -13,7 +13,6 @@
 @property (nonatomic, assign) CCLabelTTFShadow *titleLabel;
 @property (nonatomic, assign) CCLabelTTFShadow *descriptionLabel;
 @property (nonatomic, assign) CCSprite *background;
-@property (nonatomic, assign) CCSprite *itemSprite;
 @end
 
 

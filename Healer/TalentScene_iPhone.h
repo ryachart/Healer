@@ -7,7 +7,9 @@
 //
 
 #import "cocos2d.h"
+#import "CCLabelTTFShadow.h"
 
-@interface TalentScene_iPhone : CCScene
+
+@interface TalentScene_iPhone : CCScene <CCTableViewDataSource, CCTableViewDelegate>
 
 @end

@@ -10,6 +10,8 @@
 #import "cocos2d.h"
 
 @interface IconDescriptionTableCellSprite : CCSprite
+@property (nonatomic, assign) CCSprite *itemSprite;
+
 - (id)initWithIconSpriteFrameName:(NSString *)spriteFrameName title:(NSString*)title description:(NSString *)description;
 
 @end

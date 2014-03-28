@@ -1079,8 +1079,9 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
                     [newScoreboardObject setObject:[NSNumber numberWithInteger:health] forKey:@"health"];
                     [newScoreboardObject setObject:[NSNumber numberWithFloat:regen] forKey:@"regen"];
                     [newScoreboardObject setObject:[NSNumber numberWithFloat:crit] forKey:@"crit"];
-                    [newScoreboardObject setObject:[NSNumber numberWithFloat:health] forKey:@"healingPower"];
+                    [newScoreboardObject setObject:[NSNumber numberWithFloat:healing] forKey:@"healingPower"];
                     [newScoreboardObject setObject:[NSNumber numberWithFloat:speed] forKey:@"speed"];
+                    [newScoreboardObject setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] forKey:@"version"];
                     
                     if (![newScoreboardObject save]) {
                         NSLog(@"Failed to submit score because the save failed");

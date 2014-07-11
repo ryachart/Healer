@@ -2728,7 +2728,7 @@
 
 - (void)triggerAbilityForRaid:(Raid *)theRaid players:(NSArray *)players enemies:(NSArray *)enemies
 {
-    NSTimeInterval channelDuration = 6.0;
+    NSTimeInterval channelDuration = 15.0;
     Effect *immunityEffect = [[[Effect alloc] initWithDuration:channelDuration andEffectType:EffectTypePositive] autorelease];
     [immunityEffect setDamageTakenMultiplierAdjustment:-1.0];
     [immunityEffect setOwner:self.owner];

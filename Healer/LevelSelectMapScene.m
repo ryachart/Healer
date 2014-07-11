@@ -38,7 +38,7 @@
 - (id)init
 {
     if (self = [super init]) {
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/mapicon.plist"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"assets/map-icons.plist"];
         
         self.mapScrollView = [[[LevelSelectMapNode alloc] init] autorelease];
         [self.mapScrollView setLevelSelectDelegate:self];

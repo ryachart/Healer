@@ -2539,6 +2539,7 @@
         [graspEffect setTitle:@"grasp-of-the-damned-eff"];
         [graspEffect setAilmentType:AilmentCurse];
         GraspOfTheDamned *graspOfTheDamned = [[[GraspOfTheDamned alloc] initWithDamage:0 andCooldown:15.0] autorelease];
+        [graspOfTheDamned setRequiresDamageToApplyEffect:NO];
         [graspOfTheDamned setExecutionSound:@"curse.mp3"];
         [graspOfTheDamned setActivationTime:1.5];
         [self addAbility:graspOfTheDamned];
@@ -2586,7 +2587,7 @@ typedef enum {
     return [boss autorelease];
 }
 
-- (void)configureAvatarForFormType:(AvatarFormType)form
+- (void)configureAvatarForFormType:(AvatarFormType)form asEndPhase:(BOOL)isEndPhase
 {
     NSString *projectileExecutionSoundName = @"fireball.mp3";
     NSString *projectileExplosionSoundName = @"explosion2.wav";
@@ -2608,7 +2609,7 @@ typedef enum {
         ChannelledRaidProjectileAttack *bloodSpray = [[[ChannelledRaidProjectileAttack alloc] init] autorelease];
         [bloodSpray setTitle:@"Blood Spray"];
         [bloodSpray setIconName:@"blood_bolt.png"];
-        [bloodSpray setCooldown:35.0];
+        [bloodSpray setCooldown: isEndPhase ? 52.5 : 35.0];
         [bloodSpray setAbilityValue:150];
         [bloodSpray setSpriteName:@"bloodbolt.png"];
         [bloodSpray setExplosionParticleName:@"blood_spurt.plist"];
@@ -2626,7 +2627,7 @@ typedef enum {
         WaveOfTorment *wot = [[[WaveOfTorment alloc] init] autorelease];
         [wot setDodgeChanceAdjustment:-100];
         [wot setIconName:@"deathwave.png"];
-        [wot setCooldown:40.0];
+        [wot setCooldown: isEndPhase ? 60.0 : 40.0];
         [wot setAbilityValue:80];
         [wot setKey:@"wot"];
         [wot setTitle:@"Waves of Torment"];
@@ -2637,7 +2638,7 @@ typedef enum {
         [rof setDodgeChanceAdjustment:-100];
         [rof setTitle:@"Rain of Fire"];
         [rof setIconName:@"fireball.png"];
-        [rof setCooldown:27.0];
+        [rof setCooldown:isEndPhase ? 40.5 : 27.0];
         [rof setAbilityValue:250];
         [rof setKey:@"rain-of-fire"];
         [self addAbility:rof];
@@ -2649,13 +2650,13 @@ typedef enum {
     [projectileAttack setExplosionSoundName:projectileExplosionSoundName];
     [projectileAttack setSpriteName:projectileSpriteName];
     [projectileAttack setExplosionParticleName:projectileExplosionParticleName];
-    [projectileAttack setAbilityValue:-300];
+    [projectileAttack setAbilityValue:isEndPhase ? -250 : -300];
     [projectileAttack setCooldown:2.5];
     [self addAbility:projectileAttack];
     
     TormentEffect *tormentEffect = [[[TormentEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
     [tormentEffect setInfiniteDurationTickFrequency:1.5];
-    [tormentEffect setValuePerTick:-200];
+    [tormentEffect setValuePerTick:-180];
     [tormentEffect setHealingToAbsorb:600 * self.damageDoneMultiplier];
     
     switch (form) {
@@ -2677,7 +2678,7 @@ typedef enum {
                 AbilityDescriptor *fear = [[[AbilityDescriptor alloc] init] autorelease];
                 [fear setIconName:@"toxic_inversion.png"];
                 [fear setAbilityName:@"Fear of Darkness"];
-                [fear setAbilityDescription:@"Each time Penumbral Torment causes damage the target receives 3% less healing for the rest of the encounter."];
+                [fear setAbilityDescription:@"Each time Penumbral Torment causes damage the target receives 5% less healing for the rest of the encounter."];
                 [self addAbilityDescriptor:fear];
             }
             break;
@@ -2688,7 +2689,7 @@ typedef enum {
                 AbilityDescriptor *fear = [[[AbilityDescriptor alloc] init] autorelease];
                 [fear setIconName:@"angry_spirit.png"];
                 [fear setAbilityName:@"Fear of Flame"];
-                [fear setAbilityDescription:@"Each time Obsidian Torment causes damage the target takes 3% additional damage for the rest of the encounter."];
+                [fear setAbilityDescription:@"Each time Obsidian Torment causes damage the target takes 5% additional damage for the rest of the encounter."];
                 [self addAbilityDescriptor:fear];
             }
         default:
@@ -2752,33 +2753,25 @@ typedef enum {
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta
 {
     if (percentage == 100.0) {
-        [self configureAvatarForFormType:AvatarFire];
+        [self configureAvatarForFormType:AvatarFire asEndPhase:false];
         [self emergeForRaid:raid];
     }
     
     if (percentage == 75.0) {
         [self submerge];
-        [self configureAvatarForFormType:AvatarShadow];
+        [self configureAvatarForFormType:AvatarShadow asEndPhase:false];
     }
     
     if (percentage == 50.0) {
         [self submerge];
-        [self configureAvatarForFormType:AvatarBlood];
+        [self configureAvatarForFormType:AvatarBlood asEndPhase:false];
     }
     
     if (percentage == 25.0) {
         [self submerge];
-        [self configureAvatarForFormType:AvatarBlood];
-        [self configureAvatarForFormType:AvatarFire];
-        [self configureAvatarForFormType:AvatarShadow];
-        if (self.difficulty <= 2) {
-            Effect *reducedDamage = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypeNegativeInvisible] autorelease];
-            [reducedDamage setOwner:self];
-            [reducedDamage setTitle:@"normal-dmg-nerf"];
-            [reducedDamage setDamageDoneMultiplierAdjustment:-.3];
-            [self addEffect:reducedDamage];
-            //A bit too hard with all the stuff going on =)
-        }
+        [self configureAvatarForFormType:AvatarBlood asEndPhase:true];
+        [self configureAvatarForFormType:AvatarFire asEndPhase:true];
+        [self configureAvatarForFormType:AvatarShadow asEndPhase:true];
         self.abilityDescriptors = [NSMutableArray array];
     }
 }

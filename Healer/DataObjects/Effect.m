@@ -1507,14 +1507,14 @@
         Effect *damageTaken = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
         [damageTaken setOwner:self.owner];
         [damageTaken setTitle:@"obs-torment-dt-eff"];
-        [damageTaken setDamageTakenMultiplierAdjustment:.03];
+        [damageTaken setDamageTakenMultiplierAdjustment:.04];
         [damageTaken setMaxStacks:25];
         [damageTaken setSpriteName:@"angry_spirit.png"];
         [self.target addEffect:damageTaken];
     }
     if (self.appliesBleedEffect) {
         RepeatedHealthEffect *bleed = [[[RepeatedHealthEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
-        [bleed setValuePerTick:-40];
+        [bleed setValuePerTick:-50];
         [bleed setOwner:self.owner];
         [bleed setTitle:@"obs-torment-bld-eff"];
         [bleed setSpriteName:@"bleeding.png"];
@@ -1524,7 +1524,7 @@
     if (self.appliesHealingReducedEffect) {
         Effect *healingReducedEffect = [[[Effect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
         [healingReducedEffect setSpriteName:@"toxic_inversion.png"];
-        [healingReducedEffect setHealingReceivedMultiplierAdjustment:-.03];
+        [healingReducedEffect setHealingReceivedMultiplierAdjustment:-.04];
         [healingReducedEffect setTitle:@"torment-heal-red-eff"];
         [healingReducedEffect setMaxStacks:30];
         [healingReducedEffect setOwner:self.owner];

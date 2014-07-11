@@ -644,6 +644,7 @@
         bossKey = @"treant";
     } else if (level == 6) {
         enemyForEncounter = [FinalRavager defaultBoss];
+        overrideHealth = 400000;
         bossKey = @"fungalravagers";
     } else if (level == 7) {
         enemyForEncounter = [PlaguebringerColossus defaultBoss];

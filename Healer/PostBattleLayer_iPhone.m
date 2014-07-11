@@ -19,8 +19,9 @@
     if (self = [super initWithColor:ccc4(0, 0, 0, 175)]) {
         [self initializeDataForVictory:victory encounter:enc isMultiplayer:isMult];
         BasicButton *leave = [BasicButton basicButtonWithTarget:self andSelector:@selector(doneMap) andTitle:@"Leave"];
+        BasicButton *openChest = [BasicButton basicButtonWithTarget:self andSelector:@selector(open) andTitle:@"Open Chest"];
         
-        CCMenu *leaveMenu = [CCMenu menuWithItems:leave, nil];
+        CCMenu *leaveMenu = [CCMenu menuWithItems:openChest, leave, nil];
         [leaveMenu setPosition:CGPointMake(SCREEN_WIDTH / 2, 380)];
         [self addChild:leaveMenu];
         
@@ -29,7 +30,6 @@
         [self processPlayerDataProgressionForMatch];
         int ratingDiff = [PlayerDataManager localPlayer].totalRating - previousTotalRating;
         int goldDiff = [PlayerDataManager localPlayer].gold - previousGold;
-        
         
         CCLabelTTFShadow *goldDiffLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"+ %i", goldDiff] fontName:@"TrebuchetMS-Bold" fontSize:18.0f];
         CCLabelTTFShadow *ratingDiffLabel = [CCLabelTTFShadow labelWithString:[NSString stringWithFormat:@"+ %i", ratingDiff] fontName:@"TrebuchetMS-Bold" fontSize:18.0f];
@@ -48,6 +48,11 @@
         [self addChild:goldSprite];
     }
     return self;
+}
+
+- (void)openChest
+{
+    
 }
 
 - (void)doneMap

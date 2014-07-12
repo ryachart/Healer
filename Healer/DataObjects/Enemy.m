@@ -2639,7 +2639,7 @@ typedef enum {
         [rof setTitle:@"Rain of Fire"];
         [rof setIconName:@"fireball.png"];
         [rof setCooldown:isEndPhase ? 40.5 : 27.0];
-        [rof setAbilityValue:230];
+        [rof setAbilityValue:200];
         [rof setKey:@"rain-of-fire"];
         [self addAbility:rof];
         
@@ -2650,13 +2650,13 @@ typedef enum {
     [projectileAttack setExplosionSoundName:projectileExplosionSoundName];
     [projectileAttack setSpriteName:projectileSpriteName];
     [projectileAttack setExplosionParticleName:projectileExplosionParticleName];
-    [projectileAttack setAbilityValue:isEndPhase ? -240 : -280];
+    [projectileAttack setAbilityValue:300];
     [projectileAttack setCooldown:isEndPhase ? 5.5 : 2.5];
     [self addAbility:projectileAttack];
     
     TormentEffect *tormentEffect = [[[TormentEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
     [tormentEffect setInfiniteDurationTickFrequency:1.5];
-    [tormentEffect setValuePerTick:-170];
+    [tormentEffect setValuePerTick:-125];
     [tormentEffect setHealingToAbsorb:600 * self.damageDoneMultiplier];
     
     switch (form) {
@@ -2698,7 +2698,7 @@ typedef enum {
     
     Attack *obsidianTorment = [Attack appliesEffectNonMeleeAttackWithEffect:tormentEffect];
     [obsidianTorment setIgnoresPlayers:YES];
-    [obsidianTorment setCooldown:12.0];
+    [obsidianTorment setCooldown:isEndPhase ? 20.0 : 12.0];
     [obsidianTorment setExecutionSound:@"curse.png"];
     [obsidianTorment setTimeApplied:20.0];
     [obsidianTorment setKey:[NSString stringWithFormat:@"torment-%d",form]];
@@ -2741,13 +2741,13 @@ typedef enum {
 
 - (void)submerge
 {
-    [[self abilityWithKey:@"submerge"] activateAbility];
+    [[self abilityWithKey:SUBMERGE_KEY] activateAbility];
     [self clearAbilitiesForSubmerge];
 }
 
 - (void)emergeForRaid:(Raid*)theRaid
 {
-    [(AvatarOfTormentSubmerge*)[self abilityWithKey:@"submerge"] emergeForRaid:theRaid];
+    [(AvatarOfTormentSubmerge*)[self abilityWithKey:SUBMERGE_KEY] emergeForRaid:theRaid];
 }
 
 - (void)healthPercentageReached:(float)percentage forPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta

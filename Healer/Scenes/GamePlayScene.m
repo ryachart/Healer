@@ -1162,7 +1162,7 @@
         effect.type = ProjectileEffectTypeThrow;
         [self.match sendDataToAllPlayers:[effect.asNetworkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
     }
-    CCSprite *projectileSprite = [CCSprite spriteWithSpriteFrameName:effect.spriteName];;
+    CCSprite *projectileSprite = [CCSprite spriteWithSpriteFrameName:effect.spriteName];
 
     CGPoint destination = [self.raidView frameCenterForMember:(RaidMember*)effect.target];
     

@@ -2719,7 +2719,7 @@
     [self.owner.announcer announce:@"Torment erupts from the pool blasting lava onto your allies!"];
     [self.owner.announcer displayParticleSystemOnRaidWithName:@"magma_blast.plist" delay:0.0];
     for (RaidMember *member in theRaid.livingMembers) {
-        [self damageTarget:member forDamage:self.abilityValue * 1.5];
+        [self damageTarget:member forDamage:self.abilityValue];
     }
     [self.owner.announcer displayScreenShakeForDuration:2.0];
     [self.owner.announcer playAudioForTitle:@"eruption.wav"];

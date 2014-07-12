@@ -945,7 +945,7 @@
 - (void)healRaidWithPulse:(Raid*)theRaid{
     NSArray* raid = [theRaid livingMembers];
     for (RaidMember* member in raid){
-        [self adjustHealthWithAdjustment:20 forTarget:member];
+        [self adjustHealthWithAdjustment:roundf(20 / self.owner.healingDoneMultiplier) forTarget:member];
     }
 }
 
@@ -953,7 +953,7 @@
     NSArray *possibleTargets = [theRaid lowestHealthTargets:3 withRequiredTarget:nil];
     
     RaidMember *target = [possibleTargets objectAtIndex:arc4random() % possibleTargets.count];
-    [self adjustHealthWithAdjustment:(target.maximumHealth * .25) forTarget:target];
+    [self adjustHealthWithAdjustment:roundf((target.maximumHealth * .25) / self.owner.healingDoneMultiplier) forTarget:target];
 }
 
 - (void)combatUpdateForPlayers:(NSArray*)players enemies:(NSArray*)enemies theRaid:(Raid*)raid gameTime:(float)timeDelta {

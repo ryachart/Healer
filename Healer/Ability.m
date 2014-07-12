@@ -2707,7 +2707,7 @@
 {
     if (self = [super init]) {
         self.dodgeChanceAdjustment = -100.0f;
-        self.abilityValue = 250;
+        self.abilityValue = 190;
         self.cooldown = kAbilityRequiresTrigger;
         self.title = @"Submerge";
     }

@@ -2628,7 +2628,7 @@ typedef enum {
         [wot setDodgeChanceAdjustment:-100];
         [wot setIconName:@"deathwave.png"];
         [wot setCooldown: isEndPhase ? 60.0 : 40.0];
-        [wot setAbilityValue:80];
+        [wot setAbilityValue:75];
         [wot setKey:@"wot"];
         [wot setTitle:@"Waves of Torment"];
         [self addAbility:wot];
@@ -2639,7 +2639,7 @@ typedef enum {
         [rof setTitle:@"Rain of Fire"];
         [rof setIconName:@"fireball.png"];
         [rof setCooldown:isEndPhase ? 40.5 : 27.0];
-        [rof setAbilityValue:250];
+        [rof setAbilityValue:230];
         [rof setKey:@"rain-of-fire"];
         [self addAbility:rof];
         
@@ -2650,13 +2650,13 @@ typedef enum {
     [projectileAttack setExplosionSoundName:projectileExplosionSoundName];
     [projectileAttack setSpriteName:projectileSpriteName];
     [projectileAttack setExplosionParticleName:projectileExplosionParticleName];
-    [projectileAttack setAbilityValue:isEndPhase ? -250 : -300];
-    [projectileAttack setCooldown:2.5];
+    [projectileAttack setAbilityValue:isEndPhase ? -240 : -280];
+    [projectileAttack setCooldown:isEndPhase ? 5.5 : 2.5];
     [self addAbility:projectileAttack];
     
     TormentEffect *tormentEffect = [[[TormentEffect alloc] initWithDuration:-1 andEffectType:EffectTypeNegative] autorelease];
     [tormentEffect setInfiniteDurationTickFrequency:1.5];
-    [tormentEffect setValuePerTick:-180];
+    [tormentEffect setValuePerTick:-170];
     [tormentEffect setHealingToAbsorb:600 * self.damageDoneMultiplier];
     
     switch (form) {
@@ -2683,7 +2683,7 @@ typedef enum {
             }
             break;
         case AvatarFire:
-            [tormentEffect setIncreasePerTick:.8];
+            [tormentEffect setIncreasePerTick:.7];
             if (self.difficulty == 5) {
                 [tormentEffect setAppliesDamageTakenEffect:YES];
                 AbilityDescriptor *fear = [[[AbilityDescriptor alloc] init] autorelease];
@@ -2773,13 +2773,6 @@ typedef enum {
         [self configureAvatarForFormType:AvatarFire asEndPhase:true];
         [self configureAvatarForFormType:AvatarShadow asEndPhase:true];
         self.abilityDescriptors = [NSMutableArray array];
-    }
-}
-
-- (void)configureBossForDifficultyLevel:(NSInteger)difficulty
-{
-    [super configureBossForDifficultyLevel:difficulty];
-    if (self.difficulty == 5) {
     }
 }
 

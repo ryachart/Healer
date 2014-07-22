@@ -32,14 +32,7 @@
 #import "CollectibleLayer.h"
 #import "InventoryScene.h"
 #import "PlayerSprite.h"
-
-#define DEBUG_IMMUNITIES false
-#define DEBUG_PERFECT_HEALS false
-#define DEBUG_HIGH_HPS false
-#define DEBUG_WIN_IMMEDIATELY false
-
-#define DEBUG_HPS 250
-#define DEBUG_DAMAGE 0.0
+#import "DebugOptions.h"
 
 #define RAID_Z 5
 #define PAUSEABLE_TAG 812
@@ -1162,7 +1155,7 @@
         effect.type = ProjectileEffectTypeThrow;
         [self.match sendDataToAllPlayers:[effect.asNetworkMessage dataUsingEncoding:NSUTF8StringEncoding] withDataMode:GKSendDataReliable error:nil];
     }
-    CCSprite *projectileSprite = [CCSprite spriteWithSpriteFrameName:effect.spriteName];
+    CCSprite *projectileSprite = [CCSprite spriteWithSpriteFrameName:effect.spriteName];;
 
     CGPoint destination = [self.raidView frameCenterForMember:(RaidMember*)effect.target];
     

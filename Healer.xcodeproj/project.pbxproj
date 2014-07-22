@@ -702,6 +702,7 @@
 		BF261C371602C7A3003307DF /* Slot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Slot.m; sourceTree = "<group>"; };
 		BF26BFC415CA0B5D00B7132D /* AbilityDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbilityDescriptor.h; sourceTree = "<group>"; };
 		BF26BFC515CA0B5D00B7132D /* AbilityDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbilityDescriptor.m; sourceTree = "<group>"; };
+		BF2BCF54197E1B7A00757A75 /* DebugOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DebugOptions.h; sourceTree = "<group>"; };
 		BF2D1C1A16968A14006DCA9A /* CCLabelTTFShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCLabelTTFShadow.h; sourceTree = "<group>"; };
 		BF2D1C1B16968A14006DCA9A /* CCLabelTTFShadow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCLabelTTFShadow.m; sourceTree = "<group>"; };
 		BF42FF0718C0585B00E33EFE /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
@@ -799,7 +800,6 @@
 		BFD8EF4A160F9F1B00BAF83A /* LaunchScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LaunchScene.h; path = Scenes/LaunchScene.h; sourceTree = "<group>"; };
 		BFD8EF4B160F9F1C00BAF83A /* LaunchScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LaunchScene.m; path = Scenes/LaunchScene.m; sourceTree = "<group>"; };
 		BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape@2x~ipad.png"; sourceTree = SOURCE_ROOT; };
-		BFE66EDE16D9749800B9FBEE /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = SOURCE_ROOT; };
 		BFF4198B15A27CF700BC0453 /* talents.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = talents.plist; sourceTree = "<group>"; };
 		BFF6B200176926130014640C /* NSString+Obfuscation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Obfuscation.h"; sourceTree = "<group>"; };
 		BFF6B201176926130014640C /* NSString+Obfuscation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Obfuscation.m"; sourceTree = "<group>"; };
@@ -924,6 +924,7 @@
 				387E7AE3145E0D09006D9266 /* Scenes */,
 				38024F0713C2564E003D36F2 /* Supporting Files */,
 				38024DC013C2564D003D36F2 /* Resources */,
+				BF2BCF54197E1B7A00757A75 /* DebugOptions.h */,
 			);
 			path = Healer;
 			sourceTree = "<group>";
@@ -936,7 +937,6 @@
 				BF03E2AF172A44F900F3A429 /* Healer_iTunesStore_Icon144x144.png */,
 				BF03E2AD172A44F600F3A429 /* Healer_iTunesStore_Icon72x72.png */,
 				BFB99F1A15257F6D007EE559 /* sounds */,
-				BFE66EDE16D9749800B9FBEE /* fonts */,
 				BFD240CC16AC8E09007010D0 /* bosses */,
 				BFD8EF4D160FA76000BAF83A /* Default-Landscape@2x~ipad.png */,
 				BFABD58D15EC506100A30F07 /* Default-Landscape~ipad.png */,

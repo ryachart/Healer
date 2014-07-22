@@ -91,6 +91,10 @@
 	// make the View Controller a child of the main window
 	[self.window setRootViewController:self.navController];
 	[self.window makeKeyAndVisible];
+    
+#if UNLOCK_ALL
+    [[PlayerDataManager localPlayer] unlockAll];
+#endif
     return YES;
 }
 

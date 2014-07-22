@@ -82,6 +82,7 @@
 		BF261C351602C74F003307DF /* DraggableSpellIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = BF261C341602C74F003307DF /* DraggableSpellIcon.m */; };
 		BF261C381602C7A4003307DF /* Slot.m in Sources */ = {isa = PBXBuildFile; fileRef = BF261C371602C7A3003307DF /* Slot.m */; };
 		BF26BFC615CA0B5D00B7132D /* AbilityDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = BF26BFC515CA0B5D00B7132D /* AbilityDescriptor.m */; };
+		BF2BCF90197E1DC700757A75 /* DebugScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BF2BCF8F197E1DC700757A75 /* DebugScene.m */; };
 		BF2D1C1C16968A14006DCA9A /* CCLabelTTFShadow.m in Sources */ = {isa = PBXBuildFile; fileRef = BF2D1C1B16968A14006DCA9A /* CCLabelTTFShadow.m */; };
 		BF42FF0818C0585B00E33EFE /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF42FF0718C0585B00E33EFE /* GameKit.framework */; };
 		BF448C57154BA4D1009401A6 /* AddRemoveSpellLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF448C56154BA4D1009401A6 /* AddRemoveSpellLayer.m */; };
@@ -703,6 +704,8 @@
 		BF26BFC415CA0B5D00B7132D /* AbilityDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbilityDescriptor.h; sourceTree = "<group>"; };
 		BF26BFC515CA0B5D00B7132D /* AbilityDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbilityDescriptor.m; sourceTree = "<group>"; };
 		BF2BCF54197E1B7A00757A75 /* DebugOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DebugOptions.h; sourceTree = "<group>"; };
+		BF2BCF8E197E1DC700757A75 /* DebugScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugScene.h; sourceTree = "<group>"; };
+		BF2BCF8F197E1DC700757A75 /* DebugScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugScene.m; sourceTree = "<group>"; };
 		BF2D1C1A16968A14006DCA9A /* CCLabelTTFShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCLabelTTFShadow.h; sourceTree = "<group>"; };
 		BF2D1C1B16968A14006DCA9A /* CCLabelTTFShadow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCLabelTTFShadow.m; sourceTree = "<group>"; };
 		BF42FF0718C0585B00E33EFE /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
@@ -1089,6 +1092,8 @@
 				387E82A3164F1648009F11E6 /* SettingsScene.m */,
 				BF13ADB617517EFF00A613B1 /* InventoryScene.h */,
 				BF13ADB717517EFF00A613B1 /* InventoryScene.m */,
+				BF2BCF8E197E1DC700757A75 /* DebugScene.h */,
+				BF2BCF8F197E1DC700757A75 /* DebugScene.m */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -2186,6 +2191,7 @@
 				BFA44C1F16DC34FF00F20C8A /* EnemyHealthBar.m in Sources */,
 				BFB2C40116FA5B3F004C1AB1 /* PostBattleLayer.m in Sources */,
 				BF068CA61704F0BC00000C7F /* WidthScalingBackgroundSprite.m in Sources */,
+				BF2BCF90197E1DC700757A75 /* DebugScene.m in Sources */,
 				BF1DF45C17220FFC00046EB2 /* TipsLayer.m in Sources */,
 				BF03E26B1725CA2900F3A429 /* Collectible.m in Sources */,
 				BF03E26F1725CE6700F3A429 /* CollectibleLayer.m in Sources */,

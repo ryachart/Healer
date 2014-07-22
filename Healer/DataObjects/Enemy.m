@@ -3193,3 +3193,27 @@ typedef enum {
      return [endlessVoid autorelease];
 }
 @end
+
+
+@implementation TestBoss
++(id)defaultBoss {
+    TestBoss *testBoss = [[TestBoss alloc] initWithHealth:99999999 damage:400 targets:4 frequency:2.0 choosesMT:NO];
+    [testBoss setTitle:@"Test Boss"];
+    testBoss.autoAttack.failureChance = .25;
+    
+    StackingDamage *damageStacker = [[StackingDamage alloc] init];
+    [damageStacker setAbilityValue:1];
+    [damageStacker setCooldown:30];
+    [testBoss addAbility:damageStacker];
+    [damageStacker release];
+    
+    RandomAbilityGenerator *rag = [[RandomAbilityGenerator alloc] init];
+    [rag setCooldown:60];
+    [rag setTimeApplied:55.0];
+    [rag setKey:@"random-abilities"];
+    [testBoss addAbility:rag];
+    [rag release];
+    
+    return [testBoss autorelease];
+}
+@end

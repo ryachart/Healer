@@ -25,6 +25,11 @@
 #import "InventoryScene.h"
 #import "StaminaCounterNode.h"
 #import "TreasureChest.h"
+#import "DebugOptions.h"
+
+#if ENABLE_DEBUG_MENU
+#import "DebugScene.h"
+#endif
 
 
 @interface HealerStartScene ()
@@ -119,6 +124,15 @@
         [self addChild:socialMediaMenu];
         [socialMediaMenu alignItemsVertically];
         [socialMediaMenu setPosition:CGPointMake(35, 100)];
+        
+#if ENABLE_DEBUG_MENU
+        CCMenuItem *debugMenuButton = [BasicButton basicButtonWithTarget:self andSelector:@selector(debugSelected) andTitle:@"Debug"];
+        [settingsButton setScale:.4];
+        
+        CCMenu *debugMenu = [CCMenu menuWithItems:debugMenuButton, nil];
+        [settingsMenu setPosition:CGPointMake(50, 20)];
+        [self addChild:debugMenu];
+#endif
         
     }
     return self;
@@ -219,6 +233,13 @@
 {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://m.facebook.com/healergame?_rdr"]];
 }
+
+#if ENABLE_DEBUG_MENU
+- (void)debugSelected
+{
+    [[CCDirector sharedDirector] replaceScene:[[DebugScene new] autorelease]];
+}
+#endif
 
 - (void)iconDescriptionModalDidComplete:(id)modal
 {

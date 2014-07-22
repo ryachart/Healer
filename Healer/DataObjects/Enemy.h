@@ -178,3 +178,6 @@
 @interface FungalRavager : Enemy
 @end
 
+@interface TestBoss : Enemy
+@end
+

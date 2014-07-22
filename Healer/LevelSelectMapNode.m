@@ -16,8 +16,6 @@
 
 #define NUM_ENCOUNTERS 21
 
-#define MAX_HARDMODES 4
-
 @interface LevelSelectMapNode ()
 @property (nonatomic, retain) NSMutableArray *levelSelectSprites;
 @end

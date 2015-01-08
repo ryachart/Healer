@@ -54,7 +54,7 @@
 #pragma mark GKMatchDelegate
 
 - (id)initWithPreconfiguredMatch:(GKMatch*)preConMatch andServerID:(NSString*)serverID andLevelNumber:(NSInteger)levelNum{
-    Encounter *encounter = [Encounter encounterForLevel:levelNum isMultiplayer:YES];
+    Encounter *encounter = [Encounter normalEncounterForLevel:levelNum isMultiplayer:YES];
     Player *player = [PlayerDataManager playerFromLocalPlayer];
     [player configureForRecommendedSpells:encounter.recommendedSpells withLastUsedSpells:[PlayerDataManager localPlayer].lastUsedSpells];
     

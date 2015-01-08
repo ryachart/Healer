@@ -35,7 +35,7 @@ typedef enum {
 @property (nonatomic, readwrite) float castTime;
 @property (nonatomic, setter=setTargets:) NSInteger targets;
 @property (nonatomic, copy) NSArray *percentagesPerTarget;
-@property (retain, getter=description) NSString *description;
+@property (retain, getter=spellDescription) NSString *spellDescription;
 @property (nonatomic, readonly) NSString* info;
 @property (nonatomic, readwrite) float cooldownRemaining;
 @property (nonatomic, readwrite) float cooldown;

@@ -425,7 +425,7 @@
     
     self.restarting = YES;
     
-    Encounter *encounter = [Encounter encounterForLevel:self.encounter.levelNumber isMultiplayer:NO];
+    Encounter *encounter = [Encounter normalEncounterForLevel:self.encounter.levelNumber isMultiplayer:NO];
     Player *player = [PlayerDataManager playerFromLocalPlayer];
     [player configureForRecommendedSpells:nil withLastUsedSpells:[PlayerDataManager localPlayer].lastUsedSpells];
     

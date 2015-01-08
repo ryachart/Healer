@@ -15,6 +15,7 @@
 #import "Shop.h"
 #import "Player.h"
 #import "EquipmentItem.h"
+#import "Encounter.h"
 
 #define MAX_CHARACTERS 5
 
@@ -97,21 +98,21 @@ extern NSString* const MainGameContentKey;
 #pragma mark - Progress
 @property (nonatomic, readwrite) NSInteger lastSelectedLevel;
 - (NSInteger)totalRating;
-- (NSInteger)difficultyForLevelNumber:(NSInteger)levelNum;
-- (void)difficultySelected:(NSInteger)challenge forLevelNumber:(NSInteger)levelNum;
+- (NSInteger)difficultyForLevelNumber:(NSInteger)levelNum encounterType:(EncounterType)encounterType;
+- (void)difficultySelected:(NSInteger)challenge forLevelNumber:(NSInteger)levelNum encounterType:(EncounterType)encounterType;
 
 - (BOOL)hasShownNormalModeCompleteScene;
 - (void)normalModeCompleteSceneShown;
 
-- (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level;
-- (NSInteger)levelRatingForLevel:(NSInteger)level;
-- (void)setScore:(NSInteger)score forLevel:(NSInteger)level;
-- (NSInteger)scoreForLevel:(NSInteger)level;
+- (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level encounterType:(EncounterType)encounterType;
+- (NSInteger)levelRatingForLevel:(NSInteger)level encounterType:(EncounterType)encounterType;
+- (void)setScore:(NSInteger)score forLevel:(NSInteger)level encounterType:(EncounterType)encounterType;
+- (NSInteger)scoreForLevel:(NSInteger)level encounterType:(EncounterType)encounterType;
 - (NSInteger)highestLevelCompleted;
 - (NSInteger)highestLevelAttempted;
 
-- (void)failLevel:(NSInteger)level;
-- (void)completeLevel:(NSInteger)level;
+- (void)failLevel:(NSInteger)level encounterType:(EncounterType)encounterType;
+- (void)completeLevel:(NSInteger)level encounterType:(EncounterType)encounterType;
 
 #pragma mark - Purchasing Content
 - (void)performGamePurchaseCheckForFreshInstall:(BOOL)isFreshInstall;

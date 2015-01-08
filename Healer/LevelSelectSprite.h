@@ -7,6 +7,7 @@
 //
 
 #import "cocos2d.h"
+#import "Encounter.h"
 
 @class LevelSelectSprite;
 @protocol LevelSelectSpriteDelegate <NSObject>
@@ -15,9 +16,10 @@
 
 @interface LevelSelectSprite : CCSprite
 @property (nonatomic, readwrite) NSInteger levelNum;
+@property (nonatomic, readonly) EncounterType encounterType;
 @property (nonatomic, assign) id<LevelSelectSpriteDelegate> delegate;
 @property (nonatomic, readwrite) BOOL isAccessible;
-- (id)initWithLevel:(NSInteger)levelNum;
+- (id)initWithLevel:(NSInteger)levelNum encounterType:(EncounterType)encounterType;
 
 - (void)setSelected:(BOOL)isSelected;
 @end

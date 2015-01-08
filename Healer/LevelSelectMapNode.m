@@ -15,6 +15,7 @@
 #import "LevelSelectSprite.h"
 
 #define NUM_ENCOUNTERS 21
+#define NUM_EVENT_ONE_ENCOUNTERS 7
 
 @interface LevelSelectMapNode ()
 @property (nonatomic, retain) NSMutableArray *levelSelectSprites;
@@ -76,7 +77,7 @@
     for (int i = startingLevel; i <= NUM_ENCOUNTERS; i++){
 
         //This level is valid for us to play
-        LevelSelectSprite *levelSelectSprite = [[[LevelSelectSprite alloc] initWithLevel:i] autorelease];
+        LevelSelectSprite *levelSelectSprite = [[[LevelSelectSprite alloc] initWithLevel:i encounterType:EncounterTypeNormal] autorelease];
         [levelSelectSprite setPosition:[self pointForLevelNumber:i]];
         [levelSelectSprite setDelegate:self];
         [self addChild:levelSelectSprite];
@@ -88,6 +89,9 @@
         } else {
             [levelSelectSprite setIsAccessible:YES];
         }
+    }
+    
+    for (int i = 1; i <= NUM_EVENT_ONE_ENCOUNTERS; i++) {
         
     }
 }
@@ -111,7 +115,7 @@
     }
     
     [sprite setSelected:YES];
-    [self.levelSelectDelegate levelSelectMapNodeDidSelectLevelNum:level];
+    [self.levelSelectDelegate levelSelectMapNodeDidSelectLevelNum:level encounterType:sprite.encounterType];
 }
 
 - (CGPoint)pointForLevelNumber:(NSInteger)levelNum
@@ -180,7 +184,7 @@
     
     if (lastLevelSprite) {
         [lastLevelSprite setSelected:YES];
-        [self.levelSelectDelegate levelSelectMapNodeDidSelectLevelNum:lastLevelSprite.levelNum];
+        [self.levelSelectDelegate levelSelectMapNodeDidSelectLevelNum:lastLevelSprite.levelNum encounterType:lastLevelSprite.encounterType];
     }
     
     CGPoint contentOffset = CGPointMake(MIN(0,-lastLevelSprite.position.x + self.viewSize.width * .5), 0);

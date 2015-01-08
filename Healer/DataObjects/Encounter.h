@@ -11,6 +11,13 @@
 @class Player;
 @class EquipmentItem;
 
+typedef enum
+{
+    EncounterTypeNormal,
+    EncounterTypeEvent1,
+    EncounterTypeTest
+} EncounterType;
+
 #define ENDLESS_VOID_ENCOUNTER_NUMBER 992342
 @interface Encounter : NSObject
 @property (nonatomic, retain) Raid *raid;
@@ -18,6 +25,7 @@
 @property (nonatomic, retain) NSArray *requiredSpells;
 @property (nonatomic, retain) NSArray *recommendedSpells;
 @property (nonatomic, readonly) NSInteger levelNumber;
+@property (nonatomic, readonly) EncounterType encounterType;
 @property (nonatomic, readwrite) NSInteger difficulty;
 @property (nonatomic, retain) NSMutableArray *combatLog;
 @property (nonatomic, retain) NSString *info;
@@ -36,7 +44,7 @@
 //Data Loading
 @property (nonatomic, retain) NSString *bossKey;
 
-- (id)initWithRaid:(Raid*)raid enemies:(NSArray*)enemies andSpells:(NSArray*)spells;
+- (id)initWithRaid:(Raid*)raid enemies:(NSArray*)enemies andSpells:(NSArray*)spells andEncounterType:(EncounterType)encounterType;
 - (void)encounterWillBegin;
 - (void)scoreTick:(float)deltaTime;
 
@@ -44,7 +52,8 @@
 
 + (Encounter*)randomMultiplayerEncounter;
 + (Encounter*)survivalEncounterIsMultiplayer:(BOOL)multiplayer;
-+ (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer;
++ (Encounter*)encounterForType:(EncounterType)encounterType level:(NSInteger)level isMultiplayer:(BOOL)isMultiplayer;
++ (Encounter*)normalEncounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer;
 + (NSInteger)goldForLevelNumber:(NSInteger)levelNumber;
 + (NSInteger)goldRewardForSurvivalEncounterWithDuration:(NSTimeInterval)duration;
 + (NSArray *)epicItemsForLevelNumber:(NSInteger)levelNumber;

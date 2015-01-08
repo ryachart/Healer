@@ -311,7 +311,7 @@
     
 //    [[PlayerDataManager localPlayer] staminaUsedWithCompletion:^(BOOL success) {
 //        if (success) {
-            Encounter *encounter = [Encounter encounterForLevel:arc4random() % 21 + 1 isMultiplayer:NO];
+            Encounter *encounter = [Encounter normalEncounterForLevel:arc4random() % 21 + 1 isMultiplayer:NO];
             encounter.difficulty = 5;
             EquipmentItem *randomItem = encounter.randomLootReward;
             [[PlayerDataManager localPlayer] playerEarnsItem:randomItem];

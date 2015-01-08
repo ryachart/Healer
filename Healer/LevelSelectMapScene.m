@@ -25,7 +25,7 @@
 @property (nonatomic, assign) EncounterCard *encCard;
 @property (nonatomic, assign) BasicButton *battleButton;
 @property (nonatomic, readwrite) NSInteger selectedLevel;
-
+@property (nonatomic, readwrite) EncounterType selectedEncounterType;
 @end
 
 @implementation LevelSelectMapScene
@@ -77,14 +77,16 @@
     }
 }
 
-- (void)loadEncounterCardForSelectedEncounter:(NSInteger)selectedEncounter {
+- (void)loadEncounterCardForSelectedEncounter:(NSInteger)selectedEncounter encounterType:(EncounterType)encounterType {
     [self.encCard setLevelNum:selectedEncounter];
+    [self.encCard setEncounterType:encounterType];
 }
 
 - (void)battle {
     NSInteger level = self.selectedLevel;
+    EncounterType encType = self.selectedEncounterType;
     
-    if (![[PlayerDataManager localPlayer] hasPurchasedContentWithKey:MainGameContentKey] && level > END_FREE_ENCOUNTER_LEVEL) {
+    if (![[PlayerDataManager localPlayer] hasPurchasedContentWithKey:MainGameContentKey] && level > END_FREE_ENCOUNTER_LEVEL && encType == EncounterTypeNormal) {
         //Player hasn't unlocked this level yet! Wanna buy Legacy of Torment?
         IconDescriptionModalLayer *purchaseModal = [[[IconDescriptionModalLayer alloc] initAsMainContentSalesModal] autorelease];
         [purchaseModal setDelegate:self];
@@ -92,13 +94,12 @@
         return;
     }
     
-    Encounter *encounter = [Encounter encounterForLevel:level isMultiplayer:NO];
+    Encounter *encounter = [Encounter encounterForType:self.selectedEncounterType level:self.selectedLevel isMultiplayer:NO];
     Player *basicPlayer = [PlayerDataManager playerFromLocalPlayer];
     [basicPlayer configureForRecommendedSpells:encounter.recommendedSpells withLastUsedSpells:[PlayerDataManager localPlayer].lastUsedSpells];
     
     if (encounter.enemies.count > 0 && basicPlayer && encounter.raid){
         PreBattleScene *pbs = [[[PreBattleScene alloc] initWithEncounter:encounter andPlayer:basicPlayer] autorelease];
-        [pbs setLevelNumber:level];
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:pbs]];
     }
 }
@@ -112,13 +113,14 @@
     [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:.5 scene:[[[HealerStartScene alloc] init] autorelease]]];
 }
 
-- (void)levelSelectMapNodeDidSelectLevelNum:(NSInteger)levelNum
+- (void)levelSelectMapNodeDidSelectLevelNum:(NSInteger)levelNum encounterType:(EncounterType)encounterType
 {
-    if (self.selectedLevel == levelNum) {
+    if (self.selectedLevel == levelNum && self.selectedEncounterType == encounterType) {
         [self battle];
     } else {
         self.selectedLevel = levelNum;
-        [self loadEncounterCardForSelectedEncounter:levelNum];
+        self.selectedEncounterType = encounterType;
+        [self loadEncounterCardForSelectedEncounter:levelNum encounterType:encounterType];
     }
 }
 

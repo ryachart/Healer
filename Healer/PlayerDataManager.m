@@ -325,13 +325,13 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     return totalScore;
 }
 
-- (NSInteger)difficultyForLevelNumber:(NSInteger)levelNum
+- (NSInteger)difficultyForLevelNumber:(NSInteger)levelNum encounterType:(EncounterType)encounterType
 {
     NSMutableArray *difficultyLevels = [self difficultyLevels];
     return [[difficultyLevels objectAtIndex:levelNum] intValue];
 }
 
-- (void)difficultySelected:(NSInteger)challenge forLevelNumber:(NSInteger)levelNum
+- (void)difficultySelected:(NSInteger)challenge forLevelNumber:(NSInteger)levelNum encounterType:(EncounterType)encounterType
 {
     NSMutableArray *difficultyLevels = [self difficultyLevels];
     [difficultyLevels replaceObjectAtIndex:levelNum withObject:[NSNumber numberWithLong:challenge]];
@@ -342,12 +342,14 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     return [self highestLevelCompleted] >= 6;
 }
 
-- (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level {
-    [self.playerData setValue:[NSNumber numberWithLong:rating] forKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%ld", (long)level]];
+- (void)setLevelRating:(NSInteger)rating forLevel:(NSInteger)level encounterType:(EncounterType)encounterType {
+    if (encounterType == EncounterTypeNormal) {
+        [self.playerData setValue:[NSNumber numberWithLong:rating] forKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%ld", (long)level]];
+    }
 }
 
-- (NSInteger)levelRatingForLevel:(NSInteger)level {
-    if (level == 1) {
+- (NSInteger)levelRatingForLevel:(NSInteger)level encounterType:(EncounterType)encounterType {
+    if (level == 1 || encounterType != EncounterTypeNormal) {
         return 0; //You can't get rating from the tutorial level
     }
     NSInteger rating = [[self.playerData objectForKey:[PlayerLevelRatingKeyPrefix stringByAppendingFormat:@"%ld", (long)level]] intValue];
@@ -357,12 +359,17 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     return rating;
 }
 
-- (void)setScore:(NSInteger)score forLevel:(NSInteger)level {
-    [self.playerData setValue:[NSNumber numberWithLong:score] forKey:[PlayerLevelScoreKeyPrefix stringByAppendingFormat:@"%ld", (long)level]];
+- (void)setScore:(NSInteger)score forLevel:(NSInteger)level encounterType:(EncounterType)encounterType {
+    if (encounterType == EncounterTypeNormal) {
+        [self.playerData setValue:[NSNumber numberWithLong:score] forKey:[PlayerLevelScoreKeyPrefix stringByAppendingFormat:@"%ld", (long)level]];
+    }
 }
 
-- (NSInteger)scoreForLevel:(NSInteger)level {
-    return [[self.playerData objectForKey:[PlayerLevelScoreKeyPrefix stringByAppendingFormat:@"%ld", (long)level]] intValue];
+- (NSInteger)scoreForLevel:(NSInteger)level encounterType:(EncounterType)encounterType {
+    if (encounterType == EncounterTypeNormal) {
+        return [[self.playerData objectForKey:[PlayerLevelScoreKeyPrefix stringByAppendingFormat:@"%ld", (long)level]] intValue];
+    }
+    return 0;
 }
 
 - (NSInteger)highestLevelCompleted {
@@ -382,17 +389,21 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
     [self.playerData setObject:playerName forKey:PlayerName];
 }
 
-- (void)failLevel:(NSInteger)level {
-    NSString *failedKey = [PlayerLevelFailed stringByAppendingFormat:@"-%li", (long)level];
-    NSInteger failedTimes = [[self.playerData objectForKey:failedKey] intValue];
-    failedTimes++;
-    [self.playerData setObject:[NSNumber numberWithLong:failedTimes] forKey:failedKey];
+- (void)failLevel:(NSInteger)level encounterType:(EncounterType)encounterType {
+    if (encounterType == EncounterTypeNormal) {
+        NSString *failedKey = [PlayerLevelFailed stringByAppendingFormat:@"-%li", (long)level];
+        NSInteger failedTimes = [[self.playerData objectForKey:failedKey] intValue];
+        failedTimes++;
+        [self.playerData setObject:[NSNumber numberWithLong:failedTimes] forKey:failedKey];
+    }
 }
 
-- (void)completeLevel:(NSInteger)level {
-    BOOL isFirstWin = level > [self highestLevelCompleted];
-    if (isFirstWin){
-        [self.playerData setValue:[NSNumber numberWithLong:level] forKey:PlayerHighestLevelCompleted];
+- (void)completeLevel:(NSInteger)level encounterType:(EncounterType)encounterType {
+    if (encounterType == EncounterTypeNormal) {
+        BOOL isFirstWin = level > [self highestLevelCompleted];
+        if (isFirstWin){
+            [self.playerData setValue:[NSNumber numberWithLong:level] forKey:PlayerHighestLevelCompleted];
+        }
     }
 }
 
@@ -686,7 +697,7 @@ NSString* const MainGameContentKey = @"com.healer.c1key";
 #pragma mark - Debug
 - (void)clearLevelRatings {
     for (int i = 0; i < 30; i++){
-        [self setLevelRating:0 forLevel:i];
+        [self setLevelRating:0 forLevel:i encounterType:EncounterTypeNormal];
     }
 }
 

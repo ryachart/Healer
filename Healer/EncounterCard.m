@@ -20,10 +20,11 @@
 
 @implementation EncounterCard
 
-- (id)initWithLevelNum:(NSInteger)levelNum
+- (id)initWithLevelNum:(NSInteger)levelNum encounterType:(EncounterType)encounterType
 {
     if (self = [super init]) {
         _levelNum = levelNum;
+        _encounterType = encounterType;
         
         self.background = [CCSprite spriteWithSpriteFrameName:@"encounter_card_bg.png"];
         [self.background setColor:ccBLACK];
@@ -51,7 +52,7 @@
 }
 
 - (void)reloadCard {
-    Encounter *enc = [Encounter encounterForLevel:self.levelNum isMultiplayer:NO];
+    Encounter *enc = [Encounter normalEncounterForLevel:self.levelNum isMultiplayer:NO];
     
     NSString *encTitle = enc.title;
     NSString *encDesc = enc.info;
@@ -63,9 +64,10 @@
     [self.descLabel setString:encDesc];
 }
 
-- (void)setLevelNum:(NSInteger)levelNum
+- (void)setLevelNum:(NSInteger)levelNum encounterType:(EncounterType)encounterType
 {
     _levelNum = levelNum;
+    _encounterType = encounterType;
     [self reloadCard];
 }
 @end

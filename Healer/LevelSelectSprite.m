@@ -22,10 +22,11 @@
 
 @implementation LevelSelectSprite
 
-- (id)initWithLevel:(NSInteger)levelNum
+- (id)initWithLevel:(NSInteger)levelNum encounterType:(EncounterType)encounterType
 {
     if (self = [super init]) {
         self.levelNum = levelNum;
+        _encounterType = encounterType;
         
         CCSprite *bossIconSprite = [CCSprite spriteWithSpriteFrameName:[NSString stringWithFormat:@"boss-icon-%i.png", self.levelNum]];
         CCSprite *bossIconSpriteSelected = [CCSprite spriteWithSpriteFrameName:[NSString stringWithFormat:@"boss-icon-%i.png", self.levelNum]];
@@ -88,7 +89,7 @@
             [self.selectedRing runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCFadeTo actionWithDuration:1.0 opacity:120], [CCFadeTo actionWithDuration:1.0 opacity:255], nil]]];
         }
         if (!self.labelBackground) {
-            self.encounterNameLabel = [CCLabelTTF labelWithString:[Encounter encounterForLevel:self.levelNum isMultiplayer:NO].title fontName:@"TrebuchetMS-Bold" fontSize:24.0];
+            self.encounterNameLabel = [CCLabelTTF labelWithString:[Encounter normalEncounterForLevel:self.levelNum isMultiplayer:NO].title fontName:@"TrebuchetMS-Bold" fontSize:24.0];
             self.encounterNameLabel.horizontalAlignment = kCCTextAlignmentCenter;
             self.encounterNameLabel.position = CGPointMake(self.encounterNameLabel.contentSize.width / 2, 0);
             

@@ -8,10 +8,11 @@
 
 #import "cocos2d.h"
 #import "LevelSelectSprite.h"
+#import "Encounter.h"
 
 @protocol LevelSelectMapNodeDelegate <NSObject>
 
-- (void)levelSelectMapNodeDidSelectLevelNum:(NSInteger)levelNum;
+- (void)levelSelectMapNodeDidSelectLevelNum:(NSInteger)levelNum encounterType:(EncounterType)encounterType;
 
 @end
 

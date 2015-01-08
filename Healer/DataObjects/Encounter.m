@@ -37,12 +37,13 @@
     [super dealloc];
 }
 
-- (id)initWithRaid:(Raid *)raid enemies:(NSArray *)enemies andSpells:(NSArray *)spells{
+- (id)initWithRaid:(Raid *)raid enemies:(NSArray *)enemies andSpells:(NSArray *)spells andEncounterType:(EncounterType)encounterType{
     if (self = [super init]){
         self.raid = raid;
         self.enemies = enemies;
         self.recommendedSpells  = spells;
         self.difficulty = 2;
+        _encounterType = encounterType;
         
         self.combatLog = [NSMutableArray arrayWithCapacity:500];
     }
@@ -184,10 +185,34 @@
 
 + (Encounter*)randomMultiplayerEncounter{
     NSInteger roll = (arc4random() % 5 + 6);
-    return [Encounter encounterForLevel:roll isMultiplayer:YES];
+    return [Encounter normalEncounterForLevel:roll isMultiplayer:YES];
 }
 
-+ (Encounter*)encounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer{
++ (Encounter*)encounterForType:(EncounterType)encounterType level:(NSInteger)level isMultiplayer:(BOOL)isMultiplayer
+{
+    Encounter *result = nil;
+    switch (encounterType) {
+        case EncounterTypeNormal:
+            result = [Encounter normalEncounterForLevel:level isMultiplayer:isMultiplayer];
+            break;
+        case EncounterTypeEvent1:
+            result = nil;
+            break;
+        case EncounterTypeTest:
+            result = [Encounter event1EncounterForLevel:level];
+            break;
+        default:
+            break;
+    }
+    return result;
+}
+
++ (Encounter*)event1EncounterForLevel:(NSInteger)level
+{
+    return nil;
+}
+
++ (Encounter*)normalEncounterForLevel:(NSInteger)level isMultiplayer:(BOOL)multiplayer{
     Raid *basicRaid = [[[Raid alloc] init] autorelease];
     NSMutableArray *enemies = [NSMutableArray arrayWithCapacity:3];
     NSArray *spells = nil;
@@ -599,7 +624,7 @@
     for (Enemy *enemy in enemies) {
         enemy.isMultiplayer = multiplayer;
     }
-    Encounter *encToReturn = [[Encounter alloc] initWithRaid:basicRaid enemies:enemies andSpells:spells];
+    Encounter *encToReturn = [[Encounter alloc] initWithRaid:basicRaid enemies:enemies andSpells:spells andEncounterType:EncounterTypeNormal];
     [encToReturn setInfo:info];
     [encToReturn setTitle:title];
     [encToReturn setLevelNumber:level];
@@ -676,7 +701,7 @@
     }
     
     basicBoss.isMultiplayer = multiplayer;
-    Encounter *encToReturn = [[Encounter alloc] initWithRaid:basicRaid enemies:[NSArray arrayWithObject:basicBoss] andSpells:spells];
+    Encounter *encToReturn = [[Encounter alloc] initWithRaid:basicRaid enemies:[NSArray arrayWithObject:basicBoss] andSpells:spells andEncounterType:EncounterTypeTest];
     [encToReturn setLevelNumber:ENDLESS_VOID_ENCOUNTER_NUMBER];
     return [encToReturn autorelease];
 }

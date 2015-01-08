@@ -77,7 +77,7 @@
     TestBoss *boss = [TestBoss defaultBoss];
     [enemies addObject:boss];
     
-    Encounter *encToReturn = [[Encounter alloc] initWithRaid:basicRaid enemies:enemies andSpells:nil];
+    Encounter *encToReturn = [[Encounter alloc] initWithRaid:basicRaid enemies:enemies andSpells:nil andEncounterType:EncounterTypeTest];
     [encToReturn setInfo:info];
     [encToReturn setTitle:title];
     //[encToReturn setLevelNumber:999];

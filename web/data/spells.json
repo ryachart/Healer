@@ -1,0 +1,770 @@
+{
+  "dataset": "spells",
+  "generatedBy": "tools/extract_phase1_data.py",
+  "payload": [
+    {
+      "appliedEffect": null,
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "35.0",
+        "value": 35.0
+      },
+      "descriptionTemplate": "Binds the souls of all allies redistributing health evenly and reducing damage taken for those allies by 20% for 8 seconds.",
+      "endCastingAudioTitle": "heal_finish.mp3",
+      "energyCost": {
+        "expression": "100 * kCostEfficiencyScale",
+        "value": 120.0
+      },
+      "healingAmount": {
+        "expression": "0",
+        "value": 0
+      },
+      "iconFrameName": "attunement-icon.png",
+      "id": "Attunement",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "protective",
+      "targetCount": "all_allies",
+      "targeting": "raid_wide",
+      "title": "Attunement"
+    },
+    {
+      "appliedEffect": null,
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "4.0",
+        "value": 4.0
+      },
+      "descriptionTemplate": "Shields the target absorbing |H| damage.  If the shield is fully consumed 59 mana is restored to the Healer.",
+      "endCastingAudioTitle": "barrier_finish.mp3",
+      "energyCost": {
+        "expression": "75 * kCostEfficiencyScale",
+        "value": 90.0
+      },
+      "healingAmount": {
+        "expression": "0",
+        "value": 0
+      },
+      "iconFrameName": "barrier-icon.png",
+      "id": "Barrier",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "protective",
+      "targetCount": 1,
+      "targeting": "selected_ally",
+      "title": "Barrier"
+    },
+    {
+      "appliedEffect": {
+        "className": "DelayedHealthEffect",
+        "damageTakenMultiplierAdjustment": {
+          "expression": "-.25",
+          "value": -0.25
+        },
+        "declaredType": "DelayedHealthEffect",
+        "duration": {
+          "expression": "5.0",
+          "value": 5.0
+        },
+        "effectType": "EffectTypePositive",
+        "title": "blessed-armor-eff",
+        "value": {
+          "expression": "500 * kHealingDoneScale",
+          "value": 450.0
+        }
+      },
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "9.0",
+        "value": 9.0
+      },
+      "descriptionTemplate": "Reduces damage done to a target by 25% for 5 seconds.  When the effect ends it heals for |H2|.",
+      "endCastingAudioTitle": "barrier_finish.mp3",
+      "energyCost": {
+        "expression": "10 * kCostEfficiencyScale",
+        "value": 12.0
+      },
+      "healingAmount": {
+        "expression": "0",
+        "value": 0
+      },
+      "iconFrameName": "blessed-armor-icon.png",
+      "id": "BlessedArmor",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "protective",
+      "targetCount": 1,
+      "targeting": "selected_ally",
+      "title": "Blessed Armor"
+    },
+    {
+      "appliedEffect": {
+        "className": "IntensifyingRepeatedHealthEffect",
+        "declaredType": "IntensifyingRepeatedHealthEffect",
+        "duration": {
+          "expression": "10.0",
+          "value": 10.0
+        },
+        "effectType": "EffectTypePositive",
+        "numOfTicks": {
+          "expression": "8",
+          "value": 8
+        },
+        "title": "fading-light-effect",
+        "valuePerTick": {
+          "expression": "400 * kHealingDoneScale",
+          "value": 360.0
+        }
+      },
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "6.0",
+        "value": 6.0
+      },
+      "descriptionTemplate": "Heals for |H2| over |D| seconds.  The healing done starts high but decreases each tick.",
+      "endCastingAudioTitle": "heal_finish.mp3",
+      "energyCost": {
+        "expression": "80 * kCostEfficiencyScale",
+        "value": 96.0
+      },
+      "healingAmount": {
+        "expression": "0",
+        "value": 0
+      },
+      "iconFrameName": "fading-light-icon.png",
+      "id": "FadingLight",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "periodic",
+      "targetCount": 1,
+      "targeting": "selected_ally",
+      "title": "Fading Light"
+    },
+    {
+      "appliedEffect": null,
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "1.5",
+        "value": 1.5
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "descriptionTemplate": "Heals up to two targets for |H| each.",
+      "endCastingAudioTitle": "forked_finish.mp3",
+      "energyCost": {
+        "expression": "52 * kCostEfficiencyScale",
+        "value": 62.4
+      },
+      "healingAmount": {
+        "expression": "325 * kHealingDoneScale",
+        "value": 292.5
+      },
+      "iconFrameName": "forked-heal-icon.png",
+      "id": "ForkedHeal",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "multi",
+      "targetCount": 2,
+      "targeting": "lowest_health_with_required_primary",
+      "title": "Forked Heal"
+    },
+    {
+      "appliedEffect": null,
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "2.0",
+        "value": 2.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "descriptionTemplate": "Heals your target for |H|.",
+      "endCastingAudioTitle": "burst_finish.mp3",
+      "energyCost": {
+        "expression": "50 * kCostEfficiencyScale",
+        "value": 60.0
+      },
+      "healingAmount": {
+        "expression": "750 * kHealingDoneScale",
+        "value": 675.0
+      },
+      "iconFrameName": "greater-heal-icon.png",
+      "id": "GreaterHeal",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "basic",
+      "targetCount": 1,
+      "targeting": "selected_ally",
+      "title": "Greater Heal"
+    },
+    {
+      "appliedEffect": null,
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "2.0",
+        "value": 2.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "descriptionTemplate": "Heals your target for |H|. This spell is extremely mana efficient.",
+      "endCastingAudioTitle": "heal_finish.mp3",
+      "energyCost": {
+        "expression": "10 * kCostEfficiencyScale",
+        "value": 12.0
+      },
+      "healingAmount": {
+        "expression": "250 * kHealingDoneScale",
+        "value": 225.0
+      },
+      "iconFrameName": "heal-icon.png",
+      "id": "Heal",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "basic",
+      "targetCount": 1,
+      "targeting": "selected_ally",
+      "title": "Heal"
+    },
+    {
+      "appliedEffect": null,
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "1.25",
+        "value": 1.25
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "descriptionTemplate": "Heals your target for |H| very quickly.",
+      "endCastingAudioTitle": "burst_finish.mp3",
+      "energyCost": {
+        "expression": "50 * kCostEfficiencyScale",
+        "value": 60.0
+      },
+      "healingAmount": {
+        "expression": "500 * kHealingDoneScale",
+        "value": 450.0
+      },
+      "iconFrameName": "healing-burst-icon.png",
+      "id": "HealingBurst",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "basic",
+      "targetCount": 1,
+      "targeting": "selected_ally",
+      "title": "Healing Burst"
+    },
+    {
+      "appliedEffect": null,
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "2.5",
+        "value": 2.5
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "descriptionTemplate": "Heals up to 5 allies within the same attack range for |H|.",
+      "endCastingAudioTitle": "burst_finish.mp3",
+      "energyCost": {
+        "expression": "60 * kCostEfficiencyScale",
+        "value": 72.0
+      },
+      "healingAmount": {
+        "expression": "200 * kHealingDoneScale",
+        "value": 180.0
+      },
+      "iconFrameName": "light-eternal-icon.png",
+      "id": "LightEternal",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "multi",
+      "targetCount": 5,
+      "targeting": "same_position_as_primary",
+      "title": "Light Eternal"
+    },
+    {
+      "appliedEffect": {
+        "className": "ReactiveHealEffect",
+        "declaredType": "ReactiveHealEffect",
+        "duration": {
+          "expression": "20.0",
+          "value": 20.0
+        },
+        "effectCooldown": {
+          "expression": "2.0",
+          "value": 2.0
+        },
+        "effectType": "EffectTypePositive",
+        "maxStacks": {
+          "expression": "1",
+          "value": 1
+        },
+        "title": "orbs-of-light-effect",
+        "visibilityPriority": {
+          "expression": "49",
+          "value": 49
+        }
+      },
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "1.0",
+        "value": 1.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "4.0",
+        "value": 4.0
+      },
+      "descriptionTemplate": "Heals a target for |H2| each time it takes damage. Lasts |D| seconds and can only heal once every 2 seconds.",
+      "endCastingAudioTitle": "orbs_finish.mp3",
+      "energyCost": {
+        "expression": "100 * kCostEfficiencyScale",
+        "value": 120.0
+      },
+      "healingAmount": {
+        "expression": "0",
+        "value": 0
+      },
+      "iconFrameName": "orbs-of-light-icon.png",
+      "id": "OrbsOfLight",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "protective",
+      "targetCount": 1,
+      "targeting": "selected_ally",
+      "title": "Orbs of Light"
+    },
+    {
+      "appliedEffect": null,
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "5.0",
+        "value": 5.0
+      },
+      "descriptionTemplate": "Removes evil curses or poisons from your allies.  If there are none to remove, Purify heals for |H|.",
+      "endCastingAudioTitle": "purify_finish.mp3",
+      "energyCost": {
+        "expression": "40 * kCostEfficiencyScale",
+        "value": 48.0
+      },
+      "healingAmount": {
+        "expression": "50 * kHealingDoneScale",
+        "value": 45.0
+      },
+      "iconFrameName": "purify-icon.png",
+      "id": "Purify",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "protective",
+      "targetCount": 1,
+      "targeting": "selected_ally",
+      "title": "Purify"
+    },
+    {
+      "appliedEffect": {
+        "className": "RepeatedHealthEffect",
+        "declaredType": "RepeatedHealthEffect",
+        "duration": {
+          "expression": "12.0",
+          "value": 12.0
+        },
+        "effectType": "EffectTypePositive",
+        "numOfTicks": {
+          "expression": "4",
+          "value": 4
+        },
+        "title": "regrow-effect",
+        "valuePerTick": {
+          "expression": "100 * kHealingDoneScale",
+          "value": 90.0
+        }
+      },
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "1.0",
+        "value": 1.0
+      },
+      "descriptionTemplate": "Heals for |H2| over |D| seconds.",
+      "endCastingAudioTitle": "regrow_finish.wav",
+      "energyCost": {
+        "expression": "32 * kCostEfficiencyScale",
+        "value": 38.4
+      },
+      "healingAmount": {
+        "expression": "0",
+        "value": 0
+      },
+      "iconFrameName": "regrow-icon.png",
+      "id": "Regrow",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "periodic",
+      "targetCount": 1,
+      "targeting": "selected_ally",
+      "title": "Regrow"
+    },
+    {
+      "appliedEffect": null,
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "30.0",
+        "value": 30.0
+      },
+      "descriptionTemplate": "Restores 105 Mana to the caster.",
+      "endCastingAudioTitle": "heal_finish.mp3",
+      "energyCost": {
+        "expression": "0",
+        "value": 0
+      },
+      "healingAmount": {
+        "expression": "0",
+        "value": 0
+      },
+      "iconFrameName": "respite-icon.png",
+      "id": "Respite",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "empowering",
+      "targetCount": 1,
+      "targeting": "self",
+      "title": "Respite"
+    },
+    {
+      "appliedEffect": null,
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "0",
+        "value": 0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "35.0",
+        "value": 35.0
+      },
+      "descriptionTemplate": "Releases your inner light increasing healing done and reducing cast times by 50% for 7.5 seconds.",
+      "endCastingAudioTitle": "heal_finish.mp3",
+      "energyCost": {
+        "expression": "30 * kCostEfficiencyScale",
+        "value": 36.0
+      },
+      "healingAmount": {
+        "expression": "0",
+        "value": 0
+      },
+      "iconFrameName": "soaring-spirit-icon.png",
+      "id": "SoaringSpirit",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "empowering",
+      "targetCount": 1,
+      "targeting": "self",
+      "title": "Soaring Spirit"
+    },
+    {
+      "appliedEffect": null,
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "1.75",
+        "value": 1.75
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "descriptionTemplate": "Summon 4 Stars of Aravon from the heavens.  The Stars travel for 1.75 seconds before healing their target for |H|.",
+      "endCastingAudioTitle": "heal_finish.mp3",
+      "energyCost": {
+        "expression": "60 * kCostEfficiencyScale",
+        "value": 72.0
+      },
+      "healingAmount": {
+        "expression": "0",
+        "value": 0
+      },
+      "iconFrameName": "stars-of-aravon-icon.png",
+      "id": "StarsOfAravon",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "multi",
+      "targetCount": 4,
+      "targeting": "2_lowest_health_including_primary_plus_2_random",
+      "title": "Stars of Aravon"
+    },
+    {
+      "appliedEffect": null,
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "10.0",
+        "value": 10.0
+      },
+      "descriptionTemplate": "Heals up to 7 injured allies for |H2| over |D| seconds.",
+      "endCastingAudioTitle": "orbs_finish.mp3",
+      "energyCost": {
+        "expression": "30 * kCostEfficiencyScale",
+        "value": 36.0
+      },
+      "healingAmount": {
+        "expression": "0",
+        "value": 0
+      },
+      "iconFrameName": "sunburst-icon.png",
+      "id": "Sunburst",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "multi",
+      "targetCount": 7,
+      "targeting": "lowest_health_with_required_primary",
+      "title": "Sunburst"
+    },
+    {
+      "appliedEffect": {
+        "className": "SwirlingLightEffect",
+        "declaredType": "SwirlingLightEffect",
+        "duration": {
+          "expression": "10",
+          "value": 10
+        },
+        "effectType": "EffectTypePositive",
+        "maxStacks": {
+          "expression": "3",
+          "value": 3
+        },
+        "numOfTicks": {
+          "expression": "15",
+          "value": 15
+        },
+        "title": "swirling-light-effect",
+        "valuePerTick": {
+          "expression": "25 * kHealingDoneScale",
+          "value": 22.5
+        },
+        "visibilityPriority": {
+          "expression": "50",
+          "value": 50
+        }
+      },
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "1.0",
+        "value": 1.0
+      },
+      "descriptionTemplate": "Heals |H2| over |D| seconds. Maximum 3 Stacks. At 3 stacks this increases healing received by 5%. Can only be applied to 1 ally.",
+      "endCastingAudioTitle": "regrow_finish.wav",
+      "energyCost": {
+        "expression": "20 * kCostEfficiencyScale",
+        "value": 24.0
+      },
+      "healingAmount": {
+        "expression": "0",
+        "value": 0
+      },
+      "iconFrameName": "swirling-light-icon.png",
+      "id": "SwirlingLight",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": true,
+      "itemSpriteName": null,
+      "spellType": "periodic",
+      "targetCount": 1,
+      "targeting": "selected_ally",
+      "title": "Swirling Light"
+    },
+    {
+      "appliedEffect": null,
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "6.0",
+        "value": 6.0
+      },
+      "descriptionTemplate": "Heals for |H| instantly and |H2| over |D| seconds.  Each time the periodic effect heals it restores 6 mana to the Healer.",
+      "endCastingAudioTitle": "orbs_finish.mp3",
+      "energyCost": {
+        "expression": "54 * kCostEfficiencyScale",
+        "value": 64.8
+      },
+      "healingAmount": {
+        "expression": "300 * kHealingDoneScale",
+        "value": 270.0
+      },
+      "iconFrameName": "touch-of-hope-icon.png",
+      "id": "TouchOfHope",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "basic",
+      "targetCount": 1,
+      "targeting": "selected_ally",
+      "title": "Touch of Hope"
+    },
+    {
+      "appliedEffect": {
+        "className": "WanderingSpiritEffect",
+        "declaredType": "WanderingSpiritEffect",
+        "duration": {
+          "expression": "14.0",
+          "value": 14.0
+        },
+        "effectType": "EffectTypePositive",
+        "numOfTicks": {
+          "expression": "8.0",
+          "value": 8.0
+        },
+        "title": "wandering-spirit-effect",
+        "valuePerTick": {
+          "expression": "240 * kHealingDoneScale",
+          "value": 216.0
+        }
+      },
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "15.0",
+        "value": 15.0
+      },
+      "descriptionTemplate": "For |D| seconds, a spirit will wander through your allies restoring |H2| health to the injured.",
+      "endCastingAudioTitle": "heal_finish.mp3",
+      "energyCost": {
+        "expression": "90 * kCostEfficiencyScale",
+        "value": 108.0
+      },
+      "healingAmount": {
+        "expression": "0",
+        "value": 0
+      },
+      "iconFrameName": "wandering-spirit-icon.png",
+      "id": "WanderingSpirit",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "periodic",
+      "targetCount": "all_allies",
+      "targeting": "wanders_between_injured_allies",
+      "title": "Wandering Spirit"
+    },
+    {
+      "appliedEffect": null,
+      "beginCastingAudioTitle": "heal_begin.mp3",
+      "castTime": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "classification": "player",
+      "cooldown": {
+        "expression": "35.0",
+        "value": 35.0
+      },
+      "descriptionTemplate": "Covers all allies in a protective barrier that reduces incoming damage by 40% for 6 seconds.",
+      "endCastingAudioTitle": "heal_finish.mp3",
+      "energyCost": {
+        "expression": "100 * kCostEfficiencyScale",
+        "value": 120.0
+      },
+      "healingAmount": {
+        "expression": "0",
+        "value": 0
+      },
+      "iconFrameName": "ward-of-ancients-icon.png",
+      "id": "WardOfAncients",
+      "interruptedAudioTitle": "interrupted.mp3",
+      "isExclusiveEffectTarget": false,
+      "itemSpriteName": null,
+      "spellType": "protective",
+      "targetCount": "all_allies",
+      "targeting": "raid_wide",
+      "title": "Ward of Ancients"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "Healer/DataObjects/Spell.m",
+      "sha256": "c8d9b2d3ee1140a7494745d31c3e2481c14afca46fe99bca6d42954f18f75d9a"
+    },
+    {
+      "path": "Healer/DataObjects/Spell.h",
+      "sha256": "22192add45c336b2cacbb6209c039ae53a8b880706ed962499dbd273575da0c7"
+    }
+  ]
+}

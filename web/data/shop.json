@@ -1,0 +1,152 @@
+{
+  "dataset": "shop",
+  "generatedBy": "tools/extract_phase1_data.py",
+  "payload": {
+    "items": [
+      {
+        "category": "essentials",
+        "goldCost": 0,
+        "spellId": "Heal",
+        "title": "Heal"
+      },
+      {
+        "category": "essentials",
+        "goldCost": 25,
+        "spellId": "GreaterHeal",
+        "title": "Greater Heal"
+      },
+      {
+        "category": "advanced",
+        "goldCost": 25,
+        "spellId": "Purify",
+        "title": "Purify"
+      },
+      {
+        "category": "essentials",
+        "goldCost": 75,
+        "spellId": "Regrow",
+        "title": "Regrow"
+      },
+      {
+        "category": "essentials",
+        "goldCost": 100,
+        "spellId": "ForkedHeal",
+        "title": "Forked Heal"
+      },
+      {
+        "category": "advanced",
+        "goldCost": 250,
+        "spellId": "HealingBurst",
+        "title": "Healing Burst"
+      },
+      {
+        "category": "advanced",
+        "goldCost": 300,
+        "spellId": "Barrier",
+        "title": "Barrier"
+      },
+      {
+        "category": "advanced",
+        "goldCost": 300,
+        "spellId": "StarsOfAravon",
+        "title": "Stars of Aravon"
+      },
+      {
+        "category": "advanced",
+        "goldCost": 300,
+        "spellId": "TouchOfHope",
+        "title": "Touch of Hope"
+      },
+      {
+        "category": "archives",
+        "goldCost": 500,
+        "spellId": "BlessedArmor",
+        "title": "Blessed Armor"
+      },
+      {
+        "category": "archives",
+        "goldCost": 500,
+        "spellId": "FadingLight",
+        "title": "Fading Light"
+      },
+      {
+        "category": "archives",
+        "goldCost": 500,
+        "spellId": "LightEternal",
+        "title": "Light Eternal"
+      },
+      {
+        "category": "archives",
+        "goldCost": 500,
+        "spellId": "OrbsOfLight",
+        "title": "Orbs of Light"
+      },
+      {
+        "category": "archives",
+        "goldCost": 500,
+        "spellId": "Sunburst",
+        "title": "Sunburst"
+      },
+      {
+        "category": "archives",
+        "goldCost": 500,
+        "spellId": "SwirlingLight",
+        "title": "Swirling Light"
+      },
+      {
+        "category": "vault",
+        "goldCost": 900,
+        "spellId": "Attunement",
+        "title": "Attunement"
+      },
+      {
+        "category": "vault",
+        "goldCost": 900,
+        "spellId": "Respite",
+        "title": "Respite"
+      },
+      {
+        "category": "vault",
+        "goldCost": 900,
+        "spellId": "SoaringSpirit",
+        "title": "Soaring Spirit"
+      },
+      {
+        "category": "vault",
+        "goldCost": 900,
+        "spellId": "WanderingSpirit",
+        "title": "Wandering Spirit"
+      },
+      {
+        "category": "vault",
+        "goldCost": 900,
+        "spellId": "WardOfAncients",
+        "title": "Ward of Ancients"
+      }
+    ],
+    "unlockThresholdsByCategory": {
+      "advanced": 4,
+      "archives": 8,
+      "essentials": 0,
+      "vault": 11
+    }
+  },
+  "sourceFiles": [
+    {
+      "path": "Healer/Shop.m",
+      "sha256": "473739bb3c6ab44cc8e6fb8896693a61550359b75b7ba11f686aa9d2a934c402"
+    },
+    {
+      "path": "Healer/Shop.h",
+      "sha256": "084a67b3f8e96fe403c405f34b583a6b113357e55b5298270da518690c02f7b9"
+    },
+    {
+      "path": "Healer/ShopItem.m",
+      "sha256": "6e6df7e2fd1cdbc10ce5ecf897ae5668278b6101b67af7113cdc892f2f84aa61"
+    },
+    {
+      "path": "Healer/ShopItem.h",
+      "sha256": "61339a1681fa594c1f12ff1ef51086a7f007b21f86c9226ac9b682c1eab18fd0"
+    }
+  ]
+}

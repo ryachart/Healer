@@ -1,0 +1,115 @@
+{
+  "dataset": "progression-schema",
+  "generatedBy": "tools/extract_phase1_data.py",
+  "payload": {
+    "contentGate": {
+      "endFreeEncounterLevel": 7,
+      "endFreeUpsellText": "Purchase The Legacy of Torment Expansion to unlock new bosses, an additional spell slot, the Cleric's Archives, and the Sage Vault!",
+      "mainGameContentKey": "com.healer.c1key"
+    },
+    "ftueStates": [
+      "FTUEStateFresh",
+      "FTUEStateTargetSelected",
+      "FTUEStateTargetHealed",
+      "FTUEStateAbilityIconSelected",
+      "FTUEStateBattle1Finished",
+      "FTUEStateGreaterHealPurchased"
+    ],
+    "inventorySlots": [
+      "head",
+      "weapon",
+      "chest",
+      "legs",
+      "boots",
+      "neck"
+    ],
+    "persistenceKeys": {
+      "ContentKeys": "com.healer.contentKeys",
+      "DivinityTiersUnlocked": "com.healer.divTiers",
+      "EffectsDisabledKey": "com.healer.effectsDisabled",
+      "GamePurchasedCheckedKey": "com.healer.gpck",
+      "HasRequestedAppStoreReviewKey": "com.healer.requestedAppStoreReview",
+      "MainGameContentKey": "com.healer.c1key",
+      "MusicDisabledKey": "com.healer.musicDisabled",
+      "PlayerAllyDamageUpgradesKey": "com.healer.paduk",
+      "PlayerAllyHealthUpgradesKey": "com.healer.pahuk",
+      "PlayerFTUEState": "com.healer.ftueState",
+      "PlayerGold": "com.healer.playerId",
+      "PlayerGoldDidChangeNotification": "com.healer.goldDidChangeNotif",
+      "PlayerHighestLevelAttempted": "com.healer.playerHighestLevelAttempted",
+      "PlayerHighestLevelCompleted": "com.healer.playerHighestLevelCompleted",
+      "PlayerInventoryKey": "com.healer.ou1",
+      "PlayerLastSelectedLevelKey": "com.healer.plsl",
+      "PlayerLastUsedSpellsKey": "com.healer.lastUsedSpells",
+      "PlayerLevelDifficultyLevelsKey": "com.healer.diffLevels",
+      "PlayerLevelFailed": "com.healer.playerLevelFailed1",
+      "PlayerLevelRatingKeyPrefix": "com.healer.playerLevelRatingForLevel1",
+      "PlayerLevelScoreKeyPrefix": "com.healer.playerScoreForLevel2",
+      "PlayerName": "com.healer.playerName",
+      "PlayerNormalModeCompleteShown": "com.healer.nmcs",
+      "PlayerRemoteObjectIdKey": "com.healer.playerRemoteObjectID3",
+      "PlayerSlotKey": "com.healer.eslot",
+      "PlayerStaminaDidChangeNotification": "com.healer.staminaDidChangeNotif",
+      "PlayerTotalItemsEarnedKey": "com.healer.ptie",
+      "TalentConfig": "com.healer.divinityConfig"
+    },
+    "progressionRules": {
+      "allyUpgradeCost": {
+        "base": 200,
+        "maximumHealthUpgrades": 50,
+        "step": 50
+      },
+      "difficultyDefaultValue": 2,
+      "difficultyTrackedLevelSlots": 25,
+      "maximumInventorySize": 15,
+      "maximumStandardSpellSlots": {
+        "base": 3,
+        "mainGameExpansionBonus": 1
+      },
+      "multiplayerUnlockAtHighestLevelCompleted": 6,
+      "talentTierUnlocks": [
+        {
+          "requiredRating": 15,
+          "tier": 0
+        },
+        {
+          "requiredRating": 30,
+          "tier": 1
+        },
+        {
+          "requiredRating": 45,
+          "tier": 2
+        },
+        {
+          "requiredRating": 60,
+          "tier": 3
+        },
+        {
+          "requiredRating": 80,
+          "tier": 4
+        }
+      ],
+      "totalRatingStartsAtLevel": 2,
+      "tutorialLevelHasNoRating": true
+    },
+    "staminaSource": {
+      "provider": "Parse Cloud",
+      "readFunction": "getStamina",
+      "spendFunction": "useStamina"
+    }
+  },
+  "sourceFiles": [
+    {
+      "path": "Healer/PlayerDataManager.m",
+      "sha256": "2bd557312ccc976e4bcc299b069ceb327a666f0c61f09d5664ecde8dcf6d3405"
+    },
+    {
+      "path": "Healer/PlayerDataManager.h",
+      "sha256": "561dd984e090d70c60776fc9a262fa6599049f76826df159bb814e72267ccfd0"
+    },
+    {
+      "path": "Healer/EquipmentItem.h",
+      "sha256": "ac5bd52d73c3c1233ee204fcc5073269cc3e0742c63abd1f01e0aee1c6089c58"
+    }
+  ]
+}

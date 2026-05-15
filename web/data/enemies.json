@@ -1,0 +1,924 @@
+{
+  "dataset": "enemies",
+  "generatedBy": "tools/extract_phase1_data.py",
+  "payload": [
+    {
+      "abilities": [
+        {
+          "abilityValue": {
+            "expression": "75",
+            "value": 75
+          },
+          "activationTime": {
+            "expression": "1.75",
+            "value": 1.75
+          },
+          "className": "BaraghastRoar",
+          "cooldown": {
+            "expression": "38.0",
+            "value": 38.0
+          },
+          "declaredType": "BaraghastRoar",
+          "iconName": "shadow_roar.png",
+          "info": "Interrupts spell casting, dispels all positive spell effects, and deals damage to all enemies.  If a Healer is casting when this ability triggers the Healer suffers damage over time.",
+          "key": "baraghast-roar",
+          "title": "Roar of the Damned"
+        }
+      ],
+      "attackFrequency": {
+        "expression": "2.25",
+        "value": 2.25
+      },
+      "autoAttackAdjustments": {
+        "failureChance": {
+          "expression": ".30",
+          "value": 0.3
+        }
+      },
+      "choosesMainTarget": true,
+      "className": "BaraghastReborn",
+      "damage": {
+        "expression": "500",
+        "value": 500
+      },
+      "health": {
+        "expression": "3289000",
+        "value": 3289000
+      },
+      "id": "BaraghastReborn",
+      "spriteName": "baraghastreborn_battle_portrait.png",
+      "targets": {
+        "expression": "1",
+        "value": 1
+      },
+      "title": "Baraghast Reborn"
+    },
+    {
+      "abilities": [],
+      "attackFrequency": {
+        "expression": "1.25",
+        "value": 1.25
+      },
+      "autoAttackAdjustments": {
+        "failureChance": {
+          "expression": ".30",
+          "value": 0.3
+        }
+      },
+      "choosesMainTarget": true,
+      "className": "Baraghast",
+      "damage": {
+        "expression": "150",
+        "value": 150
+      },
+      "health": {
+        "expression": "3040000",
+        "value": 3040000
+      },
+      "id": "Baraghast",
+      "spriteName": "baraghast_battle_portrait.png",
+      "targets": {
+        "expression": "1",
+        "value": 1
+      },
+      "title": "Baraghast, Warlord of the Damned"
+    },
+    {
+      "abilities": [
+        {
+          "className": "Cleave",
+          "declaredType": "Cleave",
+          "factoryMethod": "normalCleave"
+        },
+        {
+          "abilityValue": {
+            "expression": "35",
+            "value": 35
+          },
+          "activationTime": {
+            "expression": "2.0",
+            "value": 2.0
+          },
+          "className": "Earthquake",
+          "cooldown": {
+            "expression": "28.0",
+            "value": 28.0
+          },
+          "declaredType": "Earthquake",
+          "executionSound": "earthquake.mp3",
+          "iconName": "quake.png",
+          "key": "root-quake",
+          "title": "Earthquake"
+        },
+        {
+          "abilityValue": {
+            "expression": "208",
+            "value": 208
+          },
+          "activationSound": "treebranchdrawback.mp3",
+          "activationTime": {
+            "expression": "2.0",
+            "value": 2.0
+          },
+          "className": "RaidDamage",
+          "cooldown": {
+            "expression": "kAbilityRequiresTrigger",
+            "value": null
+          },
+          "declaredType": "RaidDamage",
+          "executionSound": "treebranchwhipforward.mp3",
+          "iconName": "branch_thrash.png",
+          "key": "branch-attack",
+          "title": "Viscious Branches"
+        }
+      ],
+      "attackFrequency": {
+        "expression": "3.0",
+        "value": 3.0
+      },
+      "autoAttackAdjustments": {
+        "failureChance": {
+          "expression": ".25",
+          "value": 0.25
+        }
+      },
+      "choosesMainTarget": true,
+      "className": "BefouledTreant",
+      "damage": {
+        "expression": "bossDamage",
+        "value": null
+      },
+      "health": {
+        "expression": "560000",
+        "value": 560000
+      },
+      "id": "BefouledTreant",
+      "spriteName": "treant_battle_portrait.png",
+      "targets": {
+        "expression": "1",
+        "value": 1
+      },
+      "title": "Befouled Akarus"
+    },
+    {
+      "abilities": [
+        {
+          "abilityValue": {
+            "expression": "240",
+            "value": 240
+          },
+          "activationTime": {
+            "expression": "1.5",
+            "value": 1.5
+          },
+          "className": "BoneThrow",
+          "cooldown": {
+            "expression": "14.0",
+            "value": 14.0
+          },
+          "declaredType": "BoneThrow"
+        }
+      ],
+      "attackFrequency": {
+        "expression": "2.15",
+        "value": 2.15
+      },
+      "choosesMainTarget": true,
+      "className": "ColossusOfBone",
+      "damage": {
+        "expression": "620",
+        "value": 620
+      },
+      "health": {
+        "expression": "1710000",
+        "value": 1710000
+      },
+      "id": "ColossusOfBone",
+      "spriteName": "colossusbone_battle_portrait.png",
+      "targets": {
+        "expression": "1",
+        "value": 1
+      },
+      "title": "Colossus of Bone"
+    },
+    {
+      "abilities": [
+        {
+          "className": "Cleave",
+          "declaredType": "Cleave",
+          "factoryMethod": "normalCleave",
+          "info": "Attacks with a chance to deal high damage to all melee range enemies."
+        },
+        {
+          "className": "ChannelledEnemyAttackAdjustment",
+          "cooldown": {
+            "expression": "kAbilityRequiresTrigger",
+            "value": null
+          },
+          "declaredType": "ChannelledEnemyAttackAdjustment",
+          "iconName": "temper.png",
+          "info": "Occasionally, the Corrupted Troll will attack its Focused target furiously dealing high damage.",
+          "key": "frenzy",
+          "title": "Frenzy"
+        }
+      ],
+      "attackFrequency": {
+        "expression": "freq",
+        "value": null
+      },
+      "autoAttackAdjustments": {
+        "failureChance": {
+          "expression": ".1",
+          "value": 0.1
+        }
+      },
+      "choosesMainTarget": true,
+      "className": "CorruptedTroll",
+      "damage": {
+        "expression": "damage",
+        "value": null
+      },
+      "health": {
+        "expression": "health",
+        "value": null
+      },
+      "id": "CorruptedTroll",
+      "spriteName": "troll_battle_portrait.png",
+      "targets": {
+        "expression": "1",
+        "value": 1
+      },
+      "title": "Corrupted Troll"
+    },
+    {
+      "abilities": [
+        {
+          "abilityValue": {
+            "expression": "-120",
+            "value": -120
+          },
+          "className": "ProjectileAttack",
+          "cooldown": {
+            "expression": "4",
+            "value": 4
+          },
+          "declaredType": "ProjectileAttack",
+          "executionSound": "fireball.mp3",
+          "spriteName": "shadowbolt.png"
+        },
+        {
+          "activationTime": {
+            "expression": "1.5",
+            "value": 1.5
+          },
+          "className": "InvertedHealing",
+          "cooldown": {
+            "expression": "5.0",
+            "value": 5.0
+          },
+          "declaredType": "InvertedHealing",
+          "executionSound": "curse.mp3"
+        },
+        {
+          "activationTime": {
+            "expression": "2.0",
+            "value": 2.0
+          },
+          "className": "SoulBurn",
+          "cooldown": {
+            "expression": "14.0",
+            "value": 14.0
+          },
+          "declaredType": "SoulBurn",
+          "executionSound": "fire_start.mp3"
+        },
+        {
+          "className": "ImproveProjectileAbility",
+          "cooldown": {
+            "expression": "60",
+            "value": 60
+          },
+          "declaredType": "ImproveProjectileAbility",
+          "iconName": "increasing_insanity.png",
+          "info": "Tyonath casts more shadow bolts the longer the fight goes on.",
+          "title": "Increasing Insanity"
+        },
+        {
+          "abilityValue": {
+            "expression": "125",
+            "value": 125
+          },
+          "activationTime": {
+            "expression": "1.5",
+            "value": 1.5
+          },
+          "className": "RaidDamage",
+          "cooldown": {
+            "expression": "25",
+            "value": 25
+          },
+          "declaredType": "RaidDamage",
+          "executionSound": "tyonath_laugh.mp3",
+          "iconName": "roar.png",
+          "title": "Horrifying Laugh"
+        }
+      ],
+      "attackFrequency": {
+        "expression": "0",
+        "value": 0
+      },
+      "choosesMainTarget": false,
+      "className": "CrazedSeer",
+      "damage": {
+        "expression": "0",
+        "value": 0
+      },
+      "health": {
+        "expression": "2720000",
+        "value": 2720000
+      },
+      "id": "CrazedSeer",
+      "spriteName": "tyonath_battle_portrait.png",
+      "targets": {
+        "expression": "0",
+        "value": 0
+      },
+      "title": "Crazed Seer Tyonath"
+    },
+    {
+      "abilities": [],
+      "attackFrequency": {
+        "expression": "2.0",
+        "value": 2.0
+      },
+      "autoAttackAdjustments": {
+        "failureChance": {
+          "expression": ".25",
+          "value": 0.25
+        }
+      },
+      "choosesMainTarget": true,
+      "className": "FinalRavager",
+      "damage": {
+        "expression": "141",
+        "value": 141
+      },
+      "health": {
+        "expression": "187000",
+        "value": 187000
+      },
+      "id": "FinalRavager",
+      "spriteName": "fungalravagers_battle_portrait.png",
+      "targets": {
+        "expression": "1",
+        "value": 1
+      },
+      "title": "Fungal Ravagers"
+    },
+    {
+      "abilities": [],
+      "attackFrequency": {
+        "expression": "2.1",
+        "value": 2.1
+      },
+      "autoAttackAdjustments": {
+        "failureChance": {
+          "expression": ".30",
+          "value": 0.3
+        }
+      },
+      "choosesMainTarget": true,
+      "className": "GatekeeperDelsarn",
+      "damage": {
+        "expression": "500",
+        "value": 500
+      },
+      "health": {
+        "expression": "4330000",
+        "value": 4330000
+      },
+      "id": "GatekeeperDelsarn",
+      "spriteName": "gatekeeper_battle_portrait.png",
+      "targets": {
+        "expression": "1",
+        "value": 1
+      },
+      "title": "Gatekeeper of Delsarn"
+    },
+    {
+      "abilities": [
+        {
+          "activationTime": {
+            "expression": "2.5",
+            "value": 2.5
+          },
+          "className": "Attack",
+          "declaredType": "Attack",
+          "executionSound": "slimeimpact.mp3",
+          "iconName": "plague.png",
+          "info": "The Ghoul strikes a random enemy with a sickening attack causing them to be diseased for 12 seconds.",
+          "key": "plague-strike",
+          "title": "Plague Strike"
+        }
+      ],
+      "attackFrequency": {
+        "expression": "2.0",
+        "value": 2.0
+      },
+      "autoAttackAdjustments": {
+        "dodgeChanceAdjustment": {
+          "expression": "-100.0",
+          "value": -100.0
+        },
+        "failureChance": {
+          "expression": "0.0",
+          "value": 0.0
+        }
+      },
+      "choosesMainTarget": false,
+      "className": "Ghoul",
+      "damage": {
+        "expression": "300",
+        "value": 300
+      },
+      "health": {
+        "expression": "110000",
+        "value": 110000
+      },
+      "id": "Ghoul",
+      "spriteName": "ghoul_battle_portrait.png",
+      "targets": {
+        "expression": "1",
+        "value": 1
+      },
+      "title": "Ghoul"
+    },
+    {
+      "abilities": [
+        {
+          "activationTime": {
+            "expression": "1.5",
+            "value": 1.5
+          },
+          "className": "RandomPotionToss",
+          "cooldown": {
+            "expression": "11.0",
+            "value": 11.0
+          },
+          "declaredType": "RandomPotionToss",
+          "executionSound": "whiff.mp3",
+          "iconName": "vial_throw.png",
+          "key": "potions",
+          "title": "Throw Vial"
+        }
+      ],
+      "attackFrequency": {
+        "expression": "2.25",
+        "value": 2.25
+      },
+      "choosesMainTarget": false,
+      "className": "MischievousImps",
+      "damage": {
+        "expression": "0",
+        "value": 0
+      },
+      "health": {
+        "expression": "112500",
+        "value": 112500
+      },
+      "id": "MischievousImps",
+      "spriteName": "imps_battle_portrait.png",
+      "targets": {
+        "expression": "0",
+        "value": 0
+      },
+      "title": "Mischievious Imps"
+    },
+    {
+      "abilities": [],
+      "attackFrequency": {
+        "expression": "0",
+        "value": 0
+      },
+      "choosesMainTarget": false,
+      "className": "OverseerOfDelsarn",
+      "damage": {
+        "expression": "0",
+        "value": 0
+      },
+      "health": {
+        "expression": "2580000",
+        "value": 2580000
+      },
+      "id": "OverseerOfDelsarn",
+      "spriteName": "overseer_battle_portrait.png",
+      "targets": {
+        "expression": "0",
+        "value": 0
+      },
+      "title": "Overseer of Delsarn"
+    },
+    {
+      "abilities": [
+        {
+          "abilityValue": {
+            "expression": "100",
+            "value": 100
+          },
+          "activationTime": {
+            "expression": "2.5",
+            "value": 2.5
+          },
+          "className": "PlaguebringerSicken",
+          "cooldown": {
+            "expression": "13.0",
+            "value": 13.0
+          },
+          "declaredType": "PlaguebringerSicken",
+          "executionSound": "slimespraying.mp3",
+          "iconName": "plague.png",
+          "info": "The Colossus will sicken targets causing them to take damage until they are healed to full health.",
+          "key": "sicken",
+          "title": "Sicken"
+        }
+      ],
+      "attackFrequency": {
+        "expression": "2.5",
+        "value": 2.5
+      },
+      "autoAttackAdjustments": {
+        "failureChance": {
+          "expression": ".30",
+          "value": 0.3
+        }
+      },
+      "choosesMainTarget": true,
+      "className": "PlaguebringerColossus",
+      "damage": {
+        "expression": "330",
+        "value": 330
+      },
+      "health": {
+        "expression": "560000",
+        "value": 560000
+      },
+      "id": "PlaguebringerColossus",
+      "spriteName": "plaguebringer_battle_portrait.png",
+      "targets": {
+        "expression": "1",
+        "value": 1
+      },
+      "title": "Plaguebringer Colossus"
+    },
+    {
+      "abilities": [],
+      "attackFrequency": {
+        "expression": "100",
+        "value": 100
+      },
+      "choosesMainTarget": false,
+      "className": "SkeletalDragon",
+      "damage": {
+        "expression": "0",
+        "value": 0
+      },
+      "health": {
+        "expression": "2190000",
+        "value": 2190000
+      },
+      "id": "SkeletalDragon",
+      "spriteName": "skeletaldragon_battle_portrait.png",
+      "targets": {
+        "expression": "0",
+        "value": 0
+      },
+      "title": "Skeletal Dragon"
+    },
+    {
+      "abilities": [
+        {
+          "abilityValue": {
+            "expression": "100",
+            "value": 100
+          },
+          "activationSound": "dragonroar1.mp3",
+          "activationTime": {
+            "expression": "2.5",
+            "value": 2.5
+          },
+          "className": "Breath",
+          "cooldown": {
+            "expression": "kAbilityRequiresTrigger",
+            "value": null
+          },
+          "declaredType": "Breath",
+          "iconName": "burning.png",
+          "key": "flame-breath",
+          "title": "Flame Breath"
+        }
+      ],
+      "attackFrequency": {
+        "expression": "0",
+        "value": 0
+      },
+      "choosesMainTarget": false,
+      "className": "Drake",
+      "damage": {
+        "expression": "0",
+        "value": 0
+      },
+      "health": {
+        "expression": "185000",
+        "value": 185000
+      },
+      "id": "Drake",
+      "spriteName": "drake_battle_portrait.png",
+      "targets": {
+        "expression": "0",
+        "value": 0
+      },
+      "title": "Tainted Drake"
+    },
+    {
+      "abilities": [],
+      "attackFrequency": {
+        "expression": "2.0",
+        "value": 2.0
+      },
+      "autoAttackAdjustments": {
+        "failureChance": {
+          "expression": ".25",
+          "value": 0.25
+        }
+      },
+      "choosesMainTarget": false,
+      "className": "TestBoss",
+      "damage": {
+        "expression": "400",
+        "value": 400
+      },
+      "health": {
+        "expression": "99999999",
+        "value": 99999999
+      },
+      "id": "TestBoss",
+      "targets": {
+        "expression": "4",
+        "value": 4
+      },
+      "title": "Test Boss"
+    },
+    {
+      "abilities": [],
+      "attackFrequency": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "choosesMainTarget": false,
+      "className": "AvatarOfTorment1",
+      "damage": {
+        "expression": "0",
+        "value": 0
+      },
+      "health": {
+        "expression": "2304000",
+        "value": 2304000
+      },
+      "id": "AvatarOfTorment1",
+      "spriteName": "avataroftorment_battle_portrait.png",
+      "targets": {
+        "expression": "0",
+        "value": 0
+      },
+      "title": "The Avatar of Torment"
+    },
+    {
+      "abilities": [],
+      "attackFrequency": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "choosesMainTarget": false,
+      "className": "AvatarOfTorment2",
+      "damage": {
+        "expression": "0",
+        "value": 0
+      },
+      "health": {
+        "expression": "1320000",
+        "value": 1320000
+      },
+      "id": "AvatarOfTorment2",
+      "spriteName": "avataroftorment_battle_portrait.png",
+      "targets": {
+        "expression": "0",
+        "value": 0
+      },
+      "title": "The Avatar of Torment"
+    },
+    {
+      "abilities": [],
+      "attackFrequency": {
+        "expression": "2.0",
+        "value": 2.0
+      },
+      "autoAttackAdjustments": {
+        "failureChance": {
+          "expression": ".25",
+          "value": 0.25
+        }
+      },
+      "choosesMainTarget": false,
+      "className": "TheEndlessVoid",
+      "damage": {
+        "expression": "400",
+        "value": 400
+      },
+      "health": {
+        "expression": "99999999",
+        "value": 99999999
+      },
+      "id": "TheEndlessVoid",
+      "targets": {
+        "expression": "4",
+        "value": 4
+      },
+      "title": "The Endless Void"
+    },
+    {
+      "abilities": [],
+      "attackFrequency": {
+        "expression": "0.0",
+        "value": 0.0
+      },
+      "choosesMainTarget": false,
+      "className": "SoulOfTorment",
+      "damage": {
+        "expression": "0",
+        "value": 0
+      },
+      "health": {
+        "expression": "5400000",
+        "value": 5400000
+      },
+      "id": "SoulOfTorment",
+      "spriteName": "souloftorment_battle_portrait.png",
+      "targets": {
+        "expression": "0",
+        "value": 0
+      },
+      "title": "The Soul of Torment"
+    },
+    {
+      "abilities": [
+        {
+          "abilityValue": {
+            "expression": "200",
+            "value": 200
+          },
+          "activationTime": {
+            "expression": "1.0",
+            "value": 1.0
+          },
+          "className": "OozeTwoTargets",
+          "cooldown": {
+            "expression": "17.0",
+            "value": 17.0
+          },
+          "declaredType": "OozeTwoTargets",
+          "executionSound": "slimespraying.mp3",
+          "iconName": "slime.png",
+          "key": "ooze-two",
+          "title": "Tendrils of Slime"
+        }
+      ],
+      "attackFrequency": {
+        "expression": "10.0",
+        "value": 10.0
+      },
+      "autoAttackAdjustments": {
+        "failureChance": {
+          "expression": ".25",
+          "value": 0.25
+        }
+      },
+      "choosesMainTarget": false,
+      "className": "TheUnspeakable",
+      "damage": {
+        "expression": "0",
+        "value": 0
+      },
+      "health": {
+        "expression": "2900000",
+        "value": 2900000
+      },
+      "id": "TheUnspeakable",
+      "spriteName": "unspeakable_battle_portrait.png",
+      "targets": {
+        "expression": "0",
+        "value": 0
+      },
+      "title": "The Unspeakable"
+    },
+    {
+      "abilities": [
+        {
+          "activationTime": {
+            "expression": "2.0",
+            "value": 2.0
+          },
+          "className": "Attack",
+          "cooldown": {
+            "expression": "9.0",
+            "value": 9.0
+          },
+          "declaredType": "Attack",
+          "executionSound": "gas_impact.mp3",
+          "iconName": "poison.png",
+          "info": "Trulzar fills an allies veins with poison dealing increasing damage over time.  This effect may be removed with the Purify spell.",
+          "key": "poison-attack",
+          "title": "Inject Poison"
+        },
+        {
+          "abilityValue": {
+            "expression": "450",
+            "value": 450
+          },
+          "activationTime": {
+            "expression": "1.0",
+            "value": 1.0
+          },
+          "className": "ProjectileAttack",
+          "cooldown": {
+            "expression": "8.0",
+            "value": 8.0
+          },
+          "declaredType": "ProjectileAttack",
+          "executionSound": "whiff.mp3",
+          "iconName": "vial_throw.png",
+          "key": "potion-throw",
+          "spriteName": "potion.png",
+          "timeApplied": {
+            "expression": "7.0",
+            "value": 7.0
+          },
+          "title": "Toxic Vial"
+        },
+        {
+          "abilityValue": {
+            "expression": "550",
+            "value": 550
+          },
+          "activationTime": {
+            "expression": "2.0",
+            "value": 2.0
+          },
+          "className": "RaidDamagePulse",
+          "cooldown": {
+            "expression": "60.0",
+            "value": 60.0
+          },
+          "declaredType": "RaidDamagePulse",
+          "iconName": "poison_explosion.png",
+          "key": "poison-nova",
+          "timeApplied": {
+            "expression": "40.0",
+            "value": 40.0
+          },
+          "title": "Poison Nova"
+        }
+      ],
+      "attackFrequency": {
+        "expression": "100.0",
+        "value": 100.0
+      },
+      "choosesMainTarget": false,
+      "className": "Trulzar",
+      "damage": {
+        "expression": "0",
+        "value": 0
+      },
+      "health": {
+        "expression": "2600000",
+        "value": 2600000
+      },
+      "id": "Trulzar",
+      "spriteName": "trulzar_battle_portrait.png",
+      "targets": {
+        "expression": "0",
+        "value": 0
+      },
+      "title": "Trulzar the Maleficar"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "Healer/DataObjects/Enemy.m",
+      "sha256": "0a343d9fb01e2aa73bb504352a974c2df51afdb95267c8d4d9dd1dada0a7fb62"
+    },
+    {
+      "path": "Healer/DataObjects/Enemy.h",
+      "sha256": "cc82bab80214121d725ea6ea0437fa03ff24cd81b387e8eeda314cc152167bd2"
+    }
+  ]
+}

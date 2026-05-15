@@ -17,7 +17,7 @@ import type { GameRegistry } from "./registry.js";
 const PLAYER_BASE_HEALTH = 1400;
 const PLAYER_BASE_ENERGY = 1000;
 const PLAYER_BASE_ENERGY_REGEN = 10;
-const PLAYER_BASE_SPELL_CRIT = 0.05;
+const DEFAULT_CRITICAL_CHANCE = 0.05;
 const PLAYER_BASE_COOLDOWN_ADJUSTMENT = 1;
 const PLAYER_BASE_HEALING_MULTIPLIER = 1;
 
@@ -74,9 +74,9 @@ function buildOwnedSpellIds(registry: GameRegistry, encounter: EncounterRecord, 
     }
   }
   for (const [spellId, shopItem] of registry.shopItemsBySpellId.entries()) {
-    if (shopItem.goldCost === 0 || owned.size === 0) {
-      owned.add(spellId);
-    }
+      if (shopItem.goldCost === 0) {
+        owned.add(spellId);
+      }
   }
   return Array.from(owned);
 }
@@ -149,7 +149,7 @@ function buildPlayerSnapshot(registry: GameRegistry, encounter: EncounterRecord,
     maximumEnergy: PLAYER_BASE_ENERGY,
     energyRegenPerSecond: PLAYER_BASE_ENERGY_REGEN * (1 + regenBonus / 100),
     healingDoneMultiplier: PLAYER_BASE_HEALING_MULTIPLIER + healingBonus / 100,
-    spellCriticalChance: PLAYER_BASE_SPELL_CRIT + critBonus / 100,
+    spellCriticalChance: DEFAULT_CRITICAL_CHANCE + critBonus / 100,
     cooldownAdjustment: PLAYER_BASE_COOLDOWN_ADJUSTMENT + speedBonus / 100,
     equippedItemSpellIds,
     ownedSpellIds,
@@ -197,7 +197,7 @@ function createAllySnapshot(ally: AllyRecord, index: number): AllySnapshot {
     damageDealt: roundIfNumber(numericValue(ally.damageDealt)) ?? 0,
     damageFrequency: numericValue(ally.damageFrequency) ?? 0,
     dodgeChance: numericValue(ally.dodgeChance) ?? 0,
-    criticalChance: numericValue(ally.criticalChance) ?? PLAYER_BASE_SPELL_CRIT,
+    criticalChance: numericValue(ally.criticalChance) ?? DEFAULT_CRITICAL_CHANCE,
   };
 }
 

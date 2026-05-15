@@ -173,7 +173,7 @@ function buildAllyInstances(registry: GameRegistry, encounter: EncounterRecord, 
   }
 
   for (const [allyId, count] of composition.entries()) {
-    const ally = registry.alliesById.get(capitalize(allyId));
+    const ally = registry.alliesByNormalizedId.get(allyId.toLowerCase());
     if (!ally) {
       warnings.push(`Missing ally archetype for '${allyId}'.`);
       continue;
@@ -200,10 +200,6 @@ function createAllySnapshot(ally: AllyRecord, index: number): AllySnapshot {
     dodgeChance: numericValue(ally.dodgeChance) ?? 0,
     criticalChance: numericValue(ally.criticalChance) ?? DEFAULT_CRITICAL_CHANCE,
   };
-}
-
-function capitalize(value: string): string {
-  return value.length === 0 ? value : value[0].toUpperCase() + value.slice(1);
 }
 
 function mergeEnemyRecord(baseEnemy: EnemyRecord | undefined, rosterEnemy: EnemyRecord): EnemyRecord {

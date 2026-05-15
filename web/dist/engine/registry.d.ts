@@ -3,6 +3,7 @@ export interface GameRegistry {
     encounters: EncounterRecord[];
     encountersByLevel: Map<number, EncounterRecord>;
     alliesById: Map<string, AllyRecord>;
+    alliesByNormalizedId: Map<string, AllyRecord>;
     enemiesByClassName: Map<string, EnemyRecord>;
     spellsById: Map<string, SpellRecord>;
     shopItemsBySpellId: Map<string, ShopItemRecord>;

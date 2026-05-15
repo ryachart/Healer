@@ -46,7 +46,11 @@ test("encounter bootstrap assembles raid, enemies, rewards, and replay metadata"
       name: "Ayla",
       ownedSpellIds: ["Heal", "GreaterHeal", "ForkedHeal", "Purify"],
       lastUsedSpellIds: ["Purify"],
-      equippedItems: [{ id: "starter-tome", health: 25, healing: 2, regen: 1, crit: 0.5, speed: 1.5, spellId: "Purify" }],
+      equippedItems: [
+        { id: "starter-tome", health: 25, healing: 2, regen: 1, crit: 0.5, speed: 1.5, spellId: "Purify" },
+        { id: "blank-charm", spellId: null },
+        { id: "plain-band" },
+      ],
     },
   });
 

@@ -1,0 +1,68 @@
+{
+  "dataset": "allies",
+  "generatedBy": "tools/extract_phase1_data.py",
+  "payload": [
+    {
+      "criticalChance": {
+        "expression": "0.05",
+        "value": 0.05
+      },
+      "damageDealt": {
+        "expression": "287",
+        "value": 287
+      },
+      "damageFrequency": {
+        "expression": "1.25",
+        "value": 1.25
+      },
+      "dodgeChance": {
+        "expression": ".15",
+        "value": 0.15
+      },
+      "health": {
+        "expression": "1753",
+        "value": 1753
+      },
+      "id": "Guardian",
+      "info": "Overhealing creates protective shield",
+      "positioning": "melee",
+      "title": "Guardian"
+    },
+    {
+      "criticalChance": {
+        "expression": "0.05",
+        "value": 0.05
+      },
+      "damageDealt": {
+        "expression": "521",
+        "value": 521
+      },
+      "damageFrequency": {
+        "expression": "2.0",
+        "value": 2.0
+      },
+      "dodgeChance": {
+        "expression": ".07",
+        "value": 0.07
+      },
+      "health": {
+        "expression": "1142",
+        "value": 1142
+      },
+      "id": "Warlock",
+      "info": "Reduces enemy damage by 20%",
+      "positioning": "ranged",
+      "title": "Warlock"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "Healer/DataObjects/RaidMember.m",
+      "sha256": "9890eaa4b7c80db02e6a8e42864f01ab55d9b1541af417563086e7c520e53bf5"
+    },
+    {
+      "path": "Healer/DataObjects/RaidMember.h",
+      "sha256": "2cf40d8376d2550205c633af5993b22a07e9b492c3d584597066a41d72a7c153"
+    }
+  ]
+}

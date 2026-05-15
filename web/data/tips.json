@@ -1,0 +1,31 @@
+{
+  "dataset": "tips",
+  "generatedBy": "tools/extract_phase1_data.py",
+  "payload": [
+    "Wizards give you extra mana regeneration.  Keep them alive!",
+    "Try to keep your mana below full.  Mana regeneration is wasted while at full energy.",
+    "Spells that heal slowly are more mana efficient.  Use them when damage is low.",
+    "Try to find your next healing target while casting spells.",
+    "Curses and Poisons can be removed from allies by using Purify.",
+    "When healing a Guardian that is already at full health it gives the Guardian a small damage absorption effect.",
+    "Warlocks will heal themselves slowly when they are at low health.",
+    "If you find yourself not using a spell during a fight try replacing it with something else next time.",
+    "Targets that are Focused must stay alive!  Make sure to watch them carefully.",
+    "Read about the enemy abilities by tapping on the icons beneath the enemy health bar.",
+    "No spell is always better than another.  Use the right spell for the right situation.",
+    "Talents allows you to enhance your abilities in special ways.",
+    "You can earn gold from repeating bosses you've already defeated.",
+    "Train spells at the Academy to unlock more spells.",
+    "Berserkers heal themself for a small amount when they critically strike.",
+    "All allies deal more damage when they have more health.",
+    "Wizards have a small chance to critically grant you energy.",
+    "If an ally has any absorption they take 5% less damage.",
+    "On Brutal Difficulty, bosses have additional abilities."
+  ],
+  "sourceFiles": [
+    {
+      "path": "Healer/tips.plist",
+      "sha256": "47a96a49283845c2fd09157361714c2107d310854192850a78530d2bcf8858f0"
+    }
+  ]
+}

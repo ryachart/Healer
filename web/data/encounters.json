@@ -1,0 +1,853 @@
+{
+  "dataset": "encounters",
+  "generatedBy": "tools/extract_phase1_data.py",
+  "payload": [
+    {
+      "allyComposition": {
+        "archer": 1,
+        "champion": 1,
+        "guardian": 1,
+        "wizard": 1
+      },
+      "backgroundKey": "kingdom-bg",
+      "baseRewardGold": -25,
+      "battleTrackTitle": "sounds/battle1.mp3",
+      "bossKey": "ghoul",
+      "enemyRoster": [
+        {
+          "className": "Ghoul",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "You have been sent to a local farm to sound the King’s Call-to-Arms.  Upon your arrival you notice the men you’ve been sent to recruit fighting off a foul-looking creature.  A mangled body of a long-dead Theronian soldier is swinging wildly at your allies.  You rush to their aid.",
+      "level": 1,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "Heal"
+      ],
+      "title": "The Ghoul"
+    },
+    {
+      "allyComposition": {
+        "archer": 1,
+        "champion": 1,
+        "guardian": 1,
+        "wizard": 1
+      },
+      "backgroundKey": "cave-lava-bg",
+      "baseRewardGold": 25,
+      "battleTrackTitle": "sounds/battle1.mp3",
+      "bossKey": "troll",
+      "enemyRoster": [
+        {
+          "className": "CorruptedTroll",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "After enlisting the aid of a small band of soldiers you begin your trek back to Terun.  Upon your return you notice that the ground around a local cave, home to a Raklorian Troll, has stains of blood leading into the cave’s entrance. You and your allies enter to investigate.",
+      "level": 2,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "Heal",
+        "GreaterHeal"
+      ],
+      "title": "Corrupted Troll"
+    },
+    {
+      "allyComposition": {
+        "archer": 1,
+        "champion": 1,
+        "guardian": 1,
+        "wizard": 1
+      },
+      "backgroundKey": "cave-lava-bg",
+      "baseRewardGold": 25,
+      "battleTrackTitle": "sounds/battle1.mp3",
+      "bossKey": "drake",
+      "enemyRoster": [
+        {
+          "className": "Drake",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "Upon further investigation you discover that the Troll’s sanctum leads deeper into the cavern.  You find that the Troll hasn’t been eating all of the livestock that it has been stealing; rather, feeding it to something more terrible.",
+      "level": 3,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "Heal",
+        "GreaterHeal"
+      ],
+      "title": "Tainted Drake"
+    },
+    {
+      "allyComposition": {
+        "archer": 1,
+        "champion": 1,
+        "guardian": 1,
+        "wizard": 1
+      },
+      "backgroundKey": "kingdom-bg",
+      "baseRewardGold": 25,
+      "battleTrackTitle": "sounds/battle1.mp3",
+      "bossKey": "imps",
+      "enemyRoster": [
+        {
+          "className": "MischievousImps",
+          "declaredType": "MischievousImps",
+          "source": "defaultBoss"
+        },
+        {
+          "choosesMainTarget": false,
+          "className": "Enemy",
+          "damage": {
+            "expression": "0",
+            "value": 0
+          },
+          "declaredType": "Enemy",
+          "frequency": {
+            "expression": "1.25",
+            "value": 1.25
+          },
+          "health": {
+            "expression": "boss.health",
+            "value": null
+          },
+          "spriteName": "imps2_battle_portrait.png",
+          "targets": {
+            "expression": "1",
+            "value": 1
+          },
+          "threatPriority": {
+            "expression": "2",
+            "value": 2
+          },
+          "title": "Imp"
+        }
+      ],
+      "info": "On your way to the King's keep you are approached by a flustered guard.  He informs you that imps have invaded the capital’s Alchemical Storehouse.  The warehouse is home to dangerous potions and elixirs.  To avoid a major catastrophe your party hurries to the storehouse.",
+      "level": 4,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "Heal",
+        "GreaterHeal"
+      ],
+      "title": "Mischievious Imps"
+    },
+    {
+      "allyComposition": {
+        "archer": 2,
+        "champion": 2,
+        "guardian": 1,
+        "warlock": 2,
+        "wizard": 2
+      },
+      "backgroundKey": "forest-day-bg",
+      "baseRewardGold": 25,
+      "battleTrackTitle": "sounds/battle1.mp3",
+      "bossKey": "treant",
+      "enemyRoster": [
+        {
+          "className": "BefouledTreant",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "Your warband has been sent to the Green Citadel deep in the Peraxu Forest.  The Archmage Tyonath journeyed there weeks ago but never returned.  Upon approaching the forest’s edge you encounter the Akarus, a wise old treant and guardian of the forest.  Tainted by foul magics the Akarus confronts you as an enemy.",
+      "level": 5,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "Heal",
+        "GreaterHeal",
+        "ForkedHeal"
+      ],
+      "title": "Befouled Akarus"
+    },
+    {
+      "allyComposition": {
+        "archer": 2,
+        "champion": 1,
+        "guardian": 3,
+        "warlock": 1,
+        "wizard": 2
+      },
+      "backgroundKey": "forest-night-bg",
+      "baseRewardGold": 50,
+      "battleTrackTitle": "sounds/battle1.mp3",
+      "bossKey": "fungalravagers",
+      "enemyRoster": [
+        {
+          "className": "FinalRavager",
+          "declaredType": "FinalRavager",
+          "source": "defaultBoss"
+        },
+        {
+          "choosesMainTarget": true,
+          "className": "FungalRavager",
+          "damage": {
+            "expression": "162",
+            "value": 162
+          },
+          "declaredType": "FungalRavager",
+          "frequency": {
+            "expression": "2.6",
+            "value": 2.6
+          },
+          "health": {
+            "expression": "boss.health",
+            "value": null
+          },
+          "spriteName": "fungalravagers2_battle_portrait.png",
+          "targets": {
+            "expression": "1",
+            "value": 1
+          },
+          "threatPriority": {
+            "expression": "1",
+            "value": 1
+          }
+        },
+        {
+          "choosesMainTarget": true,
+          "className": "FungalRavager",
+          "damage": {
+            "expression": "193",
+            "value": 193
+          },
+          "declaredType": "FungalRavager",
+          "frequency": {
+            "expression": "3.2",
+            "value": 3.2
+          },
+          "health": {
+            "expression": "boss.health",
+            "value": null
+          },
+          "spriteName": "fungalravagers3_battle_portrait.png",
+          "targets": {
+            "expression": "1",
+            "value": 1
+          },
+          "threatPriority": {
+            "expression": "2",
+            "value": 2
+          }
+        }
+      ],
+      "info": "With a monstrous crash the sage old tree comes thundering to the earth.  As you are all catching your breath a fog of spores releases itself from the tree.  The tree withers before you at an unnatural rate.  Through the dark, stifling cloud you can see three pairs of yellow, glowing eyes.",
+      "level": 6,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "Heal",
+        "GreaterHeal",
+        "LightEternal",
+        "Regrow"
+      ],
+      "title": "Fungal Ravagers"
+    },
+    {
+      "allyComposition": {
+        "archer": 2,
+        "champion": 2,
+        "guardian": 1,
+        "warlock": 2,
+        "wizard": 2
+      },
+      "backgroundKey": "forest-night-bg",
+      "baseRewardGold": 50,
+      "battleTrackTitle": "sounds/battle2.mp3",
+      "bossKey": "plaguebringer",
+      "enemyRoster": [
+        {
+          "className": "PlaguebringerColossus",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "As the last Ravager falls you notice the forest wither more and more as it recedes into darkness.  The ground is dying in sync with the vegetation and, as the sky darkens you discover that the now mutated Akarus has risen once more.",
+      "level": 7,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "Heal",
+        "ForkedHeal",
+        "Regrow"
+      ],
+      "title": "Plaguebringer Colossus"
+    },
+    {
+      "allyComposition": {
+        "archer": 3,
+        "berserker": 5,
+        "champion": 4,
+        "guardian": 1,
+        "warlock": 3,
+        "wizard": 3
+      },
+      "backgroundKey": "darkroom-bg",
+      "baseRewardGold": 50,
+      "battleTrackTitle": "sounds/battle2.mp3",
+      "bossKey": "trulzar",
+      "enemyRoster": [
+        {
+          "className": "Trulzar",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "After a grueling journey through the forest you come to the doors of The Green Citadel. The citadel itself is now black and seems to be the center of the forest’s corruption.  A torn violet banner now hangs over its entrance.  You open the doors cautiously to find Trulzar, the Citadel’s keeper.  He is...changed.",
+      "level": 8,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "Heal",
+        "GreaterHeal",
+        "Purify",
+        "Regrow"
+      ],
+      "title": "Trulzar the Maleficar"
+    },
+    {
+      "allyComposition": {
+        "archer": 3,
+        "berserker": 5,
+        "champion": 4,
+        "guardian": 1,
+        "warlock": 3,
+        "wizard": 3
+      },
+      "backgroundKey": "throne-bg",
+      "baseRewardGold": 50,
+      "battleTrackTitle": "sounds/battle2.mp3",
+      "bossKey": "council",
+      "enemyRoster": [
+        {
+          "choosesMainTarget": false,
+          "className": "Teritha",
+          "damage": {
+            "expression": "0",
+            "value": 0
+          },
+          "declaredType": "Teritha",
+          "frequency": {
+            "expression": "0",
+            "value": 0
+          },
+          "health": {
+            "expression": "1000000",
+            "value": 1000000
+          },
+          "targets": {
+            "expression": "0",
+            "value": 0
+          },
+          "threatPriority": {
+            "expression": "1",
+            "value": 1
+          }
+        },
+        {
+          "choosesMainTarget": false,
+          "className": "Grimgon",
+          "damage": {
+            "expression": "0",
+            "value": 0
+          },
+          "declaredType": "Grimgon",
+          "frequency": {
+            "expression": "0",
+            "value": 0
+          },
+          "health": {
+            "expression": "600000",
+            "value": 600000
+          },
+          "targets": {
+            "expression": "0",
+            "value": 0
+          },
+          "threatPriority": {
+            "expression": "2",
+            "value": 2
+          }
+        },
+        {
+          "choosesMainTarget": false,
+          "className": "Galcyon",
+          "damage": {
+            "expression": "0",
+            "value": 0
+          },
+          "declaredType": "Galcyon",
+          "frequency": {
+            "expression": "0",
+            "value": 0
+          },
+          "health": {
+            "expression": "600000",
+            "value": 600000
+          },
+          "targets": {
+            "expression": "0",
+            "value": 0
+          },
+          "threatPriority": {
+            "expression": "3",
+            "value": 3
+          }
+        }
+      ],
+      "info": "One of your wizards finds a writ of orders in Trulzar’s belongings.  He was ordered to torture and brainwash a prisoner.  It was signed by a name unknown to you - Baraghast.  As you journey deeper into the citadel you find three hooded wizards channeling an incantation over an altar. Stop them!",
+      "level": 9,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "Heal",
+        "Purify",
+        "Regrow",
+        "LightEternal"
+      ],
+      "title": "Council of Dark Summoners"
+    },
+    {
+      "allyComposition": {
+        "archer": 3,
+        "berserker": 5,
+        "champion": 3,
+        "guardian": 2,
+        "warlock": 3,
+        "wizard": 3
+      },
+      "backgroundKey": "throne-bg",
+      "baseRewardGold": 50,
+      "battleTrackTitle": "sounds/battle1.mp3",
+      "bossKey": "twinchampions",
+      "enemyRoster": [
+        {
+          "choosesMainTarget": true,
+          "className": "Vorroth",
+          "damage": {
+            "expression": "190",
+            "value": 190
+          },
+          "declaredType": "Vorroth",
+          "frequency": {
+            "expression": "1.3",
+            "value": 1.3
+          },
+          "health": {
+            "expression": "1250000",
+            "value": 1250000
+          },
+          "targets": {
+            "expression": "1",
+            "value": 1
+          },
+          "threatPriority": {
+            "expression": "kThreatPriorityRandom",
+            "value": null
+          }
+        },
+        {
+          "choosesMainTarget": true,
+          "className": "Sarroth",
+          "damage": {
+            "expression": "760",
+            "value": 760
+          },
+          "declaredType": "Sarroth",
+          "frequency": {
+            "expression": "6.5",
+            "value": 6.5
+          },
+          "health": {
+            "expression": "1250000",
+            "value": 1250000
+          },
+          "targets": {
+            "expression": "1",
+            "value": 1
+          },
+          "threatPriority": {
+            "expression": "kThreatPriorityRandom",
+            "value": null
+          }
+        }
+      ],
+      "info": "As the last of the council of dark wizards falls a beam of blue light emits from the altar.  The beam streaks through grooves cut into the floor leading to the exit.  The doors fly open revealing a throne room.  Two huge, armored skeletons come to life and assemble before you.",
+      "level": 10,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "GreaterHeal",
+        "Barrier",
+        "HealingBurst"
+      ],
+      "title": "Twin Champions of Baraghast"
+    },
+    {
+      "allyComposition": {
+        "archer": 3,
+        "berserker": 5,
+        "champion": 4,
+        "guardian": 1,
+        "warlock": 3,
+        "wizard": 3
+      },
+      "backgroundKey": "darkroom-bg",
+      "baseRewardGold": 75,
+      "battleTrackTitle": "sounds/battle2.mp3",
+      "bossKey": "baraghast",
+      "enemyRoster": [
+        {
+          "className": "Baraghast",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "A large, bulky suit of armor slumped on the throne before you, stirs.  A pair of glowing red eyes spark to life, and the breathless mass of flesh and armor slowly rises before you.  With disembodied echo the creature speaks to you, \"I am Baraghast, Warlord of the Damned.  Your villages will burn. Your cities will anguish.  Torment is coming.\".",
+      "level": 11,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "GreaterHeal",
+        "Regrow",
+        "LightEternal"
+      ],
+      "title": "Baraghast, Warlord of the Damned"
+    },
+    {
+      "allyComposition": {
+        "archer": 3,
+        "berserker": 5,
+        "champion": 4,
+        "guardian": 1,
+        "warlock": 3,
+        "wizard": 3
+      },
+      "backgroundKey": "darkroom-bg",
+      "baseRewardGold": 75,
+      "battleTrackTitle": "sounds/battle1.mp3",
+      "bossKey": "tyonath",
+      "enemyRoster": [
+        {
+          "className": "CrazedSeer",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "Your group moves onward toward what you believe to be the prison tower.  After climbing the spiral staircase you enter a large chamber at the top of the tower.  Alone in the dark stands a wizard in tattered cloth.  He appears to be blind.  He hears your entrance and grins with crooked teeth. Through furious cackles he shouts,\"Visitors!\"",
+      "level": 12,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "GreaterHeal",
+        "Regrow",
+        "LightEternal"
+      ],
+      "title": "Crazed Seer Tyonath"
+    },
+    {
+      "allyComposition": {
+        "archer": 3,
+        "berserker": 5,
+        "champion": 4,
+        "guardian": 1,
+        "warlock": 3,
+        "wizard": 3
+      },
+      "backgroundKey": "portal-bg",
+      "baseRewardGold": 75,
+      "battleTrackTitle": "sounds/battle1.mp3",
+      "bossKey": "gatekeeper",
+      "enemyRoster": [
+        {
+          "className": "GatekeeperDelsarn",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "Your captain sends word to the king discussing the fates of the forest, the citadel, and the archmage.  Days later, the king responds.  Baraghast’s words seem to hint at the fulfillment of a dark prophecy.  He orders you to take the citadel’s portal to Delsarn to investigate.  As you approach the portal a hulking fiend emerges to stop you.",
+      "level": 13,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "GreaterHeal",
+        "Regrow",
+        "LightEternal"
+      ],
+      "title": "Gatekeeper of Delsarn"
+    },
+    {
+      "allyComposition": {
+        "archer": 3,
+        "berserker": 5,
+        "champion": 4,
+        "guardian": 1,
+        "warlock": 3,
+        "wizard": 3
+      },
+      "backgroundKey": "cave-poison-bg",
+      "baseRewardGold": 75,
+      "battleTrackTitle": "sounds/battle1.mp3",
+      "bossKey": "skeletaldragon",
+      "enemyRoster": [
+        {
+          "className": "SkeletalDragon",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "On the other side of the portal you find an underground entrance to a subterranean lair beneath the landscape known as the Gateway to Delsarn. You make your way through the lair and approach a chamber with the skeletal remains of a dragon.  Before you can leave the chasm the skeleton glows with dark magic and rises to block your path.",
+      "level": 14,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "GreaterHeal",
+        "Regrow",
+        "LightEternal"
+      ],
+      "title": "Skeletal Dragon"
+    },
+    {
+      "allyComposition": {
+        "archer": 3,
+        "berserker": 5,
+        "champion": 4,
+        "guardian": 1,
+        "warlock": 3,
+        "wizard": 3
+      },
+      "backgroundKey": "cave-poison-bg",
+      "baseRewardGold": 75,
+      "battleTrackTitle": "sounds/battle1.mp3",
+      "bossKey": "colossusbone",
+      "enemyRoster": [
+        {
+          "className": "ColossusOfBone",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "The dragon shatters before you and its bone fragments drop off into the toxic pool over which it stands.  The green concoction begins to bubble and boil and from it ascends a colossal construct of bone.",
+      "level": 15,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "GreaterHeal",
+        "Regrow",
+        "LightEternal"
+      ],
+      "title": "Colossus of Bone"
+    },
+    {
+      "allyComposition": {
+        "archer": 3,
+        "berserker": 5,
+        "champion": 4,
+        "guardian": 1,
+        "warlock": 3,
+        "wizard": 3
+      },
+      "backgroundKey": "city-bg",
+      "baseRewardGold": 100,
+      "battleTrackTitle": "sounds/battle1.mp3",
+      "bossKey": "overseer",
+      "enemyRoster": [
+        {
+          "className": "OverseerOfDelsarn",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "You enter Delsarn to see the streets deserted. As you approach the castle you see the violet banner of the Damned hanging from the entryway.  Outside the castle gates a hooded Delsari battlemage confronts you. \"You will not stop us from bringing Torment to this world.  Delsarn has already fallen to our dark lord. Theronia shall be next.\"",
+      "level": 16,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "GreaterHeal",
+        "Regrow",
+        "LightEternal"
+      ],
+      "title": "Overseer of Delsarn"
+    },
+    {
+      "allyComposition": {
+        "archer": 3,
+        "berserker": 5,
+        "champion": 4,
+        "guardian": 1,
+        "warlock": 3,
+        "wizard": 3
+      },
+      "backgroundKey": "cave-poison-bg",
+      "baseRewardGold": 100,
+      "battleTrackTitle": "sounds/battle1.mp3",
+      "bossKey": "unspeakable",
+      "enemyRoster": [
+        {
+          "className": "TheUnspeakable",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "As the overseer falls crazed cultists pour from the castle.  The sheer number of cultists forces you into full retreat from the city streets.  You fall back into a dark sewer beneath the city’s magic academy.  The cultists grow wide-eyed and flee as a strange rumbling grows behind you.",
+      "level": 17,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "Heal",
+        "GreaterHeal",
+        "Regrow",
+        "LightEternal"
+      ],
+      "title": "The Unspeakable"
+    },
+    {
+      "allyComposition": {
+        "archer": 3,
+        "berserker": 5,
+        "champion": 4,
+        "guardian": 1,
+        "warlock": 3,
+        "wizard": 3
+      },
+      "backgroundKey": "city-bg",
+      "baseRewardGold": 100,
+      "battleTrackTitle": "sounds/battle1.mp3",
+      "bossKey": "baraghastreborn",
+      "enemyRoster": [
+        {
+          "className": "BaraghastReborn",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "You emerge from the sewer just outside the city.  As you leave Delsarn to regroup and send word you hear an all too familiar roar behind you.  Reborn in blood, Baraghast approaches with glowing runes of power seared into his reformed flesh.",
+      "level": 18,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "GreaterHeal",
+        "Regrow",
+        "LightEternal"
+      ],
+      "title": "Baraghast Reborn"
+    },
+    {
+      "allyComposition": {
+        "archer": 3,
+        "berserker": 5,
+        "champion": 4,
+        "guardian": 1,
+        "warlock": 3,
+        "wizard": 3
+      },
+      "backgroundKey": "tormentrealm-bg",
+      "baseRewardGold": 100,
+      "battleTrackTitle": "sounds/battle2.mp3",
+      "bossKey": "avataroftorment",
+      "enemyRoster": [
+        {
+          "className": "AvatarOfTorment1",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "As Baraghast falls the ground shakes and the mountain in the distance erupts into a torrent of obsidian and brimstone.  A bright red portal opens before you as an invitation to your own demise.  Beyond the portal you emerge to a demonic creature. \"I,\"he snarls, \"am Torment’s vessel.\"",
+      "level": 19,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "GreaterHeal",
+        "Regrow",
+        "LightEternal"
+      ],
+      "title": "The Avatar of Torment"
+    },
+    {
+      "allyComposition": {
+        "archer": 3,
+        "berserker": 5,
+        "champion": 4,
+        "guardian": 1,
+        "warlock": 3,
+        "wizard": 3
+      },
+      "backgroundKey": "tormentrealm-bg",
+      "baseRewardGold": 125,
+      "battleTrackTitle": "sounds/battle2.mp3",
+      "bossKey": "avataroftorment",
+      "enemyRoster": [
+        {
+          "className": "AvatarOfTorment2",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "The Avatar sinks beneath the pool of molten rock to regain its power.  Knowing you have not yet vanquished this beast your allies briefly recover and prepare for a second battle against this demon.",
+      "level": 20,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "GreaterHeal",
+        "Regrow",
+        "LightEternal"
+      ],
+      "title": "The Avatar of Torment II"
+    },
+    {
+      "allyComposition": {
+        "archer": 3,
+        "berserker": 5,
+        "champion": 4,
+        "guardian": 1,
+        "warlock": 3,
+        "wizard": 3
+      },
+      "backgroundKey": "tormentrealm-bg",
+      "baseRewardGold": 150,
+      "battleTrackTitle": "sounds/battle2.mp3",
+      "bossKey": "souloftorment",
+      "enemyRoster": [
+        {
+          "className": "SoulOfTorment",
+          "source": "defaultBoss"
+        }
+      ],
+      "info": "Its flesh shattered and broken, you stand before a massive orb of blinding light.  Red light rays violently lash out at your party members.  You feel your mind succumbing to your body’s intense pain.  You take one deep breath to calm your senses, and prepare your most powerful magics to end this great evil once and for all.",
+      "level": 21,
+      "multiplayerAdjustments": {
+        "warlock": -1
+      },
+      "recommendedSpellIds": [
+        "GreaterHeal",
+        "Regrow",
+        "LightEternal"
+      ],
+      "title": "The Soul of Torment"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "Healer/DataObjects/Encounter.m",
+      "sha256": "a58266f12a0f019bf78f4ce72f0fde899393930b8b30774c7495215574ae8a49"
+    },
+    {
+      "path": "Healer/DataObjects/Encounter.h",
+      "sha256": "01063766ca1f7ac5f149ce27e598ada8057f16b293df7c6f6a439b4eac87daea"
+    }
+  ]
+}

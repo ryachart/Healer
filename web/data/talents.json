@@ -1,0 +1,209 @@
+{
+  "dataset": "talents",
+  "generatedBy": "tools/extract_phase1_data.py",
+  "payload": [
+    {
+      "choiceIndex": 0,
+      "description": "Increases the critical chance of spells by 10%",
+      "key": "healing-hands",
+      "requiredRating": 15,
+      "spriteFrameName": "healing-hands-icon.png",
+      "staticAdjustments": {
+        "criticalChanceAdjustment": {
+          "expression": "0.1",
+          "value": 0.1
+        }
+      },
+      "tier": 0,
+      "title": "Healing Hands"
+    },
+    {
+      "choiceIndex": 1,
+      "description": "Reduces Cast Times and Cooldowns by 10%.",
+      "key": "blessed-power",
+      "requiredRating": 15,
+      "spriteFrameName": "blessed-power-icon.png",
+      "staticAdjustments": {
+        "castTimeAdjustment": {
+          "expression": "0.1",
+          "value": 0.1
+        },
+        "cooldownMultiplierAdjustment": {
+          "expression": "-0.1",
+          "value": -0.1
+        }
+      },
+      "tier": 0,
+      "title": "Blessed Power"
+    },
+    {
+      "choiceIndex": 2,
+      "description": "Reduces Mana Costs by 10%.",
+      "key": "insight",
+      "requiredRating": 15,
+      "spriteFrameName": "insight-icon.png",
+      "staticAdjustments": {
+        "spellCostAdjustment": {
+          "expression": ".1",
+          "value": 0.1
+        }
+      },
+      "tier": 0,
+      "title": "Insight"
+    },
+    {
+      "choiceIndex": 0,
+      "description": "Increases natural mana regeneration by 10%.",
+      "key": "surging-glory",
+      "requiredRating": 30,
+      "spriteFrameName": "surging-glory-icon.png",
+      "staticAdjustments": {
+        "energyRegenAdjustment": {
+          "expression": ".1",
+          "value": 0.1
+        }
+      },
+      "tier": 1,
+      "title": "Surging Glory"
+    },
+    {
+      "choiceIndex": 1,
+      "description": "Your spells reduce the target's damage taken by 25% decreasing to 0% over 5 seconds.",
+      "key": "shining-aegis",
+      "requiredRating": 30,
+      "spriteFrameName": "shining-aegis-icon.png",
+      "staticAdjustments": {},
+      "tier": 1,
+      "title": "Shining Aegis"
+    },
+    {
+      "choiceIndex": 2,
+      "description": "Your healing shields the target for 10% of the healing done.",
+      "key": "after-light",
+      "requiredRating": 30,
+      "spriteFrameName": "after-light-icon.png",
+      "staticAdjustments": {},
+      "tier": 1,
+      "title": "After Light"
+    },
+    {
+      "choiceIndex": 0,
+      "description": "Your spells cast 5% faster and fire a bolt of light at an enemy target dealing 1000 damage. ",
+      "key": "repel-the-darkness",
+      "requiredRating": 45,
+      "spriteFrameName": "repel-the-darkness-icon.png",
+      "staticAdjustments": {
+        "castTimeAdjustment": {
+          "expression": ".05",
+          "value": 0.05
+        }
+      },
+      "tier": 2,
+      "title": "Repel The Darkness"
+    },
+    {
+      "choiceIndex": 1,
+      "description": "Increases critical chance by 5% and 50% of Overhealing is distributed to injured allies.",
+      "key": "ancient-knowledge",
+      "requiredRating": 45,
+      "spriteFrameName": "ancient-knowledge-icon.png",
+      "staticAdjustments": {
+        "criticalChanceAdjustment": {
+          "expression": ".05",
+          "value": 0.05
+        }
+      },
+      "tier": 2,
+      "title": "Ancient Knowledge"
+    },
+    {
+      "choiceIndex": 2,
+      "description": "Healing done is increased by 10% and your damage taken is reduced by 10%.",
+      "key": "purity-of-soul",
+      "requiredRating": 45,
+      "spriteFrameName": "purity-of-soul-icon.png",
+      "staticAdjustments": {
+        "damageTakenMultiplierAdjustment": {
+          "expression": "-.10",
+          "value": -0.1
+        },
+        "healingDoneMultiplierAdjustment": {
+          "expression": ".1",
+          "value": 0.1
+        }
+      },
+      "tier": 2,
+      "title": "Purity of Soul"
+    },
+    {
+      "choiceIndex": 0,
+      "description": "Your spells increase the maximum health and damage done of the target by 10% for 1 minute.",
+      "key": "searing-power",
+      "requiredRating": 60,
+      "spriteFrameName": "searing-power-icon.png",
+      "staticAdjustments": {},
+      "tier": 3,
+      "title": "Searing Power"
+    },
+    {
+      "choiceIndex": 1,
+      "description": "Your spells create a spark of life causing the target to be healed for 50 the next time they take damage.",
+      "key": "sunlight",
+      "requiredRating": 60,
+      "spriteFrameName": "sunlight-icon.png",
+      "staticAdjustments": {},
+      "tier": 3,
+      "title": "Sunlight"
+    },
+    {
+      "choiceIndex": 2,
+      "description": "Your spells have a 10% chance to grant 400 shielding to the lowest health ally.",
+      "key": "arcane-blessing",
+      "requiredRating": 60,
+      "spriteFrameName": "arcane-blessing-icon.png",
+      "staticAdjustments": {},
+      "tier": 3,
+      "title": "Arcane Blessing"
+    },
+    {
+      "choiceIndex": 0,
+      "description": "Each second you grant 3 shielding to all allies.",
+      "key": "godstouch",
+      "requiredRating": 80,
+      "spriteFrameName": "godstouch-icon.png",
+      "staticAdjustments": {},
+      "tier": 4,
+      "title": "Godstouch"
+    },
+    {
+      "choiceIndex": 1,
+      "description": "Once every 30 seconds if an ally would die instead you instantly heal them for 300 and make them immune for 2.5 seconds.",
+      "key": "redemption",
+      "requiredRating": 80,
+      "spriteFrameName": "redemption-icon.png",
+      "staticAdjustments": {},
+      "tier": 4,
+      "title": "Redemption"
+    },
+    {
+      "choiceIndex": 2,
+      "description": "All healing done has a 3% chance to summon an Avatar that heals allies for 15 seconds.",
+      "key": "avatar",
+      "requiredRating": 80,
+      "spriteFrameName": "avatar-icon.png",
+      "staticAdjustments": {},
+      "tier": 4,
+      "title": "Avatar"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "Healer/Talents.m",
+      "sha256": "c1dac3b0d7842d2f69e0f3ba4a67f3ef1838581f4b0942a35ce877b821f91a55"
+    },
+    {
+      "path": "Healer/talents.plist",
+      "sha256": "871bb3e20eff7971dc9f573fe3db90a7397f7be55b523742a05970254c84aa8c"
+    }
+  ]
+}

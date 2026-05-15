@@ -61,11 +61,13 @@ function buildOwnedSpellIds(registry, encounter, player) {
 function buildActiveSpellIds(registry, encounter, ownedSpellIds, player, maximumStandardSpellSlots) {
     const active = [];
     const owned = new Set(ownedSpellIds);
-    const sourceOrder = player.selectedSpellIds && player.selectedSpellIds.length > 0
-        ? player.selectedSpellIds
-        : player.lastUsedSpellIds && player.lastUsedSpellIds.length > 0
-            ? player.lastUsedSpellIds
-            : encounter.recommendedSpellIds;
+    let sourceOrder = encounter.recommendedSpellIds;
+    if (player.selectedSpellIds && player.selectedSpellIds.length > 0) {
+        sourceOrder = player.selectedSpellIds;
+    }
+    else if (player.lastUsedSpellIds && player.lastUsedSpellIds.length > 0) {
+        sourceOrder = player.lastUsedSpellIds;
+    }
     for (const spellId of sourceOrder) {
         if (owned.has(spellId) && !active.includes(spellId) && active.length < maximumStandardSpellSlots) {
             active.push(spellId);

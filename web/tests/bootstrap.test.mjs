@@ -48,6 +48,7 @@ test("encounter bootstrap assembles raid, enemies, rewards, and replay metadata"
       lastUsedSpellIds: ["Purify"],
       equippedItems: [
         { id: "starter-tome", health: 25, healing: 2, regen: 1, crit: 0.5, speed: 1.5, spellId: "Purify" },
+        { id: "ember-relic", spellId: "Barrier" },
         { id: "blank-charm", spellId: null },
         { id: "plain-band" },
       ],
@@ -59,12 +60,24 @@ test("encounter bootstrap assembles raid, enemies, rewards, and replay metadata"
   assert.equal(snapshot.encounter.multiplayer, true);
   assert.equal(snapshot.allies.length, 8);
   assert.deepEqual(snapshot.player.activeSpellIds, ["Purify", "Heal", "GreaterHeal"]);
-  assert.deepEqual(snapshot.player.equippedItemSpellIds, ["Purify"]);
+  assert.deepEqual(snapshot.player.equippedItemSpellIds, ["Purify", "Barrier"]);
   assert.equal(snapshot.player.maximumHealth, 1425);
   assert.equal(snapshot.rewards.gold, 150);
   assert.equal(snapshot.replay.version, 1);
   assert.ok(Number.isInteger(snapshot.replay.seed));
   assert.equal(snapshot.warnings.length, 0);
+  assert.deepEqual(
+    snapshot.player.activeSpells.map((spell) => ({ id: spell.id, source: spell.source })),
+    [
+      { id: "Purify", source: "loadout" },
+      { id: "Heal", source: "loadout" },
+      { id: "GreaterHeal", source: "loadout" },
+      { id: "Barrier", source: "equipped_item" },
+    ],
+  );
+  assert.equal(snapshot.player.activeSpells[0].energyCost, 48);
+  assert.equal(snapshot.player.activeSpells[0].castTime, 0);
+  assert.equal(snapshot.player.activeSpells[0].cooldown, 5);
 
   const boss = snapshot.enemies[0];
   assert.equal(boss.className, "FinalRavager");

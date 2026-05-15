@@ -123,6 +123,18 @@ export interface PlayerSnapshot {
     equippedItemSpellIds: string[];
     ownedSpellIds: string[];
     activeSpellIds: string[];
+    activeSpells: PlayerSpellSnapshot[];
+}
+export interface PlayerSpellSnapshot {
+    id: string;
+    title: string;
+    spellType: string | null;
+    targeting: string | null;
+    targetCount: number | string | null;
+    energyCost: number | null;
+    castTime: number | null;
+    cooldown: number | null;
+    source: "loadout" | "equipped_item";
 }
 export interface AllySnapshot {
     id: string;

@@ -30,6 +30,110 @@
     },
     {
       "criticalChance": {
+        "expression": ".1",
+        "value": 0.1
+      },
+      "damageDealt": {
+        "expression": "748",
+        "value": 748
+      },
+      "damageFrequency": {
+        "expression": ".75",
+        "value": 0.75
+      },
+      "dodgeChance": {
+        "expression": ".07",
+        "value": 0.07
+      },
+      "health": {
+        "expression": "1192",
+        "value": 1192
+      },
+      "id": "Berserker",
+      "info": "Deals very high damage",
+      "positioning": "melee",
+      "title": "Berserker"
+    },
+    {
+      "criticalChance": {
+        "expression": "0.05",
+        "value": 0.05
+      },
+      "damageDealt": {
+        "expression": "1232",
+        "value": 1232
+      },
+      "damageFrequency": {
+        "expression": "1.2",
+        "value": 1.2
+      },
+      "dodgeChance": {
+        "expression": ".05",
+        "value": 0.05
+      },
+      "health": {
+        "expression": "1013",
+        "value": 1013
+      },
+      "id": "Archer",
+      "info": "Deals very high damage",
+      "positioning": "ranged",
+      "title": "Archer"
+    },
+    {
+      "criticalChance": {
+        "expression": "0.05",
+        "value": 0.05
+      },
+      "damageDealt": {
+        "expression": "664",
+        "value": 664
+      },
+      "damageFrequency": {
+        "expression": "2.5",
+        "value": 2.5
+      },
+      "dodgeChance": {
+        "expression": ".07",
+        "value": 0.07
+      },
+      "health": {
+        "expression": "1246",
+        "value": 1246
+      },
+      "id": "Champion",
+      "info": "Improves ally's damage by 20%",
+      "positioning": "melee",
+      "title": "Champion"
+    },
+    {
+      "criticalChance": {
+        "expression": "0.05",
+        "value": 0.05
+      },
+      "damageDealt": {
+        "expression": "304",
+        "value": 304
+      },
+      "damageFrequency": {
+        "expression": "1.2",
+        "value": 1.2
+      },
+      "dodgeChance": {
+        "expression": ".07",
+        "value": 0.07
+      },
+      "health": {
+        "expression": "1157",
+        "value": 1157
+      },
+      "id": "Wizard",
+      "info": "Periodically grants you Mana",
+      "positioning": "ranged",
+      "title": "Wizard"
+    },
+    {
+      "criticalChance": {
         "expression": "0.05",
         "value": 0.05
       },

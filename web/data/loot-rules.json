@@ -17,7 +17,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 1.0,
           "slot": "SlotTypeWeapon",
-          "sourceUniqueId": 100,
           "specialKey": "burst1",
           "speed": 0
         },
@@ -34,7 +33,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 0.0,
           "slot": "SlotTypeHead",
-          "sourceUniqueId": 101,
           "specialKey": null,
           "speed": 1.5
         },
@@ -51,7 +49,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 3.0,
           "slot": "SlotTypeNeck",
-          "sourceUniqueId": 102,
           "specialKey": null,
           "speed": 1.5
         },
@@ -68,7 +65,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 0.0,
           "slot": "SlotTypeLegs",
-          "sourceUniqueId": 103,
           "specialKey": null,
           "speed": 0.0
         },
@@ -85,7 +81,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 2.0,
           "slot": "SlotTypeBoots",
-          "sourceUniqueId": 104,
           "specialKey": null,
           "speed": 0
         },
@@ -102,7 +97,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 2.0,
           "slot": "SlotTypeChest",
-          "sourceUniqueId": 105,
           "specialKey": null,
           "speed": 0
         },
@@ -119,7 +113,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 3.5,
           "slot": "SlotTypeHead",
-          "sourceUniqueId": 106,
           "specialKey": null,
           "speed": 2.5
         },
@@ -136,7 +129,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 0,
           "slot": "SlotTypeNeck",
-          "sourceUniqueId": 107,
           "specialKey": null,
           "speed": 1.0
         },
@@ -153,7 +145,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 3.5,
           "slot": "SlotTypeWeapon",
-          "sourceUniqueId": 200,
           "specialKey": "purify1",
           "speed": 0.0
         },
@@ -170,7 +161,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 4.0,
           "slot": "SlotTypeLegs",
-          "sourceUniqueId": 108,
           "specialKey": null,
           "speed": 3.0
         },
@@ -187,7 +177,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 0,
           "slot": "SlotTypeHead",
-          "sourceUniqueId": 201,
           "specialKey": null,
           "speed": 0
         },
@@ -204,7 +193,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 1.5,
           "slot": "SlotTypeWeapon",
-          "sourceUniqueId": 109,
           "specialKey": "raidheal1",
           "speed": 0.0
         },
@@ -221,7 +209,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 3.0,
           "slot": "SlotTypeWeapon",
-          "sourceUniqueId": 202,
           "specialKey": "blast1",
           "speed": 3.0
         },
@@ -238,7 +225,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 4,
           "slot": "SlotTypeChest",
-          "sourceUniqueId": 110,
           "specialKey": null,
           "speed": 0
         },
@@ -255,7 +241,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 0,
           "slot": "SlotTypeBoots",
-          "sourceUniqueId": 111,
           "specialKey": null,
           "speed": 3.5
         },
@@ -272,7 +257,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 5.0,
           "slot": "SlotTypeLegs",
-          "sourceUniqueId": 112,
           "specialKey": null,
           "speed": 3.5
         },
@@ -289,7 +273,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 3.0,
           "slot": "SlotTypeNeck",
-          "sourceUniqueId": 113,
           "specialKey": null,
           "speed": 0
         },
@@ -306,7 +289,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 3.0,
           "slot": "SlotTypeWeapon",
-          "sourceUniqueId": 115,
           "specialKey": "healbuff1",
           "speed": 3.0
         },
@@ -323,7 +305,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 5.0,
           "slot": "SlotTypeBoots",
-          "sourceUniqueId": 114,
           "specialKey": null,
           "speed": 5.0
         },
@@ -340,7 +321,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 5.0,
           "slot": "SlotTypeHead",
-          "sourceUniqueId": 116,
           "specialKey": null,
           "speed": 2.5
         },
@@ -358,7 +338,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 5,
           "slot": "SlotTypeNeck",
-          "sourceUniqueId": 117,
           "specialKey": null,
           "speed": 0
         },
@@ -375,7 +354,6 @@
           "rarity": "ItemRarityEpic",
           "regen": 5.0,
           "slot": "SlotTypeChest",
-          "sourceUniqueId": 118,
           "specialKey": null,
           "speed": 5.0
         }
@@ -394,7 +372,6 @@
           "rarity": "ItemRarityLegendary",
           "regen": 5.0,
           "slot": "SlotTypeBoots",
-          "sourceUniqueId": 300,
           "specialKey": null,
           "speed": 5.0
         },
@@ -411,7 +388,6 @@
           "rarity": "ItemRarityLegendary",
           "regen": 5.0,
           "slot": "SlotTypeNeck",
-          "sourceUniqueId": 301,
           "specialKey": null,
           "speed": 0
         },
@@ -428,7 +404,6 @@
           "rarity": "ItemRarityLegendary",
           "regen": 5.0,
           "slot": "SlotTypeChest",
-          "sourceUniqueId": 301,
           "specialKey": null,
           "speed": 0
         },
@@ -445,7 +420,6 @@
           "rarity": "ItemRarityLegendary",
           "regen": 0,
           "slot": "SlotTypeLegs",
-          "sourceUniqueId": 301,
           "specialKey": null,
           "speed": 5.0
         },
@@ -462,7 +436,6 @@
           "rarity": "ItemRarityLegendary",
           "regen": 5.0,
           "slot": "SlotTypeHead",
-          "sourceUniqueId": 301,
           "specialKey": null,
           "speed": 0
         },
@@ -479,7 +452,6 @@
           "rarity": "ItemRarityLegendary",
           "regen": 6.0,
           "slot": "SlotTypeWeapon",
-          "sourceUniqueId": 301,
           "specialKey": "aravon1",
           "speed": 5.0
         }

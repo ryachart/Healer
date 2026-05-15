@@ -527,10 +527,10 @@ def parse_equipment_item_initializers(block: str):
             quality,
             unique_id,
         ) = match.groups()
-        item_slug = re.sub(r"[^a-z0-9]+", "-", slugify(objc_string(name))).strip("-")
+        canonical_item_id_prefix = re.sub(r"[^a-z0-9]+", "-", slugify(objc_string(name))).strip("-")
         records.append(
             {
-                "id": f"{item_slug}-{safe_eval(unique_id)}",
+                "id": f"{canonical_item_id_prefix}-{safe_eval(unique_id)}",
                 "name": objc_string(name),
                 "health": safe_eval(health),
                 "regen": safe_eval(regen),
@@ -541,7 +541,6 @@ def parse_equipment_item_initializers(block: str):
                 "rarity": rarity,
                 "specialKey": objc_string(special_key) if special_key else None,
                 "quality": safe_eval(quality),
-                "sourceUniqueId": safe_eval(unique_id),
             }
         )
     return records
@@ -1264,7 +1263,8 @@ def extract_loot_rules():
     weights_method = extract_method_block(encounter_text, r"\+ \(NSArray \*\)weightsForDifficulty:\(NSInteger\)difficulty")
 
     difficulty_weights = {}
-    fallback_weights = [int(value) for value in re.findall(r"@?(-?\d+)", re.findall(r"return\s+@\[(.*?)\];", weights_method)[-1])] if re.findall(r"return\s+@\[(.*?)\];", weights_method) else []
+    return_arrays = re.findall(r"return\s+@\[(.*?)\];", weights_method)
+    fallback_weights = [int(value) for value in re.findall(r"@?(-?\d+)", return_arrays[-1])] if return_arrays else []
     for difficulty in range(1, 6):
         weights = None
         for condition, raw_array in re.findall(r"(?:if|else if)\s*\((.*?)\)\s*\{\s*return\s+@\[(.*?)\];", weights_method, re.DOTALL):

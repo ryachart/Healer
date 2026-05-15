@@ -20,7 +20,8 @@ const ENEMY_DAMAGE_MODIFIER = {
     5: 0.25,
 };
 function clampDifficulty(value, fallback) {
-    return Math.min(5, Math.max(1, Number.isFinite(value) ? value : fallback));
+    const normalized = Math.round(Number.isFinite(value) ? value : fallback);
+    return Math.min(5, Math.max(1, normalized));
 }
 function numericValue(value, context) {
     if (typeof value === "number") {
@@ -169,7 +170,7 @@ function createEnemySnapshot(enemy, index, difficulty, primaryBossBaseHealth, wa
     const damageModifier = ENEMY_DAMAGE_MODIFIER[difficulty];
     const maximumHealth = baseHealth === null ? null : Math.round(baseHealth * healthMultiplier);
     const damagePerAttack = baseDamage === null ? null : Math.round(baseDamage * (1 + damageModifier));
-    const attackFrequency = numericValue(enemy.attackFrequency ?? null);
+    const attackFrequency = numericValue(enemy.attackFrequency ?? enemy.frequency ?? null);
     const targets = numericValue(enemy.targets ?? null);
     const threatPriority = numericValue(enemy.threatPriority ?? null);
     if (baseHealth === null && enemy.health) {

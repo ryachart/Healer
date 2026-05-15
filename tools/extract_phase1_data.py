@@ -484,12 +484,13 @@ def parse_enum_block(text: str, enum_name: str):
             break
     if not match:
         return []
+    token_pattern = re.compile(r"(\w+)(?:\s*=\s*(-?\d+))?")
     entries = []
     for raw_line in match.group(1).splitlines():
         line = raw_line.split("//", 1)[0].strip().rstrip(",")
         if not line or line.startswith("//"):
             continue
-        token_match = re.match(r"(\w+)(?:\s*=\s*(-?\d+))?", line)
+        token_match = token_pattern.match(line)
         if not token_match:
             continue
         token, explicit_value = token_match.groups()
@@ -526,8 +527,10 @@ def parse_equipment_item_initializers(block: str):
             quality,
             unique_id,
         ) = match.groups()
+        item_slug = re.sub(r"[^a-z0-9]+", "-", slugify(objc_string(name))).strip("-")
         records.append(
             {
+                "id": f"{item_slug}-{safe_eval(unique_id)}",
                 "name": objc_string(name),
                 "health": safe_eval(health),
                 "regen": safe_eval(regen),
@@ -538,7 +541,7 @@ def parse_equipment_item_initializers(block: str):
                 "rarity": rarity,
                 "specialKey": objc_string(special_key) if special_key else None,
                 "quality": safe_eval(quality),
-                "uniqueId": safe_eval(unique_id),
+                "sourceUniqueId": safe_eval(unique_id),
             }
         )
     return records

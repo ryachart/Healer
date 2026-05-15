@@ -11,14 +11,15 @@
           ],
           "healing": 2.0,
           "health": 15,
+          "id": "codex-of-rage-100",
           "name": "Codex of Rage",
           "quality": 3,
           "rarity": "ItemRarityEpic",
           "regen": 1.0,
           "slot": "SlotTypeWeapon",
+          "sourceUniqueId": 100,
           "specialKey": "burst1",
-          "speed": 0,
-          "uniqueId": 100
+          "speed": 0
         },
         {
           "crit": 2.25,
@@ -27,14 +28,15 @@
           ],
           "healing": 2.0,
           "health": 0,
+          "id": "drakewing-hood-101",
           "name": "Drakewing Hood",
           "quality": 3,
           "rarity": "ItemRarityEpic",
           "regen": 0.0,
           "slot": "SlotTypeHead",
+          "sourceUniqueId": 101,
           "specialKey": null,
-          "speed": 1.5,
-          "uniqueId": 101
+          "speed": 1.5
         },
         {
           "crit": 2.25,
@@ -43,14 +45,15 @@
           ],
           "healing": 0.0,
           "health": 0,
+          "id": "pendant-of-mischief-102",
           "name": "Pendant of Mischief",
           "quality": 4,
           "rarity": "ItemRarityEpic",
           "regen": 3.0,
           "slot": "SlotTypeNeck",
+          "sourceUniqueId": 102,
           "specialKey": null,
-          "speed": 1.5,
-          "uniqueId": 102
+          "speed": 1.5
         },
         {
           "crit": 2.25,
@@ -59,14 +62,15 @@
           ],
           "healing": 2.5,
           "health": 30,
+          "id": "barkskin-trousers-103",
           "name": "Barkskin Trousers",
           "quality": 4,
           "rarity": "ItemRarityEpic",
           "regen": 0.0,
           "slot": "SlotTypeLegs",
+          "sourceUniqueId": 103,
           "specialKey": null,
-          "speed": 0.0,
-          "uniqueId": 103
+          "speed": 0.0
         },
         {
           "crit": 3.0,
@@ -75,14 +79,15 @@
           ],
           "healing": 3.5,
           "health": 0,
+          "id": "sandals-of-regrowth-104",
           "name": "Sandals of Regrowth",
           "quality": 5,
           "rarity": "ItemRarityEpic",
           "regen": 2.0,
           "slot": "SlotTypeBoots",
+          "sourceUniqueId": 104,
           "specialKey": null,
-          "speed": 0,
-          "uniqueId": 104
+          "speed": 0
         },
         {
           "crit": 0,
@@ -91,14 +96,15 @@
           ],
           "healing": 2.5,
           "health": 50,
+          "id": "gown-of-the-purifier-105",
           "name": "Gown of the Purifier",
           "quality": 5,
           "rarity": "ItemRarityEpic",
           "regen": 2.0,
           "slot": "SlotTypeChest",
+          "sourceUniqueId": 105,
           "specialKey": null,
-          "speed": 0,
-          "uniqueId": 105
+          "speed": 0
         },
         {
           "crit": 0.0,
@@ -107,14 +113,15 @@
           ],
           "healing": 2.5,
           "health": 0,
+          "id": "the-maleficar-s-cowl-106",
           "name": "The Maleficar's Cowl",
           "quality": 5,
           "rarity": "ItemRarityEpic",
           "regen": 3.5,
           "slot": "SlotTypeHead",
+          "sourceUniqueId": 106,
           "specialKey": null,
-          "speed": 2.5,
-          "uniqueId": 106
+          "speed": 2.5
         },
         {
           "crit": 0,
@@ -123,14 +130,15 @@
           ],
           "healing": 4.0,
           "health": 25,
+          "id": "amulet-of-the-ritualist-107",
           "name": "Amulet of the Ritualist",
           "quality": 5,
           "rarity": "ItemRarityEpic",
           "regen": 0,
           "slot": "SlotTypeNeck",
+          "sourceUniqueId": 107,
           "specialKey": null,
-          "speed": 1.0,
-          "uniqueId": 107
+          "speed": 1.0
         },
         {
           "crit": 0.0,
@@ -139,14 +147,15 @@
           ],
           "healing": 4.0,
           "health": 0,
+          "id": "words-of-warding-200",
           "name": "Words of Warding",
           "quality": 5,
           "rarity": "ItemRarityEpic",
           "regen": 3.5,
           "slot": "SlotTypeWeapon",
+          "sourceUniqueId": 200,
           "specialKey": "purify1",
-          "speed": 0.0,
-          "uniqueId": 200
+          "speed": 0.0
         },
         {
           "crit": 4.5,
@@ -155,14 +164,15 @@
           ],
           "healing": 0,
           "health": 0,
+          "id": "blood-splattered-pants-108",
           "name": "Blood-splattered Pants",
           "quality": 6,
           "rarity": "ItemRarityEpic",
           "regen": 4.0,
           "slot": "SlotTypeLegs",
+          "sourceUniqueId": 108,
           "specialKey": null,
-          "speed": 3.0,
-          "uniqueId": 108
+          "speed": 3.0
         },
         {
           "crit": 4.5,
@@ -171,14 +181,15 @@
           ],
           "healing": 3.0,
           "health": 40,
+          "id": "executioner-s-cowl-201",
           "name": "Executioner's Cowl",
           "quality": 6,
           "rarity": "ItemRarityEpic",
           "regen": 0,
           "slot": "SlotTypeHead",
+          "sourceUniqueId": 201,
           "specialKey": null,
-          "speed": 0,
-          "uniqueId": 201
+          "speed": 0
         },
         {
           "crit": 2.25,
@@ -187,14 +198,15 @@
           ],
           "healing": 6.0,
           "health": 0,
+          "id": "tome-of-the-warlord-109",
           "name": "Tome of the Warlord",
           "quality": 6,
           "rarity": "ItemRarityEpic",
           "regen": 1.5,
           "slot": "SlotTypeWeapon",
+          "sourceUniqueId": 109,
           "specialKey": "raidheal1",
-          "speed": 0.0,
-          "uniqueId": 109
+          "speed": 0.0
         },
         {
           "crit": 0,
@@ -203,14 +215,15 @@
           ],
           "healing": 3.0,
           "health": 0,
+          "id": "hate-imbued-libram-202",
           "name": "Hate-Imbued Libram",
           "quality": 6,
           "rarity": "ItemRarityEpic",
           "regen": 3.0,
           "slot": "SlotTypeWeapon",
+          "sourceUniqueId": 202,
           "specialKey": "blast1",
-          "speed": 3.0,
-          "uniqueId": 202
+          "speed": 3.0
         },
         {
           "crit": 0,
@@ -219,14 +232,15 @@
           ],
           "healing": 4,
           "health": 50,
+          "id": "gown-of-insanity-110",
           "name": "Gown of Insanity",
           "quality": 7,
           "rarity": "ItemRarityEpic",
           "regen": 4,
           "slot": "SlotTypeChest",
+          "sourceUniqueId": 110,
           "specialKey": null,
-          "speed": 0,
-          "uniqueId": 110
+          "speed": 0
         },
         {
           "crit": 4.5,
@@ -235,14 +249,15 @@
           ],
           "healing": 0,
           "health": 40,
+          "id": "boots-from-beyond-111",
           "name": "Boots from Beyond",
           "quality": 7,
           "rarity": "ItemRarityEpic",
           "regen": 0,
           "slot": "SlotTypeBoots",
+          "sourceUniqueId": 111,
           "specialKey": null,
-          "speed": 3.5,
-          "uniqueId": 111
+          "speed": 3.5
         },
         {
           "crit": 0.0,
@@ -251,14 +266,15 @@
           ],
           "healing": 0,
           "health": 50,
+          "id": "bone-scaled-breeches-112",
           "name": "Bone-scaled Breeches",
           "quality": 8,
           "rarity": "ItemRarityEpic",
           "regen": 5.0,
           "slot": "SlotTypeLegs",
+          "sourceUniqueId": 112,
           "specialKey": null,
-          "speed": 3.5,
-          "uniqueId": 112
+          "speed": 3.5
         },
         {
           "crit": 9.0,
@@ -267,14 +283,15 @@
           ],
           "healing": 3.0,
           "health": 0,
+          "id": "colossal-bone-necklace-113",
           "name": "Colossal Bone Necklace",
           "quality": 8,
           "rarity": "ItemRarityEpic",
           "regen": 3.0,
           "slot": "SlotTypeNeck",
+          "sourceUniqueId": 113,
           "specialKey": null,
-          "speed": 0,
-          "uniqueId": 113
+          "speed": 0
         },
         {
           "crit": 4.5,
@@ -283,14 +300,15 @@
           ],
           "healing": 3.0,
           "health": 0,
+          "id": "tome-of-the-overseer-115",
           "name": "Tome of the Overseer",
           "quality": 8,
           "rarity": "ItemRarityEpic",
           "regen": 3.0,
           "slot": "SlotTypeWeapon",
+          "sourceUniqueId": 115,
           "specialKey": "healbuff1",
-          "speed": 3.0,
-          "uniqueId": 115
+          "speed": 3.0
         },
         {
           "crit": 0.0,
@@ -299,14 +317,15 @@
           ],
           "healing": 0,
           "health": 35,
+          "id": "slime-soaked-waders-114",
           "name": "Slime-soaked Waders",
           "quality": 8,
           "rarity": "ItemRarityEpic",
           "regen": 5.0,
           "slot": "SlotTypeBoots",
+          "sourceUniqueId": 114,
           "specialKey": null,
-          "speed": 5.0,
-          "uniqueId": 114
+          "speed": 5.0
         },
         {
           "crit": 0,
@@ -315,14 +334,15 @@
           ],
           "healing": 5.0,
           "health": 25,
+          "id": "shawl-of-the-reborn-116",
           "name": "Shawl of the Reborn",
           "quality": 9,
           "rarity": "ItemRarityEpic",
           "regen": 5.0,
           "slot": "SlotTypeHead",
+          "sourceUniqueId": 116,
           "specialKey": null,
-          "speed": 2.5,
-          "uniqueId": 116
+          "speed": 2.5
         },
         {
           "crit": 5.25,
@@ -332,14 +352,15 @@
           ],
           "healing": 5.0,
           "health": 0,
+          "id": "amulet-of-torment-117",
           "name": "Amulet of Torment",
           "quality": 9,
           "rarity": "ItemRarityEpic",
           "regen": 5,
           "slot": "SlotTypeNeck",
+          "sourceUniqueId": 117,
           "specialKey": null,
-          "speed": 0,
-          "uniqueId": 117
+          "speed": 0
         },
         {
           "crit": 0.0,
@@ -348,14 +369,15 @@
           ],
           "healing": 0.0,
           "health": 70,
+          "id": "soul-imbued-robes-118",
           "name": "Soul-Imbued Robes",
           "quality": 9,
           "rarity": "ItemRarityEpic",
           "regen": 5.0,
           "slot": "SlotTypeChest",
+          "sourceUniqueId": 118,
           "specialKey": null,
-          "speed": 5.0,
-          "uniqueId": 118
+          "speed": 5.0
         }
       ],
       "legendary": [
@@ -366,14 +388,15 @@
           ],
           "healing": 5.0,
           "health": 50,
+          "id": "boots-of-the-ancients-300",
           "name": "Boots of the Ancients",
           "quality": 10,
           "rarity": "ItemRarityLegendary",
           "regen": 5.0,
           "slot": "SlotTypeBoots",
+          "sourceUniqueId": 300,
           "specialKey": null,
-          "speed": 5.0,
-          "uniqueId": 300
+          "speed": 5.0
         },
         {
           "crit": 7.5,
@@ -382,14 +405,15 @@
           ],
           "healing": 5.0,
           "health": 50,
+          "id": "pendant-of-the-ancients-301",
           "name": "Pendant of the Ancients",
           "quality": 10,
           "rarity": "ItemRarityLegendary",
           "regen": 5.0,
           "slot": "SlotTypeNeck",
+          "sourceUniqueId": 301,
           "specialKey": null,
-          "speed": 0,
-          "uniqueId": 301
+          "speed": 0
         },
         {
           "crit": 7.5,
@@ -398,14 +422,15 @@
           ],
           "healing": 7.5,
           "health": 75,
+          "id": "robes-of-the-ancients-301",
           "name": "Robes of the Ancients",
           "quality": 10,
           "rarity": "ItemRarityLegendary",
           "regen": 5.0,
           "slot": "SlotTypeChest",
+          "sourceUniqueId": 301,
           "specialKey": null,
-          "speed": 0,
-          "uniqueId": 301
+          "speed": 0
         },
         {
           "crit": 7.5,
@@ -414,14 +439,15 @@
           ],
           "healing": 7.5,
           "health": 50,
+          "id": "breeches-of-the-ancients-301",
           "name": "Breeches of the Ancients",
           "quality": 10,
           "rarity": "ItemRarityLegendary",
           "regen": 0,
           "slot": "SlotTypeLegs",
+          "sourceUniqueId": 301,
           "specialKey": null,
-          "speed": 5.0,
-          "uniqueId": 301
+          "speed": 5.0
         },
         {
           "crit": 7.5,
@@ -430,14 +456,15 @@
           ],
           "healing": 7.5,
           "health": 50,
+          "id": "crown-of-the-ancients-301",
           "name": "Crown of the Ancients",
           "quality": 10,
           "rarity": "ItemRarityLegendary",
           "regen": 5.0,
           "slot": "SlotTypeHead",
+          "sourceUniqueId": 301,
           "specialKey": null,
-          "speed": 0,
-          "uniqueId": 301
+          "speed": 0
         },
         {
           "crit": 0,
@@ -446,14 +473,15 @@
           ],
           "healing": 5.0,
           "health": 40,
+          "id": "aravon-s-lesson-301",
           "name": "Aravon's Lesson",
           "quality": 10,
           "rarity": "ItemRarityLegendary",
           "regen": 6.0,
           "slot": "SlotTypeWeapon",
+          "sourceUniqueId": 301,
           "specialKey": "aravon1",
-          "speed": 5.0,
-          "uniqueId": 301
+          "speed": 5.0
         }
       ]
     },

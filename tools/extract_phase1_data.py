@@ -529,7 +529,7 @@ def parse_equipment_item_initializers(block: str):
         canonical_item_id_prefix = re.sub(r"[^a-z0-9]+", "-", slugify(objc_string(name))).strip("-")
         records.append(
             {
-                "id": f"{canonical_item_id_prefix}-{safe_eval(unique_id)}",
+                "id": canonical_item_id_prefix,
                 "name": objc_string(name),
                 "health": safe_eval(health),
                 "regen": safe_eval(regen),

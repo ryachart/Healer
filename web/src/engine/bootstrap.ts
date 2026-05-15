@@ -9,8 +9,10 @@ import type {
   EnemySnapshot,
   EquippedItemInput,
   NumericExpression,
+  PlayerSpellSnapshot,
   PlayerProfileInput,
   PlayerSnapshot,
+  SpellRecord,
 } from "./types.js";
 import type { GameRegistry } from "./registry.js";
 
@@ -127,6 +129,8 @@ function buildPlayerSnapshot(registry: GameRegistry, encounter: EncounterRecord,
         .filter((spellId): spellId is string => typeof spellId === "string" && registry.spellsById.has(spellId)),
     ),
   );
+  const activeSpellIds = buildActiveSpellIds(registry, encounter, ownedSpellIds, player, maximumStandardSpellSlots);
+  const activeSpells = buildActiveSpells(registry, activeSpellIds, equippedItemSpellIds);
 
   let healthBonus = 0;
   let healingBonus = 0;
@@ -155,7 +159,49 @@ function buildPlayerSnapshot(registry: GameRegistry, encounter: EncounterRecord,
     cooldownAdjustment: PLAYER_BASE_COOLDOWN_ADJUSTMENT + speedBonus / 100,
     equippedItemSpellIds,
     ownedSpellIds,
-    activeSpellIds: buildActiveSpellIds(registry, encounter, ownedSpellIds, player, maximumStandardSpellSlots),
+    activeSpellIds,
+    activeSpells,
+  };
+}
+
+function buildActiveSpells(registry: GameRegistry, activeSpellIds: string[], equippedItemSpellIds: string[]): PlayerSpellSnapshot[] {
+  const activeSpellIdSet = new Set(activeSpellIds);
+  const equippedItemExclusiveSpellIds = equippedItemSpellIds.filter((spellId) => !activeSpellIdSet.has(spellId));
+  const snapshots: PlayerSpellSnapshot[] = [];
+
+  for (const spellId of activeSpellIds) {
+    const spell = registry.spellsById.get(spellId);
+    if (!spell) {
+      continue;
+    }
+    snapshots.push(createSpellSnapshot(spell, "loadout"));
+  }
+
+  for (const spellId of equippedItemExclusiveSpellIds) {
+    const spell = registry.spellsById.get(spellId);
+    if (!spell) {
+      continue;
+    }
+    snapshots.push(createSpellSnapshot(spell, "equipped_item"));
+  }
+
+  return snapshots;
+}
+
+function createSpellSnapshot(
+  spell: SpellRecord,
+  source: "loadout" | "equipped_item",
+): PlayerSpellSnapshot {
+  return {
+    id: spell.id,
+    title: spell.title,
+    spellType: spell.spellType ?? null,
+    targeting: spell.targeting ?? null,
+    targetCount: typeof spell.targetCount === "number" || typeof spell.targetCount === "string" ? spell.targetCount : null,
+    energyCost: numericValue(spell.energyCost ?? null),
+    castTime: numericValue(spell.castTime ?? null),
+    cooldown: numericValue(spell.cooldown ?? null),
+    source,
   };
 }
 

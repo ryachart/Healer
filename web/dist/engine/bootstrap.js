@@ -123,7 +123,7 @@ function buildPlayerSnapshot(registry, encounter, player) {
 }
 function buildActiveSpells(registry, activeSpellIds, equippedItemSpellIds) {
     const activeSpellIdSet = new Set(activeSpellIds);
-    const equippedOnlySpellIds = equippedItemSpellIds.filter((spellId) => !activeSpellIdSet.has(spellId));
+    const equippedItemExclusiveSpellIds = equippedItemSpellIds.filter((spellId) => !activeSpellIdSet.has(spellId));
     const snapshots = [];
     for (const spellId of activeSpellIds) {
         const spell = registry.spellsById.get(spellId);
@@ -132,7 +132,7 @@ function buildActiveSpells(registry, activeSpellIds, equippedItemSpellIds) {
         }
         snapshots.push(createSpellSnapshot(spell, "loadout"));
     }
-    for (const spellId of equippedOnlySpellIds) {
+    for (const spellId of equippedItemExclusiveSpellIds) {
         const spell = registry.spellsById.get(spellId);
         if (!spell) {
             continue;

@@ -85,7 +85,7 @@ function buildPlayerSnapshot(registry, encounter, player) {
     const ownedSpellIds = buildOwnedSpellIds(registry, encounter, player);
     const equippedItemSpellIds = Array.from(new Set(equippedItems
         .map((item) => item.spellId ?? null)
-        .filter((spellId) => Boolean(spellId) && registry.spellsById.has(spellId))));
+        .filter((spellId) => typeof spellId === "string" && registry.spellsById.has(spellId))));
     let healthBonus = 0;
     let healingBonus = 0;
     let regenBonus = 0;

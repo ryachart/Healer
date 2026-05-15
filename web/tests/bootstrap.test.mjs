@@ -53,7 +53,7 @@ test("encounter bootstrap assembles raid, enemies, rewards, and replay metadata"
   assert.equal(snapshot.encounter.level, 6);
   assert.equal(snapshot.encounter.difficulty, 5);
   assert.equal(snapshot.encounter.multiplayer, true);
-  assert.equal(snapshot.allies.length, 7);
+  assert.equal(snapshot.allies.length, 8);
   assert.deepEqual(snapshot.player.activeSpellIds, ["Purify", "Heal", "GreaterHeal"]);
   assert.deepEqual(snapshot.player.equippedItemSpellIds, ["Purify"]);
   assert.equal(snapshot.player.maximumHealth, 1425);

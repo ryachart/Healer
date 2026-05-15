@@ -22,6 +22,20 @@ SOURCE_FILES = {
         ROOT / "Healer" / "DataObjects" / "Spell.m",
         ROOT / "Healer" / "DataObjects" / "Spell.h",
     ],
+    "abilities": [
+        ROOT / "Healer" / "Ability.m",
+        ROOT / "Healer" / "Ability.h",
+        ROOT / "Healer" / "DataObjects" / "Enemy.m",
+        ROOT / "Healer" / "DataObjects" / "Enemy.h",
+    ],
+    "effects": [
+        ROOT / "Healer" / "DataObjects" / "Effect.m",
+        ROOT / "Healer" / "DataObjects" / "Effect.h",
+        ROOT / "Healer" / "DataObjects" / "Spell.m",
+        ROOT / "Healer" / "DataObjects" / "Spell.h",
+        ROOT / "Healer" / "DataObjects" / "Enemy.m",
+        ROOT / "Healer" / "DataObjects" / "Enemy.h",
+    ],
     "enemies": [
         ROOT / "Healer" / "DataObjects" / "Enemy.m",
         ROOT / "Healer" / "DataObjects" / "Enemy.h",
@@ -108,6 +122,71 @@ EFFECT_FIELDS = {
     "criticalChanceAdjustment",
     "ailmentType",
     "isIndependent",
+}
+
+ABILITY_STRING_FIELDS = ABILITY_FIELDS | {
+    "attackParticleEffectName",
+    "breathParticleName",
+    "damageAudioName",
+    "explosionParticleName",
+    "explosionSoundName",
+    "pulseSoundTitle",
+}
+
+ABILITY_NUMERIC_FIELDS = (ABILITY_FIELDS - {"key", "title", "iconName", "info", "executionSound", "activationSound", "spriteName"}) | {
+    "attacksPerTrigger",
+    "bonusCriticalChance",
+    "cooldownVariance",
+    "criticalChance",
+    "duration",
+    "failureChance",
+    "numberOfTargets",
+    "numTargets",
+    "stunDuration",
+}
+
+ABILITY_BOOL_FIELDS = {
+    "ignoresBusy",
+    "ignoresGuardians",
+    "ignoresPlayers",
+    "interruptAppliesDot",
+    "prefersTargetsWithoutVisibleEffects",
+    "removesPositiveEffects",
+    "requiresDamageToApplyEffect",
+}
+
+EFFECT_STRING_FIELDS = EFFECT_FIELDS | {
+    "completionParticleName",
+    "particleEffectName",
+}
+
+EFFECT_NUMERIC_FIELDS = (EFFECT_FIELDS - {"title", "spriteName", "isIndependent"}) | {
+    "amountPerReaction",
+    "baseValue",
+    "dodgeChanceAdjustment",
+    "effectCooldown",
+    "effectivePercentage",
+    "energyChangePerCast",
+    "failureChance",
+    "getUpThreshold",
+    "maximumAbsorbtionAdjustment",
+    "maximumHealthMultiplierAdjustment",
+    "numCastsRemaining",
+    "percentageHealingReceived",
+    "raidWidePulseCooldown",
+    "threshold",
+    "triggerCooldown",
+}
+
+EFFECT_BOOL_FIELDS = {
+    "causesBlind",
+    "causesConfusion",
+    "causesReactiveDodge",
+    "causesStun",
+    "healthReduced",
+    "ignoresDispels",
+    "isIndependent",
+    "needsDetonation",
 }
 
 
@@ -242,16 +321,16 @@ def number_or_expression(expression: str, context=None):
     }
 
 
-def parse_string_setters(text: str, variable_name: str):
+def parse_string_setters(text: str, variable_name: str, field_names):
     result = {}
-    for field in list(ABILITY_FIELDS | EFFECT_FIELDS) + ["spriteName", "title", "key", "iconName", "info"]:
+    for field in field_names:
         matches = re.findall(
             rf"\[{re.escape(variable_name)} set{field[0].upper()}{field[1:]}:@\"((?:\\.|[^\"\\])*)\"\];",
             text,
         )
         if matches:
             result[field] = objc_string(matches[-1])
-    for field in list(ABILITY_FIELDS | EFFECT_FIELDS):
+    for field in field_names:
         matches = re.findall(
             rf"{re.escape(variable_name)}\.{field}\s*=\s*@\"((?:\\.|[^\"\\])*)\";",
             text,
@@ -261,7 +340,7 @@ def parse_string_setters(text: str, variable_name: str):
     return result
 
 
-def parse_numeric_setters(text: str, variable_name: str, field_names):
+def parse_numeric_setters(text: str, variable_name: str, field_names, context=None):
     result = {}
     for field in field_names:
         matches = re.findall(
@@ -269,14 +348,60 @@ def parse_numeric_setters(text: str, variable_name: str, field_names):
             text,
         )
         if matches:
-            result[field] = number_or_expression(matches[-1])
+            result[field] = number_or_expression(matches[-1], context=context)
         matches = re.findall(
             rf"{re.escape(variable_name)}\.{field}\s*=\s*([^;]+);",
             text,
         )
         if matches:
-            result[field] = number_or_expression(matches[-1])
+            result[field] = number_or_expression(matches[-1], context=context)
     return result
+
+
+def parse_bool_setters(text: str, variable_name: str, field_names):
+    result = {}
+    for field in field_names:
+        matches = re.findall(
+            rf"\[{re.escape(variable_name)} set{field[0].upper()}{field[1:]}:(YES|NO)\];",
+            text,
+        )
+        if matches:
+            result[field] = matches[-1] == "YES"
+        matches = re.findall(
+            rf"{re.escape(variable_name)}\.{field}\s*=\s*(YES|NO);",
+            text,
+        )
+        if matches:
+            result[field] = matches[-1] == "YES"
+    return result
+
+
+def merge_missing_fields(primary, secondary):
+    for key, value in secondary.items():
+        if key not in primary or primary[key] in (None, "", {}, []):
+            primary[key] = value
+    return primary
+
+
+def effect_identifier(effect):
+    if not effect:
+        return None
+    return effect.get("title") or effect.get("key") or effect.get("className")
+
+
+def ability_identifier(ability):
+    if not ability:
+        return None
+    return (
+        ability.get("key")
+        or (slugify(ability["title"]) if ability.get("title") else None)
+        or (
+            f"{ability.get('className')}::{ability.get('factoryMethod')}"
+            if ability.get("className") and ability.get("factoryMethod")
+            else None
+        )
+        or ability.get("className")
+    )
 
 
 def render_nsstring_formats(text: str, context=None):
@@ -378,7 +503,7 @@ def extract_encounters():
             }
 
         for var_name, info in temp_enemies.items():
-            info.update(parse_string_setters(block, var_name))
+            info.update(parse_string_setters(block, var_name, {"spriteName", "title", "key", "iconName", "info"}))
             info.update(parse_numeric_setters(block, var_name, {"threatPriority"}))
 
         enemy_roster = []
@@ -420,7 +545,7 @@ def extract_encounters():
 
 def build_effect_summary(default_block: str, spell_context):
     effect_match = re.search(
-        r"(\w+)\s*\*(\w+)\s*=\s*\[\[\[?(\w+) alloc\] initWithDuration:(.*?) andEffectType:(\w+)\];",
+        r"(\w+)\s*\*(\w+)\s*=\s*\[\[\[?(\w+) alloc\] initWithDuration:(.*?) andEffectType:(\w+)\](?: autorelease\])?;",
         default_block,
     )
     if not effect_match:
@@ -432,9 +557,85 @@ def build_effect_summary(default_block: str, spell_context):
         "duration": number_or_expression(duration, context=spell_context),
         "effectType": effect_type,
     }
-    effect.update(parse_string_setters(default_block, var_name))
-    effect.update(parse_numeric_setters(default_block, var_name, EFFECT_FIELDS - {"title", "spriteName", "effectType"}))
+    effect.update(parse_string_setters(default_block, var_name, EFFECT_STRING_FIELDS))
+    effect.update(parse_numeric_setters(default_block, var_name, EFFECT_NUMERIC_FIELDS, context=spell_context))
+    effect.update(parse_bool_setters(default_block, var_name, EFFECT_BOOL_FIELDS))
+    effect["id"] = effect_identifier(effect)
     return effect
+
+
+def parse_effect_initializer(effect_match, block: str, context=None):
+    declared_type, var_name, class_name, duration, effect_type = effect_match.groups()
+    effect = {
+        "declaredType": declared_type,
+        "className": class_name,
+        "duration": number_or_expression(duration, context=context),
+        "effectType": effect_type,
+    }
+    effect.update(parse_string_setters(block, var_name, EFFECT_STRING_FIELDS))
+    effect.update(parse_numeric_setters(block, var_name, EFFECT_NUMERIC_FIELDS, context=context))
+    effect.update(parse_bool_setters(block, var_name, EFFECT_BOOL_FIELDS))
+    effect["id"] = effect_identifier(effect)
+    return var_name, effect
+
+
+def extract_declared_effects(block: str, context=None):
+    effects = {}
+    for effect_match in re.finditer(
+        r"(\w+)\s*\*(\w+)\s*=\s*\[\[\[?(\w+) alloc\] initWithDuration:(.*?) andEffectType:(\w+)\](?: autorelease\])?;",
+        block,
+        re.DOTALL,
+    ):
+        var_name, effect = parse_effect_initializer(effect_match, block, context=context)
+        effects[var_name] = effect
+    return effects
+
+
+def extract_default_effects():
+    text = read(ROOT / "Healer" / "DataObjects" / "Effect.m")
+    implementations = split_implementations(text)
+    effects = {}
+    for class_name, block in implementations.items():
+        default_block = extract_method_block(block, r"\+\s*\([^)]*\)defaultEffect")
+        if not default_block:
+            continue
+        effect_match = re.search(
+            r"(\w+)\s*\*(\w+)\s*=\s*\[\[\[?(\w+) alloc\] initWithDuration:(.*?) andEffectType:(\w+)\](?: autorelease\])?;",
+            default_block,
+            re.DOTALL,
+        )
+        if not effect_match:
+            continue
+        _, effect = parse_effect_initializer(effect_match, default_block)
+        effect["factoryMethod"] = "defaultEffect"
+        effects[class_name] = effect
+    return effects
+
+
+def extract_ability_factories():
+    text = read(ROOT / "Healer" / "Ability.m")
+    implementations = split_implementations(text)
+    factories = {}
+    cleave_block = extract_method_block(implementations.get("Cleave", ""), r"\+\s*\(Cleave \*\)normalCleave")
+    if cleave_block:
+        init_match = re.search(
+            r"(\w+)\s*\*(\w+)\s*=\s*\[\[\[?(\w+) alloc\] init[^\]]*\](?: autorelease)?\];",
+            cleave_block,
+            re.DOTALL,
+        )
+        if init_match:
+            declared_type, variable_name, class_name = init_match.groups()
+            ability = {
+                "declaredType": declared_type,
+                "className": class_name,
+                "factoryMethod": "normalCleave",
+            }
+            ability.update(parse_string_setters(cleave_block, variable_name, ABILITY_STRING_FIELDS))
+            ability.update(parse_numeric_setters(cleave_block, variable_name, ABILITY_NUMERIC_FIELDS))
+            ability.update(parse_bool_setters(cleave_block, variable_name, ABILITY_BOOL_FIELDS))
+            ability["id"] = ability_identifier(ability)
+            factories[(class_name, "normalCleave")] = ability
+    return factories
 
 
 def extract_spells():
@@ -507,13 +708,26 @@ def extract_spells():
                 "isExclusiveEffectTarget": "[%s setIsExclusiveEffectTarget:YES];" % variable_name in default_block,
                 "targetCount": targeting["targetCount"],
                 "targeting": targeting["targeting"],
+                "appliedEffectId": effect_identifier(effect_summary),
                 "appliedEffect": effect_summary,
             }
         )
     return sorted(spells, key=lambda entry: (entry["classification"], entry["title"]))
 
 
-def extract_enemies():
+def parse_ability_initializer_fields(initializer_tail: str):
+    result = {}
+    init_match = re.search(r"initWithDamage:(.*?) andCooldown:(.*?)(?:\]|$)", initializer_tail, re.DOTALL)
+    if init_match:
+        ability_value, cooldown = init_match.groups()
+        result["abilityValue"] = number_or_expression(ability_value)
+        result["cooldown"] = number_or_expression(cooldown)
+    return result
+
+
+def extract_enemies(default_effects=None, ability_factories=None):
+    default_effects = default_effects or {}
+    ability_factories = ability_factories or {}
     text = read(ROOT / "Healer" / "DataObjects" / "Enemy.m")
     implementations = split_implementations(text)
     enemies = []
@@ -556,6 +770,7 @@ def extract_enemies():
             record["autoAttackAdjustments"] = auto_attack_fields
 
         abilities = []
+        temp_effects = extract_declared_effects(default_block)
         temp_abilities = {}
         for ability_match in re.finditer(
             r"(\w+)\s*\*(\w+)\s*=\s*(?:\[\[\[(\w+) alloc\](.*?)\] autorelease\]|\[(\w+) ([^\]]+)\]);",
@@ -568,17 +783,89 @@ def extract_enemies():
                 "declaredType": declared_type,
                 "className": class_value,
             }
+            if alloc_tail:
+                temp_abilities[variable].update(parse_ability_initializer_fields(alloc_tail))
             if factory_method:
                 temp_abilities[variable]["factoryMethod"] = factory_method.strip()
         for variable_name, ability in temp_abilities.items():
-            ability.update(parse_string_setters(default_block, variable_name))
-            ability.update(parse_numeric_setters(default_block, variable_name, ABILITY_FIELDS - {"key", "title", "iconName", "info", "executionSound", "activationSound", "spriteName"}))
+            ability.update(parse_string_setters(default_block, variable_name, ABILITY_STRING_FIELDS))
+            ability.update(parse_numeric_setters(default_block, variable_name, ABILITY_NUMERIC_FIELDS))
+            ability.update(parse_bool_setters(default_block, variable_name, ABILITY_BOOL_FIELDS))
+            effect_match = re.search(
+                rf"\[(?:\(\w+\*\))?{re.escape(variable_name)} setAppliedEffect:(\w+)\];",
+                default_block,
+            )
+            default_effect_match = re.search(
+                rf"\[(?:\(\w+\*\))?{re.escape(variable_name)} setAppliedEffect:\[(\w+) defaultEffect\]\];",
+                default_block,
+            )
+            if effect_match and effect_match.group(1) in temp_effects:
+                ability["appliedEffect"] = temp_effects[effect_match.group(1)]
+            elif default_effect_match and default_effect_match.group(1) in default_effects:
+                ability["appliedEffect"] = default_effects[default_effect_match.group(1)]
+            if ability.get("factoryMethod") and (ability.get("className"), ability.get("factoryMethod")) in ability_factories:
+                merge_missing_fields(ability, ability_factories[(ability.get("className"), ability.get("factoryMethod"))])
+            ability["id"] = ability_identifier(ability)
+            ability["appliedEffectId"] = effect_identifier(ability.get("appliedEffect"))
         for added_variable in re.findall(r"\[\w+ addAbility:(\w+)\];", default_block):
             if added_variable in temp_abilities:
                 abilities.append(temp_abilities[added_variable])
         record["abilities"] = abilities
         enemies.append(record)
     return sorted(enemies, key=lambda entry: entry.get("title", entry["id"]))
+
+
+def extract_abilities(enemies):
+    abilities_by_id = {}
+    for enemy in enemies:
+        for ability in enemy.get("abilities", []):
+            ability_id = ability_identifier(ability)
+            if ability_id not in abilities_by_id:
+                canonical = dict(ability)
+                canonical["id"] = ability_id
+                canonical["usedByEnemyIds"] = [enemy["id"]]
+                abilities_by_id[ability_id] = canonical
+            else:
+                merge_missing_fields(abilities_by_id[ability_id], ability)
+                if enemy["id"] not in abilities_by_id[ability_id]["usedByEnemyIds"]:
+                    abilities_by_id[ability_id]["usedByEnemyIds"].append(enemy["id"])
+    return sorted(abilities_by_id.values(), key=lambda entry: entry["id"])
+
+
+def extract_effects(spells, enemies, default_effects):
+    effects_by_id = {}
+
+    def register(effect, *, source_type, source_id):
+        if not effect:
+            return
+        effect_id = effect_identifier(effect)
+        if not effect_id:
+            return
+        if effect_id not in effects_by_id:
+            canonical = dict(effect)
+            canonical["id"] = effect_id
+            canonical["usedBySpells"] = []
+            canonical["usedByAbilities"] = []
+            canonical["factorySources"] = []
+            effects_by_id[effect_id] = canonical
+        else:
+            merge_missing_fields(effects_by_id[effect_id], effect)
+        if source_type == "spell" and source_id not in effects_by_id[effect_id]["usedBySpells"]:
+            effects_by_id[effect_id]["usedBySpells"].append(source_id)
+        elif source_type == "ability" and source_id not in effects_by_id[effect_id]["usedByAbilities"]:
+            effects_by_id[effect_id]["usedByAbilities"].append(source_id)
+        elif source_type == "factory" and source_id not in effects_by_id[effect_id]["factorySources"]:
+            effects_by_id[effect_id]["factorySources"].append(source_id)
+
+    for spell in spells:
+        register(spell.get("appliedEffect"), source_type="spell", source_id=spell["id"])
+    for enemy in enemies:
+        for ability in enemy.get("abilities", []):
+            register(ability.get("appliedEffect"), source_type="ability", source_id=ability["id"])
+    for class_name, effect in default_effects.items():
+        register(effect, source_type="factory", source_id=class_name)
+
+    return sorted(effects_by_id.values(), key=lambda entry: entry["id"])
 
 
 def extract_allies():
@@ -762,11 +1049,18 @@ def extract_tips():
 
 
 def generate_payloads():
+    default_effects = extract_default_effects()
+    ability_factories = extract_ability_factories()
     spells = extract_spells()
+    enemies = extract_enemies(default_effects=default_effects, ability_factories=ability_factories)
+    abilities = extract_abilities(enemies)
+    effects = extract_effects(spells, enemies, default_effects)
     return {
         "encounters.json": dataset_wrapper("encounters", extract_encounters()),
         "spells.json": dataset_wrapper("spells", spells),
-        "enemies.json": dataset_wrapper("enemies", extract_enemies()),
+        "abilities.json": dataset_wrapper("abilities", abilities),
+        "effects.json": dataset_wrapper("effects", effects),
+        "enemies.json": dataset_wrapper("enemies", enemies),
         "allies.json": dataset_wrapper("allies", extract_allies()),
         "talents.json": dataset_wrapper("talents", extract_talents()),
         "shop.json": dataset_wrapper("shop", extract_shop(spells)),

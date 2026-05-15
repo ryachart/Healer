@@ -1,0 +1,566 @@
+{
+  "dataset": "abilities",
+  "generatedBy": "tools/extract_phase1_data.py",
+  "payload": [
+    {
+      "abilityValue": {
+        "expression": "240",
+        "value": 240
+      },
+      "activationTime": {
+        "expression": "1.5",
+        "value": 1.5
+      },
+      "appliedEffectId": null,
+      "className": "BoneThrow",
+      "cooldown": {
+        "expression": "14.0",
+        "value": 14.0
+      },
+      "declaredType": "BoneThrow",
+      "id": "BoneThrow",
+      "usedByEnemyIds": [
+        "ColossusOfBone"
+      ]
+    },
+    {
+      "activationTime": {
+        "expression": "1.5",
+        "value": 1.5
+      },
+      "appliedEffectId": null,
+      "className": "InvertedHealing",
+      "cooldown": {
+        "expression": "5.0",
+        "value": 5.0
+      },
+      "declaredType": "InvertedHealing",
+      "executionSound": "curse.mp3",
+      "id": "InvertedHealing",
+      "numTargets": {
+        "expression": "3",
+        "value": 3
+      },
+      "usedByEnemyIds": [
+        "CrazedSeer"
+      ]
+    },
+    {
+      "abilityValue": {
+        "expression": "-120",
+        "value": -120
+      },
+      "appliedEffectId": null,
+      "className": "ProjectileAttack",
+      "cooldown": {
+        "expression": "4",
+        "value": 4
+      },
+      "declaredType": "ProjectileAttack",
+      "executionSound": "fireball.mp3",
+      "explosionParticleName": "shadow_burst.plist",
+      "explosionSoundName": "liquid_impact.mp3",
+      "id": "ProjectileAttack",
+      "spriteName": "shadowbolt.png",
+      "usedByEnemyIds": [
+        "CrazedSeer"
+      ]
+    },
+    {
+      "activationTime": {
+        "expression": "2.0",
+        "value": 2.0
+      },
+      "appliedEffectId": null,
+      "className": "SoulBurn",
+      "cooldown": {
+        "expression": "14.0",
+        "value": 14.0
+      },
+      "declaredType": "SoulBurn",
+      "executionSound": "fire_start.mp3",
+      "id": "SoulBurn",
+      "usedByEnemyIds": [
+        "CrazedSeer"
+      ]
+    },
+    {
+      "abilityValue": {
+        "expression": "75",
+        "value": 75
+      },
+      "activationTime": {
+        "expression": "1.75",
+        "value": 1.75
+      },
+      "appliedEffectId": null,
+      "className": "BaraghastRoar",
+      "cooldown": {
+        "expression": "38.0",
+        "value": 38.0
+      },
+      "cooldownVariance": {
+        "expression": ".2",
+        "value": 0.2
+      },
+      "declaredType": "BaraghastRoar",
+      "iconName": "shadow_roar.png",
+      "id": "baraghast-roar",
+      "info": "Interrupts spell casting, dispels all positive spell effects, and deals damage to all enemies.  If a Healer is casting when this ability triggers the Healer suffers damage over time.",
+      "interruptAppliesDot": true,
+      "key": "baraghast-roar",
+      "title": "Roar of the Damned",
+      "usedByEnemyIds": [
+        "BaraghastReborn"
+      ]
+    },
+    {
+      "abilityValue": {
+        "expression": "208",
+        "value": 208
+      },
+      "activationSound": "treebranchdrawback.mp3",
+      "activationTime": {
+        "expression": "2.0",
+        "value": 2.0
+      },
+      "appliedEffect": {
+        "ailmentType": {
+          "expression": "AilmentTrauma",
+          "value": null
+        },
+        "className": "RepeatedHealthEffect",
+        "declaredType": "RepeatedHealthEffect",
+        "duration": {
+          "expression": "5.0",
+          "value": 5.0
+        },
+        "effectType": "EffectTypeNegative",
+        "id": "lash",
+        "numOfTicks": {
+          "expression": "5",
+          "value": 5
+        },
+        "spriteName": "bleeding.png",
+        "title": "lash",
+        "valuePerTick": {
+          "expression": "-36",
+          "value": -36
+        }
+      },
+      "appliedEffectId": "lash",
+      "className": "RaidDamage",
+      "cooldown": {
+        "expression": "kAbilityRequiresTrigger",
+        "value": null
+      },
+      "declaredType": "RaidDamage",
+      "executionSound": "treebranchwhipforward.mp3",
+      "iconName": "branch_thrash.png",
+      "id": "branch-attack",
+      "key": "branch-attack",
+      "title": "Viscious Branches",
+      "usedByEnemyIds": [
+        "BefouledTreant"
+      ]
+    },
+    {
+      "abilityValue": {
+        "expression": "400",
+        "value": 400
+      },
+      "activationTime": {
+        "expression": "1.0",
+        "value": 1.0
+      },
+      "appliedEffectId": null,
+      "className": "Cleave",
+      "cooldown": {
+        "expression": "12.0",
+        "value": 12.0
+      },
+      "declaredType": "Cleave",
+      "executionSound": "whiff.mp3",
+      "factoryMethod": "normalCleave",
+      "failureChance": {
+        "expression": ".4",
+        "value": 0.4
+      },
+      "iconName": "wide_swing.png",
+      "id": "cleave",
+      "info": "Attacks with a chance to deal high damage to all melee range enemies.",
+      "key": "cleave",
+      "title": "Wild Swing",
+      "usedByEnemyIds": [
+        "BefouledTreant",
+        "CorruptedTroll"
+      ]
+    },
+    {
+      "abilityValue": {
+        "expression": "100",
+        "value": 100
+      },
+      "activationSound": "dragonroar1.mp3",
+      "activationTime": {
+        "expression": "2.5",
+        "value": 2.5
+      },
+      "appliedEffectId": null,
+      "className": "Breath",
+      "cooldown": {
+        "expression": "kAbilityRequiresTrigger",
+        "value": null
+      },
+      "declaredType": "Breath",
+      "iconName": "burning.png",
+      "id": "flame-breath",
+      "key": "flame-breath",
+      "title": "Flame Breath",
+      "usedByEnemyIds": [
+        "Drake"
+      ]
+    },
+    {
+      "appliedEffectId": null,
+      "className": "ChannelledEnemyAttackAdjustment",
+      "cooldown": {
+        "expression": "kAbilityRequiresTrigger",
+        "value": null
+      },
+      "declaredType": "ChannelledEnemyAttackAdjustment",
+      "duration": {
+        "expression": "9.0",
+        "value": 9.0
+      },
+      "iconName": "temper.png",
+      "id": "frenzy",
+      "info": "Occasionally, the Corrupted Troll will attack its Focused target furiously dealing high damage.",
+      "key": "frenzy",
+      "title": "Frenzy",
+      "usedByEnemyIds": [
+        "CorruptedTroll"
+      ]
+    },
+    {
+      "abilityValue": {
+        "expression": "125",
+        "value": 125
+      },
+      "activationTime": {
+        "expression": "1.5",
+        "value": 1.5
+      },
+      "appliedEffectId": null,
+      "className": "RaidDamage",
+      "cooldown": {
+        "expression": "25",
+        "value": 25
+      },
+      "declaredType": "RaidDamage",
+      "executionSound": "tyonath_laugh.mp3",
+      "iconName": "roar.png",
+      "id": "horrifying-laugh",
+      "title": "Horrifying Laugh",
+      "usedByEnemyIds": [
+        "CrazedSeer"
+      ]
+    },
+    {
+      "appliedEffectId": null,
+      "className": "ImproveProjectileAbility",
+      "cooldown": {
+        "expression": "60",
+        "value": 60
+      },
+      "declaredType": "ImproveProjectileAbility",
+      "iconName": "increasing_insanity.png",
+      "id": "increasing-insanity",
+      "info": "Tyonath casts more shadow bolts the longer the fight goes on.",
+      "title": "Increasing Insanity",
+      "usedByEnemyIds": [
+        "CrazedSeer"
+      ]
+    },
+    {
+      "abilityValue": {
+        "expression": "200",
+        "value": 200
+      },
+      "activationTime": {
+        "expression": "1.0",
+        "value": 1.0
+      },
+      "appliedEffectId": null,
+      "className": "OozeTwoTargets",
+      "cooldown": {
+        "expression": "17.0",
+        "value": 17.0
+      },
+      "declaredType": "OozeTwoTargets",
+      "executionSound": "slimespraying.mp3",
+      "iconName": "slime.png",
+      "id": "ooze-two",
+      "key": "ooze-two",
+      "title": "Tendrils of Slime",
+      "usedByEnemyIds": [
+        "TheUnspeakable"
+      ]
+    },
+    {
+      "abilityValue": {
+        "expression": "100",
+        "value": 100
+      },
+      "activationTime": {
+        "expression": "2.5",
+        "value": 2.5
+      },
+      "appliedEffect": {
+        "className": "RepeatedHealthEffect",
+        "declaredType": "RepeatedHealthEffect",
+        "duration": {
+          "expression": "12",
+          "value": 12
+        },
+        "effectType": "EffectTypeNegative",
+        "id": "plague-dot",
+        "numOfTicks": {
+          "expression": "4",
+          "value": 4
+        },
+        "title": "plague-dot",
+        "valuePerTick": {
+          "expression": "-100",
+          "value": -100
+        }
+      },
+      "appliedEffectId": "plague-dot",
+      "className": "Attack",
+      "cooldown": {
+        "expression": "30.0",
+        "value": 30.0
+      },
+      "declaredType": "Attack",
+      "executionSound": "slimeimpact.mp3",
+      "failureChance": {
+        "expression": "0",
+        "value": 0
+      },
+      "iconName": "plague.png",
+      "id": "plague-strike",
+      "info": "The Ghoul strikes a random enemy with a sickening attack causing them to be diseased for 12 seconds.",
+      "key": "plague-strike",
+      "title": "Plague Strike",
+      "usedByEnemyIds": [
+        "Ghoul"
+      ]
+    },
+    {
+      "abilityValue": {
+        "expression": "100",
+        "value": 100
+      },
+      "activationTime": {
+        "expression": "2.0",
+        "value": 2.0
+      },
+      "appliedEffect": {
+        "ailmentType": {
+          "expression": "AilmentPoison",
+          "value": null
+        },
+        "className": "TrulzarPoison",
+        "declaredType": "TrulzarPoison",
+        "duration": {
+          "expression": "24",
+          "value": 24
+        },
+        "effectType": "EffectTypeNegative",
+        "id": "trulzar-poison1",
+        "numOfTicks": {
+          "expression": "30",
+          "value": 30
+        },
+        "title": "trulzar-poison1",
+        "valuePerTick": {
+          "expression": "-120",
+          "value": -120
+        }
+      },
+      "appliedEffectId": "trulzar-poison1",
+      "attackParticleEffectName": "poison_cloud.plist",
+      "className": "Attack",
+      "cooldown": {
+        "expression": "9.0",
+        "value": 9.0
+      },
+      "declaredType": "Attack",
+      "executionSound": "gas_impact.mp3",
+      "iconName": "poison.png",
+      "id": "poison-attack",
+      "info": "Trulzar fills an allies veins with poison dealing increasing damage over time.  This effect may be removed with the Purify spell.",
+      "key": "poison-attack",
+      "prefersTargetsWithoutVisibleEffects": true,
+      "title": "Inject Poison",
+      "usedByEnemyIds": [
+        "Trulzar"
+      ]
+    },
+    {
+      "abilityValue": {
+        "expression": "550",
+        "value": 550
+      },
+      "activationTime": {
+        "expression": "2.0",
+        "value": 2.0
+      },
+      "appliedEffectId": null,
+      "className": "RaidDamagePulse",
+      "cooldown": {
+        "expression": "60.0",
+        "value": 60.0
+      },
+      "declaredType": "RaidDamagePulse",
+      "duration": {
+        "expression": "12.0",
+        "value": 12.0
+      },
+      "iconName": "poison_explosion.png",
+      "id": "poison-nova",
+      "key": "poison-nova",
+      "pulseSoundTitle": "explosion_pulse.wav",
+      "timeApplied": {
+        "expression": "40.0",
+        "value": 40.0
+      },
+      "title": "Poison Nova",
+      "usedByEnemyIds": [
+        "Trulzar"
+      ]
+    },
+    {
+      "abilityValue": {
+        "expression": "450",
+        "value": 450
+      },
+      "activationTime": {
+        "expression": "1.0",
+        "value": 1.0
+      },
+      "appliedEffectId": null,
+      "className": "ProjectileAttack",
+      "cooldown": {
+        "expression": "8.0",
+        "value": 8.0
+      },
+      "declaredType": "ProjectileAttack",
+      "executionSound": "whiff.mp3",
+      "explosionParticleName": "poison_cloud.plist",
+      "explosionSoundName": "glassvialthrownwliquid.mp3",
+      "iconName": "vial_throw.png",
+      "id": "potion-throw",
+      "key": "potion-throw",
+      "spriteName": "potion.png",
+      "timeApplied": {
+        "expression": "7.0",
+        "value": 7.0
+      },
+      "title": "Toxic Vial",
+      "usedByEnemyIds": [
+        "Trulzar"
+      ]
+    },
+    {
+      "activationTime": {
+        "expression": "1.5",
+        "value": 1.5
+      },
+      "appliedEffectId": null,
+      "className": "RandomPotionToss",
+      "cooldown": {
+        "expression": "11.0",
+        "value": 11.0
+      },
+      "declaredType": "RandomPotionToss",
+      "executionSound": "whiff.mp3",
+      "iconName": "vial_throw.png",
+      "id": "potions",
+      "key": "potions",
+      "title": "Throw Vial",
+      "usedByEnemyIds": [
+        "MischievousImps"
+      ]
+    },
+    {
+      "abilityValue": {
+        "expression": "35",
+        "value": 35
+      },
+      "activationTime": {
+        "expression": "2.0",
+        "value": 2.0
+      },
+      "appliedEffectId": null,
+      "className": "Earthquake",
+      "cooldown": {
+        "expression": "28.0",
+        "value": 28.0
+      },
+      "declaredType": "Earthquake",
+      "executionSound": "earthquake.mp3",
+      "iconName": "quake.png",
+      "id": "root-quake",
+      "key": "root-quake",
+      "title": "Earthquake",
+      "usedByEnemyIds": [
+        "BefouledTreant"
+      ]
+    },
+    {
+      "abilityValue": {
+        "expression": "100",
+        "value": 100
+      },
+      "activationTime": {
+        "expression": "2.5",
+        "value": 2.5
+      },
+      "appliedEffectId": null,
+      "className": "PlaguebringerSicken",
+      "cooldown": {
+        "expression": "13.0",
+        "value": 13.0
+      },
+      "declaredType": "PlaguebringerSicken",
+      "executionSound": "slimespraying.mp3",
+      "iconName": "plague.png",
+      "id": "sicken",
+      "info": "The Colossus will sicken targets causing them to take damage until they are healed to full health.",
+      "key": "sicken",
+      "title": "Sicken",
+      "usedByEnemyIds": [
+        "PlaguebringerColossus"
+      ]
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "Healer/Ability.m",
+      "sha256": "a4f041d29bfc3a54572d7da50879c279e837027d4b29267e31de20cf5b2754e8"
+    },
+    {
+      "path": "Healer/Ability.h",
+      "sha256": "48ec300a8eb2556d50f9686d7acc96f0b8ac59f1acdda0f06192167b53233974"
+    },
+    {
+      "path": "Healer/DataObjects/Enemy.m",
+      "sha256": "0a343d9fb01e2aa73bb504352a974c2df51afdb95267c8d4d9dd1dada0a7fb62"
+    },
+    {
+      "path": "Healer/DataObjects/Enemy.h",
+      "sha256": "cc82bab80214121d725ea6ea0437fa03ff24cd81b387e8eeda314cc152167bd2"
+    }
+  ]
+}

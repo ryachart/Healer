@@ -955,7 +955,7 @@ def extract_allies():
     allies = []
     for class_name in ally_classes:
         block = implementations[class_name]
-        init_block = extract_method_block(block, r"- \(id\)init")
+        init_block = extract_method_block(block, r"-\s*\(id\)init")
         init_match = re.search(
             r"\[super initWithHealth:(.*?) damageDealt:(.*?) andDmgFrequency:(.*?) andPositioning:(\w+)\]",
             init_block,

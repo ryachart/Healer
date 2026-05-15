@@ -486,7 +486,7 @@ def parse_enum_block(text: str, enum_name: str):
         return []
     entries = []
     for raw_line in match.group(1).splitlines():
-        line = raw_line.strip().rstrip(",")
+        line = raw_line.split("//", 1)[0].strip().rstrip(",")
         if not line or line.startswith("//"):
             continue
         token_match = re.match(r"(\w+)(?:\s*=\s*(-?\d+))?", line)
@@ -501,18 +501,6 @@ def parse_enum_block(text: str, enum_name: str):
             value = 0
         entries.append({"token": token, "value": value})
     return entries
-
-
-def parse_objc_literal_array(expression: str):
-    sanitized = expression
-    sanitized = re.sub(r"\bNSArray\s*\*\w+\s*=\s*", "", sanitized)
-    sanitized = sanitized.replace("@[", "[").replace("@{", "{")
-    sanitized = re.sub(r"\bnil\b", "None", sanitized)
-    try:
-        value = ast.literal_eval(sanitized)
-    except Exception:
-        return None
-    return value
 
 
 def parse_equipment_item_initializers(block: str):
@@ -1163,8 +1151,12 @@ def extract_equipment_schema():
     slot_prefixes_match = re.search(r"\+ \(NSArray \*\)slotPrefixes\{([\s\S]*?)return slotPrefix;", impl_text)
     slot_prefixes = []
     if slot_prefixes_match:
-        for inner_array in re.findall(r"@\[(?:\s*@\"(?:\\.|[^\"\\])*\"\s*,?)+\s*\]", slot_prefixes_match.group(1)):
-            slot_prefixes.append([objc_string(value) for value in re.findall(r'@\"((?:\\.|[^\"\\])*)\"', inner_array)])
+        for raw_line in slot_prefixes_match.group(1).splitlines():
+            if "//" not in raw_line:
+                continue
+            values = [objc_string(value) for value in re.findall(r'@\"((?:\\.|[^\"\\])*)\"', raw_line)]
+            if values:
+                slot_prefixes.append(values)
     slot_prefixes_by_type = {
         slot_tokens[index].replace("SlotType", "").lower(): values
         for index, values in enumerate(slot_prefixes or [])

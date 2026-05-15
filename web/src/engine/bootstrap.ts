@@ -12,6 +12,7 @@ import type {
   PlayerSpellSnapshot,
   PlayerProfileInput,
   PlayerSnapshot,
+  SpellRecord,
 } from "./types.js";
 import type { GameRegistry } from "./registry.js";
 
@@ -164,7 +165,8 @@ function buildPlayerSnapshot(registry: GameRegistry, encounter: EncounterRecord,
 }
 
 function buildActiveSpells(registry: GameRegistry, activeSpellIds: string[], equippedItemSpellIds: string[]): PlayerSpellSnapshot[] {
-  const equippedOnlySpellIds = equippedItemSpellIds.filter((spellId) => !activeSpellIds.includes(spellId));
+  const activeSpellIdSet = new Set(activeSpellIds);
+  const equippedOnlySpellIds = equippedItemSpellIds.filter((spellId) => !activeSpellIdSet.has(spellId));
   const snapshots: PlayerSpellSnapshot[] = [];
 
   for (const spellId of activeSpellIds) {
@@ -172,17 +174,7 @@ function buildActiveSpells(registry: GameRegistry, activeSpellIds: string[], equ
     if (!spell) {
       continue;
     }
-    snapshots.push({
-      id: spell.id,
-      title: spell.title,
-      spellType: spell.spellType ?? null,
-      targeting: spell.targeting ?? null,
-      targetCount: typeof spell.targetCount === "number" || typeof spell.targetCount === "string" ? spell.targetCount : null,
-      energyCost: numericValue(spell.energyCost ?? null),
-      castTime: numericValue(spell.castTime ?? null),
-      cooldown: numericValue(spell.cooldown ?? null),
-      source: "loadout",
-    });
+    snapshots.push(createSpellSnapshot(spell, "loadout"));
   }
 
   for (const spellId of equippedOnlySpellIds) {
@@ -190,20 +182,27 @@ function buildActiveSpells(registry: GameRegistry, activeSpellIds: string[], equ
     if (!spell) {
       continue;
     }
-    snapshots.push({
-      id: spell.id,
-      title: spell.title,
-      spellType: spell.spellType ?? null,
-      targeting: spell.targeting ?? null,
-      targetCount: typeof spell.targetCount === "number" || typeof spell.targetCount === "string" ? spell.targetCount : null,
-      energyCost: numericValue(spell.energyCost ?? null),
-      castTime: numericValue(spell.castTime ?? null),
-      cooldown: numericValue(spell.cooldown ?? null),
-      source: "equipped_item",
-    });
+    snapshots.push(createSpellSnapshot(spell, "equipped_item"));
   }
 
   return snapshots;
+}
+
+function createSpellSnapshot(
+  spell: SpellRecord,
+  source: "loadout" | "equipped_item",
+): PlayerSpellSnapshot {
+  return {
+    id: spell.id,
+    title: spell.title,
+    spellType: spell.spellType ?? null,
+    targeting: spell.targeting ?? null,
+    targetCount: typeof spell.targetCount === "number" || typeof spell.targetCount === "string" ? spell.targetCount : null,
+    energyCost: numericValue(spell.energyCost ?? null),
+    castTime: numericValue(spell.castTime ?? null),
+    cooldown: numericValue(spell.cooldown ?? null),
+    source,
+  };
 }
 
 function buildAllyInstances(registry: GameRegistry, encounter: EncounterRecord, multiplayer: boolean, warnings: string[]): AllySnapshot[] {

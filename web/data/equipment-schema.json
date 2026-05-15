@@ -1,0 +1,414 @@
+{
+  "dataset": "equipment-schema",
+  "generatedBy": "tools/extract_phase1_data.py",
+  "payload": {
+    "proceduralGenerationRules": {
+      "namePools": {
+        "prefixesBySlot": {
+          "boots": [
+            "Boots",
+            "Sandals",
+            "Slippers",
+            "Shoes"
+          ],
+          "chest": [
+            "Robe",
+            "Tunic",
+            "Garment",
+            "Vestment",
+            "Raiment"
+          ],
+          "head": [
+            "Cover",
+            "Hood",
+            "Shawl",
+            "Mantle",
+            "Stole"
+          ],
+          "legs": [
+            "Pants",
+            "Pantaloons",
+            "Trousers",
+            "Breeches",
+            "Leggings"
+          ],
+          "neck": [
+            "Necklace",
+            "Pendant",
+            "Chain",
+            "Choker"
+          ],
+          "weapon": [
+            "Words",
+            "Tome",
+            "Book",
+            "Libram",
+            "Codex"
+          ]
+        },
+        "suffixes": [
+          "Light",
+          "Hope",
+          "Glory",
+          "Knowledge",
+          "Insight",
+          "Power",
+          "Solace",
+          "Radiance",
+          "Peace",
+          "Purity",
+          "Warmth",
+          "the Sun"
+        ]
+      },
+      "salePrice": {
+        "expression": "5 * (quality + (rarity * 2))"
+      },
+      "slotModifiers": {
+        "boots": 1.0,
+        "chest": 1.25,
+        "head": 1.125,
+        "legs": 1.125,
+        "neck": 1.0,
+        "weapon": 1.0
+      },
+      "weaponSpecials": {
+        "candidateSpecialKeys": [
+          "burst1",
+          "burst2",
+          "armor1"
+        ],
+        "minimumQualityForSpecialKey": 4
+      }
+    },
+    "rarities": [
+      {
+        "enum": "ItemRarityUncommon",
+        "id": "uncommon",
+        "value": 1
+      },
+      {
+        "enum": "ItemRarityRare",
+        "id": "rare",
+        "value": 2
+      },
+      {
+        "enum": "ItemRarityEpic",
+        "id": "epic",
+        "value": 4
+      },
+      {
+        "enum": "ItemRarityLegendary",
+        "id": "legendary",
+        "value": 5
+      }
+    ],
+    "slotTypes": [
+      {
+        "enum": "SlotTypeHead",
+        "id": "head",
+        "value": 0
+      },
+      {
+        "enum": "SlotTypeWeapon",
+        "id": "weapon",
+        "value": 1
+      },
+      {
+        "enum": "SlotTypeChest",
+        "id": "chest",
+        "value": 2
+      },
+      {
+        "enum": "SlotTypeLegs",
+        "id": "legs",
+        "value": 3
+      },
+      {
+        "enum": "SlotTypeBoots",
+        "id": "boots",
+        "value": 4
+      },
+      {
+        "enum": "SlotTypeNeck",
+        "id": "neck",
+        "value": 5
+      }
+    ],
+    "specialKeyDetails": [
+      {
+        "description": "On Use: Summons 4 Stars of Aravon from the Heavens.  15s Cooldown.",
+        "specialKey": "aravon1",
+        "spellRule": {
+          "specialKey": "aravon1",
+          "spell": {
+            "castTime": {
+              "expression": "0",
+              "value": 0
+            },
+            "className": "StarsOfAravon",
+            "cooldown": {
+              "expression": "15.0",
+              "value": 15.0
+            },
+            "energyCost": {
+              "expression": "0",
+              "value": 0
+            },
+            "healAmount": {
+              "expression": "0",
+              "value": 0
+            },
+            "title": "Stars1"
+          }
+        }
+      },
+      {
+        "description": "On Use: Reduces the damage taken of target ally by 10% for 5 seconds.  10s Cooldown",
+        "specialKey": "armor1",
+        "spellRule": {
+          "appliedEffect": {
+            "className": "Effect",
+            "damageTakenMultiplierAdjustment": {
+              "expression": "-.1",
+              "value": -0.1
+            },
+            "declaredType": "Effect",
+            "duration": {
+              "expression": "5.0",
+              "value": 5.0
+            },
+            "effectType": "EffectTypePositiveInvisible",
+            "id": "armor1-eff",
+            "title": "armor1-eff"
+          },
+          "specialKey": "armor1",
+          "spell": {
+            "castTime": {
+              "expression": "0",
+              "value": 0
+            },
+            "className": "Spell",
+            "cooldown": {
+              "expression": "10",
+              "value": 10
+            },
+            "energyCost": {
+              "expression": "0",
+              "value": 0
+            },
+            "healAmount": {
+              "expression": "0",
+              "value": 0
+            },
+            "title": "Armor"
+          }
+        }
+      },
+      {
+        "description": "On Use: Fire a bolt of light at an enemy dealing 1000 damage. 15s Cooldown.",
+        "specialKey": "blast1",
+        "spellRule": {
+          "specialKey": "blast1",
+          "spell": {
+            "castTime": {
+              "expression": "0",
+              "value": 0
+            },
+            "className": "LightBolt",
+            "cooldown": {
+              "expression": "15.0",
+              "value": 15.0
+            },
+            "energyCost": {
+              "expression": "0",
+              "value": 0
+            },
+            "healAmount": {
+              "expression": "0",
+              "value": 0
+            },
+            "title": "Bolt1"
+          }
+        }
+      },
+      {
+        "description": "On Use: Heals your target for 100.  15s Cooldown.",
+        "specialKey": "burst1",
+        "spellRule": {
+          "specialKey": "burst1",
+          "spell": {
+            "castTime": {
+              "expression": "0",
+              "value": 0
+            },
+            "className": "Spell",
+            "cooldown": {
+              "expression": "15.0",
+              "value": 15.0
+            },
+            "energyCost": {
+              "expression": "0",
+              "value": 0
+            },
+            "healAmount": {
+              "expression": "100",
+              "value": 100
+            },
+            "title": "Burst1"
+          }
+        }
+      },
+      {
+        "description": "On Use: Heals your target for 150.  15s Cooldown.",
+        "specialKey": "burst2",
+        "spellRule": {
+          "specialKey": "burst2",
+          "spell": {
+            "castTime": {
+              "expression": "0",
+              "value": 0
+            },
+            "className": "Spell",
+            "cooldown": {
+              "expression": "15.0",
+              "value": 15.0
+            },
+            "energyCost": {
+              "expression": "0",
+              "value": 0
+            },
+            "healAmount": {
+              "expression": "150",
+              "value": 150
+            },
+            "title": "Burst2"
+          }
+        }
+      },
+      {
+        "description": "On Use: Increases your healing done by 25% for 6 seconds. 30s Cooldown.",
+        "specialKey": "healbuff1",
+        "spellRule": {
+          "specialKey": "healbuff1",
+          "spell": {
+            "castTime": {
+              "expression": "0",
+              "value": 0
+            },
+            "className": "HealBuff",
+            "cooldown": {
+              "expression": "30.0",
+              "value": 30.0
+            },
+            "energyCost": {
+              "expression": "0",
+              "value": 0
+            },
+            "healAmount": {
+              "expression": "0",
+              "value": 0
+            },
+            "title": "HealBuff"
+          }
+        }
+      },
+      {
+        "description": "On Use: Removes all curses and poisons from an ally.  10s Cooldown.",
+        "specialKey": "purify1",
+        "spellRule": {
+          "specialKey": "purify1",
+          "spell": {
+            "castTime": {
+              "expression": "0",
+              "value": 0
+            },
+            "className": "Purify",
+            "cooldown": {
+              "expression": "10.0",
+              "value": 10.0
+            },
+            "energyCost": {
+              "expression": "0",
+              "value": 0
+            },
+            "healAmount": {
+              "expression": "5",
+              "value": 5
+            },
+            "title": "PurifyItem"
+          }
+        }
+      },
+      {
+        "description": "On Use: Heals all allies for 30 over 6 seconds. 30s Cooldown.",
+        "specialKey": "raidheal1",
+        "spellRule": {
+          "specialKey": "raidheal1",
+          "spell": {
+            "castTime": {
+              "expression": "0",
+              "value": 0
+            },
+            "className": "RaidHeal",
+            "cooldown": {
+              "expression": "30.0",
+              "value": 30.0
+            },
+            "energyCost": {
+              "expression": "0",
+              "value": 0
+            },
+            "healAmount": {
+              "expression": "30",
+              "value": 30
+            },
+            "title": "RaidHeal"
+          }
+        }
+      }
+    ],
+    "statTypes": [
+      {
+        "atom": 5.0,
+        "enum": "StatTypeHealth",
+        "id": "health",
+        "value": 0
+      },
+      {
+        "atom": 0.5,
+        "enum": "StatTypeHealing",
+        "id": "healing",
+        "value": 1
+      },
+      {
+        "atom": 0.5,
+        "enum": "StatTypeRegen",
+        "id": "regen",
+        "value": 2
+      },
+      {
+        "atom": 0.75,
+        "enum": "StatTypeCrit",
+        "id": "crit",
+        "value": 3
+      },
+      {
+        "atom": 0.5,
+        "enum": "StatTypeSpeed",
+        "id": "speed",
+        "value": 4
+      }
+    ]
+  },
+  "sourceFiles": [
+    {
+      "path": "Healer/EquipmentItem.m",
+      "sha256": "79f50acb11a8b2cd5b173f2ccac5e2d744a6f11ea9cd2d650252605626fc2e0c"
+    },
+    {
+      "path": "Healer/EquipmentItem.h",
+      "sha256": "ac5bd52d73c3c1233ee204fcc5073269cc3e0742c63abd1f01e0aee1c6089c58"
+    }
+  ]
+}

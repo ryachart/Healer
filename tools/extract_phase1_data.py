@@ -59,6 +59,16 @@ SOURCE_FILES = {
         ROOT / "Healer" / "PlayerDataManager.h",
         ROOT / "Healer" / "EquipmentItem.h",
     ],
+    "equipment-schema": [
+        ROOT / "Healer" / "EquipmentItem.m",
+        ROOT / "Healer" / "EquipmentItem.h",
+    ],
+    "loot-rules": [
+        ROOT / "Healer" / "DataObjects" / "Encounter.m",
+        ROOT / "Healer" / "LootTable.m",
+        ROOT / "Healer" / "EquipmentItem.m",
+        ROOT / "Healer" / "EquipmentItem.h",
+    ],
     "tips": [
         ROOT / "Healer" / "tips.plist",
     ],
@@ -466,6 +476,75 @@ def parse_case_value_map(text: str, return_type: str):
     return mapping
 
 
+def parse_enum_block(text: str, enum_name: str):
+    match = next(
+        (candidate for candidate in re.finditer(r"typedef enum\s*\{([\s\S]*?)\}\s*(\w+)\s*;", text) if candidate.group(2) == enum_name),
+        None,
+    )
+    if not match:
+        return []
+    token_pattern = re.compile(r"(\w+)(?:\s*=\s*(-?\d+))?")
+    entries = []
+    for raw_line in match.group(1).splitlines():
+        line = raw_line.split("//", 1)[0].strip().rstrip(",")
+        if not line or line.startswith("//"):
+            continue
+        token_match = token_pattern.match(line)
+        if not token_match:
+            continue
+        token, explicit_value = token_match.groups()
+        if explicit_value is not None:
+            value = int(explicit_value)
+        elif entries:
+            value = entries[-1]["value"] + 1
+        else:
+            value = 0
+        entries.append({"token": token, "value": value})
+    return entries
+
+
+def parse_equipment_item_initializers(block: str):
+    records = []
+    pattern = re.compile(
+        r'EquipmentItem\s*\*\w+\s*=\s*\[\[\[EquipmentItem alloc\] initWithName:@\"((?:\\.|[^\"\\])*)\"\s+'
+        r'health:(.*?)\s+regen:(.*?)\s+speed:(.*?)\s+crit:(.*?)\s+healing:(.*?)\s+slot:(\w+)\s+'
+        r'rarity:(\w+)\s+specialKey:(nil|@\"((?:\\.|[^\"\\])*)\")\s+quality:(.*?)\s+uniqueId:(.*?)\] autorelease\];',
+        re.DOTALL,
+    )
+    for match in pattern.finditer(block):
+        (
+            name,
+            health,
+            regen,
+            speed,
+            crit,
+            healing,
+            slot,
+            rarity,
+            _special_raw,
+            special_key,
+            quality,
+            unique_id,
+        ) = match.groups()
+        canonical_item_id_prefix = re.sub(r"[^a-z0-9]+", "-", slugify(objc_string(name))).strip("-")
+        records.append(
+            {
+                "id": canonical_item_id_prefix,
+                "name": objc_string(name),
+                "health": safe_eval(health),
+                "regen": safe_eval(regen),
+                "speed": safe_eval(speed),
+                "crit": safe_eval(crit),
+                "healing": safe_eval(healing),
+                "slot": slot,
+                "rarity": rarity,
+                "specialKey": objc_string(special_key) if special_key else None,
+                "quality": safe_eval(quality),
+            }
+        )
+    return records
+
+
 def extract_encounters():
     text = read(ROOT / "Healer" / "DataObjects" / "Encounter.m")
     body = between(text, "+ (Encounter*)normalEncounterForLevel", "+(NSInteger)goldForLevelNumber")
@@ -536,6 +615,7 @@ def extract_encounters():
                 "multiplayerAdjustments": {"warlock": -1},
                 "enemyRoster": enemy_roster,
                 "baseRewardGold": gold_map.get(level),
+                "lootRuleId": f"level-{level}",
                 "backgroundKey": background_map.get(level),
                 "battleTrackTitle": "sounds/battle2.mp3" if level in battle2_levels else "sounds/battle1.mp3",
             }
@@ -1044,6 +1124,213 @@ def extract_progression_schema():
     }
 
 
+def extract_equipment_schema():
+    header_text = read(ROOT / "Healer" / "EquipmentItem.h")
+    impl_text = read(ROOT / "Healer" / "EquipmentItem.m")
+
+    slot_enum = parse_enum_block(header_text, "SlotType")
+    stat_enum = parse_enum_block(header_text, "StatType")
+    rarity_enum = parse_enum_block(header_text, "ItemRarity")
+
+    slot_tokens = [entry["token"] for entry in slot_enum if entry["token"] != "SlotTypeMaximum"]
+    stat_tokens = [entry["token"] for entry in stat_enum if entry["token"] != "StatTypeMaximum"]
+
+    stat_atoms_match = re.search(r"static float stat_atoms\[StatTypeMaximum\]\s*=\s*\{([\s\S]*?)\};", impl_text)
+    stat_atoms = [float(value) for value in re.findall(r"(-?\d+(?:\.\d+)?)", stat_atoms_match.group(1))] if stat_atoms_match else []
+    stat_atoms_by_type = {
+        stat_tokens[index].replace("StatType", "").lower(): stat_atoms[index]
+        for index in range(min(len(stat_tokens), len(stat_atoms)))
+    }
+
+    slot_modifier_match = re.search(r"slotModifiers\[SlotTypeMaximum\]\s*=\s*\{([\s\S]*?)\};", impl_text)
+    slot_modifiers = [float(value) for value in re.findall(r"(-?\d+(?:\.\d+)?)", slot_modifier_match.group(1))] if slot_modifier_match else []
+    slot_modifier_by_type = {
+        slot_tokens[index].replace("SlotType", "").lower(): slot_modifiers[index]
+        for index in range(min(len(slot_tokens), len(slot_modifiers)))
+    }
+
+    slot_prefixes_match = re.search(r"\+ \(NSArray \*\)slotPrefixes\{([\s\S]*?)return slotPrefix;", impl_text)
+    slot_prefixes = []
+    if slot_prefixes_match:
+        for raw_line in slot_prefixes_match.group(1).splitlines():
+            if "//" not in raw_line:
+                continue
+            values = [objc_string(value) for value in re.findall(r'@\"((?:\\.|[^\"\\])*)\"', raw_line)]
+            if values:
+                slot_prefixes.append(values)
+    slot_prefixes_by_type = {
+        slot_tokens[index].replace("SlotType", "").lower(): values
+        for index, values in enumerate(slot_prefixes or [])
+        if index < len(slot_tokens)
+    }
+
+    suffixes_match = re.search(r"\+ \(NSArray \*\)suffixes \{([\s\S]*?)return suffix;", impl_text)
+    suffixes = [objc_string(value) for value in re.findall(r'@\"((?:\\.|[^\"\\])*)\"', suffixes_match.group(1))] if suffixes_match else []
+
+    special_keys_match = re.search(r"\+ \(NSArray \*\)specialKeys\s*\{([\s\S]*?)\}", impl_text)
+    special_keys = [objc_string(value) for value in re.findall(r'@\"((?:\\.|[^\"\\])*)\"', special_keys_match.group(1))] if special_keys_match else []
+
+    description_method = extract_method_block(impl_text, r"\+ \(NSString \*\)descriptionForSpecialKey:\(NSString \*\)specialKey")
+    descriptions = {
+        objc_string(key): objc_string(value)
+        for key, value in re.findall(r'@\"((?:\\.|[^\"\\])*)\"\s*:\s*@\"((?:\\.|[^\"\\])*)\"', description_method)
+    }
+
+    spell_from_item = extract_method_block(impl_text, r"- \(Spell\*\)spellFromItem")
+    special_spell_rules = []
+    for key_match in re.finditer(r'if \(\[self\.specialKey isEqualToString:@\"((?:\\.|[^\"\\])*)\"\]\)\s*\{([\s\S]*?)\n\s*\}', spell_from_item):
+        special_key = objc_string(key_match.group(1))
+        block = key_match.group(2)
+        spell_init = re.search(
+            r"\[\[\[(\w+) alloc\] initWithTitle:@\"((?:\\.|[^\"\\])*)\" healAmnt:(.*?) energyCost:(.*?) castTime:(.*?) andCooldown:(.*?)\]",
+            block,
+        )
+        rule = {"specialKey": special_key}
+        if spell_init:
+            class_name, title, heal_amount, energy_cost, cast_time, cooldown = spell_init.groups()
+            rule["spell"] = {
+                "className": class_name,
+                "title": objc_string(title),
+                "healAmount": number_or_expression(heal_amount),
+                "energyCost": number_or_expression(energy_cost),
+                "castTime": number_or_expression(cast_time),
+                "cooldown": number_or_expression(cooldown),
+            }
+
+        effect_match = re.search(
+            r"(\w+)\s+\*(\w+)\s*=\s*\[\[\[(\w+) alloc\] initWithDuration:(.*?) andEffectType:(\w+)\] autorelease\];",
+            block,
+        )
+        if effect_match:
+            _name, effect = parse_effect_initializer(effect_match, block)
+            rule["appliedEffect"] = effect
+        special_spell_rules.append(rule)
+
+    sale_price_method = extract_method_block(impl_text, r"- \(NSInteger\)salePrice")
+    sale_expression_match = re.search(r"return\s+([^;]+);", sale_price_method)
+    sale_expression = sale_expression_match.group(1).replace("self.", "") if sale_expression_match else None
+
+    return {
+        "slotTypes": [
+            {"id": entry["token"].replace("SlotType", "").lower(), "enum": entry["token"], "value": entry["value"]}
+            for entry in slot_enum
+            if entry["token"] != "SlotTypeMaximum"
+        ],
+        "statTypes": [
+            {
+                "id": entry["token"].replace("StatType", "").lower(),
+                "enum": entry["token"],
+                "value": entry["value"],
+                "atom": stat_atoms_by_type.get(entry["token"].replace("StatType", "").lower()),
+            }
+            for entry in stat_enum
+            if entry["token"] != "StatTypeMaximum"
+        ],
+        "rarities": [
+            {"id": entry["token"].replace("ItemRarity", "").lower(), "enum": entry["token"], "value": entry["value"]}
+            for entry in rarity_enum
+        ],
+        "proceduralGenerationRules": {
+            "slotModifiers": slot_modifier_by_type,
+            "namePools": {
+                "prefixesBySlot": slot_prefixes_by_type,
+                "suffixes": suffixes,
+            },
+            "weaponSpecials": {
+                "minimumQualityForSpecialKey": 4,
+                "candidateSpecialKeys": special_keys,
+            },
+            "salePrice": {
+                "expression": sale_expression,
+            },
+        },
+        "specialKeyDetails": [
+            {
+                "specialKey": key,
+                "description": descriptions.get(key),
+                "spellRule": next((rule for rule in special_spell_rules if rule["specialKey"] == key), None),
+            }
+            for key in sorted(set(list(descriptions.keys()) + list(special_keys)))
+        ],
+    }
+
+
+def extract_loot_rules():
+    encounter_text = read(ROOT / "Healer" / "DataObjects" / "Encounter.m")
+    loot_table_text = read(ROOT / "Healer" / "LootTable.m")
+    random_item_method = extract_method_block(encounter_text, r"\+ \(EquipmentItem\*\)randomItemForLevelNumber:\(NSInteger\)levelNum difficulty:\(NSInteger\)difficulty rarity:\(ItemRarity\)rarity")
+    weights_method = extract_method_block(encounter_text, r"\+ \(NSArray \*\)weightsForDifficulty:\(NSInteger\)difficulty")
+
+    difficulty_weights = {}
+    return_arrays = re.findall(r"return\s+@\[(.*?)\];", weights_method)
+    fallback_weights = [int(value) for value in re.findall(r"@?(-?\d+)", return_arrays[-1])] if return_arrays else []
+    for difficulty in range(1, 6):
+        weights = None
+        for condition, raw_array in re.findall(r"(?:if|else if)\s*\((.*?)\)\s*\{\s*return\s+@\[(.*?)\];", weights_method, re.DOTALL):
+            if safe_eval(condition.replace("difficulty", str(difficulty))):
+                weights = [int(value) for value in re.findall(r"@?(-?\d+)", raw_array)]
+                break
+        difficulty_weights[str(difficulty)] = weights or fallback_weights
+
+    quality_rules = []
+    for condition, expression in re.findall(r"(?:if|else if)\s*\((.*?)\)\s*\{\s*ql\s*=\s*([^;]+);", random_item_method, re.DOTALL):
+        quality_rules.append(
+            {
+                "condition": condition.strip(),
+                "expression": expression.strip(),
+            }
+        )
+
+    quality_table = []
+    for level in range(1, 22):
+        by_difficulty = {}
+        for difficulty in range(1, 6):
+            quality = None
+            for rule in quality_rules:
+                condition = rule["condition"].replace("levelNum", str(level)).replace("difficulty", str(difficulty))
+                if safe_eval(condition):
+                    quality = safe_eval(rule["expression"].replace("difficulty", str(difficulty)))
+                    break
+            by_difficulty[str(difficulty)] = quality
+        quality_table.append({"level": level, "qualityByDifficulty": by_difficulty})
+
+    def parse_boss_drop_method(method_pattern: str):
+        method_block = extract_method_block(encounter_text, method_pattern)
+        drops = []
+        for condition, block in re.findall(r"if \(levelNumber\s*(.*?)\)\s*\{([\s\S]*?)\n\s*\}", method_block):
+            levels = [int(value) for value in re.findall(r"(?:^|\|\|)\s*(?:levelNumber\s*)?==\s*(\d+)", condition)]
+            for item in parse_equipment_item_initializers(block):
+                item["dropLevels"] = sorted(set(levels))
+                drops.append(item)
+        return drops
+
+    return {
+        "rarityRollWeightsByDifficulty": difficulty_weights,
+        "rarityOrder": ["uncommon", "rare", "epic", "legendary"],
+        "qualityRules": {
+            "expressionRules": quality_rules,
+            "evaluatedLevelTable": quality_table,
+        },
+        "selectionBehavior": {
+            "lootTableImplementation": "weighted_random_subtraction",
+            "selectionSource": "LootTable.randomObject",
+            "zeroWeightEntriesNeverDrop": "totalWeights includes only positive sums",
+            "fallbackRules": {
+                "epic": "if no encounter-specific epic pool, roll random rare-quality item",
+                "legendary": "if no encounter-specific legendary pool, fallback to epic pool, else random rare-quality item",
+            },
+        },
+        "encounterSpecificDrops": {
+            "epic": parse_boss_drop_method(r"\+ \(NSArray \*\)epicItemsForLevelNumber:\(NSInteger\)levelNumber"),
+            "legendary": parse_boss_drop_method(r"\+ \(NSArray \*\)legendaryItemsForLevelNumber:\(NSInteger\)levelNumber"),
+        },
+        "lootTableSource": {
+            "itemsField": bool(re.search(r"@property \(nonatomic, readwrite, retain\) NSArray \*items;", loot_table_text)),
+            "weightsField": bool(re.search(r"@property \(nonatomic, readwrite, retain\) NSArray \*weights;", loot_table_text)),
+        },
+    }
+
+
 def extract_tips():
     return plistlib.loads((ROOT / "Healer" / "tips.plist").read_bytes())
 
@@ -1065,6 +1352,8 @@ def generate_payloads():
         "talents.json": dataset_wrapper("talents", extract_talents()),
         "shop.json": dataset_wrapper("shop", extract_shop(spells)),
         "progression-schema.json": dataset_wrapper("progression-schema", extract_progression_schema()),
+        "equipment-schema.json": dataset_wrapper("equipment-schema", extract_equipment_schema()),
+        "loot-rules.json": dataset_wrapper("loot-rules", extract_loot_rules()),
         "tips.json": dataset_wrapper("tips", extract_tips()),
     }
 

@@ -14,8 +14,8 @@ This workbook maps the native Objective-C sources to the canonical web-facing JS
 | Implemented | `web/data/tips.json` | `Healer/tips.plist` | Exports loading-screen tips verbatim for the browser shell. |
 | Implemented | `web/data/abilities.json` | `Healer/Ability.m`, `Healer/Ability.h`, `Healer/DataObjects/Enemy.m` | Exports canonical enemy ability records, factory defaults, usage by boss, and normalized effect references pulled out of enemy authoring. |
 | Implemented | `web/data/effects.json` | `Healer/DataObjects/Effect.m`, `Healer/DataObjects/Effect.h`, `Healer/DataObjects/Spell.m`, `Healer/DataObjects/Enemy.m` | Exports normalized spell/enemy/default-factory effect records plus reverse usage links for the web rules engine. |
-| Deferred | `web/data/equipment-schema.json` | `Healer/EquipmentItem.m`, `Healer/EquipmentItem.h` | Next phase-1 pass should export item schema and special item spell hooks. |
-| Deferred | `web/data/loot-rules.json` | `Healer/DataObjects/Encounter.m`, `Healer/EquipmentItem.m`, `Healer/LootTable.m` | Next phase-1 pass should separate boss loot tables from progression rules. |
+| Implemented | `web/data/equipment-schema.json` | `Healer/EquipmentItem.m`, `Healer/EquipmentItem.h` | Exports slot/stat/rarity metadata, procedural generation pools/rules, sale-price expression, and special weapon spell metadata. |
+| Implemented | `web/data/loot-rules.json` | `Healer/DataObjects/Encounter.m`, `Healer/EquipmentItem.m`, `Healer/LootTable.m` | Exports rarity roll weights, quality rules by level+difficulty, and encounter-specific epic/legendary drop pools. |
 
 ## Validation workflow
 
@@ -23,3 +23,8 @@ This workbook maps the native Objective-C sources to the canonical web-facing JS
 - Verify committed outputs: `python3 tools/extract_phase1_data.py --check`
 
 Each generated dataset includes source-file provenance and SHA-256 hashes so future web-port work can diff extracted data against the native source of truth.
+
+## Phase 1 audit status
+
+- `WEB_PORT_MIGRATION_PLAN.md` Phase 1 dataset list: **12 / 12 implemented**.
+- Deferred rows are now cleared; item schema and loot rule extraction are part of the canonical phase-1 payload set.

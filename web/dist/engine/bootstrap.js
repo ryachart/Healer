@@ -114,6 +114,7 @@ function buildPlayerSnapshot(registry, encounter, player) {
         energyRegenPerSecond: PLAYER_BASE_ENERGY_REGEN * (1 + regenBonus / 100),
         healingDoneMultiplier: PLAYER_BASE_HEALING_MULTIPLIER + healingBonus / 100,
         spellCriticalChance: DEFAULT_CRITICAL_CHANCE + critBonus / 100,
+        castTimeAdjustment: Math.max(0.5, 1 - speedBonus / 100),
         cooldownAdjustment: PLAYER_BASE_COOLDOWN_ADJUSTMENT + speedBonus / 100,
         equippedItemSpellIds,
         ownedSpellIds,

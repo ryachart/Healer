@@ -51,6 +51,10 @@ function createBootstrap() {
   });
 }
 
+function assertClose(actual, expected, epsilon = 1e-9) {
+  assert.ok(Math.abs(actual - expected) <= epsilon, `expected ${actual} to be within ${epsilon} of ${expected}`);
+}
+
 test("combat state derives runtime spell timing from the bootstrap snapshot", () => {
   const bootstrap = createBootstrap();
   const state = createCombatState(bootstrap);
@@ -58,11 +62,11 @@ test("combat state derives runtime spell timing from the bootstrap snapshot", ()
   assert.equal(state.time, 0);
   assert.equal(state.player.castTimeAdjustment, 0.985);
   assert.equal(state.player.activeSpells[0].id, "Purify");
-  assert.equal(state.player.activeSpells[0].cooldown, 5.075);
+  assertClose(state.player.activeSpells[0].cooldown, 5.075);
   assert.equal(state.player.activeSpells[1].id, "Heal");
-  assert.equal(state.player.activeSpells[1].castTime, 1.97);
+  assertClose(state.player.activeSpells[1].castTime, 1.97);
   assert.equal(state.player.activeSpells[3].id, "Barrier");
-  assert.equal(state.player.activeSpells[3].cooldown, 4.06);
+  assertClose(state.player.activeSpells[3].cooldown, 4.06);
 });
 
 test("instant spells spend energy immediately and start cooldown tracking", () => {
@@ -77,7 +81,7 @@ test("instant spells spend energy immediately and start cooldown tracking", () =
   }]);
   assert.equal(result.state.player.energy, 952);
   assert.equal(result.state.player.casting, null);
-  assert.equal(result.state.player.activeSpells[0].cooldownRemaining, 5.075);
+  assertClose(result.state.player.activeSpells[0].cooldownRemaining, 5.075);
 });
 
 test("timed casts regenerate energy while casting and resolve when their cast finishes", () => {
@@ -100,9 +104,9 @@ test("timed casts regenerate energy while casting and resolve when their cast fi
     spellId: "Heal",
     targetIds: ["ally-guardian-1"],
   }]);
-  assert.equal(advanced.state.time, 2);
+  assertClose(advanced.state.time, 2);
   assert.equal(advanced.state.player.casting, null);
-  assert.equal(advanced.state.player.energy, 1000);
+  assertClose(advanced.state.player.energy, 988.303);
   assert.equal(advanced.state.player.activeSpells[1].cooldownRemaining, 0);
 });
 

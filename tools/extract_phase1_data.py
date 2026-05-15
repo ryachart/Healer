@@ -477,11 +477,10 @@ def parse_case_value_map(text: str, return_type: str):
 
 
 def parse_enum_block(text: str, enum_name: str):
-    match = None
-    for candidate in re.finditer(r"typedef enum\s*\{([\s\S]*?)\}\s*(\w+)\s*;", text):
-        if candidate.group(2) == enum_name:
-            match = candidate
-            break
+    match = next(
+        (candidate for candidate in re.finditer(r"typedef enum\s*\{([\s\S]*?)\}\s*(\w+)\s*;", text) if candidate.group(2) == enum_name),
+        None,
+    )
     if not match:
         return []
     token_pattern = re.compile(r"(\w+)(?:\s*=\s*(-?\d+))?")
@@ -1299,7 +1298,7 @@ def extract_loot_rules():
         method_block = extract_method_block(encounter_text, method_pattern)
         drops = []
         for condition, block in re.findall(r"if \(levelNumber\s*(.*?)\)\s*\{([\s\S]*?)\n\s*\}", method_block):
-            levels = [int(value) for value in re.findall(r"\d+", condition)]
+            levels = [int(value) for value in re.findall(r"(?:^|\|\|)\s*(?:levelNumber\s*)?==\s*(\d+)", condition)]
             for item in parse_equipment_item_initializers(block):
                 item["dropLevels"] = sorted(set(levels))
                 drops.append(item)

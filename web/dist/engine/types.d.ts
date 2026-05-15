@@ -22,6 +22,7 @@ export interface EnemyRecord {
     damage?: NumericExpression;
     targets?: NumericExpression;
     attackFrequency?: NumericExpression;
+    frequency?: NumericExpression;
     choosesMainTarget?: boolean;
     threatPriority?: NumericExpression;
     [key: string]: unknown;

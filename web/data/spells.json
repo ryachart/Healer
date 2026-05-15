@@ -4,6 +4,7 @@
   "payload": [
     {
       "appliedEffect": null,
+      "appliedEffectId": null,
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "0.0",
@@ -36,6 +37,7 @@
     },
     {
       "appliedEffect": null,
+      "appliedEffectId": null,
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "0.0",
@@ -79,12 +81,14 @@
           "value": 5.0
         },
         "effectType": "EffectTypePositive",
+        "id": "blessed-armor-eff",
         "title": "blessed-armor-eff",
         "value": {
           "expression": "500 * kHealingDoneScale",
           "value": 450.0
         }
       },
+      "appliedEffectId": "blessed-armor-eff",
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "0.0",
@@ -124,6 +128,7 @@
           "value": 10.0
         },
         "effectType": "EffectTypePositive",
+        "id": "fading-light-effect",
         "numOfTicks": {
           "expression": "8",
           "value": 8
@@ -134,6 +139,7 @@
           "value": 360.0
         }
       },
+      "appliedEffectId": "fading-light-effect",
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "0.0",
@@ -166,6 +172,7 @@
     },
     {
       "appliedEffect": null,
+      "appliedEffectId": null,
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "1.5",
@@ -198,6 +205,7 @@
     },
     {
       "appliedEffect": null,
+      "appliedEffectId": null,
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "2.0",
@@ -230,6 +238,7 @@
     },
     {
       "appliedEffect": null,
+      "appliedEffectId": null,
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "2.0",
@@ -262,6 +271,7 @@
     },
     {
       "appliedEffect": null,
+      "appliedEffectId": null,
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "1.25",
@@ -294,6 +304,7 @@
     },
     {
       "appliedEffect": null,
+      "appliedEffectId": null,
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "2.5",
@@ -326,6 +337,10 @@
     },
     {
       "appliedEffect": {
+        "amountPerReaction": {
+          "expression": "350 * kHealingDoneScale",
+          "value": 315.0
+        },
         "className": "ReactiveHealEffect",
         "declaredType": "ReactiveHealEffect",
         "duration": {
@@ -337,6 +352,7 @@
           "value": 2.0
         },
         "effectType": "EffectTypePositive",
+        "id": "orbs-of-light-effect",
         "maxStacks": {
           "expression": "1",
           "value": 1
@@ -347,6 +363,7 @@
           "value": 49
         }
       },
+      "appliedEffectId": "orbs-of-light-effect",
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "1.0",
@@ -379,6 +396,7 @@
     },
     {
       "appliedEffect": null,
+      "appliedEffectId": null,
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "0.0",
@@ -418,6 +436,7 @@
           "value": 12.0
         },
         "effectType": "EffectTypePositive",
+        "id": "regrow-effect",
         "numOfTicks": {
           "expression": "4",
           "value": 4
@@ -428,6 +447,7 @@
           "value": 90.0
         }
       },
+      "appliedEffectId": "regrow-effect",
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "0.0",
@@ -460,6 +480,7 @@
     },
     {
       "appliedEffect": null,
+      "appliedEffectId": null,
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "0.0",
@@ -492,6 +513,7 @@
     },
     {
       "appliedEffect": null,
+      "appliedEffectId": null,
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "0",
@@ -524,6 +546,7 @@
     },
     {
       "appliedEffect": null,
+      "appliedEffectId": null,
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "1.75",
@@ -555,7 +578,26 @@
       "title": "Stars of Aravon"
     },
     {
-      "appliedEffect": null,
+      "appliedEffect": {
+        "className": "RepeatedHealthEffect",
+        "declaredType": "RepeatedHealthEffect",
+        "duration": {
+          "expression": "5.0",
+          "value": 5.0
+        },
+        "effectType": "EffectTypePositive",
+        "id": "sunburst-hot",
+        "numOfTicks": {
+          "expression": "5",
+          "value": 5
+        },
+        "title": "sunburst-hot",
+        "valuePerTick": {
+          "expression": "20 * kHealingDoneScale",
+          "value": 18.0
+        }
+      },
+      "appliedEffectId": "sunburst-hot",
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "0.0",
@@ -595,6 +637,7 @@
           "value": 10
         },
         "effectType": "EffectTypePositive",
+        "id": "swirling-light-effect",
         "maxStacks": {
           "expression": "3",
           "value": 3
@@ -613,6 +656,7 @@
           "value": 50
         }
       },
+      "appliedEffectId": "swirling-light-effect",
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "0.0",
@@ -644,7 +688,26 @@
       "title": "Swirling Light"
     },
     {
-      "appliedEffect": null,
+      "appliedEffect": {
+        "className": "TouchOfHopeEffect",
+        "declaredType": "TouchOfHopeEffect",
+        "duration": {
+          "expression": "4.0",
+          "value": 4.0
+        },
+        "effectType": "EffectTypePositive",
+        "id": "toh-effect",
+        "numOfTicks": {
+          "expression": "4",
+          "value": 4
+        },
+        "title": "toh-effect",
+        "valuePerTick": {
+          "expression": "70 * kHealingDoneScale",
+          "value": 63.0
+        }
+      },
+      "appliedEffectId": "toh-effect",
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "0.0",
@@ -684,6 +747,7 @@
           "value": 14.0
         },
         "effectType": "EffectTypePositive",
+        "id": "wandering-spirit-effect",
         "numOfTicks": {
           "expression": "8.0",
           "value": 8.0
@@ -694,6 +758,7 @@
           "value": 216.0
         }
       },
+      "appliedEffectId": "wandering-spirit-effect",
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "0.0",
@@ -726,6 +791,7 @@
     },
     {
       "appliedEffect": null,
+      "appliedEffectId": null,
       "beginCastingAudioTitle": "heal_begin.mp3",
       "castTime": {
         "expression": "0.0",

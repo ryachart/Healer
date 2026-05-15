@@ -1,0 +1,382 @@
+{
+  "dataset": "effects",
+  "generatedBy": "tools/extract_phase1_data.py",
+  "payload": [
+    {
+      "className": "DelayedHealthEffect",
+      "damageTakenMultiplierAdjustment": {
+        "expression": "-.25",
+        "value": -0.25
+      },
+      "declaredType": "DelayedHealthEffect",
+      "duration": {
+        "expression": "5.0",
+        "value": 5.0
+      },
+      "effectType": "EffectTypePositive",
+      "factorySources": [],
+      "id": "blessed-armor-eff",
+      "title": "blessed-armor-eff",
+      "usedByAbilities": [],
+      "usedBySpells": [
+        "BlessedArmor"
+      ],
+      "value": {
+        "expression": "500 * kHealingDoneScale",
+        "value": 450.0
+      }
+    },
+    {
+      "ailmentType": {
+        "expression": "AilmentPoison",
+        "value": null
+      },
+      "className": "EngulfingSlimeEffect",
+      "declaredType": "EngulfingSlimeEffect",
+      "duration": {
+        "expression": "45.0",
+        "value": 45.0
+      },
+      "effectType": "EffectTypeNegative",
+      "factoryMethod": "defaultEffect",
+      "factorySources": [
+        "EngulfingSlimeEffect"
+      ],
+      "id": "e-slime-eff",
+      "maxStacks": {
+        "expression": "5",
+        "value": 5
+      },
+      "numOfTicks": {
+        "expression": "50",
+        "value": 50
+      },
+      "spriteName": "slime.png",
+      "title": "e-slime-eff",
+      "usedByAbilities": [],
+      "usedBySpells": [],
+      "valuePerTick": {
+        "expression": "-10",
+        "value": -10
+      }
+    },
+    {
+      "className": "IntensifyingRepeatedHealthEffect",
+      "declaredType": "IntensifyingRepeatedHealthEffect",
+      "duration": {
+        "expression": "10.0",
+        "value": 10.0
+      },
+      "effectType": "EffectTypePositive",
+      "factorySources": [],
+      "id": "fading-light-effect",
+      "numOfTicks": {
+        "expression": "8",
+        "value": 8
+      },
+      "title": "fading-light-effect",
+      "usedByAbilities": [],
+      "usedBySpells": [
+        "FadingLight"
+      ],
+      "valuePerTick": {
+        "expression": "400 * kHealingDoneScale",
+        "value": 360.0
+      }
+    },
+    {
+      "ailmentType": {
+        "expression": "AilmentTrauma",
+        "value": null
+      },
+      "causesStun": true,
+      "className": "FallenDownEffect",
+      "declaredType": "FallenDownEffect",
+      "duration": {
+        "expression": "-1.0",
+        "value": -1.0
+      },
+      "effectType": "EffectTypeNegative",
+      "factoryMethod": "defaultEffect",
+      "factorySources": [
+        "FallenDownEffect"
+      ],
+      "getUpThreshold": {
+        "expression": ".8",
+        "value": 0.8
+      },
+      "id": "fallen-down",
+      "spriteName": "fallen-down.png",
+      "title": "fallen-down",
+      "usedByAbilities": [],
+      "usedBySpells": []
+    },
+    {
+      "ailmentType": {
+        "expression": "AilmentTrauma",
+        "value": null
+      },
+      "className": "RepeatedHealthEffect",
+      "declaredType": "RepeatedHealthEffect",
+      "duration": {
+        "expression": "5.0",
+        "value": 5.0
+      },
+      "effectType": "EffectTypeNegative",
+      "factorySources": [],
+      "id": "lash",
+      "numOfTicks": {
+        "expression": "5",
+        "value": 5
+      },
+      "spriteName": "bleeding.png",
+      "title": "lash",
+      "usedByAbilities": [
+        "branch-attack"
+      ],
+      "usedBySpells": [],
+      "valuePerTick": {
+        "expression": "-36",
+        "value": -36
+      }
+    },
+    {
+      "amountPerReaction": {
+        "expression": "350 * kHealingDoneScale",
+        "value": 315.0
+      },
+      "className": "ReactiveHealEffect",
+      "declaredType": "ReactiveHealEffect",
+      "duration": {
+        "expression": "20.0",
+        "value": 20.0
+      },
+      "effectCooldown": {
+        "expression": "2.0",
+        "value": 2.0
+      },
+      "effectType": "EffectTypePositive",
+      "factorySources": [],
+      "id": "orbs-of-light-effect",
+      "maxStacks": {
+        "expression": "1",
+        "value": 1
+      },
+      "title": "orbs-of-light-effect",
+      "usedByAbilities": [],
+      "usedBySpells": [
+        "OrbsOfLight"
+      ],
+      "visibilityPriority": {
+        "expression": "49",
+        "value": 49
+      }
+    },
+    {
+      "className": "RepeatedHealthEffect",
+      "declaredType": "RepeatedHealthEffect",
+      "duration": {
+        "expression": "12",
+        "value": 12
+      },
+      "effectType": "EffectTypeNegative",
+      "factorySources": [],
+      "id": "plague-dot",
+      "numOfTicks": {
+        "expression": "4",
+        "value": 4
+      },
+      "title": "plague-dot",
+      "usedByAbilities": [
+        "plague-strike"
+      ],
+      "usedBySpells": [],
+      "valuePerTick": {
+        "expression": "-100",
+        "value": -100
+      }
+    },
+    {
+      "className": "RepeatedHealthEffect",
+      "declaredType": "RepeatedHealthEffect",
+      "duration": {
+        "expression": "12.0",
+        "value": 12.0
+      },
+      "effectType": "EffectTypePositive",
+      "factorySources": [],
+      "id": "regrow-effect",
+      "numOfTicks": {
+        "expression": "4",
+        "value": 4
+      },
+      "title": "regrow-effect",
+      "usedByAbilities": [],
+      "usedBySpells": [
+        "Regrow"
+      ],
+      "valuePerTick": {
+        "expression": "100 * kHealingDoneScale",
+        "value": 90.0
+      }
+    },
+    {
+      "className": "RepeatedHealthEffect",
+      "declaredType": "RepeatedHealthEffect",
+      "duration": {
+        "expression": "5.0",
+        "value": 5.0
+      },
+      "effectType": "EffectTypePositive",
+      "factorySources": [],
+      "id": "sunburst-hot",
+      "numOfTicks": {
+        "expression": "5",
+        "value": 5
+      },
+      "title": "sunburst-hot",
+      "usedByAbilities": [],
+      "usedBySpells": [
+        "Sunburst"
+      ],
+      "valuePerTick": {
+        "expression": "20 * kHealingDoneScale",
+        "value": 18.0
+      }
+    },
+    {
+      "className": "SwirlingLightEffect",
+      "declaredType": "SwirlingLightEffect",
+      "duration": {
+        "expression": "10",
+        "value": 10
+      },
+      "effectType": "EffectTypePositive",
+      "factorySources": [],
+      "id": "swirling-light-effect",
+      "maxStacks": {
+        "expression": "3",
+        "value": 3
+      },
+      "numOfTicks": {
+        "expression": "15",
+        "value": 15
+      },
+      "title": "swirling-light-effect",
+      "usedByAbilities": [],
+      "usedBySpells": [
+        "SwirlingLight"
+      ],
+      "valuePerTick": {
+        "expression": "25 * kHealingDoneScale",
+        "value": 22.5
+      },
+      "visibilityPriority": {
+        "expression": "50",
+        "value": 50
+      }
+    },
+    {
+      "className": "TouchOfHopeEffect",
+      "declaredType": "TouchOfHopeEffect",
+      "duration": {
+        "expression": "4.0",
+        "value": 4.0
+      },
+      "effectType": "EffectTypePositive",
+      "factorySources": [],
+      "id": "toh-effect",
+      "numOfTicks": {
+        "expression": "4",
+        "value": 4
+      },
+      "title": "toh-effect",
+      "usedByAbilities": [],
+      "usedBySpells": [
+        "TouchOfHope"
+      ],
+      "valuePerTick": {
+        "expression": "70 * kHealingDoneScale",
+        "value": 63.0
+      }
+    },
+    {
+      "ailmentType": {
+        "expression": "AilmentPoison",
+        "value": null
+      },
+      "className": "TrulzarPoison",
+      "declaredType": "TrulzarPoison",
+      "duration": {
+        "expression": "24",
+        "value": 24
+      },
+      "effectType": "EffectTypeNegative",
+      "factorySources": [],
+      "id": "trulzar-poison1",
+      "numOfTicks": {
+        "expression": "30",
+        "value": 30
+      },
+      "title": "trulzar-poison1",
+      "usedByAbilities": [
+        "poison-attack"
+      ],
+      "usedBySpells": [],
+      "valuePerTick": {
+        "expression": "-120",
+        "value": -120
+      }
+    },
+    {
+      "className": "WanderingSpiritEffect",
+      "declaredType": "WanderingSpiritEffect",
+      "duration": {
+        "expression": "14.0",
+        "value": 14.0
+      },
+      "effectType": "EffectTypePositive",
+      "factorySources": [],
+      "id": "wandering-spirit-effect",
+      "numOfTicks": {
+        "expression": "8.0",
+        "value": 8.0
+      },
+      "title": "wandering-spirit-effect",
+      "usedByAbilities": [],
+      "usedBySpells": [
+        "WanderingSpirit"
+      ],
+      "valuePerTick": {
+        "expression": "240 * kHealingDoneScale",
+        "value": 216.0
+      }
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "Healer/DataObjects/Effect.m",
+      "sha256": "3b251b26cb23bfd8d3f7f1f8e95e1c0afca84b41d9f168795d6bdc9657719fec"
+    },
+    {
+      "path": "Healer/DataObjects/Effect.h",
+      "sha256": "5e45fab5d4997c8356d971ae34ff0921155b9e261a8edc254933313070560164"
+    },
+    {
+      "path": "Healer/DataObjects/Spell.m",
+      "sha256": "c8d9b2d3ee1140a7494745d31c3e2481c14afca46fe99bca6d42954f18f75d9a"
+    },
+    {
+      "path": "Healer/DataObjects/Spell.h",
+      "sha256": "22192add45c336b2cacbb6209c039ae53a8b880706ed962499dbd273575da0c7"
+    },
+    {
+      "path": "Healer/DataObjects/Enemy.m",
+      "sha256": "0a343d9fb01e2aa73bb504352a974c2df51afdb95267c8d4d9dd1dada0a7fb62"
+    },
+    {
+      "path": "Healer/DataObjects/Enemy.h",
+      "sha256": "cc82bab80214121d725ea6ea0437fa03ff24cd81b387e8eeda314cc152167bd2"
+    }
+  ]
+}

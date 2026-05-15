@@ -12,8 +12,8 @@ This workbook maps the native Objective-C sources to the canonical web-facing JS
 | Implemented | `web/data/shop.json` | `Healer/Shop.m`, `Healer/Shop.h`, `Healer/ShopItem.m`, `Healer/ShopItem.h` | Exports shop categories, unlock thresholds, spell inventory, and gold prices. |
 | Implemented | `web/data/progression-schema.json` | `Healer/PlayerDataManager.m`, `Healer/PlayerDataManager.h`, `Healer/EquipmentItem.h` | Exports progression/persistence keys, FTUE states, content gating, inventory slots, and upgrade formulas. |
 | Implemented | `web/data/tips.json` | `Healer/tips.plist` | Exports loading-screen tips verbatim for the browser shell. |
-| Deferred | `web/data/abilities.json` | `Healer/Ability.m`, `Healer/Ability.h` | Next phase-1 pass should split reusable ability definitions out of enemy authoring. |
-| Deferred | `web/data/effects.json` | `Healer/DataObjects/Effect.m`, `Healer/DataObjects/Effect.h` | Next phase-1 pass should normalize effect records shared by spells, talents, and enemies. |
+| Implemented | `web/data/abilities.json` | `Healer/Ability.m`, `Healer/Ability.h`, `Healer/DataObjects/Enemy.m` | Exports canonical enemy ability records, factory defaults, usage by boss, and normalized effect references pulled out of enemy authoring. |
+| Implemented | `web/data/effects.json` | `Healer/DataObjects/Effect.m`, `Healer/DataObjects/Effect.h`, `Healer/DataObjects/Spell.m`, `Healer/DataObjects/Enemy.m` | Exports normalized spell/enemy/default-factory effect records plus reverse usage links for the web rules engine. |
 | Deferred | `web/data/equipment-schema.json` | `Healer/EquipmentItem.m`, `Healer/EquipmentItem.h` | Next phase-1 pass should export item schema and special item spell hooks. |
 | Deferred | `web/data/loot-rules.json` | `Healer/DataObjects/Encounter.m`, `Healer/EquipmentItem.m`, `Healer/LootTable.m` | Next phase-1 pass should separate boss loot tables from progression rules. |
 

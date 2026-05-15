@@ -1,0 +1,758 @@
+{
+  "dataset": "loot-rules",
+  "generatedBy": "tools/extract_phase1_data.py",
+  "payload": {
+    "encounterSpecificDrops": {
+      "epic": [
+        {
+          "crit": 0,
+          "dropLevels": [
+            2
+          ],
+          "healing": 2.0,
+          "health": 15,
+          "name": "Codex of Rage",
+          "quality": 3,
+          "rarity": "ItemRarityEpic",
+          "regen": 1.0,
+          "slot": "SlotTypeWeapon",
+          "specialKey": "burst1",
+          "speed": 0,
+          "uniqueId": 100
+        },
+        {
+          "crit": 2.25,
+          "dropLevels": [
+            3
+          ],
+          "healing": 2.0,
+          "health": 0,
+          "name": "Drakewing Hood",
+          "quality": 3,
+          "rarity": "ItemRarityEpic",
+          "regen": 0.0,
+          "slot": "SlotTypeHead",
+          "specialKey": null,
+          "speed": 1.5,
+          "uniqueId": 101
+        },
+        {
+          "crit": 2.25,
+          "dropLevels": [
+            4
+          ],
+          "healing": 0.0,
+          "health": 0,
+          "name": "Pendant of Mischief",
+          "quality": 4,
+          "rarity": "ItemRarityEpic",
+          "regen": 3.0,
+          "slot": "SlotTypeNeck",
+          "specialKey": null,
+          "speed": 1.5,
+          "uniqueId": 102
+        },
+        {
+          "crit": 2.25,
+          "dropLevels": [
+            5
+          ],
+          "healing": 2.5,
+          "health": 30,
+          "name": "Barkskin Trousers",
+          "quality": 4,
+          "rarity": "ItemRarityEpic",
+          "regen": 0.0,
+          "slot": "SlotTypeLegs",
+          "specialKey": null,
+          "speed": 0.0,
+          "uniqueId": 103
+        },
+        {
+          "crit": 3.0,
+          "dropLevels": [
+            6
+          ],
+          "healing": 3.5,
+          "health": 0,
+          "name": "Sandals of Regrowth",
+          "quality": 5,
+          "rarity": "ItemRarityEpic",
+          "regen": 2.0,
+          "slot": "SlotTypeBoots",
+          "specialKey": null,
+          "speed": 0,
+          "uniqueId": 104
+        },
+        {
+          "crit": 0,
+          "dropLevels": [
+            7
+          ],
+          "healing": 2.5,
+          "health": 50,
+          "name": "Gown of the Purifier",
+          "quality": 5,
+          "rarity": "ItemRarityEpic",
+          "regen": 2.0,
+          "slot": "SlotTypeChest",
+          "specialKey": null,
+          "speed": 0,
+          "uniqueId": 105
+        },
+        {
+          "crit": 0.0,
+          "dropLevels": [
+            8
+          ],
+          "healing": 2.5,
+          "health": 0,
+          "name": "The Maleficar's Cowl",
+          "quality": 5,
+          "rarity": "ItemRarityEpic",
+          "regen": 3.5,
+          "slot": "SlotTypeHead",
+          "specialKey": null,
+          "speed": 2.5,
+          "uniqueId": 106
+        },
+        {
+          "crit": 0,
+          "dropLevels": [
+            9
+          ],
+          "healing": 4.0,
+          "health": 25,
+          "name": "Amulet of the Ritualist",
+          "quality": 5,
+          "rarity": "ItemRarityEpic",
+          "regen": 0,
+          "slot": "SlotTypeNeck",
+          "specialKey": null,
+          "speed": 1.0,
+          "uniqueId": 107
+        },
+        {
+          "crit": 0.0,
+          "dropLevels": [
+            9
+          ],
+          "healing": 4.0,
+          "health": 0,
+          "name": "Words of Warding",
+          "quality": 5,
+          "rarity": "ItemRarityEpic",
+          "regen": 3.5,
+          "slot": "SlotTypeWeapon",
+          "specialKey": "purify1",
+          "speed": 0.0,
+          "uniqueId": 200
+        },
+        {
+          "crit": 4.5,
+          "dropLevels": [
+            10
+          ],
+          "healing": 0,
+          "health": 0,
+          "name": "Blood-splattered Pants",
+          "quality": 6,
+          "rarity": "ItemRarityEpic",
+          "regen": 4.0,
+          "slot": "SlotTypeLegs",
+          "specialKey": null,
+          "speed": 3.0,
+          "uniqueId": 108
+        },
+        {
+          "crit": 4.5,
+          "dropLevels": [
+            10
+          ],
+          "healing": 3.0,
+          "health": 40,
+          "name": "Executioner's Cowl",
+          "quality": 6,
+          "rarity": "ItemRarityEpic",
+          "regen": 0,
+          "slot": "SlotTypeHead",
+          "specialKey": null,
+          "speed": 0,
+          "uniqueId": 201
+        },
+        {
+          "crit": 2.25,
+          "dropLevels": [
+            11
+          ],
+          "healing": 6.0,
+          "health": 0,
+          "name": "Tome of the Warlord",
+          "quality": 6,
+          "rarity": "ItemRarityEpic",
+          "regen": 1.5,
+          "slot": "SlotTypeWeapon",
+          "specialKey": "raidheal1",
+          "speed": 0.0,
+          "uniqueId": 109
+        },
+        {
+          "crit": 0,
+          "dropLevels": [
+            11
+          ],
+          "healing": 3.0,
+          "health": 0,
+          "name": "Hate-Imbued Libram",
+          "quality": 6,
+          "rarity": "ItemRarityEpic",
+          "regen": 3.0,
+          "slot": "SlotTypeWeapon",
+          "specialKey": "blast1",
+          "speed": 3.0,
+          "uniqueId": 202
+        },
+        {
+          "crit": 0,
+          "dropLevels": [
+            12
+          ],
+          "healing": 4,
+          "health": 50,
+          "name": "Gown of Insanity",
+          "quality": 7,
+          "rarity": "ItemRarityEpic",
+          "regen": 4,
+          "slot": "SlotTypeChest",
+          "specialKey": null,
+          "speed": 0,
+          "uniqueId": 110
+        },
+        {
+          "crit": 4.5,
+          "dropLevels": [
+            13
+          ],
+          "healing": 0,
+          "health": 40,
+          "name": "Boots from Beyond",
+          "quality": 7,
+          "rarity": "ItemRarityEpic",
+          "regen": 0,
+          "slot": "SlotTypeBoots",
+          "specialKey": null,
+          "speed": 3.5,
+          "uniqueId": 111
+        },
+        {
+          "crit": 0.0,
+          "dropLevels": [
+            14
+          ],
+          "healing": 0,
+          "health": 50,
+          "name": "Bone-scaled Breeches",
+          "quality": 8,
+          "rarity": "ItemRarityEpic",
+          "regen": 5.0,
+          "slot": "SlotTypeLegs",
+          "specialKey": null,
+          "speed": 3.5,
+          "uniqueId": 112
+        },
+        {
+          "crit": 9.0,
+          "dropLevels": [
+            15
+          ],
+          "healing": 3.0,
+          "health": 0,
+          "name": "Colossal Bone Necklace",
+          "quality": 8,
+          "rarity": "ItemRarityEpic",
+          "regen": 3.0,
+          "slot": "SlotTypeNeck",
+          "specialKey": null,
+          "speed": 0,
+          "uniqueId": 113
+        },
+        {
+          "crit": 4.5,
+          "dropLevels": [
+            16
+          ],
+          "healing": 3.0,
+          "health": 0,
+          "name": "Tome of the Overseer",
+          "quality": 8,
+          "rarity": "ItemRarityEpic",
+          "regen": 3.0,
+          "slot": "SlotTypeWeapon",
+          "specialKey": "healbuff1",
+          "speed": 3.0,
+          "uniqueId": 115
+        },
+        {
+          "crit": 0.0,
+          "dropLevels": [
+            17
+          ],
+          "healing": 0,
+          "health": 35,
+          "name": "Slime-soaked Waders",
+          "quality": 8,
+          "rarity": "ItemRarityEpic",
+          "regen": 5.0,
+          "slot": "SlotTypeBoots",
+          "specialKey": null,
+          "speed": 5.0,
+          "uniqueId": 114
+        },
+        {
+          "crit": 0,
+          "dropLevels": [
+            18
+          ],
+          "healing": 5.0,
+          "health": 25,
+          "name": "Shawl of the Reborn",
+          "quality": 9,
+          "rarity": "ItemRarityEpic",
+          "regen": 5.0,
+          "slot": "SlotTypeHead",
+          "specialKey": null,
+          "speed": 2.5,
+          "uniqueId": 116
+        },
+        {
+          "crit": 5.25,
+          "dropLevels": [
+            19,
+            20
+          ],
+          "healing": 5.0,
+          "health": 0,
+          "name": "Amulet of Torment",
+          "quality": 9,
+          "rarity": "ItemRarityEpic",
+          "regen": 5,
+          "slot": "SlotTypeNeck",
+          "specialKey": null,
+          "speed": 0,
+          "uniqueId": 117
+        },
+        {
+          "crit": 0.0,
+          "dropLevels": [
+            21
+          ],
+          "healing": 0.0,
+          "health": 70,
+          "name": "Soul-Imbued Robes",
+          "quality": 9,
+          "rarity": "ItemRarityEpic",
+          "regen": 5.0,
+          "slot": "SlotTypeChest",
+          "specialKey": null,
+          "speed": 5.0,
+          "uniqueId": 118
+        }
+      ],
+      "legendary": [
+        {
+          "crit": 0,
+          "dropLevels": [
+            12
+          ],
+          "healing": 5.0,
+          "health": 50,
+          "name": "Boots of the Ancients",
+          "quality": 10,
+          "rarity": "ItemRarityLegendary",
+          "regen": 5.0,
+          "slot": "SlotTypeBoots",
+          "specialKey": null,
+          "speed": 5.0,
+          "uniqueId": 300
+        },
+        {
+          "crit": 7.5,
+          "dropLevels": [
+            16
+          ],
+          "healing": 5.0,
+          "health": 50,
+          "name": "Pendant of the Ancients",
+          "quality": 10,
+          "rarity": "ItemRarityLegendary",
+          "regen": 5.0,
+          "slot": "SlotTypeNeck",
+          "specialKey": null,
+          "speed": 0,
+          "uniqueId": 301
+        },
+        {
+          "crit": 7.5,
+          "dropLevels": [
+            18
+          ],
+          "healing": 7.5,
+          "health": 75,
+          "name": "Robes of the Ancients",
+          "quality": 10,
+          "rarity": "ItemRarityLegendary",
+          "regen": 5.0,
+          "slot": "SlotTypeChest",
+          "specialKey": null,
+          "speed": 0,
+          "uniqueId": 301
+        },
+        {
+          "crit": 7.5,
+          "dropLevels": [
+            19
+          ],
+          "healing": 7.5,
+          "health": 50,
+          "name": "Breeches of the Ancients",
+          "quality": 10,
+          "rarity": "ItemRarityLegendary",
+          "regen": 0,
+          "slot": "SlotTypeLegs",
+          "specialKey": null,
+          "speed": 5.0,
+          "uniqueId": 301
+        },
+        {
+          "crit": 7.5,
+          "dropLevels": [
+            20
+          ],
+          "healing": 7.5,
+          "health": 50,
+          "name": "Crown of the Ancients",
+          "quality": 10,
+          "rarity": "ItemRarityLegendary",
+          "regen": 5.0,
+          "slot": "SlotTypeHead",
+          "specialKey": null,
+          "speed": 0,
+          "uniqueId": 301
+        },
+        {
+          "crit": 0,
+          "dropLevels": [
+            21
+          ],
+          "healing": 5.0,
+          "health": 40,
+          "name": "Aravon's Lesson",
+          "quality": 10,
+          "rarity": "ItemRarityLegendary",
+          "regen": 6.0,
+          "slot": "SlotTypeWeapon",
+          "specialKey": "aravon1",
+          "speed": 5.0,
+          "uniqueId": 301
+        }
+      ]
+    },
+    "lootTableSource": {
+      "itemsField": true,
+      "weightsField": true
+    },
+    "qualityRules": {
+      "evaluatedLevelTable": [
+        {
+          "level": 1,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 2,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 3,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 4,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 5,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 6,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 7,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 8,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 9,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 10,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 11,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 12,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 13,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 14,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 15,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 16,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 17,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 18,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 19,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 20,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        },
+        {
+          "level": 21,
+          "qualityByDifficulty": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null
+          }
+        }
+      ],
+      "expressionRules": [
+        {
+          "condition": "levelNum <= 7",
+          "expression": "min(difficulty, 4)"
+        },
+        {
+          "condition": "levelNum <= 13",
+          "expression": "min(2+difficulty, 6)"
+        },
+        {
+          "condition": "levelNum <= 21",
+          "expression": "min(4+difficulty, 8)"
+        }
+      ]
+    },
+    "rarityOrder": [
+      "uncommon",
+      "rare",
+      "epic",
+      "legendary"
+    ],
+    "rarityRollWeightsByDifficulty": {
+      "1": [
+        100,
+        0,
+        0,
+        0
+      ],
+      "2": [
+        100,
+        0,
+        0,
+        0
+      ],
+      "3": [
+        100,
+        0,
+        0,
+        0
+      ],
+      "4": [
+        100,
+        0,
+        0,
+        0
+      ],
+      "5": [
+        100,
+        0,
+        0,
+        0
+      ]
+    },
+    "selectionBehavior": {
+      "fallbackRules": {
+        "epic": "if no encounter-specific epic pool, roll random rare-quality item",
+        "legendary": "if no encounter-specific legendary pool, fallback to epic pool, else random rare-quality item"
+      },
+      "lootTableImplementation": "weighted_random_subtraction",
+      "selectionSource": "LootTable.randomObject",
+      "zeroWeightEntriesNeverDrop": "totalWeights includes only positive sums"
+    }
+  },
+  "sourceFiles": [
+    {
+      "path": "Healer/DataObjects/Encounter.m",
+      "sha256": "a58266f12a0f019bf78f4ce72f0fde899393930b8b30774c7495215574ae8a49"
+    },
+    {
+      "path": "Healer/LootTable.m",
+      "sha256": "255585035e2c199236dfb81b84c4e2b939845f89064b335819a48b1c8226dcb1"
+    },
+    {
+      "path": "Healer/EquipmentItem.m",
+      "sha256": "79f50acb11a8b2cd5b173f2ccac5e2d744a6f11ea9cd2d650252605626fc2e0c"
+    },
+    {
+      "path": "Healer/EquipmentItem.h",
+      "sha256": "ac5bd52d73c3c1233ee204fcc5073269cc3e0742c63abd1f01e0aee1c6089c58"
+    }
+  ]
+}

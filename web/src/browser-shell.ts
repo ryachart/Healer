@@ -52,6 +52,9 @@ const DEFAULT_SELECTED_SPELL_IDS = [
   "Barrier",
 ];
 
+const MIN_ENCOUNTER_LEVEL = 1;
+const FALLBACK_DIFFICULTY = 2;
+
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
@@ -104,7 +107,7 @@ function sanitizeDifficultyByLevel(value: unknown): Record<number, number> | nul
   const entries: Array<[number, number]> = [];
   for (const [key, difficulty] of Object.entries(value)) {
     const level = Number(key);
-    if (!Number.isInteger(level) || level < 1) {
+    if (!Number.isInteger(level) || level < MIN_ENCOUNTER_LEVEL) {
       continue;
     }
     if (!isFiniteNumber(difficulty)) {
@@ -155,7 +158,7 @@ export function createPlayerProfileInput(profile: BrowserShellProfile): PlayerPr
 }
 
 export function highestUnlockedEncounterLevel(profile: BrowserShellProfile): number {
-  return sanitizeHighestLevelCompleted(profile.highestLevelCompleted, 0) + 1;
+  return sanitizeHighestLevelCompleted(profile.highestLevelCompleted, 0) + MIN_ENCOUNTER_LEVEL;
 }
 
 export function createWorldMapViewModel(
@@ -177,7 +180,7 @@ export function createWorldMapViewModel(
 export function difficultyForEncounter(registry: GameRegistry, profile: BrowserShellProfile, level: number): number {
   const configuredDifficulty = profile.difficultyByLevel[level];
   const defaultDifficulty = registry.progression.progressionRules.difficultyDefaultValue;
-  return sanitizeDifficulty(configuredDifficulty, sanitizeDifficulty(defaultDifficulty, 2));
+  return sanitizeDifficulty(configuredDifficulty, sanitizeDifficulty(defaultDifficulty, FALLBACK_DIFFICULTY));
 }
 
 export function sanitizeBrowserShellProfile(

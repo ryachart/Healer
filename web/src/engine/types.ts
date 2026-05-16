@@ -212,7 +212,6 @@ export interface EncounterBootstrapSnapshot {
 }
 
 export interface CombatPlayerSpellSnapshot extends PlayerSpellSnapshot {
-  baseEnergyCost: number | null;
   baseCastTime: number | null;
   baseCooldown: number | null;
   energyCost: number | null;
@@ -226,6 +225,7 @@ export interface PlayerCastSnapshot {
   startedAt: number;
   totalCastTime: number;
   remainingCastTime: number;
+  committedEnergyCost: number | null;
   targetIds: string[];
 }
 

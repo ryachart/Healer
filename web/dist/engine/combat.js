@@ -1,4 +1,4 @@
-function clampMinimumZero(value) {
+function clampToZero(value) {
     return value > 0 ? value : 0;
 }
 function createCombatSpellSnapshot(spell, castTimeAdjustment, cooldownAdjustment) {
@@ -6,7 +6,6 @@ function createCombatSpellSnapshot(spell, castTimeAdjustment, cooldownAdjustment
     const baseCooldown = spell.cooldown ?? null;
     return {
         ...spell,
-        baseEnergyCost: spell.energyCost,
         baseCastTime,
         baseCooldown,
         energyCost: spell.energyCost,
@@ -58,25 +57,26 @@ function spendEnergy(player, amount) {
 function applySpellCooldown(spell) {
     spell.cooldownRemaining = spell.cooldown ?? 0;
 }
-function completeCast(state, spellId, targetIds, at) {
-    const spell = getSpell(state, spellId);
+function completeCast(state, casting, at) {
+    const spell = getSpell(state, casting.spellId);
     if (!spell) {
+        state.player.casting = null;
         return {
             type: "player_cast_rejected",
             at,
-            spellId,
-            targetIds,
+            spellId: casting.spellId,
+            targetIds: casting.targetIds,
             reason: "unknown_spell",
         };
     }
-    spendEnergy(state.player, spell.energyCost);
+    spendEnergy(state.player, casting.committedEnergyCost);
     applySpellCooldown(spell);
     state.player.casting = null;
     return {
         type: "player_cast_completed",
         at,
-        spellId,
-        targetIds,
+        spellId: casting.spellId,
+        targetIds: casting.targetIds,
     };
 }
 function advanceClock(state, elapsedSeconds) {
@@ -87,10 +87,10 @@ function advanceClock(state, elapsedSeconds) {
     next.time += elapsedSeconds;
     next.player.energy = Math.min(next.player.maximumEnergy, next.player.energy + (next.player.energyRegenPerSecond * elapsedSeconds));
     for (const spell of next.player.activeSpells) {
-        spell.cooldownRemaining = clampMinimumZero(spell.cooldownRemaining - elapsedSeconds);
+        spell.cooldownRemaining = clampToZero(spell.cooldownRemaining - elapsedSeconds);
     }
     if (next.player.casting) {
-        next.player.casting.remainingCastTime = clampMinimumZero(next.player.casting.remainingCastTime - elapsedSeconds);
+        next.player.casting.remainingCastTime = clampToZero(next.player.casting.remainingCastTime - elapsedSeconds);
     }
     return next;
 }
@@ -183,6 +183,7 @@ export function beginPlayerCast(state, request) {
             startedAt: next.time,
             totalCastTime: spell.castTime ?? 0,
             remainingCastTime: spell.castTime ?? 0,
+            committedEnergyCost: spell.energyCost,
             targetIds,
         };
         return {
@@ -197,7 +198,14 @@ export function beginPlayerCast(state, request) {
     }
     return {
         state: next,
-        events: [completeCast(next, spell.id, targetIds, next.time)],
+        events: [completeCast(next, {
+                spellId: spell.id,
+                startedAt: next.time,
+                totalCastTime: 0,
+                remainingCastTime: 0,
+                committedEnergyCost: spell.energyCost,
+                targetIds,
+            }, next.time)],
     };
 }
 export function advanceCombatState(state, elapsedSeconds) {
@@ -220,7 +228,7 @@ export function advanceCombatState(state, elapsedSeconds) {
         const segment = casting.remainingCastTime;
         next = advanceClock(next, segment);
         remaining -= segment;
-        events.push(completeCast(next, casting.spellId, casting.targetIds, next.time));
+        events.push(completeCast(next, casting, next.time));
     }
     return {
         state: next,

@@ -95,6 +95,7 @@ test("timed casts regenerate energy while casting and resolve when their cast fi
     targetIds: ["ally-guardian-1"],
   }]);
   assert.equal(started.state.player.casting?.remainingCastTime, 1.97);
+  assert.equal(started.state.player.casting?.committedEnergyCost, 12);
 
   const advanced = advanceCombatState(started.state, 2);
 
@@ -110,7 +111,7 @@ test("timed casts regenerate energy while casting and resolve when their cast fi
   assert.equal(advanced.state.player.activeSpells[1].cooldownRemaining, 0);
 });
 
-test("cast requests are rejected when the player is already casting or lacks energy", () => {
+test("cast requests are rejected when the player is already casting, lack energy, or request unknown spells", () => {
   const initial = createCombatState(createBootstrap());
   const started = beginPlayerCast(initial, { spellId: "Heal", targetIds: ["ally-guardian-1"] });
   const secondRequest = beginPlayerCast(started.state, { spellId: "GreaterHeal", targetIds: ["ally-guardian-2"] });
@@ -128,4 +129,16 @@ test("cast requests are rejected when the player is already casting or lacks ene
   };
   const notEnoughEnergy = beginPlayerCast(drained, { spellId: "GreaterHeal", targetIds: ["ally-guardian-2"] });
   assert.equal(notEnoughEnergy.events[0].reason, "not_enough_energy");
+
+  const unknownSpell = beginPlayerCast(initial, { spellId: "UnknownSpell", targetIds: ["ally-guardian-2"] });
+  assert.equal(unknownSpell.events[0].reason, "unknown_spell");
+});
+
+test("cast requests are rejected while a spell is still on cooldown", () => {
+  const initial = createCombatState(createBootstrap());
+  const completed = beginPlayerCast(initial, { spellId: "Purify", targetIds: ["ally-guardian-1"] });
+  const repeated = beginPlayerCast(completed.state, { spellId: "Purify", targetIds: ["ally-guardian-1"] });
+
+  assert.equal(completed.events[0].type, "player_cast_completed");
+  assert.equal(repeated.events[0].reason, "spell_on_cooldown");
 });

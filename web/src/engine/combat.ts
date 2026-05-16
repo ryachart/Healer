@@ -312,7 +312,7 @@ function disableEnemy(enemy: CombatEnemySnapshot): void {
   }
 }
 
-function disableFriendlyTarget(target: FriendlyCombatant): void {
+function disableFriendly(target: FriendlyCombatant): void {
   if (isCombatAlly(target)) {
     target.attackTimer = Number.POSITIVE_INFINITY;
     return;
@@ -340,7 +340,7 @@ function recordFriendlyHealthChange(
   });
 
   if (target.health <= 0) {
-    disableFriendlyTarget(target);
+    disableFriendly(target);
     events.push({
       type: "combatant_defeated",
       at,

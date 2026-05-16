@@ -104,13 +104,16 @@ function sanitizeDifficultyByLevel(value: unknown): Record<number, number> | nul
   const entries: Array<[number, number]> = [];
   for (const [key, difficulty] of Object.entries(value)) {
     const level = Number(key);
-    if (!Number.isInteger(level) || level < 1 || !isFiniteNumber(difficulty)) {
+    if (!Number.isInteger(level) || level < 1) {
+      continue;
+    }
+    if (!isFiniteNumber(difficulty)) {
       continue;
     }
     entries.push([level, difficulty]);
   }
 
-  return Object.fromEntries(entries) as Record<number, number>;
+  return Object.fromEntries(entries);
 }
 
 function sanitizeHighestLevelCompleted(value: unknown, fallback: number): number {

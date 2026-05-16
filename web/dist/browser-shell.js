@@ -58,7 +58,10 @@ function sanitizeDifficultyByLevel(value) {
     const entries = [];
     for (const [key, difficulty] of Object.entries(value)) {
         const level = Number(key);
-        if (!Number.isInteger(level) || level < 1 || !isFiniteNumber(difficulty)) {
+        if (!Number.isInteger(level) || level < 1) {
+            continue;
+        }
+        if (!isFiniteNumber(difficulty)) {
             continue;
         }
         entries.push([level, difficulty]);

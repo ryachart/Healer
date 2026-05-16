@@ -571,11 +571,8 @@ function renderSettings(content, state, appRoot) {
     const renameForm = element("div", "actions");
     const label = element("label", "input-label", "Display name");
     const input = element("input", "input");
-    input.id = "settings-profile-name";
-    input.setAttribute("aria-labelledby", "settings-profile-name-label");
     input.value = state.profile.name;
     input.maxLength = 24;
-    label.id = "settings-profile-name-label";
     label.append(input);
     renameForm.append(label);
     renameForm.append(actionButton("Save display name", () => {

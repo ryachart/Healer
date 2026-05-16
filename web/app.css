@@ -110,10 +110,12 @@ body {
   background: rgba(255, 255, 255, 0.06);
   color: inherit;
   border-radius: 999px;
+  min-height: 44px;
   padding: 12px 18px;
   font: inherit;
   font-weight: 700;
   cursor: pointer;
+  touch-action: manipulation;
   transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
 }
 
@@ -181,6 +183,8 @@ body {
   grid-auto-columns: minmax(240px, 280px);
   gap: 16px;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
   padding: 8px 2px 4px;
   margin-top: 20px;
 }
@@ -197,6 +201,7 @@ body {
   gap: 10px;
   align-content: start;
   padding: 20px;
+  scroll-snap-align: start;
 }
 
 .encounter-card--locked {
@@ -225,6 +230,68 @@ body {
   padding-left: 18px;
   display: grid;
   gap: 6px;
+}
+
+.loadout-list,
+.raid-frames {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.loadout-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px;
+}
+
+.loadout-row__text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.loadout-row__title,
+.loadout-row__meta,
+.raid-frame__name,
+.raid-frame__value,
+.raid-frame__effects {
+  margin: 0;
+}
+
+.loadout-row__meta,
+.raid-frame__effects {
+  color: #d8d0c3;
+  font-size: 0.9rem;
+}
+
+.raid-frame {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.raid-frame__bar {
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.raid-frame__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #57dba7, #9b69ff);
 }
 
 .notice {

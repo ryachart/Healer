@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 import { createGameRegistry } from "../dist/index.js";
 import {
+  applySelectedSpellIds,
   applyEncounterResolutionToProfile,
   createEncounterProgressionInput,
   createDefaultBrowserShellProfile,
@@ -13,6 +14,8 @@ import {
   createWorldMapViewModel,
   difficultyForEncounter,
   highestUnlockedEncounterLevel,
+  maximumStandardSpellSlots,
+  normalizeSelectedSpellIds,
   sanitizeBrowserShellProfile,
 } from "../dist/browser-shell.js";
 import { createCombatState, resolveEncounterOutcome } from "../dist/index.js";
@@ -165,4 +168,35 @@ test("encounter resolution updates persisted browser-shell progression fields", 
   assert.equal(nextProfile.inventoryCount, resolution.progression.inventoryCount);
   assert.equal(nextProfile.totalItemsEarned, resolution.progression.totalItemsEarned);
   assert.deepEqual(nextProfile.unlockedTalentTiers, resolution.progression.unlockedTalentTiers);
+});
+
+test("loadout normalization enforces owned spells, uniqueness, and max slot limits", () => {
+  const registry = createRegistry();
+  const profile = createDefaultBrowserShellProfile();
+  profile.ownedSpellIds = ["Heal", "GreaterHeal", "Purify", "Barrier"];
+
+  const normalized = normalizeSelectedSpellIds(registry, profile, [
+    "Purify",
+    "UnknownSpell",
+    "Purify",
+    "Heal",
+    "Barrier",
+    "GreaterHeal",
+  ]);
+
+  assert.equal(maximumStandardSpellSlots(registry, profile), 3);
+  assert.deepEqual(normalized, ["Purify", "Heal", "Barrier"]);
+});
+
+test("applySelectedSpellIds updates selected and last-used loadout in lockstep", () => {
+  const registry = createRegistry();
+  const profile = createDefaultBrowserShellProfile();
+  profile.ownedSpellIds = ["Heal", "GreaterHeal", "Purify", "Barrier"];
+  profile.selectedSpellIds = ["Heal", "GreaterHeal"];
+  profile.lastUsedSpellIds = ["Heal", "GreaterHeal"];
+
+  const nextProfile = applySelectedSpellIds(registry, profile, ["Barrier", "Purify"]);
+
+  assert.deepEqual(nextProfile.selectedSpellIds, ["Barrier", "Purify"]);
+  assert.deepEqual(nextProfile.lastUsedSpellIds, ["Barrier", "Purify"]);
 });

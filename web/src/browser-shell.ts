@@ -268,6 +268,46 @@ export function difficultyForEncounter(registry: GameRegistry, profile: BrowserS
   return sanitizeDifficulty(configuredDifficulty, sanitizedDefaultDifficulty);
 }
 
+export function maximumStandardSpellSlots(registry: GameRegistry, profile: BrowserShellProfile): number {
+  const slotRules = registry.progression.progressionRules.maximumStandardSpellSlots;
+  const expansionBonus = profile.hasMainGameExpansion ? slotRules.mainGameExpansionBonus : 0;
+  return Math.max(1, slotRules.base + expansionBonus);
+}
+
+export function normalizeSelectedSpellIds(
+  registry: GameRegistry,
+  profile: BrowserShellProfile,
+  selectedSpellIds: string[],
+): string[] {
+  const allowed = new Set(
+    profile.ownedSpellIds.filter((spellId) => registry.spellsById.has(spellId)),
+  );
+  const normalized: string[] = [];
+  for (const spellId of selectedSpellIds) {
+    if (!allowed.has(spellId) || normalized.includes(spellId)) {
+      continue;
+    }
+    normalized.push(spellId);
+    if (normalized.length >= maximumStandardSpellSlots(registry, profile)) {
+      break;
+    }
+  }
+  return normalized;
+}
+
+export function applySelectedSpellIds(
+  registry: GameRegistry,
+  profile: BrowserShellProfile,
+  selectedSpellIds: string[],
+): BrowserShellProfile {
+  const normalized = normalizeSelectedSpellIds(registry, profile, selectedSpellIds);
+  return {
+    ...profile,
+    selectedSpellIds: normalized,
+    lastUsedSpellIds: normalized.slice(),
+  };
+}
+
 export function sanitizeBrowserShellProfile(
   value: unknown,
   fallback: BrowserShellProfile = createDefaultBrowserShellProfile(),

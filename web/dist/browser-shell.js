@@ -186,6 +186,33 @@ export function difficultyForEncounter(registry, profile, level) {
     const sanitizedDefaultDifficulty = sanitizeDifficulty(defaultDifficulty, FALLBACK_DIFFICULTY);
     return sanitizeDifficulty(configuredDifficulty, sanitizedDefaultDifficulty);
 }
+export function maximumStandardSpellSlots(registry, profile) {
+    const slotRules = registry.progression.progressionRules.maximumStandardSpellSlots;
+    const expansionBonus = profile.hasMainGameExpansion ? slotRules.mainGameExpansionBonus : 0;
+    return Math.max(1, slotRules.base + expansionBonus);
+}
+export function normalizeSelectedSpellIds(registry, profile, selectedSpellIds) {
+    const allowed = new Set(profile.ownedSpellIds.filter((spellId) => registry.spellsById.has(spellId)));
+    const normalized = [];
+    for (const spellId of selectedSpellIds) {
+        if (!allowed.has(spellId) || normalized.includes(spellId)) {
+            continue;
+        }
+        normalized.push(spellId);
+        if (normalized.length >= maximumStandardSpellSlots(registry, profile)) {
+            break;
+        }
+    }
+    return normalized;
+}
+export function applySelectedSpellIds(registry, profile, selectedSpellIds) {
+    const normalized = normalizeSelectedSpellIds(registry, profile, selectedSpellIds);
+    return {
+        ...profile,
+        selectedSpellIds: normalized,
+        lastUsedSpellIds: normalized.slice(),
+    };
+}
 export function sanitizeBrowserShellProfile(value, fallback = createDefaultBrowserShellProfile()) {
     if (!value || typeof value !== "object" || Array.isArray(value)) {
         return fallback;

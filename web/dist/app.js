@@ -566,8 +566,8 @@ function renderSettings(content, state, appRoot) {
     }, { accent: true }));
     section.append(toolbar);
     const nameCard = element("article", "detail-card");
-    nameCard.append(element("h3", "detail-card__title", "Player name"));
-    nameCard.append(element("p", "detail-card__text", `Current name: ${state.profile.name}`));
+    nameCard.append(element("h3", "detail-card__title", "Display name"));
+    nameCard.append(element("p", "detail-card__text", `Current display name: ${state.profile.name}`));
     const renameForm = element("div", "actions");
     const inputId = "settings-profile-name";
     const label = element("label", "detail-card__text", "Display name");
@@ -578,7 +578,7 @@ function renderSettings(content, state, appRoot) {
     input.maxLength = 24;
     renameForm.append(label);
     renameForm.append(input);
-    renameForm.append(actionButton("Save name", () => {
+    renameForm.append(actionButton("Save display name", () => {
         const nextName = input.value.trim();
         if (nextName.length === 0) {
             state.notice = "Name cannot be empty.";
@@ -590,7 +590,7 @@ function renderSettings(content, state, appRoot) {
             name: nextName,
         };
         saveProfile(state.profile);
-        state.notice = `Saved profile name as ${nextName}.`;
+        state.notice = `Saved display name as ${nextName}.`;
         render(appRoot, state);
     }));
     nameCard.append(renameForm);

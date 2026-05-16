@@ -1,7 +1,9 @@
 import type {
   AllyRecord,
+  EquipmentSchemaPayload,
   EncounterRecord,
   EnemyRecord,
+  LootRulesPayload,
   ProgressionSchemaPayload,
   RegistryInput,
   ShopItemRecord,
@@ -24,6 +26,8 @@ export interface GameRegistry {
   enemiesByClassName: Map<string, EnemyRecord>;
   spellsById: Map<string, SpellRecord>;
   shopItemsBySpellId: Map<string, ShopItemRecord>;
+  lootRules: LootRulesPayload;
+  equipmentSchema: EquipmentSchemaPayload;
   progression: ProgressionSchemaPayload;
 }
 
@@ -36,6 +40,8 @@ export function createGameRegistry(input: RegistryInput): GameRegistry {
     enemiesByClassName: mapByKey(input.enemies, (enemy) => enemy.className) as Map<string, EnemyRecord>,
     spellsById: mapByKey(input.spells, (spell) => spell.id) as Map<string, SpellRecord>,
     shopItemsBySpellId: mapByKey(input.shop.items, (item) => item.spellId) as Map<string, ShopItemRecord>,
+    lootRules: input.lootRules,
+    equipmentSchema: input.equipmentSchema,
     progression: input.progression,
   };
 }

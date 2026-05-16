@@ -98,6 +98,7 @@ function copyState(state: CombatStateSnapshot): CombatStateSnapshot {
     allies: state.allies.map((ally) => ({ ...ally })),
     enemies: state.enemies.map(copyEnemy),
     effects: state.effects.map((effect) => ({ ...effect })),
+    metrics: { ...state.metrics },
     result: { ...state.result },
     warnings: state.warnings.slice(),
   };
@@ -398,6 +399,7 @@ function applySpellResolution(
         continue;
       }
       const appliedAmount = applyHealthDelta(target, resolvedHealing);
+      recordHealingMetrics(state, resolvedHealing, appliedAmount);
       recordFriendlyHealthChange(events, target, appliedAmount, at, {
         spellId: spell.id,
       });
@@ -498,11 +500,24 @@ function applyEnemyDamageToTargets(
       continue;
     }
     const appliedAmount = applyHealthDelta(target, -amount);
+    state.metrics.damageTaken += Math.abs(Math.min(0, appliedAmount));
     recordFriendlyHealthChange(events, target, appliedAmount, at, {
       abilityId,
       actorId: sourceEnemy.id,
     });
   }
+}
+
+function recordHealingMetrics(state: CombatStateSnapshot, rawAmount: number, appliedAmount: number): void {
+  if (!(rawAmount > 0)) {
+    return;
+  }
+  state.metrics.healingDone += Math.max(0, appliedAmount);
+  state.metrics.overhealingDone += Math.max(0, rawAmount - Math.max(0, appliedAmount));
+}
+
+function isEnemyAbilityId(state: CombatStateSnapshot, sourceId: string): boolean {
+  return state.enemies.some((enemy) => enemy.abilities.some((ability) => ability.id === sourceId));
 }
 
 function processDueAllyAttacks(state: CombatStateSnapshot, at: number): CombatEvent[] {
@@ -693,7 +708,14 @@ function processDueEffects(state: CombatStateSnapshot, at: number): CombatEvent[
     if (dueTick) {
       const target = getFriendlyTarget(state, next.targetId);
       if (target && next.currentValuePerTick !== null) {
-        const appliedAmount = applyHealthDelta(target, Math.round(next.currentValuePerTick));
+        const rawAmount = Math.round(next.currentValuePerTick);
+        const appliedAmount = applyHealthDelta(target, rawAmount);
+        if (rawAmount > 0 && getSpell(state, next.sourceSpellId)) {
+          recordHealingMetrics(state, rawAmount, appliedAmount);
+        }
+        if (rawAmount < 0 && isEnemyAbilityId(state, next.sourceSpellId)) {
+          state.metrics.damageTaken += Math.abs(Math.min(0, appliedAmount));
+        }
         recordFriendlyHealthChange(events, target, appliedAmount, at, {
           spellId: next.sourceSpellId,
           effectId: next.effectId,
@@ -714,7 +736,14 @@ function processDueEffects(state: CombatStateSnapshot, at: number): CombatEvent[
       if (next.className === "DelayedHealthEffect" && next.value !== null) {
         const target = getFriendlyTarget(state, next.targetId);
         if (target) {
-          const appliedAmount = applyHealthDelta(target, Math.round(next.value));
+          const rawAmount = Math.round(next.value);
+          const appliedAmount = applyHealthDelta(target, rawAmount);
+          if (rawAmount > 0 && getSpell(state, next.sourceSpellId)) {
+            recordHealingMetrics(state, rawAmount, appliedAmount);
+          }
+          if (rawAmount < 0 && isEnemyAbilityId(state, next.sourceSpellId)) {
+            state.metrics.damageTaken += Math.abs(Math.min(0, appliedAmount));
+          }
           recordFriendlyHealthChange(events, target, appliedAmount, at, {
             spellId: next.sourceSpellId,
             effectId: next.effectId,
@@ -773,6 +802,12 @@ function advanceClock(state: CombatStateSnapshot, elapsedSeconds: number): Comba
   }
 
   next.time = normalizeTimelineValue(next.time + elapsedSeconds);
+  next.metrics.scoreTally = normalizeTimelineValue(
+    next.metrics.scoreTally + next.allies.reduce(
+      (total, ally) => total + (healthRatio(ally) * elapsedSeconds),
+      0,
+    ),
+  );
   next.player.energy = Math.min(
     next.player.maximumEnergy,
     next.player.energy + (next.player.energyRegenPerSecond * elapsedSeconds),
@@ -899,6 +934,12 @@ export function createCombatState(snapshot: EncounterBootstrapSnapshot): CombatS
       casting: null,
     })),
     effects: [],
+    metrics: {
+      scoreTally: 0,
+      healingDone: 0,
+      overhealingDone: 0,
+      damageTaken: 0,
+    },
     result: {
       status: "in_progress",
       reason: null,

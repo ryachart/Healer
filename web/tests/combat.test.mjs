@@ -10,6 +10,7 @@ import {
   createCombatState,
   createEncounterBootstrap,
   createGameRegistry,
+  resolveEncounterOutcome,
 } from "../dist/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -28,6 +29,8 @@ function createRegistry() {
     enemies: loadPayload("web/data/enemies.json"),
     spells: loadPayload("web/data/spells.json"),
     shop: loadPayload("web/data/shop.json"),
+    lootRules: loadPayload("web/data/loot-rules.json"),
+    equipmentSchema: loadPayload("web/data/equipment-schema.json"),
     progression: loadPayload("web/data/progression-schema.json"),
   });
 }
@@ -470,4 +473,132 @@ test("enemy auto-attacks can defeat the raid and resolved encounters should reje
     targetIds: ["ally-guardian-1"],
   });
   assert.equal(rejected.events[0].reason, "encounter_resolved");
+});
+
+test("combat metrics track score tally, effective healing, and overhealing", () => {
+  const initial = freezeNpcCombat(createCombatState(createBootstrap({
+    difficulty: 3,
+    multiplayer: false,
+  })));
+  const heal = initial.player.activeSpells.find((spell) => spell.id === "Heal");
+  assert.ok(heal);
+
+  const injured = {
+    ...initial,
+    player: {
+      ...initial.player,
+      activeSpells: initial.player.activeSpells.map((spell) => ({ ...spell })),
+      casting: null,
+    },
+    allies: initial.allies.map((ally) => (
+      ally.id === "ally-guardian-1"
+        ? { ...ally, health: ally.maximumHealth - 50 }
+        : { ...ally }
+    )),
+  };
+
+  const started = beginPlayerCast(injured, { spellId: "Heal", targetIds: ["ally-guardian-1"] });
+  const resolved = advanceCombatState(started.state, heal.castTime);
+  const expectedHealing = Math.round(heal.healingAmount * initial.player.healingDoneMultiplier);
+  const expectedScoreTally = injured.allies.reduce(
+    (total, ally) => total + ((ally.health / ally.maximumHealth) * heal.castTime),
+    0,
+  );
+
+  assert.equal(resolved.state.metrics.healingDone, 50);
+  assert.equal(resolved.state.metrics.overhealingDone, expectedHealing - 50);
+  assertClose(resolved.state.metrics.scoreTally, expectedScoreTally, 1e-6);
+  assert.equal(resolved.state.metrics.damageTaken, 0);
+});
+
+test("encounter resolution applies gold, ratings, score progression, and deterministic loot", () => {
+  const registry = createRegistry();
+  const baseState = createCombatState(createBootstrap({
+    level: 6,
+    difficulty: 5,
+    multiplayer: false,
+  }));
+  const resolvedState = {
+    ...baseState,
+    time: 5,
+    metrics: {
+      scoreTally: 6.5,
+      healingDone: 180,
+      overhealingDone: 20,
+      damageTaken: 90,
+    },
+    result: {
+      status: "victory",
+      reason: "all_enemies_defeated",
+      finishedAt: 5,
+    },
+  };
+
+  const progression = {
+    gold: 100,
+    highestLevelCompleted: 5,
+    ratingsByLevel: { 6: 3 },
+    scoresByLevel: { 6: 1200 },
+    inventoryCount: 2,
+    totalItemsEarned: 7,
+  };
+
+  const resolution = resolveEncounterOutcome(registry, resolvedState, progression);
+  const repeated = resolveEncounterOutcome(registry, resolvedState, progression);
+
+  assert.equal(resolution.metrics.score, 1500);
+  assert.equal(resolution.rewards.goldAwarded, 175);
+  assert.equal(resolution.rewards.previousRating, 3);
+  assert.equal(resolution.rewards.updatedRating, 5);
+  assert.equal(resolution.rewards.ratingImproved, true);
+  assert.equal(resolution.rewards.previousBestScore, 1200);
+  assert.equal(resolution.rewards.newBestScore, true);
+  assert.equal(resolution.progression.gold, 275);
+  assert.equal(resolution.progression.highestLevelCompleted, 6);
+  assert.equal(resolution.progression.totalRating, 5);
+  assert.equal(resolution.progression.multiplayerUnlocked, true);
+  assert.equal(resolution.rewards.lootEligible, true);
+  assert.ok(resolution.rewards.loot);
+  assert.equal(resolution.progression.inventoryCount, 3);
+  assert.equal(resolution.progression.totalItemsEarned, 8);
+  assert.deepEqual(repeated.rewards.loot, resolution.rewards.loot);
+});
+
+test("encounter resolution records defeat failures and blocks loot when the inventory is full", () => {
+  const registry = createRegistry();
+  const baseState = createCombatState(createBootstrap({
+    level: 3,
+    difficulty: 2,
+    multiplayer: true,
+  }));
+  const resolvedState = {
+    ...baseState,
+    time: 4,
+    metrics: {
+      scoreTally: 2,
+      healingDone: 0,
+      overhealingDone: 0,
+      damageTaken: 300,
+    },
+    result: {
+      status: "defeat",
+      reason: "all_allies_defeated",
+      finishedAt: 4,
+    },
+  };
+
+  const resolution = resolveEncounterOutcome(registry, resolvedState, {
+    gold: 40,
+    highestLevelCompleted: 2,
+    failureCountsByLevel: { 3: 1 },
+    inventoryCount: 15,
+    totalItemsEarned: 15,
+  });
+
+  assert.equal(resolution.rewards.goldAwarded, 0);
+  assert.equal(resolution.rewards.lootEligible, false);
+  assert.equal(resolution.rewards.lootBlockedReason, "not_victory");
+  assert.equal(resolution.progression.failureCountsByLevel[3], 2);
+  assert.equal(resolution.progression.gold, 40);
+  assert.equal(resolution.progression.inventoryCount, 15);
 });

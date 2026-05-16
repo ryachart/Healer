@@ -99,13 +99,101 @@ export interface ShopPayload {
     items: ShopItemRecord[];
     unlockThresholdsByCategory: Record<string, number>;
 }
+export interface LootRuleItemRecord {
+    id: string;
+    name: string;
+    slot: string;
+    rarity: string;
+    quality: number;
+    health: number;
+    healing: number;
+    regen: number;
+    speed: number;
+    crit: number;
+    specialKey: string | null;
+    dropLevels: number[];
+}
+export interface LootRulesPayload {
+    rarityRollWeightsByDifficulty: Record<string, number[]>;
+    rarityOrder: string[];
+    qualityRules: {
+        evaluatedLevelTable: Array<{
+            level: number;
+            qualityByDifficulty: Record<string, number | null>;
+        }>;
+        expressionRules: Array<{
+            condition: string;
+            expression: string;
+        }>;
+    };
+    selectionBehavior: {
+        lootTableImplementation: string;
+        selectionSource: string;
+        zeroWeightEntriesNeverDrop: string;
+        fallbackRules: Record<string, string>;
+    };
+    encounterSpecificDrops: {
+        epic: LootRuleItemRecord[];
+        legendary: LootRuleItemRecord[];
+    };
+    lootTableSource: {
+        itemsField: boolean;
+        weightsField: boolean;
+    };
+}
+export interface EquipmentSchemaPayload {
+    proceduralGenerationRules: {
+        namePools: {
+            prefixesBySlot: Record<string, string[]>;
+            suffixes: string[];
+        };
+        salePrice: {
+            expression: string;
+        };
+        slotModifiers: Record<string, number>;
+        weaponSpecials: {
+            candidateSpecialKeys: string[];
+            minimumQualityForSpecialKey: number;
+        };
+    };
+    rarities: Array<{
+        enum: string;
+        id: string;
+        value: number;
+    }>;
+    slotTypes: Array<{
+        enum: string;
+        id: string;
+        value: number;
+    }>;
+    statTypes: Array<{
+        enum: string;
+        id: string;
+        value: number;
+        atom: number;
+    }>;
+}
 export interface ProgressionSchemaPayload {
     progressionRules: {
+        allyUpgradeCost: {
+            base: number;
+            maximumHealthUpgrades: number;
+            step: number;
+        };
         difficultyDefaultValue: number;
+        difficultyTrackedLevelSlots: number;
+        maximumInventorySize: number;
         maximumStandardSpellSlots: {
             base: number;
             mainGameExpansionBonus: number;
         };
+        multiplayerUnlockAtHighestLevelCompleted: number;
+        talentTierUnlocks: Array<{
+            tier: number;
+            requiredRating: number;
+        }>;
+        totalRatingStartsAtLevel: number;
+        tutorialLevelHasNoRating: boolean;
     };
 }
 export interface RegistryInput {
@@ -114,6 +202,8 @@ export interface RegistryInput {
     enemies: EnemyRecord[];
     spells: SpellRecord[];
     shop: ShopPayload;
+    lootRules: LootRulesPayload;
+    equipmentSchema: EquipmentSchemaPayload;
     progression: ProgressionSchemaPayload;
 }
 export interface EquippedItemInput {
@@ -225,6 +315,12 @@ export interface RewardPreview {
     gold: number;
     lootRuleId: string | null;
 }
+export interface CombatMetricsSnapshot {
+    scoreTally: number;
+    healingDone: number;
+    overhealingDone: number;
+    damageTaken: number;
+}
 export interface EncounterBootstrapSnapshot {
     schemaVersion: 1;
     replay: ReplayDescriptor;
@@ -324,6 +420,7 @@ export interface CombatStateSnapshot {
     allies: CombatAllySnapshot[];
     enemies: CombatEnemySnapshot[];
     effects: CombatEffectSnapshot[];
+    metrics: CombatMetricsSnapshot;
     result: CombatResultSnapshot;
     warnings: string[];
 }
@@ -353,4 +450,67 @@ export interface CombatEvent {
 export interface CombatUpdateResult {
     state: CombatStateSnapshot;
     events: CombatEvent[];
+}
+export interface EncounterProgressionInput {
+    gold?: number;
+    highestLevelCompleted?: number;
+    ratingsByLevel?: Record<string, number>;
+    scoresByLevel?: Record<string, number>;
+    failureCountsByLevel?: Record<string, number>;
+    inventoryCount?: number;
+    totalItemsEarned?: number;
+}
+export interface EncounterLootSnapshot {
+    id: string | null;
+    name: string;
+    source: "encounter_specific" | "procedural";
+    rarity: string;
+    quality: number;
+    slot: string;
+    health: number;
+    healing: number;
+    regen: number;
+    crit: number;
+    speed: number;
+    specialKey: string | null;
+    salePrice: number;
+}
+export interface EncounterResolutionSnapshot {
+    schemaVersion: 1;
+    encounter: {
+        level: number;
+        title: string;
+        difficulty: number;
+        multiplayer: boolean;
+    };
+    result: CombatResultSnapshot;
+    metrics: CombatMetricsSnapshot & {
+        duration: number;
+        score: number;
+    };
+    rewards: {
+        goldAwarded: number;
+        previousBestScore: number;
+        newBestScore: boolean;
+        previousRating: number;
+        updatedRating: number;
+        ratingImproved: boolean;
+        lootEligible: boolean;
+        lootBlockedReason: "not_victory" | "tutorial_level" | "inventory_full" | null;
+        loot: EncounterLootSnapshot | null;
+    };
+    progression: {
+        gold: number;
+        highestLevelCompleted: number;
+        ratingsByLevel: Record<string, number>;
+        scoresByLevel: Record<string, number>;
+        failureCountsByLevel: Record<string, number>;
+        inventoryCount: number;
+        totalItemsEarned: number;
+        totalRating: number;
+        unlockedTalentTiers: number[];
+        multiplayerUnlocked: boolean;
+        talentsUnlocked: boolean;
+    };
+    warnings: string[];
 }

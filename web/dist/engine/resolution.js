@@ -1,11 +1,17 @@
 import { createRandomSource } from "./random.js";
+const FIRST_LEVEL_VICTORY_GOLD = 25;
+const DIFFICULTY_REWARD_STEP_GOLD = 25;
+const RATING_IMPROVEMENT_GOLD_BONUS = 25;
+const UNCOMMON_CHEST_BONUS_STATS = 1;
+const UNCOMMON_CHEST_MINIMUM_QUALITY = 2;
 function normalizeLevelMap(values) {
     const normalized = {};
     if (!values) {
         return normalized;
     }
     for (const [key, value] of Object.entries(values)) {
-        normalized[String(Number.parseInt(key, 10) || key)] = Math.max(0, Math.trunc(value));
+        const parsed = Number.parseInt(key, 10);
+        normalized[Number.isNaN(parsed) ? key : String(parsed)] = Math.max(0, Math.trunc(value));
     }
     return normalized;
 }
@@ -52,9 +58,9 @@ function createProceduralLootItem(registry, rarityId, quality, random) {
     let totalStats = rarityValue;
     let adjustedQuality = quality;
     if (rarityId === "uncommon" && slot === "chest") {
-        totalStats += 1;
+        totalStats += UNCOMMON_CHEST_BONUS_STATS;
         if (adjustedQuality === 1) {
-            adjustedQuality = 2;
+            adjustedQuality = UNCOMMON_CHEST_MINIMUM_QUALITY;
         }
     }
     const statIds = equipmentSchema.statTypes
@@ -183,8 +189,9 @@ export function resolveEncounterOutcome(registry, state, progressionInput = {}) 
     let newBestScore = false;
     if (state.result.status === "victory") {
         goldAwarded = state.encounter.level === 1 && highestLevelCompleted === 0
-            ? 25
-            : Math.max(0, registry.encountersByLevel.get(level)?.baseRewardGold ?? 0) + ((state.encounter.difficulty - 1) * 25);
+            ? FIRST_LEVEL_VICTORY_GOLD
+            : Math.max(0, registry.encountersByLevel.get(level)?.baseRewardGold ?? 0)
+                + ((state.encounter.difficulty - 1) * DIFFICULTY_REWARD_STEP_GOLD);
         if (!state.encounter.multiplayer) {
             highestLevelCompleted = Math.max(highestLevelCompleted, level);
             if (state.encounter.difficulty > previousRating) {
@@ -192,7 +199,7 @@ export function resolveEncounterOutcome(registry, state, progressionInput = {}) 
                 ratingsByLevel[String(level)] = updatedRating;
                 ratingImproved = true;
                 if (state.encounter.difficulty > 1 && level !== 1) {
-                    goldAwarded += 25;
+                    goldAwarded += RATING_IMPROVEMENT_GOLD_BONUS;
                 }
             }
             if (score > previousBestScore) {

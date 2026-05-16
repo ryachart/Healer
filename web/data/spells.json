@@ -129,6 +129,10 @@
         },
         "effectType": "EffectTypePositive",
         "id": "fading-light-effect",
+        "increasePerTick": {
+          "expression": "-0.25",
+          "value": -0.25
+        },
         "numOfTicks": {
           "expression": "8",
           "value": 8

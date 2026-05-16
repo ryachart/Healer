@@ -32,21 +32,26 @@ function createRegistry() {
   });
 }
 
-function createBootstrap() {
+function createBootstrap(overrides = {}) {
   const registry = createRegistry();
+  const basePlayer = {
+    name: "Ayla",
+    ownedSpellIds: ["Heal", "GreaterHeal", "ForkedHeal", "Purify"],
+    lastUsedSpellIds: ["Purify"],
+    equippedItems: [
+      { id: "starter-tome", health: 25, healing: 2, regen: 1, crit: 0.5, speed: 1.5, spellId: "Purify" },
+      { id: "ember-relic", spellId: "Barrier" },
+    ],
+  };
   return createEncounterBootstrap(registry, {
     level: 6,
     difficulty: 5,
     multiplayer: true,
     seed: "phase-2-combat-runtime",
+    ...overrides,
     player: {
-      name: "Ayla",
-      ownedSpellIds: ["Heal", "GreaterHeal", "ForkedHeal", "Purify"],
-      lastUsedSpellIds: ["Purify"],
-      equippedItems: [
-        { id: "starter-tome", health: 25, healing: 2, regen: 1, crit: 0.5, speed: 1.5, spellId: "Purify" },
-        { id: "ember-relic", spellId: "Barrier" },
-      ],
+      ...basePlayer,
+      ...(overrides.player ?? {}),
     },
   });
 }
@@ -141,4 +146,171 @@ test("cast requests are rejected while a spell is still on cooldown", () => {
 
   assert.equal(completed.events[0].type, "player_cast_completed");
   assert.equal(repeated.events[0].reason, "spell_on_cooldown");
+});
+
+test("timed healing spells restore injured allies when casts complete", () => {
+  const initial = createCombatState(createBootstrap());
+  const heal = initial.player.activeSpells.find((spell) => spell.id === "Heal");
+  assert.ok(heal);
+
+  const injured = {
+    ...initial,
+    player: {
+      ...initial.player,
+      activeSpells: initial.player.activeSpells.map((spell) => ({ ...spell })),
+      casting: null,
+    },
+    allies: initial.allies.map((ally) => (
+      ally.id === "ally-guardian-1"
+        ? { ...ally, health: ally.health - 400 }
+        : { ...ally }
+    )),
+    effects: [],
+  };
+
+  const started = beginPlayerCast(injured, { spellId: "Heal", targetIds: ["ally-guardian-1"] });
+  const resolved = advanceCombatState(started.state, heal.castTime);
+  const healedTarget = resolved.state.allies.find((ally) => ally.id === "ally-guardian-1");
+  const injuredTarget = injured.allies.find((ally) => ally.id === "ally-guardian-1");
+  const expectedHealing = Math.round(heal.healingAmount * initial.player.healingDoneMultiplier);
+
+  assert.equal(resolved.events[0].type, "player_cast_completed");
+  assert.deepEqual(resolved.events[1], {
+    type: "health_changed",
+    at: heal.castTime,
+    spellId: "Heal",
+    targetId: "ally-guardian-1",
+    amount: expectedHealing,
+  });
+  assert.equal(healedTarget.health, injuredTarget.health + expectedHealing);
+});
+
+test("repeated healing effects tick deterministically and expire", () => {
+  const initial = createCombatState(createBootstrap({
+    player: {
+      ownedSpellIds: ["Regrow"],
+      selectedSpellIds: ["Regrow"],
+      lastUsedSpellIds: ["Regrow"],
+      equippedItems: [],
+    },
+  }));
+
+  const regrow = initial.player.activeSpells.find((spell) => spell.id === "Regrow");
+  assert.ok(regrow);
+
+  const injured = {
+    ...initial,
+    player: {
+      ...initial.player,
+      activeSpells: initial.player.activeSpells.map((spell) => ({ ...spell })),
+      casting: null,
+    },
+    allies: initial.allies.map((ally) => (
+      ally.id === "ally-guardian-1"
+        ? { ...ally, health: ally.health - 500 }
+        : { ...ally }
+    )),
+    effects: [],
+  };
+
+  const applied = beginPlayerCast(injured, { spellId: "Regrow", targetIds: ["ally-guardian-1"] });
+  assert.deepEqual(applied.events, [
+    {
+      type: "player_cast_completed",
+      at: 0,
+      spellId: "Regrow",
+      targetIds: ["ally-guardian-1"],
+    },
+    {
+      type: "effect_applied",
+      at: 0,
+      spellId: "Regrow",
+      targetId: "ally-guardian-1",
+      effectId: "regrow-effect",
+    },
+  ]);
+
+  const tickAmount = Math.round(applied.state.effects[0].currentValuePerTick);
+  const advanced = advanceCombatState(applied.state, 12);
+  const healthEvents = advanced.events.filter((event) => event.type === "health_changed");
+  const healedTarget = advanced.state.allies.find((ally) => ally.id === "ally-guardian-1");
+  const injuredTarget = injured.allies.find((ally) => ally.id === "ally-guardian-1");
+
+  assert.equal(healthEvents.length, 4);
+  assert.ok(healthEvents.every((event) => event.amount === tickAmount));
+  assert.deepEqual(advanced.events.at(-1), {
+    type: "effect_expired",
+    at: 12,
+    spellId: "Regrow",
+    targetId: "ally-guardian-1",
+    effectId: "regrow-effect",
+  });
+  assert.equal(advanced.state.effects.length, 0);
+  assert.equal(healedTarget.health, injuredTarget.health + (tickAmount * 4));
+});
+
+test("delayed healing effects resolve when the applied effect expires", () => {
+  const initial = createCombatState(createBootstrap({
+    player: {
+      ownedSpellIds: ["BlessedArmor"],
+      selectedSpellIds: ["BlessedArmor"],
+      lastUsedSpellIds: ["BlessedArmor"],
+      equippedItems: [],
+    },
+  }));
+
+  const injured = {
+    ...initial,
+    player: {
+      ...initial.player,
+      activeSpells: initial.player.activeSpells.map((spell) => ({ ...spell })),
+      casting: null,
+    },
+    allies: initial.allies.map((ally) => (
+      ally.id === "ally-guardian-1"
+        ? { ...ally, health: ally.health - 700 }
+        : { ...ally }
+    )),
+    effects: [],
+  };
+
+  const applied = beginPlayerCast(injured, { spellId: "BlessedArmor", targetIds: ["ally-guardian-1"] });
+  const delayedValue = Math.round(applied.state.effects[0].value);
+  const resolved = advanceCombatState(applied.state, 5);
+  const healedTarget = resolved.state.allies.find((ally) => ally.id === "ally-guardian-1");
+  const injuredTarget = injured.allies.find((ally) => ally.id === "ally-guardian-1");
+
+  assert.deepEqual(applied.events, [
+    {
+      type: "player_cast_completed",
+      at: 0,
+      spellId: "BlessedArmor",
+      targetIds: ["ally-guardian-1"],
+    },
+    {
+      type: "effect_applied",
+      at: 0,
+      spellId: "BlessedArmor",
+      targetId: "ally-guardian-1",
+      effectId: "blessed-armor-eff",
+    },
+  ]);
+  assert.deepEqual(resolved.events, [
+    {
+      type: "health_changed",
+      at: 5,
+      spellId: "BlessedArmor",
+      targetId: "ally-guardian-1",
+      effectId: "blessed-armor-eff",
+      amount: delayedValue,
+    },
+    {
+      type: "effect_expired",
+      at: 5,
+      spellId: "BlessedArmor",
+      targetId: "ally-guardian-1",
+      effectId: "blessed-armor-eff",
+    },
+  ]);
+  assert.equal(healedTarget.health, injuredTarget.health + delayedValue);
 });

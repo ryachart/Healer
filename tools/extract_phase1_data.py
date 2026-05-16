@@ -179,6 +179,7 @@ EFFECT_NUMERIC_FIELDS = (EFFECT_FIELDS - {"title", "spriteName", "isIndependent"
     "energyChangePerCast",
     "failureChance",
     "getUpThreshold",
+    "increasePerTick",
     "maximumAbsorbtionAdjustment",
     "maximumHealthMultiplierAdjustment",
     "numCastsRemaining",

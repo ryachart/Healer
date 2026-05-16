@@ -150,10 +150,13 @@ function createSpellSnapshot(spell, source) {
         spellType: spell.spellType ?? null,
         targeting: spell.targeting ?? null,
         targetCount: typeof spell.targetCount === "number" || typeof spell.targetCount === "string" ? spell.targetCount : null,
+        healingAmount: numericValue(spell.healingAmount ?? null),
         energyCost: numericValue(spell.energyCost ?? null),
         castTime: numericValue(spell.castTime ?? null),
         cooldown: numericValue(spell.cooldown ?? null),
         source,
+        appliedEffectId: spell.appliedEffectId ?? null,
+        appliedEffect: spell.appliedEffect ?? null,
     };
 }
 function buildAllyInstances(registry, encounter, multiplayer, warnings) {

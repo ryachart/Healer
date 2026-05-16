@@ -520,6 +520,20 @@ Port the simulation into a pure TypeScript engine that does not depend on the re
 
 Do not port scene code directly into browser scene code. First port the rules into a deterministic, serializable combat engine with tests and replay support.
 
+### Phase 2 audit status
+
+- **Implemented in the web runtime**
+  - encounter assembly, replay seed capture, and bootstrap snapshot generation
+  - player spell runtime state for cast timing, cooldowns, and energy progression
+  - deterministic player direct-heal resolution plus delayed/repeated positive spell-effect lifecycles
+- **Still required for Phase 2 completeness**
+  - enemy ability scheduling, damage intake, and death/failure state transitions
+  - broader combatant/status-rule parity such as threat, interrupts, dispels, shields, reactive effects, and visibility-priority handling
+  - score/reward/progression simulation after combat resolution
+- **Known extraction/runtime follow-ups**
+  - preserve remaining spell/effect fields needed for full native parity where the current canonical payloads still collapse special-case behavior
+  - keep extending the deterministic engine before any browser-scene port work begins
+
 ## Phase 3 – Build the browser shell and page flow
 
 Recreate the native flow on the web in the same order users experience it:

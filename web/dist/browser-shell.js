@@ -14,6 +14,8 @@ const DEFAULT_SELECTED_SPELL_IDS = [
     "Barrier",
 ];
 const MIN_ENCOUNTER_LEVEL = 1;
+const MIN_DIFFICULTY = 1;
+const MAX_DIFFICULTY = 5;
 const FALLBACK_DIFFICULTY = 2;
 function isFiniteNumber(value) {
     return typeof value === "number" && Number.isFinite(value);
@@ -80,7 +82,7 @@ function sanitizeDifficulty(value, fallback) {
     if (!isFiniteNumber(value)) {
         return fallback;
     }
-    return Math.max(1, Math.min(5, Math.round(value)));
+    return Math.max(MIN_DIFFICULTY, Math.min(MAX_DIFFICULTY, Math.round(value)));
 }
 export function createDefaultBrowserShellProfile() {
     return {
@@ -122,7 +124,8 @@ export function createWorldMapViewModel(registry, profile) {
 export function difficultyForEncounter(registry, profile, level) {
     const configuredDifficulty = profile.difficultyByLevel[level];
     const defaultDifficulty = registry.progression.progressionRules.difficultyDefaultValue;
-    return sanitizeDifficulty(configuredDifficulty, sanitizeDifficulty(defaultDifficulty, FALLBACK_DIFFICULTY));
+    const sanitizedDefaultDifficulty = sanitizeDifficulty(defaultDifficulty, FALLBACK_DIFFICULTY);
+    return sanitizeDifficulty(configuredDifficulty, sanitizedDefaultDifficulty);
 }
 export function sanitizeBrowserShellProfile(value, fallback = createDefaultBrowserShellProfile()) {
     if (!value || typeof value !== "object" || Array.isArray(value)) {

@@ -84,9 +84,6 @@ function getFriendlyTarget(state, targetId) {
     }
     return state.allies.find((ally) => ally.id === targetId);
 }
-function getEnemyTarget(state, targetId) {
-    return state.enemies.find((enemy) => enemy.id === targetId);
-}
 function isCombatAlly(target) {
     return target.combatantType === "ally";
 }
@@ -423,6 +420,8 @@ function processDueEnemyAutoAttacks(state, at) {
         if (targetIds.length === 0) {
             continue;
         }
+        // `autoAttackFailureChance` is exported as bootstrap metadata for future native-parity work;
+        // this deterministic runtime currently resolves auto-attacks as guaranteed hits.
         const damage = Math.max(0, Math.round(enemy.damagePerAttack ?? 0));
         events.push({
             type: "enemy_auto_attack",

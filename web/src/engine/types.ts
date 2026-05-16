@@ -222,6 +222,7 @@ export interface EnemySnapshot {
   targets: number | null;
   choosesMainTarget: boolean;
   threatPriority: number | null;
+  /** Exported for future native-parity miss handling; the current deterministic combat runtime does not consume this yet. */
   autoAttackFailureChance: number;
   abilities: EnemyAbilitySnapshot[];
   source: string;

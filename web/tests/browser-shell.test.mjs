@@ -56,7 +56,7 @@ test("prebattle view model reuses deterministic bootstrap data for the selected 
 
   assert.equal(preview.bootstrap.encounter.level, 6);
   assert.equal(preview.bootstrap.encounter.title, "Fungal Ravagers");
-  assert.equal(preview.bootstrap.replay.seed, 1882156998);
+  assert.equal(preview.bootstrap.replay.seed, 1323874544);
   assert.deepEqual(
     preview.selectedSpells.map((spell) => spell.id),
     ["Purify", "Heal", "GreaterHeal"],

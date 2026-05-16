@@ -26,6 +26,14 @@ function sanitizeStringArray(value) {
     }
     return value.filter((entry) => typeof entry === "string");
 }
+function sanitizeNumberArray(value) {
+    if (!Array.isArray(value)) {
+        return null;
+    }
+    return value
+        .filter((entry) => isFiniteNumber(entry))
+        .map((entry) => Math.max(0, Math.floor(entry)));
+}
 function sanitizeEquippedItem(item) {
     if (!item || typeof item !== "object" || Array.isArray(item)) {
         return null;
@@ -72,6 +80,20 @@ function sanitizeDifficultyByLevel(value) {
     }
     return Object.fromEntries(entries);
 }
+function sanitizeProgressionMap(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+        return null;
+    }
+    const entries = [];
+    for (const [key, amount] of Object.entries(value)) {
+        const level = Number.parseInt(key, 10);
+        if (!Number.isFinite(level) || level < MIN_ENCOUNTER_LEVEL || !isFiniteNumber(amount)) {
+            continue;
+        }
+        entries.push([String(level), Math.max(0, Math.floor(amount))]);
+    }
+    return Object.fromEntries(entries);
+}
 function sanitizeHighestLevelCompleted(value, fallback) {
     if (!isFiniteNumber(value)) {
         return fallback;
@@ -84,6 +106,12 @@ function sanitizeDifficulty(value, fallback) {
     }
     return Math.max(MIN_DIFFICULTY, Math.min(MAX_DIFFICULTY, Math.round(value)));
 }
+function sanitizeNonNegativeNumber(value, fallback) {
+    if (!isFiniteNumber(value)) {
+        return fallback;
+    }
+    return Math.max(0, Math.floor(value));
+}
 export function createDefaultBrowserShellProfile() {
     return {
         name: "Ayla",
@@ -94,6 +122,13 @@ export function createDefaultBrowserShellProfile() {
         equippedItems: [],
         hasMainGameExpansion: false,
         difficultyByLevel: {},
+        gold: 0,
+        ratingsByLevel: {},
+        scoresByLevel: {},
+        failureCountsByLevel: {},
+        inventoryCount: 0,
+        totalItemsEarned: 0,
+        unlockedTalentTiers: [],
     };
 }
 export function createPlayerProfileInput(profile) {
@@ -104,6 +139,30 @@ export function createPlayerProfileInput(profile) {
         lastUsedSpellIds: profile.lastUsedSpellIds.slice(),
         equippedItems: profile.equippedItems.map((item) => ({ ...item })),
         hasMainGameExpansion: profile.hasMainGameExpansion,
+    };
+}
+export function createEncounterProgressionInput(profile) {
+    return {
+        gold: profile.gold,
+        highestLevelCompleted: profile.highestLevelCompleted,
+        ratingsByLevel: { ...profile.ratingsByLevel },
+        scoresByLevel: { ...profile.scoresByLevel },
+        failureCountsByLevel: { ...profile.failureCountsByLevel },
+        inventoryCount: profile.inventoryCount,
+        totalItemsEarned: profile.totalItemsEarned,
+    };
+}
+export function applyEncounterResolutionToProfile(profile, resolution) {
+    return {
+        ...profile,
+        gold: resolution.progression.gold,
+        highestLevelCompleted: resolution.progression.highestLevelCompleted,
+        ratingsByLevel: { ...resolution.progression.ratingsByLevel },
+        scoresByLevel: { ...resolution.progression.scoresByLevel },
+        failureCountsByLevel: { ...resolution.progression.failureCountsByLevel },
+        inventoryCount: resolution.progression.inventoryCount,
+        totalItemsEarned: resolution.progression.totalItemsEarned,
+        unlockedTalentTiers: resolution.progression.unlockedTalentTiers.slice(),
     };
 }
 export function highestUnlockedEncounterLevel(profile) {
@@ -146,6 +205,13 @@ export function sanitizeBrowserShellProfile(value, fallback = createDefaultBrows
             : fallback.hasMainGameExpansion,
         difficultyByLevel: sanitizeDifficultyByLevel(source.difficultyByLevel)
             ?? { ...fallback.difficultyByLevel },
+        gold: sanitizeNonNegativeNumber(source.gold, fallback.gold),
+        ratingsByLevel: sanitizeProgressionMap(source.ratingsByLevel) ?? { ...fallback.ratingsByLevel },
+        scoresByLevel: sanitizeProgressionMap(source.scoresByLevel) ?? { ...fallback.scoresByLevel },
+        failureCountsByLevel: sanitizeProgressionMap(source.failureCountsByLevel) ?? { ...fallback.failureCountsByLevel },
+        inventoryCount: sanitizeNonNegativeNumber(source.inventoryCount, fallback.inventoryCount),
+        totalItemsEarned: sanitizeNonNegativeNumber(source.totalItemsEarned, fallback.totalItemsEarned),
+        unlockedTalentTiers: sanitizeNumberArray(source.unlockedTalentTiers) ?? fallback.unlockedTalentTiers.slice(),
     };
 }
 export function createPrebattleViewModel(registry, profile, level) {

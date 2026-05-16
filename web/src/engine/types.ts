@@ -49,6 +49,7 @@ export interface EncounterRecord {
 export interface SpellRecord {
   id: string;
   title: string;
+  healingAmount?: NumericExpression | null;
   energyCost?: NumericExpression | null;
   castTime?: NumericExpression | null;
   cooldown?: NumericExpression | null;
@@ -56,6 +57,26 @@ export interface SpellRecord {
   targetCount?: number | string;
   spellType?: string;
   itemSpriteName?: string | null;
+  appliedEffectId?: string | null;
+  appliedEffect?: EffectRecord | null;
+}
+
+export interface EffectRecord {
+  id: string;
+  title: string;
+  className: string;
+  declaredType?: string;
+  effectType?: string;
+  duration?: NumericExpression | null;
+  numOfTicks?: NumericExpression | null;
+  value?: NumericExpression | null;
+  valuePerTick?: NumericExpression | null;
+  amountPerReaction?: NumericExpression | null;
+  effectCooldown?: NumericExpression | null;
+  increasePerTick?: NumericExpression | null;
+  damageTakenMultiplierAdjustment?: NumericExpression | null;
+  healingDoneMultiplierAdjustment?: NumericExpression | null;
+  castTimeAdjustment?: NumericExpression | null;
 }
 
 export interface ShopItemRecord {
@@ -146,10 +167,13 @@ export interface PlayerSpellSnapshot {
   spellType: string | null;
   targeting: string | null;
   targetCount: number | string | null;
+  healingAmount: number | null;
   energyCost: number | null;
   castTime: number | null;
   cooldown: number | null;
   source: "loadout" | "equipped_item";
+  appliedEffectId: string | null;
+  appliedEffect: EffectRecord | null;
 }
 
 export interface AllySnapshot {
@@ -238,10 +262,29 @@ export interface CombatPlayerSnapshot {
   energy: number;
   maximumEnergy: number;
   energyRegenPerSecond: number;
+  healingDoneMultiplier: number;
   castTimeAdjustment: number;
   cooldownAdjustment: number;
   activeSpells: CombatPlayerSpellSnapshot[];
   casting: PlayerCastSnapshot | null;
+}
+
+export interface CombatEffectSnapshot {
+  effectId: string;
+  title: string;
+  className: string;
+  effectType: string | null;
+  targetId: string;
+  sourceSpellId: string;
+  totalDuration: number;
+  remainingDuration: number;
+  tickInterval: number | null;
+  remainingUntilNextTick: number | null;
+  totalTicks: number | null;
+  ticksApplied: number;
+  value: number | null;
+  currentValuePerTick: number | null;
+  increasePerTick: number;
 }
 
 export interface CombatStateSnapshot {
@@ -252,6 +295,7 @@ export interface CombatStateSnapshot {
   player: CombatPlayerSnapshot;
   allies: AllySnapshot[];
   enemies: EnemySnapshot[];
+  effects: CombatEffectSnapshot[];
   warnings: string[];
 }
 
@@ -261,11 +305,14 @@ export interface PlayerCastRequest {
 }
 
 export interface CombatEvent {
-  type: "player_cast_started" | "player_cast_completed" | "player_cast_rejected";
+  type: "player_cast_started" | "player_cast_completed" | "player_cast_rejected" | "effect_applied" | "effect_expired" | "health_changed";
   at: number;
-  spellId: string;
-  targetIds: string[];
-  reason?: "already_casting" | "not_enough_energy" | "spell_on_cooldown" | "unknown_spell";
+  spellId?: string;
+  targetIds?: string[];
+  targetId?: string;
+  effectId?: string;
+  amount?: number;
+  reason?: "already_casting" | "not_enough_energy" | "spell_on_cooldown" | "unknown_spell" | "invalid_target";
 }
 
 export interface CombatUpdateResult {

@@ -1,35 +1,34 @@
 import type {
+  AllySnapshot,
+  CombatEffectSnapshot,
   CombatEvent,
   CombatPlayerSnapshot,
   CombatPlayerSpellSnapshot,
   CombatStateSnapshot,
   CombatUpdateResult,
+  EffectRecord,
   EncounterBootstrapSnapshot,
   PlayerCastRequest,
   PlayerCastSnapshot,
   PlayerSpellSnapshot,
 } from "./types.js";
 
+const EPSILON = 1e-9;
+
+type HealableCombatant = CombatPlayerSnapshot | AllySnapshot;
+
 function clampToZero(value: number): number {
   return value > 0 ? value : 0;
 }
 
-function createCombatSpellSnapshot(
-  spell: PlayerSpellSnapshot,
-  castTimeAdjustment: number,
-  cooldownAdjustment: number,
-): CombatPlayerSpellSnapshot {
-  const baseCastTime = spell.castTime ?? null;
-  const baseCooldown = spell.cooldown ?? null;
-  return {
-    ...spell,
-    baseCastTime,
-    baseCooldown,
-    energyCost: spell.energyCost,
-    castTime: baseCastTime === null ? null : baseCastTime * castTimeAdjustment,
-    cooldown: baseCooldown === null ? null : baseCooldown * cooldownAdjustment,
-    cooldownRemaining: 0,
-  };
+function numericValue(value: { value: number | null } | number | null | undefined): number | null {
+  if (typeof value === "number") {
+    return value;
+  }
+  if (!value) {
+    return null;
+  }
+  return value.value;
 }
 
 function copyCasting(casting: PlayerCastSnapshot | null): PlayerCastSnapshot | null {
@@ -62,12 +61,121 @@ function copyState(state: CombatStateSnapshot): CombatStateSnapshot {
     player: copyPlayer(state.player),
     allies: state.allies.map((ally) => ({ ...ally })),
     enemies: state.enemies.map((enemy) => ({ ...enemy })),
+    effects: state.effects.map((effect) => ({ ...effect })),
     warnings: state.warnings.slice(),
   };
 }
 
 function getSpell(state: CombatStateSnapshot, spellId: string): CombatPlayerSpellSnapshot | undefined {
   return state.player.activeSpells.find((spell) => spell.id === spellId);
+}
+
+function getHealableTarget(state: CombatStateSnapshot, targetId: string): HealableCombatant | undefined {
+  if (targetId === state.player.id) {
+    return state.player;
+  }
+  return state.allies.find((ally) => ally.id === targetId);
+}
+
+function isLivingTarget(target: HealableCombatant | undefined): target is HealableCombatant {
+  return Boolean(target && target.health > 0);
+}
+
+function healthRatio(target: HealableCombatant): number {
+  if (!(target.maximumHealth > 0)) {
+    return 0;
+  }
+  return target.health / target.maximumHealth;
+}
+
+function sortTargetsByHealth(targets: AllySnapshot[]): AllySnapshot[] {
+  return targets.slice().sort((left, right) => {
+    const ratioDelta = healthRatio(left) - healthRatio(right);
+    if (Math.abs(ratioDelta) > EPSILON) {
+      return ratioDelta;
+    }
+    return left.id.localeCompare(right.id);
+  });
+}
+
+function uniqueTargetIds(targetIds: string[]): string[] {
+  return Array.from(new Set(targetIds));
+}
+
+function livingAllies(state: CombatStateSnapshot): AllySnapshot[] {
+  return state.allies.filter((ally) => ally.health > 0);
+}
+
+function requiresPrimaryTarget(targeting: string | null): boolean {
+  return [
+    "selected_ally",
+    "same_position_as_primary",
+    "lowest_health_with_required_primary",
+    "2_lowest_health_including_primary_plus_2_random",
+    "wanders_between_injured_allies",
+  ].includes(targeting ?? "");
+}
+
+function resolvePrimaryTarget(state: CombatStateSnapshot, targetIds: string[]): AllySnapshot | undefined {
+  for (const targetId of targetIds) {
+    const target = getHealableTarget(state, targetId);
+    if (target && target.id !== state.player.id && target.health > 0) {
+      return target as AllySnapshot;
+    }
+  }
+  return undefined;
+}
+
+function resolveSpellTargets(
+  state: CombatStateSnapshot,
+  spell: CombatPlayerSpellSnapshot,
+  requestedTargetIds: string[],
+): string[] {
+  const primaryTarget = resolvePrimaryTarget(state, requestedTargetIds);
+  const alliesByHealth = sortTargetsByHealth(livingAllies(state));
+  const numericTargetCount = typeof spell.targetCount === "number" ? spell.targetCount : null;
+
+  switch (spell.targeting) {
+    case "self":
+      return [state.player.id];
+    case "raid_wide":
+      return alliesByHealth.map((ally) => ally.id);
+    case "same_position_as_primary": {
+      if (!primaryTarget) {
+        return [];
+      }
+      const samePosition = alliesByHealth.filter((ally) => ally.positioning === primaryTarget.positioning && ally.id !== primaryTarget.id);
+      const limit = numericTargetCount ?? samePosition.length + 1;
+      return uniqueTargetIds([primaryTarget.id, ...samePosition.map((ally) => ally.id)]).slice(0, limit);
+    }
+    case "lowest_health_with_required_primary": {
+      if (!primaryTarget) {
+        return [];
+      }
+      const limit = Math.max(1, numericTargetCount ?? 1);
+      const additionalTargets = alliesByHealth
+        .filter((ally) => ally.id !== primaryTarget.id)
+        .slice(0, Math.max(0, limit - 1))
+        .map((ally) => ally.id);
+      return uniqueTargetIds([...additionalTargets, primaryTarget.id]);
+    }
+    case "2_lowest_health_including_primary_plus_2_random": {
+      if (!primaryTarget) {
+        return [];
+      }
+      const limit = Math.max(1, numericTargetCount ?? 4);
+      const additionalTargets = alliesByHealth
+        .filter((ally) => ally.id !== primaryTarget.id)
+        .slice(0, Math.max(0, limit - 1))
+        .map((ally) => ally.id);
+      return uniqueTargetIds([primaryTarget.id, ...additionalTargets]).slice(0, limit);
+    }
+    case "wanders_between_injured_allies":
+      return primaryTarget ? [primaryTarget.id] : [];
+    case "selected_ally":
+    default:
+      return primaryTarget ? [primaryTarget.id] : [];
+  }
 }
 
 function spendEnergy(player: CombatPlayerSnapshot, amount: number | null): void {
@@ -81,33 +189,142 @@ function applySpellCooldown(spell: CombatPlayerSpellSnapshot): void {
   spell.cooldownRemaining = spell.cooldown ?? 0;
 }
 
+function applyHealthDelta(target: HealableCombatant, amount: number): number {
+  const nextHealth = Math.max(0, Math.min(target.maximumHealth, target.health + amount));
+  const delta = nextHealth - target.health;
+  target.health = nextHealth;
+  return delta;
+}
+
+function adjustedEffectMagnitude(value: number | null, healingDoneMultiplier: number): number | null {
+  if (value === null) {
+    return null;
+  }
+  return Math.round(value * (value > 0 ? healingDoneMultiplier : 1));
+}
+
+function createCombatEffectSnapshot(
+  effect: EffectRecord,
+  targetId: string,
+  sourceSpellId: string,
+  healingDoneMultiplier: number,
+): CombatEffectSnapshot | null {
+  const effectId = effect.id ?? effect.title;
+  if (!effectId) {
+    return null;
+  }
+
+  const totalDuration = numericValue(effect.duration) ?? 0;
+  const totalTicksValue = numericValue(effect.numOfTicks);
+  const totalTicks = totalTicksValue === null ? null : Math.max(1, Math.round(totalTicksValue));
+  const tickInterval = totalTicks && totalDuration > 0 ? totalDuration / totalTicks : null;
+
+  return {
+    effectId,
+    title: effect.title ?? effectId,
+    className: effect.className,
+    effectType: effect.effectType ?? null,
+    targetId,
+    sourceSpellId,
+    totalDuration,
+    remainingDuration: totalDuration,
+    tickInterval,
+    remainingUntilNextTick: tickInterval,
+    totalTicks,
+    ticksApplied: 0,
+    value: adjustedEffectMagnitude(numericValue(effect.value), healingDoneMultiplier),
+    currentValuePerTick: adjustedEffectMagnitude(numericValue(effect.valuePerTick), healingDoneMultiplier),
+    increasePerTick: numericValue(effect.increasePerTick) ?? 0,
+  };
+}
+
+function applySpellResolution(
+  state: CombatStateSnapshot,
+  spell: CombatPlayerSpellSnapshot,
+  requestedTargetIds: string[],
+  at: number,
+): CombatEvent[] {
+  const events: CombatEvent[] = [];
+  const resolvedTargetIds = resolveSpellTargets(state, spell, requestedTargetIds);
+  if (resolvedTargetIds.length === 0) {
+    return events;
+  }
+
+  if (spell.healingAmount !== null) {
+    const resolvedHealing = Math.round(spell.healingAmount * state.player.healingDoneMultiplier);
+    for (const targetId of resolvedTargetIds) {
+      const target = getHealableTarget(state, targetId);
+      if (!target) {
+        continue;
+      }
+      const appliedAmount = applyHealthDelta(target, resolvedHealing);
+      if (appliedAmount !== 0) {
+        events.push({
+          type: "health_changed",
+          at,
+          spellId: spell.id,
+          targetId,
+          amount: appliedAmount,
+        });
+      }
+    }
+  }
+
+  if (spell.appliedEffect) {
+    for (const targetId of resolvedTargetIds) {
+      const effectSnapshot = createCombatEffectSnapshot(
+        spell.appliedEffect,
+        targetId,
+        spell.id,
+        state.player.healingDoneMultiplier,
+      );
+      if (!effectSnapshot) {
+        continue;
+      }
+      state.effects.push(effectSnapshot);
+      events.push({
+        type: "effect_applied",
+        at,
+        spellId: spell.id,
+        targetId,
+        effectId: effectSnapshot.effectId,
+      });
+    }
+  }
+
+  return events;
+}
+
 function completeCast(
   state: CombatStateSnapshot,
   casting: PlayerCastSnapshot,
   at: number,
-): CombatEvent {
+): CombatEvent[] {
   const spell = getSpell(state, casting.spellId);
   if (!spell) {
     state.player.casting = null;
-    return {
+    return [{
       type: "player_cast_rejected",
       at,
       spellId: casting.spellId,
       targetIds: casting.targetIds,
       reason: "unknown_spell",
-    };
+    }];
   }
 
   spendEnergy(state.player, casting.committedEnergyCost);
   applySpellCooldown(spell);
   state.player.casting = null;
 
-  return {
-    type: "player_cast_completed",
-    at,
-    spellId: casting.spellId,
-    targetIds: casting.targetIds,
-  };
+  return [
+    {
+      type: "player_cast_completed",
+      at,
+      spellId: casting.spellId,
+      targetIds: casting.targetIds,
+    },
+    ...applySpellResolution(state, spell, casting.targetIds, at),
+  ];
 }
 
 function advanceClock(state: CombatStateSnapshot, elapsedSeconds: number): CombatStateSnapshot {
@@ -130,7 +347,102 @@ function advanceClock(state: CombatStateSnapshot, elapsedSeconds: number): Comba
     next.player.casting.remainingCastTime = clampToZero(next.player.casting.remainingCastTime - elapsedSeconds);
   }
 
+  next.effects = next.effects.map((effect) => ({
+    ...effect,
+    remainingDuration: clampToZero(effect.remainingDuration - elapsedSeconds),
+    remainingUntilNextTick: effect.remainingUntilNextTick === null
+      ? null
+      : clampToZero(effect.remainingUntilNextTick - elapsedSeconds),
+  }));
+
   return next;
+}
+
+function nextTimelineStep(state: CombatStateSnapshot, remaining: number): number {
+  let step = remaining;
+
+  if (state.player.casting) {
+    step = Math.min(step, state.player.casting.remainingCastTime);
+  }
+
+  for (const effect of state.effects) {
+    step = Math.min(step, effect.remainingDuration);
+    if (effect.remainingUntilNextTick !== null) {
+      step = Math.min(step, effect.remainingUntilNextTick);
+    }
+  }
+
+  return step;
+}
+
+function processDueEffects(state: CombatStateSnapshot, at: number): CombatEvent[] {
+  const events: CombatEvent[] = [];
+  const activeEffects: CombatEffectSnapshot[] = [];
+
+  for (const effect of state.effects) {
+    const next = { ...effect };
+    const dueTick = next.remainingUntilNextTick !== null
+      && next.remainingUntilNextTick <= EPSILON
+      && (next.totalTicks === null || next.ticksApplied < next.totalTicks);
+
+    if (dueTick) {
+      const target = getHealableTarget(state, next.targetId);
+      if (target && next.currentValuePerTick !== null) {
+        const appliedAmount = applyHealthDelta(target, next.currentValuePerTick);
+        if (appliedAmount !== 0) {
+          events.push({
+            type: "health_changed",
+            at,
+            spellId: next.sourceSpellId,
+            targetId: next.targetId,
+            effectId: next.effectId,
+            amount: appliedAmount,
+          });
+        }
+      }
+
+      next.ticksApplied += 1;
+      next.currentValuePerTick = next.currentValuePerTick === null
+        ? null
+        : Math.round(next.currentValuePerTick * (1 + next.increasePerTick));
+      next.remainingUntilNextTick = next.totalTicks !== null && next.ticksApplied >= next.totalTicks
+        ? null
+        : next.tickInterval;
+    }
+
+    if (next.remainingDuration <= EPSILON) {
+      if (next.className === "DelayedHealthEffect" && next.value !== null) {
+        const target = getHealableTarget(state, next.targetId);
+        if (target) {
+          const appliedAmount = applyHealthDelta(target, next.value);
+          if (appliedAmount !== 0) {
+            events.push({
+              type: "health_changed",
+              at,
+              spellId: next.sourceSpellId,
+              targetId: next.targetId,
+              effectId: next.effectId,
+              amount: appliedAmount,
+            });
+          }
+        }
+      }
+
+      events.push({
+        type: "effect_expired",
+        at,
+        spellId: next.sourceSpellId,
+        targetId: next.targetId,
+        effectId: next.effectId,
+      });
+      continue;
+    }
+
+    activeEffects.push(next);
+  }
+
+  state.effects = activeEffects;
+  return events;
 }
 
 export function createCombatState(snapshot: EncounterBootstrapSnapshot): CombatStateSnapshot {
@@ -155,15 +467,22 @@ export function createCombatState(snapshot: EncounterBootstrapSnapshot): CombatS
       energy: snapshot.player.energy,
       maximumEnergy: snapshot.player.maximumEnergy,
       energyRegenPerSecond: snapshot.player.energyRegenPerSecond,
+      healingDoneMultiplier: snapshot.player.healingDoneMultiplier,
       castTimeAdjustment,
       cooldownAdjustment,
-      activeSpells: snapshot.player.activeSpells.map((spell) => (
-        createCombatSpellSnapshot(spell, castTimeAdjustment, cooldownAdjustment)
-      )),
+      activeSpells: snapshot.player.activeSpells.map((spell) => ({
+        ...spell,
+        baseCastTime: spell.castTime ?? null,
+        baseCooldown: spell.cooldown ?? null,
+        castTime: spell.castTime === null ? null : spell.castTime * castTimeAdjustment,
+        cooldown: spell.cooldown === null ? null : spell.cooldown * cooldownAdjustment,
+        cooldownRemaining: 0,
+      })),
       casting: null,
     },
     allies: snapshot.allies.map((ally) => ({ ...ally })),
     enemies: snapshot.enemies.map((enemy) => ({ ...enemy })),
+    effects: [],
     warnings: snapshot.warnings.slice(),
   };
 }
@@ -225,6 +544,19 @@ export function beginPlayerCast(state: CombatStateSnapshot, request: PlayerCastR
     };
   }
 
+  if (requiresPrimaryTarget(spell.targeting) && !resolvePrimaryTarget(next, targetIds)) {
+    return {
+      state: next,
+      events: [{
+        type: "player_cast_rejected",
+        at: next.time,
+        spellId: request.spellId,
+        targetIds,
+        reason: "invalid_target",
+      }],
+    };
+  }
+
   if ((spell.castTime ?? 0) > 0) {
     next.player.casting = {
       spellId: spell.id,
@@ -247,14 +579,14 @@ export function beginPlayerCast(state: CombatStateSnapshot, request: PlayerCastR
 
   return {
     state: next,
-    events: [completeCast(next, {
+    events: completeCast(next, {
       spellId: spell.id,
       startedAt: next.time,
       totalCastTime: 0,
       remainingCastTime: 0,
       committedEnergyCost: spell.energyCost,
       targetIds,
-    }, next.time)],
+    }, next.time),
   };
 }
 
@@ -271,17 +603,28 @@ export function advanceCombatState(state: CombatStateSnapshot, elapsedSeconds: n
   let next = copyState(state);
 
   while (remaining > 0) {
-    const casting = next.player.casting;
-    if (!casting || casting.remainingCastTime > remaining) {
-      next = advanceClock(next, remaining);
-      remaining = 0;
-      continue;
+    const segment = nextTimelineStep(next, remaining);
+    if (segment > 0) {
+      next = advanceClock(next, segment);
+      remaining -= segment;
     }
 
-    const segment = casting.remainingCastTime;
-    next = advanceClock(next, segment);
-    remaining -= segment;
-    events.push(completeCast(next, casting, next.time));
+    let emitted = false;
+    if (next.player.casting && next.player.casting.remainingCastTime <= EPSILON) {
+      const casting = next.player.casting;
+      events.push(...completeCast(next, casting, next.time));
+      emitted = true;
+    }
+
+    const effectEvents = processDueEffects(next, next.time);
+    if (effectEvents.length > 0) {
+      events.push(...effectEvents);
+      emitted = true;
+    }
+
+    if (segment <= EPSILON && !emitted) {
+      break;
+    }
   }
 
   return {

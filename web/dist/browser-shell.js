@@ -13,10 +13,74 @@ const DEFAULT_SELECTED_SPELL_IDS = [
     "Purify",
     "Barrier",
 ];
+function isFiniteNumber(value) {
+    return typeof value === "number" && Number.isFinite(value);
+}
+function sanitizeStringArray(value) {
+    if (!Array.isArray(value)) {
+        return null;
+    }
+    return value.filter((entry) => typeof entry === "string");
+}
+function sanitizeEquippedItem(item) {
+    if (!item || typeof item !== "object" || Array.isArray(item)) {
+        return null;
+    }
+    const source = item;
+    const sanitized = {};
+    if (typeof source.id === "string") {
+        sanitized.id = source.id;
+    }
+    if (isFiniteNumber(source.health)) {
+        sanitized.health = source.health;
+    }
+    if (isFiniteNumber(source.healing)) {
+        sanitized.healing = source.healing;
+    }
+    if (isFiniteNumber(source.regen)) {
+        sanitized.regen = source.regen;
+    }
+    if (isFiniteNumber(source.crit)) {
+        sanitized.crit = source.crit;
+    }
+    if (isFiniteNumber(source.speed)) {
+        sanitized.speed = source.speed;
+    }
+    if (typeof source.spellId === "string" || source.spellId === null) {
+        sanitized.spellId = source.spellId;
+    }
+    return Object.keys(sanitized).length > 0 ? sanitized : null;
+}
+function sanitizeDifficultyByLevel(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+        return null;
+    }
+    const entries = [];
+    for (const [key, difficulty] of Object.entries(value)) {
+        const level = Number(key);
+        if (!Number.isInteger(level) || level < 1 || !isFiniteNumber(difficulty)) {
+            continue;
+        }
+        entries.push([level, difficulty]);
+    }
+    return Object.fromEntries(entries);
+}
+function sanitizeHighestLevelCompleted(value, fallback) {
+    if (!isFiniteNumber(value)) {
+        return fallback;
+    }
+    return Math.max(0, Math.floor(value));
+}
+function sanitizeDifficulty(value, fallback) {
+    if (!isFiniteNumber(value)) {
+        return fallback;
+    }
+    return Math.max(1, Math.min(5, Math.round(value)));
+}
 export function createDefaultBrowserShellProfile() {
     return {
         name: "Ayla",
-        highestLevelCompleted: 1,
+        highestLevelCompleted: 0,
         selectedSpellIds: DEFAULT_SELECTED_SPELL_IDS.slice(),
         lastUsedSpellIds: DEFAULT_SELECTED_SPELL_IDS.slice(),
         ownedSpellIds: DEFAULT_OWNED_SPELL_IDS.slice(),
@@ -36,7 +100,7 @@ export function createPlayerProfileInput(profile) {
     };
 }
 export function highestUnlockedEncounterLevel(profile) {
-    return Math.max(1, profile.highestLevelCompleted + 1);
+    return sanitizeHighestLevelCompleted(profile.highestLevelCompleted, 0) + 1;
 }
 export function createWorldMapViewModel(registry, profile) {
     const highestUnlockedLevel = highestUnlockedEncounterLevel(profile);
@@ -53,7 +117,28 @@ export function createWorldMapViewModel(registry, profile) {
 export function difficultyForEncounter(registry, profile, level) {
     const configuredDifficulty = profile.difficultyByLevel[level];
     const defaultDifficulty = registry.progression.progressionRules.difficultyDefaultValue;
-    return Math.max(1, Math.min(5, configuredDifficulty ?? defaultDifficulty));
+    return sanitizeDifficulty(configuredDifficulty, sanitizeDifficulty(defaultDifficulty, 2));
+}
+export function sanitizeBrowserShellProfile(value, fallback = createDefaultBrowserShellProfile()) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+        return fallback;
+    }
+    const source = value;
+    return {
+        name: typeof source.name === "string" ? source.name : fallback.name,
+        highestLevelCompleted: sanitizeHighestLevelCompleted(source.highestLevelCompleted, fallback.highestLevelCompleted),
+        selectedSpellIds: sanitizeStringArray(source.selectedSpellIds) ?? fallback.selectedSpellIds.slice(),
+        lastUsedSpellIds: sanitizeStringArray(source.lastUsedSpellIds) ?? fallback.lastUsedSpellIds.slice(),
+        ownedSpellIds: sanitizeStringArray(source.ownedSpellIds) ?? fallback.ownedSpellIds.slice(),
+        equippedItems: Array.isArray(source.equippedItems)
+            ? source.equippedItems.map(sanitizeEquippedItem).filter((item) => item !== null)
+            : fallback.equippedItems.map((item) => ({ ...item })),
+        hasMainGameExpansion: typeof source.hasMainGameExpansion === "boolean"
+            ? source.hasMainGameExpansion
+            : fallback.hasMainGameExpansion,
+        difficultyByLevel: sanitizeDifficultyByLevel(source.difficultyByLevel)
+            ?? { ...fallback.difficultyByLevel },
+    };
 }
 export function createPrebattleViewModel(registry, profile, level) {
     const bootstrap = createEncounterBootstrap(registry, {

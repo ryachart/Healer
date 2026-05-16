@@ -1,5 +1,7 @@
+/// <reference lib="dom" />
+/// <reference lib="dom.iterable" />
 import { createGameRegistry } from "./engine/registry.js";
-import { createDefaultBrowserShellProfile, createPrebattleViewModel, createWorldMapViewModel, highestUnlockedEncounterLevel, } from "./browser-shell.js";
+import { createDefaultBrowserShellProfile, createPrebattleViewModel, sanitizeBrowserShellProfile, createWorldMapViewModel, highestUnlockedEncounterLevel, } from "./browser-shell.js";
 const SHELL_STORAGE_KEY = "healer.web.browser-shell.v1";
 async function loadPayload(path) {
     const response = await fetch(path);
@@ -29,18 +31,7 @@ function loadProfile() {
         return fallback;
     }
     try {
-        const parsed = JSON.parse(raw);
-        return {
-            ...fallback,
-            ...parsed,
-            selectedSpellIds: Array.isArray(parsed.selectedSpellIds) ? parsed.selectedSpellIds.slice() : fallback.selectedSpellIds,
-            lastUsedSpellIds: Array.isArray(parsed.lastUsedSpellIds) ? parsed.lastUsedSpellIds.slice() : fallback.lastUsedSpellIds,
-            ownedSpellIds: Array.isArray(parsed.ownedSpellIds) ? parsed.ownedSpellIds.slice() : fallback.ownedSpellIds,
-            equippedItems: Array.isArray(parsed.equippedItems) ? parsed.equippedItems.map((item) => ({ ...item })) : fallback.equippedItems,
-            difficultyByLevel: typeof parsed.difficultyByLevel === "object" && parsed.difficultyByLevel !== null
-                ? Object.fromEntries(Object.entries(parsed.difficultyByLevel).map(([key, value]) => [Number(key), Number(value)]))
-                : fallback.difficultyByLevel,
-        };
+        return sanitizeBrowserShellProfile(JSON.parse(raw), fallback);
     }
     catch {
         return fallback;

@@ -36,4 +36,5 @@ export declare function createPlayerProfileInput(profile: BrowserShellProfile): 
 export declare function highestUnlockedEncounterLevel(profile: BrowserShellProfile): number;
 export declare function createWorldMapViewModel(registry: GameRegistry, profile: BrowserShellProfile): WorldMapEncounterViewModel[];
 export declare function difficultyForEncounter(registry: GameRegistry, profile: BrowserShellProfile, level: number): number;
+export declare function sanitizeBrowserShellProfile(value: unknown, fallback?: BrowserShellProfile): BrowserShellProfile;
 export declare function createPrebattleViewModel(registry: GameRegistry, profile: BrowserShellProfile, level: number): PrebattleViewModel;

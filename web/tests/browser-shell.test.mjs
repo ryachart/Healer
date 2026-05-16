@@ -9,7 +9,9 @@ import {
   createDefaultBrowserShellProfile,
   createPrebattleViewModel,
   createWorldMapViewModel,
+  difficultyForEncounter,
   highestUnlockedEncounterLevel,
+  sanitizeBrowserShellProfile,
 } from "../dist/browser-shell.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +35,18 @@ function createRegistry() {
   });
 }
 
+test("fresh browser shell profiles only unlock the first encounter", () => {
+  const registry = createRegistry();
+  const profile = createDefaultBrowserShellProfile();
+  const unlockedLevels = createWorldMapViewModel(registry, profile)
+    .filter((entry) => entry.unlocked)
+    .map((entry) => entry.level);
+
+  assert.equal(profile.highestLevelCompleted, 0);
+  assert.equal(highestUnlockedEncounterLevel(profile), 1);
+  assert.deepEqual(unlockedLevels, [1]);
+});
+
 test("world map view model follows the native linear unlock rule", () => {
   const registry = createRegistry();
   const profile = createDefaultBrowserShellProfile();
@@ -43,7 +57,7 @@ test("world map view model follows the native linear unlock rule", () => {
 
   assert.equal(highestUnlockedEncounterLevel(profile), 4);
   assert.deepEqual(unlockedLevels, [1, 2, 3, 4]);
-  assert.equal(entries.length, 21);
+  assert.equal(entries.length, registry.encounters.length);
 });
 
 test("prebattle view model reuses deterministic bootstrap data for the selected encounter", () => {
@@ -63,4 +77,38 @@ test("prebattle view model reuses deterministic bootstrap data for the selected 
   );
   assert.ok(preview.allySummary.some((ally) => ally.title === "Guardian"));
   assert.equal(preview.bootstrap.enemies[0].title, "Fungal Ravagers");
+});
+
+test("profile sanitization discards malformed persisted fields and invalid difficulties", () => {
+  const registry = createRegistry();
+  const fallback = createDefaultBrowserShellProfile();
+  const profile = sanitizeBrowserShellProfile({
+    name: 17,
+    highestLevelCompleted: "3",
+    selectedSpellIds: ["Heal", 7],
+    lastUsedSpellIds: [null, "Purify"],
+    ownedSpellIds: ["Heal", false, "Barrier"],
+    equippedItems: [
+      null,
+      { id: "starter", healing: 5, spellId: "Heal" },
+      { speed: "fast" },
+      9,
+    ],
+    hasMainGameExpansion: "true",
+    difficultyByLevel: {
+      2: 4,
+      3: "hard",
+      foo: 2,
+    },
+  }, fallback);
+
+  assert.equal(profile.name, fallback.name);
+  assert.equal(profile.highestLevelCompleted, fallback.highestLevelCompleted);
+  assert.deepEqual(profile.selectedSpellIds, ["Heal"]);
+  assert.deepEqual(profile.lastUsedSpellIds, ["Purify"]);
+  assert.deepEqual(profile.ownedSpellIds, ["Heal", "Barrier"]);
+  assert.deepEqual(profile.equippedItems, [{ id: "starter", healing: 5, spellId: "Heal" }]);
+  assert.equal(profile.hasMainGameExpansion, fallback.hasMainGameExpansion);
+  assert.deepEqual(profile.difficultyByLevel, { 2: 4 });
+  assert.equal(difficultyForEncounter(registry, profile, 3), registry.progression.progressionRules.difficultyDefaultValue);
 });

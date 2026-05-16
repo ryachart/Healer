@@ -60,6 +60,25 @@ function assertClose(actual, expected, epsilon = 1e-9) {
   assert.ok(Math.abs(actual - expected) <= epsilon, `expected ${actual} to be within ${epsilon} of ${expected}`);
 }
 
+function freezeNpcCombat(state) {
+  return {
+    ...state,
+    allies: state.allies.map((ally) => ({
+      ...ally,
+      attackTimer: Number.POSITIVE_INFINITY,
+    })),
+    enemies: state.enemies.map((enemy) => ({
+      ...enemy,
+      attackTimer: Number.POSITIVE_INFINITY,
+      abilities: enemy.abilities.map((ability) => ({
+        ...ability,
+        remainingCooldown: Number.POSITIVE_INFINITY,
+      })),
+      casting: null,
+    })),
+  };
+}
+
 test("combat state derives runtime spell timing from the bootstrap snapshot", () => {
   const bootstrap = createBootstrap();
   const state = createCombatState(bootstrap);
@@ -90,7 +109,7 @@ test("instant spells spend energy immediately and start cooldown tracking", () =
 });
 
 test("timed casts regenerate energy while casting and resolve when their cast finishes", () => {
-  const initial = createCombatState(createBootstrap());
+  const initial = freezeNpcCombat(createCombatState(createBootstrap()));
   const started = beginPlayerCast(initial, { spellId: "Heal", targetIds: ["ally-guardian-1"] });
 
   assert.deepEqual(started.events, [{
@@ -149,7 +168,7 @@ test("cast requests are rejected while a spell is still on cooldown", () => {
 });
 
 test("timed healing spells restore injured allies when casts complete", () => {
-  const initial = createCombatState(createBootstrap());
+  const initial = freezeNpcCombat(createCombatState(createBootstrap()));
   const heal = initial.player.activeSpells.find((spell) => spell.id === "Heal");
   assert.ok(heal);
 
@@ -186,14 +205,14 @@ test("timed healing spells restore injured allies when casts complete", () => {
 });
 
 test("repeated healing effects tick deterministically and expire", () => {
-  const initial = createCombatState(createBootstrap({
+  const initial = freezeNpcCombat(createCombatState(createBootstrap({
     player: {
       ownedSpellIds: ["Regrow"],
       selectedSpellIds: ["Regrow"],
       lastUsedSpellIds: ["Regrow"],
       equippedItems: [],
     },
-  }));
+  })));
 
   const regrow = initial.player.activeSpells.find((spell) => spell.id === "Regrow");
   assert.ok(regrow);
@@ -250,14 +269,14 @@ test("repeated healing effects tick deterministically and expire", () => {
 });
 
 test("delayed healing effects resolve when the applied effect expires", () => {
-  const initial = createCombatState(createBootstrap({
+  const initial = freezeNpcCombat(createCombatState(createBootstrap({
     player: {
       ownedSpellIds: ["BlessedArmor"],
       selectedSpellIds: ["BlessedArmor"],
       lastUsedSpellIds: ["BlessedArmor"],
       equippedItems: [],
     },
-  }));
+  })));
 
   const injured = {
     ...initial,
@@ -313,4 +332,142 @@ test("delayed healing effects resolve when the applied effect expires", () => {
     },
   ]);
   assert.equal(healedTarget.health, injuredTarget.health + delayedValue);
+});
+
+test("ally auto-attacks can finish the encounter and mark victory", () => {
+  const initial = createCombatState(createBootstrap({
+    level: 5,
+    difficulty: 3,
+    multiplayer: false,
+  }));
+
+  const tuned = {
+    ...initial,
+    allies: initial.allies.map((ally, index) => (
+      index === 0
+        ? { ...ally, damageDealt: 60, damageFrequency: 1, attackTimer: 1 }
+        : { ...ally, damageDealt: 0, attackTimer: Number.POSITIVE_INFINITY }
+    )),
+    enemies: initial.enemies.map((enemy) => ({
+      ...enemy,
+      health: 100,
+      maximumHealth: 100,
+      attackTimer: Number.POSITIVE_INFINITY,
+      abilities: [],
+      casting: null,
+    })),
+  };
+
+  const resolved = advanceCombatState(tuned, 2);
+
+  assert.equal(resolved.state.result.status, "victory");
+  assert.equal(resolved.state.result.reason, "all_enemies_defeated");
+  assert.equal(resolved.state.result.finishedAt, 2);
+  assert.equal(resolved.state.enemies[0].health, 0);
+  assert.deepEqual(
+    resolved.events.map((event) => event.type),
+    ["ally_attack", "health_changed", "ally_attack", "health_changed", "combatant_defeated", "encounter_completed"],
+  );
+});
+
+test("enemy abilities start on cooldown expiry and resolve after their activation time", () => {
+  const initial = createCombatState(createBootstrap({
+    level: 15,
+    difficulty: 3,
+    multiplayer: false,
+  }));
+
+  const tuned = {
+    ...initial,
+    allies: initial.allies.map((ally, index) => (
+      index === 0
+        ? { ...ally, health: 500, maximumHealth: 500, damageDealt: 0, attackTimer: Number.POSITIVE_INFINITY }
+        : { ...ally, damageDealt: 0, attackTimer: Number.POSITIVE_INFINITY }
+    )),
+    enemies: initial.enemies.map((enemy, index) => (
+      index === 0
+        ? {
+            ...enemy,
+            attackTimer: Number.POSITIVE_INFINITY,
+            abilities: enemy.abilities.map((ability) => (
+              ability.id === "BoneThrow"
+                ? { ...ability, remainingCooldown: 1 }
+                : { ...ability, remainingCooldown: Number.POSITIVE_INFINITY }
+            )),
+            casting: null,
+          }
+        : { ...enemy, attackTimer: Number.POSITIVE_INFINITY, abilities: [], casting: null }
+    )),
+  };
+
+  const resolved = advanceCombatState(tuned, 2.5);
+  const targetId = tuned.allies[0].id;
+  const target = resolved.state.allies.find((ally) => ally.id === targetId);
+
+  assert.deepEqual(resolved.events, [
+    {
+      type: "enemy_ability_started",
+      at: 1,
+      actorId: "enemy-colossusofbone-1",
+      abilityId: "BoneThrow",
+      targetIds: [targetId],
+    },
+    {
+      type: "enemy_ability_completed",
+      at: 2.5,
+      actorId: "enemy-colossusofbone-1",
+      abilityId: "BoneThrow",
+      targetIds: [targetId],
+    },
+    {
+      type: "health_changed",
+      at: 2.5,
+      actorId: "enemy-colossusofbone-1",
+      abilityId: "BoneThrow",
+      targetId,
+      amount: -240,
+    },
+  ]);
+  assert.equal(target.health, 260);
+});
+
+test("enemy auto-attacks can defeat the raid and resolved encounters reject further casts", () => {
+  const initial = createCombatState(createBootstrap({
+    difficulty: 3,
+    multiplayer: false,
+  }));
+
+  const tuned = {
+    ...initial,
+    player: {
+      ...initial.player,
+      activeSpells: initial.player.activeSpells.map((spell) => ({ ...spell })),
+      casting: null,
+    },
+    allies: initial.allies.map((ally, index) => (
+      index === 0
+        ? { ...ally, health: 50, maximumHealth: 50, damageDealt: 0, attackTimer: Number.POSITIVE_INFINITY }
+        : { ...ally, health: 0, damageDealt: 0, attackTimer: Number.POSITIVE_INFINITY }
+    )),
+    enemies: initial.enemies.map((enemy, index) => (
+      index === 0
+        ? { ...enemy, damagePerAttack: 80, attackFrequency: 1, attackTimer: 1, abilities: [], casting: null }
+        : { ...enemy, attackTimer: Number.POSITIVE_INFINITY, abilities: [], casting: null }
+    )),
+  };
+
+  const resolved = advanceCombatState(tuned, 1);
+
+  assert.equal(resolved.state.result.status, "defeat");
+  assert.equal(resolved.state.result.reason, "all_allies_defeated");
+  assert.deepEqual(
+    resolved.events.map((event) => event.type),
+    ["enemy_auto_attack", "health_changed", "combatant_defeated", "encounter_completed"],
+  );
+
+  const rejected = beginPlayerCast(resolved.state, {
+    spellId: "Heal",
+    targetIds: ["ally-guardian-1"],
+  });
+  assert.equal(rejected.events[0].reason, "encounter_resolved");
 });

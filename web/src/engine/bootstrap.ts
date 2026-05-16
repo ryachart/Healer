@@ -1,5 +1,6 @@
 import { createRandomSource } from "./random.js";
 import type {
+  AbilityRecord,
   AllyRecord,
   AllySnapshot,
   EncounterBootstrapOptions,
@@ -262,6 +263,20 @@ function mergeEnemyRecord(baseEnemy: EnemyRecord | undefined, rosterEnemy: Enemy
   };
 }
 
+function createEnemyAbilitySnapshots(abilities: AbilityRecord[] | undefined): EnemySnapshot["abilities"] {
+  return (abilities ?? []).map((ability, index) => ({
+    id: ability.id ?? `${ability.className}-${index + 1}`,
+    title: typeof ability.title === "string" ? ability.title : ability.id ?? ability.className,
+    className: ability.className,
+    cooldown: numericValue(ability.cooldown ?? null),
+    activationTime: numericValue(ability.activationTime ?? null) ?? 0,
+    abilityValue: numericValue(ability.abilityValue ?? null),
+    targetCount: numericValue(ability.numTargets ?? null),
+    appliedEffectId: ability.appliedEffectId ?? null,
+    appliedEffect: ability.appliedEffect ?? null,
+  }));
+}
+
 function createEnemySnapshot(
   enemy: EnemyRecord,
   index: number,
@@ -278,6 +293,7 @@ function createEnemySnapshot(
   const attackFrequency = numericValue(enemy.attackFrequency ?? enemy.frequency ?? null);
   const targets = numericValue(enemy.targets ?? null);
   const threatPriority = numericValue(enemy.threatPriority ?? null);
+  const autoAttackFailureChance = numericValue(enemy.autoAttackAdjustments?.failureChance ?? null) ?? 0;
 
   if (baseHealth === null && enemy.health) {
     warnings.push(`Could not resolve health for enemy '${enemy.className}' (${enemy.health.expression}).`);
@@ -298,6 +314,8 @@ function createEnemySnapshot(
     targets,
     choosesMainTarget: enemy.choosesMainTarget !== false,
     threatPriority,
+    autoAttackFailureChance,
+    abilities: createEnemyAbilitySnapshots(enemy.abilities),
     source: typeof enemy.source === "string" ? enemy.source : "registry",
   };
 }

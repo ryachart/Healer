@@ -700,15 +700,15 @@ function renderSettings(content: HTMLElement, state: AppState, appRoot: HTMLElem
   nameCard.append(element("p", "detail-card__text", `Current display name: ${state.profile.name}`));
 
   const renameForm = element("div", "actions");
-  const inputId = "settings-profile-name";
-  const label = element("label", "detail-card__text", "Display name");
-  label.htmlFor = inputId;
+  const label = element("label", "input-label", "Display name");
   const input = element("input", "input") as HTMLInputElement;
-  input.id = inputId;
+  input.id = "settings-profile-name";
+  input.setAttribute("aria-labelledby", "settings-profile-name-label");
   input.value = state.profile.name;
   input.maxLength = 24;
+  label.id = "settings-profile-name-label";
+  label.append(input);
   renameForm.append(label);
-  renameForm.append(input);
   renameForm.append(actionButton("Save display name", () => {
     const nextName = input.value.trim();
     if (nextName.length === 0) {

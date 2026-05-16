@@ -134,6 +134,12 @@ body {
   border-color: transparent;
 }
 
+.input-label {
+  display: grid;
+  gap: 8px;
+  color: #d8d0c3;
+}
+
 .input {
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.08);

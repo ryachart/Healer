@@ -4,6 +4,14 @@ const DIFFICULTY_REWARD_STEP_GOLD = 25;
 const RATING_IMPROVEMENT_GOLD_BONUS = 25;
 const UNCOMMON_CHEST_BONUS_STATS = 1;
 const UNCOMMON_CHEST_MINIMUM_QUALITY = 2;
+const EARLY_GAME_LEVEL_MAX = 7;
+const MID_GAME_LEVEL_MAX = 13;
+const EARLY_GAME_QUALITY_BONUS = 0;
+const MID_GAME_QUALITY_BONUS = 2;
+const LATE_GAME_QUALITY_BONUS = 4;
+const EARLY_GAME_QUALITY_CAP = 4;
+const MID_GAME_QUALITY_CAP = 6;
+const LATE_GAME_QUALITY_CAP = 8;
 function normalizeLevelMap(values) {
     const normalized = {};
     if (!values) {
@@ -51,8 +59,16 @@ function resolveLootQuality(registry, level, difficulty) {
     if (resolved !== null) {
         return resolved;
     }
-    const qualityBonus = level <= 7 ? 0 : level <= 13 ? 2 : 4;
-    const qualityCap = level <= 7 ? 4 : level <= 13 ? 6 : 8;
+    const qualityBonus = level <= EARLY_GAME_LEVEL_MAX
+        ? EARLY_GAME_QUALITY_BONUS
+        : level <= MID_GAME_LEVEL_MAX
+            ? MID_GAME_QUALITY_BONUS
+            : LATE_GAME_QUALITY_BONUS;
+    const qualityCap = level <= EARLY_GAME_LEVEL_MAX
+        ? EARLY_GAME_QUALITY_CAP
+        : level <= MID_GAME_LEVEL_MAX
+            ? MID_GAME_QUALITY_CAP
+            : LATE_GAME_QUALITY_CAP;
     return Math.min(difficulty + qualityBonus, qualityCap);
 }
 function createProceduralLootItem(registry, rarityId, quality, random) {
@@ -174,6 +190,16 @@ function pickWeightedLoot(registry, level, difficulty, seed, totalItemsEarned) {
     }
     return lootByRarity.get(rarityOrder[rarityOrder.length - 1]) ?? null;
 }
+function calculateGoldReward(registry, state, highestLevelCompleted) {
+    if (state.result.status !== "victory") {
+        return 0;
+    }
+    if (state.encounter.level === 1 && highestLevelCompleted === 0) {
+        return FIRST_LEVEL_VICTORY_GOLD;
+    }
+    return Math.max(0, registry.encountersByLevel.get(state.encounter.level)?.baseRewardGold ?? 0)
+        + ((state.encounter.difficulty - 1) * DIFFICULTY_REWARD_STEP_GOLD);
+}
 export function resolveEncounterOutcome(registry, state, progressionInput = {}) {
     if (state.result.status === "in_progress" || state.result.finishedAt === null) {
         throw new Error("Cannot resolve rewards or progression before the encounter is complete.");
@@ -197,10 +223,7 @@ export function resolveEncounterOutcome(registry, state, progressionInput = {}) 
     let ratingImproved = false;
     let newBestScore = false;
     if (state.result.status === "victory") {
-        goldAwarded = state.encounter.level === 1 && highestLevelCompleted === 0
-            ? FIRST_LEVEL_VICTORY_GOLD
-            : Math.max(0, registry.encountersByLevel.get(level)?.baseRewardGold ?? 0)
-                + ((state.encounter.difficulty - 1) * DIFFICULTY_REWARD_STEP_GOLD);
+        goldAwarded = calculateGoldReward(registry, state, highestLevelCompleted);
         if (!state.encounter.multiplayer) {
             highestLevelCompleted = Math.max(highestLevelCompleted, level);
             if (state.encounter.difficulty > previousRating) {

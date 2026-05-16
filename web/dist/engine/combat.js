@@ -395,7 +395,7 @@ function recordHealingMetrics(state, rawAmount, appliedAmount) {
     state.metrics.healingDone += Math.max(0, appliedAmount);
     state.metrics.overhealingDone += Math.max(0, rawAmount - Math.max(0, appliedAmount));
 }
-function hasEnemyAbilitySource(state, sourceId) {
+function isEnemyAbilityId(state, sourceId) {
     return state.enemies.some((enemy) => enemy.abilities.some((ability) => ability.id === sourceId));
 }
 function processDueAllyAttacks(state, at) {
@@ -549,7 +549,7 @@ function processDueEffects(state, at) {
                 if (rawAmount > 0 && getSpell(state, next.sourceSpellId)) {
                     recordHealingMetrics(state, rawAmount, appliedAmount);
                 }
-                if (rawAmount < 0 && hasEnemyAbilitySource(state, next.sourceSpellId)) {
+                if (rawAmount < 0 && isEnemyAbilityId(state, next.sourceSpellId)) {
                     state.metrics.damageTaken += Math.abs(Math.min(0, appliedAmount));
                 }
                 recordFriendlyHealthChange(events, target, appliedAmount, at, {
@@ -575,7 +575,7 @@ function processDueEffects(state, at) {
                     if (rawAmount > 0 && getSpell(state, next.sourceSpellId)) {
                         recordHealingMetrics(state, rawAmount, appliedAmount);
                     }
-                    if (rawAmount < 0 && hasEnemyAbilitySource(state, next.sourceSpellId)) {
+                    if (rawAmount < 0 && isEnemyAbilityId(state, next.sourceSpellId)) {
                         state.metrics.damageTaken += Math.abs(Math.min(0, appliedAmount));
                     }
                     recordFriendlyHealthChange(events, target, appliedAmount, at, {

@@ -516,7 +516,7 @@ function recordHealingMetrics(state: CombatStateSnapshot, rawAmount: number, app
   state.metrics.overhealingDone += Math.max(0, rawAmount - Math.max(0, appliedAmount));
 }
 
-function hasEnemyAbilitySource(state: CombatStateSnapshot, sourceId: string): boolean {
+function isEnemyAbilityId(state: CombatStateSnapshot, sourceId: string): boolean {
   return state.enemies.some((enemy) => enemy.abilities.some((ability) => ability.id === sourceId));
 }
 
@@ -713,7 +713,7 @@ function processDueEffects(state: CombatStateSnapshot, at: number): CombatEvent[
         if (rawAmount > 0 && getSpell(state, next.sourceSpellId)) {
           recordHealingMetrics(state, rawAmount, appliedAmount);
         }
-        if (rawAmount < 0 && hasEnemyAbilitySource(state, next.sourceSpellId)) {
+        if (rawAmount < 0 && isEnemyAbilityId(state, next.sourceSpellId)) {
           state.metrics.damageTaken += Math.abs(Math.min(0, appliedAmount));
         }
         recordFriendlyHealthChange(events, target, appliedAmount, at, {
@@ -741,7 +741,7 @@ function processDueEffects(state: CombatStateSnapshot, at: number): CombatEvent[
           if (rawAmount > 0 && getSpell(state, next.sourceSpellId)) {
             recordHealingMetrics(state, rawAmount, appliedAmount);
           }
-          if (rawAmount < 0 && hasEnemyAbilitySource(state, next.sourceSpellId)) {
+          if (rawAmount < 0 && isEnemyAbilityId(state, next.sourceSpellId)) {
             state.metrics.damageTaken += Math.abs(Math.min(0, appliedAmount));
           }
           recordFriendlyHealthChange(events, target, appliedAmount, at, {

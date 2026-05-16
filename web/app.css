@@ -1,0 +1,246 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #100f1a;
+  color: #f5efe1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(151, 116, 255, 0.25), transparent 35%),
+    linear-gradient(180deg, #1f1b2e 0%, #100f1a 100%);
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 20px 56px;
+}
+
+.shell__header,
+.panel,
+.hero {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(16, 15, 26, 0.82);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+}
+
+.shell__header,
+.panel,
+.hero,
+.detail-card {
+  padding: 24px;
+}
+
+.shell__header {
+  margin-bottom: 20px;
+}
+
+.shell__eyebrow,
+.panel__eyebrow,
+.hero__kicker {
+  margin: 0 0 8px;
+  color: #d7b971;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.shell__title,
+.hero__title,
+.panel__title,
+.detail-card__title {
+  margin: 0 0 8px;
+}
+
+.shell__subtitle,
+.panel__text,
+.hero__text,
+.detail-card__text,
+.encounter-card__meta,
+.toolbar__hint,
+.loading {
+  margin: 0;
+  color: #d8d0c3;
+  line-height: 1.5;
+}
+
+.shell__content {
+  display: grid;
+  gap: 20px;
+}
+
+.hero {
+  text-align: center;
+  padding: 56px 24px;
+}
+
+.hero__title {
+  font-size: clamp(2.5rem, 7vw, 4.75rem);
+  letter-spacing: 0.04em;
+}
+
+.actions,
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.actions {
+  margin-top: 20px;
+}
+
+.button {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+}
+
+.button:hover:enabled {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.26);
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.button--accent {
+  background: linear-gradient(135deg, #d7b971, #9b69ff);
+  color: #140f22;
+  border-color: transparent;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 20px 0 0;
+}
+
+.metric {
+  margin: 0;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.metric__label {
+  margin: 0 0 6px;
+  color: #d7b971;
+  font-size: 0.85rem;
+}
+
+.metric__value {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.map-rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(240px, 280px);
+  gap: 16px;
+  overflow-x: auto;
+  padding: 8px 2px 4px;
+  margin-top: 20px;
+}
+
+.encounter-card,
+.detail-card {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.encounter-card {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  padding: 20px;
+}
+
+.encounter-card--locked {
+  opacity: 0.58;
+}
+
+.encounter-card__level {
+  margin: 0;
+  color: #d7b971;
+  font-weight: 700;
+}
+
+.encounter-card__title {
+  margin: 0;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.detail-card__list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+}
+
+.notice {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(215, 185, 113, 0.14);
+  border: 1px solid rgba(215, 185, 113, 0.32);
+  color: #f8e7bf;
+}
+
+.notice--error {
+  margin: 32px;
+  background: rgba(255, 90, 90, 0.16);
+  border-color: rgba(255, 90, 90, 0.34);
+  color: #ffd7d7;
+}
+
+.loading {
+  padding: 32px;
+}
+
+@media (max-width: 640px) {
+  .shell {
+    padding-inline: 14px;
+  }
+
+  .shell__header,
+  .panel,
+  .hero,
+  .detail-card {
+    padding: 18px;
+  }
+}

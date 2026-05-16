@@ -1,6 +1,6 @@
 # Healer web rules engine
 
-This workspace contains the first browser-port rules-engine slice: deterministic encounter bootstrap state assembled from the canonical `web/data/*.json` payloads.
+This workspace contains the Phase 2 browser-port rules-engine slices: deterministic encounter bootstrap state plus combat-runtime spell timing/cooldown state assembled from the canonical `web/data/*.json` payloads.
 
 ## Commands
 

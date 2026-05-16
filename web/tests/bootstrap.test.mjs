@@ -66,6 +66,8 @@ test("encounter bootstrap assembles raid, enemies, rewards, and replay metadata"
   assert.equal(snapshot.replay.version, 1);
   assert.ok(Number.isInteger(snapshot.replay.seed));
   assert.equal(snapshot.warnings.length, 0);
+  assert.equal(snapshot.player.castTimeAdjustment, 0.985);
+  assert.equal(snapshot.player.cooldownAdjustment, 1.015);
   assert.deepEqual(
     snapshot.player.activeSpells.map((spell) => ({ id: spell.id, source: spell.source })),
     [

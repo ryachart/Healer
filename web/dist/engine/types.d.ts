@@ -119,6 +119,7 @@ export interface PlayerSnapshot {
     energyRegenPerSecond: number;
     healingDoneMultiplier: number;
     spellCriticalChance: number;
+    castTimeAdjustment: number;
     cooldownAdjustment: number;
     equippedItemSpellIds: string[];
     ownedSpellIds: string[];
@@ -190,4 +191,59 @@ export interface EncounterBootstrapSnapshot {
     enemies: EnemySnapshot[];
     rewards: RewardPreview;
     warnings: string[];
+}
+export interface CombatPlayerSpellSnapshot extends PlayerSpellSnapshot {
+    baseCastTime: number | null;
+    baseCooldown: number | null;
+    energyCost: number | null;
+    castTime: number | null;
+    cooldown: number | null;
+    cooldownRemaining: number;
+}
+export interface PlayerCastSnapshot {
+    spellId: string;
+    startedAt: number;
+    totalCastTime: number;
+    remainingCastTime: number;
+    committedEnergyCost: number | null;
+    targetIds: string[];
+}
+export interface CombatPlayerSnapshot {
+    id: string;
+    title: string;
+    name: string;
+    health: number;
+    maximumHealth: number;
+    energy: number;
+    maximumEnergy: number;
+    energyRegenPerSecond: number;
+    castTimeAdjustment: number;
+    cooldownAdjustment: number;
+    activeSpells: CombatPlayerSpellSnapshot[];
+    casting: PlayerCastSnapshot | null;
+}
+export interface CombatStateSnapshot {
+    schemaVersion: 1;
+    replay: ReplayDescriptor;
+    encounter: EncounterBootstrapSnapshot["encounter"];
+    time: number;
+    player: CombatPlayerSnapshot;
+    allies: AllySnapshot[];
+    enemies: EnemySnapshot[];
+    warnings: string[];
+}
+export interface PlayerCastRequest {
+    spellId: string;
+    targetIds?: string[];
+}
+export interface CombatEvent {
+    type: "player_cast_started" | "player_cast_completed" | "player_cast_rejected";
+    at: number;
+    spellId: string;
+    targetIds: string[];
+    reason?: "already_casting" | "not_enough_energy" | "spell_on_cooldown" | "unknown_spell";
+}
+export interface CombatUpdateResult {
+    state: CombatStateSnapshot;
+    events: CombatEvent[];
 }

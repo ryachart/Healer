@@ -1,5 +1,6 @@
 import { createRandomSource } from "./random.js";
 import type {
+  AbilityRecord,
   AllyRecord,
   AllySnapshot,
   EncounterBootstrapOptions,
@@ -38,6 +39,9 @@ const ENEMY_DAMAGE_MODIFIER: Record<number, number> = {
   4: 0.125,
   5: 0.25,
 };
+
+// These classes are the current canonical raid-wide damage abilities emitted by the native extractor payload.
+const RAID_WIDE_ABILITY_CLASSES = new Set(["BaraghastRoar", "Breath", "Earthquake", "RaidDamage", "RaidDamagePulse"]);
 
 function clampDifficulty(value: number, fallback: number): number {
   const normalized = Math.round(Number.isFinite(value) ? value : fallback);
@@ -262,6 +266,21 @@ function mergeEnemyRecord(baseEnemy: EnemyRecord | undefined, rosterEnemy: Enemy
   };
 }
 
+function createEnemyAbilitySnapshots(abilities: AbilityRecord[] | undefined): EnemySnapshot["abilities"] {
+  return (abilities ?? []).map((ability, index) => ({
+    id: ability.id ?? `${ability.className}-${index + 1}`,
+    title: typeof ability.title === "string" ? ability.title : ability.id ?? ability.className,
+    className: ability.className,
+    isRaidWide: RAID_WIDE_ABILITY_CLASSES.has(ability.className),
+    cooldown: numericValue(ability.cooldown ?? null),
+    activationTime: numericValue(ability.activationTime ?? null) ?? 0,
+    abilityValue: numericValue(ability.abilityValue ?? null),
+    targetCount: numericValue(ability.numTargets ?? null),
+    appliedEffectId: ability.appliedEffectId ?? null,
+    appliedEffect: ability.appliedEffect ?? null,
+  }));
+}
+
 function createEnemySnapshot(
   enemy: EnemyRecord,
   index: number,
@@ -278,6 +297,7 @@ function createEnemySnapshot(
   const attackFrequency = numericValue(enemy.attackFrequency ?? enemy.frequency ?? null);
   const targets = numericValue(enemy.targets ?? null);
   const threatPriority = numericValue(enemy.threatPriority ?? null);
+  const autoAttackFailureChance = numericValue(enemy.autoAttackAdjustments?.failureChance ?? null) ?? 0;
 
   if (baseHealth === null && enemy.health) {
     warnings.push(`Could not resolve health for enemy '${enemy.className}' (${enemy.health.expression}).`);
@@ -298,6 +318,8 @@ function createEnemySnapshot(
     targets,
     choosesMainTarget: enemy.choosesMainTarget !== false,
     threatPriority,
+    autoAttackFailureChance,
+    abilities: createEnemyAbilitySnapshots(enemy.abilities),
     source: typeof enemy.source === "string" ? enemy.source : "registry",
   };
 }

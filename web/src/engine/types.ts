@@ -27,6 +27,10 @@ export interface EnemyRecord {
   frequency?: NumericExpression;
   choosesMainTarget?: boolean;
   threatPriority?: NumericExpression;
+  autoAttackAdjustments?: {
+    failureChance?: NumericExpression | null;
+  };
+  abilities?: AbilityRecord[];
   [key: string]: unknown;
 }
 
@@ -77,6 +81,19 @@ export interface EffectRecord {
   damageTakenMultiplierAdjustment?: NumericExpression | null;
   healingDoneMultiplierAdjustment?: NumericExpression | null;
   castTimeAdjustment?: NumericExpression | null;
+}
+
+export interface AbilityRecord {
+  id: string;
+  title?: string;
+  className: string;
+  cooldown?: NumericExpression | null;
+  activationTime?: NumericExpression | null;
+  abilityValue?: NumericExpression | null;
+  numTargets?: NumericExpression | null;
+  appliedEffectId?: string | null;
+  appliedEffect?: EffectRecord | null;
+  [key: string]: unknown;
 }
 
 export interface ShopItemRecord {
@@ -205,7 +222,23 @@ export interface EnemySnapshot {
   targets: number | null;
   choosesMainTarget: boolean;
   threatPriority: number | null;
+  /** Exported for future native-parity miss handling; the current deterministic combat runtime does not consume this yet. */
+  autoAttackFailureChance: number;
+  abilities: EnemyAbilitySnapshot[];
   source: string;
+}
+
+export interface EnemyAbilitySnapshot {
+  id: string;
+  title: string;
+  className: string;
+  isRaidWide: boolean;
+  cooldown: number | null;
+  activationTime: number;
+  abilityValue: number | null;
+  targetCount: number | null;
+  appliedEffectId: string | null;
+  appliedEffect: EffectRecord | null;
 }
 
 export interface RewardPreview {
@@ -254,6 +287,8 @@ export interface PlayerCastSnapshot {
 }
 
 export interface CombatPlayerSnapshot {
+  /** Explicit discriminator for friendly-combatant union narrowing in the runtime. */
+  combatantType: "player";
   id: string;
   title: string;
   name: string;
@@ -267,6 +302,29 @@ export interface CombatPlayerSnapshot {
   cooldownAdjustment: number;
   activeSpells: CombatPlayerSpellSnapshot[];
   casting: PlayerCastSnapshot | null;
+}
+
+export interface CombatAllySnapshot extends AllySnapshot {
+  combatantType: "ally";
+  attackTimer: number;
+}
+
+export interface CombatEnemyAbilitySnapshot extends EnemyAbilitySnapshot {
+  remainingCooldown: number;
+}
+
+export interface EnemyCastSnapshot {
+  abilityId: string;
+  startedAt: number;
+  totalCastTime: number;
+  remainingCastTime: number;
+  targetIds: string[];
+}
+
+export interface CombatEnemySnapshot extends Omit<EnemySnapshot, "abilities"> {
+  attackTimer: number;
+  abilities: CombatEnemyAbilitySnapshot[];
+  casting: EnemyCastSnapshot | null;
 }
 
 export interface CombatEffectSnapshot {
@@ -293,10 +351,17 @@ export interface CombatStateSnapshot {
   encounter: EncounterBootstrapSnapshot["encounter"];
   time: number;
   player: CombatPlayerSnapshot;
-  allies: AllySnapshot[];
-  enemies: EnemySnapshot[];
+  allies: CombatAllySnapshot[];
+  enemies: CombatEnemySnapshot[];
   effects: CombatEffectSnapshot[];
+  result: CombatResultSnapshot;
   warnings: string[];
+}
+
+export interface CombatResultSnapshot {
+  status: "in_progress" | "victory" | "defeat";
+  reason: "all_enemies_defeated" | "all_allies_defeated" | "player_defeated" | null;
+  finishedAt: number | null;
 }
 
 export interface PlayerCastRequest {
@@ -305,14 +370,36 @@ export interface PlayerCastRequest {
 }
 
 export interface CombatEvent {
-  type: "player_cast_started" | "player_cast_completed" | "player_cast_rejected" | "effect_applied" | "effect_expired" | "health_changed";
+  type:
+    | "player_cast_started"
+    | "player_cast_completed"
+    | "player_cast_rejected"
+    | "effect_applied"
+    | "effect_expired"
+    | "health_changed"
+    | "ally_attack"
+    | "enemy_auto_attack"
+    | "enemy_ability_started"
+    | "enemy_ability_completed"
+    | "combatant_defeated"
+    | "encounter_completed";
   at: number;
   spellId?: string;
+  abilityId?: string;
+  actorId?: string;
   targetIds?: string[];
   targetId?: string;
   effectId?: string;
   amount?: number;
-  reason?: "already_casting" | "not_enough_energy" | "spell_on_cooldown" | "unknown_spell" | "invalid_target";
+  reason?:
+    | "already_casting"
+    | "not_enough_energy"
+    | "spell_on_cooldown"
+    | "unknown_spell"
+    | "invalid_target"
+    | "encounter_resolved";
+  result?: CombatResultSnapshot["status"];
+  resultReason?: CombatResultSnapshot["reason"];
 }
 
 export interface CombatUpdateResult {

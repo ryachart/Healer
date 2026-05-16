@@ -14,6 +14,8 @@ export function createGameRegistry(input) {
         enemiesByClassName: mapByKey(input.enemies, (enemy) => enemy.className),
         spellsById: mapByKey(input.spells, (spell) => spell.id),
         shopItemsBySpellId: mapByKey(input.shop.items, (item) => item.spellId),
+        lootRules: input.lootRules,
+        equipmentSchema: input.equipmentSchema,
         progression: input.progression,
     };
 }

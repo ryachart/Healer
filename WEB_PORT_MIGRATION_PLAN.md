@@ -527,10 +527,10 @@ Do not port scene code directly into browser scene code. First port the rules in
   - player spell runtime state for cast timing, cooldowns, and energy progression
   - deterministic player direct-heal resolution plus delayed/repeated positive spell-effect lifecycles
   - deterministic ally/enemy combat progression including ally auto-attacks, enemy auto-attacks, numeric-cooldown enemy ability scheduling, and encounter victory/defeat transitions
+  - deterministic postbattle resolution for score tallying, gold rewards, loot rolls, and progression updates using the extracted progression/equipment/loot payloads
 - **Still required for Phase 2 completeness**
   - broader enemy-ability parity for trigger-driven/channelled/special-case native behaviors that are not yet modeled by the generic numeric-cooldown runtime
   - broader combatant/status-rule parity such as threat, interrupts, dispels, shields, reactive effects, damage-prevention hooks, and visibility-priority handling
-  - score/reward/progression simulation after combat resolution
 - **Known extraction/runtime follow-ups**
   - preserve remaining spell/effect fields needed for full native parity where the current canonical payloads still collapse special-case behavior
   - keep extending the deterministic engine before any browser-scene port work begins

@@ -1,6 +1,6 @@
 # Healer web rules engine
 
-This workspace contains the Phase 2 browser-port rules-engine slices: deterministic encounter bootstrap state plus combat-runtime spell timing/cooldown, player-healing resolution, ally/enemy combat progression, encounter result transitions, and positive spell-effect lifecycle state assembled from the canonical `web/data/*.json` payloads.
+This workspace contains the Phase 2 browser-port rules-engine slices: deterministic encounter bootstrap state plus combat-runtime spell timing/cooldown, player-healing resolution, ally/enemy combat progression, encounter result transitions, postbattle reward/progression resolution, and positive spell-effect lifecycle state assembled from the canonical `web/data/*.json` payloads.
 
 ## Commands
 

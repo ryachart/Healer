@@ -42,10 +42,18 @@ function rarityValueForId(equipmentSchema, rarityId) {
 function salePriceForItem(equipmentSchema, rarityId, quality) {
     return 5 * (quality + (rarityValueForId(equipmentSchema, rarityId) * 2));
 }
+function normalizeRarityId(value) {
+    return value.replace(/^ItemRarity/, "").toLowerCase();
+}
 function resolveLootQuality(registry, level, difficulty) {
     const qualityByLevel = registry.lootRules.qualityRules.evaluatedLevelTable.find((entry) => entry.level === level);
     const resolved = qualityByLevel?.qualityByDifficulty[String(difficulty)] ?? null;
-    return resolved ?? Math.min(level <= 7 ? difficulty : level <= 13 ? difficulty + 2 : difficulty + 4, level <= 7 ? 4 : level <= 13 ? 6 : 8);
+    if (resolved !== null) {
+        return resolved;
+    }
+    const qualityBonus = level <= 7 ? 0 : level <= 13 ? 2 : 4;
+    const qualityCap = level <= 7 ? 4 : level <= 13 ? 6 : 8;
+    return Math.min(difficulty + qualityBonus, qualityCap);
 }
 function createProceduralLootItem(registry, rarityId, quality, random) {
     const { equipmentSchema } = registry;
@@ -113,11 +121,12 @@ function createProceduralLootItem(registry, rarityId, quality, random) {
     };
 }
 function toLootSnapshot(registry, item) {
+    const rarityId = normalizeRarityId(item.rarity);
     return {
         id: item.id,
         name: item.name,
         source: "encounter_specific",
-        rarity: item.rarity.replace(/^ItemRarity/, "").toLowerCase(),
+        rarity: rarityId,
         quality: item.quality,
         slot: item.slot.replace(/^SlotType/, "").toLowerCase(),
         health: item.health,
@@ -126,7 +135,7 @@ function toLootSnapshot(registry, item) {
         crit: item.crit,
         speed: item.speed,
         specialKey: item.specialKey,
-        salePrice: salePriceForItem(registry.equipmentSchema, item.rarity.replace(/^ItemRarity/, "").toLowerCase(), item.quality),
+        salePrice: salePriceForItem(registry.equipmentSchema, rarityId, item.quality),
     };
 }
 function pickWeightedLoot(registry, level, difficulty, seed, totalItemsEarned) {

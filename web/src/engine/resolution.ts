@@ -60,10 +60,19 @@ function salePriceForItem(equipmentSchema: EquipmentSchemaPayload, rarityId: str
   return 5 * (quality + (rarityValueForId(equipmentSchema, rarityId) * 2));
 }
 
+function normalizeRarityId(value: string): string {
+  return value.replace(/^ItemRarity/, "").toLowerCase();
+}
+
 function resolveLootQuality(registry: GameRegistry, level: number, difficulty: number): number {
   const qualityByLevel = registry.lootRules.qualityRules.evaluatedLevelTable.find((entry) => entry.level === level);
   const resolved = qualityByLevel?.qualityByDifficulty[String(difficulty)] ?? null;
-  return resolved ?? Math.min(level <= 7 ? difficulty : level <= 13 ? difficulty + 2 : difficulty + 4, level <= 7 ? 4 : level <= 13 ? 6 : 8);
+  if (resolved !== null) {
+    return resolved;
+  }
+  const qualityBonus = level <= 7 ? 0 : level <= 13 ? 2 : 4;
+  const qualityCap = level <= 7 ? 4 : level <= 13 ? 6 : 8;
+  return Math.min(difficulty + qualityBonus, qualityCap);
 }
 
 function createProceduralLootItem(
@@ -142,11 +151,12 @@ function createProceduralLootItem(
 }
 
 function toLootSnapshot(registry: GameRegistry, item: LootRuleItemRecord): EncounterLootSnapshot {
+  const rarityId = normalizeRarityId(item.rarity);
   return {
     id: item.id,
     name: item.name,
     source: "encounter_specific",
-    rarity: item.rarity.replace(/^ItemRarity/, "").toLowerCase(),
+    rarity: rarityId,
     quality: item.quality,
     slot: item.slot.replace(/^SlotType/, "").toLowerCase(),
     health: item.health,
@@ -155,7 +165,7 @@ function toLootSnapshot(registry: GameRegistry, item: LootRuleItemRecord): Encou
     crit: item.crit,
     speed: item.speed,
     specialKey: item.specialKey,
-    salePrice: salePriceForItem(registry.equipmentSchema, item.rarity.replace(/^ItemRarity/, "").toLowerCase(), item.quality),
+    salePrice: salePriceForItem(registry.equipmentSchema, rarityId, item.quality),
   };
 }
 

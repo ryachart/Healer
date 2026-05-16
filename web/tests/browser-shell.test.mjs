@@ -6,6 +6,8 @@ import { fileURLToPath } from "node:url";
 
 import { createGameRegistry } from "../dist/index.js";
 import {
+  applyEncounterResolutionToProfile,
+  createEncounterProgressionInput,
   createDefaultBrowserShellProfile,
   createPrebattleViewModel,
   createWorldMapViewModel,
@@ -13,6 +15,7 @@ import {
   highestUnlockedEncounterLevel,
   sanitizeBrowserShellProfile,
 } from "../dist/browser-shell.js";
+import { createCombatState, resolveEncounterOutcome } from "../dist/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -111,4 +114,55 @@ test("profile sanitization discards malformed persisted fields and invalid diffi
   assert.equal(profile.hasMainGameExpansion, fallback.hasMainGameExpansion);
   assert.deepEqual(profile.difficultyByLevel, { 2: 4 });
   assert.equal(difficultyForEncounter(registry, profile, 3), registry.progression.progressionRules.difficultyDefaultValue);
+});
+
+test("progression input mirrors persisted shell profile progression fields", () => {
+  const profile = createDefaultBrowserShellProfile();
+  profile.gold = 775;
+  profile.highestLevelCompleted = 6;
+  profile.ratingsByLevel = { 2: 3, 6: 4 };
+  profile.scoresByLevel = { 2: 5100 };
+  profile.failureCountsByLevel = { 5: 2 };
+  profile.inventoryCount = 7;
+  profile.totalItemsEarned = 13;
+
+  assert.deepEqual(createEncounterProgressionInput(profile), {
+    gold: 775,
+    highestLevelCompleted: 6,
+    ratingsByLevel: { 2: 3, 6: 4 },
+    scoresByLevel: { 2: 5100 },
+    failureCountsByLevel: { 5: 2 },
+    inventoryCount: 7,
+    totalItemsEarned: 13,
+  });
+});
+
+test("encounter resolution updates persisted browser-shell progression fields", () => {
+  const registry = createRegistry();
+  const profile = createDefaultBrowserShellProfile();
+  profile.highestLevelCompleted = 1;
+  profile.gold = 250;
+  profile.inventoryCount = 2;
+  profile.totalItemsEarned = 5;
+
+  const preview = createPrebattleViewModel(registry, profile, 2);
+  const combatState = createCombatState(preview.bootstrap);
+  combatState.result = {
+    status: "victory",
+    reason: "all_enemies_defeated",
+    finishedAt: 48,
+  };
+  combatState.metrics.scoreTally = 275;
+
+  const resolution = resolveEncounterOutcome(registry, combatState, createEncounterProgressionInput(profile));
+  const nextProfile = applyEncounterResolutionToProfile(profile, resolution);
+
+  assert.equal(nextProfile.highestLevelCompleted, resolution.progression.highestLevelCompleted);
+  assert.equal(nextProfile.gold, resolution.progression.gold);
+  assert.deepEqual(nextProfile.ratingsByLevel, resolution.progression.ratingsByLevel);
+  assert.deepEqual(nextProfile.scoresByLevel, resolution.progression.scoresByLevel);
+  assert.deepEqual(nextProfile.failureCountsByLevel, resolution.progression.failureCountsByLevel);
+  assert.equal(nextProfile.inventoryCount, resolution.progression.inventoryCount);
+  assert.equal(nextProfile.totalItemsEarned, resolution.progression.totalItemsEarned);
+  assert.deepEqual(nextProfile.unlockedTalentTiers, resolution.progression.unlockedTalentTiers);
 });

@@ -535,6 +535,17 @@ Do not port scene code directly into browser scene code. First port the rules in
   - preserve remaining spell/effect fields needed for full native parity where the current canonical payloads still collapse special-case behavior
   - keep extending the deterministic engine before any browser-scene port work begins
 
+### Web-port execution checkpoint (after PR #25)
+
+- **Completed in PR #25**
+  - initial Phase 3 browser shell scaffold for splash, main menu, world map, and prebattle
+  - browser-shell profile persistence and sanitization
+  - world-map unlock parity (`highestLevelCompleted + 1`) and deterministic prebattle view-model derivation
+- **Remaining at that checkpoint**
+  - gameplay and postbattle browser pages wired to the deterministic combat/resolution runtime
+  - menu destination pages for talents, academy/shop, armory, and settings
+  - profile progression persistence wiring for gold, ratings/scores/failures, loot inventory counters, and unlocked talent tiers
+
 ## Phase 3 – Build the browser shell and page flow
 
 Recreate the native flow on the web in the same order users experience it:
@@ -556,6 +567,17 @@ Recreate the native flow on the web in the same order users experience it:
 - Prebattle must show boss, allies, and currently selected spells.
 - The battle HUD must retain raid-frame readability and status-icon priority behavior.
 - Menu navigation should work with mouse and touch.
+
+### Phase 3 execution track (series of PRs)
+
+- [x] **PR #25** – shell foundation (splash/menu/map/prebattle, browser-shell view models, persistence sanitization)
+- [x] **PR: Phase 3 flow completion** – gameplay and postbattle pages using deterministic autoplay + `resolveEncounterOutcome`, plus menu destination pages for academy, armory, talents, and settings
+- [ ] **PR: Phase 3 parity polish** – tighten battle HUD parity (raid-frame readability/status prioritization), richer prebattle loadout editing, and touch-first interaction refinements
+
+### Phase 3 status now
+
+- **Complete for flow-level scope**: all native top-level pages are reachable in the browser shell, and the Play path now runs prebattle → gameplay → postbattle with deterministic progression updates persisted in browser profile state.
+- **Still deferred to later phases**: full battle-UI pixel/parity fidelity, advanced combat rule parity beyond current deterministic runtime coverage, and service-backed persistence/multiplayer architecture.
 
 ## Phase 4 – Convert and package assets
 

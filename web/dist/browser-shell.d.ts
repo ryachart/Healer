@@ -1,5 +1,5 @@
 import type { GameRegistry } from "./engine/registry.js";
-import type { EncounterBootstrapSnapshot, EquippedItemInput, PlayerProfileInput } from "./engine/types.js";
+import type { EncounterBootstrapSnapshot, EncounterProgressionInput, EncounterResolutionSnapshot, EquippedItemInput, PlayerProfileInput } from "./engine/types.js";
 export interface BrowserShellProfile {
     name: string;
     highestLevelCompleted: number;
@@ -9,6 +9,13 @@ export interface BrowserShellProfile {
     equippedItems: EquippedItemInput[];
     hasMainGameExpansion: boolean;
     difficultyByLevel: Record<number, number>;
+    gold: number;
+    ratingsByLevel: Record<string, number>;
+    scoresByLevel: Record<string, number>;
+    failureCountsByLevel: Record<string, number>;
+    inventoryCount: number;
+    totalItemsEarned: number;
+    unlockedTalentTiers: number[];
 }
 export interface WorldMapEncounterViewModel {
     level: number;
@@ -33,6 +40,8 @@ export interface PrebattleViewModel {
 }
 export declare function createDefaultBrowserShellProfile(): BrowserShellProfile;
 export declare function createPlayerProfileInput(profile: BrowserShellProfile): PlayerProfileInput;
+export declare function createEncounterProgressionInput(profile: BrowserShellProfile): EncounterProgressionInput;
+export declare function applyEncounterResolutionToProfile(profile: BrowserShellProfile, resolution: EncounterResolutionSnapshot): BrowserShellProfile;
 export declare function highestUnlockedEncounterLevel(profile: BrowserShellProfile): number;
 export declare function createWorldMapViewModel(registry: GameRegistry, profile: BrowserShellProfile): WorldMapEncounterViewModel[];
 export declare function difficultyForEncounter(registry: GameRegistry, profile: BrowserShellProfile, level: number): number;

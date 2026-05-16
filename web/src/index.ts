@@ -3,6 +3,8 @@ export { advanceCombatState, beginPlayerCast, createCombatState } from "./engine
 export { resolveEncounterOutcome } from "./engine/resolution.js";
 export { createGameRegistry } from "./engine/registry.js";
 export {
+  applyEncounterResolutionToProfile,
+  createEncounterProgressionInput,
   createDefaultBrowserShellProfile,
   createPrebattleViewModel,
   createWorldMapViewModel,

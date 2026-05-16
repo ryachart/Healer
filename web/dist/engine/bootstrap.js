@@ -19,6 +19,7 @@ const ENEMY_DAMAGE_MODIFIER = {
     4: 0.125,
     5: 0.25,
 };
+// These classes are the current canonical raid-wide damage abilities emitted by the native extractor payload.
 const RAID_WIDE_ABILITY_CLASSES = new Set(["BaraghastRoar", "Breath", "Earthquake", "RaidDamage", "RaidDamagePulse"]);
 function clampDifficulty(value, fallback) {
     const normalized = Math.round(Number.isFinite(value) ? value : fallback);

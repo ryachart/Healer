@@ -286,6 +286,7 @@ export interface PlayerCastSnapshot {
 }
 
 export interface CombatPlayerSnapshot {
+  /** Explicit discriminator for friendly-combatant union narrowing in the runtime. */
   combatantType: "player";
   id: string;
   title: string;

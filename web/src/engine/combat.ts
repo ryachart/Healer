@@ -239,8 +239,7 @@ function applySpellCooldown(spell: CombatPlayerSpellSnapshot): void {
 }
 
 function applyHealthDelta(target: { health: number; maximumHealth: number }, amount: number): number {
-  const nextHealth = Math.max(0, Math.min(target.maximumHealth, target.health + amount));
-  const delta = nextHealth - target.health;
+  const { nextHealth, delta } = resolveHealthDelta(target.health, target.maximumHealth, amount);
   target.health = nextHealth;
   return delta;
 }
@@ -249,10 +248,17 @@ function applyEnemyHealthDelta(target: CombatEnemySnapshot, amount: number): num
   if (target.health === null || target.maximumHealth === null) {
     return 0;
   }
-  const nextHealth = Math.max(0, Math.min(target.maximumHealth, target.health + amount));
-  const delta = nextHealth - target.health;
+  const { nextHealth, delta } = resolveHealthDelta(target.health, target.maximumHealth, amount);
   target.health = nextHealth;
   return delta;
+}
+
+function resolveHealthDelta(currentHealth: number, maximumHealth: number, amount: number): { nextHealth: number; delta: number } {
+  const nextHealth = Math.max(0, Math.min(maximumHealth, currentHealth + amount));
+  return {
+    nextHealth,
+    delta: nextHealth - currentHealth,
+  };
 }
 
 function adjustedEffectMagnitude(value: number | null, healingDoneMultiplier: number): number | null {

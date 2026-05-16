@@ -188,8 +188,7 @@ function applySpellCooldown(spell) {
     spell.cooldownRemaining = spell.cooldown ?? 0;
 }
 function applyHealthDelta(target, amount) {
-    const nextHealth = Math.max(0, Math.min(target.maximumHealth, target.health + amount));
-    const delta = nextHealth - target.health;
+    const { nextHealth, delta } = resolveHealthDelta(target.health, target.maximumHealth, amount);
     target.health = nextHealth;
     return delta;
 }
@@ -197,10 +196,16 @@ function applyEnemyHealthDelta(target, amount) {
     if (target.health === null || target.maximumHealth === null) {
         return 0;
     }
-    const nextHealth = Math.max(0, Math.min(target.maximumHealth, target.health + amount));
-    const delta = nextHealth - target.health;
+    const { nextHealth, delta } = resolveHealthDelta(target.health, target.maximumHealth, amount);
     target.health = nextHealth;
     return delta;
+}
+function resolveHealthDelta(currentHealth, maximumHealth, amount) {
+    const nextHealth = Math.max(0, Math.min(maximumHealth, currentHealth + amount));
+    return {
+        nextHealth,
+        delta: nextHealth - currentHealth,
+    };
 }
 function adjustedEffectMagnitude(value, healingDoneMultiplier) {
     if (value === null) {

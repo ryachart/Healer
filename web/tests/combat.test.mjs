@@ -431,7 +431,7 @@ test("enemy abilities start on cooldown expiry and resolve after their activatio
   assert.equal(target.health, 260);
 });
 
-test("enemy auto-attacks can defeat the raid and resolved encounters reject further casts", () => {
+test("enemy auto-attacks can defeat the raid and resolved encounters should reject further casts", () => {
   const initial = createCombatState(createBootstrap({
     difficulty: 3,
     multiplayer: false,

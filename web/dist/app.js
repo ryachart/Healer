@@ -3,7 +3,7 @@
 import { createGameRegistry } from "./engine/registry.js";
 import { advanceCombatState, beginPlayerCast, createCombatState } from "./engine/combat.js";
 import { resolveEncounterOutcome } from "./engine/resolution.js";
-import { applyEncounterResolutionToProfile, createDefaultBrowserShellProfile, createEncounterProgressionInput, createPrebattleViewModel, sanitizeBrowserShellProfile, createWorldMapViewModel, highestUnlockedEncounterLevel, } from "./browser-shell.js";
+import { applySelectedSpellIds, applyEncounterResolutionToProfile, createDefaultBrowserShellProfile, createEncounterProgressionInput, createPrebattleViewModel, sanitizeBrowserShellProfile, createWorldMapViewModel, highestUnlockedEncounterLevel, maximumStandardSpellSlots, normalizeSelectedSpellIds, } from "./browser-shell.js";
 const SHELL_STORAGE_KEY = "healer.web.browser-shell.v1";
 const AUTOPLAY_STEP_SECONDS = 0.25;
 const AUTOPLAY_MAX_STEPS = 2400;
@@ -94,6 +94,36 @@ function lowestHealthAllyId(state) {
         .filter((ally) => ally.health > 0 && ally.maximumHealth > 0)
         .sort((left, right) => (left.health / left.maximumHealth) - (right.health / right.maximumHealth));
     return candidates[0]?.id ?? null;
+}
+function healthPercent(health, maximumHealth) {
+    if (maximumHealth <= 0) {
+        return 0;
+    }
+    return Math.max(0, Math.min(100, (health / maximumHealth) * 100));
+}
+function priorityForEffect(event) {
+    let priority = 0;
+    if (event.tickInterval !== null) {
+        priority += 100;
+    }
+    if (event.currentValuePerTick !== null) {
+        priority += 50;
+    }
+    if (event.effectType === "negative") {
+        priority += 40;
+    }
+    if (event.effectType === "positive") {
+        priority += 20;
+    }
+    priority += Math.max(0, Math.round((event.totalDuration - event.remainingDuration) * 10));
+    return priority;
+}
+function setSelectedSpells(state, appRoot, spellIds) {
+    const nextProfile = applySelectedSpellIds(state.registry, state.profile, spellIds);
+    state.profile = nextProfile;
+    saveProfile(nextProfile);
+    state.notice = `Updated prebattle loadout (${nextProfile.selectedSpellIds.length}/${maximumStandardSpellSlots(state.registry, nextProfile)} slots).`;
+    render(appRoot, state);
 }
 function runAutoplayEncounter(state, level) {
     const preview = createPrebattleViewModel(state.registry, state.profile, level);
@@ -315,9 +345,16 @@ function renderPrebattle(content, state, appRoot) {
     grid.append(alliesPanel);
     const spellsPanel = element("article", "detail-card");
     spellsPanel.append(element("h3", "detail-card__title", "Selected spells"));
+    const maxSpellSlots = maximumStandardSpellSlots(state.registry, state.profile);
+    const effectiveSelectedSpellIds = normalizeSelectedSpellIds(state.registry, state.profile, preview.bootstrap.player.activeSpellIds);
+    const selectedSpellIdSet = new Set(effectiveSelectedSpellIds);
+    spellsPanel.append(element("p", "detail-card__text", `Loadout slots: ${effectiveSelectedSpellIds.length}/${maxSpellSlots}`));
     const spellList = element("ul", "detail-card__list");
     for (const spell of preview.selectedSpells) {
         spellList.append(element("li", "", spell.spellType ? `${spell.title} (${spell.spellType})` : spell.title));
+    }
+    if (preview.selectedSpells.length === 0) {
+        spellList.append(element("li", "", "No selected spells. The bootstrap falls back to recommended/owned spells."));
     }
     spellsPanel.append(spellList);
     spellsPanel.append(element("p", "detail-card__text", `Recommended: ${preview.bootstrap.encounter.recommendedSpellIds.join(", ") || "None"}`));
@@ -325,6 +362,54 @@ function renderPrebattle(content, state, appRoot) {
         spellsPanel.append(element("p", "detail-card__text", `Required: ${preview.bootstrap.encounter.requiredSpellIds.join(", ")}`));
     }
     grid.append(spellsPanel);
+    const loadoutPanel = element("article", "detail-card");
+    loadoutPanel.append(element("h3", "detail-card__title", "Loadout editor"));
+    loadoutPanel.append(element("p", "detail-card__text", "Toggle owned spells before battle. Selection is persisted to browser profile state."));
+    const loadoutActions = element("div", "actions");
+    loadoutActions.append(actionButton("Use recommended", () => {
+        const recommendedFirst = [
+            ...preview.bootstrap.encounter.requiredSpellIds,
+            ...preview.bootstrap.encounter.recommendedSpellIds,
+            ...effectiveSelectedSpellIds,
+        ];
+        setSelectedSpells(state, appRoot, recommendedFirst);
+    }));
+    loadoutActions.append(actionButton("Clear loadout", () => {
+        setSelectedSpells(state, appRoot, []);
+    }));
+    loadoutPanel.append(loadoutActions);
+    const loadoutList = element("ul", "loadout-list");
+    for (const spellId of state.profile.ownedSpellIds) {
+        const spell = state.registry.spellsById.get(spellId);
+        if (!spell) {
+            continue;
+        }
+        const row = element("li", "loadout-row");
+        const text = element("div", "loadout-row__text");
+        text.append(element("p", "loadout-row__title", spell.title));
+        const tags = [
+            preview.bootstrap.encounter.requiredSpellIds.includes(spellId) ? "required" : null,
+            preview.bootstrap.encounter.recommendedSpellIds.includes(spellId) ? "recommended" : null,
+            selectedSpellIdSet.has(spellId) ? "selected" : null,
+        ].filter((entry) => entry !== null);
+        text.append(element("p", "loadout-row__meta", tags.join(" • ") || "owned"));
+        row.append(text);
+        row.append(actionButton(selectedSpellIdSet.has(spellId) ? "Remove" : "Add", () => {
+            const nextSelection = selectedSpellIdSet.has(spellId)
+                ? effectiveSelectedSpellIds.filter((id) => id !== spellId)
+                : [...effectiveSelectedSpellIds, spellId];
+            setSelectedSpells(state, appRoot, nextSelection);
+        }, {
+            accent: !selectedSpellIdSet.has(spellId),
+            disabled: !selectedSpellIdSet.has(spellId) && effectiveSelectedSpellIds.length >= maxSpellSlots,
+        }));
+        loadoutList.append(row);
+    }
+    if (loadoutList.childElementCount === 0) {
+        loadoutList.append(element("li", "loadout-row", "No owned spells are available in this profile."));
+    }
+    loadoutPanel.append(loadoutList);
+    grid.append(loadoutPanel);
     const enemiesPanel = element("article", "detail-card");
     enemiesPanel.append(element("h3", "detail-card__title", "Enemy roster"));
     const enemyList = element("ul", "detail-card__list");
@@ -368,6 +453,40 @@ function renderGameplay(content, state, appRoot) {
     metrics.append(createMetric("Healing", formatNumber(Math.trunc(gameplay.resolution.metrics.healingDone))));
     metrics.append(createMetric("Damage taken", formatNumber(Math.trunc(gameplay.resolution.metrics.damageTaken))));
     section.append(metrics);
+    const hudGrid = element("div", "detail-grid");
+    const raidCard = element("article", "detail-card");
+    raidCard.append(element("h3", "detail-card__title", "Raid frames"));
+    const raidList = element("ul", "raid-frames");
+    for (const ally of gameplay.finalState.allies) {
+        const allyRow = element("li", "raid-frame");
+        allyRow.append(element("p", "raid-frame__name", ally.title));
+        allyRow.append(element("p", "raid-frame__value", `${formatNumber(ally.health)} / ${formatNumber(ally.maximumHealth)} HP`));
+        const bar = element("div", "raid-frame__bar");
+        const fill = element("div", "raid-frame__fill");
+        fill.style.width = `${healthPercent(ally.health, ally.maximumHealth).toFixed(2)}%`;
+        bar.append(fill);
+        allyRow.append(bar);
+        const topEffects = gameplay.finalState.effects
+            .filter((effect) => effect.targetId === ally.id)
+            .sort((left, right) => priorityForEffect(right) - priorityForEffect(left))
+            .slice(0, 2);
+        const effectText = topEffects.length > 0
+            ? topEffects.map((effect) => effect.title).join(", ")
+            : "No active effects";
+        allyRow.append(element("p", "raid-frame__effects", effectText));
+        raidList.append(allyRow);
+    }
+    raidCard.append(raidList);
+    hudGrid.append(raidCard);
+    const playerCard = element("article", "detail-card");
+    playerCard.append(element("h3", "detail-card__title", "Player status"));
+    playerCard.append(element("p", "detail-card__text", `${formatNumber(Math.trunc(gameplay.finalState.player.health))}/${formatNumber(Math.trunc(gameplay.finalState.player.maximumHealth))} HP`));
+    playerCard.append(element("p", "detail-card__text", `${formatNumber(Math.trunc(gameplay.finalState.player.energy))}/${formatNumber(Math.trunc(gameplay.finalState.player.maximumEnergy))} Energy`));
+    playerCard.append(element("p", "detail-card__text", gameplay.finalState.player.casting
+        ? `Casting ${gameplay.finalState.player.casting.spellId} (${gameplay.finalState.player.casting.remainingCastTime.toFixed(2)}s left)`
+        : "Not casting"));
+    hudGrid.append(playerCard);
+    section.append(hudGrid);
     const logCard = element("article", "detail-card");
     logCard.append(element("h3", "detail-card__title", "Recent combat events"));
     const logList = element("ul", "detail-card__list");

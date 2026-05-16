@@ -3,6 +3,7 @@ export { advanceCombatState, beginPlayerCast, createCombatState } from "./engine
 export { resolveEncounterOutcome } from "./engine/resolution.js";
 export { createGameRegistry } from "./engine/registry.js";
 export {
+  applySelectedSpellIds,
   applyEncounterResolutionToProfile,
   createEncounterProgressionInput,
   createDefaultBrowserShellProfile,
@@ -10,6 +11,8 @@ export {
   createWorldMapViewModel,
   difficultyForEncounter,
   highestUnlockedEncounterLevel,
+  maximumStandardSpellSlots,
+  normalizeSelectedSpellIds,
 } from "./browser-shell.js";
 export type {
   CombatStateSnapshot,

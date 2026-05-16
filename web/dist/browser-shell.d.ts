@@ -45,5 +45,8 @@ export declare function applyEncounterResolutionToProfile(profile: BrowserShellP
 export declare function highestUnlockedEncounterLevel(profile: BrowserShellProfile): number;
 export declare function createWorldMapViewModel(registry: GameRegistry, profile: BrowserShellProfile): WorldMapEncounterViewModel[];
 export declare function difficultyForEncounter(registry: GameRegistry, profile: BrowserShellProfile, level: number): number;
+export declare function maximumStandardSpellSlots(registry: GameRegistry, profile: BrowserShellProfile): number;
+export declare function normalizeSelectedSpellIds(registry: GameRegistry, profile: BrowserShellProfile, selectedSpellIds: string[]): string[];
+export declare function applySelectedSpellIds(registry: GameRegistry, profile: BrowserShellProfile, selectedSpellIds: string[]): BrowserShellProfile;
 export declare function sanitizeBrowserShellProfile(value: unknown, fallback?: BrowserShellProfile): BrowserShellProfile;
 export declare function createPrebattleViewModel(registry: GameRegistry, profile: BrowserShellProfile, level: number): PrebattleViewModel;

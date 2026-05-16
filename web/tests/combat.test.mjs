@@ -230,7 +230,7 @@ test("repeated healing effects tick deterministically and expire", () => {
     },
   ]);
 
-  const tickAmount = applied.state.effects[0].currentValuePerTick;
+  const tickAmount = Math.round(applied.state.effects[0].currentValuePerTick);
   const advanced = advanceCombatState(applied.state, 12);
   const healthEvents = advanced.events.filter((event) => event.type === "health_changed");
   const healedTarget = advanced.state.allies.find((ally) => ally.id === "ally-guardian-1");
@@ -275,7 +275,7 @@ test("delayed healing effects resolve when the applied effect expires", () => {
   };
 
   const applied = beginPlayerCast(injured, { spellId: "BlessedArmor", targetIds: ["ally-guardian-1"] });
-  const delayedValue = applied.state.effects[0].value;
+  const delayedValue = Math.round(applied.state.effects[0].value);
   const resolved = advanceCombatState(applied.state, 5);
   const healedTarget = resolved.state.allies.find((ally) => ally.id === "ally-guardian-1");
   const injuredTarget = injured.allies.find((ally) => ally.id === "ally-guardian-1");

@@ -21,6 +21,10 @@ function clampToZero(value: number): number {
   return value > 0 ? value : 0;
 }
 
+function normalizeTimelineValue(value: number): number {
+  return Math.round(value * 1_000_000) / 1_000_000;
+}
+
 function numericValue(value: { value: number | null } | number | null | undefined): number | null {
   if (typeof value === "number") {
     return value;
@@ -200,7 +204,8 @@ function adjustedEffectMagnitude(value: number | null, healingDoneMultiplier: nu
   if (value === null) {
     return null;
   }
-  return Math.round(value * (value > 0 ? healingDoneMultiplier : 1));
+  // Positive effect values represent healing and inherit the player's healing multiplier; negative values are damage and stay raw.
+  return value * (value > 0 ? healingDoneMultiplier : 1);
 }
 
 function createCombatEffectSnapshot(
@@ -214,10 +219,10 @@ function createCombatEffectSnapshot(
     return null;
   }
 
-  const totalDuration = numericValue(effect.duration) ?? 0;
+  const totalDuration = normalizeTimelineValue(numericValue(effect.duration) ?? 0);
   const totalTicksValue = numericValue(effect.numOfTicks);
   const totalTicks = totalTicksValue === null ? null : Math.max(1, Math.round(totalTicksValue));
-  const tickInterval = totalTicks && totalDuration > 0 ? totalDuration / totalTicks : null;
+  const tickInterval = totalTicks && totalDuration > 0 ? normalizeTimelineValue(totalDuration / totalTicks) : null;
 
   return {
     effectId,
@@ -333,10 +338,10 @@ function advanceClock(state: CombatStateSnapshot, elapsedSeconds: number): Comba
     return next;
   }
 
-  next.time += elapsedSeconds;
+  next.time = normalizeTimelineValue(next.time + elapsedSeconds);
   next.player.energy = Math.min(
     next.player.maximumEnergy,
-    next.player.energy + (next.player.energyRegenPerSecond * elapsedSeconds),
+      next.player.energy + (next.player.energyRegenPerSecond * elapsedSeconds),
   );
 
   for (const spell of next.player.activeSpells) {
@@ -349,10 +354,10 @@ function advanceClock(state: CombatStateSnapshot, elapsedSeconds: number): Comba
 
   next.effects = next.effects.map((effect) => ({
     ...effect,
-    remainingDuration: clampToZero(effect.remainingDuration - elapsedSeconds),
+    remainingDuration: normalizeTimelineValue(clampToZero(effect.remainingDuration - elapsedSeconds)),
     remainingUntilNextTick: effect.remainingUntilNextTick === null
       ? null
-      : clampToZero(effect.remainingUntilNextTick - elapsedSeconds),
+      : normalizeTimelineValue(clampToZero(effect.remainingUntilNextTick - elapsedSeconds)),
   }));
 
   return next;
@@ -388,7 +393,7 @@ function processDueEffects(state: CombatStateSnapshot, at: number): CombatEvent[
     if (dueTick) {
       const target = getHealableTarget(state, next.targetId);
       if (target && next.currentValuePerTick !== null) {
-        const appliedAmount = applyHealthDelta(target, next.currentValuePerTick);
+        const appliedAmount = applyHealthDelta(target, Math.round(next.currentValuePerTick));
         if (appliedAmount !== 0) {
           events.push({
             type: "health_changed",
@@ -402,9 +407,10 @@ function processDueEffects(state: CombatStateSnapshot, at: number): CombatEvent[
       }
 
       next.ticksApplied += 1;
+      // Native `increasePerTick` is a multiplicative delta: 0.1 => 10% larger next tick, -0.25 => 25% smaller next tick.
       next.currentValuePerTick = next.currentValuePerTick === null
         ? null
-        : Math.round(next.currentValuePerTick * (1 + next.increasePerTick));
+        : next.currentValuePerTick * (1 + next.increasePerTick);
       next.remainingUntilNextTick = next.totalTicks !== null && next.ticksApplied >= next.totalTicks
         ? null
         : next.tickInterval;
@@ -414,7 +420,7 @@ function processDueEffects(state: CombatStateSnapshot, at: number): CombatEvent[
       if (next.className === "DelayedHealthEffect" && next.value !== null) {
         const target = getHealableTarget(state, next.targetId);
         if (target) {
-          const appliedAmount = applyHealthDelta(target, next.value);
+          const appliedAmount = applyHealthDelta(target, Math.round(next.value));
           if (appliedAmount !== 0) {
             events.push({
               type: "health_changed",

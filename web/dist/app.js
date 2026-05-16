@@ -8,6 +8,8 @@ const SHELL_STORAGE_KEY = "healer.web.browser-shell.v1";
 const AUTOPLAY_STEP_SECONDS = 0.25;
 const AUTOPLAY_MAX_STEPS = 2400;
 const EVENT_LOG_LIMIT = 24;
+const EVENT_LOG_STORAGE_LIMIT = 256;
+const NUMBER_FORMATTER = new Intl.NumberFormat("en-US");
 async function loadPayload(path) {
     const response = await fetch(path);
     if (!response.ok) {
@@ -76,7 +78,16 @@ function createMetric(label, value) {
     return wrapper;
 }
 function formatNumber(value) {
-    return new Intl.NumberFormat("en-US").format(value);
+    return NUMBER_FORMATTER.format(value);
+}
+function appendRecentEvents(eventLog, events) {
+    if (events.length === 0) {
+        return;
+    }
+    eventLog.push(...events);
+    if (eventLog.length > EVENT_LOG_STORAGE_LIMIT) {
+        eventLog.splice(0, eventLog.length - EVENT_LOG_STORAGE_LIMIT);
+    }
 }
 function lowestHealthAllyId(state) {
     const candidates = state.allies
@@ -103,9 +114,7 @@ function runAutoplayEncounter(state, level) {
                     targetIds: targetId ? [targetId] : [],
                 });
                 combatState = castUpdate.state;
-                if (castUpdate.events.length > 0) {
-                    eventLog.push(...castUpdate.events);
-                }
+                appendRecentEvents(eventLog, castUpdate.events);
                 if (castUpdate.events.some((event) => event.type !== "player_cast_rejected")) {
                     break;
                 }
@@ -113,9 +122,7 @@ function runAutoplayEncounter(state, level) {
         }
         const update = advanceCombatState(combatState, AUTOPLAY_STEP_SECONDS);
         combatState = update.state;
-        if (update.events.length > 0) {
-            eventLog.push(...update.events);
-        }
+        appendRecentEvents(eventLog, update.events);
     }
     if (combatState.result.status === "in_progress") {
         throw new Error("Autoplay did not resolve the encounter within the simulation limit.");
@@ -562,9 +569,14 @@ function renderSettings(content, state, appRoot) {
     nameCard.append(element("h3", "detail-card__title", "Player name"));
     nameCard.append(element("p", "detail-card__text", `Current name: ${state.profile.name}`));
     const renameForm = element("div", "actions");
+    const inputId = "settings-profile-name";
+    const label = element("label", "detail-card__text", "Display name");
+    label.htmlFor = inputId;
     const input = element("input", "input");
+    input.id = inputId;
     input.value = state.profile.name;
     input.maxLength = 24;
+    renameForm.append(label);
     renameForm.append(input);
     renameForm.append(actionButton("Save name", () => {
         const nextName = input.value.trim();

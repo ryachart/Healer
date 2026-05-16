@@ -12,6 +12,8 @@ const LATE_GAME_QUALITY_BONUS = 4;
 const EARLY_GAME_QUALITY_CAP = 4;
 const MID_GAME_QUALITY_CAP = 6;
 const LATE_GAME_QUALITY_CAP = 8;
+const SALE_PRICE_BASE_MULTIPLIER = 5;
+const SALE_PRICE_RARITY_MULTIPLIER = 2;
 function normalizeLevelMap(values) {
     const normalized = {};
     if (!values) {
@@ -48,7 +50,7 @@ function rarityValueForId(equipmentSchema, rarityId) {
     return equipmentSchema.rarities.find((rarity) => rarity.id === rarityId)?.value ?? 1;
 }
 function salePriceForItem(equipmentSchema, rarityId, quality) {
-    return 5 * (quality + (rarityValueForId(equipmentSchema, rarityId) * 2));
+    return SALE_PRICE_BASE_MULTIPLIER * (quality + (rarityValueForId(equipmentSchema, rarityId) * SALE_PRICE_RARITY_MULTIPLIER));
 }
 function normalizeRarityId(value) {
     return value.replace(/^ItemRarity/, "").toLowerCase();
@@ -99,6 +101,7 @@ function createProceduralLootItem(registry, rarityId, quality, random) {
         selectedStatIds.splice(randomIndex(random, selectedStatIds.length), 1, "health");
     }
     const slotModifier = equipmentSchema.proceduralGenerationRules.slotModifiers[slot] ?? 1;
+    // Native loot generation distributes a discrete stat-budget ("atoms") across the rolled stat list.
     let totalAtoms = Math.max(0, Math.floor(adjustedQuality * slotModifier * rarityValue));
     const stats = Object.fromEntries(equipmentSchema.statTypes.map((stat) => [stat.id, 0]));
     for (const statId of selectedStatIds) {

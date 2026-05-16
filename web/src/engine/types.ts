@@ -186,6 +186,11 @@ export interface EquipmentSchemaPayload {
 }
 
 export interface ProgressionSchemaPayload {
+  contentGate: {
+    endFreeEncounterLevel: number;
+    endFreeUpsellText: string;
+    mainGameContentKey: string;
+  };
   progressionRules: {
     allyUpgradeCost: {
       base: number;

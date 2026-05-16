@@ -19,6 +19,7 @@ const ENEMY_DAMAGE_MODIFIER = {
     4: 0.125,
     5: 0.25,
 };
+const RAID_WIDE_ABILITY_CLASSES = new Set(["BaraghastRoar", "Breath", "Earthquake", "RaidDamage", "RaidDamagePulse"]);
 function clampDifficulty(value, fallback) {
     const normalized = Math.round(Number.isFinite(value) ? value : fallback);
     return Math.min(5, Math.max(1, normalized));
@@ -209,6 +210,7 @@ function createEnemyAbilitySnapshots(abilities) {
         id: ability.id ?? `${ability.className}-${index + 1}`,
         title: typeof ability.title === "string" ? ability.title : ability.id ?? ability.className,
         className: ability.className,
+        isRaidWide: RAID_WIDE_ABILITY_CLASSES.has(ability.className),
         cooldown: numericValue(ability.cooldown ?? null),
         activationTime: numericValue(ability.activationTime ?? null) ?? 0,
         abilityValue: numericValue(ability.abilityValue ?? null),

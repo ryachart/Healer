@@ -231,6 +231,7 @@ export interface EnemyAbilitySnapshot {
   id: string;
   title: string;
   className: string;
+  isRaidWide: boolean;
   cooldown: number | null;
   activationTime: number;
   abilityValue: number | null;
@@ -285,6 +286,7 @@ export interface PlayerCastSnapshot {
 }
 
 export interface CombatPlayerSnapshot {
+  combatantType: "player";
   id: string;
   title: string;
   name: string;
@@ -301,6 +303,7 @@ export interface CombatPlayerSnapshot {
 }
 
 export interface CombatAllySnapshot extends AllySnapshot {
+  combatantType: "ally";
   attackTimer: number;
 }
 

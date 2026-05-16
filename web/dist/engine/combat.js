@@ -88,7 +88,7 @@ function getEnemyTarget(state, targetId) {
     return state.enemies.find((enemy) => enemy.id === targetId);
 }
 function isCombatAlly(target) {
-    return "attackTimer" in target;
+    return target.combatantType === "ally";
 }
 function healthRatio(target) {
     if (!(target.maximumHealth > 0)) {
@@ -356,15 +356,12 @@ function completeCast(state, casting, at) {
         ...applySpellResolution(state, spell, casting.targetIds, at),
     ];
 }
-function isRaidWideAbility(ability) {
-    return ["BaraghastRoar", "Breath", "Earthquake", "RaidDamage", "RaidDamagePulse"].includes(ability.className);
-}
 function resolveEnemyTargetIds(state, enemy, ability) {
     const availableTargets = livingAllies(state);
     if (availableTargets.length === 0) {
         return [];
     }
-    if (ability && isRaidWideAbility(ability)) {
+    if (ability?.isRaidWide) {
         return availableTargets.map((target) => target.id);
     }
     const maxTargets = Math.max(1, Math.round(ability?.targetCount ?? enemy.targets ?? 1));
@@ -673,6 +670,7 @@ export function createCombatState(snapshot) {
         },
         time: 0,
         player: {
+            combatantType: "player",
             id: snapshot.player.id,
             title: snapshot.player.title,
             name: snapshot.player.name,
@@ -696,6 +694,7 @@ export function createCombatState(snapshot) {
         },
         allies: snapshot.allies.map((ally) => ({
             ...ally,
+            combatantType: "ally",
             attackTimer: recurringTimer(ally.damageFrequency),
         })),
         enemies: snapshot.enemies.map((enemy) => ({
@@ -850,9 +849,9 @@ export function advanceCombatState(state, elapsedSeconds) {
             events.push(...enemyAbilityCompletionEvents);
             emitted = true;
         }
-        let resultEvents = updateCombatResult(next, next.time);
-        if (resultEvents.length > 0) {
-            events.push(...resultEvents);
+        const postEnemyCastResultEvents = updateCombatResult(next, next.time);
+        if (postEnemyCastResultEvents.length > 0) {
+            events.push(...postEnemyCastResultEvents);
             break;
         }
         const allyAttackEvents = processDueAllyAttacks(next, next.time);
@@ -860,9 +859,9 @@ export function advanceCombatState(state, elapsedSeconds) {
             events.push(...allyAttackEvents);
             emitted = true;
         }
-        resultEvents = updateCombatResult(next, next.time);
-        if (resultEvents.length > 0) {
-            events.push(...resultEvents);
+        const postAllyAttackResultEvents = updateCombatResult(next, next.time);
+        if (postAllyAttackResultEvents.length > 0) {
+            events.push(...postAllyAttackResultEvents);
             break;
         }
         const enemyAutoAttackEvents = processDueEnemyAutoAttacks(next, next.time);
@@ -870,9 +869,9 @@ export function advanceCombatState(state, elapsedSeconds) {
             events.push(...enemyAutoAttackEvents);
             emitted = true;
         }
-        resultEvents = updateCombatResult(next, next.time);
-        if (resultEvents.length > 0) {
-            events.push(...resultEvents);
+        const postEnemyAttackResultEvents = updateCombatResult(next, next.time);
+        if (postEnemyAttackResultEvents.length > 0) {
+            events.push(...postEnemyAttackResultEvents);
             break;
         }
         const enemyAbilityStartEvents = processDueEnemyAbilityStarts(next, next.time);
@@ -885,9 +884,9 @@ export function advanceCombatState(state, elapsedSeconds) {
             events.push(...effectEvents);
             emitted = true;
         }
-        resultEvents = updateCombatResult(next, next.time);
-        if (resultEvents.length > 0) {
-            events.push(...resultEvents);
+        const postEffectResultEvents = updateCombatResult(next, next.time);
+        if (postEffectResultEvents.length > 0) {
+            events.push(...postEffectResultEvents);
             break;
         }
         if (segment <= EPSILON && !emitted) {

@@ -206,6 +206,7 @@ function adjustedEffectMagnitude(value, healingDoneMultiplier) {
     if (value === null) {
         return null;
     }
+    // Positive effect values represent healing and inherit the player's healing multiplier; negative values are damage and stay raw.
     return value * (value > 0 ? healingDoneMultiplier : 1);
 }
 function createCombatEffectSnapshot(effect, targetId, sourceSpellId, healingDoneMultiplier) {
@@ -536,6 +537,7 @@ function processDueEffects(state, at) {
                 });
             }
             next.ticksApplied += 1;
+            // Native `increasePerTick` is a multiplicative delta: 0.1 => 10% larger next tick, -0.25 => 25% smaller next tick.
             next.currentValuePerTick = next.currentValuePerTick === null
                 ? null
                 : next.currentValuePerTick * (1 + next.increasePerTick);

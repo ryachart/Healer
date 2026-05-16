@@ -440,9 +440,13 @@ function renderPrebattle(content: HTMLElement, state: AppState, appRoot: HTMLEle
   const spellsPanel = element("article", "detail-card");
   spellsPanel.append(element("h3", "detail-card__title", "Selected spells"));
   const maxSpellSlots = maximumStandardSpellSlots(state.registry, state.profile);
-  const normalizedSelectedSpellIds = normalizeSelectedSpellIds(state.registry, state.profile, state.profile.selectedSpellIds);
-  const selectedSpellIdSet = new Set(normalizedSelectedSpellIds);
-  spellsPanel.append(element("p", "detail-card__text", `Loadout slots: ${normalizedSelectedSpellIds.length}/${maxSpellSlots}`));
+  const effectiveSelectedSpellIds = normalizeSelectedSpellIds(
+    state.registry,
+    state.profile,
+    preview.bootstrap.player.activeSpellIds,
+  );
+  const selectedSpellIdSet = new Set(effectiveSelectedSpellIds);
+  spellsPanel.append(element("p", "detail-card__text", `Loadout slots: ${effectiveSelectedSpellIds.length}/${maxSpellSlots}`));
   const spellList = element("ul", "detail-card__list");
   for (const spell of preview.selectedSpells) {
     spellList.append(element("li", "", spell.spellType ? `${spell.title} (${spell.spellType})` : spell.title));
@@ -474,7 +478,7 @@ function renderPrebattle(content: HTMLElement, state: AppState, appRoot: HTMLEle
     const recommendedFirst = [
       ...preview.bootstrap.encounter.requiredSpellIds,
       ...preview.bootstrap.encounter.recommendedSpellIds,
-      ...normalizedSelectedSpellIds,
+      ...effectiveSelectedSpellIds,
     ];
     setSelectedSpells(state, appRoot, recommendedFirst);
   }));
@@ -504,11 +508,14 @@ function renderPrebattle(content: HTMLElement, state: AppState, appRoot: HTMLEle
       selectedSpellIdSet.has(spellId) ? "Remove" : "Add",
       () => {
         const nextSelection = selectedSpellIdSet.has(spellId)
-          ? normalizedSelectedSpellIds.filter((id) => id !== spellId)
-          : [...normalizedSelectedSpellIds, spellId];
+          ? effectiveSelectedSpellIds.filter((id) => id !== spellId)
+          : [...effectiveSelectedSpellIds, spellId];
         setSelectedSpells(state, appRoot, nextSelection);
       },
-      { accent: !selectedSpellIdSet.has(spellId) },
+      {
+        accent: !selectedSpellIdSet.has(spellId),
+        disabled: !selectedSpellIdSet.has(spellId) && effectiveSelectedSpellIds.length >= maxSpellSlots,
+      },
     ));
     loadoutList.append(row);
   }

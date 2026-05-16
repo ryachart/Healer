@@ -194,10 +194,12 @@ export function maximumStandardSpellSlots(registry, profile) {
 export function normalizeSelectedSpellIds(registry, profile, selectedSpellIds) {
     const allowed = new Set(profile.ownedSpellIds.filter((spellId) => registry.spellsById.has(spellId)));
     const normalized = [];
+    const seen = new Set();
     for (const spellId of selectedSpellIds) {
-        if (!allowed.has(spellId) || normalized.includes(spellId)) {
+        if (!allowed.has(spellId) || seen.has(spellId)) {
             continue;
         }
+        seen.add(spellId);
         normalized.push(spellId);
         if (normalized.length >= maximumStandardSpellSlots(registry, profile)) {
             break;
